@@ -1,6 +1,7 @@
 name: Rcc
 on:
-  workflow_dispatch: # Enables manual triggering
+  workflow_dispatch:
+    # enables manual triggering
   push:
     branches:
       - master
@@ -9,13 +10,10 @@ on:
   pull_request:
     branches:
       - master
-  push:
-    tags:
-      - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
 
 jobs:
   build:
-    name: Build RCC
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v5
@@ -28,24 +26,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install invoke
         run: python -m pip install invoke
-      - name: Show commit info
+      - name: What
         run: inv what
-      - name: Build RCC
+      - name: Building
         run: inv build
-      - name: Prepare Artifacts
-        run: |
-          mkdir -p rcc-builds
-          cp build/linux64/rcc rcc-builds/rcc-linux64
-          cp build/windows64/rcc.exe rcc-builds/rcc-windows64.exe
-          cp build/darwin64/rcc rcc-builds/rcc-darwin64
-      - name: Upload RCC Binaries
-        uses: actions/upload-artifact@v4
-        with:
-          name: RCC-Binaries
-          path: rcc-builds/
 
   robot:
-    name: Robot Tests
+    name: Robot
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
@@ -61,17 +48,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install invoke
         run: python -m pip install invoke
-      - name: Setup Robot Environment
+      - name: Setup
         run: inv robotsetup
-      - name: Show commit info
+      - name: What
         run: inv what
-      - name: Run Robot Framework Tests
+      - name: Testing
         run: inv robot
       - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           name: ${{ matrix.os }}-test-reports
           path: ./tmp/output/
+
 
   release:
     name: Create GitHub Release
@@ -93,3 +81,4 @@ jobs:
           files: rcc-builds/*
           draft: false
           prerelease: false
+        
