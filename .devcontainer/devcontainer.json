@@ -1,0 +1,16 @@
+// .devcontainer/devcontainer.json
+{
+    "name": "Universal Dev Container",
+    "image": "ghcr.io/joshyorko/joshyorko_devcontainer:latest",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh"
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    }
+}
