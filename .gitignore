@@ -16,6 +16,7 @@
 # vendor/
 #
 
+.venv/
 __pycache__/
 build/
 output/
