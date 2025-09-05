@@ -55,5 +55,6 @@ func ConsentTracking(state bool) {
 }
 
 func CanTrack() bool {
-	return GetBool(trackingConsentKey) && !common.WarrantyVoided()
+	// Telemetry tracking is disabled in this fork
+	return false
 }

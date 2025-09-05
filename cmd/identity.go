@@ -28,7 +28,7 @@ var identityCmd = &cobra.Command{
 		if xviper.CanTrack() {
 			common.Stdout("and anonymous health tracking is: enabled\n")
 		} else {
-			common.Stdout("and anonymous health tracking is: disabled\n")
+			common.Stdout("and anonymous health tracking is: permanently disabled\n")
 		}
 	},
 }

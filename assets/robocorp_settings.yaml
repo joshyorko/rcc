@@ -7,7 +7,7 @@ endpoints:
   conda: # https://conda.anaconda.org/
   downloads: https://downloads.robocorp.com/
   docs: https://robocorp.com/docs/
-  telemetry: https://telemetry.robocorp.com/
+  telemetry: # disabled - no telemetry tracking
   issues: https://telemetry.robocorp.com/
 
 diagnostics-hosts:

@@ -4,7 +4,7 @@ endpoints:
   cloud-ui: https://cloud.robocorp.com/
   downloads: https://cdn.sema4.ai/
   docs: https://sema4.ai/docs/
-  telemetry: https://sema4.ai/api/telemetry
+  telemetry: # disabled - no telemetry tracking
   issues: https://telemetry.robocorp.com/
 
 diagnostics-hosts:
