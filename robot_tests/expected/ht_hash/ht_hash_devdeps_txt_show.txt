@@ -1,0 +1,12 @@
+Blueprint hash for [robot_tests/bare_action/package.yaml] is ac2e488f48812dcf.
+Blueprint:
+channels:
+- conda-forge
+dependencies:
+- python=3.10.12
+- uv=0.4.24
+- pytest=8.3.3
+- pip:
+  - robocorp==1.6.2
+  - robocorp-actions==0.0.7
+  - ruff==0.7.0

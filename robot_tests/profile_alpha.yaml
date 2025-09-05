@@ -1,0 +1,14 @@
+name: Alpha
+description: Alpha settings
+settings:
+  certificates:
+    verify-ssl: true
+    ssl-no-revoke: false
+  network:
+    https-proxy: ""
+    http-proxy: ""
+  meta:
+    name: Alpha
+    description: Alpha settings
+    source: tests
+    version: 1.2.3.4

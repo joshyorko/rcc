@@ -1,0 +1,28 @@
+activities:
+  My activity:
+    output: output
+    activityRoot: .
+    environment: 
+      path:
+        - bin
+      pythonPath:
+        - variables
+        - libraries
+        - resources
+    action:
+      command:
+        - python
+        - -m
+        - robot
+        - --report
+        - NONE
+        - --outputdir
+        - output
+        - --logtitle
+        - Task log
+        - ./tasks/*.robot
+
+condaConfig: config/conda.yaml
+
+# File format for this yaml, do not edit
+format: 0.0.3

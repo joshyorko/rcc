@@ -1,0 +1,1 @@
+Blueprint hash for [robot_tests/bare_action/package.yaml] is ac2e488f48812dcf.

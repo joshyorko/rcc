@@ -1,0 +1,19 @@
+name: RCC testing package
+description: Just for testing rcc.
+version: 0.0.1
+
+documentation: https://github.com/robocorp/rcc/
+
+dependencies:
+  conda-forge:
+    - python=3.10.12
+    - uv=0.4.24
+  pypi:
+    - robocorp=1.6.2
+    - robocorp-actions=0.0.7
+
+dev-dependencies:
+  conda-forge:
+    - pytest=8.3.3
+  pypi:
+    - ruff=0.7.0

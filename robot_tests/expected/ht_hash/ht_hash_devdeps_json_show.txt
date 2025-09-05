@@ -1,0 +1,4 @@
+{
+  "blueprint": "channels:\n- conda-forge\ndependencies:\n- python=3.10.12\n- uv=0.4.24\n- pytest=8.3.3\n- pip:\n  - robocorp==1.6.2\n  - robocorp-actions==0.0.7\n  - ruff==0.7.0",
+  "hash": "ac2e488f48812dcf"
+}

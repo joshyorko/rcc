@@ -1,0 +1,14 @@
+name: Gamma
+description: Gamma settings
+settings:
+  certificates:
+    verify-ssl: true
+    ssl-no-revoke: false
+  network:
+    https-proxy: ""
+    http-proxy: ""
+  meta:
+    name: Gamma
+    description: Gamma settings
+    source: tests
+    version: 1.2.3.4

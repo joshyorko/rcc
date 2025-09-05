@@ -1,0 +1,28 @@
+tasks:
+  task form name:
+    robotTaskName: Simplest Case Possible
+  shell form name:
+    shell: python -m robot -d output --logtitle "Task log" tasks/shilling.robot
+  old command form name:
+    command:
+      - python
+      - -m
+      - robot
+      - --report
+      - NONE
+      - --outputdir
+      - output
+      - --logtitle
+      - Task log
+      - tasks/fancy.robot
+
+condaConfigFile: config/conda.yaml
+ignoreFiles:
+    - .gitignore
+artifactsDir: output
+PATH:
+  - bin
+PYTHONPATH:
+  - variables
+  - libraries
+  - resources

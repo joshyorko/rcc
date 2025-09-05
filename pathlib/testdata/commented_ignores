@@ -1,0 +1,4 @@
+# this is empty ignore file, no patterns
+
+# so this should generate error when loaded, even when there is empty lines
+# and comments on it

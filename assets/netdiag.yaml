@@ -1,0 +1,44 @@
+network:
+    dns-lookup:
+    - www.robocorp.com
+    tls-verify:
+    - chat.robocorp.com
+    head-request:
+    - url: https://www.robocorp.com
+      codes: [200]
+    - url: https://downloads.robocorp.com/canary.txt
+      codes: [200]
+    - url: https://pypi.org/simple/jupyterlab-pygments/
+      codes: [200]
+    - url: https://conda.anaconda.org/conda-forge/linux-64/repodata.json
+      codes: [200]
+    - url: https://cloud.robocorp.com
+      codes: [200]
+    - url: https://api.eu1.robocorp.com
+      codes: [403]
+    - url: https://api.eu1.robocloud.eu
+      codes: [403]
+    - url: https://roboworker-control-ws-v2.eu1.robocloud.eu
+      codes: [403]
+    - url: https://task-data-api.eu1.robocloud.eu
+      codes: [403]
+    - url: https://telemetry.robocorp.com
+      codes: [403]
+    - url: https://feedback.robocorp.com
+      codes: [403]
+    - url: https://status.robocorp.com
+      codes: [200]
+    - url: https://status.robocorp.com/history.atom
+      codes: [200]
+    - url: https://status.robocorp.com/history.rss
+      codes: [200]
+    - url: https://status.robocorp.com/uptime
+      codes: [200]
+    - url: https://robocorp.com/docs
+      codes: [200]
+    - url: https://robocorp.com/portal
+      codes: [200]
+    get-request:
+    - url: https://downloads.robocorp.com/canary.txt
+      codes: [200]
+      content-sha256: 7a8b721c71428e8599d250e647135550c05a71cc50276e9eea09d82d1baf09a1

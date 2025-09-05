@@ -1,0 +1,25 @@
+tasks:
+  robot:
+    shell: python call_invoke.py robot
+
+devTasks:
+  unitTests:
+    shell: python call_invoke.py test
+  build:
+    shell: python call_invoke.py build
+  local:
+    shell: python call_invoke.py local
+  tools:
+    shell: python call_invoke.py tooling
+  toc:
+    shell: python call_invoke.py toc
+
+environmentConfigs:
+  - setup.yaml
+
+artifactsDir: tmp
+
+PATH:
+PYTHONPATH:
+ignoreFiles:
+  - .gitignore

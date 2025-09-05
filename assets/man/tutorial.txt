@@ -1,0 +1,25 @@
+# Welcome to RCC tutorial
+
+Create you first Robot Framework or python robot and follow given instructions to run it:	
+
+    rcc create
+
+Easy way to run existing, unwrapped robot is just like this:
+
+    rcc run --robot path/to/my/robot.yaml --task "My fine task"
+
+Jumpstart your development with robot examples and templates from our community. 
+Download and run any robot from Robocorp Portal https://robocorp.com/robots/
+For example:
+
+    rcc pull example-google-image-search
+    cd example-google-image-search-main
+    rcc run
+
+Check help for any command with --help. Explore other available commands.
+
+    rcc
+    rcc configure credentials
+    rcc cloud push
+
+Have fun!

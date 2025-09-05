@@ -1,0 +1,21 @@
+name: Beta
+description: Beta settings
+settings:
+  certificates:
+    verify-ssl: false
+    ssl-no-revoke: true
+    legacy-renegotiation-allowed: true
+  network:
+    no-proxy: noproxy.betaputkinen.net
+    https-proxy: http://bad.betaputkinen.net:1234/
+    http-proxy: http://bad.betaputkinen.net:2345/
+  meta:
+    name: Beta
+    description: Beta settings
+    source: tests
+    version: 1.2.3.4
+piprc: |
+  [global]
+  trusted-host = pypi.python.org pypi.org files.pythonhosted.org www.googleapis.com api.github.com selenium-release.storage.googleapis.com
+micromambarc: |
+  ssl_verify: False

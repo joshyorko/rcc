@@ -1,0 +1,9 @@
+channels:
+- conda-forge
+dependencies:
+- python=3.9.13
+- pip=22.1.2
+- pip:
+  - rpaframework==22.5.3
+rccPostInstall:
+- python3 -m pip --version

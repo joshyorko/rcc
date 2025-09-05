@@ -1,0 +1,54 @@
+activities:
+  Read Excel to work item:
+    output: excel-to-work-item/output
+    activityRoot: excel-to-work-item
+    environment: 
+      path:
+        - excel-to-work-item/bin
+      pythonPath:
+        - excel-to-work-item/variables
+        - excel-to-work-item/libraries
+        - excel-to-work-item/resources
+    action:
+      command:
+        - python
+        - -m
+        - robot
+        - --report
+        - NONE
+        - --outputdir
+        - output
+        - --logtitle
+        - Task log
+        - ./tasks/*.robot
+
+  Generate PDFs from work item:
+    output: work-item-to-pdf/output
+    activityRoot: work-item-to-pdf
+    environment: 
+      path:
+        - work-item-to-pdf/bin
+      pythonPath:
+        - work-item-to-pdf/variables
+        - work-item-to-pdf/libraries
+        - work-item-to-pdf/resources
+    action:
+      command:
+        - python
+        - -m
+        - robot
+        - --report
+        - NONE
+        - --outputdir
+        - output
+        - --logtitle
+        - Task log
+        - ./tasks/*.robot
+
+condaConfig: conda.yaml
+ignoreFiles:
+    - .gitignore
+    - moreignores
+
+# File format for this yaml, do not edit
+format: 0.0.3

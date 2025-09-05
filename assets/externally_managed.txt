@@ -1,0 +1,21 @@
+[externally-managed]
+Error=by Robocorp tooling called `rcc`.
+
+ To install Python packages into this managed environment, those should
+ be added to `conda.yaml` file, or more generally into "environment
+ configuration files".
+
+ Motivation with these kind of managed environments is, that they provide:
+ - repeatability, so that same environment can be recreated later
+ - isolation, so that different automations can have their own dependencies
+ - as few as possible dependency resolutions (currently two: conda and pypi)
+ - support for "foreign machines", and not just your own personal machine
+ - supporting Windows, MacOS, and linux operating systems with same automations
+
+ If you don't need above features, or need more flexibility in your personal
+ developement environment, consider using something else (like virtualenv or
+ poetry) with your personal tooling, and only use `rcc` managed environments
+ for final delivery to your users and customers.
+
+ For more details, see:
+ https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-are-environmentconfigs

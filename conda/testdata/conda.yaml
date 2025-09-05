@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.13
+  - pip
+  - robotframework=3.1
+  - robotframework-seleniumlibrary
+  - pip:
+    - webdrivermanager

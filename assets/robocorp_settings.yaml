@@ -1,0 +1,46 @@
+endpoints:
+  cloud-api: https://api.eu1.robocorp.com/
+  cloud-linking: https://cloud.robocorp.com/link/
+  cloud-ui: https://cloud.robocorp.com/
+  pypi: # https://pypi.org/simple/
+  pypi-trusted: # https://pypi.org/
+  conda: # https://conda.anaconda.org/
+  downloads: https://downloads.robocorp.com/
+  docs: https://robocorp.com/docs/
+  telemetry: https://telemetry.robocorp.com/
+  issues: https://telemetry.robocorp.com/
+
+diagnostics-hosts:
+  - files.pythonhosted.org
+  - github.com
+  - conda.anaconda.org
+  - pypi.org
+
+autoupdates:
+  assistant: https://downloads.robocorp.com/assistant/releases/
+  workforce-agent: https://downloads.robocorp.com/workforce-agent/releases/
+  setup-utility: https://downloads.robocorp.com/setup-utility/releases/
+  templates: https://downloads.robocorp.com/templates/templates.yaml
+
+certificates:
+  verify-ssl: true
+  ssl-no-revoke: false
+  legacy-renegotiation-allowed: false
+
+options:
+  no-build: false
+
+network:
+  no-proxy: # no no proxy by default
+  https-proxy: # no proxy by default
+  http-proxy: # no proxy by default
+
+branding:
+  logo: https://downloads.robocorp.com/company/press-kit/logos/robocorp-logo-black.svg
+  theme-color: FF0000
+
+meta:
+  name: default
+  description: Robocorp.com default settings.yaml internal to rcc
+  source: builtin
+  version: 2023.09
