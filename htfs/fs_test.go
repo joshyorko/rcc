@@ -36,7 +36,9 @@ func TestHTFSspecification(t *testing.T) {
 	wont.Nil(reloaded)
 	before, err := reloaded.AsJson()
 	must.Nil(err)
-	must.True(len(before) < 300)
+	// Ensure the pre-load JSON is significantly smaller than the lifted content.
+	// Fixed thresholds are brittle due to varying absolute path lengths, so compare relative to content size.
+	must.True(len(before) < len(content)/100)
 	wont.Equal(fs.Path, reloaded.Path)
 	must.Nil(reloaded.LoadFrom(filename))
 	after, err := reloaded.AsJson()

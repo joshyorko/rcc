@@ -47,7 +47,8 @@ func (it *legacyStrategy) IsLegacy() bool {
 }
 
 func (it *legacyStrategy) AllowInternalMetrics() bool {
-	return true
+	// Disable internal metrics in this fork
+	return false
 }
 
 func (it *legacyStrategy) ForceHome(value string) {
@@ -86,7 +87,8 @@ func (it *sema4Strategy) IsLegacy() bool {
 }
 
 func (it *sema4Strategy) AllowInternalMetrics() bool {
-	return !IsBundled()
+	// Disable internal metrics in this fork
+	return false
 }
 
 func (it *sema4Strategy) ForceHome(value string) {

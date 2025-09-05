@@ -32,15 +32,15 @@ Goal: Show rcc license information.
   Must Have   Copyright 2020 Robocorp Technologies, Inc.
   Wont Have   EULA
 
-Goal: Telemetry tracking enabled by default.
+Goal: Telemetry tracking disabled by default.
   Step        build/rcc configure identity --controller citests
-  Must Have   anonymous health tracking is: enabled
+  Must Have   anonymous health tracking is: disabled
   Must Exist  %{ROBOCORP_HOME}/rcc.yaml
 
-Goal: Send telemetry data to cloud.
-  Step        build/rcc feedback metric --controller citests -t test -n rcc.test -v robot.fullrun
+Goal: Send telemetry data to cloud is a no-op when disabled.
+  Step        build/rcc feedback metric --controller citests -t test -n rcc.test -v robot.fullrun    1
   Use STDERR
-  Must Have   OK
+  Must Have   Tracking is disabled. Quitting.
 
 Goal: Telemetry tracking can be disabled.
   Step        build/rcc configure identity --controller citests --do-not-track

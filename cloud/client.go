@@ -146,7 +146,10 @@ func (it *internalClient) does(method string, request *Request) *Response {
 	if len(request.TransferEncoding) > 0 {
 		httpRequest.TransferEncoding = []string{request.TransferEncoding}
 	}
-	httpRequest.Header.Add("robocorp-installation-id", xviper.TrackingIdentity())
+	// Only send installation identifier if tracking is allowed
+	if xviper.CanTrack() {
+		httpRequest.Header.Add("robocorp-installation-id", xviper.TrackingIdentity())
+	}
 	httpRequest.Header.Add("User-Agent", common.UserAgent())
 	for name, value := range request.Headers {
 		httpRequest.Header.Add(name, value)

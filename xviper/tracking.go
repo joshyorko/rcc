@@ -45,7 +45,8 @@ func TrackingIdentity() string {
 	if len(identity) == 0 {
 		identity = generateRandomIdentity()
 		Set(trackingIdentityKey, identity)
-		ConsentTracking(true)
+		// Do NOT auto-enable tracking consent. Default is disabled until user opts-in explicitly.
+		// ConsentTracking(true)
 	}
 	return identity
 }
@@ -55,5 +56,6 @@ func ConsentTracking(state bool) {
 }
 
 func CanTrack() bool {
-	return GetBool(trackingConsentKey) && !common.WarrantyVoided()
+	// Telemetry is disabled in this fork regardless of consent or mode
+	return false
 }

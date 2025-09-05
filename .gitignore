@@ -21,7 +21,6 @@ build/
 output/
 tmp/
 developer/tmp/
-rcc.yaml
 rcccache.yaml
 tags
 .DS_Store

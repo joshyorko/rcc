@@ -83,6 +83,16 @@ The changelog can be seen [here](/docs/changelog.md). It is also visible inside 
 Some tips, tricks, and recipes can be found [here](/docs/recipes.md).
 These are also visible inside RCC using the command: `rcc docs recipes`.
 
+## Telemetry
+
+This fork disables all internal telemetry by default:
+
+- No background metrics are sent and internal metrics are disabled across product modes.
+- The installation identifier header is not attached to outbound HTTP requests when telemetry is disabled.
+- The `rcc configure identity` output will always report tracking as disabled unless explicitly modified in code; feedback/metric commands are effectively no-ops.
+
+If you depend on Robocorp Control Room features that require telemetry or the installation identifier, adapt the forked code accordingly. The build and asset pipeline remains unchanged.
+
 ## Community and Support
 
 The Robocorp community can be found on [Developer Slack](https://robocorp-developers.slack.com), where you can ask questions, voice ideas, and share your projects.

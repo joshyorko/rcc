@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/robocorp/rcc/common"
+	"github.com/robocorp/rcc/pretty"
 	"github.com/robocorp/rcc/xviper"
 
 	"github.com/spf13/cobra"
@@ -19,17 +20,11 @@ var identityCmd = &cobra.Command{
 	Long:    "Manage rcc instance identity related things.",
 	Run: func(cmd *cobra.Command, args []string) {
 		common.Stdout("rcc instance identity is: %v\n", xviper.TrackingIdentity())
-		if enableTracking {
-			xviper.ConsentTracking(true)
+		// Telemetry is disabled in this fork regardless of user preference.
+		if enableTracking || doNotTrack {
+			pretty.Warning("Telemetry is disabled in this fork; --enable/--do-not-track flags have no effect.")
 		}
-		if doNotTrack {
-			xviper.ConsentTracking(false)
-		}
-		if xviper.CanTrack() {
-			common.Stdout("and anonymous health tracking is: enabled\n")
-		} else {
-			common.Stdout("and anonymous health tracking is: disabled\n")
-		}
+		common.Stdout("and anonymous health tracking is: disabled\n")
 	},
 }
 
