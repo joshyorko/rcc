@@ -3,7 +3,7 @@ on:
   workflow_dispatch: # Enables manual triggering
   push:
     branches:
-      - master
+      - main
       - maintenance
       - series10
     tags:
@@ -11,7 +11,7 @@ on:
   
   pull_request:
     branches:
-      - master
+      - main
 
 
 jobs:
