@@ -30,6 +30,33 @@ RCC is a Go-based CLI tool for creating, managing, and distributing Python-based
 - Clean build artifacts: `inv clean`
 - Update documentation TOC: `inv toc`
 
+## Developer toolkit (developer/)
+
+Use the bundled developer toolkit to bootstrap a consistent env and run common tasks via rcc. This requires an existing rcc binary on your PATH (any recent older rcc works) since it self-bootstraps.
+
+- Quick robot smoke test (writes logs to `tmp/output/log.html`):
+    - `rcc run -r developer/toolkit.yaml -t robot`
+
+- Developer tasks (use `--dev`):
+    - Unit tests: `rcc run -r developer/toolkit.yaml --dev -t unitTests`
+        - Outside of invoke, set `GOARCH=amd64` when using `go test` directly since some tests assume it.
+    - Local build (current OS): `rcc run -r developer/toolkit.yaml --dev -t local`
+    - Cross-platform build: `rcc run -r developer/toolkit.yaml --dev -t build`
+    - Show tools: `rcc run -r developer/toolkit.yaml --dev -t tools`
+    - Update docs TOC: `rcc run -r developer/toolkit.yaml --dev -t toc`
+
+- How it’s wired:
+    - `developer/toolkit.yaml` defines tasks and devTasks that call `python developer/call_invoke.py <task>`.
+    - `developer/call_invoke.py` runs `invoke <task>` in the repo root so you benefit from the same Invoke tasks described below.
+    - Environments are declared in `developer/setup.yaml` and pinned to:
+        - Python 3.10.15, Invoke 2.2.0
+        - Robot Framework 6.1.1 (matches `robot_requirements.txt`)
+        - Go 1.20.7, Git 2.46.0
+
+Notes
+- If rcc downloads are blocked in your network, you can still use the direct Invoke/Go commands documented in this file.
+- The toolkit writes artifacts under `tmp/` and respects `.gitignore` specified in `developer/toolkit.yaml`.
+
 ## Critical Build Requirements
 
 ### Asset Preparation
