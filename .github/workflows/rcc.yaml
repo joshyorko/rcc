@@ -1,6 +1,11 @@
 name: Rcc
 on:
   workflow_dispatch: # Enables manual triggering
+    inputs:
+      tag:
+        description: "Tag name to release (e.g., v18.5.0)"
+        required: true
+        type: string
   push:
     branches:
       - main
@@ -19,6 +24,8 @@ jobs:
     name: Build RCC
     runs-on: ubuntu-latest
     steps:
+      # Checkout first so setup-go can locate go.mod/go.sum for caching
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version: "1.20.x"
@@ -26,7 +33,6 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.10"
-      - uses: actions/checkout@v5
       - name: Install invoke
         run: python -m pip install invoke
       - name: Show commit info
@@ -58,13 +64,14 @@ jobs:
       matrix:
         os: ["ubuntu", "windows"]
     steps:
+      # Checkout first so setup-go can locate go.mod/go.sum for caching
+      - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version: "1.20.x"
       - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
-      - uses: actions/checkout@v5
       - name: Install invoke
         run: python -m pip install invoke
       - name: Setup Robot Environment
@@ -86,6 +93,11 @@ jobs:
     needs:
       - build
       - robot
+    # Only run this job on tag pushes (e.g., refs/tags/v18.5.0) or manual dispatch
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    # Grant only the permissions needed to publish a release
+    permissions:
+      contents: write
 
     steps:
       - name: Debug Release Job
@@ -104,5 +116,7 @@ jobs:
         uses: softprops/action-gh-release@v2.3.2
         with:
           files: rcc-builds/*
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
           draft: false
           prerelease: false
