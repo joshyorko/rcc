@@ -47,6 +47,23 @@ For detailed instructions, visit [Robocorp RCC documentation](https://robocorp.c
 
 > Links to changelog and different versions [available here](https://downloads.robocorp.com/rcc/releases/index.html)
 
+### Docker
+
+RCC is available as a containerized application:
+
+```bash
+# Build Docker image from source
+git clone https://github.com/joshyorko/rcc.git
+cd rcc
+pip install invoke
+inv docker-build
+
+# Run RCC in container
+docker run --rm rcc:latest rcc --help
+```
+
+For detailed Docker usage, see [Docker Documentation](docs/DOCKER.md).
+
 ### Windows
 
 1. Open the command prompt

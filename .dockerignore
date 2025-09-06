@@ -1,0 +1,56 @@
+# Git and version control
+.git/
+.gitignore
+
+# Build artifacts
+build/
+dist/
+*.exe
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Documentation build artifacts
+docs/_build/
+
+# Test outputs
+robot_tests/output/
+output/
+
+# Node modules if any
+node_modules/
+
+# Coverage reports
+coverage/
+*.coverage
+
+# Keep these for the Docker build
+!assets/
+!blobs/
+!templates/
+!go.mod
+!go.sum
+!tasks.py
+!*.go

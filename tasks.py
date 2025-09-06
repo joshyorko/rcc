@@ -254,3 +254,38 @@ def robot(c):
     """Run robot tests on local application"""
     print("Running robot tests...")
     c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests")
+
+
+@task
+def docker_build(c, tag="rcc:latest"):
+    """Build Docker image for RCC"""
+    print(f"Building Docker image: {tag}")
+    c.run(f"docker build -t {tag} .")
+
+
+@task
+def docker_test(c, tag="rcc:latest"):
+    """Test Docker image functionality"""
+    print(f"Testing Docker image: {tag}")
+    # Test basic functionality
+    c.run(f"docker run --rm {tag} rcc --version")
+    c.run(f"docker run --rm {tag} rcc --help")
+
+
+@task(pre=[docker_build])
+def docker_run(c, tag="rcc:latest", command="--help"):
+    """Run RCC in Docker container"""
+    print(f"Running RCC in Docker: {tag}")
+    c.run(f"docker run --rm -it {tag} rcc {command}")
+
+
+@task
+def docker_push(c, tag="rcc:latest", registry=""):
+    """Push Docker image to registry"""
+    if registry:
+        full_tag = f"{registry}/{tag}"
+        c.run(f"docker tag {tag} {full_tag}")
+        c.run(f"docker push {full_tag}")
+        print(f"Pushed: {full_tag}")
+    else:
+        print("No registry specified, use --registry option")
