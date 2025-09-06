@@ -1,5 +1,12 @@
 # rcc change log
 
+## v18.6.0 (date: 06.09.2025)
+
+- removal: stripped telemetry/metrics code paths and related plumbing
+- ci: release job now runs only on tags or manual dispatch; artifacts uploaded consistently
+- ci: reordered checkout before setup-go/python to restore Go cache properly
+- docs: added developer toolkit notes to Copilot instructions
+
 ## v18.5.0 (date: 25.10.2024)
 
 - support `--stdin` flag in `rcc holotree hash` to read the package file content from stdin
