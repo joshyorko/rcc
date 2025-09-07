@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/robocorp/rcc/blobs"
 	"github.com/robocorp/rcc/common"
@@ -26,6 +27,49 @@ var (
 	Global         gateway
 	chain          SettingsLayers
 )
+
+// loadEnvOverrides inspects well-known env vars and produces a Settings layer
+// that overrides endpoint URLs without requiring a custom settings.yaml file.
+// This lets downstream users repoint the control plane and downloads easily.
+// Returns nil if no environment overrides are found.
+func loadEnvOverrides() *Settings {
+	// Mapping of env var -> endpoints key in settings
+	mapping := map[string]string{
+		"RCC_ENDPOINT_CLOUD_API":      "cloud-api",
+		"RCC_ENDPOINT_CLOUD_LINKING":  "cloud-linking",
+		"RCC_ENDPOINT_CLOUD_UI":       "cloud-ui",
+		"RCC_ENDPOINT_DOWNLOADS":      "downloads",
+		"RCC_ENDPOINT_DOCS":           "docs",
+		"RCC_ENDPOINT_TELEMETRY":      "telemetry",
+		"RCC_ENDPOINT_ISSUES":         "issues",
+		"RCC_ENDPOINT_PYPI":           "pypi",
+		"RCC_ENDPOINT_PYPI_TRUSTED":   "pypi-trusted",
+		"RCC_ENDPOINT_CONDA":          "conda",
+	}
+
+	overrides := &Settings{
+		Endpoints: make(StringMap),
+	}
+	haveAny := false
+	for envVar, key := range mapping {
+		if trimmed := strings.TrimSpace(os.Getenv(envVar)); len(trimmed) > 0 {
+			overrides.Endpoints[key] = trimmed
+			haveAny = true
+		}
+	}
+
+	if !haveAny {
+		return nil
+	}
+	// Annotate metadata so diagnostics are informative.
+	overrides.Meta = &Meta{
+		Name:        "env-overrides",
+		Description: "settings overrides from environment variables",
+		Source:      "environment",
+		Version:     "env",
+	}
+	return overrides
+}
 
 func cacheSettings(result *Settings) (*Settings, error) {
 	if result != nil {
@@ -285,7 +329,7 @@ func init() {
 	chain = SettingsLayers{
 		DefaultSettingsLayer(),
 		CustomSettingsLayer(),
-		nil,
+		loadEnvOverrides(),
 	}
 	verifySsl := true
 	Global = gateway(true)
