@@ -31,6 +31,7 @@ var (
 // loadEnvOverrides inspects well-known env vars and produces a Settings layer
 // that overrides endpoint URLs without requiring a custom settings.yaml file.
 // This lets downstream users repoint the control plane and downloads easily.
+// Returns nil if no environment overrides are found.
 func loadEnvOverrides() *Settings {
 	// Mapping of env var -> endpoints key in settings
 	mapping := map[string]string{
