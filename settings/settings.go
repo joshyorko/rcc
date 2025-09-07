@@ -52,12 +52,9 @@ func loadEnvOverrides() *Settings {
 	}
 	haveAny := false
 	for envVar, key := range mapping {
-		if val := os.Getenv(envVar); true {
-			trimmed := strings.TrimSpace(val)
-			if len(trimmed) > 0 {
-				overrides.Endpoints[key] = trimmed
-				haveAny = true
-			}
+		if trimmed := strings.TrimSpace(os.Getenv(envVar)); len(trimmed) > 0 {
+			overrides.Endpoints[key] = trimmed
+			haveAny = true
 		}
 	}
 
