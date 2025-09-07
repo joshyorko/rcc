@@ -93,6 +93,59 @@ This fork disables all internal telemetry by default:
 
 If you depend on Robocorp Control Room features that require telemetry or the installation identifier, adapt the forked code accordingly. The build and asset pipeline remains unchanged.
 
+## Repoint endpoints without code changes
+
+If you want to keep cloud-related commands available but stop referring to Robocorp’s control plane by default, you can repoint all network endpoints via environment variables or a local `settings.yaml`.
+
+- Quick override with environment variables (takes precedence over builtin settings):
+  - RCC_ENDPOINT_CLOUD_API
+  - RCC_ENDPOINT_CLOUD_LINKING
+  - RCC_ENDPOINT_CLOUD_UI
+  - RCC_ENDPOINT_DOWNLOADS
+  - RCC_ENDPOINT_DOCS
+  - RCC_ENDPOINT_TELEMETRY
+  - RCC_ENDPOINT_ISSUES
+  - RCC_ENDPOINT_PYPI
+  - RCC_ENDPOINT_PYPI_TRUSTED
+  - RCC_ENDPOINT_CONDA
+
+Example (zsh):
+
+```zsh
+# Point rcc at your own control plane endpoints
+export RCC_ENDPOINT_CLOUD_API="https://api.control-room.yorko.io/"
+export RCC_ENDPOINT_CLOUD_UI="https://console.control-room.yorko.io/"
+export RCC_ENDPOINT_CLOUD_LINKING="https://console.control-room.yorko.io/link/"
+
+# Optional: switch where generic downloads (e.g., rcc releases index) resolve
+export RCC_ENDPOINT_DOWNLOADS="https://downloads.control-room.yorko.io/"
+
+# Optional mirrors for docs, PyPI, and conda
+export RCC_ENDPOINT_DOCS="https://docs.control-room.yorko.io/"
+export RCC_ENDPOINT_PYPI="https://pypi.org/simple/"
+export RCC_ENDPOINT_PYPI_TRUSTED="https://pypi.org/"
+export RCC_ENDPOINT_CONDA="https://conda.anaconda.org/"
+
+# Validate your overrides
+build/rcc configuration diagnostics --quick --json | jq .
+```
+
+- Local settings file: write a `settings.yaml` to `$(ROBOCORP_HOME)/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
+
+Notes
+- Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
+
+```zsh
+export RCC_DOWNLOADS_BASE="https://downloads.control-room.yorko.io"
+rcc run -r developer/toolkit.yaml --dev -t assets
+```
+
+- To verify what endpoints are in effect at runtime, run:
+
+```zsh
+build/rcc configuration diagnostics --quick --json | jq .
+```
+
 ## Community and Support
 
 The Robocorp community can be found on [Developer Slack](https://robocorp-developers.slack.com), where you can ask questions, voice ideas, and share your projects.

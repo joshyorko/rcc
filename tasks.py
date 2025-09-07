@@ -55,7 +55,10 @@ def noassets(c):
 
 
 def download_link(version, platform, filename):
-    return f"https://downloads.robocorp.com/micromamba/{version}/{platform}/{filename}"
+    base = os.environ.get("RCC_DOWNLOADS_BASE", "https://downloads.robocorp.com")
+    # Ensure no trailing slash on base to avoid double slashes
+    base = base.rstrip("/")
+    return f"{base}/micromamba/{version}/{platform}/{filename}"
 
 
 @task
