@@ -1,4 +1,12 @@
 # rcc change log
+## v18.7.0 (date: 09.06.2025)
+
+- feature: all network endpoints (cloud, downloads, docs, telemetry, etc.) can now be repointed via environment variables (RCC_ENDPOINT_*) or local settings.yaml, decoupling from Robocorp control plane
+- feature: asset pipeline (tasks.py) now respects RCC_DOWNLOADS_BASE for micromamba and asset downloads, allowing custom mirrors
+- docs: README.md updated with instructions for endpoint overrides and asset pipeline configuration
+- bugfix: fixed missing import (strings) in settings/settings.go after adding env override logic
+- build: validated all packages and developer toolkit after changes
+- note: default settings assets (robocorp_settings.yaml, sema4ai_settings.yaml) still point to Robocorp/Sema4.ai endpoints by default; override as needed
 
 ## v18.6.0 (date: 06.09.2025)
 
