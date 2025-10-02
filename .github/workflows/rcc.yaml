@@ -6,18 +6,18 @@ on:
         description: "Tag name to release (e.g., v18.5.0)"
         required: true
         type: string
-  #push:
-  #  branches:
-  #    - main
-  #    - maintenance
-  #    - series10
-  #  tags:
-  #    - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
-  #
-  #pull_request:
-  #  branches:
-  #    - main
-#
+  push:
+    branches:
+      - main
+      - maintenance
+      - series10
+    tags:
+      - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
+
+  pull_request:
+    branches:
+      - main
+
 
 jobs:
   build:
