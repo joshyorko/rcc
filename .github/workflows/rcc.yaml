@@ -48,8 +48,11 @@ jobs:
         run: |
           mkdir -p rcc-builds
           cp build/linux64/rcc rcc-builds/rcc-linux64
+          cp build/linux64/rccremote rcc-builds/rccremote-linux64
           cp build/windows64/rcc.exe rcc-builds/rcc-windows64.exe
+          cp build/windows64/rccremote.exe rcc-builds/rccremote-windows64.exe
           cp build/darwin64/rcc rcc-builds/rcc-darwin64
+          cp build/darwin64/rccremote rcc-builds/rccremote-darwin64
       - name: Upload RCC Binaries
         uses: actions/upload-artifact@v4.6.2
         with:
