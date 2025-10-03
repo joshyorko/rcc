@@ -79,8 +79,8 @@ func (tm *TunnelManager) Start(localPort int) error {
 // parseOutput reads cloudflared stderr to extract the public URL
 func (tm *TunnelManager) parseOutput(stderr io.ReadCloser) {
 	scanner := bufio.NewScanner(stderr)
-	// Quick Tunnel URL format: "https://<random>.trycloudflare.com"
-	urlRegex := regexp.MustCompile(`https://[a-z0-9-]+\.trycloudflare\.com`)
+	// Match any https:// URL (for both Quick and Named Tunnels)
+	urlRegex := regexp.MustCompile(`https://[^\s"]+`)
 
 	for scanner.Scan() {
 		line := scanner.Text()
