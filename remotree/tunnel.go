@@ -114,8 +114,21 @@ func (tm *TunnelManager) Stop() error {
 	if tm.cmd != nil && tm.cmd.Process != nil {
 		// Try graceful shutdown first
 		if err := tm.cmd.Process.Signal(os.Interrupt); err != nil {
-			// If interrupt fails, kill it
+			// If interrupt fails, kill it immediately
 			return tm.cmd.Process.Kill()
+		}
+
+		// Wait for process to exit gracefully, with timeout
+		done := make(chan error, 1)
+		go func() {
+			done <- tm.cmd.Wait()
+		}()
+		select {
+		case <-time.After(5 * time.Second):
+			common.Log("Tunnel did not exit after interrupt, killing...")
+			return tm.cmd.Process.Kill()
+		case err := <-done:
+			return err
 		}
 	}
 	return nil
