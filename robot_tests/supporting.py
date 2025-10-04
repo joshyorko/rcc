@@ -9,7 +9,10 @@ log = logging.getLogger(__name__)
 
 def fix_command(command):
     if sys.platform == "win32":
-        if command.strip().startswith("build/rcc"):
+        # Check for rccremote first, before rcc, to avoid partial match
+        if command.strip().startswith("build/rccremote"):
+            command = command.replace("build/rccremote", ".\\build\\rccremote.exe", 1)
+        elif command.strip().startswith("build/rcc"):
             command = command.replace("build/rcc", ".\\build\\rcc.exe", 1)
     return command
 
@@ -28,8 +31,16 @@ def get_cwd():
         assert "rcc.exe" in os.listdir(
             build_dir
         ), f"Missing rcc.exe in: {build_dir!r} {detail}"
+        # Also check for rccremote.exe if tests use it
+        if not "rccremote.exe" in os.listdir(build_dir):
+            # Only warn, don't fail - rccremote tests are optional
+            log.warning(f"rccremote.exe not found in: {build_dir!r}")
     else:
         assert "rcc" in os.listdir(build_dir), f"Missing rcc in: {build_dir!r} {detail}"
+        # Also check for rccremote if tests use it
+        if not "rccremote" in os.listdir(build_dir):
+            # Only warn, don't fail - rccremote tests are optional
+            log.warning(f"rccremote not found in: {build_dir!r}")
     return cwd
 
 
