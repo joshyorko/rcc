@@ -1,4 +1,10 @@
 # rcc change log
+## v18.8.0 (date: TBD)
+
+- feature: added `--expose` flag to `rccremote` for exposing server via Cloudflare Quick Tunnels (zero-config, no tokens required)
+- feature: added `--tunnel-name` flag to `rccremote` for using Named Tunnels with custom domains (requires CF_TUNNEL_TOKEN environment variable)
+- note: requires `cloudflared` binary to be installed for tunnel functionality; see https://github.com/cloudflare/cloudflared/releases
+
 ## v18.7.0 (date: 09.06.2025)
 
 - feature: all network endpoints (cloud, downloads, docs, telemetry, etc.) can now be repointed via environment variables (RCC_ENDPOINT_*) or local settings.yaml, decoupling from Robocorp control plane
