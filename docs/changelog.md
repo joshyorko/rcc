@@ -1,4 +1,14 @@
 # rcc change log
+## v18.8.0 (date: 20.11.2025)
+
+- feature: new `rcc holotree build-from-bundle` command to build Holotree environments from single-file robot bundles
+  - reads `envs/<name>/conda.yaml` definitions from ZIP bundle files
+  - supports `--force` flag to rebuild environments even if they already exist
+  - supports `--restore` flag to restore environments to spaces after building
+  - supports `--json` flag for structured JSON output (use with `--silent` for clean JSON)
+  - detects but does not import `hololib/hololib.zip` from bundles (v1 limitation)
+  - enables air-gapped deployments and single-file robot distribution
+
 ## v18.7.0 (date: 09.06.2025)
 
 - feature: all network endpoints (cloud, downloads, docs, telemetry, etc.) can now be repointed via environment variables (RCC_ENDPOINT_*) or local settings.yaml, decoupling from Robocorp control plane
