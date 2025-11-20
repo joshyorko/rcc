@@ -50,5 +50,16 @@ Goal: Run task from plain bundle and check env processing
   Use STDOUT
   Must Have    Hello from bundle task
 
+Goal: Create bundle using rcc robot bundle command
+  Step    build/rcc robot bundle -r robot_tests/testdata/robot_bundle/robot/robot.yaml -o tmp/rcc_created_bundle.py
+  Must Exist    tmp/rcc_created_bundle.py
+
+Goal: Run task from rcc created bundle
+  Step    build/rcc robot run-from-bundle tmp/rcc_created_bundle.py --task test --controller citests
+  Use STDOUT
+  Must Have    Hello from bundle task
+  Use STDERR
+  Must Have    OK.
+
 Goal: Cleanup
-  Fire And Forget    rm -f tmp/robot_bundle.zip tmp/robot_sfx.py tmp/robot_sfx.exe
+  Fire And Forget    rm -f tmp/robot_bundle.zip tmp/robot_sfx.py tmp/robot_sfx.exe tmp/rcc_created_bundle.py
