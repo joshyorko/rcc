@@ -54,113 +54,31 @@ local Holotree library.`,
 		pretty.Guard(err == nil, 2, "Could not open bundle %q: %v", bundleFile, err)
 		defer closer.Close()
 
-		// Find all conda.yaml files under envs/
-		envFiles := findEnvFiles(zr)
-		if len(envFiles) == 0 {
+		// Import hololib if present
+		err = importHololib(zr)
+		pretty.Guard(err == nil, 3, "Failed to import hololib from bundle: %v", err)
+
+		// Process environments
+		results, err := processBundleEnvs(zr, bundleFile, bundleForceFlag, bundleRestoreFlag)
+		pretty.Guard(err == nil, 4, "Failed to process environments: %v", err)
+
+		if len(results) == 0 {
 			pretty.Exit(3, "No environment definitions (envs/*/conda.yaml) found in bundle %q", bundleFile)
-		}
-
-		pretty.Note("Found %d environment(s) in bundle %q", len(envFiles), bundleFile)
-
-		// Check for hololib.zip (note but don't import in v1)
-		if hasHololibZip(zr) {
-			pretty.Note("Bundle contains pre-baked hololib.zip at /hololib/hololib.zip (not imported in v1).")
-		}
-
-		// Track results for JSON output
-		type envResult struct {
-			Name    string `json:"name"`
-			Hash    string `json:"hash"`
-			Path    string `json:"path,omitempty"`
-			Success bool   `json:"success"`
-			Error   string `json:"error,omitempty"`
-		}
-		results := make([]envResult, 0, len(envFiles))
-
-		// Process each environment
-		total := len(envFiles)
-		failed := 0
-		for at, envFile := range envFiles {
-			envName := envFile.name
-			result := envResult{Name: envName, Success: false}
-
-			pretty.Note("%d/%d: Processing environment %q", at+1, total, envName)
-
-			// Extract conda.yaml to temp file
-			tmpConda, err := extractCondaYaml(envFile.zipFile, envName)
-			if err != nil {
-				failed++
-				result.Error = fmt.Sprintf("Failed to extract conda.yaml: %v", err)
-				results = append(results, result)
-				pretty.Warning("%d/%d: Failed to extract conda.yaml for %q: %v", at+1, total, envName, err)
-				continue
-			}
-			defer os.Remove(tmpConda)
-
-			// Compose blueprint and get hash
-			_, blueprint, err := htfs.ComposeFinalBlueprint([]string{tmpConda}, "", false)
-			if err != nil {
-				failed++
-				result.Error = fmt.Sprintf("Failed to compose blueprint: %v", err)
-				results = append(results, result)
-				pretty.Warning("%d/%d: Failed to compose blueprint for %q: %v", at+1, total, envName, err)
-				continue
-			}
-
-			hash := common.BlueprintHash(blueprint)
-			result.Hash = hash
-			pretty.Note("%d/%d: Blueprint hash for %q is %s", at+1, total, envName, hash)
-
-			// Build environment via existing Holotree pipeline
-			if bundleRestoreFlag {
-				// Use NewEnvironment which includes restore
-				label, _, err := htfs.NewEnvironment(tmpConda, "", true, bundleForceFlag, operations.PullCatalog)
-				if err != nil {
-					failed++
-					result.Error = fmt.Sprintf("Failed to build environment: %v", err)
-					results = append(results, result)
-					pretty.Warning("%d/%d: Failed to build environment for %q: %v", at+1, total, envName, err)
-				} else {
-					result.Success = true
-					result.Path = label
-					results = append(results, result)
-					pretty.Ok()
-					pretty.Note("%d/%d: Built and restored environment %q with hash %s at %q", at+1, total, envName, hash, label)
-				}
-			} else {
-				// Use RecordEnvironment to just build without restoring space
-				tree, err := htfs.New()
-				if err != nil {
-					failed++
-					result.Error = fmt.Sprintf("Failed to create Holotree library: %v", err)
-					results = append(results, result)
-					pretty.Warning("%d/%d: Failed to create Holotree library for %q: %v", at+1, total, envName, err)
-					continue
-				}
-
-				scorecard := common.NewScorecard()
-				err = htfs.RecordEnvironment(tree, blueprint, bundleForceFlag, scorecard, operations.PullCatalog)
-				if err != nil {
-					failed++
-					result.Error = fmt.Sprintf("Failed to record environment: %v", err)
-					results = append(results, result)
-					pretty.Warning("%d/%d: Failed to record environment for %q: %v", at+1, total, envName, err)
-				} else {
-					result.Success = true
-					results = append(results, result)
-					pretty.Ok()
-					pretty.Note("%d/%d: Built environment %q with hash %s", at+1, total, envName, hash)
-				}
-			}
 		}
 
 		// Output results
 		if bundleJsonFlag {
 			output := make(map[string]interface{})
 			output["bundle"] = bundleFile
-			output["total"] = total
-			output["succeeded"] = total - failed
-			output["failed"] = failed
+			output["total"] = len(results)
+			succeeded := 0
+			for _, r := range results {
+				if r.Success {
+					succeeded++
+				}
+			}
+			output["succeeded"] = succeeded
+			output["failed"] = len(results) - succeeded
 			output["environments"] = results
 
 			jsonOutput, err := operations.NiceJsonOutput(output)
@@ -168,12 +86,18 @@ local Holotree library.`,
 			fmt.Println(jsonOutput)
 		} else {
 			// Final summary
+			failed := 0
+			for _, r := range results {
+				if !r.Success {
+					failed++
+				}
+			}
 			if failed > 0 {
-				pretty.Exit(4, "%d out of %d environment builds failed! See output above for details.", failed, total)
+				pretty.Exit(4, "%d out of %d environment builds failed! See output above for details.", failed, len(results))
 			}
 
 			pretty.Ok()
-			pretty.Note("Successfully built %d environment(s) from bundle.", total)
+			pretty.Note("Successfully built %d environment(s) from bundle.", len(results))
 		}
 	},
 }
@@ -342,4 +266,147 @@ func init() {
 	holotreeBundleCmd.Flags().BoolVarP(&bundleForceFlag, "force", "f", false, "Force environment builds, even when blueprint is already present.")
 	holotreeBundleCmd.Flags().BoolVarP(&bundleRestoreFlag, "restore", "r", false, "Also restore the environment to a space (not just build catalog).")
 	holotreeBundleCmd.Flags().BoolVarP(&bundleJsonFlag, "json", "j", false, "Output results as JSON.")
+}
+
+type envResult struct {
+	Name    string `json:"name"`
+	Hash    string `json:"hash"`
+	Path    string `json:"path,omitempty"`
+	Success bool   `json:"success"`
+	Error   string `json:"error,omitempty"`
+}
+
+// processBundleEnvs processes all environment definitions found in the bundle's envs/ directory.
+// For each environment, it either builds or restores it based on the restore flag.
+// It returns a slice of envResult containing the result for each environment processed.
+//
+// Parameters:
+//   zr             - the zip.Reader for the bundle file
+//   bundleFilename - the name of the bundle file
+//   force          - if true, forces environment builds even if the blueprint is present
+//   restore        - if true, restores the environment to a space (not just build catalog)
+//
+// Returns:
+//   []envResult - results for each environment processed
+//   error       - error if processing fails
+func processBundleEnvs(zr *zip.Reader, bundleFilename string, force bool, restore bool) ([]envResult, error) {
+	envFiles := findEnvFiles(zr)
+	if len(envFiles) == 0 {
+		return nil, nil
+	}
+
+	pretty.Note("Found %d environment(s) in bundle %q", len(envFiles), bundleFilename)
+
+	results := make([]envResult, 0, len(envFiles))
+	total := len(envFiles)
+
+	for at, envFile := range envFiles {
+		envName := envFile.name
+		result := envResult{Name: envName, Success: false}
+
+		pretty.Note("%d/%d: Processing environment %q", at+1, total, envName)
+
+		tmpConda, err := extractCondaYaml(envFile.zipFile, envName)
+		if err != nil {
+			result.Error = fmt.Sprintf("Failed to extract conda.yaml: %v", err)
+			results = append(results, result)
+			pretty.Warning("%d/%d: Failed to extract conda.yaml for %q: %v", at+1, total, envName, err)
+			continue
+		}
+		defer os.Remove(tmpConda)
+
+		_, blueprint, err := htfs.ComposeFinalBlueprint([]string{tmpConda}, "", false)
+		if err != nil {
+			result.Error = fmt.Sprintf("Failed to compose blueprint: %v", err)
+			results = append(results, result)
+			pretty.Warning("%d/%d: Failed to compose blueprint for %q: %v", at+1, total, envName, err)
+			continue
+		}
+
+		hash := common.BlueprintHash(blueprint)
+		result.Hash = hash
+		pretty.Note("%d/%d: Blueprint hash for %q is %s", at+1, total, envName, hash)
+
+		if restore {
+			label, _, err := htfs.NewEnvironment(tmpConda, "", true, force, operations.PullCatalog)
+			if err != nil {
+				result.Error = fmt.Sprintf("Failed to build environment: %v", err)
+				results = append(results, result)
+				pretty.Warning("%d/%d: Failed to build environment for %q: %v", at+1, total, envName, err)
+			} else {
+				result.Success = true
+				result.Path = label
+				results = append(results, result)
+				pretty.Ok()
+				pretty.Note("%d/%d: Built and restored environment %q with hash %s at %q", at+1, total, envName, hash, label)
+			}
+		} else {
+			tree, err := htfs.New()
+			if err != nil {
+				result.Error = fmt.Sprintf("Failed to create Holotree library: %v", err)
+				results = append(results, result)
+				pretty.Warning("%d/%d: Failed to create Holotree library for %q: %v", at+1, total, envName, err)
+				continue
+			}
+
+			scorecard := common.NewScorecard()
+			err = htfs.RecordEnvironment(tree, blueprint, force, scorecard, operations.PullCatalog)
+			if err != nil {
+
+// importHololib checks for and imports a hololib.zip file from the bundle if present,
+// extracting it to a temporary location and calling ProtectedImport.
+				results = append(results, result)
+				pretty.Warning("%d/%d: Failed to record environment for %q: %v", at+1, total, envName, err)
+			} else {
+				result.Success = true
+				results = append(results, result)
+				pretty.Ok()
+				pretty.Note("%d/%d: Built environment %q with hash %s", at+1, total, envName, hash)
+			}
+		}
+	}
+	return results, nil
+}
+
+func importHololib(zr *zip.Reader) error {
+	if !hasHololibZip(zr) {
+		return nil
+	}
+	pretty.Note("Found hololib.zip in bundle, importing...")
+
+	var hololibFile *zip.File
+	for _, f := range zr.File {
+		if filepath.ToSlash(f.Name) == "hololib/hololib.zip" {
+			hololibFile = f
+			break
+		}
+	}
+
+	if hololibFile == nil {
+		return nil
+	}
+
+	rc, err := hololibFile.Open()
+	if err != nil {
+		return err
+	}
+	defer rc.Close()
+
+	tmpDir := pathlib.TempDir()
+	tmpFile := filepath.Join(tmpDir, "hololib_import.zip")
+
+	out, err := os.Create(tmpFile)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(out, rc)
+	out.Close()
+	if err != nil {
+		os.Remove(tmpFile)
+		return err
+	}
+	defer os.Remove(tmpFile)
+
+	return operations.ProtectedImport(tmpFile)
 }
