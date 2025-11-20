@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"archive/zip"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
@@ -48,10 +49,10 @@ local Holotree library.`,
 			pretty.Exit(1, "Bundle file %q does not exist or is not a file.", bundleFile)
 		}
 
-		// Open the bundle as a ZIP file
-		zr, err := zip.OpenReader(bundleFile)
-		pretty.Guard(err == nil, 2, "Could not open bundle %q as ZIP: %v", bundleFile, err)
-		defer zr.Close()
+		// Open the bundle as a ZIP file (or appended ZIP)
+		zr, closer, err := openBundle(bundleFile)
+		pretty.Guard(err == nil, 2, "Could not open bundle %q: %v", bundleFile, err)
+		defer closer.Close()
 
 		// Find all conda.yaml files under envs/
 		envFiles := findEnvFiles(zr)
@@ -183,8 +184,8 @@ type envFileInfo struct {
 }
 
 // findEnvFiles searches for all conda.yaml files under envs/ in the ZIP
-func findEnvFiles(zr *zip.ReadCloser) []envFileInfo {
-	var envFiles []envFileInfo
+func findEnvFiles(zr *zip.Reader) []envFileInfo {
+	var files []envFileInfo
 
 	for _, f := range zr.File {
 		// Normalize path separators
@@ -196,7 +197,7 @@ func findEnvFiles(zr *zip.ReadCloser) []envFileInfo {
 			parts := strings.Split(name, "/")
 			if len(parts) >= 3 {
 				envName := parts[1]
-				envFiles = append(envFiles, envFileInfo{
+				files = append(files, envFileInfo{
 					name:    envName,
 					zipFile: f,
 				})
@@ -204,11 +205,11 @@ func findEnvFiles(zr *zip.ReadCloser) []envFileInfo {
 		}
 	}
 
-	return envFiles
+	return files
 }
 
 // hasHololibZip checks if the bundle contains a hololib.zip
-func hasHololibZip(zr *zip.ReadCloser) bool {
+func hasHololibZip(zr *zip.Reader) bool {
 	for _, f := range zr.File {
 		name := filepath.ToSlash(f.Name)
 		if name == "hololib/hololib.zip" {
@@ -244,6 +245,96 @@ func extractCondaYaml(f *zip.File, envName string) (string, error) {
 	}
 
 	return tmpFile, nil
+}
+
+type offsetReaderAt struct {
+	r      io.ReaderAt
+	offset int64
+}
+
+func (o *offsetReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
+	return o.r.ReadAt(p, off+o.offset)
+}
+
+func openBundle(filename string) (*zip.Reader, io.Closer, error) {
+	// Try standard zip open first
+	zr, err := zip.OpenReader(filename)
+	if err == nil {
+		return &zr.Reader, zr, nil
+	}
+
+	// If failed, try to find appended zip
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	fi, err := f.Stat()
+	if err != nil {
+		f.Close()
+		return nil, nil, err
+	}
+	size := fi.Size()
+
+	start, err := findZipStart(f, size)
+	if err != nil {
+		f.Close()
+		return nil, nil, fmt.Errorf("could not open as zip or find appended zip: %v", err)
+	}
+
+	ra := &offsetReaderAt{r: f, offset: start}
+	zr2, err := zip.NewReader(ra, size-start)
+	if err != nil {
+		f.Close()
+		return nil, nil, err
+	}
+	return zr2, f, nil
+}
+
+func findZipStart(f *os.File, size int64) (int64, error) {
+	const eocdHeaderSize = 22
+	const maxCommentSize = 65535
+
+	// Read last 64KB + 22 bytes
+	readSize := int64(maxCommentSize + eocdHeaderSize)
+	if readSize > size {
+		readSize = size
+	}
+
+	buf := make([]byte, readSize)
+	if _, err := f.ReadAt(buf, size-readSize); err != nil {
+		return 0, err
+	}
+
+	// Scan backwards for signature 0x06054b50
+	for i := len(buf) - eocdHeaderSize; i >= 0; i-- {
+		// Check signature
+		if buf[i] == 0x50 && buf[i+1] == 0x4b && buf[i+2] == 0x05 && buf[i+3] == 0x06 {
+			// Found signature candidate
+			// Check comment length
+			commentLen := int(binary.LittleEndian.Uint16(buf[i+20 : i+22]))
+			expectedEnd := i + eocdHeaderSize + commentLen
+			if expectedEnd == len(buf) {
+				// Valid EOCD found
+				// Get Size of CD (offset 12)
+				sizeCD := int64(binary.LittleEndian.Uint32(buf[i+12 : i+16]))
+				// Get Offset of CD (offset 16)
+				offsetCD := int64(binary.LittleEndian.Uint32(buf[i+16 : i+20]))
+
+				// EOCD starts at (size - readSize + i)
+				eocdStart := size - readSize + int64(i)
+
+				// Start of ZIP = EOCD Start - Size CD - Offset CD
+				zipStart := eocdStart - sizeCD - offsetCD
+
+				if zipStart < 0 {
+					continue // Invalid, maybe false positive signature
+				}
+				return zipStart, nil
+			}
+		}
+	}
+	return 0, fmt.Errorf("EOCD not found")
 }
 
 func init() {

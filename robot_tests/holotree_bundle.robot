@@ -75,6 +75,19 @@ Goal: Test error handling with empty bundle
   Use STDERR
   Must Have    No environment definitions
 
+Goal: Create a self-extracting bundle
+  Step    python3 -c "import zipfile, os; zf = zipfile.ZipFile('tmp/test_bundle.zip', 'w', zipfile.ZIP_DEFLATED); [(zf.write(os.path.join(r, f), os.path.relpath(os.path.join(r, f), 'robot_tests/testdata/bundle')) if os.path.isfile(os.path.join(r, f)) else None) for r, _, fs in os.walk('robot_tests/testdata/bundle') for f in fs]; zf.close()"
+  Step    python3 -c "with open('tmp/sfx_bundle.py', 'wb') as f: f.write(b'print(\"hello\")\\n'); f.write(open('tmp/test_bundle.zip', 'rb').read())"
+  Must Exist    tmp/sfx_bundle.py
+
+Goal: Build environment from self-extracting bundle
+  Step    build/rcc holotree build-from-bundle tmp/sfx_bundle.py --controller citests
+  Use STDERR
+  Must Have    Found 1 environment(s) in bundle
+  Must Have    Successfully built 1 environment(s) from bundle
+  Must Have    fbc5c1dc22abe9e3
+  Must Have    OK.
+
 Goal: Cleanup test artifacts
-  Fire And Forget    rm -f tmp/test_bundle.zip tmp/multi_bundle.zip tmp/empty_bundle.zip
+  Fire And Forget    rm -f tmp/test_bundle.zip tmp/multi_bundle.zip tmp/empty_bundle.zip tmp/sfx_bundle.py
   Fire And Forget    rm -rf tmp/bundle_test tmp/bundle_multi
