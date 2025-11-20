@@ -20,6 +20,7 @@ import (
 var (
 	bundleForceFlag   bool
 	bundleRestoreFlag bool
+	bundleJsonFlag    bool
 )
 
 var holotreeBundleCmd = &cobra.Command{
@@ -65,17 +66,31 @@ local Holotree library.`,
 			pretty.Note("Bundle contains pre-baked hololib.zip at /hololib/hololib.zip (not imported in v1).")
 		}
 
+		// Track results for JSON output
+		type envResult struct {
+			Name    string `json:"name"`
+			Hash    string `json:"hash"`
+			Path    string `json:"path,omitempty"`
+			Success bool   `json:"success"`
+			Error   string `json:"error,omitempty"`
+		}
+		results := make([]envResult, 0, len(envFiles))
+
 		// Process each environment
 		total := len(envFiles)
 		failed := 0
 		for at, envFile := range envFiles {
 			envName := envFile.name
+			result := envResult{Name: envName, Success: false}
+
 			pretty.Note("%d/%d: Processing environment %q", at+1, total, envName)
 
 			// Extract conda.yaml to temp file
 			tmpConda, err := extractCondaYaml(envFile.zipFile, envName)
 			if err != nil {
 				failed++
+				result.Error = fmt.Sprintf("Failed to extract conda.yaml: %v", err)
+				results = append(results, result)
 				pretty.Warning("%d/%d: Failed to extract conda.yaml for %q: %v", at+1, total, envName, err)
 				continue
 			}
@@ -85,11 +100,14 @@ local Holotree library.`,
 			_, blueprint, err := htfs.ComposeFinalBlueprint([]string{tmpConda}, "", false)
 			if err != nil {
 				failed++
+				result.Error = fmt.Sprintf("Failed to compose blueprint: %v", err)
+				results = append(results, result)
 				pretty.Warning("%d/%d: Failed to compose blueprint for %q: %v", at+1, total, envName, err)
 				continue
 			}
 
 			hash := common.BlueprintHash(blueprint)
+			result.Hash = hash
 			pretty.Note("%d/%d: Blueprint hash for %q is %s", at+1, total, envName, hash)
 
 			// Build environment via existing Holotree pipeline
@@ -98,8 +116,13 @@ local Holotree library.`,
 				label, _, err := htfs.NewEnvironment(tmpConda, "", true, bundleForceFlag, operations.PullCatalog)
 				if err != nil {
 					failed++
+					result.Error = fmt.Sprintf("Failed to build environment: %v", err)
+					results = append(results, result)
 					pretty.Warning("%d/%d: Failed to build environment for %q: %v", at+1, total, envName, err)
 				} else {
+					result.Success = true
+					result.Path = label
+					results = append(results, result)
 					pretty.Ok()
 					pretty.Note("%d/%d: Built and restored environment %q with hash %s at %q", at+1, total, envName, hash, label)
 				}
@@ -108,6 +131,8 @@ local Holotree library.`,
 				tree, err := htfs.New()
 				if err != nil {
 					failed++
+					result.Error = fmt.Sprintf("Failed to create Holotree library: %v", err)
+					results = append(results, result)
 					pretty.Warning("%d/%d: Failed to create Holotree library for %q: %v", at+1, total, envName, err)
 					continue
 				}
@@ -116,21 +141,39 @@ local Holotree library.`,
 				err = htfs.RecordEnvironment(tree, blueprint, bundleForceFlag, scorecard, operations.PullCatalog)
 				if err != nil {
 					failed++
+					result.Error = fmt.Sprintf("Failed to record environment: %v", err)
+					results = append(results, result)
 					pretty.Warning("%d/%d: Failed to record environment for %q: %v", at+1, total, envName, err)
 				} else {
+					result.Success = true
+					results = append(results, result)
 					pretty.Ok()
 					pretty.Note("%d/%d: Built environment %q with hash %s", at+1, total, envName, hash)
 				}
 			}
 		}
 
-		// Final summary
-		if failed > 0 {
-			pretty.Exit(4, "%d out of %d environment builds failed! See output above for details.", failed, total)
-		}
+		// Output results
+		if bundleJsonFlag {
+			output := make(map[string]interface{})
+			output["bundle"] = bundleFile
+			output["total"] = total
+			output["succeeded"] = total - failed
+			output["failed"] = failed
+			output["environments"] = results
 
-		pretty.Ok()
-		pretty.Note("Successfully built %d environment(s) from bundle.", total)
+			jsonOutput, err := operations.NiceJsonOutput(output)
+			pretty.Guard(err == nil, 5, "Failed to generate JSON output: %v", err)
+			fmt.Println(jsonOutput)
+		} else {
+			// Final summary
+			if failed > 0 {
+				pretty.Exit(4, "%d out of %d environment builds failed! See output above for details.", failed, total)
+			}
+
+			pretty.Ok()
+			pretty.Note("Successfully built %d environment(s) from bundle.", total)
+		}
 	},
 }
 
@@ -207,4 +250,5 @@ func init() {
 	holotreeCmd.AddCommand(holotreeBundleCmd)
 	holotreeBundleCmd.Flags().BoolVarP(&bundleForceFlag, "force", "f", false, "Force environment builds, even when blueprint is already present.")
 	holotreeBundleCmd.Flags().BoolVarP(&bundleRestoreFlag, "restore", "r", false, "Also restore the environment to a space (not just build catalog).")
+	holotreeBundleCmd.Flags().BoolVarP(&bundleJsonFlag, "json", "j", false, "Output results as JSON.")
 }
