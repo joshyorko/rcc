@@ -49,7 +49,7 @@ executed by 'rcc robot run-from-bundle'.`,
 			holozip = config.Holozip()
 		}
 
-		_, _, err = htfs.NewEnvironment(condafile, holozip, true, false, operations.PullCatalog)
+		_, _, err = htfs.NewEnvironment(condafile, holozip, false, false, operations.PullCatalog)
 		pretty.Guard(err == nil, 3, "Failed to create environment: %v", err)
 
 		// 2. Export holotree
