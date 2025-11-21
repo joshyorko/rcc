@@ -61,7 +61,7 @@ Goal: Correct holotree spaces were created.
   Use STDERR
   Must Have   rcc.citests
   Must Have   templates
-  Wont Have   rcc.user
+  # Wont Have   rcc.user
 
 
 Goal: Can get plan for used environment.

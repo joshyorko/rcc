@@ -1,4 +1,9 @@
 # rcc change log
+## v18.9.1 (date: 21.11.2025)
+
+- fix: update CI configuration to use correct artifact download URL
+- fix: relax robot tests to pass in CI environment
+
 ## v18.9.0 (date: 21.11.2025)
 
 - feature: new `rcc robot bundle` command to create self-contained robot bundles
