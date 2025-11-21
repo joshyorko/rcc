@@ -1,3 +1,10 @@
+# RCC
+
+[![Build (caching)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml/badge.svg)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/joshyorko/rcc)](https://goreportcard.com/report/github.com/joshyorko/rcc)
+[![codecov](https://codecov.io/gh/joshyorko/rcc/branch/master/graph/badge.svg)](https://codecov.io/gh/joshyorko/rcc)
+[![Release](https://img.shields.io/github/v/release/joshyorko/rcc)](https://github.com/joshyorko/rcc/releases)
+
 ![RCC](/docs/title.png)
 
 RCC allows you to create, manage, and distribute Python-based self-contained automation packages. RCC also allows you to run your automations in isolated Python environments so they can still access the rest of your machine.
@@ -10,7 +17,7 @@ Together with [robot.yaml](https://robocorp.com/docs/robot-structure/robot-yaml-
   <img width="400" src="./docs/robocorp_stack.png">
 </p>
 
-RCC is actively maintained by [Sema4.ai](https://sema4.ai/).
+RCC is actively maintained by [JoshYorko](https://github.com/joshyorko).
 
 
 ## Why use rcc?
