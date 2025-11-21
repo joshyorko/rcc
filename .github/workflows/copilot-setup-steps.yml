@@ -1,0 +1,39 @@
+name: Copilot Setup Steps
+
+on:
+    workflow_dispatch:
+    push:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
+    pull_request:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+    copilot-setup-steps:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
+
+            - name: Install RCC
+              run: |
+                  curl -L -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
+                  chmod +x rcc
+                  sudo mv rcc /usr/local/bin/
+                  rcc version
+
+            - name: Show environment info
+              run: rcc run -r developer/toolkit.yaml --dev -t tools
+
+            - name: Build RCC
+              run: rcc run -r developer/toolkit.yaml --dev -t build
+
+            - name: Run unit tests
+              run: rcc run -r developer/toolkit.yaml --dev -t unitTests
+
+            - name: Run integration tests
+              run: rcc run -r developer/toolkit.yaml -t robot

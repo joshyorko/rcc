@@ -434,7 +434,13 @@ func (it *Dir) Lift(path string) error {
 		// following must be done to get by symbolic links
 		info, err := os.Stat(fullpath)
 		if err != nil {
-			return err
+			// It might be a broken symlink, which we still want to lift as a file.
+			lstat, lerr := os.Lstat(fullpath)
+			if lerr == nil && (lstat.Mode()&os.ModeSymlink != 0) {
+				info = lstat
+			} else {
+				return err
+			}
 		}
 		symlink, _ := pathlib.Symlink(fullpath)
 		if info.IsDir() {

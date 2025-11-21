@@ -51,7 +51,7 @@ Goal: Run task from plain bundle and check env processing
   Must Have    Hello from bundle task
 
 Goal: Create bundle using rcc robot bundle command
-  Step    build/rcc robot bundle -r robot_tests/testdata/robot_bundle/robot/robot.yaml -o tmp/rcc_created_bundle.py
+  Step    build/rcc robot bundle --controller citests -r robot_tests/testdata/robot_bundle/robot/robot.yaml -o tmp/rcc_created_bundle.py
   Must Exist    tmp/rcc_created_bundle.py
 
 Goal: Run task from rcc created bundle

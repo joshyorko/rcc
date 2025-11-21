@@ -4,7 +4,7 @@ dependencies:
   # Note: needs to match the version in the GitHub Actions workflow
   # (both rcc and rcc-pipeline)
   - python=3.10.15
-  - invoke=2.2.0
+  - invoke=2.2.1
   # Note: needs to match the version in robot_requirements.txt
   # Also in rcc-pipeline
   - robotframework=6.1.1
