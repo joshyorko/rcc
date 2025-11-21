@@ -82,7 +82,7 @@ def headings(filename):
 def process():
     toc = Toc(
         "Table of contents: rcc documentation",
-        "https://github.com/robocorp/rcc/blob/master/",
+        "https://github.com/joshyorko/rcc/blob/main/",
     )
     flatnames = list(map(basename, glob.glob("docs/*.md")))
     for filename in PRIORITY_LIST:

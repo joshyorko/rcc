@@ -973,6 +973,47 @@ developer machines that need to use those templates, or better yet, be part
 of "profile" that developers can use to setup all of required configurations.
 
 
+## How to create and run a self-contained bundle?
+
+Starting from rcc v18.9.0, you can create self-contained robot bundles that include both your robot code and the required environment (Holotree). These bundles are single-file executables (Python zipapps) that can be easily distributed and run on other machines.
+
+### Creating a bundle
+
+To create a bundle from your robot project:
+
+```sh
+# Create a bundle named 'my-robot.py' from the current directory
+rcc robot bundle --robot robot.yaml --output my-robot.py
+```
+
+This command will:
+1. Build the environment defined in `robot.yaml` (if not already built).
+2. Export the environment from Holotree.
+3. Package the robot code and the exported environment into a single Python script.
+
+### Running a bundle
+
+To run a task from the bundle:
+
+```sh
+# Run the 'Producer' task from the bundle
+rcc robot run-from-bundle my-robot.py --task Producer
+```
+
+You can also execute the bundle directly if it has the executable permission:
+
+```sh
+./my-robot.py
+```
+(Note: Direct execution prints instructions on how to run it with `rcc`)
+
+### Benefits
+
+- **Single-file distribution**: Everything needed to run the robot is in one file.
+- **Air-gapped support**: The bundle contains the full environment, so no internet connection is needed to build it on the target machine.
+- **Version pinning**: The environment in the bundle is exactly what was built at creation time.
+
+
 ## Where can I find updates for rcc?
 
 https://downloads.robocorp.com/rcc/releases/index.html

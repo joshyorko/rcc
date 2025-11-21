@@ -1,4 +1,15 @@
 # rcc change log
+## v18.9.0 (date: 21.11.2025)
+
+- feature: new `rcc robot bundle` command to create self-contained robot bundles
+  - creates a single-file executable Python script (zipapp) containing both robot code and environment
+  - automatically builds and exports the required Holotree environment
+  - bundles can be executed with `rcc robot run-from-bundle`
+- feature: new `rcc robot run-from-bundle` command to execute tasks from bundle files
+  - supports running tasks directly from `.zip` or executable `.py` bundles
+  - automatically restores the environment from the bundle if needed
+  - supports standard robot task execution flags (`--task`, `--controller`, etc.)
+
 ## v18.8.0 (date: 20.11.2025)
 
 - feature: new `rcc holotree build-from-bundle` command to build Holotree environments from single-file robot bundles
@@ -739,7 +750,7 @@
 ## v13.12.3 (date: 14.4.2023)
 
 - improvement: more clear messaging on hololib corruption
-- fix: full cleanup will first remove catalogs and then hololib
+- fix: full cleanup will first remove catalogs and then holotree
 
 ## v13.12.2 (date: 13.4.2023)
 
@@ -2384,16 +2395,15 @@ visible changes in rcc commands used. Here is a summary of those changes.
 
 ## v9.7.2 (date: 11.3.2021)
 
-- adding visibility of installation plans in environment listing
-- added --json support to environment listing including installation plan file
-- added command `rcc env plan` to show installation plans for environment
-- installation plan is now also part of robot diagnostics, if available
+- upgrading micromamba to 0.8.1
+- added --no-rc option to micromamba commands
+- added --no-capture option to rcc task run
+- added --quick option to rcc config cleanup
 
 ## v9.7.1 (date: 10.3.2021)
 
-- fixes/improvements to activation and installation plan
-- added missing content type to assistant requests
-- micromamba upgrade to 0.8.0
+- fixed broken tests
+- micromamba version bump to 0.8.0
 
 ## v9.7.0 (date: 10.3.2021)
 

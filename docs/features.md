@@ -26,3 +26,5 @@
   where it is not desired to build those locally
 * support unmanaged environments, where rcc only initially build environment
   by the spec, but after that, does not do additional management of it
+* support for creating self-contained robot bundles (zipapps) that include both code and environment
+* support for running tasks directly from bundle files without manual extraction
