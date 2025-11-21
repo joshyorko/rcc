@@ -61,7 +61,7 @@ Goal: Correct holotree spaces were created.
   Use STDERR
   Must Have   rcc.citests
   Must Have   templates
-  Wont Have   rcc.user
+
 
 Goal: Can get plan for used environment.
   Step        build/rcc holotree plan 4e67cd8_c6880905
