@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.10.12
+  - pip=23.2.1

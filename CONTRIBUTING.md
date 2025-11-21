@@ -30,7 +30,7 @@
 ## How to proceed with improvements/contributions?
 
 - create an issue in the rcc repository at
-  https://github.com/robocorp/rcc/issues
+  https://github.com/joshyorko/rcc/issues
 - on that issue, discuss the solution you are proposing
 - implementation can proceed only when the solution is clear and accepted
 - the solution should be made so that it works on Mac, Windows, and Linux

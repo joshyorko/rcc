@@ -194,15 +194,14 @@ func (it *hololib) Export(catalogs, known []string, archive string) (err error) 
 	common.TimelineBegin("holotree export start")
 	defer common.TimelineEnd()
 
-	handle, err := pathlib.Create(archive)
+	writer, err := os.Create(archive)
 	fail.On(err != nil, "Could not create archive %q.", archive)
-	writer := zip.NewWriter(handle)
-	defer writer.Close()
 
 	zipper := &zipseen{
-		writer,
+		zip.NewWriter(writer),
 		make(map[string]bool),
 	}
+	defer zipper.Close()
 
 	exported := false
 
