@@ -83,8 +83,6 @@ Visit [https://robocorp.com/docs](https://robocorp.com/docs) to view the full do
 
 The changelog can be seen [here](/docs/changelog.md). It is also visible inside RCC using the command `rcc docs changelog`.
 
-[EULA for pre-built distribution.](https://cdn.robocorp.com/legal/Robocorp-EULA-v1.0.pdf)
-
 Some tips, tricks, and recipes can be found [here](/docs/recipes.md).
 These are also visible inside RCC using the command: `rcc docs recipes`.
 
