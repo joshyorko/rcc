@@ -3,7 +3,7 @@ Resource  resources.robot
 
 *** Test cases ***
 
-Github issue 7 about initial call with do-not-track
+Goal: Verify initial call with do-not-track (GH#7)
   [Setup]     Remove config    tmp/bug_7.yaml
   Wont Exist  tmp/bug_7.yaml
 
@@ -31,7 +31,7 @@ Bug in virtual holotree with gzipped files
   Use STDERR
   Must Have   Blueprint "8b2083d262262cbd" is available: true
 
-Github issue 32 about rcc task script command failing
+Goal: Verify rcc task script command works (GH#32)
   Step        build/rcc task script --controller citests --robot robot_tests/spellbug/robot.yaml -- pip list
   Use STDOUT
   Must Have   pyspellchecker
