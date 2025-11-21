@@ -1,88 +1,30 @@
 name: Copilot Setup Steps
 
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
-  pull_request:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
+    workflow_dispatch:
+    push:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
+    pull_request:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
 
 jobs:
-  copilot-setup-steps:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    copilot-setup-steps:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v5
 
-      - name: Install RCC
-        run: |
-          curl -L -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
-          chmod +x rcc
-          sudo mv rcc /usr/local/bin/
-          rcc version
+            - name: Install RCC
+              run: |
+                  curl -L -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
+                  chmod +x rcc
+                  sudo mv rcc /usr/local/bin/
+                  rcc version
 
-      - name: Show environment info
-        run: rcc run -r developer/toolkit.yaml holotree vars
-
-      - name: Show developer setup instructions
-        run: |
-          echo "# Developer setup helper"
-          echo ""
-          echo "To give idea, what is needed to develop rcc. This is bootstrapping rcc"
-          echo "development with older version of rcc. So, you really need older rcc"
-          echo "installed somewhere available in PATH."
-          echo ""
-          echo "This developer toolkit uses both \`tasks:\` and \`devTasks:\` to enable tools."
-          echo "Pay attention for \`--dev\` flag usage."
-          echo ""
-          echo "## One task to test the thing with robot"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml -t robot"
-          echo "\`\`\`"
-          echo ""
-          echo "Then see \`tmp/output/log.html\` for possible failure details."
-          echo ""
-          echo "## Some developer tasks"
-          echo ""
-          echo "### Unit tests"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml --dev -t unitTests"
-          echo "\`\`\`"
-          echo ""
-          echo "You can also run tests running \`invoke\` directly from your CLI, or run \`go test\` - when running unit tests"
-          echo "outside of \`invoke\` however, make sure \`GOARCH\` env variable is set to \`amd64\`, as some tests may rely on it."
-          echo ""
-          echo "### Building the thing for local OS"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml --dev -t local"
-          echo "\`\`\`"
-          echo ""
-          echo "### Building the thing (all OSes)"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml --dev -t build"
-          echo "\`\`\`"
-          echo ""
-          echo "### Update documentation TOC"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml --dev -t toc"
-          echo "\`\`\`"
-          echo ""
-          echo "### Show tools"
-          echo ""
-          echo "\`\`\`"
-          echo "rcc run -r developer/toolkit.yaml --dev -t tools"
-          echo "\`\`\`"
-          echo ""
-          echo "## Dependencies"
-          echo ""
-          echo "Needed dependencies are visible at \`developer/setup.yaml\` file."
+            - name: Show environment info
+              run: rcc run -r developer/toolkit.yaml holotree vars
