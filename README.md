@@ -52,29 +52,27 @@ For detailed instructions, visit [Robocorp RCC documentation](https://robocorp.c
 
 ## Installing RCC from the command line
 
-> Links to changelog and different versions [available here](https://downloads.robocorp.com/rcc/releases/index.html)
+> Links to changelog and different versions [available here](https://github.com/joshyorko/rcc/releases)
 
 ### Windows
 
 1. Open the command prompt
-1. Download: `curl -o rcc.exe https://downloads.robocorp.com/rcc/releases/latest/windows64/rcc.exe`
+1. Download: `curl -o rcc.exe https://github.com/joshyorko/rcc/releases/latest/download/rcc-windows64.exe`
 1. [Add to system path](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/): Open Start -> `Edit the system environment variables`
 1. Test: `rcc`
 
 ### macOS
 
-#### Brew cask from Robocorp tap
-
-1. Update brew: `brew update`
-1. Install: `brew install robocorp/tools/rcc`
+1. Open the terminal
+1. Download: `curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-darwin64`
+1. Make the downloaded file executable: `chmod a+x rcc`
+1. Add to path: `sudo mv rcc /usr/local/bin/`
 1. Test: `rcc`
-
-Upgrading: `brew upgrade rcc`
 
 ### Linux
 
 1. Open the terminal
-1. Download: `curl -o rcc https://downloads.robocorp.com/rcc/releases/latest/linux64/rcc`
+1. Download: `curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64`
 1. Make the downloaded file executable: `chmod a+x rcc`
 1. Add to path: `sudo mv rcc /usr/local/bin/`
 1. Test: `rcc`
@@ -156,6 +154,13 @@ build/rcc configuration diagnostics --quick --json | jq .
 ## Community and Support
 
 The Robocorp community can be found on [Developer Slack](https://robocorp-developers.slack.com), where you can ask questions, voice ideas, and share your projects.
+
+## Acknowledgements
+
+Special thanks to the Robocorp team for building RCC up to version 18.5.0 and releasing it as open source. Their work laid the foundation for this project.
+
+- [Official Robocorp Documentation](https://robocorp.com/docs)
+- [Robocorp Code VS Code Extension](https://marketplace.visualstudio.com/items?itemName=robocorp.robocorp-code)
 
 ## License
 
