@@ -11,13 +11,13 @@ Goal: Can see human readable catalog of robots
   Must Have   inside hololib
   Must Have   Age (days)
   Must Have   Idle (days)
-  Must Have   9bb380af7a514f63
+  Must Have   79ba58276b645f09
   Must Have   OK.
 
 Goal: Can see machine readable catalog of robots
   Step        build/rcc holotree catalogs --controller citests --json
   Must Be Json Response
-  Must Have   9bb380af7a514f63
+  Must Have   79ba58276b645f09
   Must Have   "age_in_days": 0,
   Must Have   "days_since_last_use": 0,
   Must Have   "holotree":
@@ -45,7 +45,7 @@ Goal: Can remove catalogs from hololib by idle days and give warnings
   Must Have   OK.
 
 Goal: Can remove catalogs with check from hololib by ids correctly
-  Step        build/rcc holotree remove 9bb380af7a514f63 --check 5 --controller citests
+  Step        build/rcc holotree remove 79ba58276b645f09 --check 5 --controller citests
   Use STDERR
   Wont Have   Warning: No catalogs given, so nothing to do. Quitting!
   Wont Have   Warning: Remember to run `rcc holotree check` after you have removed all desired catalogs!
