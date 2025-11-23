@@ -36,10 +36,11 @@ func (m *RccCi) Test(ctx context.Context, source *dagger.Directory) (string, err
 		WithExec([]string{"chmod", "+x", "/usr/local/bin/rcc"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
+		WithMountedCache("/go/pkg/mod", dag.CacheVolume("go-mod-cache")).
 		WithMountedCache("/root/.robocorp", dag.CacheVolume("robocorp-home")).
 		WithEnvVariable("PIP_ROOT_USER_ACTION", "ignore").
 		WithExec([]string{"rcc", "holotree", "variables", "-r", "developer/toolkit.yaml"}).
-		WithExec([]string{"rcc", "run", "--debug", "-r", "developer/toolkit.yaml", "-t", "robot"}).
+		WithExec([]string{"rcc", "run", "-r", "developer/toolkit.yaml", "-t", "robot"}).
 		Stdout(ctx)
 }
 

@@ -30,7 +30,7 @@ func TestCanCompareDependencies(t *testing.T) {
 	first := conda.AsDependency("python")
 	second := conda.AsDependency("python=3.7.7")
 	third := conda.AsDependency("python=3.9.13")
-	fourth := conda.AsDependency("robotframework=3.2")
+	fourth := conda.AsDependency("robotframework=7.3.2")
 
 	wont_be.True(first.IsExact())
 	must_be.True(second.IsExact())

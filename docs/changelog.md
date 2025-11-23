@@ -1,4 +1,9 @@
 # rcc change log
+## v18.9.2 (date: 23.11.2025)
+
+- feature: new `rcc robot unpack` command to unpack robot bundles into a directory
+- fix: `rcc robot run-from-bundle` now correctly copies artifacts to the current working directory
+
 ## v18.9.1 (date: 21.11.2025)
 
 - fix: update CI configuration to use correct artifact download URL

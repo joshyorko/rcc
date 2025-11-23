@@ -1,0 +1,6 @@
+tasks:
+  produce:
+    shell: python task.py
+environmentConfigs:
+  - conda.yaml
+artifactsDir: output

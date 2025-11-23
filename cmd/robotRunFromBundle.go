@@ -135,15 +135,15 @@ func copyDir(source, target string) error {
 		}
 		targetPath := filepath.Join(target, relPath)
 		if info.IsDir() {
-
-// extractRobotTree extracts all files under the 'robot/' directory from the zip archive
-// represented by zr to the destination path dest. It returns an error if no 'robot/' directory
-// is found in the archive.
+			return os.MkdirAll(targetPath, info.Mode())
 		}
 		return pathlib.CopyFile(path, targetPath, true)
 	})
 }
 
+// extractRobotTree extracts all files under the 'robot/' directory from the zip archive
+// represented by zr to the destination path dest. It returns an error if no 'robot/' directory
+// is found in the archive.
 func extractRobotTree(zr *zip.Reader, dest string) error {
 	found := false
 	for _, f := range zr.File {
