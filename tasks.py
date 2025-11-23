@@ -257,3 +257,10 @@ def robot(c):
     """Run robot tests on local application"""
     print("Running robot tests...")
     c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests")
+
+
+@task(pre=[robotsetup, assets, local])
+def unpackTest(c):
+    """Run unpack robot tests"""
+    print("Running unpack robot tests...")
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests/robot_bundle.robot")

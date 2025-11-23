@@ -1,4 +1,16 @@
 # rcc change log
+## v18.10.0 (date: 23.11.2025)
+
+- feature: new `rcc robot unpack` command to unpack robot bundles
+  - extracts robot code from bundle to directory
+  - supports `--force` to overwrite existing directory
+- dependencies: updated development dependencies
+  - python=3.10.15
+  - invoke=2.2.0
+  - robotframework=6.1.1
+  - go=1.20.7
+  - git=2.46.0
+
 ## v18.9.1 (date: 21.11.2025)
 
 - fix: update CI configuration to use correct artifact download URL
