@@ -131,17 +131,17 @@ Goal: Run task in clean temporary directory.
 Goal: Merge two different conda.yaml files with conflict fails
   Step        build/rcc holotree vars --controller citests conda/testdata/conda.yaml conda/testdata/other.yaml  5
   Use STDERR
-  Must Have   robotframework=7.1.0 vs. robotframework=7.3.2
+  Must Have   robotframework=3.1 vs. robotframework=3.2
 
 Goal: Merge two different conda.yaml files without conflict passes
   Step        build/rcc holotree vars --controller citests conda/testdata/third.yaml conda/testdata/other.yaml --silent
-  Must Have   RCC_ENVIRONMENT_HASH=9bb380af7a514f63
+  Must Have   RCC_ENVIRONMENT_HASH=ffd32af1fdf0f253
   Must Have   4e67cd8_9fcd2534
 
 Goal: Can list environments as JSON
   Step        build/rcc holotree list --controller citests --json
   Must Have   4e67cd8_9fcd2534
-  Must Have   9bb380af7a514f63
+  Must Have   ffd32af1fdf0f253
   Must Be Json Response
 
 Goal: See variables from specific environment without robot.yaml knowledge
@@ -165,7 +165,7 @@ Goal: See variables from specific environment without robot.yaml knowledge
   Wont Have   PYTHONPATH=
   Wont Have   ROBOT_ROOT=
   Wont Have   ROBOT_ARTIFACTS=
-  Must Have   RCC_ENVIRONMENT_HASH=116ffd64b05c968c
+  Must Have   RCC_ENVIRONMENT_HASH=786fd9dca1e1f1db
   Step        build/rcc holotree check --controller citests
 
 Goal: See variables from specific environment with robot.yaml but without task
