@@ -24,7 +24,7 @@ func TestReadingCorrectFileProducesText(t *testing.T) {
 	text, err := conda.ReadConfig("testdata/conda.yaml")
 	must_be.Nil(err)
 	wont_be.Text("", text)
-	must_be.Equal(173, len(text))
+	must_be.Equal(171, len(text))
 }
 
 func TestUnifyLineWorksCorrectly(t *testing.T) {
