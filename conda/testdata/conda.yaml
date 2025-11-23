@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python=3.9.13
   - pip
-  - robotframework=7.3.2
+  - robotframework=7.1.0
   - robotframework-seleniumlibrary
   - pip:
       - webdrivermanager
