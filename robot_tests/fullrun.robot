@@ -165,7 +165,7 @@ Goal: See variables from specific environment without robot.yaml knowledge
   Wont Have   PYTHONPATH=
   Wont Have   ROBOT_ROOT=
   Wont Have   ROBOT_ARTIFACTS=
-  Must Have   RCC_ENVIRONMENT_HASH=9bb380af7a514f63
+  Must Have   RCC_ENVIRONMENT_HASH=116ffd64b05c968c
   Step        build/rcc holotree check --controller citests
 
 Goal: See variables from specific environment with robot.yaml but without task
