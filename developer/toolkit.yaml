@@ -15,6 +15,8 @@ devTasks:
     shell: python call_invoke.py toc
   assets:
     shell: python call_invoke.py assets
+  unpackTest:
+    shell: python call_invoke.py unpackTest
 
 environmentConfigs:
   - setup.yaml
