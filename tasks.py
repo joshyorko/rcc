@@ -263,4 +263,4 @@ def robot(c):
 def unpackTest(c):
     """Run unpack robot tests"""
     print("Running unpack robot tests...")
-    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests/unpack.robot")
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests/robot_bundle.robot")

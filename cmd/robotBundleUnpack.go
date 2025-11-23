@@ -40,6 +40,9 @@ from the bundle into the specified directory.`,
 		}
 
 		// Open bundle
+		if _, err := os.Stat(unpackBundle); os.IsNotExist(err) {
+			pretty.Exit(2, "Bundle %q does not exist.", unpackBundle)
+		}
 		zr, err := zip.OpenReader(unpackBundle)
 		if err != nil {
 			pretty.Exit(2, "Failed to open bundle %q: %v", unpackBundle, err)

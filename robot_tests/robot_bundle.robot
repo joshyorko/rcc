@@ -61,5 +61,45 @@ Goal: Run task from rcc created bundle
   Use STDERR
   Must Have    OK.
 
+Goal: Unpack plain bundle
+  Step    build/rcc robot unpack --bundle tmp/robot_bundle.zip --output tmp/unpack_test/plain
+  Must Exist    tmp/unpack_test/plain/robot.yaml
+  Must Exist    tmp/unpack_test/plain/task.py
+  Use STDERR
+  Must Have    OK.
+
+Goal: Unpack SFX bundle
+  Step    build/rcc robot unpack --bundle tmp/robot_sfx.py --output tmp/unpack_test/sfx
+  Must Exist    tmp/unpack_test/sfx/robot.yaml
+  Must Exist    tmp/unpack_test/sfx/task.py
+  Use STDERR
+  Must Have    OK.
+
+Goal: Unpack rcc created bundle
+  Step    build/rcc robot unpack --bundle tmp/rcc_created_bundle.py --output tmp/unpack_test/rcc
+  Must Exist    tmp/unpack_test/rcc/robot.yaml
+  Must Exist    tmp/unpack_test/rcc/task.py
+  Use STDERR
+  Must Have    OK.
+
+Goal: Unpack to existing directory fails
+  Create Directory  tmp/unpack_test/fail
+  Step    build/rcc robot unpack --bundle tmp/robot_bundle.zip --output tmp/unpack_test/fail    1
+  Use STDERR
+  Must Have    already exists
+
+Goal: Unpack to existing directory with force succeeds
+  Create Directory  tmp/unpack_test/force
+  Step    build/rcc robot unpack --bundle tmp/robot_bundle.zip --output tmp/unpack_test/force --force
+  Must Exist    tmp/unpack_test/force/robot.yaml
+  Use STDERR
+  Must Have    OK.
+
+Goal: Unpack missing bundle fails
+  Step    build/rcc robot unpack --bundle tmp/missing.zip --output tmp/unpack_test/missing    2
+  Use STDERR
+  Must Have    does not exist
+
 Goal: Cleanup
   Fire And Forget    rm -f tmp/robot_bundle.zip tmp/robot_sfx.py tmp/robot_sfx.exe tmp/rcc_created_bundle.py
+  Remove Directory  tmp/unpack_test  True
