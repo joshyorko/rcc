@@ -131,7 +131,7 @@ Goal: Run task in clean temporary directory.
 Goal: Merge two different conda.yaml files with conflict fails
   Step        build/rcc holotree vars --controller citests conda/testdata/conda.yaml conda/testdata/other.yaml  5
   Use STDERR
-  Must Have   robotframework=7.3.2 vs. robotframework=7.3.2
+  Must Have   robotframework=7.1.0 vs. robotframework=7.3.2
 
 Goal: Merge two different conda.yaml files without conflict passes
   Step        build/rcc holotree vars --controller citests conda/testdata/third.yaml conda/testdata/other.yaml --silent
