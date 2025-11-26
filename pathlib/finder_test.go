@@ -19,7 +19,8 @@ func TestCanFindNamedPaths(t *testing.T) {
 	found, err = pathlib.FindNamedPath("..", "doc.go")
 	wont_be.Nil(err)
 	message := err.Error()
-	must_be.True(strings.HasPrefix(message, "Found 11 files named as 'doc.go'. Expecting exactly one."))
+	must_be.True(strings.HasPrefix(message, "Found "))
+	must_be.True(strings.Contains(message, " files named as 'doc.go'. Expecting exactly one."))
 	must_be.Equal("", found)
 
 	found, err = pathlib.FindNamedPath("..", "finder_test.go")

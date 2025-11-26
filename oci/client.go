@@ -215,7 +215,26 @@ func parseAuthHeader(header string) (string, map[string]string, error) {
 	paramPart := strings.TrimSpace(parts[1])
 	params := make(map[string]string)
 
-	for _, part := range strings.Split(paramPart, ",") {
+	segments := make([]string, 0, 4)
+	start := 0
+	inQuotes := false
+	for i := 0; i < len(paramPart); i++ {
+		switch paramPart[i] {
+		case '"':
+			inQuotes = !inQuotes
+		case ',':
+			if inQuotes {
+				continue
+			}
+			segments = append(segments, paramPart[start:i])
+			start = i + 1
+		}
+	}
+	if start < len(paramPart) {
+		segments = append(segments, paramPart[start:])
+	}
+
+	for _, part := range segments {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			continue
