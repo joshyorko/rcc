@@ -66,11 +66,11 @@ jobs:
 
   robot:
     name: Robot Tests
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu", "windows"]
+        os: ["rcc-runner-k8s", "windows-latest"]
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@v5
