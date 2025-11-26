@@ -104,7 +104,7 @@ func extractCondaFromDir(library htfs.MutableLibrary, path string, dir *htfs.Dir
 
 // condaToPurl creates a Package URL for a conda package.
 func condaToPurl(name, version, channel, subdir string) string {
-	// Format: pkg:conda/channel/name@version?subdir=linux-64
+	// Format: pkg:conda/channel/name@version
 	channel = sanitizeChannel(channel)
 	purl := fmt.Sprintf("pkg:conda/%s@%s", url.PathEscape(name), url.PathEscape(version))
 	if channel != "" {

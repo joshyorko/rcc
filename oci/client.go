@@ -221,14 +221,14 @@ func (c *Client) authenticate(ctx context.Context, registryBase, repository stri
 	}
 
 	// Parse WWW-Authenticate header
+	// Note: This implementation uses Basic auth for simplicity. Registries that require
+	// OAuth2/Bearer token authentication (like GitHub Container Registry in some configurations)
+	// may need additional token exchange logic. For most use cases with personal access tokens
+	// or docker credentials, basic auth works well.
 	authHeader := resp.Header.Get("WWW-Authenticate")
-	if authHeader == "" {
-		// Use basic auth directly
-		return base64.StdEncoding.EncodeToString([]byte(c.config.Username + ":" + c.config.Password)), nil
-	}
+	_ = authHeader // Currently unused, but available for future Bearer token implementation
 
-	// For simplicity, use basic auth for now
-	// A full implementation would parse the Bearer challenge and request a token
+	// Use basic auth - works with most registries when using personal access tokens
 	return base64.StdEncoding.EncodeToString([]byte(c.config.Username + ":" + c.config.Password)), nil
 }
 

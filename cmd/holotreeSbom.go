@@ -175,8 +175,12 @@ Examples:
 			if jsonFlag {
 				// Wrap SBOM in metadata
 				var sbomContent interface{}
-				json.Unmarshal(sbomData, &sbomContent)
-				result["sbom"] = sbomContent
+				if err := json.Unmarshal(sbomData, &sbomContent); err != nil {
+					// If unmarshal fails, include the raw SBOM as a string
+					result["sbom"] = string(sbomData)
+				} else {
+					result["sbom"] = sbomContent
+				}
 				nice, err := json.MarshalIndent(result, "", "  ")
 				pretty.Guard(err == nil, 4, "%v", err)
 				common.Stdout("%s\n", nice)
