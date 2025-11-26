@@ -1,6 +1,7 @@
 package sbom
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -41,13 +42,28 @@ func NewGenerator(library htfs.MutableLibrary, blueprintHash, platform string) *
 	}
 }
 
+func deterministicUUID(seed string) string {
+	hash := sha256.Sum256([]byte(seed))
+	uuid := hash[:16]
+
+	// Set version (5) and variant bits to satisfy RFC 4122.
+	uuid[6] = (uuid[6] & 0x0f) | 0x50
+	uuid[8] = (uuid[8] & 0x3f) | 0x80
+
+	return fmt.Sprintf("urn:uuid:%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:16])
+}
+
 // Generate generates an SBOM from the given catalog root.
 func (g *Generator) Generate(root *htfs.Root, format FormatType) ([]byte, error) {
 	components, err := ExtractComponents(g.library, root)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract components: %w", err)
 	}
+	return g.GenerateFromComponents(components, format)
+}
 
+// GenerateFromComponents renders an SBOM from the provided component list.
+func (g *Generator) GenerateFromComponents(components []*Component, format FormatType) ([]byte, error) {
 	sbom := &SBOM{
 		Format:        string(format),
 		ToolName:      "rcc",
@@ -73,7 +89,7 @@ func (g *Generator) generateCycloneDX(sbom *SBOM) ([]byte, error) {
 	cdx := CycloneDX{
 		BomFormat:   "CycloneDX",
 		SpecVersion: "1.4",
-		SerialNum:   fmt.Sprintf("urn:uuid:%s", g.blueprintHash),
+		SerialNum:   deterministicUUID(g.blueprintHash),
 		Version:     1,
 		Metadata: CycloneDXMetadata{
 			Timestamp: sbom.CreatedAt.Format(time.RFC3339),
@@ -83,6 +99,13 @@ func (g *Generator) generateCycloneDX(sbom *SBOM) ([]byte, error) {
 					Name:    sbom.ToolName,
 					Version: sbom.ToolVersion,
 				},
+			},
+			Component: &struct {
+				Type string `json:"type"`
+				Name string `json:"name"`
+			}{
+				Type: "application",
+				Name: fmt.Sprintf("holotree-%s-%s", g.blueprintHash, g.platform),
 			},
 		},
 		Components: make([]CycloneDXComponent, 0, len(sbom.Components)),
@@ -145,12 +168,12 @@ func (g *Generator) generateSPDX(sbom *SBOM) ([]byte, error) {
 		spdxID := fmt.Sprintf("SPDXRef-Package-%d", i+1)
 
 		pkg := SPDXPackage{
-			SPDXID:            spdxID,
-			Name:              comp.Name,
-			VersionInfo:       comp.Version,
-			DownloadLocation:  "NOASSERTION",
-			FilesAnalyzed:     false,
-			CopyrightText:     "NOASSERTION",
+			SPDXID:                spdxID,
+			Name:                  comp.Name,
+			VersionInfo:           comp.Version,
+			DownloadLocation:      "NOASSERTION",
+			FilesAnalyzed:         false,
+			CopyrightText:         "NOASSERTION",
 			PrimaryPackagePurpose: "LIBRARY",
 		}
 

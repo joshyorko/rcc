@@ -30,6 +30,11 @@ type Client struct {
 	httpClient *http.Client
 }
 
+type authInfo struct {
+	scheme string
+	token  string
+}
+
 // NewClient creates a new OCI client.
 func NewClient(config Config) *Client {
 	return &Client{
@@ -70,10 +75,10 @@ type PushResult struct {
 
 // OCI manifest structure
 type ociManifest struct {
-	SchemaVersion int              `json:"schemaVersion"`
-	MediaType     string           `json:"mediaType"`
-	Config        ociDescriptor    `json:"config"`
-	Layers        []ociDescriptor  `json:"layers"`
+	SchemaVersion int               `json:"schemaVersion"`
+	MediaType     string            `json:"mediaType"`
+	Config        ociDescriptor     `json:"config"`
+	Layers        []ociDescriptor   `json:"layers"`
 	Annotations   map[string]string `json:"annotations,omitempty"`
 }
 
@@ -96,25 +101,25 @@ func (c *Client) Push(ctx context.Context, content []byte, mediaType string) (*P
 
 	// Calculate digest of the content
 	contentDigest := calculateDigest(content)
-	
+
 	// Create empty config blob (required for OCI artifacts)
 	emptyConfig := []byte("{}")
 	configDigest := calculateDigest(emptyConfig)
 
 	// Step 1: Check if we need to authenticate and get a token
-	token, err := c.authenticate(ctx, registryBase, repository)
+	auth, err := c.authenticate(ctx, registryBase, repository)
 	if err != nil {
 		return nil, fmt.Errorf("authentication failed: %w", err)
 	}
 
 	// Step 2: Upload the config blob
-	err = c.uploadBlob(ctx, registryBase, repository, emptyConfig, configDigest, token)
+	err = c.uploadBlob(ctx, registryBase, repository, emptyConfig, configDigest, auth)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload config blob: %w", err)
 	}
 
 	// Step 3: Upload the content blob
-	err = c.uploadBlob(ctx, registryBase, repository, content, contentDigest, token)
+	err = c.uploadBlob(ctx, registryBase, repository, content, contentDigest, auth)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload content blob: %w", err)
 	}
@@ -148,7 +153,7 @@ func (c *Client) Push(ctx context.Context, content []byte, mediaType string) (*P
 		return nil, fmt.Errorf("failed to marshal manifest: %w", err)
 	}
 
-	manifestDigest, err := c.pushManifest(ctx, registryBase, repository, manifestBytes, c.config.Tag, token)
+	manifestDigest, err := c.pushManifest(ctx, registryBase, repository, manifestBytes, c.config.Tag, auth)
 	if err != nil {
 		return nil, fmt.Errorf("failed to push manifest: %w", err)
 	}
@@ -193,51 +198,148 @@ func calculateDigest(content []byte) string {
 	return fmt.Sprintf("sha256:%x", hash)
 }
 
-// authenticate attempts to authenticate with the registry.
-func (c *Client) authenticate(ctx context.Context, registryBase, repository string) (string, error) {
-	// If no credentials, try without authentication
-	if c.config.Username == "" || c.config.Password == "" {
-		return "", nil
+func newBasicAuth(username, password string) *authInfo {
+	return &authInfo{
+		scheme: "Basic",
+		token:  base64.StdEncoding.EncodeToString([]byte(username + ":" + password)),
+	}
+}
+
+func parseAuthHeader(header string) (string, map[string]string, error) {
+	parts := strings.SplitN(header, " ", 2)
+	if len(parts) != 2 {
+		return "", nil, fmt.Errorf("invalid WWW-Authenticate header: %q", header)
 	}
 
-	// Try to get a token from the registry's token service
-	// First, check the /v2/ endpoint to get the www-authenticate header
+	scheme := strings.ToLower(strings.TrimSpace(parts[0]))
+	paramPart := strings.TrimSpace(parts[1])
+	params := make(map[string]string)
+
+	for _, part := range strings.Split(paramPart, ",") {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		kv := strings.SplitN(part, "=", 2)
+		if len(kv) != 2 {
+			continue
+		}
+		key := strings.ToLower(strings.TrimSpace(kv[0]))
+		value := strings.Trim(strings.TrimSpace(kv[1]), `"`)
+		params[key] = value
+	}
+
+	return scheme, params, nil
+}
+
+func (c *Client) exchangeBearerToken(ctx context.Context, realm, service, repository, scope string) (*authInfo, error) {
+	if realm == "" {
+		return nil, fmt.Errorf("bearer authentication requested but no realm provided")
+	}
+
+	// Default scope covers both pull and push for the repository.
+	if scope == "" {
+		scope = fmt.Sprintf("repository:%s:pull,push", repository)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", realm, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	query := req.URL.Query()
+	if service != "" {
+		query.Set("service", service)
+	}
+	if scope != "" {
+		query.Set("scope", scope)
+	}
+	req.URL.RawQuery = query.Encode()
+	req.SetBasicAuth(c.config.Username, c.config.Password)
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("token request failed: status %d, body: %s", resp.StatusCode, string(body))
+	}
+
+	var payload struct {
+		Token       string `json:"token"`
+		AccessToken string `json:"access_token"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
+		return nil, fmt.Errorf("failed to decode bearer token response: %w", err)
+	}
+
+	token := payload.Token
+	if token == "" {
+		token = payload.AccessToken
+	}
+	if token == "" {
+		return nil, fmt.Errorf("bearer token response did not include a token")
+	}
+
+	return &authInfo{scheme: "Bearer", token: token}, nil
+}
+
+// authenticate attempts to authenticate with the registry.
+func (c *Client) authenticate(ctx context.Context, registryBase, repository string) (*authInfo, error) {
+	// If no credentials, try without authentication
+	if c.config.Username == "" || c.config.Password == "" {
+		return nil, nil
+	}
+
+	// Probe the /v2/ endpoint to learn the required authentication scheme.
 	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/v2/", registryBase), nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
 		// No authentication required
-		return "", nil
+		return nil, nil
 	}
 
 	if resp.StatusCode != http.StatusUnauthorized {
-		return "", fmt.Errorf("unexpected response from registry: %d", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected response from registry: %d", resp.StatusCode)
 	}
 
-	// Parse WWW-Authenticate header
-	// Note: This implementation uses Basic auth for simplicity. Registries that require
-	// OAuth2/Bearer token authentication (like GitHub Container Registry in some configurations)
-	// may need additional token exchange logic. For most use cases with personal access tokens
-	// or docker credentials, basic auth works well.
 	authHeader := resp.Header.Get("WWW-Authenticate")
-	_ = authHeader // Currently unused, but available for future Bearer token implementation
+	if authHeader == "" {
+		// Registry asked for auth but did not specify the scheme; fall back to basic.
+		return newBasicAuth(c.config.Username, c.config.Password), nil
+	}
 
-	// Use basic auth - works with most registries when using personal access tokens
-	return base64.StdEncoding.EncodeToString([]byte(c.config.Username + ":" + c.config.Password)), nil
+	scheme, params, err := parseAuthHeader(authHeader)
+	if err != nil {
+		return nil, err
+	}
+
+	switch scheme {
+	case "basic":
+		return newBasicAuth(c.config.Username, c.config.Password), nil
+	case "bearer":
+		return c.exchangeBearerToken(ctx, params["realm"], params["service"], repository, params["scope"])
+	default:
+		return nil, fmt.Errorf("unsupported auth scheme %q", scheme)
+	}
 }
 
 // uploadBlob uploads a blob to the registry.
-func (c *Client) uploadBlob(ctx context.Context, registryBase, repository string, content []byte, digest, token string) error {
+func (c *Client) uploadBlob(ctx context.Context, registryBase, repository string, content []byte, digest string, auth *authInfo) error {
 	// Check if blob already exists
-	exists, err := c.blobExists(ctx, registryBase, repository, digest, token)
+	exists, err := c.blobExists(ctx, registryBase, repository, digest, auth)
 	if err != nil {
 		return err
 	}
@@ -252,7 +354,7 @@ func (c *Client) uploadBlob(ctx context.Context, registryBase, repository string
 	if err != nil {
 		return err
 	}
-	c.addAuth(req, token)
+	c.addAuth(req, auth)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -289,7 +391,7 @@ func (c *Client) uploadBlob(ctx context.Context, registryBase, repository string
 	}
 	req.Header.Set("Content-Type", "application/octet-stream")
 	req.Header.Set("Content-Length", fmt.Sprintf("%d", len(content)))
-	c.addAuth(req, token)
+	c.addAuth(req, auth)
 
 	resp, err = c.httpClient.Do(req)
 	if err != nil {
@@ -306,13 +408,13 @@ func (c *Client) uploadBlob(ctx context.Context, registryBase, repository string
 }
 
 // blobExists checks if a blob exists in the registry.
-func (c *Client) blobExists(ctx context.Context, registryBase, repository, digest, token string) (bool, error) {
+func (c *Client) blobExists(ctx context.Context, registryBase, repository, digest string, auth *authInfo) (bool, error) {
 	url := fmt.Sprintf("%s/v2/%s/blobs/%s", registryBase, repository, digest)
 	req, err := http.NewRequestWithContext(ctx, "HEAD", url, nil)
 	if err != nil {
 		return false, err
 	}
-	c.addAuth(req, token)
+	c.addAuth(req, auth)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -324,14 +426,14 @@ func (c *Client) blobExists(ctx context.Context, registryBase, repository, diges
 }
 
 // pushManifest pushes the manifest to the registry.
-func (c *Client) pushManifest(ctx context.Context, registryBase, repository string, manifest []byte, tag, token string) (string, error) {
+func (c *Client) pushManifest(ctx context.Context, registryBase, repository string, manifest []byte, tag string, auth *authInfo) (string, error) {
 	url := fmt.Sprintf("%s/v2/%s/manifests/%s", registryBase, repository, tag)
 	req, err := http.NewRequestWithContext(ctx, "PUT", url, bytes.NewReader(manifest))
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("Content-Type", "application/vnd.oci.image.manifest.v1+json")
-	c.addAuth(req, token)
+	c.addAuth(req, auth)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -354,8 +456,9 @@ func (c *Client) pushManifest(ctx context.Context, registryBase, repository stri
 }
 
 // addAuth adds authentication to the request.
-func (c *Client) addAuth(req *http.Request, token string) {
-	if token != "" {
-		req.Header.Set("Authorization", "Basic "+token)
+func (c *Client) addAuth(req *http.Request, auth *authInfo) {
+	if auth == nil || auth.token == "" {
+		return
 	}
+	req.Header.Set("Authorization", fmt.Sprintf("%s %s", auth.scheme, auth.token))
 }
