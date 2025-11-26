@@ -4,7 +4,7 @@ on:
     inputs:
       tag:
         description: "Tag name to release (e.g., v18.5.0)"
-        required: true
+        required: false
         type: string
   push:
     branches:
