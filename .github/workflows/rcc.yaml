@@ -9,8 +9,7 @@ on:
   push:
     branches:
       - main
-      - maintenance
-      - series10
+
     tags:
       - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
     paths-ignore:
@@ -28,7 +27,7 @@ permissions:
 jobs:
   build:
     name: Build RCC
-    runs-on: ubuntu-latest
+    runs-on: rcc-runner-k8s
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@v5
@@ -97,7 +96,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-    runs-on: ubuntu-latest
+    runs-on: rcc-runner-k8s
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     needs:
       - build
