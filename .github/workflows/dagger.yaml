@@ -10,7 +10,7 @@ on:
 jobs:
     test:
         name: Run Tests
-        runs-on: ubuntu-latest
+        runs-on: rcc-runner-k8s
         steps:
             - name: Checkout
               uses: actions/checkout@v4
