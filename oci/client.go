@@ -171,6 +171,8 @@ func parseRegistryURL(registryURL string) (string, string, error) {
 	} else if strings.HasPrefix(url, "http://") {
 		protocol = "http://"
 		url = strings.TrimPrefix(url, "http://")
+		// Warning: HTTP connections are insecure and should only be used for local development
+		common.Debug("WARNING: Using insecure HTTP connection to registry")
 	}
 
 	// Split into registry and repository

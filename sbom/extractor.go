@@ -53,6 +53,8 @@ func extractCondaFromDir(library htfs.MutableLibrary, path string, dir *htfs.Dir
 	// Check if this is the conda-meta directory
 	if filepath.Base(path) == "conda-meta" {
 		for name, file := range dir.Files {
+			// Skip non-JSON files and the "history" file which contains
+			// conda environment modification history, not package metadata
 			if !strings.HasSuffix(name, ".json") || name == "history" {
 				continue
 			}
