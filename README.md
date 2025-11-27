@@ -5,23 +5,19 @@
 [![codecov](https://codecov.io/gh/joshyorko/rcc/branch/master/graph/badge.svg)](https://codecov.io/gh/joshyorko/rcc)
 [![Release](https://img.shields.io/github/v/release/joshyorko/rcc)](https://github.com/joshyorko/rcc/releases)
 
-![RCC](/docs/title.png)
+![RCC](/docs/rcc-logo.svg)
 
 RCC allows you to create, manage, and distribute Python-based self-contained automation packages. RCC also allows you to run your automations in isolated Python environments so they can still access the rest of your machine.
 
-🚀 "Repeatable, movable and isolated Python environments for your automation."
+**Repeatable, Contained Code** - movable and isolated Python environments for your automation.
 
 Together with [robot.yaml](https://robocorp.com/docs/robot-structure/robot-yaml-format) configuration file, `rcc` is a foundation that allows anyone to build and share automation easily.
-
-<p align="center">
-  <img width="400" src="./docs/robocorp_stack.png">
-</p>
 
 RCC is actively maintained by [JoshYorko](https://github.com/joshyorko).
 
 
 ## Why use rcc?
- 
+
 * You do not need to install Python on the target machine
 * You can control exactly which version of Python your automation will run on (..and which pip version is used to resolve dependencies)
 * You can avoid `Works on my machine`
@@ -30,25 +26,23 @@ RCC is actively maintained by [JoshYorko](https://github.com/joshyorko).
 * If you have run into "dependency drifts", where once working runtime environment dependencies get updated and break your production system?, RCC can freeze ALL dependencies, pre-build environments, and more.
 * RCC will give you a heads-up if your automations have been leaving behind processes after running.
 
-...and much much more. 
-
-👉 If the command line seems scary, just pick up [Robocorp Code](https://marketplace.visualstudio.com/items?itemName=robocorp.robocorp-code) -extension for VS Code, and you'll get the power of RCC directly in VS Code without worrying about the commands.
+...and much much more.
 
 ## Getting Started
 
-:arrow_double_down: Install rcc 
-> [Installation guide](https://github.com/robocorp/rcc?tab=readme-ov-file#installing-rcc-from-the-command-line)
+**Install rcc**
+> [Installation guide](#installing-rcc-from-the-command-line)
 
-:octocat: Pull robot from GitHub:
-> `rcc pull github.com/robocorp/template-python-browser`
+**Pull a robot from GitHub:**
+> `rcc pull github.com/joshyorko/template-python-browser`
 
-:running: Run robot
+**Run robot**
 > `rcc run`
 
-:hatching_chick: Create your own robot from templates
+**Create your own robot from templates**
 > `rcc create`
 
-For detailed instructions, visit [Robocorp RCC documentation](https://robocorp.com/docs/rcc/overview) to get started. To build `rcc` from this repository, see the [Setup Guide](/docs/BUILD.md)
+For detailed instructions, visit the [RCC documentation](https://robocorp.com/docs/rcc/overview) to get started. To build `rcc` from this repository, see the [Setup Guide](/docs/BUILD.md)
 
 ## Installing RCC from the command line
 
@@ -79,12 +73,12 @@ For detailed instructions, visit [Robocorp RCC documentation](https://robocorp.c
 
 ## Documentation
 
-Visit [https://robocorp.com/docs](https://robocorp.com/docs) to view the full documentation on the full Robocorp stack.
-
 The changelog can be seen [here](/docs/changelog.md). It is also visible inside RCC using the command `rcc docs changelog`.
 
 Some tips, tricks, and recipes can be found [here](/docs/recipes.md).
 These are also visible inside RCC using the command: `rcc docs recipes`.
+
+For additional documentation on robot.yaml, conda.yaml, and the broader ecosystem, see the [Robocorp/Sema4ai Documentation](https://robocorp.com/docs).
 
 ## Telemetry
 
@@ -94,37 +88,35 @@ This fork disables all internal telemetry by default:
 - The installation identifier header is not attached to outbound HTTP requests when telemetry is disabled.
 - The `rcc configure identity` output will always report tracking as disabled unless explicitly modified in code; feedback/metric commands are effectively no-ops.
 
-If you depend on Robocorp Control Room features that require telemetry or the installation identifier, adapt the forked code accordingly. The build and asset pipeline remains unchanged.
+## Custom Endpoints
 
-## Repoint endpoints without code changes
+You can repoint all network endpoints via environment variables or a local `settings.yaml`.
 
-If you want to keep cloud-related commands available but stop referring to Robocorp’s control plane by default, you can repoint all network endpoints via environment variables or a local `settings.yaml`.
-
-- Quick override with environment variables (takes precedence over builtin settings):
-  - RCC_ENDPOINT_CLOUD_API
-  - RCC_ENDPOINT_CLOUD_LINKING
-  - RCC_ENDPOINT_CLOUD_UI
-  - RCC_ENDPOINT_DOWNLOADS
-  - RCC_ENDPOINT_DOCS
-  - RCC_ENDPOINT_TELEMETRY
-  - RCC_ENDPOINT_ISSUES
-  - RCC_ENDPOINT_PYPI
-  - RCC_ENDPOINT_PYPI_TRUSTED
-  - RCC_ENDPOINT_CONDA
+Environment variables (take precedence over builtin settings):
+- `RCC_ENDPOINT_CLOUD_API`
+- `RCC_ENDPOINT_CLOUD_LINKING`
+- `RCC_ENDPOINT_CLOUD_UI`
+- `RCC_ENDPOINT_DOWNLOADS`
+- `RCC_ENDPOINT_DOCS`
+- `RCC_ENDPOINT_TELEMETRY`
+- `RCC_ENDPOINT_ISSUES`
+- `RCC_ENDPOINT_PYPI`
+- `RCC_ENDPOINT_PYPI_TRUSTED`
+- `RCC_ENDPOINT_CONDA`
 
 Example (zsh):
 
 ```zsh
 # Point rcc at your own control plane endpoints
-export RCC_ENDPOINT_CLOUD_API="https://api.control-room.yorko.io/"
-export RCC_ENDPOINT_CLOUD_UI="https://console.control-room.yorko.io/"
-export RCC_ENDPOINT_CLOUD_LINKING="https://console.control-room.yorko.io/link/"
+export RCC_ENDPOINT_CLOUD_API="https://api.your-domain.com/"
+export RCC_ENDPOINT_CLOUD_UI="https://console.your-domain.com/"
+export RCC_ENDPOINT_CLOUD_LINKING="https://console.your-domain.com/link/"
 
-# Optional: switch where generic downloads (e.g., rcc releases index) resolve
-export RCC_ENDPOINT_DOWNLOADS="https://downloads.control-room.yorko.io/"
+# Optional: switch where generic downloads resolve
+export RCC_ENDPOINT_DOWNLOADS="https://downloads.your-domain.com/"
 
 # Optional mirrors for docs, PyPI, and conda
-export RCC_ENDPOINT_DOCS="https://docs.control-room.yorko.io/"
+export RCC_ENDPOINT_DOCS="https://docs.your-domain.com/"
 export RCC_ENDPOINT_PYPI="https://pypi.org/simple/"
 export RCC_ENDPOINT_PYPI_TRUSTED="https://pypi.org/"
 export RCC_ENDPOINT_CONDA="https://conda.anaconda.org/"
@@ -133,32 +125,28 @@ export RCC_ENDPOINT_CONDA="https://conda.anaconda.org/"
 build/rcc configuration diagnostics --quick --json | jq .
 ```
 
-- Local settings file: write a `settings.yaml` to `$(ROBOCORP_HOME)/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
+Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/rcc_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
 
-Notes
-- Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
+### Notes
+
+Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
 
 ```zsh
-export RCC_DOWNLOADS_BASE="https://downloads.control-room.yorko.io"
+export RCC_DOWNLOADS_BASE="https://downloads.your-domain.com"
 rcc run -r developer/toolkit.yaml --dev -t assets
 ```
 
-- To verify what endpoints are in effect at runtime, run:
+To verify what endpoints are in effect at runtime, run:
 
 ```zsh
 build/rcc configuration diagnostics --quick --json | jq .
 ```
 
-## Community and Support
-
-The Robocorp community can be found on [Developer Slack](https://robocorp-developers.slack.com), where you can ask questions, voice ideas, and share your projects.
-
 ## Acknowledgements
 
-Special thanks to the Robocorp team for building RCC up to version 18.5.0 and releasing it as open source. Their work laid the foundation for this project.
+RCC was originally developed by the Robocorp team and released as open source under the Apache 2.0 license. This fork continues development independently.
 
-- [Official Robocorp Documentation](https://robocorp.com/docs)
-- [Robocorp Code VS Code Extension](https://marketplace.visualstudio.com/items?itemName=robocorp.robocorp-code)
+- [Robocorp/Sema4ai Documentation](https://sema4.ai/docs/automation) - detailed docs on compatible python libraries and guides.
 
 ## License
 

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280">
+  <defs>
+    <linearGradient id="gridFade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8eef4"/>
+      <stop offset="50%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#e8eef4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Top bar -->
+  <rect width="800" height="35" fill="#2d3748"/>
+
+  <!-- Main background with subtle gradient -->
+  <rect y="35" width="800" height="245" fill="url(#gridFade)"/>
+
+  <!-- Diamond grid pattern -->
+  <g stroke="#c5d1dc" stroke-width="0.75" fill="none" opacity="0.6">
+    <!-- Diagonal lines going right -->
+    <line x1="0" y1="35" x2="245" y2="280"/>
+    <line x1="80" y1="35" x2="325" y2="280"/>
+    <line x1="160" y1="35" x2="405" y2="280"/>
+    <line x1="240" y1="35" x2="485" y2="280"/>
+    <line x1="320" y1="35" x2="565" y2="280"/>
+    <line x1="400" y1="35" x2="645" y2="280"/>
+    <line x1="480" y1="35" x2="725" y2="280"/>
+    <line x1="560" y1="35" x2="800" y2="275"/>
+    <line x1="640" y1="35" x2="800" y2="195"/>
+    <line x1="720" y1="35" x2="800" y2="115"/>
+    <!-- Diagonal lines going left -->
+    <line x1="800" y1="35" x2="555" y2="280"/>
+    <line x1="720" y1="35" x2="475" y2="280"/>
+    <line x1="640" y1="35" x2="395" y2="280"/>
+    <line x1="560" y1="35" x2="315" y2="280"/>
+    <line x1="480" y1="35" x2="235" y2="280"/>
+    <line x1="400" y1="35" x2="155" y2="280"/>
+    <line x1="320" y1="35" x2="75" y2="280"/>
+    <line x1="240" y1="35" x2="0" y2="275"/>
+    <line x1="160" y1="35" x2="0" y2="195"/>
+    <line x1="80" y1="35" x2="0" y2="115"/>
+  </g>
+
+  <!-- RCC Badge -->
+  <g transform="translate(310, 115)">
+    <!-- Badge background -->
+    <rect width="180" height="70" rx="8" fill="#1a365d"/>
+    <!-- Subtle inner shadow/depth -->
+    <rect x="3" y="3" width="174" height="64" rx="6" fill="none" stroke="#2d4a6f" stroke-width="1"/>
+    <!-- RCC Text -->
+    <text x="90" y="48" text-anchor="middle" font-family="'Arial Black', 'Helvetica Neue', sans-serif" font-size="36" font-weight="900" fill="#ffffff" letter-spacing="4">RCC</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="400" y="215" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', sans-serif" font-size="13" fill="#4a5568" letter-spacing="2">REPEATABLE · CONTAINED · CODE</text>
+</svg>
