@@ -7,7 +7,7 @@ RCC is a Go-based CLI tool for creating, managing, and distributing Python-based
 ## Working Effectively
 
 ### Prerequisites and Setup
-- Install Go 1.20 or later: `go version` (should show 1.20+)
+- Install Go 1.20: `go version` (should show 1.20.x)
 - Install Python 3.10 or later: `python3 --version` 
 - Install invoke for build automation: `python3 -m pip install invoke`
 - Verify tools: `inv -l` (should list available tasks)
