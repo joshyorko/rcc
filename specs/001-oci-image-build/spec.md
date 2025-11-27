@@ -5,6 +5,16 @@
 **Status**: Draft
 **Input**: User description: "Build OCI images containing Holotree environments, robot packages, and RCC runtime for self-contained container deployment"
 
+## Clarifications
+
+### Session 2025-11-27
+
+- Q: How should build progress be communicated to users? → A: Progress messages to stdout showing current build phase
+- Q: What should be the default base image? → A: Debian slim (good balance of size and compatibility)
+- Q: How should interrupted builds be handled? → A: Clean up partial artifacts on interrupt (best-effort)
+- Q: How should private dependency authentication be handled? → A: Pass through host environment variables during build
+- Q: Should RCC require Docker/Podman for building images? → A: No, RCC builds OCI images natively without external container runtime dependencies
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Build OCI Image from Robot (Priority: P1)
@@ -50,7 +60,7 @@ A developer needs to use a specific base image to meet organizational security r
 **Acceptance Scenarios**:
 
 1. **Given** a robot directory, **When** user runs `rcc oci build --base-image registry.example.com/approved-base:latest`, **Then** the image uses the specified base
-2. **Given** no base image specified, **When** user builds, **Then** a reasonable default Linux base image is used (e.g., minimal Debian or Alpine)
+2. **Given** no base image specified, **When** user builds, **Then** Debian slim is used as the default base image
 3. **Given** an invalid or inaccessible base image, **When** build is attempted, **Then** user receives clear error message explaining the issue
 
 ---
@@ -91,23 +101,23 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 
 - What happens when the robot has platform-specific dependencies that conflict with the target container platform (e.g., Windows-only packages)?
 - How does the system handle very large Holotree environments (multi-GB) during image creation?
-- What happens if the build is interrupted mid-way through environment resolution?
+- What happens if the build is interrupted mid-way through environment resolution? → System performs best-effort cleanup of partial artifacts
 - How does the system behave when building on a host platform different from the target image platform?
-- What happens when the user doesn't have a container runtime installed?
-- How does the system handle robots with private package dependencies requiring authentication?
+- What happens when the user doesn't have a container runtime installed? → Not applicable; RCC builds images natively without external runtime
+- How does the system handle robots with private package dependencies requiring authentication? → Host environment variables (e.g., CONDA_TOKEN, PIP_INDEX_URL) are passed through during build for authentication
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: System MUST create valid OCI-compliant container images from robot packages
+- **FR-001**: System MUST create valid OCI-compliant container images from robot packages using native OCI image assembly (no Docker/Podman dependency)
 - **FR-002**: System MUST embed a statically-linked RCC binary in the generated image
 - **FR-003**: System MUST include pre-resolved Holotree catalog in the image so no runtime environment resolution is needed
 - **FR-004**: System MUST copy robot source code to a well-defined location in the image
 - **FR-005**: System MUST configure the container entrypoint to execute the robot via embedded RCC
 - **FR-006**: System MUST support user-specified image tags following OCI naming conventions
 - **FR-007**: System MUST support user-specified base images for the container
-- **FR-008**: System MUST provide a default base image when none is specified
+- **FR-008**: System MUST use Debian slim as the default base image when none is specified
 - **FR-009**: System MUST support generating standalone Dockerfile for external build tools
 - **FR-010**: System MUST accept existing Holotree catalog references to avoid redundant environment resolution
 - **FR-011**: System MUST validate robot.yaml and conda.yaml before attempting build
@@ -115,6 +125,9 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 - **FR-013**: System MUST respect existing holotree shared/private mode configurations
 - **FR-014**: System MUST ensure path invariants are maintained for holotree environment compatibility
 - **FR-015**: System MUST detect and warn when cross-platform builds may produce incompatible environments
+- **FR-016**: System MUST output progress messages to stdout showing current build phase (validation, environment resolution, image assembly, completion)
+- **FR-017**: System MUST perform best-effort cleanup of partial artifacts when build is interrupted (SIGINT/SIGTERM)
+- **FR-018**: System MUST pass through relevant host environment variables (e.g., CONDA_TOKEN, PIP_INDEX_URL) during environment resolution for private dependency authentication
 
 ### Key Entities
 
@@ -132,13 +145,13 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 - **SC-002**: Built images execute robots identically to running `rcc run` on the host system
 - **SC-003**: 100% of valid robot packages that run via `rcc run` can be successfully containerized
 - **SC-004**: Generated images are portable across any OCI-compliant container runtime (Docker, Podman, containerd)
-- **SC-005**: Users can integrate RCC OCI builds into CI/CD pipelines without requiring container runtime on build agents (via Dockerfile generation)
+- **SC-005**: Users can build OCI images in CI/CD pipelines without requiring any container runtime on build agents (RCC builds natively)
 - **SC-006**: Built images start and execute robot tasks within 10 seconds of container launch (excluding robot task runtime)
 - **SC-007**: Image size overhead from RCC and Holotree infrastructure is under 100MB beyond the environment dependencies themselves
 
 ## Assumptions
 
-- Users have a functioning container runtime (Docker or Podman) installed when using direct build (not required for Dockerfile generation)
+- RCC builds OCI images natively without requiring Docker, Podman, or any external container runtime on the build host
 - Target deployment environments support OCI-compliant container images
 - The RCC binary can be statically compiled for Linux x86_64 (primary target platform)
 - Holotree environments resolved on Linux are used for Linux container images (no cross-platform environment resolution)
