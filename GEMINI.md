@@ -68,3 +68,10 @@ The project uses `invoke` (Python) to manage build tasks. Ensure you have Python
 *   **Assets:** If you modify `assets/`, run `inv assets` to update the embedded resources.
 *   **Versioning:** Version information is stored in `common/version.go`.
 *   **Code Style:** Follow standard Go conventions (`gofmt`, `go vet`).
+
+## Active Technologies
+- Go 1.20 + `github.com/google/go-containerregistry` (for native OCI image construction) (001-oci-image-build)
+- N/A (Output is a file/tarball or registry push) (001-oci-image-build)
+
+## Recent Changes
+- 001-oci-image-build: Added Go 1.20 + `github.com/google/go-containerregistry` (for native OCI image construction)
