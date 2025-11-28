@@ -22,6 +22,11 @@ Implement a native OCI image builder within RCC (`rcc oci build`) that allows us
 **Storage**: N/A (Output is a file/tarball or registry push)
 **Testing**: Go `testing` package (Unit), Robot Framework (Acceptance - requires container runtime on test host)
 **Target Platform**: The *tool* runs on Linux, Windows, macOS. The *output image* is Linux x86_64.
+**Linux Binary Strategy**: On Linux, use the current running binary. On Windows/macOS, attempt to download the matching version of `rcc` for Linux x86_64 from GitHub releases, or accept a specific path via `--rcc-exec`.
+**Image Layout**:
+*   Workdir: `/home/robot/app` (Robot code)
+*   Binary: `/usr/local/bin/rcc`
+*   Entrypoint: `["/usr/local/bin/rcc", "run", "--robot", "/home/robot/app/robot.yaml"]`
 **Project Type**: CLI Subcommand (`rcc oci ...`)
 **Performance Goals**: Build time < 5 mins; Minimal overhead (< 100MB)
 **Constraints**: Must work without Docker installed. Must support "offline" building if assets are cached.

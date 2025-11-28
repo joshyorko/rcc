@@ -99,10 +99,10 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 
 ### Edge Cases
 
-- What happens when the robot has platform-specific dependencies that conflict with the target container platform (e.g., Windows-only packages)?
+- What happens when the robot has platform-specific dependencies that conflict with the target container platform (e.g., Windows-only packages)? → Build proceeds with warning; incompatible packages are skipped from environment resolution. User is informed which packages were excluded. If critical packages cannot be resolved, build fails with clear error listing the problematic dependencies.
 - How does the system handle very large Holotree environments (multi-GB) during image creation?
 - What happens if the build is interrupted mid-way through environment resolution? → System performs best-effort cleanup of partial artifacts
-- How does the system behave when building on a host platform different from the target image platform?
+- How does the system behave when building on a host platform different from the target image platform? → On Windows/macOS hosts, RCC automatically downloads the matching Linux x86_64 RCC binary from GitHub releases (same version as running RCC). If download fails or is unavailable, user can provide a pre-downloaded binary via `--rcc-exec` flag. Build proceeds only after Linux binary is available.
 - What happens when the user doesn't have a container runtime installed? → Not applicable; RCC builds images natively without external runtime
 - How does the system handle robots with private package dependencies requiring authentication? → Host environment variables (e.g., CONDA_TOKEN, PIP_INDEX_URL) are passed through during build for authentication
 
@@ -128,6 +128,8 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 - **FR-016**: System MUST output progress messages to stdout showing current build phase (validation, environment resolution, image assembly, completion)
 - **FR-017**: System MUST perform best-effort cleanup of partial artifacts when build is interrupted (SIGINT/SIGTERM)
 - **FR-018**: System MUST pass through relevant host environment variables (e.g., CONDA_TOKEN, PIP_INDEX_URL) during environment resolution for private dependency authentication
+- **FR-019**: System MUST detect platform-incompatible dependencies during environment resolution and emit warnings listing excluded packages
+- **FR-020**: System MUST fail with clear error if critical dependencies cannot be resolved for the target Linux x86_64 platform
 
 ### Key Entities
 
@@ -141,7 +143,7 @@ A developer wants to integrate RCC image building into an existing CI/CD pipelin
 
 ### Measurable Outcomes
 
-- **SC-001**: Users can build a container image from a robot in under 5 minutes (excluding initial environment resolution time)
+- **SC-001**: Users can build a container image from a 1-2GB Holotree environment in under 1 minute on typical developer hardware (4+ CPU cores, 8GB+ RAM, SSD storage) with cached base image. This is achievable because the Holotree catalog contains pre-resolved, pre-built dependencies - the OCI build packages existing artifacts rather than resolving dependencies at build time. Traditional Docker builds for equivalent environments typically take 3-5 minutes due to layer rebuild and dependency resolution overhead.
 - **SC-002**: Built images execute robots identically to running `rcc run` on the host system
 - **SC-003**: 100% of valid robot packages that run via `rcc run` can be successfully containerized
 - **SC-004**: Generated images are portable across any OCI-compliant container runtime (Docker, Podman, containerd)
