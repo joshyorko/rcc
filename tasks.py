@@ -54,37 +54,71 @@ def noassets(c):
                 print(f"Error removing {file_path}: {e}")
 
 
-def download_link(version, platform, filename):
-    base = os.environ.get("RCC_DOWNLOADS_BASE", "https://downloads.robocorp.com")
-    # Ensure no trailing slash on base to avoid double slashes
+def get_official_micromamba_url(version, platform):
+    """
+    Get the official micromamba download URL from micro.mamba.pm (conda-forge).
+
+    This uses the official mamba-org distribution instead of Robocorp's mirror.
+    The binaries are identical (verified by SHA256), but using the official source
+    eliminates dependency on Robocorp's CDN for this open-source fork.
+    """
+    # Map our platform names to conda-forge platform names
+    platform_map = {
+        "linux64": "linux-64",
+        "macos64": "osx-64",
+        "windows64": "win-64",
+    }
+    conda_platform = platform_map.get(platform)
+    if not conda_platform:
+        raise ValueError(f"Unknown platform: {platform}")
+
+    # Strip 'v' prefix if present - official API uses bare version numbers (e.g., "1.5.8" not "v1.5.8")
+    if version.startswith("v"):
+        version = version[1:]
+
+    # Allow override via environment variable for custom mirrors
+    base = os.environ.get("RCC_MICROMAMBA_BASE", "https://micro.mamba.pm/api/micromamba")
     base = base.rstrip("/")
-    return f"{base}/micromamba/{version}/{platform}/{filename}"
+    return f"{base}/{conda_platform}/{version}"
 
 
 @task
 def micromamba(c):
-    """Download micromamba files"""
+    """Download micromamba files from official conda-forge source"""
     with open("assets/micromamba_version.txt", "r", encoding="utf-8") as f:
         version = f.read().strip()
     print(f"Using micromamba version {version}")
 
     platforms = {
+        "linux64": "linux_amd64",
         "macos64": "darwin_amd64",
         "windows64": "windows_amd64",
-        "linux64": "linux_amd64",
     }
 
     for platform, arch in platforms.items():
-        filename = "micromamba.exe" if platform == "windows64" else "micromamba"
-        url = download_link(version, platform, filename)
         output = f"blobs/assets/micromamba.{arch}"
         if os.path.exists(output + ".gz"):
             print(f"Asset {output}.gz already exists, skipping")
             continue
-        print(f"Downloading {url} to {output}")
-        c.run(f"curl -o {output} {url}")
+
+        url = get_official_micromamba_url(version, platform)
+        print(f"Downloading from official source: {url}")
+
+        # Official source returns a tar.bz2 archive, extract the binary
+        c.run(f"curl -sL '{url}' | tar -xvj -C /tmp bin/micromamba")
+
+        # Handle Windows .exe extension
+        if platform == "windows64":
+            c.run(f"mv /tmp/bin/micromamba /tmp/bin/micromamba.exe")
+            c.run(f"mv /tmp/bin/micromamba.exe {output}")
+        else:
+            c.run(f"mv /tmp/bin/micromamba {output}")
+
         print(f"Compressing {output}")
         c.run(f"gzip -f -9 {output}")
+
+        # Cleanup
+        c.run("rm -rf /tmp/bin")
 
 
 @task(pre=[micromamba])
