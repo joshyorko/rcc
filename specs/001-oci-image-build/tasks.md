@@ -20,8 +20,8 @@
 *Goal: Initialize project structure and dependencies.*
 
 - [ ] T001 Add `github.com/google/go-containerregistry` dependency to `go.mod`
-- [ ] T002 Create `cmd/oci.go` with `ociCmd` struct and help text
-- [ ] T003 Register `ociCmd` in `cmd/oci.go` `init()` function (add to `rootCmd`)
+- [X] T002 Create `cmd/oci.go` with `ociCmd` struct and help text
+- [X] T003 Register `ociCmd` in `cmd/oci.go` `init()` function (add to `rootCmd`)
 - [ ] T004 Create `common/oci` directory
 
 ## Phase 2: Foundational
