@@ -121,7 +121,9 @@ def micromamba(c):
 
         # Extract the binary from the archive
         # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
-        c.run(f'tar -xvjf "{archive_path}" -C "{extract_dir}"')
+        import tarfile
+        with tarfile.open(archive_path, "r:bz2") as tar:
+            tar.extractall(path=extract_dir)
 
         # Find and move the binary
         if platform == "windows64":
