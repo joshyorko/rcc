@@ -3,7 +3,7 @@ package pathlib
 import (
 	"os"
 
-	"github.com/robocorp/rcc/fail"
+	"github.com/joshyorko/rcc/fail"
 )
 
 type (

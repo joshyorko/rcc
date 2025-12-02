@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pretty"
 )
 
 const (

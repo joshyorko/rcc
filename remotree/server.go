@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
 func Serve(address string, port int, domain, storage string) error {

@@ -6,9 +6,9 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/journal"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/journal"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/spf13/cobra"
 )
 

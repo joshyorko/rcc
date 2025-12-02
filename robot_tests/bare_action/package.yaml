@@ -2,7 +2,7 @@ name: RCC testing package
 description: Just for testing rcc.
 version: 0.0.1
 
-documentation: https://github.com/robocorp/rcc/
+documentation: https://github.com/joshyorko/rcc/
 
 dependencies:
   conda-forge:

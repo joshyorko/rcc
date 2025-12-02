@@ -78,7 +78,7 @@ The changelog can be seen [here](/docs/changelog.md). It is also visible inside 
 Some tips, tricks, and recipes can be found [here](/docs/recipes.md).
 These are also visible inside RCC using the command: `rcc docs recipes`.
 
-For additional documentation on robot.yaml, conda.yaml, and the broader ecosystem, see the [Robocorp/Sema4ai Documentation](https://robocorp.com/docs).
+For additional documentation on robot.yaml, conda.yaml, and the broader ecosystem, see the [Robocorp Documentation](https://robocorp.com/docs).
 
 ## Telemetry
 
@@ -146,7 +146,7 @@ build/rcc configuration diagnostics --quick --json | jq .
 
 RCC was originally developed by the Robocorp team and released as open source under the Apache 2.0 license. This fork continues development independently.
 
-- [Robocorp/Sema4ai Documentation](https://sema4.ai/docs/automation) - detailed docs on compatible python libraries and guides.
+- [Robocorp Documentation](https://robocorp.com/docs) - detailed docs on compatible python libraries and guides.
 
 ## License
 

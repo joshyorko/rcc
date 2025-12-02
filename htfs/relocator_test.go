@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/htfs"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/htfs"
 )
 
 func TestBasics(t *testing.T) {

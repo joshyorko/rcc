@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 )
 
 func MakeRelativeMap(root string, entries map[string]string) map[string]string {

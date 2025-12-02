@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
+	"github.com/joshyorko/rcc/hamlet"
 )
 
 type Nothing struct{}

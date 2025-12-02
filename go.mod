@@ -1,4 +1,4 @@
-module github.com/robocorp/rcc
+module github.com/joshyorko/rcc
 
 go 1.20
 

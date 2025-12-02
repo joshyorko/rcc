@@ -178,7 +178,7 @@ tasks.py             # Build tasks
 
 ### View go.mod
 ```
-module github.com/robocorp/rcc
+module github.com/joshyorko/rcc
 go 1.20
 require (
     github.com/spf13/cobra v1.7.0

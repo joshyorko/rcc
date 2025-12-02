@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/robocorp/rcc/cloud"
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/mocks"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/cloud"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/mocks"
+	"github.com/joshyorko/rcc/operations"
 )
 
 func TestCanCalculateDigestFromText(t *testing.T) {

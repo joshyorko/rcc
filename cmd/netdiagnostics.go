@@ -3,10 +3,10 @@ package cmd
 import (
 	"os"
 
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/operations"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/operations"
+	"github.com/joshyorko/rcc/pretty"
 
 	"github.com/spf13/cobra"
 )

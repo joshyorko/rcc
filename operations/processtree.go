@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/mitchellh/go-ps"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/set"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/set"
 )
 
 type (

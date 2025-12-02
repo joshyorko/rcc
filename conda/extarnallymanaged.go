@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
 )
 
 const (

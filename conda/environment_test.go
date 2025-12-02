@@ -3,8 +3,8 @@ package conda_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/hamlet"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/hamlet"
 )
 
 func TestHasDownloadLinkAvailable(t *testing.T) {

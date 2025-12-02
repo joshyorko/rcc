@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/operations"
 )
 
 func TestCanCreatePrivateRsaKey(t *testing.T) {

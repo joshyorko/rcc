@@ -1,7 +1,7 @@
 # Incomplete list of rcc features
 
 * supported operating systems are Windows, MacOS, and Linux
-* support for product families `--robocorp` and `--sema4ai`
+* support for product families `--robocorp`
 * supported sources for environment building are both conda and pypi
 * provide repeatable, isolated, and clean environments for automations and
   robots to run on
