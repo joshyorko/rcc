@@ -39,7 +39,7 @@ func DirhashDiff(history, future map[string]string, warning bool) {
 			changed = append(changed, key)
 		}
 	}
-	for key, _ := range future {
+	for key := range future {
 		_, ok := history[key]
 		if !ok {
 			added = append(added, key)

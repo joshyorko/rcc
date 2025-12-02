@@ -329,7 +329,7 @@ func (it *robot) IgnoreFiles() []string {
 func (it *robot) AvailableTasks() []string {
 	tasks := it.taskMap(false)
 	result := make([]string, 0, len(tasks))
-	for name, _ := range tasks {
+	for name := range tasks {
 		result = append(result, fmt.Sprintf("%q", name))
 	}
 	sort.Strings(result)

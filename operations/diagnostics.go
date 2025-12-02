@@ -185,7 +185,7 @@ func runDiagnostics(quick bool) *common.DiagnosticStatus {
 	}
 	result.Details["tls-lookup-time"] = tlsStopwatch.Text()
 	if len(hostnames) > 1 && len(tlsRoots) == 1 {
-		for name, _ := range tlsRoots {
+		for name := range tlsRoots {
 			result.Details["tls-proxy-firewall"] = name
 		}
 	} else {
@@ -565,7 +565,7 @@ func jsonDiagnostics(sink io.Writer, details *common.DiagnosticStatus) {
 func humaneDiagnostics(sink io.Writer, details *common.DiagnosticStatus, showStatistics bool) {
 	fmt.Fprintln(sink, "Diagnostics:")
 	keys := make([]string, 0, len(details.Details))
-	for key, _ := range details.Details {
+	for key := range details.Details {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

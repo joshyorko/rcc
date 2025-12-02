@@ -487,7 +487,7 @@ func LoadHololibHashes() (map[string]map[string]bool, map[string]map[string]bool
 	anywork.Sync()
 	for at, slot := range slots {
 		catalog := catalogs[at]
-		for k, _ := range slot {
+		for k := range slot {
 			who, ok := needed[k]
 			if !ok {
 				who = make(map[string]bool)

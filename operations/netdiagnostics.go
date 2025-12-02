@@ -82,7 +82,7 @@ func networkDiagnostics(config *Configuration, target *common.DiagnosticStatus) 
 	}
 	target.Details["tls-lookup-time"] = tlsStopwatch.Text()
 	if len(hostnames) > 1 && len(tlsRoots) == 1 {
-		for name, _ := range tlsRoots {
+		for name := range tlsRoots {
 			target.Details["tls-proxy-firewall"] = name
 		}
 	} else {

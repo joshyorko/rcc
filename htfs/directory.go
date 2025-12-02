@@ -141,7 +141,7 @@ func (it Roots) Spacemap() map[string]string {
 
 func (it Roots) FindEnvironments(fragments []string) []string {
 	result := make([]string, 0, 10)
-	for directory, _ := range it.Spacemap() {
+	for directory := range it.Spacemap() {
 		name := filepath.Base(directory)
 		for _, fragment := range fragments {
 			if strings.Contains(name, fragment) {

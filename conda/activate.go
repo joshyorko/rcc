@@ -78,7 +78,7 @@ func parseJson(content string) (map[string]string, error) {
 
 func diffStringMaps(before, after map[string]string) map[string]string {
 	result := make(map[string]string)
-	for key, _ := range before {
+	for key := range before {
 		_, ok := after[key]
 		if !ok {
 			result[key] = ""

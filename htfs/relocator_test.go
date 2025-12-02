@@ -26,7 +26,7 @@ func TestBasics(t *testing.T) {
 	must.Panic(func() {
 		fmt.Sprintf("%q", sut[12:])
 	})
-	must.Equal(sut, sut[:len(sut)])
+	must.Equal(sut, sut[:])
 	must.Equal("", sut[len(sut):])
 }
 

@@ -143,7 +143,7 @@ func (it *Settings) Hostnames() []string {
 		}
 	}
 	result := make([]string, 0, len(collector))
-	for key, _ := range collector {
+	for key := range collector {
 		result = append(result, key)
 	}
 	sort.Strings(result)

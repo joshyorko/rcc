@@ -156,7 +156,7 @@ func SideBySideViewOfDependencies(goldenfile, wantedfile string) (err error) {
 	injectDiffmap(diffmap, want, 0)
 	injectDiffmap(diffmap, gold, 1)
 	keyset := make([]string, 0, len(diffmap))
-	for key, _ := range diffmap {
+	for key := range diffmap {
 		keyset = append(keyset, key)
 	}
 	sort.Strings(keyset)
