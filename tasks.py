@@ -85,6 +85,9 @@ def get_official_micromamba_url(version, platform):
 @task
 def micromamba(c):
     """Download micromamba files from official conda-forge source"""
+    import gzip
+    import tempfile
+
     with open("assets/micromamba_version.txt", "r", encoding="utf-8") as f:
         version = f.read().strip()
     print(f"Using micromamba version {version}")
@@ -95,30 +98,50 @@ def micromamba(c):
         "windows64": "windows_amd64",
     }
 
+    # Use a cross-platform temporary directory
+    tmp_dir = tempfile.gettempdir()
+
     for platform, arch in platforms.items():
         output = f"blobs/assets/micromamba.{arch}"
-        if os.path.exists(output + ".gz"):
-            print(f"Asset {output}.gz already exists, skipping")
+        output_gz = output + ".gz"
+        if os.path.exists(output_gz):
+            print(f"Asset {output_gz} already exists, skipping")
             continue
 
         url = get_official_micromamba_url(version, platform)
         print(f"Downloading from official source: {url}")
 
-        # Official source returns a tar.bz2 archive, extract the binary
-        c.run(f"curl -sL '{url}' | tar -xvj -C /tmp bin/micromamba")
+        # Create extraction directory
+        extract_dir = os.path.join(tmp_dir, "rcc_micromamba_extract")
+        os.makedirs(extract_dir, exist_ok=True)
 
-        # Handle Windows .exe extension
+        # Download the archive
+        archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
+        c.run(f'curl -sL "{url}" -o "{archive_path}"')
+
+        # Extract the binary from the archive
+        # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
+        c.run(f'tar -xvjf "{archive_path}" -C "{extract_dir}"')
+
+        # Find and move the binary
         if platform == "windows64":
-            c.run(f"mv /tmp/bin/micromamba /tmp/bin/micromamba.exe")
-            c.run(f"mv /tmp/bin/micromamba.exe {output}")
+            # Windows archive has binary at Library/bin/micromamba.exe
+            src_binary = os.path.join(extract_dir, "Library", "bin", "micromamba.exe")
         else:
-            c.run(f"mv /tmp/bin/micromamba {output}")
+            # Unix archives have binary at bin/micromamba
+            src_binary = os.path.join(extract_dir, "bin", "micromamba")
 
+        shutil.move(src_binary, output)
+
+        # Compress using Python's gzip module (cross-platform)
         print(f"Compressing {output}")
-        c.run(f"gzip -f -9 {output}")
+        with open(output, "rb") as f_in:
+            with gzip.open(output_gz, "wb", compresslevel=9) as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        os.remove(output)
 
         # Cleanup
-        c.run("rm -rf /tmp/bin")
+        shutil.rmtree(extract_dir, ignore_errors=True)
 
 
 @task(pre=[micromamba])
