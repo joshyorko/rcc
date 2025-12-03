@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/robocorp/rcc/fail"
+	"github.com/joshyorko/rcc/fail"
 )
 
 func gzDelegateOpen(filename string, ungzip bool) (readable io.Reader, closer Closer, err error) {

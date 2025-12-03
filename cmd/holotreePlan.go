@@ -4,9 +4,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/htfs"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/pretty"
 
 	"github.com/spf13/cobra"
 )

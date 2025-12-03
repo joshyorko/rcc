@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
 func TestCanFindNamedPaths(t *testing.T) {

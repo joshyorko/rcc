@@ -7,18 +7,9 @@ Library     supporting.py
 Clean Local
     Remove Directory    tmp/robocorp    True
 
-Prepare Sema4.ai Home
-    [Arguments]    ${location}
-    Create Directory    ${location}
-    Remove Environment Variable    ROBOCORP_HOME
-    Set Environment Variable    SEMA4AI_HOME    ${location}
-    Copy File    robot_tests/settings.yaml    ${location}/settings.yaml
-    Fire And Forget    build/rcc --sema4ai ht init --revoke --controller citests
-
 Prepare Robocorp Home
     [Arguments]    ${location}
     Create Directory    ${location}
-    Remove Environment Variable    SEMA4AI_HOME
     Set Environment Variable    ROBOCORP_HOME    ${location}
     Copy File    robot_tests/settings.yaml    ${location}/settings.yaml
 

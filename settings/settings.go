@@ -10,10 +10,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
 )
 
 const (
@@ -35,16 +35,16 @@ var (
 func loadEnvOverrides() *Settings {
 	// Mapping of env var -> endpoints key in settings
 	mapping := map[string]string{
-		"RCC_ENDPOINT_CLOUD_API":      "cloud-api",
-		"RCC_ENDPOINT_CLOUD_LINKING":  "cloud-linking",
-		"RCC_ENDPOINT_CLOUD_UI":       "cloud-ui",
-		"RCC_ENDPOINT_DOWNLOADS":      "downloads",
-		"RCC_ENDPOINT_DOCS":           "docs",
-		"RCC_ENDPOINT_TELEMETRY":      "telemetry",
-		"RCC_ENDPOINT_ISSUES":         "issues",
-		"RCC_ENDPOINT_PYPI":           "pypi",
-		"RCC_ENDPOINT_PYPI_TRUSTED":   "pypi-trusted",
-		"RCC_ENDPOINT_CONDA":          "conda",
+		"RCC_ENDPOINT_CLOUD_API":     "cloud-api",
+		"RCC_ENDPOINT_CLOUD_LINKING": "cloud-linking",
+		"RCC_ENDPOINT_CLOUD_UI":      "cloud-ui",
+		"RCC_ENDPOINT_DOWNLOADS":     "downloads",
+		"RCC_ENDPOINT_DOCS":          "docs",
+		"RCC_ENDPOINT_TELEMETRY":     "telemetry",
+		"RCC_ENDPOINT_ISSUES":        "issues",
+		"RCC_ENDPOINT_PYPI":          "pypi",
+		"RCC_ENDPOINT_PYPI_TRUSTED":  "pypi-trusted",
+		"RCC_ENDPOINT_CONDA":         "conda",
 	}
 
 	overrides := &Settings{

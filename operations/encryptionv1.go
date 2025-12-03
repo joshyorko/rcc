@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 )
 
 type Ephemeral interface {

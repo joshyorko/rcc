@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/htfs"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/htfs"
 )
 
 func TestBasics(t *testing.T) {
@@ -26,7 +26,7 @@ func TestBasics(t *testing.T) {
 	must.Panic(func() {
 		fmt.Sprintf("%q", sut[12:])
 	})
-	must.Equal(sut, sut[:len(sut)])
+	must.Equal(sut, sut[:])
 	must.Equal("", sut[len(sut):])
 }
 

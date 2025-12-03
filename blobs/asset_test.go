@@ -3,9 +3,9 @@ package blobs_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/operations"
 )
 
 func TestCanSeeBaseZipAsset(t *testing.T) {
@@ -30,7 +30,6 @@ func TestCanOtherAssets(t *testing.T) {
 	must_be.Panic(func() { blobs.MustAsset("assets/settings.yaml") })
 
 	wont_be.Panic(func() { blobs.MustAsset("assets/robocorp_settings.yaml") })
-	wont_be.Panic(func() { blobs.MustAsset("assets/sema4ai_settings.yaml") })
 
 	wont_be.Panic(func() { blobs.MustAsset("assets/micromamba_version.txt") })
 	wont_be.Panic(func() { blobs.MustAsset("assets/externally_managed.txt") })

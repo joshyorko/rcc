@@ -3,9 +3,9 @@ package journal_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/journal"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/journal"
 )
 
 func TestJounalCanBeCalled(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 )
 
 type PathParts []string

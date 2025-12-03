@@ -13,16 +13,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/robocorp/rcc/cloud"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/htfs"
-	"github.com/robocorp/rcc/journal"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/robot"
-	"github.com/robocorp/rcc/settings"
-	"github.com/robocorp/rcc/xviper"
+	"github.com/joshyorko/rcc/cloud"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/journal"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/robot"
+	"github.com/joshyorko/rcc/settings"
+	"github.com/joshyorko/rcc/xviper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -185,7 +185,7 @@ func runDiagnostics(quick bool) *common.DiagnosticStatus {
 	}
 	result.Details["tls-lookup-time"] = tlsStopwatch.Text()
 	if len(hostnames) > 1 && len(tlsRoots) == 1 {
-		for name, _ := range tlsRoots {
+		for name := range tlsRoots {
 			result.Details["tls-proxy-firewall"] = name
 		}
 	} else {
@@ -565,7 +565,7 @@ func jsonDiagnostics(sink io.Writer, details *common.DiagnosticStatus) {
 func humaneDiagnostics(sink io.Writer, details *common.DiagnosticStatus, showStatistics bool) {
 	fmt.Fprintln(sink, "Diagnostics:")
 	keys := make([]string, 0, len(details.Details))
-	for key, _ := range details.Details {
+	for key := range details.Details {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)

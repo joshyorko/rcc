@@ -18,4 +18,4 @@ Error=by Robocorp tooling called `rcc`.
  for final delivery to your users and customers.
 
  For more details, see:
- https://github.com/robocorp/rcc/blob/master/docs/recipes.md#what-are-environmentconfigs
+ https://github.com/joshyorko/rcc/blob/master/docs/recipes.md#what-are-environmentconfigs

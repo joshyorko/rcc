@@ -8,14 +8,14 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/robocorp/rcc/anywork"
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/htfs"
-	"github.com/robocorp/rcc/operations"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/settings"
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/operations"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/settings"
 
 	"github.com/spf13/cobra"
 )

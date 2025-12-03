@@ -11,11 +11,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/robocorp/rcc/anywork"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/set"
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/set"
 )
 
 var (
@@ -141,7 +141,7 @@ func (it Roots) Spacemap() map[string]string {
 
 func (it Roots) FindEnvironments(fragments []string) []string {
 	result := make([]string, 0, 10)
-	for directory, _ := range it.Spacemap() {
+	for directory := range it.Spacemap() {
 		name := filepath.Base(directory)
 		for _, fragment := range fragments {
 			if strings.Contains(name, fragment) {

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/robocorp/rcc/anywork"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/htfs"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/spf13/cobra"
 )
 
@@ -37,22 +37,22 @@ func checkHolotreeIntegrity() (err error) {
 	common.Timeline("holotree integrity report")
 	fail.On(err != nil, "%s", err)
 	purge := make(map[string]bool)
-	for k, _ := range collector {
+	for k := range collector {
 		found, ok := known[filepath.Base(k)]
 		if !ok {
 			continue
 		}
-		for catalog, _ := range found {
+		for catalog := range found {
 			purge[catalog] = true
 		}
 	}
 	for _, v := range needed {
-		for catalog, _ := range v {
+		for catalog := range v {
 			purge[catalog] = true
 		}
 	}
 	redo := false
-	for k, _ := range purge {
+	for k := range purge {
 		fmt.Println("Purge catalog:", k)
 		redo = true
 		anywork.Backlog(htfs.RemoveFile(k))

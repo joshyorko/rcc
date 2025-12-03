@@ -14,12 +14,14 @@ on:
       - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
     paths-ignore:
       - ".github/workflows/**"
+      - ".dagger/**"
 
   pull_request:
     branches:
       - main
     paths-ignore:
       - ".github/workflows/**"
+      - ".dagger/**"
 
 permissions:
   contents: write

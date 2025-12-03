@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 	"gopkg.in/yaml.v2"
 )
 
@@ -143,7 +143,7 @@ func (it *Settings) Hostnames() []string {
 		}
 	}
 	result := make([]string, 0, len(collector))
-	for key, _ := range collector {
+	for key := range collector {
 		result = append(result, key)
 	}
 	sort.Strings(result)
@@ -187,11 +187,10 @@ func (it *Settings) CriticalEnvironmentDiagnostics(target *common.DiagnosticStat
 	diagnose := target.Diagnose("settings.yaml")
 	correct := true
 	if it.Endpoints == nil {
-		diagnose.Fatal(0, "", "endpoints section is totally missing")
-		correct = false
+		diagnose.Warning(0, "", "endpoints section is totally missing")
 	} else {
-		correct = diagnoseUrl(it.Endpoints["cloud-api"], "endpoints/cloud-api", diagnose, correct)
-		correct = diagnoseUrl(it.Endpoints["downloads"], "endpoints/downloads", diagnose, correct)
+		correct = diagnoseOptionalUrl(it.Endpoints["cloud-api"], "endpoints/cloud-api", diagnose, correct)
+		correct = diagnoseOptionalUrl(it.Endpoints["downloads"], "endpoints/downloads", diagnose, correct)
 	}
 	if correct {
 		diagnose.Ok(0, "Critical environment diagnostics are ok.")
@@ -209,8 +208,8 @@ func (it *Settings) Diagnostics(target *common.DiagnosticStatus) {
 		diagnose.Warning(0, "", "settings.yaml: endpoints section is totally missing")
 		correct = false
 	} else {
-		correct = diagnoseUrl(it.Endpoints["cloud-api"], "endpoints/cloud-api", diagnose, correct)
-		correct = diagnoseUrl(it.Endpoints["downloads"], "endpoints/downloads", diagnose, correct)
+		correct = diagnoseOptionalUrl(it.Endpoints["cloud-api"], "endpoints/cloud-api", diagnose, correct)
+		correct = diagnoseOptionalUrl(it.Endpoints["downloads"], "endpoints/downloads", diagnose, correct)
 
 		correct = diagnoseOptionalUrl(it.Endpoints["cloud-ui"], "endpoints/cloud-ui", diagnose, correct)
 		correct = diagnoseOptionalUrl(it.Endpoints["cloud-linking"], "endpoints/cloud-linking", diagnose, correct)

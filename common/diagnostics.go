@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/robocorp/rcc/fail"
+	"github.com/joshyorko/rcc/fail"
 )
 
 const (

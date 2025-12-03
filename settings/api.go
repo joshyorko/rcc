@@ -3,7 +3,7 @@ package settings
 import (
 	"net/http"
 
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 )
 
 type EndpointsApi func(string) string

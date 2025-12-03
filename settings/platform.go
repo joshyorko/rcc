@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/robocorp/rcc/shell"
+	"github.com/joshyorko/rcc/shell"
 )
 
 const (

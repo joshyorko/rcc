@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/set"
-	"github.com/robocorp/rcc/xviper"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/set"
+	"github.com/joshyorko/rcc/xviper"
 
 	"gopkg.in/yaml.v2"
 )
