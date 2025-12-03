@@ -203,6 +203,12 @@ def toc(c):
     c.run(f"{PYTHON} scripts/toc.py")
     print("Ran scripts/toc.py")
 
+@task
+def deadcode(c):
+    """Update table of contents on docs/ directory"""
+    c.run(f"{PYTHON} scripts/deadcode.py")
+    print("Ran scripts/deadcode.py")
+
 
 @task(pre=[toc])
 def support(c):

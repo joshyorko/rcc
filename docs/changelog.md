@@ -1,4 +1,16 @@
 # rcc change log
+## v18.11.0 (date: 03.12.2025)
+
+- feature: switch micromamba source to official conda-forge releases
+  - downloads from https://micro.mamba.pm/api/micromamba/ instead of custom mirrors
+  - uses proper platform-specific archives (bz2 for linux/macos, tar.bz2 for windows)
+- fix: improved cross-platform micromamba extraction compatibility
+  - uses tarfile module for more reliable archive extraction across platforms
+- refactor: updated import paths from github.com/robocorp/rcc to github.com/joshyorko/rcc
+- code: simplified range loop syntax by removing unused variable assignments
+- tooling: added `deadcode` task to developer toolkit for detecting unused Go functions
+- tooling: improved `scripts/deadcode.py` with better reporting, CLI options, and reference tracking
+
 ## v18.10.0 (date: 23.11.2025)
 
 - feature: new `rcc robot unpack` command to unpack robot bundles
