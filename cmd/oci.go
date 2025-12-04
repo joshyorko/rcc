@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/robocorp/rcc/settings"
+	"github.com/joshyorko/rcc/settings"
 	"github.com/spf13/cobra"
 )
 
