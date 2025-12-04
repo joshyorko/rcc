@@ -28,38 +28,42 @@ type CatalogPuller func(string, string, bool) error
 func NewEnvironment(condafile, holozip string, restore, force bool, puller CatalogPuller) (label string, scorecard common.Scorecard, err error) {
 	defer fail.Around(&err)
 
-	// Initialize environment dashboard with 15 build steps
-	stepNames := []string{
-		"Context verification",
-		"Holotree lock acquisition",
-		"Blueprint composition",
-		"Blueprint validation",
-		"Remote catalog check",
-		"Holotree stage preparation",
-		"Environment build",
-		"Partial environment restore",
-		"Micromamba phase",
-		"Pip/UV install phase",
-		"Post-install scripts",
-		"Activate environment",
-		"Pip check",
-		"Record to hololib",
-		"Restore space / Finalize",
+	// Use the existing unified dashboard if available (created by operations/running.go for rcc run)
+	// For standalone operations (robot bundle, holotree vars, etc.), don't use dashboard
+	unified := pretty.GetUnifiedDashboard()
+	if unified != nil {
+		// Use the unified dashboard - it's already started for rcc run flow
+		environmentDashboard = unified
+		// Do NOT stop the unified dashboard here - it will be stopped after robot run completes
+	} else {
+		// Standalone environment operation - use noop dashboard to avoid alt-screen flicker
+		// Progress will be shown via pretty.Progress() calls instead
+		environmentDashboard = pretty.NewNoopDashboard()
 	}
-	environmentDashboard = pretty.NewEnvironmentDashboard(stepNames)
-	environmentDashboard.Start()
-	// Always stop the dashboard when NewEnvironment completes
-	// If a robot runs afterward, operations/running.go will use the existing dashboard
-	// through the wrapper that re-uses the unified dashboard
-	defer func() {
-		if environmentDashboard != nil {
-			environmentDashboard.Stop(err == nil)
-		}
-	}()
 
 	who, _ := user.Current()
 	host, _ := os.Hostname()
-	contextMsg := fmt.Sprintf("Context: %q <%v@%v> [%v/%v]", who.Name, who.Username, host, common.Platform(), settings.OperatingSystem())
+	osInfo := settings.OperatingSystem()
+
+	// Parse OS info for display (format: "LSB Version: ...; Distributor ID: ...; Description: ...; Release: ...; Codename: ...")
+	distroID, distroDesc, release := "", "", ""
+	for _, part := range strings.Split(osInfo, ";") {
+		part = strings.TrimSpace(part)
+		if strings.HasPrefix(part, "Distributor ID:") {
+			distroID = strings.TrimSpace(strings.TrimPrefix(part, "Distributor ID:"))
+		} else if strings.HasPrefix(part, "Description:") {
+			distroDesc = strings.TrimSpace(strings.TrimPrefix(part, "Description:"))
+		} else if strings.HasPrefix(part, "Release:") {
+			release = strings.TrimSpace(strings.TrimPrefix(part, "Release:"))
+		}
+	}
+
+	// Feed context to unified dashboard
+	if unified != nil {
+		unified.SetSystemContext(who.Username, host, common.Platform(), distroID, distroDesc, release)
+	}
+
+	contextMsg := fmt.Sprintf("Context: %q <%v@%v> [%v/%v]", who.Name, who.Username, host, common.Platform(), osInfo)
 	environmentDashboard.SetStep(0, pretty.StepRunning, contextMsg)
 	pretty.Progress(0, "%s", contextMsg)
 
@@ -137,6 +141,12 @@ func NewEnvironment(condafile, holozip string, restore, force bool, puller Catal
 	environmentDashboard.SetStep(2, pretty.StepComplete, "")
 
 	common.EnvironmentHash, common.FreshlyBuildEnvironment = common.BlueprintHash(holotreeBlueprint), false
+
+	// Feed build info to unified dashboard
+	if unified := pretty.GetUnifiedDashboard(); unified != nil {
+		unified.SetBuildInfo(common.EnvironmentHash, int(anywork.Scale()), runtime.NumCPU(), filepath.Base(condafile))
+	}
+
 	blueprintMsg := fmt.Sprintf("Holotree blueprint is %q [%s with %d workers on %d CPUs from %q]", common.EnvironmentHash, common.Platform(), anywork.Scale(), runtime.NumCPU(), filepath.Base(condafile))
 	environmentDashboard.SetStep(3, pretty.StepRunning, blueprintMsg)
 	pretty.Progress(2, "%s", blueprintMsg)

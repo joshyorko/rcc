@@ -32,9 +32,25 @@ executed by 'rcc robot run-from-bundle'.`,
 			defer common.Stopwatch("Bundle creation lasted").Report()
 		}
 
+		// Create unified dashboard for environment build progress
+		var dashboard *pretty.UnifiedDashboard
+		if pretty.ShouldUseDashboard() {
+			dashboard = pretty.GetOrCreateUnifiedDashboard()
+		}
+
+		// Ensure dashboard is stopped on exit
+		defer func() {
+			if dashboard != nil {
+				pretty.StopUnifiedDashboard(true)
+			}
+		}()
+
 		// 1. Calculate environment hash
 		config, blueprint, err := htfs.ComposeFinalBlueprint(nil, bundleRobot, false)
-		pretty.Guard(err == nil, 1, "Failed to load robot configuration: %v", err)
+		if err != nil {
+			pretty.StopUnifiedDashboard(false)
+			pretty.Guard(false, 1, "Failed to load robot configuration: %v", err)
+		}
 
 		hash := common.BlueprintHash(blueprint)
 		common.Log("Environment hash: %s", hash)
@@ -42,7 +58,10 @@ executed by 'rcc robot run-from-bundle'.`,
 		// Ensure environment exists
 		condafile := filepath.Join(common.ProductTemp(), hash)
 		err = pathlib.WriteFile(condafile, blueprint, 0o644)
-		pretty.Guard(err == nil, 2, "Failed to write conda file: %v", err)
+		if err != nil {
+			pretty.StopUnifiedDashboard(false)
+			pretty.Guard(false, 2, "Failed to write conda file: %v", err)
+		}
 
 		holozip := ""
 		if config != nil {
@@ -50,7 +69,14 @@ executed by 'rcc robot run-from-bundle'.`,
 		}
 
 		_, _, err = htfs.NewEnvironment(condafile, holozip, false, false, operations.PullCatalog)
-		pretty.Guard(err == nil, 3, "Failed to create environment: %v", err)
+		if err != nil {
+			pretty.StopUnifiedDashboard(false)
+			pretty.Guard(false, 3, "Failed to create environment: %v", err)
+		}
+
+		// Stop dashboard after environment build - export/bundle are quick operations
+		pretty.StopUnifiedDashboard(true)
+		dashboard = nil // Prevent double-stop in defer
 
 		// 2. Export holotree
 		tempHololib := filepath.Join(os.TempDir(), fmt.Sprintf("hololib_%s.zip", hash))

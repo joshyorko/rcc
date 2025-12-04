@@ -244,13 +244,19 @@ func LoadTaskWithEnvironment(packfile, theTask string, force bool) (bool, robot.
 		return true, config, todo, ""
 	}
 
-	// Enable unified dashboard persistence
-	pretty.SetKeepDashboardAlive(true)
+	// Create unified dashboard ONCE at the start - it will persist through env build AND robot run
+	// The dashboard is created here and will be stopped in ExecuteTask after robot completes
+	if pretty.ShouldUseDashboard() {
+		_ = pretty.GetOrCreateUnifiedDashboard()
+	}
+
 	label, _, err := htfs.NewEnvironment(config.CondaConfigFile(), config.Holozip(), true, force, PullCatalog)
-	// Disable persistence so it can be stopped later
-	pretty.SetKeepDashboardAlive(false)
 
 	if err != nil {
+		// Stop dashboard on error
+		if unified := pretty.GetUnifiedDashboard(); unified != nil {
+			unified.Stop(false)
+		}
 		pretty.RccPointOfView(newEnvironment, err)
 		pretty.Exit(4, "Error: %v", err)
 	}
@@ -432,7 +438,8 @@ func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo ro
 		pretty.Exit(9, "Error: %v", err)
 	}
 
-	// Create and start robot run dashboard EARLY to capture all output
+	// Get or create dashboard for robot execution
+	// The unified dashboard was created in LoadTaskWithEnvironment before env build
 	var dashboard pretty.Dashboard
 	var stdoutWriter, stderrWriter io.Writer
 
@@ -442,47 +449,46 @@ func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo ro
 		robotName := deriveRobotName(flags.RobotYaml)
 		taskName := deriveTaskName(task)
 
-		common.Debug("Creating RobotRunDashboard for robot=%s, task=%s", robotName, taskName)
+		common.Debug("Setting up dashboard for robot=%s, task=%s", robotName, taskName)
 
-		// Try to get existing unified dashboard
+		// Use existing unified dashboard (created in LoadTaskWithEnvironment)
 		if unified := pretty.GetUnifiedDashboard(); unified != nil {
 			dashboard = unified
+			// Transition to robot phase - the dashboard is already running
 			unified.TransitionToRobotPhase(robotName, taskName)
+			// Set additional robot context info
+			host, _ := os.Hostname()
+			if unified.GetModel() != nil {
+				unified.GetModel().RobotState.Hostname = host
+				unified.GetModel().RobotState.Controller = common.ControllerIdentity()
+				unified.GetModel().RobotState.Workers = int(anywork.Scale())
+			}
 		} else {
+			// No unified dashboard - create a standalone robot dashboard
 			dashboard = pretty.NewRobotRunDashboard(robotName)
+			if dashboard != nil {
+				dashboard.Start()
+				dashboard.SetStep(0, pretty.StepRunning, taskName)
+
+				// Feed environment and context info to standalone dashboard
+				if teaDash, ok := dashboard.(*pretty.TeaRobotDashboard); ok {
+					teaDash.SetEnvironmentInfo(common.EnvironmentHash, directory, label)
+					who, _ := user.Current()
+					host, _ := os.Hostname()
+					contextName := fmt.Sprintf("%s@%s", who.Username, host)
+					teaDash.SetContextInfo(contextName, common.Platform(), int(anywork.Scale()), runtime.NumCPU())
+				}
+			}
 		}
 
-		// Start the dashboard before any output
+		// Create dashboard writers that feed output to the dashboard
 		if dashboard != nil {
-			dashboard.Start()
-
-			// Update dashboard with task name and environment info
-			// Only for non-unified dashboards (UnifiedDashboard handles this via TransitionToRobotPhase)
-			if _, isUnified := dashboard.(*pretty.UnifiedDashboard); !isUnified {
-				dashboard.SetStep(0, pretty.StepRunning, taskName)
-			}
-
-			// Feed environment and context info to dashboard if it supports it
-			if teaDash, ok := dashboard.(*pretty.TeaRobotDashboard); ok {
-				teaDash.SetEnvironmentInfo(
-					common.EnvironmentHash,
-					directory,
-					label,
-				)
-				// Set context info like RCC point of view
-				who, _ := user.Current()
-				host, _ := os.Hostname()
-				contextName := fmt.Sprintf("%s@%s", who.Username, host)
-				teaDash.SetContextInfo(contextName, common.Platform(), int(anywork.Scale()), runtime.NumCPU())
-			}
-
-			// Create dashboard writers that feed output to the dashboard
 			stdoutWriter = newDashboardWriter(nil, dashboard)
 			stderrWriter = newDashboardWriter(nil, dashboard)
 		}
 	}
 
-	// Ensure dashboard is stopped on exit
+	// Ensure dashboard is stopped on exit - this is the ONLY place the unified dashboard gets stopped
 	defer func() {
 		if dashboard != nil {
 			dashboard.Stop(err == nil)

@@ -72,12 +72,24 @@ func holotreeExpandEnvironment(userFiles []string, packfile, environment, worksp
 	common.TimelineBegin("environment expansion start")
 	defer common.TimelineEnd()
 
+	// Create unified dashboard for environment build progress
+	var dashboard *pretty.UnifiedDashboard
+	if pretty.ShouldUseDashboard() {
+		dashboard = pretty.GetOrCreateUnifiedDashboard()
+	}
+
 	config, holotreeBlueprint, err := htfs.ComposeFinalBlueprint(userFiles, packfile, devDependencies)
-	pretty.Guard(err == nil, 5, "%s", err)
+	if err != nil {
+		pretty.StopUnifiedDashboard(false)
+		pretty.Guard(false, 5, "%s", err)
+	}
 
 	condafile := filepath.Join(common.ProductTemp(), common.BlueprintHash(holotreeBlueprint))
 	err = pathlib.WriteFile(condafile, holotreeBlueprint, 0o644)
-	pretty.Guard(err == nil, 6, "%s", err)
+	if err != nil {
+		pretty.StopUnifiedDashboard(false)
+		pretty.Guard(false, 6, "%s", err)
+	}
 
 	holozip := ""
 	if config != nil {
@@ -87,6 +99,12 @@ func holotreeExpandEnvironment(userFiles []string, packfile, environment, worksp
 	// i.e.: the conda file is now already created in the temp folder, so, there's no need to use the devDependencies flag
 	// anymore.
 	path, _, err := htfs.NewEnvironment(condafile, holozip, true, force, operations.PullCatalog)
+
+	// Stop dashboard after environment build
+	if dashboard != nil {
+		pretty.StopUnifiedDashboard(err == nil)
+	}
+
 	if !common.WarrantyVoided() {
 		pretty.RccPointOfView(newEnvironment, err)
 	}
@@ -160,13 +178,18 @@ var holotreeVariablesCmd = &cobra.Command{
 			defer common.Stopwatch("Holotree variables command lasted").Report()
 		}
 
-		// Start a delayed spinner for long-running environment expansion
-		spinner := pretty.NewDelayedSpinner("Resolving environment...")
-		spinner.Start()
+		// Only use spinner if dashboard won't be used (dashboard handles its own progress display)
+		var spinner *pretty.DelayedSpinner
+		if !pretty.ShouldUseDashboard() {
+			spinner = pretty.NewDelayedSpinner("Resolving environment...")
+			spinner.Start()
+		}
 
 		env := holotreeExpandEnvironment(args, robotFile, environmentFile, workspaceId, validityTime, holotreeForce, common.DevDependencies)
 
-		spinner.Stop(true)
+		if spinner != nil {
+			spinner.Stop(true)
+		}
 
 		if holotreeJson {
 			asJson(env)

@@ -222,11 +222,18 @@ func ShouldUseDashboard() bool {
 		return false
 	}
 
-	// Disable dashboards when running with a controller that's not "user"
+	// Disable dashboards for CI/automated controllers
 	// This prevents Bubble Tea alt-screen mode from interfering with CI test output capture
+	// Allow dashboard for interactive user commands (user, venv, etc.)
 	controller := common.ControllerType
-	if controller != "" && controller != "user" {
-		common.Trace("Dashboard disabled: running with controller %q", controller)
+	disabledControllers := map[string]bool{
+		"citests":  true,
+		"cloud":    true,
+		"rcc.test": true,
+		"internal": true,
+	}
+	if disabledControllers[controller] {
+		common.Trace("Dashboard disabled: running with CI controller %q", controller)
 		return false
 	}
 
@@ -388,6 +395,16 @@ func NewRobotRunDashboard(robotName string) Dashboard {
 		return &noopDashboard{}
 	}
 
+	// Check if unified dashboard is already running - use it instead of creating new one
+	unified := GetUnifiedDashboard()
+	if unified != nil && unified.IsRunning() {
+		common.Trace("Using existing unified dashboard for robot: %s", robotName)
+		// Transition the unified dashboard to robot mode
+		unified.TransitionToRobotPhase(robotName, "")
+		// Return a wrapper that delegates to the unified dashboard
+		return &unifiedRobotWrapper{unified: unified, robotName: robotName}
+	}
+
 	// Use Bubble Tea dashboard for modern UI with alt-screen mode
 	teaDashboard := NewTeaRobotDashboard(robotName)
 	if teaDashboard != nil {
@@ -398,6 +415,68 @@ func NewRobotRunDashboard(robotName string) Dashboard {
 	// Fallback to noop if Bubble Tea fails to initialize
 	common.Trace("Bubble Tea init failed, returning noop")
 	return &noopDashboard{}
+}
+
+// unifiedRobotWrapper wraps the unified dashboard for robot execution
+type unifiedRobotWrapper struct {
+	unified   *UnifiedDashboard
+	robotName string
+}
+
+func (w *unifiedRobotWrapper) Start() {
+	// Dashboard is already running, just ensure we're in robot mode
+	w.unified.TransitionToRobotPhase(w.robotName, "")
+}
+
+func (w *unifiedRobotWrapper) Stop(success bool) {
+	// Let the unified dashboard handle stopping
+	w.unified.Stop(success)
+}
+
+func (w *unifiedRobotWrapper) Update(state DashboardState) {
+	w.unified.Update(state)
+}
+
+func (w *unifiedRobotWrapper) SetStep(index int, status StepStatus, message string) {
+	w.unified.SetStep(index, status, message)
+}
+
+func (w *unifiedRobotWrapper) AddOutput(line string) {
+	w.unified.AddOutput(line)
+}
+
+// SetEnvironmentInfo sets environment details for the robot run
+func (w *unifiedRobotWrapper) SetEnvironmentInfo(envHash, workingDir, envPath string) {
+	// Store in RobotState for display
+	if w.unified != nil && w.unified.model != nil {
+		w.unified.mu.Lock()
+		// Could add these to RobotState if needed
+		w.unified.mu.Unlock()
+	}
+}
+
+// SetContextInfo sets context details for the robot run
+func (w *unifiedRobotWrapper) SetContextInfo(contextName, platform string, workers, cpus int) {
+	if w.unified != nil && w.unified.model != nil {
+		w.unified.mu.Lock()
+		w.unified.model.RobotState.Workers = workers
+		w.unified.mu.Unlock()
+	}
+}
+
+// SetTaskName sets the current task name
+func (w *unifiedRobotWrapper) SetTaskName(taskName string) {
+	w.unified.SetTaskName(taskName)
+}
+
+// AddWarning adds a warning message
+func (w *unifiedRobotWrapper) AddWarning(warning string) {
+	w.unified.AddWarning(warning)
+}
+
+// AddNotice adds a notice message
+func (w *unifiedRobotWrapper) AddNotice(notice string) {
+	w.unified.AddNotice(notice)
 }
 
 // DownloadDashboard implementation (Layout C)

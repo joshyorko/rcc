@@ -169,16 +169,20 @@ func (it *Task) TeeWithSink(folder string, stdoutSink, stderrSink io.Writer, int
 	defer errfile.Close()
 
 	// Create multi-writers that include the dashboard sinks
+	// When using dashboard sink, don't write to terminal stdout/stderr to avoid
+	// output appearing below the alt-screen dashboard
 	var stdout io.Writer
 	if stdoutSink != nil {
-		stdout = io.MultiWriter(it.stdout(), outfile, stdoutSink)
+		// Dashboard mode - only write to file and dashboard
+		stdout = io.MultiWriter(outfile, stdoutSink)
 	} else {
 		stdout = io.MultiWriter(it.stdout(), outfile)
 	}
 
 	var stderr io.Writer
 	if stderrSink != nil {
-		stderr = io.MultiWriter(os.Stderr, errfile, stderrSink)
+		// Dashboard mode - only write to file and dashboard
+		stderr = io.MultiWriter(errfile, stderrSink)
 	} else {
 		stderr = io.MultiWriter(os.Stderr, errfile)
 	}

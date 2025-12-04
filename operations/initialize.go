@@ -215,13 +215,15 @@ func templateByName(name string, internal bool) ([]byte, error) {
 	}
 	unzipper, err := newUnzipper(zipfile, false)
 	if err != nil {
-		return nil, err
+		// Can't open templates.zip, fall back to embedded blobs
+		return blobs.Asset(blobname)
 	}
 	defer unzipper.Close()
 	zipname := fmt.Sprintf("%s.zip", name)
 	blob, err := unzipper.Asset(zipname)
 	if err != nil {
-		return nil, err
+		// Template not found in downloaded zip, fall back to embedded blobs
+		return blobs.Asset(blobname)
 	}
 	if blob != nil {
 		return blob, nil
