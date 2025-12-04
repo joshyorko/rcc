@@ -3,9 +3,9 @@ package conda_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/blobs"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/hamlet"
+	"github.com/joshyorko/rcc/blobs"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/hamlet"
 )
 
 func second(_ interface{}, version string) string {

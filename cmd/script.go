@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/operations"
 
 	"github.com/spf13/cobra"
 )

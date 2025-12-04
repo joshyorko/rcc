@@ -26,7 +26,7 @@ func Values[Key, Value comparable](incoming map[Key]Value) []Value {
 
 func Keys[Key comparable, Value any](incoming map[Key]Value) []Key {
 	result := make([]Key, 0, len(incoming))
-	for key, _ := range incoming {
+	for key := range incoming {
 		result = append(result, key)
 	}
 	return Sort(result)

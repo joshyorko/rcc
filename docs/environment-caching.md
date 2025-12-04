@@ -28,7 +28,7 @@ Holotree can fit hundreds of unique environments in a small space.
 
 There are other significant changes and improvements in Holotree regarding [relocation](<https://en.wikipedia.org/wiki/Relocation_(computing)>) and [file locking](https://en.wikipedia.org/wiki/File_locking).
 
-The implementation is already available in [RCC v10](https://github.com/robocorp/rcc/blob/master/docs/changelog.md), and we are rolling out it to our developer tools, applications and Control Room during Q3 2021.
+The implementation is already available in [RCC v10](https://github.com/joshyorko/rcc/blob/master/docs/changelog.md), and we are rolling out it to our developer tools, applications and Control Room during Q3 2021.
 
 ### Relocation and file locking
 

@@ -3,8 +3,8 @@ package operations_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/operations"
 )
 
 func TestCanRemoveWindowsNewlines(t *testing.T) {

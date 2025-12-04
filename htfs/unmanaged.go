@@ -5,9 +5,9 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
 )
 
 type unmanaged struct {

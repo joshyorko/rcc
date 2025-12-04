@@ -6,11 +6,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/robocorp/rcc/cloud"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/set"
-	"github.com/robocorp/rcc/settings"
+	"github.com/joshyorko/rcc/cloud"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/set"
+	"github.com/joshyorko/rcc/settings"
 	"gopkg.in/yaml.v2"
 )
 
@@ -82,7 +82,7 @@ func networkDiagnostics(config *Configuration, target *common.DiagnosticStatus) 
 	}
 	target.Details["tls-lookup-time"] = tlsStopwatch.Text()
 	if len(hostnames) > 1 && len(tlsRoots) == 1 {
-		for name, _ := range tlsRoots {
+		for name := range tlsRoots {
 			target.Details["tls-proxy-firewall"] = name
 		}
 	} else {

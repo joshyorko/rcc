@@ -8,16 +8,16 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/robocorp/rcc/anywork"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/journal"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/robot"
-	"github.com/robocorp/rcc/settings"
-	"github.com/robocorp/rcc/xviper"
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/journal"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/robot"
+	"github.com/joshyorko/rcc/settings"
+	"github.com/joshyorko/rcc/xviper"
 )
 
 type CatalogPuller func(string, string, bool) error

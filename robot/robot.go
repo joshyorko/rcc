@@ -10,11 +10,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/shell"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/shell"
 
 	"gopkg.in/yaml.v2"
 )
@@ -329,7 +329,7 @@ func (it *robot) IgnoreFiles() []string {
 func (it *robot) AvailableTasks() []string {
 	tasks := it.taskMap(false)
 	result := make([]string, 0, len(tasks))
-	for name, _ := range tasks {
+	for name := range tasks {
 		result = append(result, fmt.Sprintf("%q", name))
 	}
 	sort.Strings(result)

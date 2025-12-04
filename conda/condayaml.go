@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 
 	"gopkg.in/yaml.v2"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 
 	"github.com/spf13/viper"
 )

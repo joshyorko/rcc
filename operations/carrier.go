@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
 const (

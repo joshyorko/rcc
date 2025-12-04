@@ -9,10 +9,10 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
 	"gopkg.in/yaml.v2"
 )
 
@@ -156,7 +156,7 @@ func SideBySideViewOfDependencies(goldenfile, wantedfile string) (err error) {
 	injectDiffmap(diffmap, want, 0)
 	injectDiffmap(diffmap, gold, 1)
 	keyset := make([]string, 0, len(diffmap))
-	for key, _ := range diffmap {
+	for key := range diffmap {
 		keyset = append(keyset, key)
 	}
 	sort.Strings(keyset)

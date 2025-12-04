@@ -1,6 +1,6 @@
 package pathlib
 
-import "github.com/robocorp/rcc/common"
+import "github.com/joshyorko/rcc/common"
 
 var (
 	Lockless bool

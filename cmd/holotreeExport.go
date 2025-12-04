@@ -5,9 +5,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/htfs"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/spf13/cobra"
 )
 

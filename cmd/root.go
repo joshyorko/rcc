@@ -7,13 +7,13 @@ import (
 	"runtime/pprof"
 	"strings"
 
-	"github.com/robocorp/rcc/anywork"
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/pathlib"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/set"
-	"github.com/robocorp/rcc/xviper"
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/set"
+	"github.com/joshyorko/rcc/xviper"
 
 	"github.com/spf13/cobra"
 )
@@ -118,7 +118,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $%s/rcc.yaml)", common.Product.HomeVariable()))
 	rootCmd.PersistentFlags().StringVar(&anythingIgnore, "anything", "", "freeform string value that can be set without any effect, for example CLI versioning/reference")
 
-	rootCmd.PersistentFlags().BoolVarP(&productFakeFlag, "sema4ai", "", false, "Select Sema4.ai toolset strategy.")
 	rootCmd.PersistentFlags().BoolVarP(&productFakeFlag, "robocorp", "", false, "Select Robocorp toolset strategy.")
 	rootCmd.PersistentFlags().BoolVarP(&common.NoBuild, "no-build", "", false, "never allow building new environments, only use what exists already in hololib (also RCC_NO_BUILD=1)")
 	rootCmd.PersistentFlags().BoolVarP(&common.NoRetryBuild, "no-retry-build", "", false, "no retry in case of first environment build fails, just report error immediately")

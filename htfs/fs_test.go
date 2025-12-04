@@ -7,10 +7,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/htfs"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/htfs"
 )
 
 func TestHTFSspecification(t *testing.T) {

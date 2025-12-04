@@ -333,7 +333,7 @@ Identity            Controller  Space  Blueprint         Full path
 
 ### How to get understanding on holotree?
 
-See: https://github.com/robocorp/rcc/blob/master/docs/environment-caching.md
+See: https://github.com/joshyorko/rcc/blob/master/docs/environment-caching.md
 
 ### How to activate holotree environment?
 
@@ -1027,7 +1027,7 @@ That is rcc download site with two categories of:
 
 ### See changelog from git repo ...
 
-https://github.com/robocorp/rcc/blob/master/docs/changelog.md
+https://github.com/joshyorko/rcc/blob/master/docs/changelog.md
 
 ### See that from your version of rcc directly ...
 
@@ -1040,5 +1040,5 @@ rcc docs changelog
 
 Sure. See following URL.
 
-https://github.com/robocorp/rcc/blob/master/docs/recipes.md
+https://github.com/joshyorko/rcc/blob/master/docs/recipes.md
 

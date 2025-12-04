@@ -3,8 +3,8 @@ package operations_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/operations"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/operations"
 )
 
 func TestCreateCommunityLocation(t *testing.T) {
@@ -15,5 +15,5 @@ func TestCreateCommunityLocation(t *testing.T) {
 	must_be.Equal("https://path.to/safe-robot.zip", operations.CommunityLocation("https://path.to/safe-robot.zip", "ignored"))
 	must_be.Equal("https://github.com/foobart/twitter-bot/archive/main.zip", operations.CommunityLocation("github.com/foobart/twitter-bot", "main"))
 	must_be.Equal("https://github.com/foobart/twitter-bot/archive/master.zip", operations.CommunityLocation("foobart/twitter-bot", "master"))
-	must_be.Equal("https://github.com/robocorp/twitter-bot/archive/main.zip", operations.CommunityLocation("twitter-bot", "main"))
+	must_be.Equal("https://github.com/joshyorko/fetch-repos-bot/archive/main.zip", operations.CommunityLocation("joshyorko/fetch-repos-bot", "main"))
 }

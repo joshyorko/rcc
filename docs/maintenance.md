@@ -41,9 +41,8 @@ Some of those effects might be:
 ## Maintenace and product families
 
 Since v18 of rcc, there are two different product families present. To
-explicitely maintain specific product family holotree, then either
-`--robocorp` or `--sema4ai` flag should be given. Both product families
-have their separate holotree libraries and spaces.
+explicitely maintain specific product family holotree, then
+`--robocorp` flag should be given.
 
 ## Deleting catalogs and spaces
 

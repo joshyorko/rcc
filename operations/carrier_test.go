@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/operations"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/operations"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
 func TestCanUseCarrier(t *testing.T) {

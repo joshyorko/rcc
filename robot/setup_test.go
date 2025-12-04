@@ -3,8 +3,8 @@ package robot_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/robot"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/robot"
 )
 
 func TestCanEmptyEnvironmentWontBreakThings(t *testing.T) {

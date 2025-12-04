@@ -12,7 +12,7 @@ Implement a new CLI command `rcc robot unpack` that allows users to extract the 
 ## Technical Context
 
 **Language/Version**: Go 1.20+
-**Primary Dependencies**: `github.com/spf13/cobra` (CLI), `archive/zip` (Standard Lib), `github.com/robocorp/rcc/common` (Logging/Utils)
+**Primary Dependencies**: `github.com/spf13/cobra` (CLI), `archive/zip` (Standard Lib), `github.com/joshyorko/rcc/common` (Logging/Utils)
 **Storage**: Filesystem (Read zip, Write files)
 **Testing**: Go `testing` package (Unit tests for extraction logic and command execution)
 **Target Platform**: Linux, Windows, macOS

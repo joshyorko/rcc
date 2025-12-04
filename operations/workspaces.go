@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/robocorp/rcc/cloud"
+	"github.com/joshyorko/rcc/cloud"
 )
 
 const (

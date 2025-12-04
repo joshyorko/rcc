@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/conda"
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/pretty"
 
 	"github.com/spf13/cobra"
 )

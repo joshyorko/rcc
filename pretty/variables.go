@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/mattn/go-isatty"
-	"github.com/robocorp/rcc/common"
+	"github.com/joshyorko/rcc/common"
 )
 
 var (

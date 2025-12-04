@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/pathlib"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
 const (
@@ -78,7 +78,7 @@ func parseJson(content string) (map[string]string, error) {
 
 func diffStringMaps(before, after map[string]string) map[string]string {
 	result := make(map[string]string)
-	for key, _ := range before {
+	for key := range before {
 		_, ok := after[key]
 		if !ok {
 			result[key] = ""

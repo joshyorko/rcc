@@ -16,11 +16,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/pretty"
-	"github.com/robocorp/rcc/set"
-	"github.com/robocorp/rcc/settings"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/set"
+	"github.com/joshyorko/rcc/settings"
 	"gopkg.in/yaml.v2"
 )
 

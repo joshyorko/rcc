@@ -3,8 +3,8 @@ package settings_test
 import (
 	"testing"
 
-	"github.com/robocorp/rcc/hamlet"
-	"github.com/robocorp/rcc/settings"
+	"github.com/joshyorko/rcc/hamlet"
+	"github.com/joshyorko/rcc/settings"
 )
 
 func TestCanCallEntropyFunction(t *testing.T) {

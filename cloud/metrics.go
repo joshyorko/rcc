@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/robocorp/rcc/common"
-	"github.com/robocorp/rcc/fail"
-	"github.com/robocorp/rcc/settings"
-	"github.com/robocorp/rcc/xviper"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/fail"
+	"github.com/joshyorko/rcc/settings"
+	"github.com/joshyorko/rcc/xviper"
 )
 
 var (

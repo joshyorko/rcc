@@ -54,37 +54,96 @@ def noassets(c):
                 print(f"Error removing {file_path}: {e}")
 
 
-def download_link(version, platform, filename):
-    base = os.environ.get("RCC_DOWNLOADS_BASE", "https://downloads.robocorp.com")
-    # Ensure no trailing slash on base to avoid double slashes
+def get_official_micromamba_url(version, platform):
+    """
+    Get the official micromamba download URL from micro.mamba.pm (conda-forge).
+
+    This uses the official mamba-org distribution instead of Robocorp's mirror.
+    The binaries are identical (verified by SHA256), but using the official source
+    eliminates dependency on Robocorp's CDN for this open-source fork.
+    """
+    # Map our platform names to conda-forge platform names
+    platform_map = {
+        "linux64": "linux-64",
+        "macos64": "osx-64",
+        "windows64": "win-64",
+    }
+    conda_platform = platform_map.get(platform)
+    if not conda_platform:
+        raise ValueError(f"Unknown platform: {platform}")
+
+    # Strip 'v' prefix if present - official API uses bare version numbers (e.g., "1.5.8" not "v1.5.8")
+    if version.startswith("v"):
+        version = version[1:]
+
+    # Allow override via environment variable for custom mirrors
+    base = os.environ.get("RCC_MICROMAMBA_BASE", "https://micro.mamba.pm/api/micromamba")
     base = base.rstrip("/")
-    return f"{base}/micromamba/{version}/{platform}/{filename}"
+    return f"{base}/{conda_platform}/{version}"
 
 
 @task
 def micromamba(c):
-    """Download micromamba files"""
+    """Download micromamba files from official conda-forge source"""
+    import gzip
+    import tempfile
+
     with open("assets/micromamba_version.txt", "r", encoding="utf-8") as f:
         version = f.read().strip()
     print(f"Using micromamba version {version}")
 
     platforms = {
+        "linux64": "linux_amd64",
         "macos64": "darwin_amd64",
         "windows64": "windows_amd64",
-        "linux64": "linux_amd64",
     }
 
+    # Use a cross-platform temporary directory
+    tmp_dir = tempfile.gettempdir()
+
     for platform, arch in platforms.items():
-        filename = "micromamba.exe" if platform == "windows64" else "micromamba"
-        url = download_link(version, platform, filename)
         output = f"blobs/assets/micromamba.{arch}"
-        if os.path.exists(output + ".gz"):
-            print(f"Asset {output}.gz already exists, skipping")
+        output_gz = output + ".gz"
+        if os.path.exists(output_gz):
+            print(f"Asset {output_gz} already exists, skipping")
             continue
-        print(f"Downloading {url} to {output}")
-        c.run(f"curl -o {output} {url}")
+
+        url = get_official_micromamba_url(version, platform)
+        print(f"Downloading from official source: {url}")
+
+        # Create extraction directory
+        extract_dir = os.path.join(tmp_dir, "rcc_micromamba_extract")
+        os.makedirs(extract_dir, exist_ok=True)
+
+        # Download the archive
+        archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
+        c.run(f'curl -sL "{url}" -o "{archive_path}"')
+
+        # Extract the binary from the archive
+        # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
+        import tarfile
+        with tarfile.open(archive_path, "r:bz2") as tar:
+            tar.extractall(path=extract_dir)
+
+        # Find and move the binary
+        if platform == "windows64":
+            # Windows archive has binary at Library/bin/micromamba.exe
+            src_binary = os.path.join(extract_dir, "Library", "bin", "micromamba.exe")
+        else:
+            # Unix archives have binary at bin/micromamba
+            src_binary = os.path.join(extract_dir, "bin", "micromamba")
+
+        shutil.move(src_binary, output)
+
+        # Compress using Python's gzip module (cross-platform)
         print(f"Compressing {output}")
-        c.run(f"gzip -f -9 {output}")
+        with open(output, "rb") as f_in:
+            with gzip.open(output_gz, "wb", compresslevel=9) as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        os.remove(output)
+
+        # Cleanup
+        shutil.rmtree(extract_dir, ignore_errors=True)
 
 
 @task(pre=[micromamba])
@@ -143,6 +202,12 @@ def toc(c):
     """Update table of contents on docs/ directory"""
     c.run(f"{PYTHON} scripts/toc.py")
     print("Ran scripts/toc.py")
+
+@task
+def deadcode(c):
+    """Update table of contents on docs/ directory"""
+    c.run(f"{PYTHON} scripts/deadcode.py")
+    print("Ran scripts/deadcode.py")
 
 
 @task(pre=[toc])

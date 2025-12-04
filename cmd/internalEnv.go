@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/robocorp/rcc/pretty"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/spf13/cobra"
 )
 
