@@ -10,6 +10,7 @@ import (
 	"github.com/joshyorko/rcc/anywork"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/interactive"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
 	"github.com/joshyorko/rcc/set"
@@ -19,14 +20,15 @@ import (
 )
 
 var (
-	anythingIgnore  string
-	profilefile     string
-	profiling       *os.File
-	versionFlag     bool
-	silentFlag      bool
-	debugFlag       bool
-	traceFlag       bool
+	anythingIgnore   string
+	profilefile      string
+	profiling        *os.File
+	versionFlag      bool
+	silentFlag       bool
+	debugFlag        bool
+	traceFlag        bool
 	productFakeFlag bool // this is handled in common init
+	tuiModeFlag     bool
 
 	excludedCommands = []string{"completion"}
 )
@@ -71,6 +73,13 @@ var rootCmd = &cobra.Command{
 communicating with %s Control Room, and managing virtual environments where
 tasks can be developed, debugged, and run.`, common.Product.Name()),
 	Run: func(cmd *cobra.Command, args []string) {
+		if tuiModeFlag {
+			err := interactive.Run()
+			if err != nil {
+				pretty.Exit(1, "Interactive mode error: %v", err)
+			}
+			return
+		}
 		if versionFlag {
 			common.Stdout("%s\n", common.Version)
 		} else {
@@ -111,6 +120,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "Show rcc version and exit.")
+	rootCmd.Flags().BoolVarP(&tuiModeFlag, "interactive", "i", false, "Launch interactive TUI mode.")
 
 	rootCmd.PersistentFlags().StringVar(&profilefile, "pprof", "", "Filename to save profiling information.")
 	rootCmd.PersistentFlags().StringVar(&common.ControllerType, "controller", "user", "internal, DO NOT USE (unless you know what you are doing)")

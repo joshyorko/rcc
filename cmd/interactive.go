@@ -1,20 +1,39 @@
 package cmd
 
 import (
-	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/interactive"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/spf13/cobra"
 )
 
 var interactiveCmd = &cobra.Command{
 	Use:     "interactive",
-	Aliases: []string{"i"},
-	Short:   "Group of interactive commands. For human users. Do not use in automation.",
-	Long: `This group of commands are interactive, asking questions from user when needed.
-Do not try to use these in automation, they will fail there.`,
+	Aliases: []string{"tui"},
+	Short:   "Launch interactive TUI mode.",
+	Long: `Launch an interactive terminal user interface for navigating
+and managing RCC commands, robots, and environments.
+
+Navigation:
+  1-5        Switch between views (Home, Commands, Robots, Envs, Logs)
+  j/k        Move down/up
+  h/l        Collapse/expand (in tree views)
+  Enter      Select item
+  q          Quit
+
+Views:
+  1 - Home         System information and quick actions
+  2 - Commands     Browse available RCC commands
+  3 - Robots       Detect and manage robots in current directory
+  4 - Environments View and manage holotree environments
+  5 - Logs         View activity log`,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := interactive.Run()
+		if err != nil {
+			pretty.Exit(1, "Interactive mode error: %v", err)
+		}
+	},
 }
 
 func init() {
-	if common.Product.IsLegacy() {
-		rootCmd.AddCommand(interactiveCmd)
-	}
+	rootCmd.AddCommand(interactiveCmd)
 }
