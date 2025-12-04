@@ -152,6 +152,13 @@ func SideBySideViewOfDependencies(goldenfile, wantedfile string) (err error) {
 		return fmt.Errorf("Running against old environment, and no dependencies.yaml.")
 	}
 
+	// Skip the verbose dependency table output in interactive mode
+	// The dashboard provides visual feedback instead
+	// Also skip if dashboard is currently active
+	if pretty.Interactive || pretty.IsDashboardActive() {
+		return nil
+	}
+
 	diffmap := make(map[string][2]int)
 	injectDiffmap(diffmap, want, 0)
 	injectDiffmap(diffmap, gold, 1)

@@ -4,12 +4,14 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/wizard"
 	"github.com/spf13/cobra"
 )
 
 var (
-	removeCheckRetries int
-	unusedDays         int
+	removeCheckRetries      int
+	unusedDays              int
+	holotreeRemoveYesFlag   bool
 )
 
 func holotreeRemove(catalogs []string) {
@@ -52,7 +54,20 @@ var holotreeRemoveCmd = &cobra.Command{
 		if unusedDays > 0 {
 			args = append(args, allUnusedCatalogs(unusedDays)...)
 		}
-		holotreeRemove(selectCatalogs(args))
+
+		// Confirm removal unless --yes flag is provided
+		catalogs := selectCatalogs(args)
+		if len(catalogs) > 0 {
+			confirmed, err := wizard.Confirm("Remove the selected holotree catalog(s)?", holotreeRemoveYesFlag)
+			if err != nil {
+				pretty.Exit(1, "Error: %v", err)
+			}
+			if !confirmed {
+				return
+			}
+		}
+
+		holotreeRemove(catalogs)
 		if removeCheckRetries > 0 {
 			checkLoop(removeCheckRetries)
 		} else {
@@ -65,5 +80,6 @@ var holotreeRemoveCmd = &cobra.Command{
 func init() {
 	holotreeRemoveCmd.Flags().IntVarP(&removeCheckRetries, "check", "c", 0, "Additionally run holotree check with this many times.")
 	holotreeRemoveCmd.Flags().IntVarP(&unusedDays, "unused", "", 0, "Remove idle/unused catalog entries based on idle days when value is above given limit.")
+	wizard.AddYesFlag(holotreeRemoveCmd, &holotreeRemoveYesFlag)
 	holotreeCmd.AddCommand(holotreeRemoveCmd)
 }

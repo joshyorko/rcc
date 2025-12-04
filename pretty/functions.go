@@ -28,6 +28,10 @@ func Ok() error {
 }
 
 func JustOnce(format string, rest ...interface{}) {
+	// Suppress when dashboard is active
+	if IsDashboardActive() {
+		return
+	}
 	message := fmt.Sprintf(format, rest...)
 	if !onlyOnceMessages[message] {
 		onlyOnceMessages[message] = true
@@ -41,21 +45,37 @@ func DebugNote(format string, rest ...interface{}) {
 }
 
 func Note(format string, rest ...interface{}) {
+	// Suppress when dashboard is active
+	if IsDashboardActive() {
+		return
+	}
 	niceform := fmt.Sprintf("%s%sNote: %s%s", Cyan, Bold, format, Reset)
 	common.Log(niceform, rest...)
 }
 
 func Warning(format string, rest ...interface{}) {
+	// Suppress when dashboard is active
+	if IsDashboardActive() {
+		return
+	}
 	niceform := fmt.Sprintf("%sWarning: %s%s", Yellow, format, Reset)
 	common.Log(niceform, rest...)
 }
 
 func Highlight(format string, rest ...interface{}) {
+	// Suppress when dashboard is active
+	if IsDashboardActive() {
+		return
+	}
 	niceform := fmt.Sprintf("%s%s%s", Magenta, format, Reset)
 	common.Log(niceform, rest...)
 }
 
 func Lowlight(format string, rest ...interface{}) {
+	// Suppress when dashboard is active
+	if IsDashboardActive() {
+		return
+	}
 	niceform := fmt.Sprintf("%s%s%s", Grey, format, Reset)
 	common.Log(niceform, rest...)
 }
@@ -87,10 +107,13 @@ func RccPointOfView(context string, err error) {
 		message = fmt.Sprintf("@@@  %s FAILURE, reason: %q. See details above.  @@@", explain, err)
 		journal = fmt.Sprintf("%s FAILURE, reason: %s", explain, err)
 	}
-	banner := strings.Repeat("@", len(message))
-	printer(banner)
-	printer(message)
-	printer(banner)
+	// Skip printing banners when dashboard is active - they'll see the result in the dashboard
+	if !IsDashboardActive() {
+		banner := strings.Repeat("@", len(message))
+		printer(banner)
+		printer(message)
+		printer(banner)
+	}
 	common.RunJournal("robot exit", journal, "rcc point of view")
 }
 
@@ -111,7 +134,13 @@ func progress(color string, step int, form string, details ...interface{}) {
 	ProgressMark = time.Now()
 	delta := ProgressMark.Sub(previous).Round(1 * time.Millisecond).Seconds()
 	message := fmt.Sprintf(form, details...)
-	common.Log("%s####  Progress: %02d/%d  %s  %8.3fs  %s%s", color, step, maxSteps, common.Version, delta, message, Reset)
+
+	// Skip terminal output if dashboard is active (dashboard handles display)
+	if !IsDashboardActive() {
+		common.Log("%s####  Progress: %02d/%d  %s  %8.3fs  %s%s", color, step, maxSteps, common.Version, delta, message, Reset)
+	}
+
+	// Always log to timeline and journal regardless of dashboard state
 	common.Timeline("%d/%d %s", step, maxSteps, message)
 	common.RunJournal("environment", "build", "Progress: %02d/%d  %s  %8.3fs  %s", step, maxSteps, common.Version, delta, message)
 }

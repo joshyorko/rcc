@@ -79,3 +79,10 @@ Or via `settings.yaml` in `$ROBOCORP_HOME`.
 - Source edits belong in `assets/` and Go packages
 - Run `inv assets` to regenerate `blobs/`
 - Micromamba is embedded and extracted at runtime; change download base via `RCC_DOWNLOADS_BASE`
+
+## Active Technologies
+- Go 1.20 + Cobra (CLI), go-isatty (terminal detection), existing `pretty` and `wizard` packages (002-ui-wizard-enhancements)
+- N/A (no data persistence changes) (002-ui-wizard-enhancements)
+
+## Recent Changes
+- 002-ui-wizard-enhancements: Added Go 1.20 + Cobra (CLI), go-isatty (terminal detection), existing `pretty` and `wizard` packages

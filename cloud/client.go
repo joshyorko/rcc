@@ -12,10 +12,27 @@ import (
 
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
 	"github.com/joshyorko/rcc/set"
 	"github.com/joshyorko/rcc/settings"
 	"github.com/joshyorko/rcc/xviper"
 )
+
+// progressWriter wraps an io.Writer to track progress and update progress bar
+type progressWriter struct {
+	writer      io.Writer
+	progressBar pretty.ProgressIndicator
+	written     int64
+}
+
+func (pw *progressWriter) Write(p []byte) (n int, err error) {
+	n, err = pw.writer.Write(p)
+	pw.written += int64(n)
+	if pw.progressBar != nil {
+		pw.progressBar.Update(pw.written, "")
+	}
+	return n, err
+}
 
 type internalClient struct {
 	endpoint string
@@ -250,13 +267,85 @@ func Download(url, filename string) error {
 	defer out.Close()
 
 	digest := sha256.New()
-	many := io.MultiWriter(out, digest)
 
 	common.Debug("Downloading %s <%s> -> %s", url, response.Status, filename)
 
-	bytecount, err := io.Copy(many, response.Body)
-	if err != nil {
-		return err
+	// Use dashboard for large downloads (> 1MB), progress bar for smaller ones
+	contentLength := response.ContentLength
+	useDashboard := contentLength > 1024*1024 && pretty.Interactive
+
+	var dashboard pretty.Dashboard
+	var progressBar pretty.ProgressIndicator
+
+	if useDashboard {
+		// Use DownloadDashboard for large files
+		dashboard = pretty.NewDownloadDashboard(filename, contentLength)
+		dashboard.Start()
+		defer dashboard.Stop(true)
+	} else if contentLength > 0 && pretty.Interactive {
+		// Use simple progress bar for smaller files
+		progressBar = pretty.NewProgressBar(fmt.Sprintf("Downloading %s", filename), contentLength)
+		progressBar.Start()
+		defer progressBar.Stop(true)
+	}
+
+	// Create progress-tracking writer
+	pw := &progressWriter{
+		writer:      io.MultiWriter(out, digest),
+		progressBar: progressBar,
+		written:     0,
+	}
+
+	// For dashboard, we need to update it during the copy
+	bytecount := int64(0)
+	if useDashboard {
+		// Manual copy loop to update dashboard
+		buf := make([]byte, 32*1024) // 32KB buffer
+		for {
+			nr, er := response.Body.Read(buf)
+			if nr > 0 {
+				nw, ew := pw.writer.Write(buf[0:nr])
+				if nw < 0 || nr < nw {
+					nw = 0
+					if ew == nil {
+						ew = fmt.Errorf("invalid write result")
+					}
+				}
+				bytecount += int64(nw)
+				if ew != nil {
+					err = ew
+					break
+				}
+				if nr != nw {
+					err = io.ErrShortWrite
+					break
+				}
+
+				// Update dashboard with progress
+				dashboard.Update(pretty.DashboardState{
+					Progress: float64(bytecount) / float64(contentLength),
+				})
+			}
+			if er != nil {
+				if er != io.EOF {
+					err = er
+				}
+				break
+			}
+		}
+		if err != nil {
+			dashboard.Stop(false)
+			return err
+		}
+	} else {
+		// Use standard io.Copy for progress bar or no progress
+		bytecount, err = io.Copy(pw, response.Body)
+		if err != nil {
+			if progressBar != nil {
+				progressBar.Stop(false)
+			}
+			return err
+		}
 	}
 
 	common.Timeline("downloaded %d bytes to %s", bytecount, filename)

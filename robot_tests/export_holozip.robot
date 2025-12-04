@@ -11,7 +11,7 @@ Export setup
   Remove Directory  tmp/guest  True
   Remove Directory  tmp/standalone  True
   Prepare Robocorp Home    tmp/developer
-  Fire And Forget   build/rcc ht delete 4e67cd8
+  Fire And Forget   build/rcc ht delete --yes 4e67cd8
 
 Export teardown
   Prepare Robocorp Home    tmp/robocorp
@@ -72,7 +72,7 @@ Goal: See contents of that robot
     Must Have    hololib.zip
 
 Goal: Can delete author space
-    Step    build/rcc ht delete 4e67cd8_fcb4b859
+    Step    build/rcc ht delete --yes 4e67cd8_fcb4b859
     Step    build/rcc ht ls
     Use STDERR
     Wont Have    4e67cd8_fcb4b859
@@ -82,7 +82,7 @@ Goal: Can delete author space
     Wont Have    guest
 
 Goal: Can run as guest
-    Fire And Forget    build/rcc ht delete 4e67cd8
+    Fire And Forget    build/rcc ht delete --yes 4e67cd8
     Prepare Robocorp Home    tmp/guest
   Step        build/rcc task run --controller citests -s guest -r tmp/standalone/robot.yaml -t "run example task"
     Use STDERR

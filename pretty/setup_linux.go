@@ -1,6 +1,6 @@
 package pretty
 
 func localSetup(bool) {
-	Iconic = false
+	Iconic = true // Enable Unicode icons on Linux (modern terminals support them)
 	Disabled = false
 }

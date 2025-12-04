@@ -23,7 +23,7 @@ Prepare Local
     Comment    Make sure that tests do not use shared holotree
     Fire And Forget    build/rcc ht init --revoke
 
-    Fire And Forget    build/rcc ht delete 4e67cd8
+    Fire And Forget    build/rcc ht delete --yes 4e67cd8
 
     Comment    Verify micromamba is installed or download and install it.
     Step    build/rcc ht vars --controller citests robot_tests/conda.yaml

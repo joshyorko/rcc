@@ -155,3 +155,95 @@ def run_and_check_expected_output(
                 f"Expected: {expected_output!r}\n"
                 f"Actual: {contents!r}"
             )
+
+
+def run_and_stream_output(command: str, title: str = "UI Output") -> tuple[int, str, str]:
+    """
+    Run a command and stream its output to the terminal in real-time.
+    This allows you to see spinners, progress bars, and dashboard UI as they render.
+    Also captures and returns the output for assertions.
+
+    Args:
+        command: The command to run
+        title: A title to display before the output
+
+    Returns:
+        tuple of (return_code, stdout, stderr)
+    """
+    import os
+    import select
+    import io
+
+    command = fix_command(command)
+    cwd = get_cwd()
+    log_command(command, cwd)
+
+    # Print header
+    print(f"\n{'='*70}", flush=True)
+    print(f"  {title}", flush=True)
+    print(f"  Command: {command}", flush=True)
+    print(f"{'='*70}", flush=True)
+    print(f"--- OUTPUT (stdout + stderr interleaved) ---", flush=True)
+
+    # Run with output going directly to terminal AND captured
+    # Use unbuffered mode and inherit terminal for proper ANSI rendering
+    task = subprocess.Popen(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        cwd=cwd,
+        bufsize=0,  # Unbuffered
+    )
+
+    stdout_data = io.StringIO()
+    stderr_data = io.StringIO()
+
+    # Read from both streams and print in real-time
+    import threading
+
+    def read_stream(stream, storage, prefix=""):
+        """Read from stream and print + store"""
+        while True:
+            line = stream.readline()
+            if not line:
+                break
+            decoded = line.decode('utf-8', errors='replace')
+            storage.write(decoded)
+            # Print to terminal with ANSI codes preserved
+            sys.stdout.write(decoded)
+            sys.stdout.flush()
+
+    # Start threads to read both streams
+    stdout_thread = threading.Thread(target=read_stream, args=(task.stdout, stdout_data))
+    stderr_thread = threading.Thread(target=read_stream, args=(task.stderr, stderr_data))
+
+    stdout_thread.start()
+    stderr_thread.start()
+
+    # Wait for completion
+    stdout_thread.join()
+    stderr_thread.join()
+    task.wait()
+
+    print(f"\n{'='*70}", flush=True)
+    print(f"  Exit code: {task.returncode}", flush=True)
+    print(f"{'='*70}\n", flush=True)
+
+    return task.returncode, stdout_data.getvalue(), stderr_data.getvalue()
+
+
+def run_ui_sample(command: str, title: str = "UI Sample") -> tuple[int, str, str]:
+    """
+    Convenience function to run a command and display its UI output.
+    Streams output in real-time so you can see progress indicators,
+    spinners, and dashboards as they render.
+
+    Args:
+        command: The RCC command to run
+        title: Description of what this UI sample shows
+
+    Returns:
+        tuple of (return_code, stdout, stderr)
+    """
+    return run_and_stream_output(command, title)

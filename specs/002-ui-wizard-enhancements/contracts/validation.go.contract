@@ -1,0 +1,69 @@
+// Contract: Enhanced Validation Interface
+// Package: wizard
+// File: wizard/common.go (extends existing)
+//
+// This contract defines enhancements to the existing validation system.
+// Existing functions (memberValidation, regexpValidation) remain unchanged.
+
+package wizard
+
+// --- Existing Functions (unchanged) ---
+
+// memberValidation creates a validator that checks if input matches one of the allowed members.
+// Already exists in wizard/common.go - continue using as-is.
+// func memberValidation(members []string, erratic string) Validator
+
+// regexpValidation creates a validator that checks if input matches the given pattern.
+// Already exists in wizard/common.go - continue using as-is.
+// func regexpValidation(validator *regexp.Regexp, erratic string) Validator
+
+// --- Enhanced Validation Helpers ---
+
+// ValidateProjectName validates a robot project name.
+// Uses existing namePattern: ^[\w-]*$
+// Error message explains valid characters.
+//
+// Usage in wizard/create.go:
+//   name, err := ask("Project name", defaultName, ValidateProjectName())
+func ValidateProjectName() Validator
+
+// ValidateSelection creates a validator for a list selection.
+// Displays numbered options and validates the selection.
+//
+// Parameters:
+//   - options: List of valid choices
+//   - displayNames: Human-readable names for each option (optional, uses options if nil)
+//
+// Behavior:
+// - Accepts either the option value or its 1-based index number
+// - On invalid input, displays all options with numbers
+// - Error message: "Invalid selection. Choose from: 1) opt1, 2) opt2, ..."
+func ValidateSelection(options []string, displayNames []string) Validator
+
+// --- Display Helpers ---
+
+// ShowOptions displays a numbered list of options for selection prompts.
+// Used before ask() to show available choices.
+//
+// Parameters:
+//   - options: List of choices to display
+//   - displayNames: Human-readable names (optional)
+//
+// Output format:
+//   1) Python (Standard Python automation)
+//   2) Browser (Browser-based automation)
+//   3) Custom (Custom template)
+func ShowOptions(options []string, displayNames []string)
+
+// --- Implementation Requirements ---
+
+// All validators must:
+// - Return true for valid input
+// - Display error in pretty.Red on invalid input
+// - Allow re-prompting (handled by ask() loop)
+// - Handle empty input appropriately (depends on whether default exists)
+
+// Error messages must:
+// - Be actionable (tell user what to do)
+// - List valid options when applicable
+// - Use consistent color coding (red for errors)

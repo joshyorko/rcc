@@ -4,12 +4,14 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/wizard"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	deleteSpace string
+	deleteSpace           string
+	holotreeDeleteYesFlag bool
 )
 
 func deleteByPartialIdentity(partials []string) {
@@ -42,6 +44,16 @@ var holotreeDeleteCmd = &cobra.Command{
 			partials = append(partials, htfs.ControllerSpaceName([]byte(common.ControllerIdentity()), []byte(deleteSpace)))
 		}
 		pretty.Guard(len(partials) > 0, 1, "Must provide either --space flag, or partial environment identity!")
+
+		// Confirm deletion unless --yes flag is provided
+		confirmed, err := wizard.Confirm("Delete the selected holotree environment(s)?", holotreeDeleteYesFlag)
+		if err != nil {
+			pretty.Exit(1, "Error: %v", err)
+		}
+		if !confirmed {
+			return
+		}
+
 		deleteByPartialIdentity(partials)
 		pretty.Ok()
 	},
@@ -51,4 +63,5 @@ func init() {
 	holotreeCmd.AddCommand(holotreeDeleteCmd)
 	holotreeDeleteCmd.Flags().BoolVarP(&dryFlag, "dryrun", "d", false, "Don't delete environments, just show what would happen.")
 	holotreeDeleteCmd.Flags().StringVarP(&deleteSpace, "space", "s", "", "Client specific name to identify environment to delete.")
+	wizard.AddYesFlag(holotreeDeleteCmd, &holotreeDeleteYesFlag)
 }

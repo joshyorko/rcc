@@ -160,7 +160,14 @@ var holotreeVariablesCmd = &cobra.Command{
 			defer common.Stopwatch("Holotree variables command lasted").Report()
 		}
 
+		// Start a delayed spinner for long-running environment expansion
+		spinner := pretty.NewDelayedSpinner("Resolving environment...")
+		spinner.Start()
+
 		env := holotreeExpandEnvironment(args, robotFile, environmentFile, workspaceId, validityTime, holotreeForce, common.DevDependencies)
+
+		spinner.Stop(true)
+
 		if holotreeJson {
 			asJson(env)
 		} else {

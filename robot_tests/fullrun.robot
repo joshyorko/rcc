@@ -6,7 +6,7 @@ Suite Setup  Fullrun setup
 
 *** Keywords ***
 Fullrun setup
-  Fire And Forget   build/rcc ht delete 4e67cd8
+  Fire And Forget   build/rcc ht delete --yes 4e67cd8
 
 *** Test cases ***
 

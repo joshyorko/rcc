@@ -150,6 +150,46 @@ func (it *Task) Observed(sink io.Writer, interactive bool) (int, error) {
 	return it.execute(stdin, stdout, stderr)
 }
 
+// TeeWithSink combines Tee (logging to files) with additional sink writers
+// This allows dashboard integration while maintaining file logging
+func (it *Task) TeeWithSink(folder string, stdoutSink, stderrSink io.Writer, interactive bool) (int, error) {
+	err := os.MkdirAll(folder, 0755)
+	if err != nil {
+		return -600, err
+	}
+	outfile, err := pathlib.Create(filepath.Join(folder, "stdout.log"))
+	if err != nil {
+		return -601, err
+	}
+	defer outfile.Close()
+	errfile, err := pathlib.Create(filepath.Join(folder, "stderr.log"))
+	if err != nil {
+		return -602, err
+	}
+	defer errfile.Close()
+
+	// Create multi-writers that include the dashboard sinks
+	var stdout io.Writer
+	if stdoutSink != nil {
+		stdout = io.MultiWriter(it.stdout(), outfile, stdoutSink)
+	} else {
+		stdout = io.MultiWriter(it.stdout(), outfile)
+	}
+
+	var stderr io.Writer
+	if stderrSink != nil {
+		stderr = io.MultiWriter(os.Stderr, errfile, stderrSink)
+	} else {
+		stderr = io.MultiWriter(os.Stderr, errfile)
+	}
+
+	var stdin io.Reader = os.Stdin
+	if !interactive {
+		stdin = bytes.NewReader([]byte{})
+	}
+	return it.execute(stdin, stdout, stderr)
+}
+
 func (it *Task) Tracked(sink io.Writer, interactive bool) (int, error) {
 	var stdin io.Reader = os.Stdin
 	if !interactive {

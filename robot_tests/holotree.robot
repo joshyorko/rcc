@@ -6,7 +6,7 @@ Suite Setup  Holotree setup
 
 *** Keywords ***
 Holotree setup
-  Fire And Forget   build/rcc ht delete 4e67cd8
+  Fire And Forget   build/rcc ht delete --yes 4e67cd8
 
 *** Test cases ***
 
@@ -124,7 +124,7 @@ Goal: Liveonly works and uses virtual holotree
   Must Have   (virtual)
 
 Goal: Do quick cleanup on environments
-  Step        build/rcc config cleanup --controller citests --quick
+  Step        build/rcc config cleanup --yes --controller citests --quick
   Must Exist  %{ROBOCORP_HOME}/micromamba/
   Wont Exist  %{ROBOCORP_HOME}/pkgs/
   Wont Exist  %{ROBOCORP_HOME}/pipcache/

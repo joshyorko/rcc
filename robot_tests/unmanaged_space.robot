@@ -6,7 +6,7 @@ Suite Setup  Holotree setup
 
 *** Keywords ***
 Holotree setup
-  Fire And Forget   build/rcc ht delete 4e67cd8
+  Fire And Forget   build/rcc ht delete --yes 4e67cd8
 
 *** Test cases ***
 
@@ -120,7 +120,7 @@ Goal: Can see unmanaged spaces in listings
   Must Have   python39
 
 Goal: Can delete all unmanaged spaces with one command
-  Step        build/rcc holotree delete --controller citests UNMNGED_
+  Step        build/rcc holotree delete --yes --controller citests UNMNGED_
   Use STDERR
   Must Have   Removing UNMNGED_
 

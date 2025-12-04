@@ -1,0 +1,78 @@
+// Contract: Confirmation Prompt Interface
+// Package: wizard
+// File: wizard/confirm.go
+//
+// This contract defines the public API for confirmation prompts.
+// Implementation must satisfy these interfaces and behaviors.
+
+package wizard
+
+// Confirm prompts the user for a yes/no confirmation.
+//
+// Parameters:
+//   - question: The question to display (will have " [y/N]:" appended)
+//   - force: If true, return true immediately without prompting (--yes flag)
+//
+// Returns:
+//   - confirmed: true if user entered y/Y or force=true
+//   - error: non-nil if non-interactive and force=false, or on input error
+//
+// Behavior:
+// - If force=true: returns (true, nil) immediately
+// - If !pretty.Interactive && !force: returns (false, ErrConfirmationRequired)
+// - If Interactive: displays colored prompt, validates input via memberValidation
+// - Default is "n" (No) - pressing Enter alone rejects
+// - Accepts: y, Y (confirm), n, N, Enter (reject)
+// - Invalid input: shows red error message, re-prompts
+//
+// Display format:
+//   ? Are you sure you want to delete this? [y/N]: _
+//   (green "?" prefix, white question text, grey "[y/N]:", reset for input)
+func Confirm(question string, force bool) (confirmed bool, err error)
+
+// ConfirmDangerous is like Confirm but requires typing "yes" instead of just "y".
+// Use for particularly destructive operations.
+//
+// Parameters:
+//   - question: The question to display (will have " [type 'yes' to confirm]:" appended)
+//   - force: If true, return true immediately without prompting
+//
+// Returns:
+//   - confirmed: true if user typed "yes" (case-insensitive) or force=true
+//   - error: non-nil if non-interactive and force=false, or on input error
+//
+// Behavior:
+// - Requires exact string "yes" (case-insensitive)
+// - Any other input (including "y") is treated as rejection
+func ConfirmDangerous(question string, force bool) (confirmed bool, err error)
+
+// ErrConfirmationRequired is returned when confirmation is needed but
+// the terminal is non-interactive and --yes flag was not provided.
+var ErrConfirmationRequired = errors.New("confirmation required: use --yes flag in non-interactive mode")
+
+// --- Flag Integration ---
+
+// AddYesFlag adds the --yes/-y flag to a Cobra command.
+// Use this helper to ensure consistent flag naming across commands.
+//
+// Usage in cmd/*.go:
+//   var yesFlag bool
+//   func init() {
+//       wizard.AddYesFlag(deleteCmd, &yesFlag)
+//   }
+//   func runDelete(cmd *cobra.Command, args []string) error {
+//       confirmed, err := wizard.Confirm("Delete all environments?", yesFlag)
+//       ...
+//   }
+func AddYesFlag(cmd *cobra.Command, target *bool)
+
+// --- Implementation Requirements ---
+
+// Must use existing patterns:
+// - ask() function for input loop
+// - memberValidation() for y/n validation
+// - pretty.Green, pretty.White, pretty.Grey, pretty.Red for colors
+// - common.Stdout() for output
+
+// Error messages must be displayed in pretty.Red
+// Prompts must respect pretty.Interactive flag

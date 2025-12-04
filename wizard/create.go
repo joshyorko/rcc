@@ -3,7 +3,6 @@ package wizard
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -18,10 +17,6 @@ const (
 	newline = '\n'
 )
 
-var (
-	digitPattern = regexp.MustCompile("^\\d+$")
-)
-
 func choose(question, label string, candidates []string) (string, error) {
 	keys := []string{}
 	common.Stdout("%s%s:%s\n", pretty.Grey, label, pretty.Reset)
@@ -31,12 +26,18 @@ func choose(question, label string, candidates []string) (string, error) {
 		common.Stdout("  %s%2d: %s%s%s\n", pretty.Grey, key, pretty.White, candidate, pretty.Reset)
 	}
 	common.Stdout("\n")
-	selectable := strings.Join(keys, "|")
-	pattern, err := regexp.Compile(fmt.Sprintf("^(?:%s)?$", selectable))
-	if err != nil {
-		return "", err
+
+	// Build error message listing valid options
+	var optionsList strings.Builder
+	for i, key := range keys {
+		if i > 0 {
+			optionsList.WriteString(", ")
+		}
+		optionsList.WriteString(key)
 	}
-	reply, err := ask(question, "1", regexpValidation(pattern, "Give selections number from above list."))
+	errorMsg := fmt.Sprintf("Invalid selection. Choose a number from: %s", optionsList.String())
+
+	reply, err := ask(question, "1", memberValidation(keys, errorMsg))
 	if err != nil {
 		return "", err
 	}
@@ -51,7 +52,7 @@ func Create(arguments []string) error {
 	common.Stdout("\n")
 
 	warning(len(arguments) > 1, "You provided more than one argument, but only the first one will be\nused as the name.")
-	robotName, err := ask("Give robot name", firstOf(arguments, "my-first-robot"), regexpValidation(namePattern, "Use just normal english word characters and no spaces!"))
+	robotName, err := ask("Give robot name", firstOf(arguments, "my-first-robot"), ValidateProjectName())
 
 	if err != nil {
 		return err

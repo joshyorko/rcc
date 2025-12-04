@@ -1,0 +1,73 @@
+// Contract: Progress Indicator Interface
+// Package: pretty
+// File: pretty/progress.go
+//
+// This contract defines the public API for progress indicators.
+// Implementation must satisfy these interfaces and behaviors.
+
+package pretty
+
+import "time"
+
+// ProgressIndicator provides visual feedback for long-running operations.
+// Thread-safe for concurrent Start/Stop calls.
+type ProgressIndicator interface {
+    // Start begins displaying the progress indicator.
+    // No-op if pretty.Interactive is false.
+    // Logs "Progress started: {message}" at trace level.
+    Start()
+
+    // Stop halts the progress indicator and cleans up terminal state.
+    // success=true logs "Progress completed", success=false logs "Progress failed".
+    // Always restores cursor visibility and resets formatting.
+    Stop(success bool)
+
+    // Update changes the status message (for spinners) or progress (for bars).
+    // For SpinnerType: updates Message field.
+    // For BarType: updates Current field and recalculates percentage.
+    Update(current int64, message string)
+
+    // IsRunning returns true if the indicator is currently animating.
+    IsRunning() bool
+}
+
+// NewSpinner creates a spinner-style progress indicator.
+// message: Status text displayed next to spinner animation.
+// Returns a ProgressIndicator ready to Start().
+//
+// Behavior:
+// - Animation runs at 100ms intervals (10 fps)
+// - Uses frames: ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏ (braille dots)
+// - Falls back to ASCII frames (| / - \) if TERM suggests limited support
+// - Suppressed entirely when Interactive=false
+func NewSpinner(message string) ProgressIndicator
+
+// NewProgressBar creates a bar-style progress indicator.
+// message: Status text displayed above/beside the bar.
+// total: Total units of work (must be > 0).
+// Returns a ProgressIndicator ready to Start().
+//
+// Behavior:
+// - Bar width adapts to terminal width (min 20 chars, max width-20 for message)
+// - Shows percentage and ETA when total > 0
+// - Format: "[=====>    ] 45% 2m30s remaining"
+// - Suppressed entirely when Interactive=false
+func NewProgressBar(message string, total int64) ProgressIndicator
+
+// --- Internal implementation requirements ---
+
+// Animation must use csif() for all ANSI escape sequences:
+// - Hide cursor: csif("?25l")
+// - Show cursor: csif("?25h")
+// - Carriage return: \r
+// - Clear to end of line: csif("0K")
+
+// Signal handling must:
+// - Catch SIGINT (Ctrl+C) and SIGTERM
+// - Call cleanup() before allowing process exit
+// - Exit with code 130 for SIGINT (Unix convention)
+
+// Trace logging must use common.Trace() for:
+// - Start event
+// - Stop event (success or failure)
+// - Error events

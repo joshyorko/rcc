@@ -2,12 +2,15 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
+	"github.com/joshyorko/rcc/anywork"
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/conda"
@@ -29,6 +32,55 @@ var (
 	rcHosts  = []string{"RC_API_SECRET_HOST", "RC_API_WORKITEM_HOST"}
 	rcTokens = []string{"RC_API_SECRET_TOKEN", "RC_API_WORKITEM_TOKEN"}
 )
+
+// dashboardWriter wraps an io.Writer and feeds output lines to a dashboard
+type dashboardWriter struct {
+	underlying io.Writer
+	dashboard  pretty.Dashboard
+	buffer     []byte
+}
+
+func newDashboardWriter(underlying io.Writer, dashboard pretty.Dashboard) *dashboardWriter {
+	return &dashboardWriter{
+		underlying: underlying,
+		dashboard:  dashboard,
+		buffer:     make([]byte, 0, 256),
+	}
+}
+
+// NewDashboardWriterForTest is exported for testing purposes
+func NewDashboardWriterForTest(underlying io.Writer, dashboard pretty.Dashboard) io.Writer {
+	return newDashboardWriter(underlying, dashboard)
+}
+
+func (w *dashboardWriter) Write(p []byte) (n int, err error) {
+	// Write to underlying writer first if it exists
+	if w.underlying != nil {
+		n, err = w.underlying.Write(p)
+		if err != nil {
+			return n, err
+		}
+	} else {
+		// If no underlying writer, just report the bytes as written
+		n = len(p)
+	}
+
+	// Process lines for dashboard
+	for _, b := range p {
+		if b == '\n' {
+			// Complete line - send to dashboard
+			line := string(w.buffer)
+			if w.dashboard != nil && line != "" {
+				w.dashboard.AddOutput(line)
+			}
+			w.buffer = w.buffer[:0]
+		} else {
+			w.buffer = append(w.buffer, b)
+		}
+	}
+
+	return n, nil
+}
 
 type TokenPeriod struct {
 	ValidityTime int // minutes
@@ -192,7 +244,12 @@ func LoadTaskWithEnvironment(packfile, theTask string, force bool) (bool, robot.
 		return true, config, todo, ""
 	}
 
+	// Enable unified dashboard persistence
+	pretty.SetKeepDashboardAlive(true)
 	label, _, err := htfs.NewEnvironment(config.CondaConfigFile(), config.Holozip(), true, force, PullCatalog)
+	// Disable persistence so it can be stopped later
+	pretty.SetKeepDashboardAlive(false)
+
 	if err != nil {
 		pretty.RccPointOfView(newEnvironment, err)
 		pretty.Exit(4, "Error: %v", err)
@@ -285,6 +342,53 @@ func findExecutableOrDie(searchPath pathlib.PathParts, executable string) string
 	return fullpath
 }
 
+// deriveRobotName extracts a robot name from the robot yaml filename
+// Falls back to "Robot" if extraction fails
+func deriveRobotName(robotYamlPath string) string {
+	if robotYamlPath == "" {
+		return "Robot"
+	}
+
+	// Get the directory name (typically the robot project directory)
+	dir := filepath.Dir(robotYamlPath)
+	if dir != "" && dir != "." {
+		basename := filepath.Base(dir)
+		if basename != "" && basename != "." {
+			return basename
+		}
+	}
+
+	return "Robot"
+}
+
+// deriveTaskName extracts a task name from the commandline
+// For robot framework, tries to find the .robot file being executed
+func deriveTaskName(commandline []string) string {
+	if len(commandline) == 0 {
+		return "Main Task"
+	}
+
+	// Look for .robot files in arguments
+	for _, arg := range commandline {
+		if strings.HasSuffix(arg, ".robot") {
+			// Extract just the filename without path and extension
+			base := filepath.Base(arg)
+			name := strings.TrimSuffix(base, ".robot")
+			if name != "" {
+				return name
+			}
+		}
+	}
+
+	// Fall back to the executable name
+	executable := filepath.Base(commandline[0])
+	if executable != "" {
+		return executable
+	}
+
+	return "Main Task"
+}
+
 func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo robot.Task, label string, interactive bool, extraEnv map[string]string) {
 	common.Debug("Command line is: %v", template)
 	developmentEnvironment, err := robot.LoadEnvironmentSetup(flags.EnvironmentFile)
@@ -327,6 +431,64 @@ func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo ro
 	if err != nil {
 		pretty.Exit(9, "Error: %v", err)
 	}
+
+	// Create and start robot run dashboard EARLY to capture all output
+	var dashboard pretty.Dashboard
+	var stdoutWriter, stderrWriter io.Writer
+
+	// Use dashboard when terminal is interactive (has TTY) and output capture is enabled
+	if pretty.ShouldUseDashboard() && !common.NoOutputCapture {
+		// Derive robot and task names from the configuration
+		robotName := deriveRobotName(flags.RobotYaml)
+		taskName := deriveTaskName(task)
+
+		common.Debug("Creating RobotRunDashboard for robot=%s, task=%s", robotName, taskName)
+
+		// Try to get existing unified dashboard
+		if unified := pretty.GetUnifiedDashboard(); unified != nil {
+			dashboard = unified
+			unified.TransitionToRobotPhase(robotName, taskName)
+		} else {
+			dashboard = pretty.NewRobotRunDashboard(robotName)
+		}
+
+		// Start the dashboard before any output
+		if dashboard != nil {
+			dashboard.Start()
+
+			// Update dashboard with task name and environment info
+			// Only for non-unified dashboards (UnifiedDashboard handles this via TransitionToRobotPhase)
+			if _, isUnified := dashboard.(*pretty.UnifiedDashboard); !isUnified {
+				dashboard.SetStep(0, pretty.StepRunning, taskName)
+			}
+
+			// Feed environment and context info to dashboard if it supports it
+			if teaDash, ok := dashboard.(*pretty.TeaRobotDashboard); ok {
+				teaDash.SetEnvironmentInfo(
+					common.EnvironmentHash,
+					directory,
+					label,
+				)
+				// Set context info like RCC point of view
+				who, _ := user.Current()
+				host, _ := os.Hostname()
+				contextName := fmt.Sprintf("%s@%s", who.Username, host)
+				teaDash.SetContextInfo(contextName, common.Platform(), int(anywork.Scale()), runtime.NumCPU())
+			}
+
+			// Create dashboard writers that feed output to the dashboard
+			stdoutWriter = newDashboardWriter(nil, dashboard)
+			stderrWriter = newDashboardWriter(nil, dashboard)
+		}
+	}
+
+	// Ensure dashboard is stopped on exit
+	defer func() {
+		if dashboard != nil {
+			dashboard.Stop(err == nil)
+		}
+	}()
+
 	if !flags.NoPipFreeze && !flags.Assistant && !common.Silent() && !interactive {
 		wantedfile, _ := config.DependenciesFile()
 		ExecutionEnvironmentListing(wantedfile, label, searchPath, directory, outputDir, environment)
@@ -362,19 +524,33 @@ func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo ro
 
 	common.Debug("about to run command - %v", task)
 	journal.CurrentBuildEvent().RobotStarts()
+
 	pipe := WatchChildren(os.Getpid(), 550*time.Millisecond)
 	shell.WithInterrupt(func() {
 		exitcode := 0
 		if common.NoOutputCapture {
 			exitcode, err = shell.New(environment, directory, task...).Execute(interactive)
 		} else {
-			exitcode, err = shell.New(environment, directory, task...).Tee(outputDir, interactive)
+			// Use TeeWithSink to integrate dashboard while maintaining file logging
+			if dashboard != nil {
+				exitcode, err = shell.New(environment, directory, task...).TeeWithSink(outputDir, stdoutWriter, stderrWriter, interactive)
+			} else {
+				exitcode, err = shell.New(environment, directory, task...).Tee(outputDir, interactive)
+			}
 		}
 		if exitcode != 0 {
 			details := fmt.Sprintf("%s_%d_%08x", common.Platform(), exitcode, uint32(exitcode))
 			cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.cli.run.failure", details)
 		}
 	})
+
+	// Stop dashboard IMMEDIATELY after robot execution completes
+	// This ensures clean transition before post-run output (RCC point of view, etc.)
+	if dashboard != nil {
+		dashboard.Stop(err == nil)
+		dashboard = nil // Prevent double-stop in defer
+	}
+
 	pretty.RccPointOfView(actualRun, err)
 	seen, ok := <-pipe
 	suberr := SubprocessWarning(seen, ok)
