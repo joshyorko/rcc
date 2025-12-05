@@ -414,6 +414,7 @@ func (v *RemoteView) Update(msg tea.Msg) (View, tea.Cmd) {
 		if msg.success {
 			v.serverRunning = true
 			v.serverPID = msg.pid
+			v.downloadProgress = fmt.Sprintf("Server started! PID %d, listening on %s:%d", msg.pid, v.serverHostname, v.serverPort)
 		} else {
 			v.downloadProgress = "Start failed: " + msg.err
 		}
