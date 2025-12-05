@@ -10,6 +10,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 	"github.com/joshyorko/rcc/fail"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
@@ -155,7 +156,7 @@ func SideBySideViewOfDependencies(goldenfile, wantedfile string) (err error) {
 	// Skip the verbose dependency table output in interactive mode
 	// The dashboard provides visual feedback instead
 	// Also skip if dashboard is currently active
-	if pretty.Interactive || pretty.IsDashboardActive() {
+	if pretty.Interactive || dashcore.IsDashboardActive() {
 		return nil
 	}
 

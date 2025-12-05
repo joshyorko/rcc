@@ -1,4 +1,4 @@
-package pretty
+package interactive
 
 import (
 	"fmt"
@@ -37,7 +37,7 @@ type RootModel struct {
 	Spinner       spinner.Model
 	LogViewport   viewport.Model
 	ProgressModel teaprogress.Model
-	Styles        Styles
+	Styles        *Styles
 
 	// Tracking
 	Progress *ProgressTracker
@@ -62,8 +62,7 @@ func rootTickCmd() tea.Cmd {
 
 // NewRootModel creates a new RootModel with default settings
 func NewRootModel() *RootModel {
-	theme := DefaultTheme()
-	styles := NewStyles(theme)
+	styles := NewStyles()
 
 	// Create a beautiful spinner
 	s := spinner.New()
@@ -82,7 +81,7 @@ func NewRootModel() *RootModel {
 
 	// Log viewport - larger
 	vp := viewport.New(100, 12)
-	vp.Style = styles.LogBox
+	vp.Style = styles.Panel
 
 	// Get hostname for display
 	hostname, _ := os.Hostname()
@@ -274,14 +273,14 @@ func (m *RootModel) View() string {
 		m.Height,
 		lipgloss.Center,
 		lipgloss.Center,
-		m.Styles.Box.Width(boxWidth).Render(content),
+		m.Styles.Panel.Width(boxWidth).Render(content),
 	)
 }
 
 func (m *RootModel) renderHeader() string {
 	// Left: Logo + Title
 	logo := m.Styles.Title.Render("◆ RCC")
-	version := m.Styles.Subtext.Render(m.Version)
+	version := m.Styles.Subtle.Render(m.Version)
 	left := lipgloss.JoinHorizontal(lipgloss.Center, logo, " ", version)
 
 	// Right: Context info
@@ -319,9 +318,9 @@ func (m *RootModel) renderHeader() string {
 func (m *RootModel) renderSeparator() string {
 	width := m.contentWidth()
 	if Iconic {
-		return m.Styles.Label.Render(strings.Repeat("─", width))
+		return m.Styles.Subtle.Render(strings.Repeat("─", width))
 	}
-	return m.Styles.Label.Render(strings.Repeat("-", width))
+	return m.Styles.Subtle.Render(strings.Repeat("-", width))
 }
 
 func (m *RootModel) renderEnvironment() string {
@@ -337,8 +336,8 @@ func (m *RootModel) renderEnvironment() string {
 	}
 
 	// Title with count
-	title := fmt.Sprintf("Building Environment  %s", m.Styles.Subtext.Render(fmt.Sprintf("%d/%d", completed, total)))
-	b.WriteString(m.Styles.Text.Bold(true).Render(title))
+	title := fmt.Sprintf("Building Environment  %s", m.Styles.Subtle.Render(fmt.Sprintf("%d/%d", completed, total)))
+	b.WriteString(m.Styles.Title.Bold(true).Render(title))
 	b.WriteString("\n\n")
 
 	// System context info in table format
@@ -347,13 +346,13 @@ func (m *RootModel) renderEnvironment() string {
 		labelWidth := 12
 		formatLabel := func(label string) string {
 			paddedLabel := label + strings.Repeat(" ", labelWidth-len(label))
-			return m.Styles.Label.Render(paddedLabel)
+			return m.Styles.Subtle.Render(paddedLabel)
 		}
 
 		// User row - cyan accent color
 		if m.EnvState.Username != "" && m.EnvState.Hostname != "" {
 			b.WriteString(formatLabel("User"))
-			b.WriteString(m.Styles.Accent.Render(fmt.Sprintf("%s@%s", m.EnvState.Username, m.EnvState.Hostname)))
+			b.WriteString(m.Styles.Info.Render(fmt.Sprintf("%s@%s", m.EnvState.Username, m.EnvState.Hostname)))
 			b.WriteString("\n")
 		}
 
@@ -367,7 +366,7 @@ func (m *RootModel) renderEnvironment() string {
 				}
 			}
 			b.WriteString(formatLabel("Platform"))
-			b.WriteString(m.Styles.Subtext.Render(platform))
+			b.WriteString(m.Styles.Subtle.Render(platform))
 			b.WriteString("\n")
 		}
 
@@ -388,7 +387,7 @@ func (m *RootModel) renderEnvironment() string {
 		// Config file row - subtle color (skip if it's the same as blueprint hash)
 		if m.EnvState.ConfigFile != "" && m.EnvState.ConfigFile != m.EnvState.Blueprint {
 			b.WriteString(formatLabel("Config"))
-			b.WriteString(m.Styles.Subtext.Render(m.EnvState.ConfigFile))
+			b.WriteString(m.Styles.Subtle.Render(m.EnvState.ConfigFile))
 			b.WriteString("\n")
 		}
 
@@ -418,7 +417,7 @@ func (m *RootModel) renderEnvironment() string {
 			if len(msg) > 40 {
 				msg = msg[:37] + "..."
 			}
-			line += m.Styles.Label.Render("  " + msg)
+			line += m.Styles.Subtle.Render("  " + msg)
 		}
 
 		b.WriteString(style.Render(line))
@@ -429,7 +428,7 @@ func (m *RootModel) renderEnvironment() string {
 	b.WriteString("\n")
 	progress := float64(completed) / float64(maxInt(total, 1))
 	progressBar := m.ProgressModel.ViewAs(progress)
-	percentage := m.Styles.Subtext.Render(fmt.Sprintf(" %3.0f%%", progress*100))
+	percentage := m.Styles.Subtle.Render(fmt.Sprintf(" %3.0f%%", progress*100))
 	b.WriteString(lipgloss.JoinHorizontal(lipgloss.Center, progressBar, percentage))
 
 	// ETA
@@ -438,7 +437,7 @@ func (m *RootModel) renderEnvironment() string {
 		avgTime := elapsed / time.Duration(completed)
 		eta := avgTime * time.Duration(total-completed)
 		b.WriteString("\n")
-		b.WriteString(m.Styles.Label.Render(fmt.Sprintf("  ETA: %s", formatDurationShort(eta))))
+		b.WriteString(m.Styles.Subtle.Render(fmt.Sprintf("  ETA: %s", formatDurationShort(eta))))
 	}
 
 	return b.String()
@@ -448,14 +447,14 @@ func (m *RootModel) renderRobotRun() string {
 	var b strings.Builder
 
 	// Title
-	b.WriteString(m.Styles.Text.Bold(true).Render("Running Robot"))
+	b.WriteString(m.Styles.Title.Bold(true).Render("Running Robot"))
 	b.WriteString("\n\n")
 
 	// Table layout helper
 	labelWidth := 12
 	formatRow := func(label, value string) string {
 		paddedLabel := label + strings.Repeat(" ", labelWidth-len(label))
-		return m.Styles.Label.Render(paddedLabel) + value + "\n"
+		return m.Styles.Subtle.Render(paddedLabel) + value + "\n"
 	}
 
 	// Robot info section
@@ -463,7 +462,7 @@ func (m *RootModel) renderRobotRun() string {
 	if robotName == "" {
 		robotName = "Unknown"
 	}
-	b.WriteString(formatRow("Robot", m.Styles.Text.Bold(true).Render(robotName)))
+	b.WriteString(formatRow("Robot", m.Styles.Title.Bold(true).Render(robotName)))
 
 	taskName := m.RobotState.TaskName
 	if taskName == "" {
@@ -476,10 +475,10 @@ func (m *RootModel) renderRobotRun() string {
 	if hostname == "" {
 		hostname = "-"
 	}
-	b.WriteString(formatRow("Host", m.Styles.Text.Render(hostname)))
+	b.WriteString(formatRow("Host", m.Styles.ListItem.Render(hostname)))
 
 	if m.RobotState.Workers > 0 {
-		b.WriteString(formatRow("Workers", m.Styles.Text.Render(fmt.Sprintf("%d", m.RobotState.Workers))))
+		b.WriteString(formatRow("Workers", m.Styles.ListItem.Render(fmt.Sprintf("%d", m.RobotState.Workers))))
 	}
 
 	b.WriteString("\n")
@@ -489,14 +488,14 @@ func (m *RootModel) renderRobotRun() string {
 	if status == "" {
 		status = "Executing..."
 	}
-	statusValue := m.Spinner.View() + " " + m.Styles.Accent.Render(status)
+	statusValue := m.Spinner.View() + " " + m.Styles.Info.Render(status)
 	b.WriteString(formatRow("Status", statusValue))
 
 	// Timing info
 	elapsed := time.Since(m.StartTime)
 
 	if m.RobotState.BuildTime > 0 {
-		b.WriteString(formatRow("Build Time", m.Styles.Subtext.Render(formatDurationShort(m.RobotState.BuildTime))))
+		b.WriteString(formatRow("Build Time", m.Styles.Subtle.Render(formatDurationShort(m.RobotState.BuildTime))))
 	}
 
 	b.WriteString(formatRow("Run Time", m.Styles.Success.Render(formatDurationShort(elapsed))))
@@ -505,11 +504,11 @@ func (m *RootModel) renderRobotRun() string {
 }
 
 func (m *RootModel) renderDiagnostics() string {
-	return m.Styles.Text.Render("Running diagnostics...")
+	return m.Styles.ListItem.Render("Running diagnostics...")
 }
 
 func (m *RootModel) renderDownload() string {
-	return m.Styles.Text.Render("Downloading...")
+	return m.Styles.ListItem.Render("Downloading...")
 }
 
 func (m *RootModel) renderLogSection() string {
@@ -521,7 +520,7 @@ func (m *RootModel) renderLogSection() string {
 	if stats != "" {
 		header += "  " + stats
 	}
-	b.WriteString(m.Styles.Label.Render(header))
+	b.WriteString(m.Styles.Subtle.Render(header))
 	b.WriteString("\n")
 
 	// Log content
@@ -545,12 +544,12 @@ func (m *RootModel) renderFooter() string {
 		if completed == len(m.EnvState.Steps) && len(m.EnvState.Steps) > 0 {
 			status = m.Styles.Success.Render("● Complete")
 		} else {
-			status = m.Spinner.View() + " " + m.Styles.Text.Render("Building...")
+			status = m.Spinner.View() + " " + m.Styles.ListItem.Render("Building...")
 		}
 	case ModeRobotRun:
-		status = m.Spinner.View() + " " + m.Styles.Text.Render("Running...")
+		status = m.Spinner.View() + " " + m.Styles.ListItem.Render("Running...")
 	default:
-		status = m.Spinner.View() + " " + m.Styles.Text.Render("Working...")
+		status = m.Spinner.View() + " " + m.Styles.ListItem.Render("Working...")
 	}
 
 	// Right: Key hints
@@ -577,7 +576,7 @@ func (m *RootModel) renderFooter() string {
 }
 
 func (m *RootModel) formatKeyHint(key, action string) string {
-	return m.Styles.KeyHint.Render(key) + " " + m.Styles.Label.Render(action)
+	return m.Styles.HelpKey.Render(key) + " " + m.Styles.Subtle.Render(action)
 }
 
 func (m *RootModel) renderFinal() string {
@@ -591,14 +590,14 @@ func (m *RootModel) renderFinal() string {
 		} else {
 			b.WriteString(m.Styles.Success.Render("[OK] "))
 		}
-		b.WriteString(m.Styles.Text.Render(fmt.Sprintf("Completed in %s", formatDurationShort(elapsed))))
+		b.WriteString(m.Styles.ListItem.Render(fmt.Sprintf("Completed in %s", formatDurationShort(elapsed))))
 	} else {
 		if Iconic {
 			b.WriteString(m.Styles.Error.Render("✗ "))
 		} else {
 			b.WriteString(m.Styles.Error.Render("[FAIL] "))
 		}
-		b.WriteString(m.Styles.Text.Render(fmt.Sprintf("Failed after %s", formatDurationShort(elapsed))))
+		b.WriteString(m.Styles.ListItem.Render(fmt.Sprintf("Failed after %s", formatDurationShort(elapsed))))
 	}
 
 	// Show error count if any

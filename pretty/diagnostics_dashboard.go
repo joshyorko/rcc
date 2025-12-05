@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 // diagnosticsCheck represents a single diagnostic check with its status
@@ -27,14 +28,14 @@ type diagnosticsDashboard struct {
 
 // Start begins the diagnostics dashboard rendering
 func (d *diagnosticsDashboard) Start() {
-	d.mu.Lock()
-	if d.running {
-		d.mu.Unlock()
+	d.Mu.Lock()
+	if d.Running {
+		d.Mu.Unlock()
 		return
 	}
-	d.running = true
-	d.startTime = time.Now()
-	d.mu.Unlock()
+	d.Running = true
+	d.StartTime = time.Now()
+	d.Mu.Unlock()
 
 	// Skip if not interactive
 	if !Interactive {
@@ -45,7 +46,7 @@ func (d *diagnosticsDashboard) Start() {
 	common.Trace("Starting diagnostics dashboard with %d checks", len(d.checks))
 
 	// Setup signal handlers for graceful cleanup
-	setupDashboardSignals(func() {
+	dashcore.SetupDashboardSignals(func() {
 		d.cleanup()
 	})
 
@@ -74,18 +75,18 @@ func (d *diagnosticsDashboard) Start() {
 	d.render()
 
 	// Start render loop
-	go d.startRenderLoop(d.render)
+	go d.StartRenderLoop(d.render)
 }
 
 // Stop ends the diagnostics dashboard and shows final state
 func (d *diagnosticsDashboard) Stop(success bool) {
-	d.mu.Lock()
-	if !d.running {
-		d.mu.Unlock()
+	d.Mu.Lock()
+	if !d.Running {
+		d.Mu.Unlock()
 		return
 	}
-	d.running = false
-	d.mu.Unlock()
+	d.Running = false
+	d.Mu.Unlock()
 
 	if !Interactive {
 		return
@@ -94,10 +95,10 @@ func (d *diagnosticsDashboard) Stop(success bool) {
 	common.Trace("Stopping diagnostics dashboard, success=%v", success)
 
 	// Signal render loop to stop
-	close(d.stopChan)
+	close(d.StopChan)
 
 	// Wait for render loop to finish
-	<-d.doneChan
+	<-d.DoneChan
 
 	// Render final state
 	d.render()
@@ -106,7 +107,7 @@ func (d *diagnosticsDashboard) Stop(success bool) {
 	d.cleanup()
 
 	// Log completion
-	duration := time.Since(d.startTime)
+	duration := time.Since(d.StartTime)
 	statusMsg := ""
 	if success {
 		statusMsg = fmt.Sprintf("%s✓%s Diagnostics completed in %v", Green, Reset, duration)
@@ -122,8 +123,8 @@ func (d *diagnosticsDashboard) Stop(success bool) {
 
 // Update updates the dashboard state (for generic state updates)
 func (d *diagnosticsDashboard) Update(state DashboardState) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.Mu.Lock()
+	defer d.Mu.Unlock()
 
 	// Update checks from state steps
 	for i, step := range state.Steps {
@@ -136,8 +137,8 @@ func (d *diagnosticsDashboard) Update(state DashboardState) {
 
 // SetStep updates a specific check's status and message
 func (d *diagnosticsDashboard) SetStep(index int, status StepStatus, message string) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.Mu.Lock()
+	defer d.Mu.Unlock()
 
 	if index >= 0 && index < len(d.checks) {
 		d.checks[index].Status = status
@@ -153,9 +154,9 @@ func (d *diagnosticsDashboard) AddOutput(line string) {
 
 // render draws the diagnostics dashboard
 func (d *diagnosticsDashboard) render() {
-	d.mu.Lock()
-	if !Interactive || !d.running {
-		d.mu.Unlock()
+	d.Mu.Lock()
+	if !Interactive || !d.Running {
+		d.Mu.Unlock()
 		return
 	}
 
@@ -164,7 +165,7 @@ func (d *diagnosticsDashboard) render() {
 	spinnerFrame := d.spinnerFrame
 	d.spinnerFrame = (d.spinnerFrame + 1) % 10 // Cycle through 10 spinner frames
 	version := d.version
-	d.mu.Unlock()
+	d.Mu.Unlock()
 
 	// Save cursor position (which should be in the scroll region)
 	SaveCursor()
@@ -324,24 +325,24 @@ func (d *diagnosticsDashboard) getCheckIconAndColor(status StepStatus, spinnerFr
 
 	switch status {
 	case StepComplete:
-		if Iconic {
+		if dashcore.Iconic {
 			return "✓", Green
 		}
 		return "+", Green
 	case StepFailed:
-		if Iconic {
+		if dashcore.Iconic {
 			return "✗", Red
 		}
 		return "x", Red
 	case StepSkipped:
 		// Use warning symbol for skipped (yellow)
-		if Iconic {
+		if dashcore.Iconic {
 			return "⚠", Yellow
 		}
 		return "!", Yellow
 	case StepRunning:
 		// Animated spinner
-		if Iconic {
+		if dashcore.Iconic {
 			frame := spinnerFrame % len(spinnerFrames)
 			return spinnerFrames[frame], Cyan
 		}
@@ -350,7 +351,7 @@ func (d *diagnosticsDashboard) getCheckIconAndColor(status StepStatus, spinnerFr
 	case StepPending:
 		fallthrough
 	default:
-		if Iconic {
+		if dashcore.Iconic {
 			return "○", Grey
 		}
 		return "o", Grey
@@ -421,7 +422,7 @@ func (d *diagnosticsDashboard) getSummaryLine(checks []diagnosticsCheck) string 
 
 	// Use Unicode vertical bar if iconic, otherwise pipe character
 	separator := " | "
-	if Iconic {
+	if dashcore.Iconic {
 		separator = " │ "
 	}
 

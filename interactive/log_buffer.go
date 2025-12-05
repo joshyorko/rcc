@@ -1,4 +1,4 @@
-package pretty
+package interactive
 
 import (
 	"fmt"
@@ -27,26 +27,26 @@ func NewLogBuffer(maxSize int) *LogBuffer {
 	return logbuf.NewLogBuffer(maxSize)
 }
 
-// Format returns a formatted log line using pretty.Styles
-func FormatLogEntry(e LogEntry, styles Styles, showTime bool) string {
+// FormatLogEntry returns a formatted log line using interactive.Styles
+func FormatLogEntry(e LogEntry, styles *Styles, showTime bool) string {
 	var b strings.Builder
 
 	// Time (optional)
 	if showTime {
 		timeStr := e.Time.Format("15:04:05")
-		b.WriteString(styles.Label.Render(timeStr))
+		b.WriteString(styles.Subtle.Render(timeStr))
 		b.WriteString(" ")
 	}
 
 	// Level icon with color
-	var levelStyle = styles.Text
+	var levelStyle = styles.ListItem
 	switch e.Level {
 	case LogTrace:
-		levelStyle = styles.Subtext
+		levelStyle = styles.Subtle
 	case LogDebug:
-		levelStyle = styles.Subtext
+		levelStyle = styles.Subtle
 	case LogInfo:
-		levelStyle = styles.Text
+		levelStyle = styles.ListItem
 	case LogWarn:
 		levelStyle = styles.Warning
 	case LogError:
@@ -57,21 +57,21 @@ func FormatLogEntry(e LogEntry, styles Styles, showTime bool) string {
 
 	// Source (if present)
 	if e.Source != "" {
-		b.WriteString(styles.Label.Render("[" + e.Source + "]"))
+		b.WriteString(styles.Subtle.Render("[" + e.Source + "]"))
 		b.WriteString(" ")
 	}
 
 	// Message
-	b.WriteString(styles.Text.Render(e.Message))
+	b.WriteString(styles.ListItem.Render(e.Message))
 
 	return b.String()
 }
 
 // RenderLogBuffer returns a formatted string of the N most recent logs
-func RenderLogBuffer(lb *LogBuffer, styles Styles, n int, showTime bool) string {
+func RenderLogBuffer(lb *LogBuffer, styles *Styles, n int, showTime bool) string {
 	entries := lb.Recent(n)
 	if len(entries) == 0 {
-		return styles.Label.Render("No logs yet...")
+		return styles.Subtle.Render("No logs yet...")
 	}
 
 	var lines []string
@@ -81,8 +81,8 @@ func RenderLogBuffer(lb *LogBuffer, styles Styles, n int, showTime bool) string 
 	return strings.Join(lines, "\n")
 }
 
-// FormatLogStats returns a formatted stats summary using pretty.Styles
-func FormatLogStats(lb *LogBuffer, styles Styles) string {
+// FormatLogStats returns a formatted stats summary using interactive.Styles
+func FormatLogStats(lb *LogBuffer, styles *Styles) string {
 	stats := lb.Stats()
 	if stats.Total == 0 {
 		return ""
@@ -95,7 +95,7 @@ func FormatLogStats(lb *LogBuffer, styles Styles) string {
 	if stats.Warns > 0 {
 		parts = append(parts, styles.Warning.Render(fmt.Sprintf("%d warnings", stats.Warns)))
 	}
-	parts = append(parts, styles.Subtext.Render(fmt.Sprintf("%d total", stats.Total)))
+	parts = append(parts, styles.Subtle.Render(fmt.Sprintf("%d total", stats.Total)))
 
 	return strings.Join(parts, " · ")
 }

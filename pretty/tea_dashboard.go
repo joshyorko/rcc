@@ -14,6 +14,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 // TeaEnvironmentDashboard is a Bubble Tea-based dashboard for environment builds
@@ -141,7 +142,7 @@ func (d *TeaEnvironmentDashboard) Start() {
 	d.mu.Unlock()
 
 	// Mark dashboard as active to suppress log output
-	setDashboardActive(true)
+	dashcore.SetDashboardActive(true)
 
 	// Suppress all log output during dashboard operation
 	common.SetLogInterceptor(func(message string) bool {
@@ -185,7 +186,7 @@ func (d *TeaEnvironmentDashboard) Stop(success bool) {
 
 	// Clear log interceptor
 	common.ClearLogInterceptor()
-	setDashboardActive(false)
+	dashcore.SetDashboardActive(false)
 
 	// Send quit message
 	if d.program != nil {

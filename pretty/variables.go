@@ -5,6 +5,7 @@ import (
 
 	"github.com/mattn/go-isatty"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 var (
@@ -55,6 +56,9 @@ func Setup() {
 	visualOutput := stdout && !Colorless
 
 	localSetup(Interactive)
+
+	// Sync Iconic setting to dashcore package
+	dashcore.Iconic = Iconic
 
 	common.Trace("Interactive mode enabled: %v; colors enabled: %v; icons enabled: %v", Interactive, !Disabled, Iconic)
 	if visualOutput && !Disabled {

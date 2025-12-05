@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 const (
@@ -29,7 +30,7 @@ func Ok() error {
 
 func JustOnce(format string, rest ...interface{}) {
 	// Suppress when dashboard is active
-	if IsDashboardActive() {
+	if dashcore.IsDashboardActive() {
 		return
 	}
 	message := fmt.Sprintf(format, rest...)
@@ -46,7 +47,7 @@ func DebugNote(format string, rest ...interface{}) {
 
 func Note(format string, rest ...interface{}) {
 	// Suppress when dashboard is active
-	if IsDashboardActive() {
+	if dashcore.IsDashboardActive() {
 		return
 	}
 	niceform := fmt.Sprintf("%s%sNote: %s%s", Cyan, Bold, format, Reset)
@@ -55,7 +56,7 @@ func Note(format string, rest ...interface{}) {
 
 func Warning(format string, rest ...interface{}) {
 	// Suppress when dashboard is active
-	if IsDashboardActive() {
+	if dashcore.IsDashboardActive() {
 		return
 	}
 	niceform := fmt.Sprintf("%sWarning: %s%s", Yellow, format, Reset)
@@ -64,7 +65,7 @@ func Warning(format string, rest ...interface{}) {
 
 func Highlight(format string, rest ...interface{}) {
 	// Suppress when dashboard is active
-	if IsDashboardActive() {
+	if dashcore.IsDashboardActive() {
 		return
 	}
 	niceform := fmt.Sprintf("%s%s%s", Magenta, format, Reset)
@@ -73,7 +74,7 @@ func Highlight(format string, rest ...interface{}) {
 
 func Lowlight(format string, rest ...interface{}) {
 	// Suppress when dashboard is active
-	if IsDashboardActive() {
+	if dashcore.IsDashboardActive() {
 		return
 	}
 	niceform := fmt.Sprintf("%s%s%s", Grey, format, Reset)
@@ -108,7 +109,7 @@ func RccPointOfView(context string, err error) {
 		journal = fmt.Sprintf("%s FAILURE, reason: %s", explain, err)
 	}
 	// Skip printing banners when dashboard is active - they'll see the result in the dashboard
-	if !IsDashboardActive() {
+	if !dashcore.IsDashboardActive() {
 		banner := strings.Repeat("@", len(message))
 		printer(banner)
 		printer(message)
@@ -136,7 +137,7 @@ func progress(color string, step int, form string, details ...interface{}) {
 	message := fmt.Sprintf(form, details...)
 
 	// Skip terminal output if dashboard is active (dashboard handles display)
-	if !IsDashboardActive() {
+	if !dashcore.IsDashboardActive() {
 		common.Log("%s####  Progress: %02d/%d  %s  %8.3fs  %s%s", color, step, maxSteps, common.Version, delta, message, Reset)
 	}
 

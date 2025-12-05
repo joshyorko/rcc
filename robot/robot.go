@@ -12,6 +12,7 @@ import (
 
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/dashcore"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
 	"github.com/joshyorko/rcc/shell"
@@ -550,7 +551,7 @@ func LoadRobotYaml(filename string, visible bool) (Robot, error) {
 	}
 	// Skip verbose robot.yaml output in interactive mode (dashboard will be shown instead)
 	// Also skip if dashboard is currently active
-	if visible && !pretty.Interactive && !pretty.IsDashboardActive() {
+	if visible && !pretty.Interactive && !dashcore.IsDashboardActive() {
 		common.Log("%q as robot.yaml is:\n%s", fullpath, string(content))
 	}
 	robot, err := robotFrom(content)

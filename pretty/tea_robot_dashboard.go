@@ -15,6 +15,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 // TeaRobotDashboard is a Bubble Tea-based dashboard for robot execution
@@ -179,7 +180,7 @@ func (d *TeaRobotDashboard) Start() {
 	d.mu.Unlock()
 
 	// Mark dashboard as active to suppress log output
-	setDashboardActive(true)
+	dashcore.SetDashboardActive(true)
 
 	// Intercept log output to capture notices and warnings
 	common.SetLogInterceptor(func(message string) bool {
@@ -232,7 +233,7 @@ func (d *TeaRobotDashboard) Stop(success bool) {
 
 	// Clear log interceptor
 	common.ClearLogInterceptor()
-	setDashboardActive(false)
+	dashcore.SetDashboardActive(false)
 
 	// Send quit message
 	if d.program != nil {

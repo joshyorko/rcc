@@ -1,6 +1,6 @@
 package pretty
 
-// Dashboard framework for RCC's UI enhancements (Phase 11: T079-T084)
+// Dashboard framework for RCC's UI enhancements
 //
 // This package provides the core dashboard system with interface and common functionality
 // for displaying interactive, real-time progress information in the terminal.
@@ -10,13 +10,17 @@ package pretty
 // - StepStatus: Enumeration for step states with visual representations
 // - DashboardState: Shared state structure across dashboard types
 // - baseDashboard: Common fields and functionality for dashboard implementations
-// - Factory functions: Create type-specific dashboards (stubs for now, implemented in later phases)
+// - Factory functions: Create type-specific dashboards
 //
 // Dashboard Detection:
-// Dashboards are enabled when:
+// Dashboards are DISABLED by default and must be explicitly enabled via:
+// - --dashboard flag on the command line
+// - RCC_DASHBOARD=1 environment variable
+//
+// Additional requirements for dashboard to display:
 // - Interactive mode is active (stdin/stdout/stderr are TTY)
 // - Terminal height >= 20 lines (minimum for useful dashboard display)
-// - RCC_NO_DASHBOARD environment variable is NOT set
+// - Not running in CI/automated controller mode
 //
 // Signal Handling:
 // All dashboards register SIGINT/SIGTERM handlers for graceful cleanup:
@@ -31,156 +35,43 @@ package pretty
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"strings"
-	"sync"
-	"sync/atomic"
-	"syscall"
 	"time"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
-// activeDashboard tracks if a dashboard is currently active
-// This is used to suppress redundant output from pretty.Progress() etc.
-var activeDashboard atomic.Int32
+// Type aliases for dashcore types
+type Dashboard = dashcore.Dashboard
+type StepStatus = dashcore.StepStatus
+type StepState = dashcore.StepState
+type DashboardState = dashcore.DashboardState
+type DashboardMode = dashcore.DashboardMode
+type EnvState = dashcore.EnvState
+type RobotState = dashcore.RobotState
+type EnvStep = dashcore.EnvStep
+type UnifiedUpdateMsg = dashcore.UnifiedUpdateMsg
 
-// keepDashboardAlive tracks if the dashboard should remain active after Stop()
-var keepDashboardAlive atomic.Bool
-
-// SetKeepDashboardAlive sets whether the dashboard should remain active after Stop()
-func SetKeepDashboardAlive(keep bool) {
-	keepDashboardAlive.Store(keep)
-}
-
-// IsKeepDashboardAlive returns true if the dashboard should remain active
-func IsKeepDashboardAlive() bool {
-	return keepDashboardAlive.Load()
-}
-
-// IsDashboardActive returns true if any dashboard is currently rendering
-func IsDashboardActive() bool {
-	return activeDashboard.Load() > 0
-}
-
-// setDashboardActive increments or decrements the active dashboard counter
-func setDashboardActive(active bool) {
-	if active {
-		activeDashboard.Add(1)
-	} else {
-		activeDashboard.Add(-1)
-	}
-}
-
-// Dashboard interface defines the contract for interactive dashboard displays
-type Dashboard interface {
-	Start()
-	Stop(success bool)
-	Update(state DashboardState)
-	SetStep(index int, status StepStatus, message string)
-	AddOutput(line string)
-}
-
-// StepStatus represents the current state of a dashboard step
-type StepStatus int
-
+// StepStatus constants
 const (
-	StepPending StepStatus = iota
-	StepRunning
-	StepComplete
-	StepFailed
-	StepSkipped
+	StepPending  = dashcore.StepPending
+	StepRunning  = dashcore.StepRunning
+	StepComplete = dashcore.StepComplete
+	StepFailed   = dashcore.StepFailed
+	StepSkipped  = dashcore.StepSkipped
 )
 
-// String returns the visual representation of a step status
-func (s StepStatus) String() string {
-	if Iconic {
-		switch s {
-		case StepPending:
-			return "○"
-		case StepRunning:
-			return "⠋" // Spinner frame (will be animated in implementations)
-		case StepComplete:
-			return "✓"
-		case StepFailed:
-			return "✗"
-		case StepSkipped:
-			return "⊘"
-		default:
-			return "○"
-		}
-	}
+// DashboardMode constants
+const (
+	ModeEnvironment = dashcore.ModeEnvironment
+	ModeRobotRun    = dashcore.ModeRobotRun
+	ModeDiagnostics = dashcore.ModeDiagnostics
+	ModeDownload    = dashcore.ModeDownload
+)
 
-	// ASCII fallback
-	switch s {
-	case StepPending:
-		return "o"
-	case StepRunning:
-		return "-"
-	case StepComplete:
-		return "+"
-	case StepFailed:
-		return "x"
-	case StepSkipped:
-		return "/"
-	default:
-		return "o"
-	}
-}
-
-// StepState represents the state of a single step in a dashboard
-type StepState struct {
-	Index   int
-	Status  StepStatus
-	Message string
-}
-
-// DashboardState holds the common state shared across dashboard implementations
-type DashboardState struct {
-	Steps     []StepState
-	Progress  float64 // 0.0 to 1.0
-	Message   string
-	StartTime time.Time
-	Output    []string // Recent output lines
-}
-
-// baseDashboard provides common functionality for dashboard implementations
-type baseDashboard struct {
-	running   bool
-	mu        sync.Mutex
-	stopChan  chan struct{}
-	doneChan  chan struct{}
-	startTime time.Time
-	state     DashboardState
-}
-
-// newBaseDashboard creates a new base dashboard with initialized channels
-func newBaseDashboard() baseDashboard {
-	return baseDashboard{
-		running:   false,
-		stopChan:  make(chan struct{}),
-		doneChan:  make(chan struct{}),
-		startTime: time.Now(),
-		state: DashboardState{
-			StartTime: time.Now(),
-			Steps:     []StepState{},
-			Output:    []string{},
-		},
-	}
-}
-
-// setupDashboardSignals registers signal handlers for graceful shutdown
-// This ensures the dashboard cleans up properly on Ctrl+C or termination
-func setupDashboardSignals(cleanup func()) {
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-sigChan
-		common.Trace("Interrupt signal received, cleaning up dashboard")
-		cleanup()
-		os.Exit(1)
-	}()
-}
+// baseDashboard is an alias to dashcore.BaseDashboard for implementations in this package
+type baseDashboard = dashcore.BaseDashboard
 
 // cleanupDashboard performs common cleanup operations
 // Restores scroll region and cursor visibility
@@ -189,42 +80,31 @@ func cleanupDashboard() {
 	ShowCursor()
 }
 
-// startRenderLoop begins the dashboard render loop at 20fps (50ms cycle)
-func (b *baseDashboard) startRenderLoop(renderFunc func()) {
-	ticker := time.NewTicker(50 * time.Millisecond)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-b.stopChan:
-			close(b.doneChan)
-			return
-		case <-ticker.C:
-			renderFunc()
-		}
-	}
-}
+// DashboardEnabled controls whether the interactive dashboard UI is shown.
+// This is an opt-in flag - dashboards are disabled by default.
+// Set via --dashboard flag or RCC_DASHBOARD=1 environment variable.
+var DashboardEnabled bool
 
 // ShouldUseDashboard determines if dashboards should be enabled
 // Returns true only if:
+// - DashboardEnabled is true (via --dashboard flag or RCC_DASHBOARD=1)
 // - Interactive mode is enabled (stdin/stdout/stderr are TTY)
 // - Terminal height is >= 20 lines
-// - RCC_NO_DASHBOARD environment variable is NOT set
 // - Not running with a non-user controller (e.g., citests, cloud)
 func ShouldUseDashboard() bool {
+	// Check opt-in flag first (env var checked here for runtime flexibility)
+	if !DashboardEnabled && os.Getenv("RCC_DASHBOARD") != "1" {
+		common.Trace("Dashboard disabled: --dashboard flag not set and RCC_DASHBOARD!=1")
+		return false
+	}
+
 	if !Interactive {
 		common.Trace("Dashboard disabled: not in interactive mode")
 		return false
 	}
 
-	if os.Getenv("RCC_NO_DASHBOARD") != "" {
-		common.Trace("Dashboard disabled: RCC_NO_DASHBOARD is set")
-		return false
-	}
-
 	// Disable dashboards for CI/automated controllers
 	// This prevents Bubble Tea alt-screen mode from interfering with CI test output capture
-	// Allow dashboard for interactive user commands (user, venv, etc.)
 	controller := common.ControllerType
 	disabledControllers := map[string]bool{
 		"citests":  true,
@@ -243,23 +123,14 @@ func ShouldUseDashboard() bool {
 		return false
 	}
 
-	common.Trace("Dashboard enabled: interactive mode, height=%d", height)
+	common.Trace("Dashboard enabled: --dashboard flag set, interactive mode, height=%d", height)
 	return true
 }
-
-// noopDashboard is a no-op implementation for when dashboards are disabled
-type noopDashboard struct{}
-
-func (n *noopDashboard) Start()                                               {}
-func (n *noopDashboard) Stop(success bool)                                    {}
-func (n *noopDashboard) Update(state DashboardState)                          {}
-func (n *noopDashboard) SetStep(index int, status StepStatus, message string) {}
-func (n *noopDashboard) AddOutput(line string)                                {}
 
 // NewNoopDashboard returns a no-op dashboard implementation that does nothing.
 // Use this when you need a Dashboard interface but don't want any visual output.
 func NewNoopDashboard() Dashboard {
-	return &noopDashboard{}
+	return dashcore.NewNoopDashboard()
 }
 
 // Factory functions for dashboard layouts
@@ -273,7 +144,7 @@ func NewEnvironmentDashboard(steps []string) Dashboard {
 
 	if !ShouldUseDashboard() {
 		common.Trace("Dashboard disabled, returning noop")
-		return &noopDashboard{}
+		return dashcore.NewNoopDashboard()
 	}
 
 	// Use Unified Dashboard for seamless experience
@@ -292,7 +163,7 @@ func NewEnvironmentDashboard(steps []string) Dashboard {
 
 	// Fallback to noop if Bubble Tea fails to initialize
 	common.Trace("Bubble Tea init failed, returning noop")
-	return &noopDashboard{}
+	return dashcore.NewNoopDashboard()
 }
 
 // NewDiagnosticsDashboard creates a dashboard for diagnostics operations (Layout B)
@@ -302,12 +173,12 @@ func NewDiagnosticsDashboard(checks []string) Dashboard {
 
 	if !ShouldUseDashboard() {
 		common.Trace("Dashboard conditions not met, returning noop dashboard")
-		return &noopDashboard{}
+		return dashcore.NewNoopDashboard()
 	}
 
 	// Initialize dashboard with checks
 	dashboard := &diagnosticsDashboard{
-		baseDashboard: newBaseDashboard(),
+		baseDashboard: dashcore.NewBaseDashboard(),
 		checks:        make([]diagnosticsCheck, len(checks)),
 		version:       "v18.0.0", // TODO: Get actual RCC version
 	}
@@ -342,11 +213,11 @@ func NewDownloadDashboard(filename string, total int64) Dashboard {
 
 	if !ShouldUseDashboard() {
 		common.Trace("Dashboard conditions not met, returning noop dashboard")
-		return &noopDashboard{}
+		return dashcore.NewNoopDashboard()
 	}
 
 	dashboard := &DownloadDashboard{
-		baseDashboard: newBaseDashboard(),
+		baseDashboard: dashcore.NewBaseDashboard(),
 		filename:      filename,
 		total:         total,
 		current:       0,
@@ -365,7 +236,7 @@ func NewDownloadDashboard(filename string, total int64) Dashboard {
 func NewMultiTaskDashboard(tasks []string) Dashboard {
 	common.Trace("NewMultiTaskDashboard called with %d tasks (stub implementation)", len(tasks))
 	// TODO: Implement in Phase 15 (T103-T108)
-	return &noopDashboard{}
+	return dashcore.NewNoopDashboard()
 }
 
 
@@ -374,7 +245,7 @@ func NewMultiTaskDashboard(tasks []string) Dashboard {
 func NewCompactProgress(message string) Dashboard {
 	common.Trace("NewCompactProgress called with message: %s", message)
 	return &CompactProgress{
-		baseDashboard: newBaseDashboard(),
+		baseDashboard: dashcore.NewBaseDashboard(),
 		message:       message,
 		currentStep:   0,
 		totalSteps:    0,
@@ -392,7 +263,7 @@ func NewRobotRunDashboard(robotName string) Dashboard {
 
 	if !ShouldUseDashboard() {
 		common.Trace("Dashboard conditions not met, returning noop dashboard")
-		return &noopDashboard{}
+		return dashcore.NewNoopDashboard()
 	}
 
 	// Check if unified dashboard is already running - use it instead of creating new one
@@ -414,7 +285,7 @@ func NewRobotRunDashboard(robotName string) Dashboard {
 
 	// Fallback to noop if Bubble Tea fails to initialize
 	common.Trace("Bubble Tea init failed, returning noop")
-	return &noopDashboard{}
+	return dashcore.NewNoopDashboard()
 }
 
 // unifiedRobotWrapper wraps the unified dashboard for robot execution
@@ -496,57 +367,57 @@ type DownloadDashboard struct {
 
 // Start begins the download dashboard display
 func (d *DownloadDashboard) Start() {
-	d.mu.Lock()
-	if d.running {
-		d.mu.Unlock()
+	d.Mu.Lock()
+	if d.Running {
+		d.Mu.Unlock()
 		return
 	}
-	d.running = true
-	d.startTime = time.Now()
+	d.Running = true
+	d.StartTime = time.Now()
 	d.lastUpdate = time.Now()
-	d.mu.Unlock()
+	d.Mu.Unlock()
 
 	common.Trace("Starting DownloadDashboard for %s", d.filename)
 
 	// Setup signal handlers for cleanup
-	setupDashboardSignals(func() {
+	dashcore.SetupDashboardSignals(func() {
 		d.cleanup()
 	})
 
 	// Hide cursor and start render loop
 	HideCursor()
 
-	go d.startRenderLoop(d.render)
+	go d.StartRenderLoop(d.render)
 }
 
 // Stop stops the download dashboard and shows final status
 func (d *DownloadDashboard) Stop(success bool) {
-	d.mu.Lock()
-	if !d.running {
-		d.mu.Unlock()
+	d.Mu.Lock()
+	if !d.Running {
+		d.Mu.Unlock()
 		return
 	}
-	d.running = false
-	d.mu.Unlock()
+	d.Running = false
+	d.Mu.Unlock()
 
 	common.Trace("Stopping DownloadDashboard with success=%v", success)
 
 	// Stop render loop
-	close(d.stopChan)
-	<-d.doneChan
+	close(d.StopChan)
+	<-d.DoneChan
 
 	// Cleanup and show final message
 	d.cleanup()
 
 	// Show completion message
 	if success {
-		if Iconic {
+		if dashcore.Iconic {
 			common.Stdout("%s✓%s Download complete: %s (%s)\n", Green, Reset, d.filename, formatBytes(d.total))
 		} else {
 			common.Stdout("%s[OK]%s Download complete: %s (%s)\n", Green, Reset, d.filename, formatBytes(d.total))
 		}
 	} else {
-		if Iconic {
+		if dashcore.Iconic {
 			common.Stdout("%s✗%s Download failed: %s\n", Red, Reset, d.filename)
 		} else {
 			common.Stdout("%s[FAIL]%s Download failed: %s\n", Red, Reset, d.filename)
@@ -556,8 +427,8 @@ func (d *DownloadDashboard) Stop(success bool) {
 
 // Update updates the download progress
 func (d *DownloadDashboard) Update(state DashboardState) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.Mu.Lock()
+	defer d.Mu.Unlock()
 
 	// Use Progress field to calculate current bytes (0.0 to 1.0)
 	if state.Progress >= 0 && state.Progress <= 1.0 {
@@ -604,8 +475,8 @@ func (d *DownloadDashboard) AddOutput(line string) {
 
 // render draws the download dashboard
 func (d *DownloadDashboard) render() {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.Mu.Lock()
+	defer d.Mu.Unlock()
 
 	// Get terminal dimensions
 	width := getTerminalWidth()
@@ -640,7 +511,7 @@ func (d *DownloadDashboard) render() {
 	filledWidth := int(float64(progressBarWidth) * percentage / 100.0)
 
 	progressBar := ""
-	if Iconic {
+	if dashcore.Iconic {
 		// Unicode progress bar
 		for i := 0; i < progressBarWidth; i++ {
 			if i < filledWidth {
@@ -761,7 +632,7 @@ type CompactProgress struct {
 
 // spinnerFrames returns the spinner animation frames
 func (c *CompactProgress) spinnerFrames() []string {
-	if Iconic {
+	if dashcore.Iconic {
 		return []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
 	}
 	// ASCII fallback
@@ -770,14 +641,14 @@ func (c *CompactProgress) spinnerFrames() []string {
 
 // Start begins the compact progress indicator
 func (c *CompactProgress) Start() {
-	c.mu.Lock()
-	if c.running {
-		c.mu.Unlock()
+	c.Mu.Lock()
+	if c.Running {
+		c.Mu.Unlock()
 		return
 	}
-	c.running = true
-	c.startTime = time.Now()
-	c.mu.Unlock()
+	c.Running = true
+	c.StartTime = time.Now()
+	c.Mu.Unlock()
 
 	// Skip if not interactive
 	if !Interactive {
@@ -789,7 +660,7 @@ func (c *CompactProgress) Start() {
 	common.Trace("Starting CompactProgress: %s", c.message)
 
 	// Setup signal handler for cleanup
-	setupDashboardSignals(func() {
+	dashcore.SetupDashboardSignals(func() {
 		c.cleanup()
 	})
 
@@ -797,18 +668,18 @@ func (c *CompactProgress) Start() {
 	HideCursor()
 
 	// Start render loop
-	go c.startRenderLoop(c.render)
+	go c.StartRenderLoop(c.render)
 }
 
 // Stop stops the compact progress and shows final status
 func (c *CompactProgress) Stop(success bool) {
-	c.mu.Lock()
-	if !c.running {
-		c.mu.Unlock()
+	c.Mu.Lock()
+	if !c.Running {
+		c.Mu.Unlock()
 		return
 	}
-	c.running = false
-	c.mu.Unlock()
+	c.Running = false
+	c.Mu.Unlock()
 
 	common.Trace("Stopping CompactProgress with success=%v: %s", success, c.message)
 
@@ -817,8 +688,8 @@ func (c *CompactProgress) Stop(success bool) {
 	}
 
 	// Signal render loop to stop
-	close(c.stopChan)
-	<-c.doneChan
+	close(c.StopChan)
+	<-c.DoneChan
 
 	// Show final status
 	c.renderFinal(success)
@@ -827,8 +698,8 @@ func (c *CompactProgress) Stop(success bool) {
 
 // Update updates the progress state
 func (c *CompactProgress) Update(state DashboardState) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
 
 	c.progress = state.Progress
 	if state.Message != "" {
@@ -849,8 +720,8 @@ func (c *CompactProgress) Update(state DashboardState) {
 
 // SetStep updates the current step information
 func (c *CompactProgress) SetStep(index int, status StepStatus, message string) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
 
 	c.currentStep = index + 1
 	c.status = status
@@ -868,8 +739,8 @@ func (c *CompactProgress) AddOutput(line string) {
 
 // render draws the current progress state
 func (c *CompactProgress) render() {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
 
 	// Get spinner frame
 	frames := c.spinnerFrames()
@@ -902,15 +773,15 @@ func (c *CompactProgress) render() {
 
 // renderFinal shows the final status line
 func (c *CompactProgress) renderFinal(success bool) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
 
 	var icon string
 	var color string
 
 	if success {
 		c.status = StepComplete
-		if Iconic {
+		if dashcore.Iconic {
 			icon = "✓"
 		} else {
 			icon = "+"
@@ -918,7 +789,7 @@ func (c *CompactProgress) renderFinal(success bool) {
 		color = Green
 	} else {
 		c.status = StepFailed
-		if Iconic {
+		if dashcore.Iconic {
 			icon = "✗"
 		} else {
 			icon = "x"
@@ -968,18 +839,18 @@ type MultiTaskDashboard struct {
 
 // Start begins the multi-task dashboard display
 func (m *MultiTaskDashboard) Start() {
-	m.mu.Lock()
-	if m.running {
-		m.mu.Unlock()
+	m.Mu.Lock()
+	if m.Running {
+		m.Mu.Unlock()
 		return
 	}
-	m.running = true
-	m.mu.Unlock()
+	m.Running = true
+	m.Mu.Unlock()
 
 	common.Trace("Starting MultiTaskDashboard with %d tasks", len(m.tasks))
 
 	// Setup signal handler for graceful cleanup
-	setupDashboardSignals(func() {
+	dashcore.SetupDashboardSignals(func() {
 		m.cleanup()
 	})
 
@@ -987,24 +858,24 @@ func (m *MultiTaskDashboard) Start() {
 	HideCursor()
 
 	// Start render loop
-	go m.startRenderLoop(m.render)
+	go m.StartRenderLoop(m.render)
 }
 
 // Stop stops the dashboard and shows final status
 func (m *MultiTaskDashboard) Stop(success bool) {
-	m.mu.Lock()
-	if !m.running {
-		m.mu.Unlock()
+	m.Mu.Lock()
+	if !m.Running {
+		m.Mu.Unlock()
 		return
 	}
-	m.running = false
-	m.mu.Unlock()
+	m.Running = false
+	m.Mu.Unlock()
 
 	common.Trace("Stopping MultiTaskDashboard with success=%v", success)
 
 	// Stop render loop
-	close(m.stopChan)
-	<-m.doneChan
+	close(m.StopChan)
+	<-m.DoneChan
 
 	// Cleanup
 	m.cleanup()
@@ -1020,8 +891,8 @@ func (m *MultiTaskDashboard) Update(state DashboardState) {
 
 // SetStep updates a specific task's status and message
 func (m *MultiTaskDashboard) SetStep(index int, status StepStatus, message string) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
 
 	if index < 0 || index >= len(m.tasks) {
 		common.Trace("SetStep: index %d out of range [0, %d)", index, len(m.tasks))
@@ -1048,8 +919,8 @@ func (m *MultiTaskDashboard) SetStep(index int, status StepStatus, message strin
 
 // SetTaskProgress updates a specific task's progress (0.0 to 1.0)
 func (m *MultiTaskDashboard) SetTaskProgress(index int, progress float64) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
 
 	if index < 0 || index >= len(m.tasks) {
 		common.Trace("SetTaskProgress: index %d out of range [0, %d)", index, len(m.tasks))
@@ -1075,8 +946,8 @@ func (m *MultiTaskDashboard) AddOutput(line string) {
 
 // render draws the dashboard frame
 func (m *MultiTaskDashboard) render() {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
 
 	// Update spinner frame
 	m.spinnerFrame = (m.spinnerFrame + 1) % 8
@@ -1181,7 +1052,7 @@ func (m *MultiTaskDashboard) formatTaskLine(task TaskProgress, width int) string
 
 	// Build progress bar
 	var bar string
-	if Iconic {
+	if dashcore.Iconic {
 		bar = strings.Repeat("█", filled) + strings.Repeat("░", barWidth-filled)
 	} else {
 		bar = strings.Repeat("=", filled) + strings.Repeat(" ", barWidth-filled)
@@ -1212,7 +1083,7 @@ func (m *MultiTaskDashboard) formatTaskLine(task TaskProgress, width int) string
 func (m *MultiTaskDashboard) getStatusIcon(status StepStatus) string {
 	if status == StepRunning {
 		// Animate spinner
-		if Iconic {
+		if dashcore.Iconic {
 			frames := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧"}
 			return Cyan + frames[m.spinnerFrame] + Reset
 		}
@@ -1264,8 +1135,8 @@ func (m *MultiTaskDashboard) cleanup() {
 
 // renderFinalSummary shows the final summary after stopping
 func (m *MultiTaskDashboard) renderFinalSummary(success bool) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
 
 	// Count final statuses
 	complete := 0

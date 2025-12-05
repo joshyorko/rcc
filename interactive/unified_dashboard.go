@@ -1,4 +1,4 @@
-package pretty
+package interactive
 
 // UnifiedDashboard provides a seamless Bubble Tea dashboard that handles both
 // environment build and robot execution phases in a single terminal session.
@@ -11,7 +11,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/joshyorko/rcc/common"
-	"github.com/joshyorko/rcc/dashcore"
 )
 
 // UnifiedDashboard is a single Bubble Tea dashboard that handles all phases
@@ -88,9 +87,8 @@ func StopUnifiedDashboard(success bool) {
 
 // NewUnifiedDashboard creates a new unified dashboard for the entire operation
 func NewUnifiedDashboard(envSteps []string) *UnifiedDashboard {
-	if !ShouldUseDashboard() {
-		return nil
-	}
+	// Check if dashboards should be used - defer to caller to check ShouldUseDashboard
+	// This allows the interactive package to be self-contained
 
 	model := NewRootModel()
 	model.EnvState.Steps = make([]EnvStep, len(envSteps))
@@ -128,7 +126,7 @@ func (d *UnifiedDashboard) Start() {
 	d.mu.Unlock()
 
 	// Mark dashboard as active to suppress log output
-	dashcore.SetDashboardActive(true)
+	SetDashboardActive(true)
 
 	// Intercept all log output and route to dashboard
 	common.SetLogInterceptor(func(message string) bool {
@@ -192,7 +190,7 @@ func (d *UnifiedDashboard) Stop(success bool) {
 
 	// Clear log interceptor
 	common.ClearLogInterceptor()
-	dashcore.SetDashboardActive(false)
+	SetDashboardActive(false)
 
 	// Clear global reference
 	globalUnifiedMu.Lock()

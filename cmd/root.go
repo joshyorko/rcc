@@ -125,6 +125,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&common.Liveonly, "liveonly", "", false, "do not create base environment from live ... DANGER! For containers only!")
 	rootCmd.PersistentFlags().BoolVarP(&pathlib.Lockless, "lockless", "", false, "do not use file locking ... DANGER!")
 	rootCmd.PersistentFlags().BoolVarP(&pretty.Colorless, "colorless", "", false, "do not use colors in CLI UI")
+	rootCmd.PersistentFlags().BoolVarP(&pretty.DashboardEnabled, "dashboard", "", false, "enable interactive dashboard UI (also RCC_DASHBOARD=1)")
 	rootCmd.PersistentFlags().BoolVarP(&common.NoCache, "nocache", "", false, "do not use cache for credentials and tokens, always request them from cloud")
 
 	rootCmd.PersistentFlags().BoolVarP(&common.LogLinenumbers, "numbers", "", false, "put line numbers on rcc produced log output")

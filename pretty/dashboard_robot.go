@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 // RobotRunDashboard displays real-time robot execution status (Layout F)
@@ -40,14 +41,14 @@ type RobotRunDashboard struct {
 
 // Start begins the robot run dashboard display
 func (r *RobotRunDashboard) Start() {
-	r.mu.Lock()
-	if r.running {
-		r.mu.Unlock()
+	r.Mu.Lock()
+	if r.Running {
+		r.Mu.Unlock()
 		return
 	}
-	r.running = true
-	r.startTime = time.Now()
-	r.mu.Unlock()
+	r.Running = true
+	r.StartTime = time.Now()
+	r.Mu.Unlock()
 
 	// Skip if not interactive
 	if !Interactive {
@@ -56,12 +57,12 @@ func (r *RobotRunDashboard) Start() {
 	}
 
 	// Mark dashboard as active to suppress verbose output
-	setDashboardActive(true)
+	dashcore.SetDashboardActive(true)
 
 	common.Trace("RobotRunDashboard starting for robot: %s, task: %s", r.robotName, r.taskName)
 
 	// Setup signal handlers for cleanup
-	setupDashboardSignals(func() {
+	dashcore.SetupDashboardSignals(func() {
 		r.cleanup()
 	})
 
@@ -82,17 +83,17 @@ func (r *RobotRunDashboard) Start() {
 	r.render()
 
 	// Start render loop in background
-	go r.baseDashboard.startRenderLoop(r.render)
+	go r.baseDashboard.StartRenderLoop(r.render)
 }
 
 // Stop terminates the dashboard and shows final status
 func (r *RobotRunDashboard) Stop(success bool) {
-	r.mu.Lock()
-	if !r.running {
-		r.mu.Unlock()
+	r.Mu.Lock()
+	if !r.Running {
+		r.Mu.Unlock()
 		return
 	}
-	r.running = false
+	r.Running = false
 
 	// Update final status
 	if success {
@@ -100,18 +101,18 @@ func (r *RobotRunDashboard) Stop(success bool) {
 	} else {
 		r.status = "Failed"
 	}
-	r.mu.Unlock()
+	r.Mu.Unlock()
 
 	// Mark dashboard as inactive
-	setDashboardActive(false)
+	dashcore.SetDashboardActive(false)
 
 	if !Interactive {
 		return
 	}
 
 	// Signal render loop to stop
-	close(r.stopChan)
-	<-r.doneChan
+	close(r.StopChan)
+	<-r.DoneChan
 
 	// Render final state
 	r.render()
@@ -120,7 +121,7 @@ func (r *RobotRunDashboard) Stop(success bool) {
 	r.cleanup()
 
 	// Log completion
-	duration := time.Since(r.startTime)
+	duration := time.Since(r.StartTime)
 	if success {
 		icon := "+"
 		if Iconic {
@@ -142,10 +143,10 @@ func (r *RobotRunDashboard) Stop(success bool) {
 
 // Update updates the dashboard state (for compatibility with Dashboard interface)
 func (r *RobotRunDashboard) Update(state DashboardState) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 
-	r.state = state
+	r.State = state
 
 	// Update status from message if provided
 	if state.Message != "" {
@@ -155,8 +156,8 @@ func (r *RobotRunDashboard) Update(state DashboardState) {
 
 // SetStep updates task counts based on step status
 func (r *RobotRunDashboard) SetStep(index int, status StepStatus, message string) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 
 	// Update task counts based on status changes
 	switch status {
@@ -179,8 +180,8 @@ func (r *RobotRunDashboard) SetStep(index int, status StepStatus, message string
 // AddOutput adds a line to the scrolling output region
 // Maintains a circular buffer of the last N lines
 func (r *RobotRunDashboard) AddOutput(line string) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 
 	// Trim whitespace and skip empty lines
 	line = strings.TrimSpace(line)
@@ -199,10 +200,10 @@ func (r *RobotRunDashboard) AddOutput(line string) {
 
 // render draws the complete dashboard frame
 func (r *RobotRunDashboard) render() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
 
-	if !Interactive || !r.running {
+	if !Interactive || !r.Running {
 		return
 	}
 
@@ -218,7 +219,7 @@ func (r *RobotRunDashboard) render() {
 	style := BoxRounded // Use rounded corners as specified
 
 	// Calculate duration
-	duration := time.Since(r.startTime)
+	duration := time.Since(r.StartTime)
 	durationStr := formatRobotDuration(duration)
 
 	// === Draw Header (2 lines) ===

@@ -3,6 +3,8 @@ package pretty
 import (
 	"os"
 	"testing"
+
+	"github.com/joshyorko/rcc/dashcore"
 )
 
 func TestStepStatusString(t *testing.T) {
@@ -26,9 +28,9 @@ func TestStepStatusString(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			oldIconic := Iconic
-			Iconic = tt.iconic
-			defer func() { Iconic = oldIconic }()
+			oldIconic := dashcore.Iconic
+			dashcore.Iconic = tt.iconic
+			defer func() { dashcore.Iconic = oldIconic }()
 
 			result := tt.status.String()
 			if result != tt.expected {
@@ -40,61 +42,54 @@ func TestStepStatusString(t *testing.T) {
 
 func TestShouldUseDashboard(t *testing.T) {
 	tests := []struct {
-		name         string
-		interactive  bool
-		termHeight   int
-		envSet       bool
-		expected     bool
+		name            string
+		dashboardFlag   bool
+		dashboardEnv    bool
+		interactive     bool
+		expected        bool
 	}{
-		{"interactive_tall_terminal", true, 25, false, true},
-		{"interactive_min_height", true, 20, false, true},
-		{"interactive_short_terminal", true, 19, false, false},
-		{"non_interactive", false, 25, false, false},
-		{"env_variable_set", true, 25, true, false},
+		{"disabled_by_default", false, false, true, false},
+		{"enabled_by_flag", true, false, true, true},
+		{"enabled_by_env", false, true, true, true},
+		{"non_interactive_with_flag", true, false, false, false},
+		{"non_interactive_with_env", false, true, false, false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Save and restore state
 			oldInteractive := Interactive
-			oldEnv := os.Getenv("RCC_NO_DASHBOARD")
+			oldDashboardEnabled := DashboardEnabled
+			oldEnv := os.Getenv("RCC_DASHBOARD")
 			defer func() {
 				Interactive = oldInteractive
+				DashboardEnabled = oldDashboardEnabled
 				if oldEnv == "" {
-					os.Unsetenv("RCC_NO_DASHBOARD")
+					os.Unsetenv("RCC_DASHBOARD")
 				} else {
-					os.Setenv("RCC_NO_DASHBOARD", oldEnv)
+					os.Setenv("RCC_DASHBOARD", oldEnv)
 				}
 			}()
 
 			// Setup test state
 			Interactive = tt.interactive
-			if tt.envSet {
-				os.Setenv("RCC_NO_DASHBOARD", "1")
+			DashboardEnabled = tt.dashboardFlag
+			if tt.dashboardEnv {
+				os.Setenv("RCC_DASHBOARD", "1")
 			} else {
-				os.Unsetenv("RCC_NO_DASHBOARD")
+				os.Unsetenv("RCC_DASHBOARD")
 			}
 
-			// Note: We can't easily mock TerminalHeight() without refactoring,
-			// so this test will use the actual terminal height.
-			// In a real environment, we'd inject the height check.
 			result := ShouldUseDashboard()
 
-			// For the short terminal test, we can only verify it returns false
-			// if the terminal is actually short
-			if tt.name == "interactive_short_terminal" {
-				// Skip this check since we can't mock terminal height
-				t.Skip("Cannot mock terminal height in this test")
+			// For tests that should enable dashboard, result depends on terminal height too
+			if tt.expected && tt.interactive {
+				// If we expect true but terminal is too short, result may still be false
+				// Just verify it doesn't panic
+				_ = result
 			} else {
-				// For other tests, check based on interactive and env settings
-				if tt.interactive && !tt.envSet {
-					// Result depends on actual terminal height
-					// We can only verify it's consistent
-					_ = result
-				} else {
-					if result != tt.expected {
-						t.Errorf("expected %v, got %v", tt.expected, result)
-					}
+				if result != tt.expected {
+					t.Errorf("expected %v, got %v", tt.expected, result)
 				}
 			}
 		})
@@ -103,7 +98,7 @@ func TestShouldUseDashboard(t *testing.T) {
 
 func TestNoopDashboard(t *testing.T) {
 	// Verify noopDashboard doesn't panic
-	d := &noopDashboard{}
+	d := NewNoopDashboard()
 
 	d.Start()
 	d.Stop(true)
@@ -143,26 +138,26 @@ func TestFactoryFunctionsReturnNoop(t *testing.T) {
 
 func TestBaseDashboard(t *testing.T) {
 	// Test base dashboard initialization
-	base := newBaseDashboard()
+	base := dashcore.NewBaseDashboard()
 
-	if base.running {
+	if base.Running {
 		t.Error("new dashboard should not be running")
 	}
 
-	if base.stopChan == nil {
-		t.Error("stopChan should be initialized")
+	if base.StopChan == nil {
+		t.Error("StopChan should be initialized")
 	}
 
-	if base.doneChan == nil {
-		t.Error("doneChan should be initialized")
+	if base.DoneChan == nil {
+		t.Error("DoneChan should be initialized")
 	}
 
-	if base.state.Steps == nil {
-		t.Error("state.Steps should be initialized")
+	if base.State.Steps == nil {
+		t.Error("State.Steps should be initialized")
 	}
 
-	if base.state.Output == nil {
-		t.Error("state.Output should be initialized")
+	if base.State.Output == nil {
+		t.Error("State.Output should be initialized")
 	}
 }
 

@@ -1,4 +1,4 @@
-package pretty
+package interactive
 
 import (
 	"github.com/joshyorko/rcc/progresscore"
