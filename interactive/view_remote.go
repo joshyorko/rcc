@@ -271,36 +271,58 @@ func (v *RemoteView) startServer() tea.Msg {
 		return serverStartMsg{success: false, err: "Shared holotree must be enabled first"}
 	}
 
+	// Check if there are catalogs to serve
+	catalogs := htfs.CatalogNames()
+	if len(catalogs) == 0 {
+		return serverStartMsg{success: false, err: "No catalogs to serve. Run a robot first to create holotree spaces."}
+	}
+
 	// Create log file for server output
 	logFile := filepath.Join(common.Product.Home(), "rccremote.log")
+	pidFile := filepath.Join(common.Product.Home(), "rccremote.pid")
 
-	// Use nohup-style approach: redirect to file, detach completely
-	var cmd *exec.Cmd
+	var pid int
+
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command(v.serverBinaryPath,
+		// On Windows, use Start() with detached process attributes
+		cmd := exec.Command(v.serverBinaryPath,
 			"-hostname", v.serverHostname,
 			"-port", fmt.Sprintf("%d", v.serverPort),
 			"-domain", v.serverDomain,
 		)
+		// Redirect output to log file
+		logOut, err := os.Create(logFile)
+		if err != nil {
+			return serverStartMsg{success: false, err: "Failed to create log: " + err.Error()}
+		}
+		cmd.Stdout = logOut
+		cmd.Stderr = logOut
+		detachProcess(cmd)
+
+		if err := cmd.Start(); err != nil {
+			logOut.Close()
+			return serverStartMsg{success: false, err: err.Error()}
+		}
+		pid = cmd.Process.Pid
+		// Don't wait - let it run detached
+		logOut.Close()
 	} else {
 		// On Unix, use shell to properly detach with nohup behavior
 		shellCmd := fmt.Sprintf("nohup %s -hostname %s -port %d -domain %s > %s 2>&1 & echo $!",
 			v.serverBinaryPath, v.serverHostname, v.serverPort, v.serverDomain, logFile)
-		cmd = exec.Command("sh", "-c", shellCmd)
-	}
+		cmd := exec.Command("sh", "-c", shellCmd)
 
-	output, err := cmd.Output()
-	if err != nil {
-		return serverStartMsg{success: false, err: err.Error()}
-	}
+		output, err := cmd.Output()
+		if err != nil {
+			return serverStartMsg{success: false, err: err.Error()}
+		}
 
-	// Parse PID from output (the echo $! part)
-	var pid int
-	fmt.Sscanf(strings.TrimSpace(string(output)), "%d", &pid)
+		// Parse PID from output (the echo $! part)
+		fmt.Sscanf(strings.TrimSpace(string(output)), "%d", &pid)
+	}
 
 	if pid > 0 {
 		// Write PID file
-		pidFile := filepath.Join(common.Product.Home(), "rccremote.pid")
 		os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", pid)), 0644)
 	}
 
@@ -1010,6 +1032,18 @@ func (v *RemoteView) renderHostTab(vs ViewStyles, contentWidth int) string {
 		b.WriteString(vs.Success.Render(fmt.Sprintf("[Running] PID %d", v.serverPID)))
 	} else {
 		b.WriteString(vs.Subtext.Render("[Stopped]"))
+	}
+	b.WriteString("\n")
+
+	// Show catalog count - server needs catalogs to serve
+	catalogCount := len(v.localCatalogs)
+	b.WriteString(vs.Label.Render("Catalogs       "))
+	if catalogCount > 0 {
+		b.WriteString(vs.Success.Render(fmt.Sprintf("[%d available]", catalogCount)))
+	} else {
+		b.WriteString(vs.Warning.Render("[None]"))
+		b.WriteString("\n")
+		b.WriteString(vs.Warning.Render("  Run a robot first to create holotree spaces"))
 	}
 	b.WriteString("\n\n")
 
