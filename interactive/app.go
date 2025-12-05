@@ -57,6 +57,7 @@ type confirmMsg struct {
 	action    ActionResult
 }
 
+
 // View interface that all views must implement
 type View interface {
 	Init() tea.Cmd
@@ -222,6 +223,7 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		a.pendingAction = nil
 		return a, nil
+
 	}
 
 	// Handle confirmation dialog keys

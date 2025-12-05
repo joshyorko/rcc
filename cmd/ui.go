@@ -41,12 +41,22 @@ Example:
 			pretty.Exit(1, "The UI requires an interactive terminal (TTY)")
 		}
 
-		action, err := interactive.Run()
-		pretty.Guard(err == nil, 1, "UI error: %v", err)
+		// Main UI loop - keep returning to UI after actions
+		for {
+			action, err := interactive.Run()
+			pretty.Guard(err == nil, 1, "UI error: %v", err)
 
-		// Handle action result
-		if action != nil {
+			// No action means user quit
+			if action == nil {
+				break
+			}
+
+			// Handle action result
 			handleAction(action)
+
+			// Pause to let user see output, then return to UI
+			fmt.Print("\n\033[36m▸\033[0m Press Enter to return to UI (or Ctrl+C to exit)...")
+			fmt.Scanln()
 		}
 	},
 }
@@ -69,8 +79,8 @@ func handleAction(action *interactive.ActionResult) {
 func runRobotAction(action *interactive.ActionResult) {
 	robotDir := filepath.Dir(action.RobotPath)
 
-	// Build command args - include --dashboard flag for unified dashboard
-	args := []string{"run", "--dashboard", "-r", action.RobotPath}
+	// Build command args with dashboard for better UX
+	args := []string{"run", "-r", action.RobotPath, "--dashboard"}
 	if action.RobotTask != "" {
 		args = append(args, "-t", action.RobotTask)
 	}
