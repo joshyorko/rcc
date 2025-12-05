@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/joshyorko/rcc/common"
@@ -41,6 +40,7 @@ type ActionResult struct {
 	Type       ActionType
 	RobotPath  string // For ActionRunRobot
 	RobotTask  string // For ActionRunRobot (optional)
+	EnvFile    string // For ActionRunRobot - environment JSON file (optional)
 	Command    string // For ActionRunCommand
 	EnvID      string // For ActionDeleteEnv, ActionExportCatalog
 	OutputPath string // For ActionExportCatalog
@@ -75,7 +75,6 @@ type App struct {
 	styles        *Styles
 	quitting      bool
 	showHelp      bool
-	spinner       spinner.Model
 	startTime     time.Time
 	pendingAction *ActionResult
 	showConfirm   bool
@@ -86,20 +85,11 @@ type App struct {
 func NewApp() *App {
 	styles := NewStyles()
 
-	// Create spinner with nice animation
-	s := spinner.New()
-	s.Spinner = spinner.Spinner{
-		Frames: []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"},
-		FPS:    time.Second / 10,
-	}
-	s.Style = styles.Spinner
-
 	app := &App{
 		activeView: ViewHome,
 		styles:     styles,
 		width:      120,
 		height:     30,
-		spinner:    s,
 		startTime:  time.Now(),
 	}
 
@@ -119,7 +109,6 @@ func NewApp() *App {
 // Init implements tea.Model
 func (a *App) Init() tea.Cmd {
 	var cmds []tea.Cmd
-	cmds = append(cmds, a.spinner.Tick)
 	for _, v := range a.views {
 		if cmd := v.Init(); cmd != nil {
 			cmds = append(cmds, cmd)
@@ -136,7 +125,6 @@ type viewChangedMsg struct {
 
 // Update implements tea.Model
 func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
@@ -203,10 +191,6 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		a.width = msg.Width
 		a.height = msg.Height
-
-	case spinner.TickMsg:
-		a.spinner, cmd = a.spinner.Update(msg)
-		cmds = append(cmds, cmd)
 
 	case actionMsg:
 		// Handle action from views
@@ -351,12 +335,10 @@ func (a *App) renderHeader() string {
 }
 
 func (a *App) renderLogo() string {
-	// RCC ASCII-ish logo with spinner
-	spinnerView := a.spinner.View()
 	title := a.styles.LogoText.Render(" RCC ")
 	subtitle := a.styles.LogoSubtle.Render("Interactive")
 
-	return lipgloss.JoinHorizontal(lipgloss.Center, spinnerView, title, subtitle)
+	return lipgloss.JoinHorizontal(lipgloss.Center, title, subtitle)
 }
 
 func (a *App) renderStatus() string {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // LogsView displays RCC activity logs
@@ -40,9 +40,16 @@ func (v *LogsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		v.width = msg.Width
 		v.height = msg.Height
 	case tea.KeyMsg:
+		maxScroll := v.logs.Len() - 10
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+
 		switch msg.String() {
 		case "j", "down":
-			v.scroll++
+			if v.scroll < maxScroll {
+				v.scroll++
+			}
 		case "k", "up":
 			if v.scroll > 0 {
 				v.scroll--
@@ -50,10 +57,22 @@ func (v *LogsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		case "g":
 			v.scroll = 0
 		case "G":
-			v.scroll = v.logs.Len()
+			v.scroll = maxScroll
 		case "c":
 			v.logs.Clear()
 			v.scroll = 0
+		case "d":
+			// Page down
+			v.scroll += 10
+			if v.scroll > maxScroll {
+				v.scroll = maxScroll
+			}
+		case "u":
+			// Page up
+			v.scroll -= 10
+			if v.scroll < 0 {
+				v.scroll = 0
+			}
 		}
 	}
 	return v, nil
@@ -61,201 +80,163 @@ func (v *LogsView) Update(msg tea.Msg) (View, tea.Cmd) {
 
 // View implements View
 func (v *LogsView) View() string {
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
+
+	// Dynamic box sizing - logs need more width
+	boxWidth := v.width - 8
+	if boxWidth < 70 {
+		boxWidth = 70
+	}
+	if boxWidth > 140 {
+		boxWidth = 140
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
 	var b strings.Builder
 
-	// Calculate available space for the panel
-	availableHeight := v.height - 6 // Reserve space for title and footer
-	if availableHeight < 10 {
-		availableHeight = 10
-	}
-	panelWidth := v.width - 4
-	if panelWidth < 40 {
-		panelWidth = 40
-	}
-
-	// Build stats bar
-	stats := v.buildStatsBar()
-
-	// Build log content
-	logContent := v.buildLogContent(availableHeight - 4) // Reserve space for stats and borders
-
-	// Create the panel content
-	var panelContent strings.Builder
-	panelContent.WriteString(stats)
-	panelContent.WriteString("\n")
-	panelContent.WriteString(v.styles.Divider.Render(strings.Repeat("─", panelWidth-4)))
-	panelContent.WriteString("\n\n")
-	panelContent.WriteString(logContent)
-
-	// Wrap in panel
-	panel := v.styles.Panel.
-		Width(panelWidth).
-		Height(availableHeight).
-		Render(panelContent.String())
-
-	// Build the complete view
-	b.WriteString("\n")
-	b.WriteString(v.styles.PanelTitle.Render("  Activity Logs"))
-	b.WriteString("\n\n")
-	b.WriteString(panel)
-	b.WriteString("\n\n")
-	b.WriteString(v.buildFooter())
-	b.WriteString("\n")
-
-	return b.String()
-}
-
-// buildStatsBar creates a statistics bar showing log counts
-func (v *LogsView) buildStatsBar() string {
+	// Header with RCC version
 	stats := v.logs.Stats()
+	subtitle := fmt.Sprintf("(%d entries)", stats.Total)
+	b.WriteString(RenderHeader(vs, "Activity Logs", subtitle, contentWidth))
 
-	if stats.Total == 0 {
-		return v.styles.Subtle.Render("No entries")
+	// Stats row with colored badges
+	if stats.Total > 0 {
+		if stats.Errors > 0 {
+			b.WriteString(vs.BadgeActive.Copy().Background(theme.Error).Render(fmt.Sprintf(" %d ERR ", stats.Errors)))
+			b.WriteString(" ")
+		}
+		if stats.Warns > 0 {
+			b.WriteString(vs.BadgeActive.Copy().Background(theme.Warning).Render(fmt.Sprintf(" %d WRN ", stats.Warns)))
+			b.WriteString(" ")
+		}
+		if stats.Infos > 0 {
+			b.WriteString(vs.Badge.Render(fmt.Sprintf(" %d INF ", stats.Infos)))
+			b.WriteString(" ")
+		}
+		b.WriteString("\n")
 	}
+	b.WriteString("\n")
 
-	var parts []string
-
-	// Total count
-	parts = append(parts, v.styles.Info.Render(fmt.Sprintf("[*] %d total", stats.Total)))
-
-	// Errors (if any)
-	if stats.Errors > 0 {
-		parts = append(parts, v.styles.Error.Render(fmt.Sprintf("[x] %d errors", stats.Errors)))
-	}
-
-	// Warnings (if any)
-	if stats.Warns > 0 {
-		parts = append(parts, v.styles.Warning.Render(fmt.Sprintf("[!] %d warnings", stats.Warns)))
-	}
-
-	// Info count
-	if stats.Infos > 0 {
-		parts = append(parts, v.styles.Subtle.Render(fmt.Sprintf("[i] %d info", stats.Infos)))
-	}
-
-	separator := v.styles.Divider.Render(" │ ")
-	return strings.Join(parts, separator)
-}
-
-// buildLogContent creates the formatted log viewer content
-func (v *LogsView) buildLogContent(maxLines int) string {
+	// Log content area
 	if v.logs.Len() == 0 {
-		return v.renderEmptyState()
+		// Empty state - show helpful message
+		b.WriteString(vs.Subtext.Render("No activity logs yet"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Info"))
+		b.WriteString(vs.Text.Render("Logs from RCC operations appear here"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Tip"))
+		b.WriteString(vs.Text.Render("Run a robot task to generate logs"))
+	} else {
+		// Calculate visible area
+		maxVisibleLines := 12
+		entries := v.logs.Recent(v.logs.Len())
+
+		// Apply scroll offset
+		startIdx := v.scroll
+		endIdx := startIdx + maxVisibleLines
+		if endIdx > len(entries) {
+			endIdx = len(entries)
+		}
+		if startIdx > len(entries) {
+			startIdx = len(entries) - maxVisibleLines
+			if startIdx < 0 {
+				startIdx = 0
+			}
+		}
+
+		visibleEntries := entries
+		if startIdx < len(entries) && endIdx <= len(entries) {
+			visibleEntries = entries[startIdx:endIdx]
+		}
+
+		// Render log entries
+		for i, entry := range visibleEntries {
+			lineNum := startIdx + i + 1
+
+			// Line number - dim
+			numStr := fmt.Sprintf("%3d", lineNum)
+			b.WriteString(vs.Subtext.Render(numStr))
+			b.WriteString(" ")
+
+			// Time
+			timeStr := entry.Time.Format("15:04:05")
+			b.WriteString(vs.Subtext.Render(timeStr))
+			b.WriteString(" ")
+
+			// Level badge
+			switch entry.Level {
+			case LogError:
+				b.WriteString(vs.Error.Render("[ERR]"))
+			case LogWarn:
+				b.WriteString(vs.Warning.Render("[WRN]"))
+			case LogInfo:
+				b.WriteString(vs.Info.Render("[INF]"))
+			case LogDebug:
+				b.WriteString(vs.Subtext.Render("[DBG]"))
+			default:
+				b.WriteString(vs.Subtext.Render("[---]"))
+			}
+			b.WriteString(" ")
+
+			// Source if present
+			if entry.Source != "" {
+				b.WriteString(vs.Accent.Render(entry.Source))
+				b.WriteString(vs.Subtext.Render(":"))
+				b.WriteString(" ")
+			}
+
+			// Message - truncate if too long
+			msg := entry.Message
+			maxMsgLen := contentWidth - 30
+			if len(msg) > maxMsgLen {
+				msg = msg[:maxMsgLen-3] + "..."
+			}
+
+			msgStyle := vs.Text
+			if entry.Level == LogError {
+				msgStyle = vs.Error
+			} else if entry.Level == LogWarn {
+				msgStyle = vs.Warning
+			}
+			b.WriteString(msgStyle.Render(msg))
+			b.WriteString("\n")
+		}
+
+		// Scroll indicator
+		if v.logs.Len() > maxVisibleLines {
+			scrollPct := 0
+			maxScroll := v.logs.Len() - maxVisibleLines
+			if maxScroll > 0 {
+				scrollPct = (v.scroll * 100) / maxScroll
+			}
+			b.WriteString("\n")
+			b.WriteString(vs.Subtext.Render(fmt.Sprintf("Showing %d-%d of %d (%d%%)",
+				startIdx+1, endIdx, v.logs.Len(), scrollPct)))
+		}
 	}
 
-	entries := v.logs.Recent(maxLines)
-	if len(entries) == 0 {
-		return v.renderEmptyState()
-	}
-
-	var lines []string
-	totalEntries := v.logs.Len()
-	startNum := totalEntries - len(entries) + 1
-
-	// Calculate line number width for alignment
-	lineNumWidth := len(fmt.Sprintf("%d", totalEntries))
-	if lineNumWidth < 3 {
-		lineNumWidth = 3
-	}
-
-	for i, entry := range entries {
-		lineNum := startNum + i
-		line := v.formatLogLine(lineNum, entry, lineNumWidth)
-		lines = append(lines, line)
-	}
-
-	return strings.Join(lines, "\n")
-}
-
-// formatLogLine formats a single log entry with line number and styling
-func (v *LogsView) formatLogLine(lineNum int, entry LogEntry, lineNumWidth int) string {
-	var b strings.Builder
-
-	// Line number (right-aligned, dimmed)
-	lineNumStr := fmt.Sprintf("%*d", lineNumWidth, lineNum)
-	b.WriteString(v.styles.Subtle.Render(lineNumStr))
-	b.WriteString(" ")
-	b.WriteString(v.styles.Divider.Render("│"))
-	b.WriteString(" ")
-
-	// Timestamp (optional, compact)
-	timeStr := entry.Time.Format("15:04:05")
-	b.WriteString(v.styles.Subtle.Render(timeStr))
-	b.WriteString(" ")
-
-	// Level indicator with appropriate styling
-	levelStyle := v.getLevelStyle(entry.Level)
-	levelIcon := entry.Level.Icon()
-	b.WriteString(levelStyle.Render(levelIcon))
-	b.WriteString(" ")
-
-	// Source tag (if present)
-	if entry.Source != "" {
-		sourceTag := fmt.Sprintf("[%s]", entry.Source)
-		b.WriteString(v.styles.Accent.Render(sourceTag))
-		b.WriteString(" ")
-	}
-
-	// Message content
-	messageStyle := v.getMessageStyle(entry.Level)
-	b.WriteString(messageStyle.Render(entry.Message))
-
-	return b.String()
-}
-
-// getLevelStyle returns the appropriate style for a log level icon
-func (v *LogsView) getLevelStyle(level LogLevel) lipgloss.Style {
-	switch level {
-	case LogTrace:
-		return v.styles.Subtle
-	case LogDebug:
-		return v.styles.Subtle
-	case LogInfo:
-		return v.styles.Info
-	case LogWarn:
-		return v.styles.Warning
-	case LogError:
-		return v.styles.Error
-	default:
-		return v.styles.ListItem
-	}
-}
-
-// getMessageStyle returns the appropriate style for a log message
-func (v *LogsView) getMessageStyle(level LogLevel) lipgloss.Style {
-	switch level {
-	case LogError:
-		return v.styles.ListItem.Copy().Foreground(v.styles.theme.Error)
-	case LogWarn:
-		return v.styles.ListItem
-	default:
-		return v.styles.ListItem
-	}
-}
-
-// renderEmptyState creates a nice empty state message
-func (v *LogsView) renderEmptyState() string {
-	var b strings.Builder
-	b.WriteString("\n")
-	b.WriteString(v.styles.Subtle.Render("    [i] No activity logs yet"))
+	// Footer
 	b.WriteString("\n\n")
-	b.WriteString(v.styles.Subtle.Render("    Logs from RCC operations will appear here"))
-	b.WriteString("\n")
+	hints := []KeyHint{
+		{"j/k", "scroll"},
+		{"g/G", "top/bot"},
+		{"d/u", "page"},
+		{"c", "clear"},
+	}
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
-	return b.String()
-}
-
-// buildFooter creates the help/command footer
-func (v *LogsView) buildFooter() string {
-	var parts []string
-
-	// Navigation commands
-	parts = append(parts, v.styles.HelpKey.Render("j/k")+" "+v.styles.HelpDesc.Render("scroll"))
-	parts = append(parts, v.styles.HelpKey.Render("g/G")+" "+v.styles.HelpDesc.Render("top/bottom"))
-	parts = append(parts, v.styles.HelpKey.Render("c")+" "+v.styles.HelpDesc.Render("clear"))
-
-	separator := v.styles.MenuSeparator.Render(" • ")
-	return "  " + strings.Join(parts, separator)
+	return lipgloss.Place(v.width, v.height,
+		lipgloss.Center, lipgloss.Center,
+		boxStyle.Render(b.String()),
+	)
 }
 
 // Name implements View

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/joshyorko/rcc/robot"
 )
 
@@ -15,26 +16,42 @@ type robotData struct {
 	path      string
 	directory string
 	tasks     []string
+	envFiles  []string
 }
 
+// Focus states
+const (
+	focusRobotList = 0
+	focusTaskRow   = 1
+	focusEnvRow    = 2
+)
+
 type RobotsView struct {
-	styles     *Styles
-	robots     []robotData
-	width      int
-	height     int
-	cursor     int
-	taskCursor int
-	loading    bool
-	err        error
+	styles  *Styles
+	robots  []robotData
+	width   int
+	height  int
+	loading bool
+	err     error
+
+	// Navigation state
+	robotIdx int // Which robot is selected
+	focus    int // 0=robot list, 1=task row, 2=env row
+	taskIdx  int // Which task is selected
+	envIdx   int // Which env is selected (-1 = none)
 }
 
 func NewRobotsView(styles *Styles) *RobotsView {
 	return &RobotsView{
-		styles:  styles,
-		robots:  []robotData{},
-		width:   120,
-		height:  30,
-		loading: true,
+		styles:   styles,
+		robots:   []robotData{},
+		width:    120,
+		height:   30,
+		loading:  true,
+		robotIdx: 0,
+		focus:    focusRobotList,
+		taskIdx:  0,
+		envIdx:   -1,
 	}
 }
 
@@ -87,6 +104,7 @@ func (v *RobotsView) scanForRobots() tea.Msg {
 				}
 			}
 
+			item.envFiles = findEnvFiles(item.directory)
 			robots = append(robots, item)
 		}
 
@@ -96,14 +114,40 @@ func (v *RobotsView) scanForRobots() tea.Msg {
 	return robotsLoadedMsg{robots: robots}
 }
 
+func findEnvFiles(robotDir string) []string {
+	var envFiles []string
+
+	patterns := []string{
+		"env.json",
+		"devdata/env.json",
+		"devdata/*.json",
+		"env/*.json",
+		"environments/*.json",
+	}
+
+	for _, pattern := range patterns {
+		matches, err := filepath.Glob(filepath.Join(robotDir, pattern))
+		if err == nil {
+			for _, match := range matches {
+				relPath, _ := filepath.Rel(robotDir, match)
+				envFiles = append(envFiles, relPath)
+			}
+		}
+	}
+
+	return envFiles
+}
+
 func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 	switch msg := msg.(type) {
 	case robotsLoadedMsg:
 		v.loading = false
 		v.err = msg.err
 		v.robots = msg.robots
-		v.cursor = 0
-		v.taskCursor = 0
+		v.robotIdx = 0
+		v.focus = focusRobotList
+		v.taskIdx = 0
+		v.envIdx = -1
 
 	case tea.WindowSizeMsg:
 		v.width = msg.Width
@@ -111,46 +155,30 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "j", "down":
-			if v.cursor < len(v.robots)-1 {
-				v.cursor++
-				v.taskCursor = 0
-			}
-		case "k", "up":
-			if v.cursor > 0 {
-				v.cursor--
-				v.taskCursor = 0
-			}
-		case "l", "right", "tab":
-			if r := v.selectedRobot(); r != nil && len(r.tasks) > 1 {
-				v.taskCursor = (v.taskCursor + 1) % len(r.tasks)
-			}
-		case "h", "left":
-			if r := v.selectedRobot(); r != nil && len(r.tasks) > 1 {
-				v.taskCursor--
-				if v.taskCursor < 0 {
-					v.taskCursor = len(r.tasks) - 1
-				}
-			}
-		case "g":
-			v.cursor = 0
-			v.taskCursor = 0
-		case "G":
-			if len(v.robots) > 0 {
-				v.cursor = len(v.robots) - 1
-				v.taskCursor = 0
-			}
+		case "up", "k":
+			v.moveUp()
+		case "down", "j":
+			v.moveDown()
+		case "left", "h":
+			v.moveLeft()
+		case "right", "l":
+			v.moveRight()
 		case "R":
 			v.loading = true
 			return v, v.scanForRobots
-		case "r", "enter":
+		case "esc":
+			v.focus = focusRobotList
+		case "enter":
 			if r := v.selectedRobot(); r != nil {
 				action := ActionResult{
 					Type:      ActionRunRobot,
 					RobotPath: r.path,
 				}
-				if len(r.tasks) > 0 {
-					action.RobotTask = r.tasks[v.taskCursor]
+				if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
+					action.RobotTask = r.tasks[v.taskIdx]
+				}
+				if v.envIdx >= 0 && v.envIdx < len(r.envFiles) {
+					action.EnvFile = filepath.Join(r.directory, r.envFiles[v.envIdx])
 				}
 				return v, func() tea.Msg { return actionMsg{action: action} }
 			}
@@ -166,123 +194,319 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 	return v, nil
 }
 
+func (v *RobotsView) moveUp() {
+	switch v.focus {
+	case focusRobotList:
+		if v.robotIdx > 0 {
+			v.robotIdx--
+			v.resetSelections()
+		}
+	case focusTaskRow:
+		v.focus = focusRobotList
+	case focusEnvRow:
+		v.focus = focusTaskRow
+	}
+}
+
+func (v *RobotsView) moveDown() {
+	switch v.focus {
+	case focusRobotList:
+		if v.robotIdx < len(v.robots)-1 {
+			v.robotIdx++
+			v.resetSelections()
+		} else if len(v.robots) > 0 {
+			// At bottom of robot list, move to task row
+			v.focus = focusTaskRow
+		}
+	case focusTaskRow:
+		r := v.selectedRobot()
+		if r != nil && len(r.envFiles) > 0 {
+			v.focus = focusEnvRow
+		}
+	case focusEnvRow:
+		// Already at bottom, do nothing
+	}
+}
+
+func (v *RobotsView) moveLeft() {
+	r := v.selectedRobot()
+	if r == nil {
+		return
+	}
+
+	switch v.focus {
+	case focusTaskRow:
+		if len(r.tasks) > 0 {
+			v.taskIdx--
+			if v.taskIdx < 0 {
+				v.taskIdx = len(r.tasks) - 1
+			}
+		}
+	case focusEnvRow:
+		// -1 = none, 0 to len-1 = env files
+		v.envIdx--
+		if v.envIdx < -1 {
+			v.envIdx = len(r.envFiles) - 1
+		}
+	}
+}
+
+func (v *RobotsView) moveRight() {
+	r := v.selectedRobot()
+	if r == nil {
+		return
+	}
+
+	switch v.focus {
+	case focusTaskRow:
+		if len(r.tasks) > 0 {
+			v.taskIdx = (v.taskIdx + 1) % len(r.tasks)
+		}
+	case focusEnvRow:
+		v.envIdx++
+		if v.envIdx >= len(r.envFiles) {
+			v.envIdx = -1
+		}
+	}
+}
+
+func (v *RobotsView) resetSelections() {
+	v.taskIdx = 0
+	v.envIdx = -1
+}
+
 func (v *RobotsView) selectedRobot() *robotData {
-	if v.cursor >= 0 && v.cursor < len(v.robots) {
-		return &v.robots[v.cursor]
+	if v.robotIdx >= 0 && v.robotIdx < len(v.robots) {
+		return &v.robots[v.robotIdx]
 	}
 	return nil
 }
 
 func (v *RobotsView) View() string {
-	s := v.styles
-	var content strings.Builder
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
 
-	// Main container using Panel style
-	panelStyle := s.Panel.Width(min(v.width-4, 70))
+	boxWidth := v.width - 8
+	if boxWidth < 60 {
+		boxWidth = 60
+	}
+	if boxWidth > 100 {
+		boxWidth = 100
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
+	var b strings.Builder
+
+	// Header
+	subtitle := ""
+	if !v.loading && len(v.robots) > 0 {
+		subtitle = fmt.Sprintf("(%d found)", len(v.robots))
+	}
+	b.WriteString(RenderHeader(vs, "Robots", subtitle, contentWidth))
+	b.WriteString("\n")
 
 	// Loading state
 	if v.loading {
-		content.WriteString(s.Subtle.Render("[...] Scanning for robots..."))
-		return panelStyle.Render(content.String())
+		b.WriteString(vs.Subtext.Render("Scanning for robots..."))
+		return v.placeBox(boxStyle.Render(b.String()))
 	}
 
 	// Error state
 	if v.err != nil {
-		content.WriteString(s.Error.Render("[!] Error: " + v.err.Error()))
-		return panelStyle.Render(content.String())
+		b.WriteString(vs.Error.Render("Error: " + v.err.Error()))
+		return v.placeBox(boxStyle.Render(b.String()))
 	}
 
 	// Empty state
 	if len(v.robots) == 0 {
-		content.WriteString(s.Subtle.Render("No robots found in current directory\n\n"))
-		content.WriteString(s.Subtle.Render("Initialize a new robot:\n"))
-		content.WriteString(s.Info.Render("  $ rcc robot init"))
-		return panelStyle.Render(content.String())
+		b.WriteString(vs.Subtext.Render("No robots found in current directory"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Create one"))
+		b.WriteString(vs.Info.Render("rcc robot init"))
+		return v.placeBox(boxStyle.Render(b.String()))
 	}
 
-	// Header with count
-	content.WriteString(s.PanelTitle.Render(fmt.Sprintf("ROBOTS [%d]", len(v.robots))))
-	content.WriteString("\n")
-	content.WriteString(s.Divider.Render(strings.Repeat("─", 50)))
-	content.WriteString("\n\n")
+	// Robot list section
+	maxVisible := 6
+	startIdx := 0
+	if v.robotIdx >= maxVisible {
+		startIdx = v.robotIdx - maxVisible + 1
+	}
 
-	// Robot list
-	for i, r := range v.robots {
-		isSelected := i == v.cursor
+	for i := startIdx; i < len(v.robots) && i < startIdx+maxVisible; i++ {
+		r := v.robots[i]
+		isSelected := i == v.robotIdx
 
-		// Get relative path
+		// Build display name
+		name := r.name
+		if len(name) > 20 {
+			name = name[:17] + "..."
+		}
+
+		// Relative path
 		relPath, _ := filepath.Rel(".", r.directory)
 		if relPath == "" || relPath == "." {
 			relPath = "./"
-		}
-
-		// Truncate name if needed
-		name := r.name
-		if len(name) > 30 {
-			name = name[:27] + "..."
-		}
-
-		// Build the row
-		if isSelected {
-			// Selected: use ListItemSelected style
-			nameStr := "> " + name
-			padded := fmt.Sprintf("%-35s", nameStr)
-			content.WriteString(s.ListItemSelected.Render(padded))
-			content.WriteString(" ")
-			content.WriteString(s.Info.Render(relPath))
 		} else {
-			// Normal row
-			content.WriteString(s.ListItem.Render(name))
-			spaces := strings.Repeat(" ", max(1, 33-len(name)))
-			content.WriteString(spaces)
-			content.WriteString(s.Subtle.Render(relPath))
+			relPath = "./" + relPath
 		}
-		content.WriteString("\n")
+		if len(relPath) > 30 {
+			relPath = relPath[:27] + "..."
+		}
 
-		// Show tasks for selected robot
-		if isSelected && len(r.tasks) > 0 {
-			content.WriteString("\n")
-			content.WriteString(s.Subtle.Render("  Tasks: "))
-			for j, task := range r.tasks {
-				if j == v.taskCursor {
-					content.WriteString(s.ActiveTab.Render(task))
+		// Format line with padding
+		line := fmt.Sprintf("%-21s %s", name, relPath)
+
+		if isSelected && v.focus == focusRobotList {
+			b.WriteString(vs.Selected.Render("> " + line))
+		} else if isSelected {
+			b.WriteString(vs.Accent.Render("> " + line))
+		} else {
+			b.WriteString(vs.Normal.Render("  " + line))
+		}
+		b.WriteString("\n")
+	}
+
+	// Show scroll indicator if needed
+	if len(v.robots) > maxVisible {
+		remaining := len(v.robots) - startIdx - maxVisible
+		if remaining > 0 {
+			b.WriteString(vs.Subtext.Render(fmt.Sprintf("  ... +%d more (use arrows)", remaining)))
+			b.WriteString("\n")
+		}
+	}
+
+	// Separator before config
+	b.WriteString("\n")
+	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
+	b.WriteString("\n\n")
+
+	// Config section for selected robot
+	r := v.selectedRobot()
+	if r != nil {
+		// Task row
+		taskPrefix := "  "
+		taskStyle := vs.Normal
+		if v.focus == focusTaskRow {
+			taskPrefix = "> "
+			taskStyle = vs.Selected
+		}
+		b.WriteString(taskStyle.Render(taskPrefix))
+		b.WriteString(vs.Label.Render("Task    "))
+
+		if len(r.tasks) == 0 {
+			b.WriteString(vs.Subtext.Render("(default)"))
+		} else {
+			for i, task := range r.tasks {
+				if i == v.taskIdx {
+					b.WriteString(vs.BadgeActive.Render("[" + task + "]"))
 				} else {
-					content.WriteString(s.Tab.Render(task))
+					b.WriteString(vs.Badge.Render(" " + task + " "))
 				}
+				b.WriteString(" ")
 			}
-			if len(r.tasks) > 1 {
-				content.WriteString(s.Subtle.Render("  [h/l]"))
+		}
+		b.WriteString("\n")
+
+		// Env row (only show if there are env files)
+		if len(r.envFiles) > 0 {
+			envPrefix := "  "
+			envStyle := vs.Normal
+			if v.focus == focusEnvRow {
+				envPrefix = "> "
+				envStyle = vs.Selected
 			}
-			content.WriteString("\n")
+			b.WriteString(envStyle.Render(envPrefix))
+			b.WriteString(vs.Label.Render("Env     "))
+
+			// None option
+			if v.envIdx == -1 {
+				b.WriteString(vs.BadgeActive.Render("[none]"))
+			} else {
+				b.WriteString(vs.Badge.Render(" none "))
+			}
+			b.WriteString(" ")
+
+			// Env files (limit display)
+			maxEnvShow := 3
+			for i, envFile := range r.envFiles {
+				if i >= maxEnvShow {
+					b.WriteString(vs.Subtext.Render(fmt.Sprintf("+%d", len(r.envFiles)-maxEnvShow)))
+					break
+				}
+				displayName := filepath.Base(envFile)
+				if len(displayName) > 12 {
+					displayName = displayName[:9] + "..."
+				}
+				if i == v.envIdx {
+					b.WriteString(vs.BadgeActive.Render("[" + displayName + "]"))
+				} else {
+					b.WriteString(vs.Badge.Render(" " + displayName + " "))
+				}
+				b.WriteString(" ")
+			}
+			b.WriteString("\n")
 		}
 	}
 
-	// Footer with action hint
-	content.WriteString("\n")
-	content.WriteString(s.Divider.Render(strings.Repeat("─", 50)))
-	content.WriteString("\n")
-	if r := v.selectedRobot(); r != nil && len(r.tasks) > 0 {
-		content.WriteString(s.HelpKey.Render("[Enter]"))
-		content.WriteString(s.HelpDesc.Render(" Run "))
-		content.WriteString(s.Success.Render(r.tasks[v.taskCursor]))
-		content.WriteString("  ")
-		content.WriteString(s.HelpKey.Render("[R]"))
-		content.WriteString(s.HelpDesc.Render(" Refresh"))
-	} else {
-		content.WriteString(s.HelpKey.Render("[R]"))
-		content.WriteString(s.HelpDesc.Render(" Refresh  "))
-		content.WriteString(s.HelpKey.Render("[j/k]"))
-		content.WriteString(s.HelpDesc.Render(" Navigate"))
+	// Command preview separator
+	b.WriteString("\n")
+	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
+	b.WriteString("\n\n")
+
+	// Command preview
+	if r != nil {
+		cmd := v.buildCommandPreview(r)
+		b.WriteString(vs.Info.Render("  " + cmd))
+		b.WriteString("\n")
 	}
 
-	return panelStyle.Render(content.String())
+	// Footer
+	b.WriteString("\n")
+	hints := []KeyHint{
+		{"Enter", "run"},
+		{"Arrows", "navigate"},
+		{"R", "refresh"},
+	}
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
+
+	return v.placeBox(boxStyle.Render(b.String()))
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
+func (v *RobotsView) buildCommandPreview(r *robotData) string {
+	relPath, _ := filepath.Rel(".", r.path)
+	if relPath == "" {
+		relPath = r.path
 	}
-	return b
+
+	cmd := "rcc run -r " + relPath
+
+	if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
+		cmd += " -t " + r.tasks[v.taskIdx]
+	}
+
+	if v.envIdx >= 0 && v.envIdx < len(r.envFiles) {
+		envPath := filepath.Join(filepath.Dir(relPath), r.envFiles[v.envIdx])
+		cmd += " -e " + envPath
+	}
+
+	return cmd
+}
+
+func (v *RobotsView) placeBox(box string) string {
+	return lipgloss.Place(
+		v.width,
+		v.height,
+		lipgloss.Center,
+		lipgloss.Center,
+		box,
+	)
 }
 
 func (v *RobotsView) Name() string {
@@ -290,12 +514,5 @@ func (v *RobotsView) Name() string {
 }
 
 func (v *RobotsView) ShortHelp() string {
-	return "j/k:nav h/l:task r:run R:refresh"
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+	return "Arrows:navigate Enter:run R:refresh"
 }

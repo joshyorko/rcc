@@ -63,13 +63,11 @@ func (v *EnvironmentsView) loadCatalogs() tea.Msg {
 			Platform: "unknown",
 		}
 
-		// Get file stats
 		if stat, err := os.Stat(fullPath); err == nil {
 			info.SizeKB = stat.Size() / 1024
 			info.Age = int(time.Since(stat.ModTime()).Hours() / 24)
 		}
 
-		// Try to determine platform from filename pattern
 		if strings.Contains(name, "win") || strings.Contains(name, "windows") {
 			info.Platform = "windows"
 		} else if strings.Contains(name, "darwin") || strings.Contains(name, "mac") {
@@ -111,12 +109,16 @@ func (v *EnvironmentsView) Update(msg tea.Msg) (View, tea.Cmd) {
 			if v.tab == 0 && v.selected > 0 {
 				v.selected--
 			}
+		case "g":
+			v.selected = 0
+		case "G":
+			if len(v.catalogs) > 0 {
+				v.selected = len(v.catalogs) - 1
+			}
 		case "R":
-			// Refresh catalogs
 			v.loadingCatalogs = true
 			return v, v.loadCatalogs
 		case "d":
-			// Delete selected catalog
 			if v.tab == 0 && v.selected >= 0 && v.selected < len(v.catalogs) {
 				action := ActionResult{
 					Type:  ActionDeleteEnv,
@@ -131,270 +133,160 @@ func (v *EnvironmentsView) Update(msg tea.Msg) (View, tea.Cmd) {
 
 // View implements View
 func (v *EnvironmentsView) View() string {
-	var sections []string
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
 
-	// Header with title
-	sections = append(sections, v.renderHeader())
+	// Dynamic box sizing
+	boxWidth := v.width - 8
+	if boxWidth < 60 {
+		boxWidth = 60
+	}
+	if boxWidth > 140 {
+		boxWidth = 140
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
+	var b strings.Builder
+
+	// Header with RCC version
+	subtitle := ""
+	if !v.loadingCatalogs {
+		subtitle = fmt.Sprintf("(%d catalogs)", len(v.catalogs))
+	}
+	b.WriteString(RenderHeader(vs, "Holotree", subtitle, contentWidth))
 
 	// Tab bar
-	sections = append(sections, v.renderTabs())
+	tabs := []string{"Catalogs", "Spaces"}
+	for i, tab := range tabs {
+		if i == v.tab {
+			b.WriteString(vs.BadgeActive.Render(" " + tab + " "))
+		} else {
+			b.WriteString(vs.Badge.Render(" " + tab + " "))
+		}
+		b.WriteString(" ")
+	}
+	b.WriteString(vs.Subtext.Render(" Tab to switch"))
+	b.WriteString("\n\n")
 
-	// Content area based on selected tab
+	// Content based on tab
 	if v.tab == 0 {
-		sections = append(sections, v.renderCatalogsPanel())
+		b.WriteString(v.renderCatalogsContent(vs, contentWidth))
 	} else {
-		sections = append(sections, v.renderSpacesPanel())
+		b.WriteString(v.renderSpacesContent(vs, contentWidth))
 	}
 
-	// Help footer
-	sections = append(sections, "")
-	sections = append(sections, v.renderHelp())
+	// Footer
+	b.WriteString("\n")
+	hints := []KeyHint{
+		{"Tab", "switch"},
+		{"j/k", "nav"},
+		{"d", "delete"},
+		{"R", "refresh"},
+	}
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
-}
-
-func (v *EnvironmentsView) renderHeader() string {
-	title := v.styles.Title.Render("Holotree")
-	subtitle := v.styles.Subtle.Render("Manage isolated Python environments and catalogs")
-
-	return lipgloss.JoinVertical(lipgloss.Left,
-		title,
-		subtitle,
-		"",
+	return lipgloss.Place(v.width, v.height,
+		lipgloss.Center, lipgloss.Center,
+		boxStyle.Render(b.String()),
 	)
 }
 
-func (v *EnvironmentsView) renderTabs() string {
-	tabs := []string{"Catalogs", "Spaces"}
+func (v *EnvironmentsView) renderCatalogsContent(vs ViewStyles, contentWidth int) string {
+	var b strings.Builder
 
-	var tabStrings []string
-	for i, tab := range tabs {
-		if i == v.tab {
-			tabStrings = append(tabStrings, v.styles.ActiveTab.Render(tab))
-		} else {
-			tabStrings = append(tabStrings, v.styles.Tab.Render(tab))
-		}
-	}
-
-	tabBar := lipgloss.JoinHorizontal(lipgloss.Top, tabStrings...)
-	divider := v.styles.Divider.Render(strings.Repeat("─", v.width-4))
-
-	return lipgloss.JoinVertical(lipgloss.Left, tabBar, divider, "")
-}
-
-func (v *EnvironmentsView) renderCatalogsPanel() string {
 	if v.loadingCatalogs {
-		loading := v.styles.Spinner.Render("Loading catalogs...")
-		return v.styles.Panel.Width(v.width - 4).Render(loading)
+		b.WriteString(vs.Subtext.Render("Loading catalogs..."))
+		return b.String()
 	}
 
 	if len(v.catalogs) == 0 {
-		emptyMsg := v.styles.Subtle.Render("No catalogs found in holotree.\n\n") +
-			v.styles.Info.Render("Catalogs are created automatically when you build or use environments.")
-		return v.styles.Panel.Width(v.width - 4).Render(emptyMsg)
+		b.WriteString(vs.Subtext.Render("No catalogs found in holotree"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Tip"))
+		b.WriteString(vs.Text.Render("Run a robot to create environments"))
+		return b.String()
 	}
 
-	// Split view: catalog list on left, details on right
-	listWidth := 60
-	detailsWidth := v.width - listWidth - 8
-
-	catalogList := v.renderCatalogList(listWidth)
-	catalogDetails := v.renderCatalogDetails(detailsWidth)
-
-	content := lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		catalogList,
-		"  ",
-		catalogDetails,
-	)
-
-	return content
-}
-
-func (v *EnvironmentsView) renderCatalogList(width int) string {
-	var content []string
-
-	// Header
-	content = append(content, v.styles.PanelTitle.Render("Catalog List"))
-	content = append(content, "")
-
-	// Table header
-	headerCols := []string{
-		v.styles.TableHeader.Width(8).Render(""),
-		v.styles.TableHeader.Width(35).Render("Catalog ID"),
-		v.styles.TableHeader.Width(10).Render("Age"),
-	}
-	header := lipgloss.JoinHorizontal(lipgloss.Left, headerCols...)
-	content = append(content, header)
-	content = append(content, v.styles.Divider.Render(strings.Repeat("─", width-4)))
-
-	// Table rows
+	// Catalog list
 	for i, catalog := range v.catalogs {
-		var prefix string
-		var rowStyle lipgloss.Style
+		isSelected := i == v.selected
 
-		if i == v.selected {
-			prefix = "> "
-			rowStyle = v.styles.ListItemSelected
-		} else {
-			prefix = "  "
-			if i%2 == 0 {
-				rowStyle = v.styles.TableRow
-			} else {
-				rowStyle = v.styles.TableRowAlt
-			}
-		}
-
-		// Truncate long catalog names
+		// Truncate name if needed
 		displayName := catalog.Name
-		if len(displayName) > 32 {
-			displayName = displayName[:29] + "..."
+		if len(displayName) > 40 {
+			displayName = displayName[:37] + "..."
 		}
 
+		// Age display
 		ageStr := fmt.Sprintf("%dd", catalog.Age)
 		if catalog.Age == 0 {
 			ageStr = "today"
 		}
 
-		cols := []string{
-			rowStyle.Width(8).Render(prefix),
-			rowStyle.Width(35).Render(displayName),
-			rowStyle.Width(10).Render(ageStr),
-		}
-
-		row := lipgloss.JoinHorizontal(lipgloss.Left, cols...)
-		content = append(content, row)
-	}
-
-	// Footer stats
-	content = append(content, "")
-	content = append(content, v.styles.Divider.Render(strings.Repeat("─", width-4)))
-	stats := v.styles.Subtle.Render(fmt.Sprintf("Total: %d catalogs", len(v.catalogs)))
-	content = append(content, stats)
-
-	listContent := lipgloss.JoinVertical(lipgloss.Left, content...)
-	return v.styles.Panel.Width(width).Render(listContent)
-}
-
-func (v *EnvironmentsView) renderCatalogDetails(width int) string {
-	var content []string
-
-	// Header
-	content = append(content, v.styles.PanelTitle.Render("Catalog Details"))
-	content = append(content, "")
-
-	if v.selected < 0 || v.selected >= len(v.catalogs) {
-		content = append(content, v.styles.Subtle.Render("Select a catalog to view details"))
-	} else {
-		catalog := v.catalogs[v.selected]
-
 		// Platform badge
-		var platformColor lipgloss.Style
+		platformBadge := ""
 		switch catalog.Platform {
 		case "linux":
-			platformColor = v.styles.Success
+			platformBadge = vs.Success.Render("[LNX]")
 		case "darwin":
-			platformColor = v.styles.Info
+			platformBadge = vs.Info.Render("[MAC]")
 		case "windows":
-			platformColor = v.styles.Warning
+			platformBadge = vs.Warning.Render("[WIN]")
 		default:
-			platformColor = v.styles.Subtle
+			platformBadge = vs.Subtext.Render("[???]")
 		}
 
-		platform := platformColor.Render("[" + strings.ToUpper(catalog.Platform) + "]")
-		content = append(content, platform)
-		content = append(content, "")
-
-		// Catalog info
-		details := []struct {
-			label string
-			value string
-			style lipgloss.Style
-		}{
-			{"Name", catalog.Name, v.styles.Highlight},
-			{"Size", fmt.Sprintf("%d KB", catalog.SizeKB), v.styles.Accent},
-			{"Age", fmt.Sprintf("%d days", catalog.Age), v.styles.Info},
+		if isSelected {
+			b.WriteString(vs.Selected.Render("> " + displayName))
+		} else {
+			b.WriteString(vs.Normal.Render("  " + displayName))
 		}
+		b.WriteString("  ")
+		b.WriteString(platformBadge)
+		b.WriteString("  ")
+		b.WriteString(vs.Subtext.Render(ageStr))
+		b.WriteString("\n")
 
-		for _, detail := range details {
-			line := v.styles.StatusKey.Render(detail.label+": ") +
-				detail.style.Render(detail.value)
-			content = append(content, line)
+		// Show details for selected catalog
+		if isSelected {
+			b.WriteString("\n")
+			b.WriteString(vs.Label.Render("Size"))
+			b.WriteString(vs.Accent.Render(fmt.Sprintf("%d KB", catalog.SizeKB)))
+			b.WriteString("\n")
+
+			// Truncate path
+			pathStr := catalog.FullPath
+			if len(pathStr) > contentWidth-16 {
+				half := (contentWidth - 19) / 2
+				pathStr = pathStr[:half] + "..." + pathStr[len(pathStr)-half:]
+			}
+			b.WriteString(vs.Label.Render("Path"))
+			b.WriteString(vs.Subtext.Render(pathStr))
+			b.WriteString("\n")
 		}
-
-		content = append(content, "")
-		content = append(content, v.styles.Divider.Render(strings.Repeat("─", width-4)))
-		content = append(content, "")
-
-		// Path info
-		content = append(content, v.styles.StatusKey.Render("Location:"))
-		pathStr := catalog.FullPath
-		if len(pathStr) > width-8 {
-			// Truncate from middle
-			half := (width - 11) / 2
-			pathStr = pathStr[:half] + "..." + pathStr[len(pathStr)-half:]
-		}
-		content = append(content, v.styles.Subtle.Render(pathStr))
-
-		content = append(content, "")
-		content = append(content, "")
-
-		// Actions
-		content = append(content, v.styles.StatusKey.Render("Actions:"))
-		deleteAction := v.styles.Warning.Render("  d") +
-			v.styles.Subtle.Render(" - Delete this catalog")
-		content = append(content, deleteAction)
-
-		refreshAction := v.styles.Info.Render("  R") +
-			v.styles.Subtle.Render(" - Refresh catalog list")
-		content = append(content, refreshAction)
 	}
 
-	detailsContent := lipgloss.JoinVertical(lipgloss.Left, content...)
-	return v.styles.Panel.Width(width).Render(detailsContent)
+	return b.String()
 }
 
-func (v *EnvironmentsView) renderSpacesPanel() string {
-	var content []string
+func (v *EnvironmentsView) renderSpacesContent(vs ViewStyles, contentWidth int) string {
+	var b strings.Builder
 
-	// Header
-	content = append(content, v.styles.PanelTitle.Render("Holotree Spaces"))
-	content = append(content, "")
+	b.WriteString(vs.Subtext.Render("Holotree Spaces"))
+	b.WriteString("\n\n")
+	b.WriteString(vs.Text.Render("Spaces are isolated holotree environments used by"))
+	b.WriteString("\n")
+	b.WriteString(vs.Text.Render("different controllers and automation tasks."))
+	b.WriteString("\n\n")
+	b.WriteString(vs.Info.Render("Space management coming soon."))
 
-	// Placeholder content
-	content = append(content, v.styles.Subtle.Render("Space management coming soon."))
-	content = append(content, "")
-	content = append(content, v.styles.Info.Render(
-		"Spaces are isolated holotree environments used by different\n"+
-			"controllers and automation tasks. Each space maintains its\n"+
-			"own set of Python environments based on catalog blueprints.",
-	))
-
-	spacesContent := lipgloss.JoinVertical(lipgloss.Left, content...)
-	return v.styles.Panel.Width(v.width - 4).Render(spacesContent)
-}
-
-func (v *EnvironmentsView) renderHelp() string {
-	helps := []struct {
-		key  string
-		desc string
-	}{
-		{"tab", "Switch views"},
-		{"j/k ↑↓", "Navigate"},
-		{"d", "Delete"},
-		{"R", "Refresh"},
-		{"q", "Back"},
-	}
-
-	var helpItems []string
-	for _, h := range helps {
-		item := v.styles.HelpKey.Render(h.key) +
-			v.styles.Subtle.Render(" "+h.desc)
-		helpItems = append(helpItems, item)
-	}
-
-	return v.styles.Subtle.Render("  ") +
-		strings.Join(helpItems, v.styles.Subtle.Render("  •  "))
+	return b.String()
 }
 
 // Name implements View

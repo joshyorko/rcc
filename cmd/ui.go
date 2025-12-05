@@ -74,6 +74,9 @@ func runRobotAction(action *interactive.ActionResult) {
 	if action.RobotTask != "" {
 		args = append(args, "-t", action.RobotTask)
 	}
+	if action.EnvFile != "" {
+		args = append(args, "-e", action.EnvFile)
+	}
 
 	// Execute rcc run
 	rccPath, err := os.Executable()

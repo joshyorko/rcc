@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -34,7 +35,7 @@ type SystemInfo struct {
 func NewHomeView(styles *Styles) *HomeView {
 	return &HomeView{
 		styles: styles,
-		width:  120, // default, will be updated
+		width:  120,
 		height: 30,
 	}
 }
@@ -62,8 +63,6 @@ func (v *HomeView) loadSystemInfo() tea.Msg {
 	}
 
 	info.HolotreeDir = common.HololibLocation()
-
-	// Count environments
 	catalogs := htfs.CatalogNames()
 	info.EnvCount = len(catalogs)
 
@@ -86,166 +85,104 @@ func (v *HomeView) Update(msg tea.Msg) (View, tea.Cmd) {
 
 // View implements View
 func (v *HomeView) View() string {
-	var sections []string
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
 
-	// Banner/Welcome header
-	sections = append(sections, v.renderBanner())
-
-	// System info cards in a row
-	sections = append(sections, v.renderSystemCards())
-
-	// Quick Actions section
-	sections = append(sections, v.renderQuickActions())
-
-	return lipgloss.JoinVertical(lipgloss.Left, sections...)
-}
-
-func (v *HomeView) renderBanner() string {
-	// Create a clean centered banner without ugly "####" markers
-	var lines []string
-
-	// ASCII art logo - simple, clean RCC
-	logo := []string{
-		" ____   ____ ____ ",
-		"|  _ \\ / ___|/ ___|",
-		"| |_) | |   | |    ",
-		"|  _ <| |___| |___ ",
-		"|_| \\_\\\\____|\\____|",
+	// Dynamic box sizing
+	boxWidth := v.width - 8
+	if boxWidth < 60 {
+		boxWidth = 60
 	}
-
-	for _, line := range logo {
-		lines = append(lines, v.styles.Title.Render(line))
+	if boxWidth > 100 {
+		boxWidth = 100
 	}
+	contentWidth := boxWidth - 6
 
-	// Tagline
-	tagline := v.styles.Subtle.Render("Repeatable - Contained - Code")
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
 
-	// Version and status
-	versionLine := v.styles.StatusKey.Render("Version: ") +
-		v.styles.Highlight.Render(v.info.Version) +
-		v.styles.Subtle.Render("  │  ") +
-		v.styles.StatusKey.Render("Platform: ") +
-		v.styles.Info.Render(v.info.Platform+"/"+v.info.Architecture)
+	var b strings.Builder
 
-	statusLine := v.styles.Success.Render("[OK] System Ready")
+	// Header with RCC version (same as all other views)
+	b.WriteString(RenderHeader(vs, "Dashboard", "", contentWidth))
+	b.WriteString("\n")
 
-	lines = append(lines, "")
-	lines = append(lines, lipgloss.NewStyle().Width(40).Align(lipgloss.Center).Render(tagline))
-	lines = append(lines, lipgloss.NewStyle().Width(60).Align(lipgloss.Center).Render(versionLine))
-	lines = append(lines, lipgloss.NewStyle().Width(40).Align(lipgloss.Center).Render(statusLine))
-	lines = append(lines, "")
+	// Status line
+	b.WriteString(vs.Success.Render("[OK] Ready"))
+	b.WriteString("\n\n")
 
-	return lipgloss.JoinVertical(lipgloss.Center, lines...)
-}
+	// Info grid
+	b.WriteString(vs.Label.Render("Version"))
+	b.WriteString(vs.Accent.Render(v.info.Version))
+	b.WriteString("\n")
 
-func (v *HomeView) renderSystemCards() string {
-	// Create individual status cards with rounded borders
-	cardWidth := 35
+	b.WriteString(vs.Label.Render("Platform"))
+	b.WriteString(vs.Info.Render(v.info.Platform + "/" + v.info.Architecture))
+	b.WriteString("\n")
 
-	// User/Host Card
-	userCard := v.createStatusCard(
-		"System",
-		[]statusItem{
-			{label: "User", value: v.info.Username, style: v.styles.Accent},
-			{label: "Host", value: v.info.Hostname, style: v.styles.Info},
-		},
-		cardWidth,
-	)
+	b.WriteString(vs.Label.Render("User"))
+	b.WriteString(vs.Text.Render(v.info.Username))
+	b.WriteString("\n")
 
-	// Environment Card
-	envCard := v.createStatusCard(
-		"Environment",
-		[]statusItem{
-			{label: "Environments", value: fmt.Sprintf("%d", v.info.EnvCount), style: v.styles.Success},
-			{label: "Catalogs", value: fmt.Sprintf("%d", v.info.EnvCount), style: v.styles.Warning},
-		},
-		cardWidth,
-	)
+	b.WriteString(vs.Label.Render("Host"))
+	b.WriteString(vs.Text.Render(v.info.Hostname))
+	b.WriteString("\n")
 
-	// Holotree Card
-	holotreePath := v.info.HolotreeDir
-	if len(holotreePath) > 25 {
-		holotreePath = "..." + holotreePath[len(holotreePath)-22:]
+	b.WriteString(vs.Label.Render("Environments"))
+	b.WriteString(vs.Success.Render(fmt.Sprintf("%d", v.info.EnvCount)))
+	b.WriteString("\n")
+
+	// Truncate holotree path
+	htPath := v.info.HolotreeDir
+	maxPathLen := contentWidth - 16
+	if len(htPath) > maxPathLen {
+		htPath = "..." + htPath[len(htPath)-(maxPathLen-3):]
 	}
-	holotreeCard := v.createStatusCard(
-		"Holotree",
-		[]statusItem{
-			{label: "Location", value: holotreePath, style: v.styles.Highlight},
-		},
-		cardWidth,
-	)
+	b.WriteString(vs.Label.Render("Holotree"))
+	b.WriteString(vs.Subtext.Render(htPath))
+	b.WriteString("\n\n")
 
-	// Arrange cards in a row
-	return lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		userCard,
-		"  ",
-		envCard,
-		"  ",
-		holotreeCard,
-	)
-}
+	// Navigation section
+	b.WriteString(vs.Separator.Render(strings.Repeat("─", contentWidth)))
+	b.WriteString("\n")
+	b.WriteString(vs.Accent.Bold(true).Render("Navigation"))
+	b.WriteString("\n\n")
 
-type statusItem struct {
-	label string
-	value string
-	style lipgloss.Style
-}
-
-func (v *HomeView) createStatusCard(title string, items []statusItem, width int) string {
-	var content []string
-
-	// Title
-	content = append(content, v.styles.PanelTitle.Render(title))
-	content = append(content, "")
-
-	// Items
-	for _, item := range items {
-		line := v.styles.StatusKey.Render(item.label+": ") +
-			item.style.Render(item.value)
-		content = append(content, line)
-	}
-
-	cardContent := lipgloss.JoinVertical(lipgloss.Left, content...)
-
-	// Wrap in panel with rounded border
-	return v.styles.Panel.
-		Width(width).
-		Render(cardContent)
-}
-
-func (v *HomeView) renderQuickActions() string {
-	// Create a panel for quick actions
-	var content []string
-
-	content = append(content, v.styles.PanelTitle.Render("Quick Actions"))
-	content = append(content, "")
-
-	actions := []struct {
+	navItems := []struct {
 		key  string
 		desc string
 	}{
-		{"2", "Browse Commands"},
-		{"3", "View Robots"},
-		{"4", "Manage Holotree"},
-		{"5", "View Logs"},
-		{"6", "Remote Catalogs"},
+		{"2", "Commands"},
+		{"3", "Robots"},
+		{"4", "Holotree"},
+		{"5", "Logs"},
+		{"6", "Remote"},
 	}
 
-	for _, a := range actions {
-		line := "  " +
-			v.styles.HelpKey.Render(a.key) +
-			v.styles.Subtle.Render(" | ") +
-			v.styles.HelpDesc.Render(a.desc)
-		content = append(content, line)
+	for _, nav := range navItems {
+		b.WriteString("  ")
+		b.WriteString(vs.KeyHint.Render(nav.key))
+		b.WriteString(" ")
+		b.WriteString(vs.Subtext.Render(nav.desc))
+		b.WriteString("\n")
 	}
 
-	actionContent := lipgloss.JoinVertical(lipgloss.Left, content...)
+	// Footer
+	b.WriteString("\n")
+	hints := []KeyHint{
+		{"1-6", "views"},
+		{"?", "help"},
+		{"q", "quit"},
+	}
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
-	// Wrap in panel
-	return v.styles.Panel.
-		Width(60).
-		Render(actionContent)
+	return lipgloss.Place(v.width, v.height,
+		lipgloss.Center, lipgloss.Center,
+		boxStyle.Render(b.String()),
+	)
 }
 
 // Name implements View
@@ -255,5 +192,5 @@ func (v *HomeView) Name() string {
 
 // ShortHelp implements View
 func (v *HomeView) ShortHelp() string {
-	return "1-5:switch views"
+	return "1-6:switch views"
 }

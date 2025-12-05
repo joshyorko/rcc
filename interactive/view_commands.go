@@ -22,7 +22,7 @@ type CommandCategory struct {
 	Expanded bool
 }
 
-// CommandsView displays available RCC commands in a tree structure
+// CommandsView displays available RCC commands
 type CommandsView struct {
 	styles      *Styles
 	width       int
@@ -30,7 +30,7 @@ type CommandsView struct {
 	categories  []CommandCategory
 	selectedCat int
 	selectedCmd int
-	inCategory  bool // true when navigating within a category
+	inCategory  bool
 }
 
 // NewCommandsView creates a new commands view
@@ -54,7 +54,7 @@ func getCommandCategories() []CommandCategory {
 			Expanded: true,
 			Commands: []CommandInfo{
 				{Name: "run", Description: "Run a robot task", Usage: "rcc run -r robot.yaml -t task"},
-				{Name: "task", Description: "Run a specific task from robot.yaml", Usage: "rcc task script -r robot.yaml"},
+				{Name: "task", Description: "Run task from robot.yaml", Usage: "rcc task script -r robot.yaml"},
 				{Name: "testrun", Description: "Test run a robot", Usage: "rcc robot testrun"},
 				{Name: "init", Description: "Initialize robot structure", Usage: "rcc robot init"},
 				{Name: "bundle", Description: "Create robot bundle", Usage: "rcc robot bundle"},
@@ -65,16 +65,13 @@ func getCommandCategories() []CommandCategory {
 			Name:     "Holotree",
 			Expanded: false,
 			Commands: []CommandInfo{
-				{Name: "list", Description: "List holotree environments", Usage: "rcc holotree list"},
-				{Name: "catalogs", Description: "List holotree catalogs", Usage: "rcc holotree catalogs"},
-				{Name: "variables", Description: "Show environment variables", Usage: "rcc holotree variables"},
-				{Name: "check", Description: "Check holotree integrity", Usage: "rcc holotree check"},
-				{Name: "delete", Description: "Delete a holotree space", Usage: "rcc holotree delete"},
-				{Name: "venv", Description: "Create virtual environment", Usage: "rcc holotree venv"},
+				{Name: "list", Description: "List environments", Usage: "rcc holotree list"},
+				{Name: "catalogs", Description: "List catalogs", Usage: "rcc holotree catalogs"},
+				{Name: "variables", Description: "Show env variables", Usage: "rcc holotree variables"},
+				{Name: "check", Description: "Check integrity", Usage: "rcc holotree check"},
+				{Name: "delete", Description: "Delete a space", Usage: "rcc holotree delete"},
 				{Name: "export", Description: "Export environment", Usage: "rcc holotree export"},
 				{Name: "import", Description: "Import environment", Usage: "rcc holotree import"},
-				{Name: "init", Description: "Initialize holotree", Usage: "rcc holotree init"},
-				{Name: "prebuild", Description: "Prebuild environment", Usage: "rcc holotree prebuild"},
 			},
 		},
 		{
@@ -85,7 +82,6 @@ func getCommandCategories() []CommandCategory {
 				{Name: "settings", Description: "Show/modify settings", Usage: "rcc configure settings"},
 				{Name: "credentials", Description: "Manage credentials", Usage: "rcc configure credentials"},
 				{Name: "identity", Description: "Show identity info", Usage: "rcc configure identity"},
-				{Name: "profile", Description: "Configure profile", Usage: "rcc configure profile"},
 			},
 		},
 		{
@@ -95,7 +91,6 @@ func getCommandCategories() []CommandCategory {
 				{Name: "diag", Description: "Run full diagnostics", Usage: "rcc configure diagnostics"},
 				{Name: "netdiag", Description: "Network diagnostics", Usage: "rcc configure netdiag"},
 				{Name: "speed", Description: "Speed test", Usage: "rcc configure speed"},
-				{Name: "longpaths", Description: "Check long paths support", Usage: "rcc configure longpaths"},
 			},
 		},
 		{
@@ -105,7 +100,6 @@ func getCommandCategories() []CommandCategory {
 				{Name: "authorize", Description: "Authorize with cloud", Usage: "rcc cloud authorize"},
 				{Name: "push", Description: "Push to cloud", Usage: "rcc cloud push"},
 				{Name: "pull", Description: "Pull from cloud", Usage: "rcc pull"},
-				{Name: "workspace", Description: "Workspace operations", Usage: "rcc cloud workspace"},
 			},
 		},
 		{
@@ -114,8 +108,6 @@ func getCommandCategories() []CommandCategory {
 			Commands: []CommandInfo{
 				{Name: "version", Description: "Show version info", Usage: "rcc version"},
 				{Name: "man", Description: "Manual pages", Usage: "rcc man"},
-				{Name: "feedback", Description: "Send feedback", Usage: "rcc feedback"},
-				{Name: "interactive", Description: "Interactive mode", Usage: "rcc interactive"},
 				{Name: "ui", Description: "Launch TUI dashboard", Usage: "rcc ui"},
 			},
 		},
@@ -164,7 +156,6 @@ func (v *CommandsView) moveDown() {
 		if v.selectedCmd < len(cat.Commands)-1 {
 			v.selectedCmd++
 		} else {
-			// Move to next category
 			v.inCategory = false
 			if v.selectedCat < len(v.categories)-1 {
 				v.selectedCat++
@@ -183,13 +174,11 @@ func (v *CommandsView) moveUp() {
 		if v.selectedCmd > 0 {
 			v.selectedCmd--
 		} else {
-			// Back to category header
 			v.inCategory = false
 		}
 	} else {
 		if v.selectedCat > 0 {
 			v.selectedCat--
-			// If previous category is expanded, go to its last command
 			if v.categories[v.selectedCat].Expanded {
 				v.inCategory = true
 				v.selectedCmd = len(v.categories[v.selectedCat].Commands) - 1
@@ -201,7 +190,6 @@ func (v *CommandsView) moveUp() {
 func (v *CommandsView) expandOrEnter() tea.Cmd {
 	cat := &v.categories[v.selectedCat]
 	if !v.inCategory {
-		// Toggle expand/collapse of category
 		cat.Expanded = !cat.Expanded
 		if cat.Expanded && len(cat.Commands) > 0 {
 			v.inCategory = true
@@ -209,7 +197,6 @@ func (v *CommandsView) expandOrEnter() tea.Cmd {
 		}
 		return nil
 	}
-	// Execute the selected command
 	if cmd := v.GetSelectedCommand(); cmd != nil {
 		action := ActionResult{
 			Type:    ActionRunCommand,
@@ -230,198 +217,115 @@ func (v *CommandsView) collapseOrBack() {
 
 // View implements View
 func (v *CommandsView) View() string {
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
+
+	// Dynamic box sizing
+	boxWidth := v.width - 8
+	if boxWidth < 70 {
+		boxWidth = 70
+	}
+	if boxWidth > 120 {
+		boxWidth = 120
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
 	var b strings.Builder
 
-	// Calculate available space for layout
-	contentHeight := v.height - 8 // Reserve space for header and help
-	treeWidth := v.width / 2
-	if v.width < 80 {
-		treeWidth = v.width - 4
+	// Header with RCC version
+	totalCmds := 0
+	for _, cat := range v.categories {
+		totalCmds += len(cat.Commands)
 	}
-	detailWidth := v.width - treeWidth - 6
-
-	// Title
-	title := v.styles.PanelTitle.Render("Commands")
-	subtitle := v.styles.Subtle.Render("Browse and execute RCC commands")
-	b.WriteString(title)
+	b.WriteString(RenderHeader(vs, "Commands", fmt.Sprintf("(%d available)", totalCmds), contentWidth))
 	b.WriteString("\n")
-	b.WriteString(subtitle)
-	b.WriteString("\n\n")
 
-	// Build tree view
-	treeContent := v.buildTreeView(treeWidth, contentHeight)
-
-	// Build detail panel for selected command
-	var detailContent string
-	if cmd := v.GetSelectedCommand(); cmd != nil && v.width >= 80 {
-		detailContent = v.buildDetailPanel(cmd, detailWidth, contentHeight)
-	}
-
-	// Render side-by-side panels for wide terminals
-	if v.width >= 80 && detailContent != "" {
-		// Use lipgloss JoinHorizontal to place panels side by side
-		treePanelContent := v.styles.Panel.
-			Width(treeWidth).
-			Height(contentHeight).
-			Render(treeContent)
-
-		detailPanelContent := v.styles.Panel.
-			Width(detailWidth).
-			Height(contentHeight).
-			Render(detailContent)
-
-		panels := lipgloss.JoinHorizontal(lipgloss.Top, treePanelContent, " ", detailPanelContent)
-		b.WriteString(panels)
-	} else {
-		// Single panel for narrow terminals
-		panelContent := v.styles.Panel.
-			Width(v.width - 4).
-			Height(contentHeight).
-			Render(treeContent)
-		b.WriteString(panelContent)
-	}
-
-	b.WriteString("\n\n")
-
-	// Help bar
-	help := v.buildHelpBar()
-	b.WriteString(help)
-
-	return b.String()
-}
-
-// buildTreeView renders the command tree structure
-func (v *CommandsView) buildTreeView(width, height int) string {
-	var b strings.Builder
-
+	// Category list
 	for catIdx, cat := range v.categories {
-		// Category header
 		isSelectedCat := catIdx == v.selectedCat && !v.inCategory
-		isLastCat := catIdx == len(v.categories)-1
 
-		// Tree branch character
-		branchChar := "+"
-		if isLastCat {
-			branchChar = "+"
-		}
-
-		// Expand/collapse icon
-		expandIcon := "[+]"
+		// Category header with expand indicator
+		expandIcon := "+"
 		if cat.Expanded {
-			expandIcon = "[-]"
+			expandIcon = "-"
 		}
 
-		// Build category line
-		catLine := v.styles.TreeBranch.Render(branchChar+"─") + " "
+		catHeader := fmt.Sprintf("[%s] %s", expandIcon, cat.Name)
+		cmdCount := fmt.Sprintf(" (%d)", len(cat.Commands))
 
 		if isSelectedCat {
-			catLine += v.styles.ListItemSelected.Render(expandIcon + " " + cat.Name)
+			b.WriteString(vs.Selected.Render(catHeader))
+			b.WriteString(vs.Subtext.Render(cmdCount))
 		} else {
-			catLine += v.styles.Title.Render(expandIcon+" ") + v.styles.TreeBranch.Render(cat.Name)
+			b.WriteString(vs.Normal.Render(catHeader))
+			b.WriteString(vs.Subtext.Render(cmdCount))
 		}
-
-		// Show command count
-		cmdCount := v.styles.Subtle.Render(fmt.Sprintf(" (%d)", len(cat.Commands)))
-		catLine += cmdCount
-
-		b.WriteString(catLine)
 		b.WriteString("\n")
 
-		// Show commands if expanded
+		// Commands if expanded
 		if cat.Expanded {
 			for cmdIdx, cmd := range cat.Commands {
 				isSelectedCmd := catIdx == v.selectedCat && v.inCategory && cmdIdx == v.selectedCmd
 
-				// Tree structure
-				var prefix string
-				if !isLastCat {
-					prefix = v.styles.TreeBranch.Render("│")
-				} else {
-					prefix = " "
-				}
-
-				// Command branch character
-				cmdBranch := "+"
-
-				// Build command line
-				cmdLine := prefix + v.styles.TreeBranch.Render("  "+cmdBranch+"─")
-
+				// Indent and format command
 				if isSelectedCmd {
-					// Selected command with highlight
-					cmdLine += " " + v.styles.ListItemSelected.Render("> "+cmd.Name)
+					b.WriteString("  ")
+					b.WriteString(vs.BadgeActive.Render(cmd.Name))
+					b.WriteString(" ")
+					b.WriteString(vs.Text.Render(cmd.Description))
 				} else {
-					// Normal command
-					cmdLine += " " + v.styles.TreeLeaf.Render(cmd.Name)
+					b.WriteString("  ")
+					b.WriteString(vs.Badge.Render(cmd.Name))
+					b.WriteString(" ")
+					b.WriteString(vs.Subtext.Render(cmd.Description))
 				}
-
-				b.WriteString(cmdLine)
 				b.WriteString("\n")
 			}
 		}
 	}
 
-	return b.String()
-}
+	// Selected command detail panel
+	if cmd := v.GetSelectedCommand(); cmd != nil {
+		b.WriteString("\n")
+		b.WriteString(vs.Separator.Render(strings.Repeat("─", contentWidth)))
+		b.WriteString("\n\n")
 
-// buildDetailPanel renders the detail view for a selected command
-func (v *CommandsView) buildDetailPanel(cmd *CommandInfo, width, height int) string {
-	var b strings.Builder
+		b.WriteString(vs.Accent.Bold(true).Render("Selected Command"))
+		b.WriteString("\n\n")
 
-	// Title
-	title := v.styles.Highlight.Bold(true).Render(cmd.Name)
-	b.WriteString(title)
-	b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Command"))
+		b.WriteString(vs.Accent.Render(cmd.Name))
+		b.WriteString("\n")
 
-	// Description
-	descLabel := v.styles.Subtle.Render("Description:")
-	b.WriteString(descLabel)
-	b.WriteString("\n")
-	desc := v.styles.ListItemDesc.Render("  " + cmd.Description)
-	b.WriteString(desc)
-	b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("Description"))
+		b.WriteString(vs.Text.Render(cmd.Description))
+		b.WriteString("\n")
 
-	// Usage
-	usageLabel := v.styles.Subtle.Render("Usage:")
-	b.WriteString(usageLabel)
-	b.WriteString("\n")
-
-	// Usage in a code-like box
-	usage := v.styles.Info.
-		Background(v.styles.theme.Surface).
-		Padding(0, 1).
-		Render(cmd.Usage)
-	b.WriteString("  " + usage)
-	b.WriteString("\n\n")
-
-	// Action hint
-	hint := v.styles.Success.Render("Enter") + " " + v.styles.Subtle.Render("to execute")
-	b.WriteString(hint)
-
-	return b.String()
-}
-
-// buildHelpBar renders the bottom help/shortcuts bar
-func (v *CommandsView) buildHelpBar() string {
-	keys := []struct {
-		key  string
-		desc string
-	}{
-		{"k", "up"},
-		{"j", "down"},
-		{"l/enter", "expand"},
-		{"h", "collapse"},
-		{"enter", "execute"},
-		{"g", "top"},
-		{"G", "bottom"},
+		b.WriteString(vs.Label.Render("Usage"))
+		b.WriteString(vs.Info.Render(cmd.Usage))
+		b.WriteString("\n")
 	}
 
-	var helpItems []string
-	for _, k := range keys {
-		item := v.styles.HelpKey.Render(k.key) + " " + v.styles.HelpDesc.Render(k.desc)
-		helpItems = append(helpItems, item)
+	// Footer
+	b.WriteString("\n")
+	hints := []KeyHint{
+		{"j/k", "nav"},
+		{"l/h", "expand"},
+		{"Enter", "run"},
+		{"g/G", "top/bot"},
 	}
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
-	return v.styles.Subtle.Render(strings.Join(helpItems, "  |  "))
+	return lipgloss.Place(v.width, v.height,
+		lipgloss.Center, lipgloss.Center,
+		boxStyle.Render(b.String()),
+	)
 }
 
 // Name implements View
@@ -431,7 +335,7 @@ func (v *CommandsView) Name() string {
 
 // ShortHelp implements View
 func (v *CommandsView) ShortHelp() string {
-	return "j/k:nav l/h:expand enter:select"
+	return "j/k:nav l/h:expand enter:run"
 }
 
 // GetSelectedCommand returns the currently selected command info

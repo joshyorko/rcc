@@ -3,471 +3,698 @@ package interactive
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/htfs"
 )
 
-// RemoteInfo holds information about a remote RCC server
-type RemoteInfo struct {
-	URL        string
-	Status     string // "connected", "disconnected", "checking"
-	Catalogs   []string
-	LastCheck  time.Time
-	Error      string
-	ServerInfo string
-}
-
-// RemoteView displays RCC remote server management
+// RemoteView displays RCC remote server management - focused on CLIENT operations
 type RemoteView struct {
-	styles       *Styles
-	width        int
-	height       int
-	remote       RemoteInfo
-	localCatalogs []string
-	selected     int
-	tab          int // 0 = Remote, 1 = Local, 2 = Server
-	loading      bool
-	serverRunning bool
+	styles          *Styles
+	width           int
+	height          int
+	tab             int // 0 = Connect, 1 = Servers, 2 = Pull, 3 = Host Guide
+	selected        int
+	loading         bool
+	profiles        *ServerProfiles
+	currentOrigin   string
+	connectionOK    bool
+	lastCheck       time.Time
+	checkError      string
+	localCatalogs   []string
+	remoteCatalogs  []string
+	sharedEnabled   bool
+	inputMode       bool
+	inputBuffer     string
+	inputField      string // "name", "url", "auth"
+	editingProfile  *ServerProfile
 }
 
 // NewRemoteView creates a new remote view
 func NewRemoteView(styles *Styles) *RemoteView {
-	// Get remote origin from environment
-	remoteURL := os.Getenv("RCC_REMOTE_ORIGIN")
-	if remoteURL == "" {
-		remoteURL = "not configured"
-	}
-
+	profiles, _ := LoadServerProfiles()
 	return &RemoteView{
-		styles:   styles,
-		width:    120,
-		height:   30,
-		remote: RemoteInfo{
-			URL:    remoteURL,
-			Status: "disconnected",
-		},
-		localCatalogs: []string{},
-		selected:      0,
+		styles:        styles,
+		width:         120,
+		height:        30,
 		tab:           0,
+		selected:      0,
 		loading:       true,
+		profiles:      profiles,
+		currentOrigin: common.RccRemoteOrigin(),
+		sharedEnabled: common.SharedHolotree,
 	}
 }
 
 // Init implements View
 func (v *RemoteView) Init() tea.Cmd {
-	return tea.Batch(v.loadLocalCatalogs, v.checkRemoteStatus)
+	return tea.Batch(v.checkConnection, v.loadCatalogs)
 }
 
-// remoteStatusMsg contains remote server status
-type remoteStatusMsg struct {
-	connected  bool
-	catalogs   []string
-	serverInfo string
-	err        error
-}
-
-// localCatalogsMsg contains local catalog list
-type localCatalogsMsg struct {
+type connectionCheckMsg struct {
+	ok       bool
+	err      error
 	catalogs []string
 }
 
-func (v *RemoteView) loadLocalCatalogs() tea.Msg {
-	catalogs := htfs.CatalogNames()
-	return localCatalogsMsg{catalogs: catalogs}
+type remoteCatalogsMsg struct {
+	catalogs []string
 }
 
-func (v *RemoteView) checkRemoteStatus() tea.Msg {
-	remoteURL := os.Getenv("RCC_REMOTE_ORIGIN")
-	if remoteURL == "" {
-		return remoteStatusMsg{connected: false, err: fmt.Errorf("RCC_REMOTE_ORIGIN not set")}
+func (v *RemoteView) checkConnection() tea.Msg {
+	origin := common.RccRemoteOrigin()
+	if origin == "" {
+		return connectionCheckMsg{ok: false, err: fmt.Errorf("RCC_REMOTE_ORIGIN not set")}
 	}
 
-	// Try to connect to remote server
 	client := &http.Client{Timeout: 5 * time.Second}
-
-	// Check the /parts/ endpoint which is the catalog query endpoint
-	partsURL := strings.TrimSuffix(remoteURL, "/") + "/parts/"
+	partsURL := strings.TrimSuffix(origin, "/") + "/parts/"
 	resp, err := client.Get(partsURL)
 	if err != nil {
-		return remoteStatusMsg{connected: false, err: err}
+		return connectionCheckMsg{ok: false, err: err}
 	}
 	defer resp.Body.Close()
 
-	// If we get any response, server is running
-	return remoteStatusMsg{
-		connected:  true,
-		serverInfo: fmt.Sprintf("HTTP %d", resp.StatusCode),
+	if resp.StatusCode != 200 {
+		return connectionCheckMsg{ok: false, err: fmt.Errorf("HTTP %d", resp.StatusCode)}
 	}
+
+	return connectionCheckMsg{ok: true}
+}
+
+func (v *RemoteView) loadCatalogs() tea.Msg {
+	return remoteCatalogsMsg{catalogs: htfs.CatalogNames()}
 }
 
 // Update implements View
 func (v *RemoteView) Update(msg tea.Msg) (View, tea.Cmd) {
+	// Handle input mode separately
+	if v.inputMode {
+		return v.handleInputMode(msg)
+	}
+
 	switch msg := msg.(type) {
-	case localCatalogsMsg:
+	case connectionCheckMsg:
+		v.loading = false
+		v.lastCheck = time.Now()
+		v.connectionOK = msg.ok
+		if msg.err != nil {
+			v.checkError = msg.err.Error()
+		} else {
+			v.checkError = ""
+		}
+		v.remoteCatalogs = msg.catalogs
+	case remoteCatalogsMsg:
 		v.localCatalogs = msg.catalogs
 		v.loading = false
-	case remoteStatusMsg:
-		v.loading = false
-		if msg.err != nil {
-			v.remote.Status = "disconnected"
-			v.remote.Error = msg.err.Error()
-		} else if msg.connected {
-			v.remote.Status = "connected"
-			v.remote.Catalogs = msg.catalogs
-			v.remote.ServerInfo = msg.serverInfo
-			v.remote.Error = ""
-		}
-		v.remote.LastCheck = time.Now()
 	case tea.WindowSizeMsg:
 		v.width = msg.Width
 		v.height = msg.Height
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "tab":
-			v.tab = (v.tab + 1) % 3
+			v.tab = (v.tab + 1) % 4
+			v.selected = 0
+		case "shift+tab":
+			v.tab--
+			if v.tab < 0 {
+				v.tab = 3
+			}
 			v.selected = 0
 		case "j", "down":
-			v.moveDown()
+			v.selected++
+			max := v.getMaxItems()
+			if v.selected >= max {
+				v.selected = max - 1
+			}
+			if v.selected < 0 {
+				v.selected = 0
+			}
 		case "k", "up":
-			v.moveUp()
+			if v.selected > 0 {
+				v.selected--
+			}
+		case "g":
+			v.selected = 0
+		case "G":
+			v.selected = v.getMaxItems() - 1
+			if v.selected < 0 {
+				v.selected = 0
+			}
 		case "R":
-			// Refresh
 			v.loading = true
-			return v, tea.Batch(v.loadLocalCatalogs, v.checkRemoteStatus)
-		case "e":
-			// Export selected catalog
-			if v.tab == 1 && v.selected < len(v.localCatalogs) {
+			v.currentOrigin = common.RccRemoteOrigin()
+			return v, tea.Batch(v.checkConnection, v.loadCatalogs)
+		case "a":
+			if v.tab == 1 { // Servers tab - add new
+				v.inputMode = true
+				v.inputField = "name"
+				v.inputBuffer = ""
+				v.editingProfile = &ServerProfile{}
+			}
+		case "d":
+			if v.tab == 1 && v.selected < len(v.profiles.Profiles) {
+				v.profiles.RemoveProfile(v.profiles.Profiles[v.selected].Name)
+				SaveServerProfiles(v.profiles)
+				if v.selected >= len(v.profiles.Profiles) {
+					v.selected = len(v.profiles.Profiles) - 1
+				}
+				if v.selected < 0 {
+					v.selected = 0
+				}
+			}
+		case "enter":
+			return v.handleEnter()
+		case "p":
+			if v.tab == 2 && v.currentOrigin != "" && v.connectionOK {
+				// Pull catalogs
 				action := ActionResult{
-					Type:  ActionExportCatalog,
-					EnvID: v.localCatalogs[v.selected],
+					Type:    ActionRunCommand,
+					Command: "rcc holotree pull",
 				}
 				return v, func() tea.Msg { return actionMsg{action: action} }
-			}
-		case "p":
-			// Pull from remote (placeholder)
-			if v.tab == 0 && v.remote.Status == "connected" {
-				// TODO: Implement pull action
 			}
 		case "s":
-			// Start/stop local server
-			if v.tab == 2 {
-				action := ActionResult{
-					Type: ActionToggleServer,
+			if v.tab == 1 && v.selected < len(v.profiles.Profiles) {
+				// Set as default
+				profile := v.profiles.Profiles[v.selected]
+				v.profiles.SetDefault(profile.Name)
+				SaveServerProfiles(v.profiles)
+			}
+		case "t":
+			if v.tab == 1 && v.selected < len(v.profiles.Profiles) {
+				// Test connection to selected profile
+				profile := v.profiles.Profiles[v.selected]
+				v.loading = true
+				return v, func() tea.Msg {
+					client := &http.Client{Timeout: 5 * time.Second}
+					partsURL := strings.TrimSuffix(profile.URL, "/") + "/parts/"
+					resp, err := client.Get(partsURL)
+					if err != nil {
+						return connectionCheckMsg{ok: false, err: err}
+					}
+					defer resp.Body.Close()
+					if resp.StatusCode != 200 {
+						return connectionCheckMsg{ok: false, err: fmt.Errorf("HTTP %d", resp.StatusCode)}
+					}
+					return connectionCheckMsg{ok: true}
 				}
-				return v, func() tea.Msg { return actionMsg{action: action} }
 			}
 		}
 	}
 	return v, nil
 }
 
-func (v *RemoteView) moveDown() {
-	maxItems := 0
-	switch v.tab {
-	case 0: // Remote catalogs
-		maxItems = len(v.remote.Catalogs)
-	case 1: // Local catalogs
-		maxItems = len(v.localCatalogs)
-	case 2: // Server options
-		maxItems = 3
+func (v *RemoteView) handleInputMode(msg tea.Msg) (View, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+			v.inputMode = false
+			v.editingProfile = nil
+			v.inputBuffer = ""
+		case "enter":
+			// Save current field and move to next or finish
+			switch v.inputField {
+			case "name":
+				v.editingProfile.Name = v.inputBuffer
+				v.inputField = "url"
+				v.inputBuffer = "https://"
+			case "url":
+				v.editingProfile.URL = v.inputBuffer
+				v.inputField = "auth"
+				v.inputBuffer = ""
+			case "auth":
+				v.editingProfile.AuthToken = v.inputBuffer
+				// Save the profile
+				v.profiles.AddProfile(*v.editingProfile)
+				SaveServerProfiles(v.profiles)
+				v.inputMode = false
+				v.editingProfile = nil
+				v.inputBuffer = ""
+			}
+		case "backspace":
+			if len(v.inputBuffer) > 0 {
+				v.inputBuffer = v.inputBuffer[:len(v.inputBuffer)-1]
+			}
+		default:
+			if len(msg.String()) == 1 {
+				v.inputBuffer += msg.String()
+			}
+		}
 	}
-	if v.selected < maxItems-1 {
-		v.selected++
-	}
+	return v, nil
 }
 
-func (v *RemoteView) moveUp() {
-	if v.selected > 0 {
-		v.selected--
+func (v *RemoteView) handleEnter() (View, tea.Cmd) {
+	switch v.tab {
+	case 1: // Servers - set as default and test
+		if v.selected < len(v.profiles.Profiles) {
+			profile := v.profiles.Profiles[v.selected]
+			v.profiles.SetDefault(profile.Name)
+			SaveServerProfiles(v.profiles)
+			// Test connection
+			v.loading = true
+			return v, func() tea.Msg {
+				client := &http.Client{Timeout: 5 * time.Second}
+				partsURL := strings.TrimSuffix(profile.URL, "/") + "/parts/"
+				resp, err := client.Get(partsURL)
+				if err != nil {
+					return connectionCheckMsg{ok: false, err: err}
+				}
+				defer resp.Body.Close()
+				if resp.StatusCode != 200 {
+					return connectionCheckMsg{ok: false, err: fmt.Errorf("HTTP %d", resp.StatusCode)}
+				}
+				return connectionCheckMsg{ok: true}
+			}
+		}
+	case 2: // Pull - trigger pull with origin from default profile
+		origin := v.getActiveOrigin()
+		if origin != "" {
+			action := ActionResult{
+				Type:    ActionRunCommand,
+				Command: fmt.Sprintf("rcc holotree pull -o %s --force", origin),
+			}
+			return v, func() tea.Msg { return actionMsg{action: action} }
+		}
 	}
+	return v, nil
+}
+
+// getActiveOrigin returns the URL to use for remote operations
+func (v *RemoteView) getActiveOrigin() string {
+	// First check env var
+	if v.currentOrigin != "" {
+		return v.currentOrigin
+	}
+	// Then check default profile
+	if defaultProfile := v.profiles.GetDefault(); defaultProfile != nil {
+		return defaultProfile.URL
+	}
+	return ""
+}
+
+func (v *RemoteView) getMaxItems() int {
+	switch v.tab {
+	case 0:
+		return 2
+	case 1:
+		return len(v.profiles.Profiles)
+	case 2:
+		return len(v.localCatalogs) + 1
+	case 3:
+		return 4
+	}
+	return 0
 }
 
 // View implements View
 func (v *RemoteView) View() string {
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
+
+	boxWidth := v.width - 8
+	if boxWidth < 70 {
+		boxWidth = 70
+	}
+	if boxWidth > 130 {
+		boxWidth = 130
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
 	var b strings.Builder
 
-	// Header
-	title := v.styles.PanelTitle.Render("Remote")
-	subtitle := v.styles.Subtle.Render(" Catalog Sharing & Remote Server Management")
-	b.WriteString(title + subtitle)
-	b.WriteString("\n\n")
-
-	// Connection status bar
-	b.WriteString(v.renderConnectionStatus())
-	b.WriteString("\n\n")
+	b.WriteString(RenderHeader(vs, "Remote", "Catalog Sharing", contentWidth))
 
 	// Tab bar
-	b.WriteString(v.renderTabBar())
+	tabs := []string{"Connect", "Servers", "Pull", "Host"}
+	for i, tab := range tabs {
+		if i == v.tab {
+			b.WriteString(vs.BadgeActive.Render(" " + tab + " "))
+		} else {
+			b.WriteString(vs.Badge.Render(" " + tab + " "))
+		}
+		b.WriteString(" ")
+	}
 	b.WriteString("\n")
-	b.WriteString(v.styles.Divider.Render(strings.Repeat("─", min(v.width-4, 80))))
+	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
 	b.WriteString("\n\n")
 
-	// Content based on tab
+	// Content
 	switch v.tab {
 	case 0:
-		b.WriteString(v.renderRemoteCatalogs())
+		b.WriteString(v.renderConnectTab(vs, contentWidth))
 	case 1:
-		b.WriteString(v.renderLocalCatalogs())
+		b.WriteString(v.renderServersTab(vs, contentWidth))
 	case 2:
-		b.WriteString(v.renderServerControls())
+		b.WriteString(v.renderPullTab(vs, contentWidth))
+	case 3:
+		b.WriteString(v.renderHostTab(vs, contentWidth))
 	}
 
 	// Footer
-	b.WriteString("\n")
-	b.WriteString(v.renderFooter())
+	b.WriteString("\n\n")
+	hints := v.getHints()
+	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
-	// Wrap in panel
-	panelStyle := lipgloss.NewStyle().
-		Padding(1, 2).
-		Width(min(v.width-4, 90))
-
-	return panelStyle.Render(b.String())
+	return lipgloss.Place(v.width, v.height,
+		lipgloss.Center, lipgloss.Center,
+		boxStyle.Render(b.String()),
+	)
 }
 
-func (v *RemoteView) renderConnectionStatus() string {
+func (v *RemoteView) getHints() []KeyHint {
+	hints := []KeyHint{
+		{"Tab", "switch"},
+		{"j/k", "nav"},
+		{"R", "refresh"},
+	}
+	switch v.tab {
+	case 1:
+		hints = append(hints, KeyHint{"a", "add"})
+		if len(v.profiles.Profiles) > 0 {
+			hints = append(hints, KeyHint{"Enter", "activate"}, KeyHint{"t", "test"}, KeyHint{"d", "delete"})
+		}
+	case 2:
+		if v.getActiveOrigin() != "" {
+			hints = append(hints, KeyHint{"Enter", "pull"})
+		}
+	}
+	return hints
+}
+
+func (v *RemoteView) renderConnectTab(vs ViewStyles, contentWidth int) string {
 	var b strings.Builder
+
+	b.WriteString(vs.Accent.Bold(true).Render("Connection Status"))
+	b.WriteString("\n\n")
 
 	// Status indicator
-	statusIcon := "[ ]"
-	statusStyle := v.styles.Subtle
-	statusText := "Disconnected"
-
+	b.WriteString(vs.Label.Render("Status"))
 	if v.loading {
-		statusIcon = "[.]"
-		statusStyle = v.styles.Info
-		statusText = "Checking..."
-	} else if v.remote.Status == "connected" {
-		statusIcon := "[+]"
-		statusStyle = v.styles.Success
-		statusText = "Connected"
-		_ = statusIcon // Use within this block
-	} else if v.remote.Error != "" {
-		statusIcon = "[x]"
-		statusStyle = v.styles.Error
-		statusText = "Error"
+		b.WriteString(vs.Info.Render("[...] Checking"))
+	} else if v.connectionOK {
+		b.WriteString(vs.Success.Render("[OK] Connected"))
+	} else {
+		b.WriteString(vs.Error.Render("[X] Disconnected"))
+	}
+	b.WriteString("\n")
+
+	// Active origin (env var or default profile)
+	activeOrigin := v.getActiveOrigin()
+	b.WriteString(vs.Label.Render("Active Server"))
+	if activeOrigin == "" {
+		b.WriteString(vs.Warning.Render("(none configured)"))
+	} else {
+		origin := activeOrigin
+		if len(origin) > 45 {
+			origin = origin[:42] + "..."
+		}
+		b.WriteString(vs.Info.Render(origin))
+	}
+	b.WriteString("\n")
+
+	// Show source of active origin
+	if v.currentOrigin != "" {
+		b.WriteString(vs.Label.Render("Source"))
+		b.WriteString(vs.Subtext.Render("RCC_REMOTE_ORIGIN env var"))
+		b.WriteString("\n")
+	} else if defaultProfile := v.profiles.GetDefault(); defaultProfile != nil {
+		b.WriteString(vs.Label.Render("Source"))
+		b.WriteString(vs.Subtext.Render("Saved profile: " + defaultProfile.Name))
+		b.WriteString("\n")
 	}
 
-	// Build status line
-	b.WriteString(statusStyle.Render(statusIcon + " " + statusText))
-	b.WriteString("  ")
-	b.WriteString(v.styles.Subtle.Render("Remote: "))
-
-	urlStyle := v.styles.Info
-	if v.remote.URL == "not configured" {
-		urlStyle = v.styles.Warning
+	// Last check
+	if !v.lastCheck.IsZero() {
+		b.WriteString(vs.Label.Render("Last Check"))
+		b.WriteString(vs.Subtext.Render(v.lastCheck.Format("15:04:05")))
+		b.WriteString("\n")
 	}
-	b.WriteString(urlStyle.Render(v.remote.URL))
 
-	if v.remote.ServerInfo != "" {
-		b.WriteString("  ")
-		b.WriteString(v.styles.Subtle.Render("(" + v.remote.ServerInfo + ")"))
+	// Error
+	if v.checkError != "" && !v.connectionOK {
+		b.WriteString("\n")
+		b.WriteString(vs.Error.Render("Error: " + v.checkError))
+		b.WriteString("\n")
+	}
+
+	// Quick setup if not configured
+	if activeOrigin == "" {
+		b.WriteString("\n")
+		b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Accent.Bold(true).Render("Getting Started"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Text.Render("1. Go to Servers tab and add a server"))
+		b.WriteString("\n")
+		b.WriteString(vs.Text.Render("2. Press Enter to set as default and test"))
+		b.WriteString("\n")
+		b.WriteString(vs.Text.Render("3. Go to Pull tab to pull catalogs"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Subtext.Render("Or set RCC_REMOTE_ORIGIN env var manually"))
 	}
 
 	return b.String()
 }
 
-func (v *RemoteView) renderTabBar() string {
-	tabs := []string{"Remote Catalogs", "Local Catalogs", "Server"}
-	var parts []string
-
-	for i, tab := range tabs {
-		style := v.styles.Tab
-		if i == v.tab {
-			style = v.styles.ActiveTab
-		}
-		parts = append(parts, style.Render(" "+tab+" "))
-	}
-
-	return lipgloss.JoinHorizontal(lipgloss.Top, parts...)
-}
-
-func (v *RemoteView) renderRemoteCatalogs() string {
+func (v *RemoteView) renderServersTab(vs ViewStyles, contentWidth int) string {
 	var b strings.Builder
 
-	if v.remote.Status != "connected" {
-		// Not connected - show help
-		b.WriteString(v.styles.Subtle.Render("  Not connected to remote server"))
+	// Input mode overlay
+	if v.inputMode {
+		b.WriteString(vs.Accent.Bold(true).Render("Add Server"))
 		b.WriteString("\n\n")
 
-		if v.remote.URL == "not configured" {
-			b.WriteString(v.styles.Warning.Render("  [!] RCC_REMOTE_ORIGIN not set"))
-			b.WriteString("\n\n")
-			b.WriteString(v.styles.Subtle.Render("  To connect to a remote server:"))
-			b.WriteString("\n")
-			b.WriteString(v.styles.Info.Render("    export RCC_REMOTE_ORIGIN=https://your-server:8443"))
-			b.WriteString("\n")
-		} else if v.remote.Error != "" {
-			b.WriteString(v.styles.Error.Render("  Error: " + v.remote.Error))
+		fields := []struct {
+			name   string
+			label  string
+			value  string
+			active bool
+		}{
+			{"name", "Name", v.editingProfile.Name, v.inputField == "name"},
+			{"url", "URL", v.editingProfile.URL, v.inputField == "url"},
+			{"auth", "Auth Token", v.editingProfile.AuthToken, v.inputField == "auth"},
+		}
+
+		for _, f := range fields {
+			b.WriteString(vs.Label.Render(f.label))
+			if f.active {
+				b.WriteString(vs.Selected.Render(v.inputBuffer + "_"))
+			} else if f.value != "" {
+				b.WriteString(vs.Text.Render(f.value))
+			} else {
+				b.WriteString(vs.Subtext.Render("(empty)"))
+			}
 			b.WriteString("\n")
 		}
 
 		b.WriteString("\n")
-		b.WriteString(v.styles.Subtle.Render("  Press 'R' to retry connection"))
+		b.WriteString(vs.Subtext.Render("Enter to continue, Esc to cancel"))
 		return b.String()
 	}
 
-	// Connected - show catalogs
-	if len(v.remote.Catalogs) == 0 {
-		b.WriteString(v.styles.Subtle.Render("  No catalogs available on remote server"))
+	b.WriteString(vs.Accent.Bold(true).Render("Saved Servers"))
+	b.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)", len(v.profiles.Profiles))))
+	b.WriteString("\n\n")
+
+	if len(v.profiles.Profiles) == 0 {
+		b.WriteString(vs.Subtext.Render("No servers saved"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Subtext.Render("Press "))
+		b.WriteString(vs.KeyHint.Render("a"))
+		b.WriteString(vs.Subtext.Render(" to add a server"))
+		return b.String()
+	}
+
+	for i, profile := range v.profiles.Profiles {
+		isSelected := i == v.selected
+
+		// Name with default indicator
+		name := profile.Name
+		if profile.IsDefault {
+			name += " *"
+		}
+
+		if isSelected {
+			b.WriteString(vs.Selected.Render("> " + name))
+		} else {
+			b.WriteString(vs.Normal.Render("  " + name))
+		}
 		b.WriteString("\n")
-		b.WriteString(v.styles.Subtle.Render("  The server may not have any catalogs yet"))
-		return b.String()
-	}
 
-	// Header
-	b.WriteString(v.styles.TableHeader.Render("  CATALOG ID"))
-	b.WriteString("\n")
-
-	for i, cat := range v.remote.Catalogs {
-		prefix := "  "
-		style := v.styles.TableRow
-		if i%2 == 1 {
-			style = v.styles.TableRowAlt
+		// Show URL for selected
+		if isSelected {
+			b.WriteString("    ")
+			url := profile.URL
+			if len(url) > 45 {
+				url = url[:42] + "..."
+			}
+			b.WriteString(vs.Info.Render(url))
+			b.WriteString("\n")
+			if profile.AuthToken != "" {
+				b.WriteString("    ")
+				b.WriteString(vs.Subtext.Render("Auth: "))
+				b.WriteString(vs.Success.Render("configured"))
+				b.WriteString("\n")
+			}
 		}
-		if i == v.selected {
-			prefix = v.styles.Success.Render("> ")
-			style = v.styles.ListItemSelected
-		}
-		b.WriteString(prefix + style.Render(cat) + "\n")
 	}
-
-	b.WriteString("\n")
-	b.WriteString(v.styles.Subtle.Render(fmt.Sprintf("  %d catalog(s) available", len(v.remote.Catalogs))))
 
 	return b.String()
 }
 
-func (v *RemoteView) renderLocalCatalogs() string {
+func (v *RemoteView) renderPullTab(vs ViewStyles, contentWidth int) string {
 	var b strings.Builder
 
-	if v.loading {
-		b.WriteString(v.styles.Subtle.Render("  Loading local catalogs..."))
+	b.WriteString(vs.Accent.Bold(true).Render("Pull Catalogs"))
+	b.WriteString("\n\n")
+
+	// Active server
+	activeOrigin := v.getActiveOrigin()
+	b.WriteString(vs.Label.Render("Server"))
+	if activeOrigin == "" {
+		b.WriteString(vs.Warning.Render("Not configured"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Subtext.Render("Add a server in Servers tab first"))
 		return b.String()
 	}
+
+	origin := activeOrigin
+	if len(origin) > 40 {
+		origin = origin[:37] + "..."
+	}
+	b.WriteString(vs.Info.Render(origin))
+	b.WriteString("\n\n")
+
+	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
+	b.WriteString("\n\n")
+
+	// Pull action
+	if v.selected == 0 {
+		b.WriteString(vs.Selected.Render("> Pull Catalogs from Server"))
+	} else {
+		b.WriteString(vs.Normal.Render("  Pull Catalogs from Server"))
+	}
+	b.WriteString("\n")
+	b.WriteString("    ")
+	b.WriteString(vs.Subtext.Render(fmt.Sprintf("rcc holotree pull -o %s", origin)))
+	b.WriteString("\n\n")
+
+	// Local catalogs
+	b.WriteString(vs.Accent.Bold(true).Render("Local Catalogs"))
+	b.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)", len(v.localCatalogs))))
+	b.WriteString("\n\n")
 
 	if len(v.localCatalogs) == 0 {
-		b.WriteString(v.styles.Subtle.Render("  No local catalogs found"))
-		b.WriteString("\n\n")
-		b.WriteString(v.styles.Subtle.Render("  Build an environment to create a catalog:"))
+		b.WriteString(vs.Subtext.Render("No local catalogs yet"))
 		b.WriteString("\n")
-		b.WriteString(v.styles.Info.Render("    rcc holotree vars -r robot.yaml"))
-		return b.String()
+		b.WriteString(vs.Subtext.Render("Pull from server or run a robot to create"))
+	} else {
+		maxShow := 8
+		for i, cat := range v.localCatalogs {
+			if i >= maxShow {
+				b.WriteString(vs.Subtext.Render(fmt.Sprintf("  ... and %d more", len(v.localCatalogs)-maxShow)))
+				break
+			}
+			displayName := cat
+			if len(displayName) > 50 {
+				displayName = displayName[:47] + "..."
+			}
+			b.WriteString(vs.Normal.Render("  " + displayName))
+			b.WriteString("\n")
+		}
 	}
-
-	// Header
-	b.WriteString(v.styles.TableHeader.Render("  CATALOG ID                              ACTION"))
-	b.WriteString("\n")
-
-	for i, cat := range v.localCatalogs {
-		prefix := "  "
-		style := v.styles.TableRow
-		if i%2 == 1 {
-			style = v.styles.TableRowAlt
-		}
-		if i == v.selected {
-			prefix = v.styles.Success.Render("> ")
-			style = v.styles.ListItemSelected
-		}
-
-		// Truncate catalog ID if too long
-		displayCat := cat
-		if len(displayCat) > 38 {
-			displayCat = displayCat[:35] + "..."
-		}
-
-		line := fmt.Sprintf("%-40s", displayCat)
-		if i == v.selected {
-			line += v.styles.HelpKey.Render("<e>") + v.styles.HelpDesc.Render(" export")
-		}
-
-		b.WriteString(prefix + style.Render(line) + "\n")
-	}
-
-	b.WriteString("\n")
-	b.WriteString(v.styles.Subtle.Render(fmt.Sprintf("  %d local catalog(s)", len(v.localCatalogs))))
 
 	return b.String()
 }
 
-func (v *RemoteView) renderServerControls() string {
+func (v *RemoteView) renderHostTab(vs ViewStyles, contentWidth int) string {
 	var b strings.Builder
 
-	// Server status
-	serverStatus := "Stopped"
-	serverIcon := "[ ]"
-	serverStyle := v.styles.Subtle
-	if v.serverRunning {
-		serverStatus = "Running"
-		serverIcon = "[+]"
-		serverStyle = v.styles.Success
+	b.WriteString(vs.Accent.Bold(true).Render("Host Your Own Server"))
+	b.WriteString("\n\n")
+
+	// Prerequisites
+	b.WriteString(vs.Label.Render("Shared Holotree"))
+	if v.sharedEnabled {
+		b.WriteString(vs.Success.Render("[OK] Enabled"))
+	} else {
+		b.WriteString(vs.Error.Render("[X] Required"))
+	}
+	b.WriteString("\n\n")
+
+	if !v.sharedEnabled {
+		b.WriteString(vs.Warning.Render("Enable shared holotree first:"))
+		b.WriteString("\n")
+		b.WriteString(vs.Info.Render("sudo rcc holotree shared --enable"))
+		b.WriteString("\n\n")
 	}
 
-	b.WriteString(v.styles.PanelTitle.Render("  Local RCC Remote Server"))
+	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
 	b.WriteString("\n\n")
 
-	b.WriteString("  Status: ")
-	b.WriteString(serverStyle.Render(serverIcon + " " + serverStatus))
+	b.WriteString(vs.Accent.Bold(true).Render("Deployment Options"))
 	b.WriteString("\n\n")
 
-	// Server options
 	options := []struct {
-		key  string
+		name string
 		desc string
-		info string
+		cmd  string
 	}{
-		{"s", "Start/Stop Server", "Launch rccremote to serve catalogs"},
-		{"c", "Configure Server", "Set hostname, port, and domain"},
-		{"l", "View Server Logs", "Show server output"},
+		{
+			"Local Development",
+			"Run rccremote directly (HTTP only)",
+			"rccremote -hostname 0.0.0.0 -port 4653",
+		},
+		{
+			"Docker + NGINX",
+			"Production setup with TLS",
+			"github.com/yorko-io/rccremote-docker",
+		},
+		{
+			"Cloudflare Tunnel",
+			"Expose via CF tunnel (no port forwarding)",
+			"make quick-cf HOSTNAME=rcc.example.com",
+		},
+		{
+			"Kubernetes",
+			"K8s deployment with ingress",
+			"make quick-k8s",
+		},
 	}
 
 	for i, opt := range options {
-		prefix := "  "
-		style := v.styles.ListItem
 		if i == v.selected {
-			prefix = v.styles.Success.Render("> ")
-			style = v.styles.ListItemSelected
+			b.WriteString(vs.Selected.Render("> " + opt.name))
+		} else {
+			b.WriteString(vs.Normal.Render("  " + opt.name))
 		}
-
-		line := v.styles.HelpKey.Render("<"+opt.key+">") + " " + style.Render(opt.desc)
-		b.WriteString(prefix + line + "\n")
+		b.WriteString("\n")
 		if i == v.selected {
-			b.WriteString("      " + v.styles.Subtle.Render(opt.info) + "\n")
+			b.WriteString("    ")
+			b.WriteString(vs.Subtext.Render(opt.desc))
+			b.WriteString("\n    ")
+			b.WriteString(vs.Info.Render(opt.cmd))
+			b.WriteString("\n")
 		}
 	}
 
 	b.WriteString("\n")
-	b.WriteString(v.styles.Subtle.Render("  Server listens on: "))
-	b.WriteString(v.styles.Info.Render("localhost:4653"))
-	b.WriteString("\n")
-	b.WriteString(v.styles.Subtle.Render("  Requires shared holotree to be enabled"))
+	b.WriteString(vs.Subtext.Render("Note: Production deployments require TLS certificates"))
 
 	return b.String()
-}
-
-func (v *RemoteView) renderFooter() string {
-	var hints []string
-
-	hints = append(hints, v.styles.HelpKey.Render("<tab>")+" "+v.styles.HelpDesc.Render("switch"))
-	hints = append(hints, v.styles.HelpKey.Render("<j/k>")+" "+v.styles.HelpDesc.Render("nav"))
-	hints = append(hints, v.styles.HelpKey.Render("<R>")+" "+v.styles.HelpDesc.Render("refresh"))
-
-	switch v.tab {
-	case 0:
-		if v.remote.Status == "connected" {
-			hints = append(hints, v.styles.HelpKey.Render("<p>")+" "+v.styles.HelpDesc.Render("pull"))
-		}
-	case 1:
-		hints = append(hints, v.styles.HelpKey.Render("<e>")+" "+v.styles.HelpDesc.Render("export"))
-	case 2:
-		hints = append(hints, v.styles.HelpKey.Render("<s>")+" "+v.styles.HelpDesc.Render("start/stop"))
-	}
-
-	return lipgloss.JoinHorizontal(lipgloss.Left, hints...)
 }
 
 // Name implements View
@@ -477,7 +704,5 @@ func (v *RemoteView) Name() string {
 
 // ShortHelp implements View
 func (v *RemoteView) ShortHelp() string {
-	return "tab:switch j/k:nav e:export R:refresh"
+	return "tab:switch j/k:nav a:add p:pull R:refresh"
 }
-
-// Note: min() helper is defined in view_robots.go
