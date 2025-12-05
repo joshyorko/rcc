@@ -1,9 +1,16 @@
 package interactive
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -17,7 +24,7 @@ type RemoteView struct {
 	styles          *Styles
 	width           int
 	height          int
-	tab             int // 0 = Connect, 1 = Servers, 2 = Pull, 3 = Host Guide
+	tab             int // 0 = Connect, 1 = Servers, 2 = Pull, 3 = Host
 	selected        int
 	loading         bool
 	profiles        *ServerProfiles
@@ -32,27 +39,317 @@ type RemoteView struct {
 	inputBuffer     string
 	inputField      string // "name", "url", "auth"
 	editingProfile  *ServerProfile
+
+	// Host tab - server management
+	serverBinaryPath string
+	serverInstalled  bool
+	serverRunning    bool
+	serverPID        int
+	serverHostname   string
+	serverPort       int
+	serverDomain     string
+	downloadProgress string
 }
 
 // NewRemoteView creates a new remote view
 func NewRemoteView(styles *Styles) *RemoteView {
 	profiles, _ := LoadServerProfiles()
-	return &RemoteView{
-		styles:        styles,
-		width:         120,
-		height:        30,
-		tab:           0,
-		selected:      0,
-		loading:       true,
-		profiles:      profiles,
-		currentOrigin: common.RccRemoteOrigin(),
-		sharedEnabled: common.SharedHolotree,
+
+	// Determine rccremote binary path
+	binPath := getRccremotePath()
+
+	// Check if installed
+	installed := false
+	if _, err := os.Stat(binPath); err == nil {
+		installed = true
 	}
+
+	return &RemoteView{
+		styles:           styles,
+		width:            120,
+		height:           30,
+		tab:              0,
+		selected:         0,
+		loading:          true,
+		profiles:         profiles,
+		currentOrigin:    common.RccRemoteOrigin(),
+		sharedEnabled:    isSharedHolotreeEnabled(),
+		serverBinaryPath: binPath,
+		serverInstalled:  installed,
+		serverHostname:   "0.0.0.0",
+		serverPort:       4653,
+		serverDomain:     "personal",
+	}
+}
+
+// isSharedHolotreeEnabled checks if shared holotree is enabled
+func isSharedHolotreeEnabled() bool {
+	// Check the system-level shared holotree marker
+	// This is at /opt/robocorp/ht/shared.yes on Linux
+	sharedMarker := common.SharedMarkerLocation()
+	if _, err := os.Stat(sharedMarker); err == nil {
+		return true
+	}
+	// Also check the user-level marker as fallback
+	userFile := common.HoloInitUserFile()
+	if _, err := os.Stat(userFile); err == nil {
+		return true
+	}
+	return false
+}
+
+// getRccremotePath returns the path where rccremote binary should be stored
+func getRccremotePath() string {
+	binDir := common.BinLocation()
+	if runtime.GOOS == "windows" {
+		return filepath.Join(binDir, "rccremote.exe")
+	}
+	return filepath.Join(binDir, "rccremote")
+}
+
+// getGitHubAssetName returns the asset name for current platform
+func getGitHubAssetName() string {
+	switch runtime.GOOS {
+	case "windows":
+		return "rccremote-windows64.exe"
+	case "darwin":
+		return "rccremote-darwin64"
+	default:
+		return "rccremote-linux64"
+	}
+}
+
+// Message types for server management
+type serverDownloadMsg struct {
+	success bool
+	err     string
+}
+
+type serverStartMsg struct {
+	success bool
+	pid     int
+	err     string
+}
+
+type serverStopMsg struct {
+	success bool
+	err     string
+}
+
+type serverStatusMsg struct {
+	running bool
+	pid     int
 }
 
 // Init implements View
 func (v *RemoteView) Init() tea.Cmd {
-	return tea.Batch(v.checkConnection, v.loadCatalogs)
+	return tea.Batch(v.checkConnection, v.loadCatalogs, v.checkServerStatus)
+}
+
+// checkServerStatus checks if rccremote is running
+func (v *RemoteView) checkServerStatus() tea.Msg {
+	// Check if our PID file exists
+	pidFile := filepath.Join(common.Product.Home(), "rccremote.pid")
+	data, err := os.ReadFile(pidFile)
+	if err != nil {
+		return serverStatusMsg{running: false}
+	}
+
+	var pid int
+	fmt.Sscanf(string(data), "%d", &pid)
+	if pid > 0 {
+		// Check if process is still running
+		process, err := os.FindProcess(pid)
+		if err == nil && process != nil {
+			// On Unix, FindProcess always succeeds, need to send signal 0 to check
+			if runtime.GOOS != "windows" {
+				err = process.Signal(syscall.Signal(0))
+				if err == nil {
+					return serverStatusMsg{running: true, pid: pid}
+				}
+			} else {
+				// On Windows, try to open the process
+				return serverStatusMsg{running: true, pid: pid}
+			}
+		}
+	}
+	// PID file exists but process not running - clean up
+	os.Remove(pidFile)
+	return serverStatusMsg{running: false}
+}
+
+// downloadRccremote downloads rccremote from GitHub releases
+func (v *RemoteView) downloadRccremote() tea.Msg {
+	// Get latest release info from GitHub API
+	client := &http.Client{Timeout: 30 * time.Second}
+
+	// Fetch latest release
+	apiURL := "https://api.github.com/repos/joshyorko/rcc/releases/latest"
+	resp, err := client.Get(apiURL)
+	if err != nil {
+		return serverDownloadMsg{success: false, err: "Failed to fetch release info: " + err.Error()}
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return serverDownloadMsg{success: false, err: fmt.Sprintf("GitHub API returned %d", resp.StatusCode)}
+	}
+
+	var release struct {
+		TagName string `json:"tag_name"`
+		Assets  []struct {
+			Name               string `json:"name"`
+			BrowserDownloadURL string `json:"browser_download_url"`
+		} `json:"assets"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+		return serverDownloadMsg{success: false, err: "Failed to parse release info: " + err.Error()}
+	}
+
+	// Find the right asset for this platform
+	assetName := getGitHubAssetName()
+	var downloadURL string
+	for _, asset := range release.Assets {
+		if asset.Name == assetName {
+			downloadURL = asset.BrowserDownloadURL
+			break
+		}
+	}
+
+	if downloadURL == "" {
+		return serverDownloadMsg{success: false, err: "No release asset found for " + assetName}
+	}
+
+	// Download the binary
+	resp, err = client.Get(downloadURL)
+	if err != nil {
+		return serverDownloadMsg{success: false, err: "Download failed: " + err.Error()}
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return serverDownloadMsg{success: false, err: fmt.Sprintf("Download returned %d", resp.StatusCode)}
+	}
+
+	// Ensure bin directory exists
+	binDir := common.BinLocation()
+	if err := os.MkdirAll(binDir, 0755); err != nil {
+		return serverDownloadMsg{success: false, err: "Failed to create bin directory: " + err.Error()}
+	}
+
+	// Write to file
+	binPath := getRccremotePath()
+	out, err := os.Create(binPath)
+	if err != nil {
+		return serverDownloadMsg{success: false, err: "Failed to create file: " + err.Error()}
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return serverDownloadMsg{success: false, err: "Failed to write file: " + err.Error()}
+	}
+
+	// Make executable on Unix
+	if runtime.GOOS != "windows" {
+		if err := os.Chmod(binPath, 0755); err != nil {
+			return serverDownloadMsg{success: false, err: "Failed to make executable: " + err.Error()}
+		}
+	}
+
+	return serverDownloadMsg{success: true}
+}
+
+// startServer starts rccremote as a fully detached process
+func (v *RemoteView) startServer() tea.Msg {
+	if !v.serverInstalled {
+		return serverStartMsg{success: false, err: "rccremote not installed"}
+	}
+
+	if !v.sharedEnabled {
+		return serverStartMsg{success: false, err: "Shared holotree must be enabled first"}
+	}
+
+	// Create log file for server output
+	logFile := filepath.Join(common.Product.Home(), "rccremote.log")
+
+	// Use nohup-style approach: redirect to file, detach completely
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command(v.serverBinaryPath,
+			"-hostname", v.serverHostname,
+			"-port", fmt.Sprintf("%d", v.serverPort),
+			"-domain", v.serverDomain,
+		)
+	} else {
+		// On Unix, use shell to properly detach with nohup behavior
+		shellCmd := fmt.Sprintf("nohup %s -hostname %s -port %d -domain %s > %s 2>&1 & echo $!",
+			v.serverBinaryPath, v.serverHostname, v.serverPort, v.serverDomain, logFile)
+		cmd = exec.Command("sh", "-c", shellCmd)
+	}
+
+	output, err := cmd.Output()
+	if err != nil {
+		return serverStartMsg{success: false, err: err.Error()}
+	}
+
+	// Parse PID from output (the echo $! part)
+	var pid int
+	fmt.Sscanf(strings.TrimSpace(string(output)), "%d", &pid)
+
+	if pid > 0 {
+		// Write PID file
+		pidFile := filepath.Join(common.Product.Home(), "rccremote.pid")
+		os.WriteFile(pidFile, []byte(fmt.Sprintf("%d", pid)), 0644)
+	}
+
+	// Give server a moment to start, then verify it's running
+	time.Sleep(500 * time.Millisecond)
+
+	// Check if process is actually running
+	if pid > 0 {
+		if process, err := os.FindProcess(pid); err == nil {
+			// On Unix, send signal 0 to check if process exists
+			if runtime.GOOS != "windows" {
+				if err := process.Signal(syscall.Signal(0)); err != nil {
+					// Process not running - read log for error
+					if logData, err := os.ReadFile(logFile); err == nil && len(logData) > 0 {
+						errMsg := string(logData)
+						if len(errMsg) > 200 {
+							errMsg = errMsg[:200] + "..."
+						}
+						return serverStartMsg{success: false, err: "Server exited: " + errMsg}
+					}
+					return serverStartMsg{success: false, err: "Server failed to start"}
+				}
+			}
+		}
+	}
+
+	return serverStartMsg{success: true, pid: pid}
+}
+
+// stopServer stops the running rccremote
+func (v *RemoteView) stopServer() tea.Msg {
+	if v.serverPID <= 0 {
+		return serverStopMsg{success: false, err: "No server running"}
+	}
+
+	process, err := os.FindProcess(v.serverPID)
+	if err != nil {
+		return serverStopMsg{success: false, err: err.Error()}
+	}
+
+	if err := process.Kill(); err != nil {
+		return serverStopMsg{success: false, err: err.Error()}
+	}
+
+	// Remove PID file
+	pidFile := filepath.Join(common.Product.Home(), "rccremote.pid")
+	os.Remove(pidFile)
+
+	return serverStopMsg{success: true}
 }
 
 type connectionCheckMsg struct {
@@ -98,6 +395,38 @@ func (v *RemoteView) Update(msg tea.Msg) (View, tea.Cmd) {
 	}
 
 	switch msg := msg.(type) {
+	case serverStatusMsg:
+		v.serverRunning = msg.running
+		v.serverPID = msg.pid
+
+	case serverDownloadMsg:
+		v.loading = false
+		v.downloadProgress = ""
+		if msg.success {
+			v.serverInstalled = true
+			v.downloadProgress = "Download complete!"
+		} else {
+			v.downloadProgress = "Error: " + msg.err
+		}
+
+	case serverStartMsg:
+		v.loading = false
+		if msg.success {
+			v.serverRunning = true
+			v.serverPID = msg.pid
+		} else {
+			v.downloadProgress = "Start failed: " + msg.err
+		}
+
+	case serverStopMsg:
+		v.loading = false
+		if msg.success {
+			v.serverRunning = false
+			v.serverPID = 0
+		} else {
+			v.downloadProgress = "Stop failed: " + msg.err
+		}
+
 	case connectionCheckMsg:
 		v.loading = false
 		v.lastCheck = time.Now()
@@ -148,7 +477,12 @@ func (v *RemoteView) Update(msg tea.Msg) (View, tea.Cmd) {
 		case "R":
 			v.loading = true
 			v.currentOrigin = common.RccRemoteOrigin()
-			return v, tea.Batch(v.checkConnection, v.loadCatalogs)
+			v.sharedEnabled = isSharedHolotreeEnabled()
+			v.serverInstalled = false
+			if _, err := os.Stat(v.serverBinaryPath); err == nil {
+				v.serverInstalled = true
+			}
+			return v, tea.Batch(v.checkConnection, v.loadCatalogs, v.checkServerStatus)
 		case "a":
 			if v.tab == 1 { // Servers tab - add new
 				v.inputMode = true
@@ -282,6 +616,31 @@ func (v *RemoteView) handleEnter() (View, tea.Cmd) {
 			}
 			return v, func() tea.Msg { return actionMsg{action: action} }
 		}
+	case 3: // Host - server management
+		if v.selected == 0 {
+			// Download/Install
+			if !v.serverInstalled {
+				v.loading = true
+				v.downloadProgress = "Downloading rccremote..."
+				return v, v.downloadRccremote
+			} else {
+				v.downloadProgress = "Already installed"
+			}
+		} else if v.selected == 1 {
+			// Start/Stop server
+			if v.serverRunning {
+				v.loading = true
+				return v, v.stopServer
+			} else if !v.serverInstalled {
+				v.downloadProgress = "Error: Download rccremote first"
+			} else if !v.sharedEnabled {
+				v.downloadProgress = "Error: Enable shared holotree first (sudo rcc holotree shared --enable)"
+			} else {
+				v.loading = true
+				v.downloadProgress = "Starting server..."
+				return v, v.startServer
+			}
+		}
 	}
 	return v, nil
 }
@@ -308,7 +667,7 @@ func (v *RemoteView) getMaxItems() int {
 	case 2:
 		return len(v.localCatalogs) + 1
 	case 3:
-		return 4
+		return 2 // Download, Start/Stop
 	}
 	return 0
 }
@@ -623,76 +982,102 @@ func (v *RemoteView) renderPullTab(vs ViewStyles, contentWidth int) string {
 func (v *RemoteView) renderHostTab(vs ViewStyles, contentWidth int) string {
 	var b strings.Builder
 
-	b.WriteString(vs.Accent.Bold(true).Render("Host Your Own Server"))
+	b.WriteString(vs.Accent.Bold(true).Render("Host Server"))
 	b.WriteString("\n\n")
 
-	// Prerequisites
-	b.WriteString(vs.Label.Render("Shared Holotree"))
+	// Status section
+	b.WriteString(vs.Label.Render("Shared Holotree "))
 	if v.sharedEnabled {
-		b.WriteString(vs.Success.Render("[OK] Enabled"))
+		b.WriteString(vs.Success.Render("[OK]"))
 	} else {
-		b.WriteString(vs.Error.Render("[X] Required"))
+		b.WriteString(vs.Error.Render("[Required]"))
+		b.WriteString("\n")
+		b.WriteString(vs.Warning.Render("  Run: sudo rcc holotree shared --enable"))
+	}
+	b.WriteString("\n")
+
+	b.WriteString(vs.Label.Render("rccremote      "))
+	if v.serverInstalled {
+		b.WriteString(vs.Success.Render("[Installed]"))
+	} else {
+		b.WriteString(vs.Warning.Render("[Not installed]"))
+	}
+	b.WriteString("\n")
+
+	b.WriteString(vs.Label.Render("Server         "))
+	if v.serverRunning {
+		b.WriteString(vs.Success.Render(fmt.Sprintf("[Running] PID %d", v.serverPID)))
+	} else {
+		b.WriteString(vs.Subtext.Render("[Stopped]"))
 	}
 	b.WriteString("\n\n")
-
-	if !v.sharedEnabled {
-		b.WriteString(vs.Warning.Render("Enable shared holotree first:"))
-		b.WriteString("\n")
-		b.WriteString(vs.Info.Render("sudo rcc holotree shared --enable"))
-		b.WriteString("\n\n")
-	}
 
 	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
 	b.WriteString("\n\n")
 
-	b.WriteString(vs.Accent.Bold(true).Render("Deployment Options"))
+	// Actions
+	b.WriteString(vs.Accent.Bold(true).Render("Actions"))
 	b.WriteString("\n\n")
 
-	options := []struct {
-		name string
-		desc string
-		cmd  string
-	}{
-		{
-			"Local Development",
-			"Run rccremote directly (HTTP only)",
-			"rccremote -hostname 0.0.0.0 -port 4653",
-		},
-		{
-			"Docker + NGINX",
-			"Production setup with TLS",
-			"github.com/yorko-io/rccremote-docker",
-		},
-		{
-			"Cloudflare Tunnel",
-			"Expose via CF tunnel (no port forwarding)",
-			"make quick-cf HOSTNAME=rcc.example.com",
-		},
-		{
-			"Kubernetes",
-			"K8s deployment with ingress",
-			"make quick-k8s",
-		},
+	// Action 0: Download/Install
+	action0Label := "Download rccremote"
+	action0Desc := "Download from github.com/joshyorko/rcc/releases"
+	if v.serverInstalled {
+		action0Label = "rccremote installed"
+		action0Desc = v.serverBinaryPath
 	}
+	if v.selected == 0 {
+		b.WriteString(vs.Selected.Render("> " + action0Label))
+	} else {
+		b.WriteString(vs.Normal.Render("  " + action0Label))
+	}
+	b.WriteString("\n")
+	b.WriteString(vs.Subtext.Render("    " + action0Desc))
+	b.WriteString("\n\n")
 
-	for i, opt := range options {
-		if i == v.selected {
-			b.WriteString(vs.Selected.Render("> " + opt.name))
+	// Action 1: Start/Stop
+	action1Label := "Start Server"
+	action1Desc := fmt.Sprintf("Listen on %s:%d", v.serverHostname, v.serverPort)
+	if v.serverRunning {
+		action1Label = "Stop Server"
+		action1Desc = fmt.Sprintf("Stop process %d", v.serverPID)
+	} else if !v.serverInstalled {
+		action1Desc = "(download rccremote first)"
+	} else if !v.sharedEnabled {
+		action1Desc = "(enable shared holotree first)"
+	}
+	if v.selected == 1 {
+		b.WriteString(vs.Selected.Render("> " + action1Label))
+	} else {
+		b.WriteString(vs.Normal.Render("  " + action1Label))
+	}
+	b.WriteString("\n")
+	b.WriteString(vs.Subtext.Render("    " + action1Desc))
+	b.WriteString("\n")
+
+	// Progress/status message
+	if v.downloadProgress != "" {
+		b.WriteString("\n")
+		if strings.HasPrefix(v.downloadProgress, "Error") || strings.HasPrefix(v.downloadProgress, "Start failed") || strings.HasPrefix(v.downloadProgress, "Stop failed") {
+			b.WriteString(vs.Error.Render(v.downloadProgress))
 		} else {
-			b.WriteString(vs.Normal.Render("  " + opt.name))
+			b.WriteString(vs.Info.Render(v.downloadProgress))
 		}
 		b.WriteString("\n")
-		if i == v.selected {
-			b.WriteString("    ")
-			b.WriteString(vs.Subtext.Render(opt.desc))
-			b.WriteString("\n    ")
-			b.WriteString(vs.Info.Render(opt.cmd))
-			b.WriteString("\n")
-		}
 	}
 
-	b.WriteString("\n")
-	b.WriteString(vs.Subtext.Render("Note: Production deployments require TLS certificates"))
+	// Client connection info
+	if v.serverRunning {
+		b.WriteString("\n")
+		b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Accent.Bold(true).Render("Connect from clients"))
+		b.WriteString("\n")
+		b.WriteString(vs.Info.Render(fmt.Sprintf("  export RCC_REMOTE_ORIGIN=http://<this-ip>:%d", v.serverPort)))
+		b.WriteString("\n")
+		b.WriteString(vs.Info.Render("  rcc holotree pull"))
+		b.WriteString("\n")
+	}
 
 	return b.String()
 }

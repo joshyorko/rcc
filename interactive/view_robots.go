@@ -119,6 +119,14 @@ type RobotsView struct {
 	pythonVer    string
 	dependencies []string
 
+	// Full parsed data for dashboard
+	taskCommands   map[string]string // task name -> command
+	condaChannels  []string
+	condaDeps      []string
+	pipDeps        []string
+	artifactsDir   string
+	preRunScripts  []string
+
 	// Input mode for pull
 	inputMode   bool
 	inputBuffer string
@@ -282,6 +290,14 @@ type robotDetailLoadedMsg struct {
 	dependencies []string
 	envStatus    EnvStatus
 	envLastBuilt time.Time
+
+	// Full parsed data
+	taskCommands  map[string]string
+	condaChannels []string
+	condaDeps     []string
+	pipDeps       []string
+	artifactsDir  string
+	preRunScripts []string
 }
 type envRebuildMsg struct {
 	success bool
@@ -298,12 +314,25 @@ func (v *RobotsView) loadRobotDetails() tea.Msg {
 		return robotDetailLoadedMsg{}
 	}
 
-	result := robotDetailLoadedMsg{}
+	result := robotDetailLoadedMsg{
+		taskCommands: make(map[string]string),
+	}
 
-	// Parse robot.yaml for conda file reference
-	// CondaConfigFile() returns an absolute path already
+	// Parse robot.yaml for full details
 	if robotYaml, err := robot.LoadRobotYaml(r.path, false); err == nil {
 		result.condaFile = robotYaml.CondaConfigFile()
+		result.artifactsDir = robotYaml.ArtifactDirectory()
+		result.preRunScripts = robotYaml.PreRunScripts()
+
+		// Get task commands
+		for _, taskName := range robotYaml.AvailableTasks() {
+			if task := robotYaml.TaskByName(taskName); task != nil {
+				cmdLine := task.Commandline()
+				if len(cmdLine) > 0 {
+					result.taskCommands[taskName] = strings.Join(cmdLine, " ")
+				}
+			}
+		}
 	}
 
 	// Load conda.yaml info - condaFile is already absolute, or use default
@@ -315,13 +344,15 @@ func (v *RobotsView) loadRobotDetails() tea.Msg {
 	if info, err := os.Stat(condaPath); err == nil {
 		result.condaModTime = info.ModTime()
 
-		// Read and hash conda contents
+		// Read and parse conda.yaml fully
 		if data, err := os.ReadFile(condaPath); err == nil {
 			hash := sha256.Sum256(data)
 			result.condaHash = hex.EncodeToString(hash[:8])
 
-			// Parse for display info
-			result.pythonVer, result.dependencies = parseDependencies(string(data))
+			// Parse for full info
+			result.pythonVer, result.condaChannels, result.condaDeps, result.pipDeps = parseCondaYaml(string(data))
+			// Keep dependencies for backwards compat
+			result.dependencies = append(result.condaDeps, result.pipDeps...)
 		}
 	}
 
@@ -339,6 +370,74 @@ func (v *RobotsView) loadRobotDetails() tea.Msg {
 	}
 
 	return result
+}
+
+// parseCondaYaml extracts all relevant info from conda.yaml
+func parseCondaYaml(content string) (pythonVer string, channels, condaDeps, pipDeps []string) {
+	lines := strings.Split(content, "\n")
+	inChannels := false
+	inDeps := false
+	inPip := false
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+
+		// Detect sections
+		if strings.HasPrefix(trimmed, "channels:") {
+			inChannels = true
+			inDeps = false
+			inPip = false
+			continue
+		}
+		if strings.HasPrefix(trimmed, "dependencies:") {
+			inChannels = false
+			inDeps = true
+			inPip = false
+			continue
+		}
+
+		// Parse channels
+		if inChannels && strings.HasPrefix(trimmed, "- ") {
+			channel := strings.TrimPrefix(trimmed, "- ")
+			channels = append(channels, channel)
+		}
+
+		// Parse dependencies
+		if inDeps && strings.HasPrefix(trimmed, "- ") {
+			dep := strings.TrimPrefix(trimmed, "- ")
+
+			if dep == "pip:" {
+				inPip = true
+				continue
+			}
+
+			if strings.HasPrefix(dep, "python") {
+				// Extract python version
+				if parts := strings.Split(dep, "="); len(parts) > 1 {
+					pythonVer = strings.TrimSpace(parts[len(parts)-1])
+				} else if parts := strings.Split(dep, ">="); len(parts) > 1 {
+					pythonVer = ">=" + strings.TrimSpace(parts[1])
+				} else if parts := strings.Split(dep, "<"); len(parts) > 1 {
+					pythonVer = "<" + strings.TrimSpace(parts[1])
+				}
+			} else if !inPip && dep != "pip" {
+				condaDeps = append(condaDeps, dep)
+			}
+		}
+
+		// Parse pip dependencies (indented under pip:)
+		if inPip && strings.HasPrefix(trimmed, "- ") {
+			dep := strings.TrimPrefix(trimmed, "- ")
+			pipDeps = append(pipDeps, dep)
+		}
+
+		// Stop at next top-level section
+		if inDeps && !strings.HasPrefix(line, " ") && !strings.HasPrefix(line, "\t") && trimmed != "" && !strings.HasPrefix(trimmed, "-") && !strings.HasPrefix(trimmed, "#") {
+			break
+		}
+	}
+
+	return
 }
 
 func parseDependencies(condaContent string) (pythonVer string, dependencies []string) {
@@ -452,6 +551,12 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		v.dependencies = msg.dependencies
 		v.envStatus = msg.envStatus
 		v.envLastBuilt = msg.envLastBuilt
+		v.taskCommands = msg.taskCommands
+		v.condaChannels = msg.condaChannels
+		v.condaDeps = msg.condaDeps
+		v.pipDeps = msg.pipDeps
+		v.artifactsDir = msg.artifactsDir
+		v.preRunScripts = msg.preRunScripts
 
 	case envRebuildMsg:
 		v.loading = false
@@ -581,15 +686,30 @@ func (v *RobotsView) handleInputMode(msg tea.Msg) (View, tea.Cmd) {
 		case "esc":
 			v.inputMode = false
 			v.inputBuffer = ""
+			v.inputStep = 0
+			v.pullURL = ""
 		case "enter":
-			if v.inputBuffer != "" {
-				// Execute pull within UI
-				url := v.inputBuffer
-				v.inputMode = false
-				v.inputBuffer = ""
-				v.spinning = true
-				v.message = "Pulling robot from " + url + "..."
-				return v, tea.Batch(v.spinner.Tick, v.pullRobot(url))
+			if v.inputStep == 0 {
+				// Step 0: URL entered, move to directory
+				if v.inputBuffer != "" {
+					v.pullURL = v.inputBuffer
+					v.inputStep = 1
+					// Default to repo name extracted from URL
+					v.inputBuffer = extractRepoName(v.pullURL)
+				}
+			} else {
+				// Step 1: Directory entered, execute pull
+				if v.inputBuffer != "" {
+					url := v.pullURL
+					dir := v.inputBuffer
+					v.inputMode = false
+					v.inputBuffer = ""
+					v.inputStep = 0
+					v.pullURL = ""
+					v.spinning = true
+					v.message = "Pulling robot into " + dir + "..."
+					return v, tea.Batch(v.spinner.Tick, v.pullRobot(url, dir))
+				}
 			}
 		case "backspace":
 			if len(v.inputBuffer) > 0 {
@@ -604,27 +724,50 @@ func (v *RobotsView) handleInputMode(msg tea.Msg) (View, tea.Cmd) {
 	return v, nil
 }
 
-func (v *RobotsView) pullRobot(url string) tea.Cmd {
+// extractRepoName extracts the repository name from a git URL
+func extractRepoName(url string) string {
+	// Remove trailing .git
+	url = strings.TrimSuffix(url, ".git")
+	// Get last path segment
+	parts := strings.Split(url, "/")
+	if len(parts) > 0 {
+		name := parts[len(parts)-1]
+		// Handle git@github.com:user/repo format
+		if colonIdx := strings.LastIndex(name, ":"); colonIdx != -1 {
+			name = name[colonIdx+1:]
+		}
+		if name != "" {
+			return name
+		}
+	}
+	return "robot"
+}
+
+func (v *RobotsView) pullRobot(url, directory string) tea.Cmd {
 	return func() tea.Msg {
 		rccPath, err := os.Executable()
 		if err != nil {
 			return pullRobotMsg{success: false, message: err.Error()}
 		}
 
-		cmd := exec.Command(rccPath, "pull", url)
+		// rcc pull <url> -d <directory>
+		cmd := exec.Command(rccPath, "pull", url, "-d", directory)
 		output, err := cmd.CombinedOutput()
 		if err != nil {
-			return pullRobotMsg{success: false, message: string(output)}
+			errMsg := string(output)
+			if errMsg == "" {
+				errMsg = err.Error()
+			}
+			return pullRobotMsg{success: false, message: errMsg}
 		}
 
-		// Parse output to find where it was pulled
-		outputStr := string(output)
-		// rcc pull typically outputs the path where it was cloned
-		return pullRobotMsg{success: true, message: "Robot pulled successfully", path: outputStr}
+		return pullRobotMsg{success: true, message: "Robot pulled to " + directory, path: directory}
 	}
 }
 
 func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
+	r := v.selectedRobot()
+
 	switch msg.String() {
 	case "esc":
 		// Return to list mode
@@ -641,17 +784,37 @@ func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 	case "right", "l":
 		v.moveRightDetail()
 
+	case "c":
+		// Copy command to clipboard
+		if r != nil {
+			cmd := v.buildCommandPreview(r)
+			if err := copyToClipboard(cmd); err == nil {
+				return v, v.addToast("Command copied to clipboard", "success")
+			} else {
+				return v, v.addToast("Failed to copy: "+err.Error(), "error")
+			}
+		}
+
 	case "e":
-		// Quick edit based on current focus
-		if v.detailFocus == focusDetailConfig {
-			return v, v.handleConfigAction()
+		// Edit robot.yaml
+		if r != nil {
+			return v, v.editFile(r.path)
+		}
+
+	case "E":
+		// Edit conda.yaml
+		if r != nil {
+			condaPath := v.condaFile
+			if condaPath == "" {
+				condaPath = filepath.Join(r.directory, "conda.yaml")
+			}
+			return v, v.editFile(condaPath)
 		}
 
 	case "r":
 		// Rebuild environment
-		v.loading = true
-		v.message = "Rebuilding environment..."
-		return v, v.rebuildEnvironment
+		v.spinning = true
+		return v, tea.Batch(v.spinner.Tick, v.rebuildEnvironment)
 
 	case "R":
 		// Refresh
@@ -659,13 +822,43 @@ func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 		return v, v.loadRobotDetails
 
 	case "enter":
-		if v.detailFocus == focusDetailConfig {
-			return v, v.handleConfigAction()
-		}
 		// Run the robot
 		return v, v.runRobot()
 	}
 	return v, nil
+}
+
+// copyToClipboard copies text to system clipboard
+func copyToClipboard(text string) error {
+	// Try xclip first (Linux)
+	cmd := exec.Command("xclip", "-selection", "clipboard")
+	cmd.Stdin = strings.NewReader(text)
+	if err := cmd.Run(); err == nil {
+		return nil
+	}
+
+	// Try xsel (Linux)
+	cmd = exec.Command("xsel", "--clipboard", "--input")
+	cmd.Stdin = strings.NewReader(text)
+	if err := cmd.Run(); err == nil {
+		return nil
+	}
+
+	// Try wl-copy (Wayland)
+	cmd = exec.Command("wl-copy")
+	cmd.Stdin = strings.NewReader(text)
+	if err := cmd.Run(); err == nil {
+		return nil
+	}
+
+	// Try pbcopy (macOS)
+	cmd = exec.Command("pbcopy")
+	cmd.Stdin = strings.NewReader(text)
+	if err := cmd.Run(); err == nil {
+		return nil
+	}
+
+	return fmt.Errorf("no clipboard utility found")
 }
 
 // List mode navigation (simplified - just actions and robot list)
@@ -1130,32 +1323,60 @@ func (v *RobotsView) renderInputMode() string {
 
 	var b strings.Builder
 
-	b.WriteString(RenderHeader(vs, "Pull Robot", "From Git", contentWidth))
-	b.WriteString("\n")
+	if v.inputStep == 0 {
+		// Step 1: Enter URL
+		b.WriteString(RenderHeader(vs, "Pull Robot", "Step 1/2", contentWidth))
+		b.WriteString("\n")
 
-	b.WriteString(vs.Accent.Bold(true).Render("REPOSITORY URL"))
-	b.WriteString("\n\n")
+		b.WriteString(vs.Accent.Bold(true).Render("REPOSITORY URL"))
+		b.WriteString("\n\n")
 
-	b.WriteString(vs.Label.Render("URL  "))
-	b.WriteString(vs.Selected.Render(v.inputBuffer + "_"))
-	b.WriteString("\n\n")
+		b.WriteString(vs.Label.Render("URL  "))
+		b.WriteString(vs.Selected.Render(v.inputBuffer + "_"))
+		b.WriteString("\n\n")
 
-	b.WriteString(vs.Subtext.Render("Enter a git repository URL or path"))
-	b.WriteString("\n")
-	b.WriteString(vs.Subtext.Render("Examples:"))
-	b.WriteString("\n")
-	b.WriteString(vs.Subtext.Render("  github.com/robocorp/example-web-scraper"))
-	b.WriteString("\n")
-	b.WriteString(vs.Subtext.Render("  https://gitlab.com/user/robot.git"))
-	b.WriteString("\n")
-	b.WriteString(vs.Subtext.Render("  git@github.com:user/repo.git"))
-	b.WriteString("\n\n")
+		b.WriteString(vs.Subtext.Render("Enter a git repository URL or path"))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("Examples:"))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("  github.com/robocorp/example-web-scraper"))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("  https://gitlab.com/user/robot.git"))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("  git@github.com:user/repo.git"))
+		b.WriteString("\n\n")
 
-	hints := []KeyHint{
-		{"Enter", "pull"},
-		{"Esc", "cancel"},
+		hints := []KeyHint{
+			{"Enter", "next"},
+			{"Esc", "cancel"},
+		}
+		b.WriteString(RenderFooter(vs, hints, contentWidth))
+	} else {
+		// Step 2: Enter directory
+		b.WriteString(RenderHeader(vs, "Pull Robot", "Step 2/2", contentWidth))
+		b.WriteString("\n")
+
+		b.WriteString(vs.Accent.Bold(true).Render("TARGET DIRECTORY"))
+		b.WriteString("\n\n")
+
+		b.WriteString(vs.Label.Render("URL  "))
+		b.WriteString(vs.Subtext.Render(v.pullURL))
+		b.WriteString("\n")
+		b.WriteString(vs.Label.Render("Dir  "))
+		b.WriteString(vs.Selected.Render(v.inputBuffer + "_"))
+		b.WriteString("\n\n")
+
+		b.WriteString(vs.Subtext.Render("Enter directory name to clone into"))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("(relative to current working directory)"))
+		b.WriteString("\n\n")
+
+		hints := []KeyHint{
+			{"Enter", "pull"},
+			{"Esc", "cancel"},
+		}
+		b.WriteString(RenderFooter(vs, hints, contentWidth))
 	}
-	b.WriteString(RenderFooter(vs, hints, contentWidth))
 
 	return v.placeBox(boxStyle.Render(b.String()))
 }
@@ -1164,221 +1385,275 @@ func (v *RobotsView) renderDetailView() string {
 	theme := v.styles.theme
 	vs := NewViewStyles(theme)
 
-	boxWidth := v.width - 8
-	if boxWidth < 70 {
-		boxWidth = 70
+	// Use more screen real estate
+	totalWidth := v.width - 4
+	if totalWidth < 100 {
+		totalWidth = 100
 	}
-	if boxWidth > 110 {
-		boxWidth = 110
+	if totalWidth > 140 {
+		totalWidth = 140
 	}
-	contentWidth := boxWidth - 6
 
-	boxStyle := lipgloss.NewStyle().
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(theme.Border).
-		Padding(1, 2).
-		Width(boxWidth)
-
-	var b strings.Builder
+	leftWidth := (totalWidth / 2) - 2
+	rightWidth := totalWidth - leftWidth - 4
 
 	r := v.selectedRobot()
 	if r == nil {
-		b.WriteString(vs.Subtext.Render("No robot selected"))
-		return v.placeBox(boxStyle.Render(b.String()))
+		return vs.Subtext.Render("No robot selected")
 	}
 
-	// Header
-	robotName := r.name
-	if len(robotName) > 30 {
-		robotName = robotName[:27] + "..."
+	// Get relative path for display
+	relDir, _ := filepath.Rel(".", r.directory)
+	if relDir == "" || relDir == "." {
+		relDir = "./"
+	} else {
+		relDir = "./" + relDir
 	}
-	relPath, _ := filepath.Rel(".", r.path)
-	b.WriteString(RenderHeader(vs, "Robot", robotName, contentWidth))
-	b.WriteString("\n")
 
-	// RUN section - PRIMARY (at top)
-	b.WriteString(vs.Accent.Bold(true).Render("RUN"))
-	b.WriteString("\n\n")
+	// ═══ LEFT COLUMN: Run Configuration ═══
+	var left strings.Builder
 
-	// Task row
-	taskPrefix := "  "
-	taskLabelStyle := vs.Normal
-	if v.detailFocus == focusDetailTask {
-		taskPrefix = "> "
-		taskLabelStyle = vs.Selected
+	left.WriteString(vs.Accent.Bold(true).Render("RUN"))
+	left.WriteString("\n")
+
+	// Task selector
+	left.WriteString(vs.Label.Render("Task "))
+	if len(r.tasks) == 0 {
+		left.WriteString(vs.Subtext.Render("(default)"))
+	} else {
+		task := r.tasks[v.taskIdx]
+		if v.detailFocus == focusDetailTask {
+			left.WriteString(vs.Selected.Render("< " + task + " >"))
+		} else {
+			left.WriteString(vs.Text.Render(task))
+		}
+		left.WriteString(vs.Subtext.Render(fmt.Sprintf(" %d/%d", v.taskIdx+1, len(r.tasks))))
 	}
-	b.WriteString(taskLabelStyle.Render(taskPrefix))
-	b.WriteString(vs.Label.Render("Task    "))
+	left.WriteString("\n")
+
+	// Env selector
+	left.WriteString(vs.Label.Render("Env  "))
+	currentEnv := "none"
+	if v.envIdx >= 0 && v.envIdx < len(r.envFiles) {
+		currentEnv = filepath.Base(r.envFiles[v.envIdx])
+	}
+	if v.detailFocus == focusDetailEnv {
+		left.WriteString(vs.Selected.Render("< " + currentEnv + " >"))
+	} else {
+		left.WriteString(vs.Text.Render(currentEnv))
+	}
+	if len(r.envFiles) > 0 {
+		left.WriteString(vs.Subtext.Render(fmt.Sprintf(" %d/%d", v.envIdx+2, len(r.envFiles)+1)))
+	}
+	left.WriteString("\n\n")
+
+	// Command box
+	left.WriteString(vs.Accent.Render("CMD"))
+	left.WriteString(vs.Subtext.Render(" [c]copy"))
+	left.WriteString("\n")
+	cmd := v.buildShortCommand(r)
+	for _, line := range strings.Split(cmd, "\n") {
+		left.WriteString(vs.Info.Render(" " + line))
+		left.WriteString("\n")
+	}
+
+	left.WriteString(vs.Subtext.Render("[Enter]Run [e]robot [E]conda [r]rebuild"))
+
+	// Spinner/Toast
+	if v.spinning {
+		left.WriteString("\n")
+		left.WriteString(v.spinner.View())
+		left.WriteString(vs.Info.Render(" Rebuilding..."))
+	}
+	for _, toast := range v.toasts {
+		left.WriteString("\n")
+		switch toast.Type {
+		case "success":
+			left.WriteString(vs.Success.Render("OK " + toast.Message))
+		case "error":
+			left.WriteString(vs.Error.Render("X " + toast.Message))
+		default:
+			left.WriteString(vs.Info.Render("* " + toast.Message))
+		}
+	}
+
+	// ═══ RIGHT COLUMN: Robot & Conda Info Dashboard ═══
+	var right strings.Builder
+
+	// TASKS section - compact, just show selected task's command
+	right.WriteString(vs.Accent.Bold(true).Render("TASKS"))
+	right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)", len(r.tasks))))
+	right.WriteString("\n")
 
 	if len(r.tasks) == 0 {
-		b.WriteString(vs.Subtext.Render("(default)"))
+		right.WriteString(vs.Subtext.Render(" (default)"))
 	} else {
-		for i, task := range r.tasks {
-			if i == v.taskIdx {
-				b.WriteString(vs.BadgeActive.Render("[" + task + "]"))
-			} else {
-				b.WriteString(vs.Badge.Render(" " + task + " "))
-			}
-			b.WriteString(" ")
-		}
-	}
-	b.WriteString("\n")
-
-	// Env row (only if env files exist)
-	if len(r.envFiles) > 0 {
-		envPrefix := "  "
-		envLabelStyle := vs.Normal
-		if v.detailFocus == focusDetailEnv {
-			envPrefix = "> "
-			envLabelStyle = vs.Selected
-		}
-		b.WriteString(envLabelStyle.Render(envPrefix))
-		b.WriteString(vs.Label.Render("Env     "))
-
-		// None option
-		if v.envIdx == -1 {
-			b.WriteString(vs.BadgeActive.Render("[none]"))
-		} else {
-			b.WriteString(vs.Badge.Render(" none "))
-		}
-		b.WriteString(" ")
-
-		// Env files
+		// Show max 3 tasks inline
 		maxShow := 3
-		for i, envFile := range r.envFiles {
+		for i, task := range r.tasks {
 			if i >= maxShow {
-				b.WriteString(vs.Subtext.Render(fmt.Sprintf("+%d", len(r.envFiles)-maxShow)))
+				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d", len(r.tasks)-maxShow)))
 				break
 			}
-			displayName := filepath.Base(envFile)
-			if len(displayName) > 12 {
-				displayName = displayName[:9] + "..."
-			}
-			if i == v.envIdx {
-				b.WriteString(vs.BadgeActive.Render("[" + displayName + "]"))
+			if i == v.taskIdx {
+				right.WriteString(vs.Text.Render(" [" + task + "]"))
 			} else {
-				b.WriteString(vs.Badge.Render(" " + displayName + " "))
+				right.WriteString(vs.Subtext.Render(" " + task))
 			}
-			b.WriteString(" ")
 		}
-		b.WriteString("\n")
+	}
+	right.WriteString("\n")
+
+	// Show current task's command
+	if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
+		if cmd, ok := v.taskCommands[r.tasks[v.taskIdx]]; ok {
+			cmdDisplay := cmd
+			if len(cmdDisplay) > 40 {
+				cmdDisplay = cmdDisplay[:37] + "..."
+			}
+			right.WriteString(vs.Info.Render(" " + cmdDisplay))
+			right.WriteString("\n")
+		}
 	}
 
-	// Command preview
-	b.WriteString("\n")
-	cmd := v.buildCommandPreview(r)
-	b.WriteString(vs.Info.Render("  " + cmd))
-	b.WriteString("\n")
-
-	b.WriteString("\n")
-	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
-	b.WriteString("\n\n")
-
-	// Info section (condensed)
-	b.WriteString(vs.Accent.Bold(true).Render("INFO"))
-	b.WriteString("\n\n")
-
-	b.WriteString(vs.Label.Render("Path"))
-	b.WriteString(vs.Info.Render(relPath))
-	b.WriteString("\n")
-
-	// Environment status inline
-	b.WriteString(vs.Label.Render("Env"))
+	// ENVIRONMENT - single line
+	right.WriteString(vs.Accent.Bold(true).Render("ENV"))
 	switch v.envStatus {
 	case EnvStatusReady:
-		b.WriteString(vs.Success.Render("[Ready]"))
-		if !v.envLastBuilt.IsZero() {
-			b.WriteString(vs.Subtext.Render(fmt.Sprintf(" built %s", timeAgo(v.envLastBuilt))))
-		}
+		right.WriteString(vs.Success.Render(" Ready"))
 	case EnvStatusNeedsRebuild:
-		b.WriteString(vs.Warning.Render("[Needs Rebuild]"))
-	case EnvStatusNotBuilt:
-		b.WriteString(vs.Error.Render("[Not Built]"))
+		right.WriteString(vs.Warning.Render(" Rebuild"))
 	default:
-		b.WriteString(vs.Subtext.Render("[Unknown]"))
+		right.WriteString(vs.Subtext.Render(" Not built"))
 	}
-	b.WriteString("\n")
-
 	if v.pythonVer != "" {
-		b.WriteString(vs.Label.Render("Python"))
-		b.WriteString(vs.Text.Render(v.pythonVer))
-		b.WriteString("\n")
+		right.WriteString(vs.Subtext.Render(" py" + v.pythonVer))
 	}
+	right.WriteString("\n")
 
-	b.WriteString("\n")
-	b.WriteString(vs.Separator.Render(strings.Repeat("-", contentWidth)))
-	b.WriteString("\n\n")
-
-	// Configuration section (at bottom)
-	b.WriteString(vs.Accent.Bold(true).Render("CONFIGURE"))
-	b.WriteString("\n\n")
-
-	configActions := []struct {
-		label string
-		desc  string
-	}{
-		{"Edit robot.yaml", "Configure tasks and settings"},
-		{"Edit conda.yaml", "Configure dependencies"},
-		{"Rebuild Environment", "Force rebuild from conda.yaml"},
-	}
-
-	for i, action := range configActions {
-		prefix := "  "
-		style := vs.Normal
-		if v.detailFocus == focusDetailConfig && i == v.configIdx {
-			prefix = "> "
-			style = vs.Selected
-		}
-		b.WriteString(style.Render(prefix + action.label))
-		b.WriteString("\n")
-		if v.detailFocus == focusDetailConfig && i == v.configIdx {
-			b.WriteString("    ")
-			b.WriteString(vs.Subtext.Render(action.desc))
-			b.WriteString("\n")
-		}
-	}
-
-	// Spinner when rebuilding
-	if v.spinning {
-		b.WriteString("\n")
-		b.WriteString("  ")
-		b.WriteString(v.spinner.View())
-		b.WriteString(vs.Info.Render(" Rebuilding environment..."))
-		b.WriteString("\n")
-	}
-
-	// Toast notifications
-	if len(v.toasts) > 0 {
-		b.WriteString("\n")
-		for _, toast := range v.toasts {
-			icon := "  "
-			style := vs.Info
-			switch toast.Type {
-			case "success":
-				icon = "  [OK] "
-				style = vs.Success
-			case "error":
-				icon = "  [X] "
-				style = vs.Error
-			case "info":
-				icon = "  [i] "
-				style = vs.Info
+	// CONDA DEPS - compact
+	if len(v.condaDeps) > 0 {
+		right.WriteString(vs.Accent.Bold(true).Render("CONDA"))
+		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d) ", len(v.condaDeps))))
+		maxShow := 3
+		for i, dep := range v.condaDeps {
+			if i >= maxShow {
+				right.WriteString(vs.Subtext.Render(fmt.Sprintf("+%d", len(v.condaDeps)-maxShow)))
+				break
 			}
-			b.WriteString(style.Render(icon + toast.Message))
-			b.WriteString("\n")
+			// Shorten dep name
+			d := dep
+			if len(d) > 15 {
+				d = d[:12] + "..."
+			}
+			right.WriteString(vs.Subtext.Render(d + " "))
+		}
+		right.WriteString("\n")
+	}
+
+	// PIP DEPS - compact
+	if len(v.pipDeps) > 0 {
+		right.WriteString(vs.Accent.Bold(true).Render("PIP"))
+		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)\n", len(v.pipDeps))))
+		maxShow := 4
+		for i, dep := range v.pipDeps {
+			if i >= maxShow {
+				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d more", len(v.pipDeps)-maxShow)))
+				break
+			}
+			d := dep
+			if len(d) > 25 {
+				d = d[:22] + "..."
+			}
+			right.WriteString(vs.Subtext.Render(" " + d + "\n"))
 		}
 	}
+
+	// ENV FILES - compact
+	if len(r.envFiles) > 0 {
+		right.WriteString(vs.Accent.Bold(true).Render("FILES"))
+		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)\n", len(r.envFiles))))
+		maxShow := 3
+		for i, env := range r.envFiles {
+			if i >= maxShow {
+				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d more", len(r.envFiles)-maxShow)))
+				break
+			}
+			name := filepath.Base(env)
+			if len(name) > 20 {
+				name = name[:17] + "..."
+			}
+			if i == v.envIdx {
+				right.WriteString(vs.Text.Render(" [" + name + "]\n"))
+			} else {
+				right.WriteString(vs.Subtext.Render(" " + name + "\n"))
+			}
+		}
+	}
+
+	// Create styled columns - reduced padding
+	leftStyle := lipgloss.NewStyle().
+		Width(leftWidth).
+		Padding(0, 1).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border)
+
+	rightStyle := lipgloss.NewStyle().
+		Width(rightWidth).
+		Padding(0, 1).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border)
+
+	// Header - robot name and path
+	header := vs.Text.Bold(true).Render(r.name) + vs.Subtext.Render("  "+relDir)
+
+	// Join columns horizontally
+	columns := lipgloss.JoinHorizontal(lipgloss.Top,
+		leftStyle.Render(left.String()),
+		" ",
+		rightStyle.Render(right.String()),
+	)
 
 	// Footer
-	b.WriteString("\n")
 	hints := []KeyHint{
 		{"Enter", "run"},
-		{"Arrows", "navigate"},
+		{"←→", "cycle"},
+		{"↑↓", "section"},
 		{"Esc", "back"},
 	}
-	b.WriteString(RenderFooter(vs, hints, contentWidth))
+	footer := RenderFooter(vs, hints, totalWidth)
 
-	return v.placeBox(boxStyle.Render(b.String()))
+	// Combine all - minimal spacing
+	content := header + "\n" + columns + "\n" + footer
+
+	// Use horizontal centering only, don't fill height (app handles that)
+	return lipgloss.NewStyle().Width(v.width).Align(lipgloss.Center).Render(content)
+}
+
+// buildShortCommand creates a clean, short command preview
+func (v *RobotsView) buildShortCommand(r *robotData) string {
+	// Use relative directory name
+	relDir, _ := filepath.Rel(".", r.directory)
+	if relDir == "" || relDir == "." {
+		relDir = "."
+	}
+
+	lines := []string{}
+	lines = append(lines, fmt.Sprintf("rcc run -r %s/robot.yaml \\", relDir))
+
+	if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
+		lines = append(lines, fmt.Sprintf("    -t %s \\", r.tasks[v.taskIdx]))
+	}
+
+	if v.envIdx >= 0 && v.envIdx < len(r.envFiles) {
+		lines = append(lines, fmt.Sprintf("    -e %s/%s", relDir, r.envFiles[v.envIdx]))
+	} else {
+		// Remove trailing backslash from last line
+		lastIdx := len(lines) - 1
+		lines[lastIdx] = strings.TrimSuffix(lines[lastIdx], " \\")
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 func (v *RobotsView) buildCommandPreview(r *robotData) string {
