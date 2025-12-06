@@ -9,43 +9,51 @@ import (
 
 // ViewStyles provides consistent styling for all views
 type ViewStyles struct {
-	theme          Theme
-	Title          lipgloss.Style
-	Subtext        lipgloss.Style
-	Label          lipgloss.Style
-	Text           lipgloss.Style
-	Accent         lipgloss.Style
-	Success        lipgloss.Style
-	Warning        lipgloss.Style
-	Error          lipgloss.Style
-	Info           lipgloss.Style
-	Separator      lipgloss.Style
-	KeyHint        lipgloss.Style
-	Selected       lipgloss.Style
-	Normal         lipgloss.Style
-	Badge          lipgloss.Style
-	BadgeActive    lipgloss.Style
+	theme        Theme
+	Title        lipgloss.Style
+	Subtext      lipgloss.Style
+	Label        lipgloss.Style
+	Text         lipgloss.Style
+	Accent       lipgloss.Style
+	Success      lipgloss.Style
+	Warning      lipgloss.Style
+	Error        lipgloss.Style
+	Info         lipgloss.Style
+	Separator    lipgloss.Style
+	KeyHint      lipgloss.Style
+	Selected     lipgloss.Style
+	Normal       lipgloss.Style
+	Badge        lipgloss.Style
+	BadgeActive  lipgloss.Style
+	ToastInfo    lipgloss.Style
+	ToastSuccess lipgloss.Style
+	ToastWarning lipgloss.Style
+	ToastError   lipgloss.Style
 }
 
 // NewViewStyles creates consistent styles from a theme
 func NewViewStyles(theme Theme) ViewStyles {
 	return ViewStyles{
-		theme:       theme,
-		Title:       lipgloss.NewStyle().Bold(true).Foreground(theme.Primary),
-		Subtext:     lipgloss.NewStyle().Foreground(theme.TextMuted),
-		Label:       lipgloss.NewStyle().Foreground(theme.TextDim).Width(14),
-		Text:        lipgloss.NewStyle().Foreground(theme.Text),
-		Accent:      lipgloss.NewStyle().Foreground(theme.Accent),
-		Success:     lipgloss.NewStyle().Foreground(theme.Success),
-		Warning:     lipgloss.NewStyle().Foreground(theme.Warning),
-		Error:       lipgloss.NewStyle().Foreground(theme.Error),
-		Info:        lipgloss.NewStyle().Foreground(theme.Info),
-		Separator:   lipgloss.NewStyle().Foreground(theme.BorderDim),
-		KeyHint:     lipgloss.NewStyle().Foreground(theme.TextDim).Background(theme.Surface).Padding(0, 1),
-		Selected:    lipgloss.NewStyle().Foreground(theme.TextBright).Background(theme.Highlight).Bold(true).Padding(0, 1),
-		Normal:      lipgloss.NewStyle().Foreground(theme.Text).Padding(0, 1),
-		Badge:       lipgloss.NewStyle().Background(theme.Surface).Foreground(theme.Text).Padding(0, 1),
-		BadgeActive: lipgloss.NewStyle().Background(theme.Accent).Foreground(lipgloss.Color("#1a1b26")).Padding(0, 1).Bold(true),
+		theme:        theme,
+		Title:        lipgloss.NewStyle().Bold(true).Foreground(theme.Primary),
+		Subtext:      lipgloss.NewStyle().Foreground(theme.TextMuted),
+		Label:        lipgloss.NewStyle().Foreground(theme.TextDim).Width(14),
+		Text:         lipgloss.NewStyle().Foreground(theme.Text),
+		Accent:       lipgloss.NewStyle().Foreground(theme.Accent),
+		Success:      lipgloss.NewStyle().Foreground(theme.Success),
+		Warning:      lipgloss.NewStyle().Foreground(theme.Warning),
+		Error:        lipgloss.NewStyle().Foreground(theme.Error),
+		Info:         lipgloss.NewStyle().Foreground(theme.Info),
+		Separator:    lipgloss.NewStyle().Foreground(theme.BorderDim),
+		KeyHint:      lipgloss.NewStyle().Foreground(theme.TextDim).Background(theme.Surface).Padding(0, 1),
+		Selected:     lipgloss.NewStyle().Foreground(theme.TextBright).Background(theme.Highlight).Bold(true).Padding(0, 1),
+		Normal:       lipgloss.NewStyle().Foreground(theme.Text).Padding(0, 1),
+		Badge:        lipgloss.NewStyle().Background(theme.Surface).Foreground(theme.Text).Padding(0, 1),
+		BadgeActive:  lipgloss.NewStyle().Background(theme.Accent).Foreground(lipgloss.Color("#1a1b26")).Padding(0, 1).Bold(true),
+		ToastInfo:    lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Info).Padding(0, 1).Width(30),
+		ToastSuccess: lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Success).Padding(0, 1).Width(30),
+		ToastWarning: lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Warning).Padding(0, 1).Width(30),
+		ToastError:   lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Error).Padding(0, 1).Width(30),
 	}
 }
 
@@ -63,9 +71,6 @@ func NewViewBox(width, height int, theme Theme) ViewBox {
 	boxWidth := width - 8
 	if boxWidth < 60 {
 		boxWidth = 60
-	}
-	if boxWidth > 140 {
-		boxWidth = 140
 	}
 
 	return ViewBox{

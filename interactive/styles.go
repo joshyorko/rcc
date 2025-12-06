@@ -75,6 +75,18 @@ type Styles struct {
 	StepRunning lipgloss.Style
 	StepDone    lipgloss.Style
 	StepFail    lipgloss.Style
+
+	// Toasts
+	ToastInfo    lipgloss.Style
+	ToastSuccess lipgloss.Style
+	ToastWarning lipgloss.Style
+	ToastError   lipgloss.Style
+
+	// Cards & Stats
+	StatBox   lipgloss.Style
+	StatLabel lipgloss.Style
+	StatValue lipgloss.Style
+	Badge     lipgloss.Style
 }
 
 // NewStyles creates a new Styles instance using the DefaultTheme
@@ -246,6 +258,52 @@ func NewStylesWithTheme(theme Theme) *Styles {
 
 		StepFail: lipgloss.NewStyle().
 			Foreground(theme.Error),
+
+		// Toasts
+		ToastInfo: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(theme.Info).
+			Padding(0, 1).
+			Width(30),
+
+		ToastSuccess: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(theme.Success).
+			Padding(0, 1).
+			Width(30),
+
+		ToastWarning: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(theme.Warning).
+			Padding(0, 1).
+			Width(30),
+
+		ToastError: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(theme.Error).
+			Padding(0, 1).
+			Width(30),
+
+		// Cards & Stats
+		StatBox: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(theme.Border).
+			Padding(0, 1).
+			Width(24),
+
+		StatLabel: lipgloss.NewStyle().
+			Foreground(theme.TextMuted).
+			Bold(true),
+
+		StatValue: lipgloss.NewStyle().
+			Foreground(theme.Accent).
+			Bold(true),
+
+		Badge: lipgloss.NewStyle().
+			Foreground(theme.Background).
+			Background(theme.Accent).
+			Padding(0, 1).
+			Bold(true),
 	}
 }
 

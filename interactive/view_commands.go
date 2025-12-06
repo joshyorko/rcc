@@ -225,8 +225,8 @@ func (v *CommandsView) View() string {
 	if boxWidth < 70 {
 		boxWidth = 70
 	}
-	if boxWidth > 120 {
-		boxWidth = 120
+	if boxWidth < 70 {
+		boxWidth = 70
 	}
 	contentWidth := boxWidth - 6
 

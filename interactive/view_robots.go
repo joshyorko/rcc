@@ -13,15 +13,10 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/joshyorko/rcc/operations"
 	"github.com/joshyorko/rcc/robot"
+	"github.com/joshyorko/rcc/wizard"
 )
-
-// Toast represents a temporary notification
-type Toast struct {
-	Message   string
-	Type      string // "success", "error", "info"
-	ExpiresAt time.Time
-}
 
 // toastExpiredMsg is sent when a toast should be removed
 type toastExpiredMsg struct{}
@@ -120,12 +115,12 @@ type RobotsView struct {
 	dependencies []string
 
 	// Full parsed data for dashboard
-	taskCommands   map[string]string // task name -> command
-	condaChannels  []string
-	condaDeps      []string
-	pipDeps        []string
-	artifactsDir   string
-	preRunScripts  []string
+	taskCommands  map[string]string // task name -> command
+	condaChannels []string
+	condaDeps     []string
+	pipDeps       []string
+	artifactsDir  string
+	preRunScripts []string
 
 	// Input mode for pull
 	inputMode   bool
@@ -140,11 +135,14 @@ type RobotsView struct {
 	spinner  spinner.Model
 	spinning bool
 
-	// Toast notifications
-	toasts []Toast
+	// State
 
-	// Status message (legacy, being replaced by toasts)
-	message string
+	// Creation Wizard State
+	creating    bool
+	createStep  int // 0=Name, 1=Template
+	createName  string
+	templates   []wizard.Template
+	tmplListIdx int
 }
 
 func NewRobotsView(styles *Styles) *RobotsView {
@@ -175,31 +173,9 @@ func (v *RobotsView) Init() tea.Cmd {
 	return v.scanForRobots
 }
 
-// addToast adds a toast notification that auto-expires
-func (v *RobotsView) addToast(msg string, toastType string) tea.Cmd {
-	toast := Toast{
-		Message:   msg,
-		Type:      toastType,
-		ExpiresAt: time.Now().Add(4 * time.Second),
-	}
-	v.toasts = append(v.toasts, toast)
-
-	// Return a command to remove the toast after expiry
-	return tea.Tick(4*time.Second, func(t time.Time) tea.Msg {
-		return toastExpiredMsg{}
-	})
-}
-
-// cleanExpiredToasts removes toasts that have expired
-func (v *RobotsView) cleanExpiredToasts() {
-	now := time.Now()
-	active := []Toast{}
-	for _, t := range v.toasts {
-		if t.ExpiresAt.After(now) {
-			active = append(active, t)
-		}
-	}
-	v.toasts = active
+// addToast adds a toast notification using the global system
+func (v *RobotsView) addToast(message string, tType ToastType) tea.Cmd {
+	return ShowToast(message, tType)
 }
 
 type robotsLoadedMsg struct {
@@ -208,6 +184,8 @@ type robotsLoadedMsg struct {
 }
 
 func (v *RobotsView) scanForRobots() tea.Msg {
+	// Add a small delay to make the refresh perceptible
+	time.Sleep(500 * time.Millisecond)
 	cwd, err := os.Getwd()
 	if err != nil {
 		return robotsLoadedMsg{err: err}
@@ -517,15 +495,23 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		if editMsg, ok := msg.(editFileMsg); ok {
 			v.editing = false
 			if editMsg.changed {
-				v.message = fmt.Sprintf("Saved %s - rebuild recommended", filepath.Base(editMsg.file))
-				v.envStatus = EnvStatusNeedsRebuild
+
+				return v, tea.Batch(
+					v.addToast(fmt.Sprintf("Saved %s", filepath.Base(editMsg.file)), ToastInfo),
+					v.loadRobotDetails,
+				)
 			}
 			return v, v.loadRobotDetails
 		}
 		return v, nil
 	}
 
-	// Handle input mode
+	// Handle creation wizard
+	if v.creating {
+		return v.handleCreateKeys(msg)
+	}
+
+	// Handle input mode (pull)
 	if v.inputMode {
 		return v.handleInputMode(msg)
 	}
@@ -541,6 +527,8 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		v.taskIdx = 0
 		v.envIdx = -1
 		v.mode = modeList
+		// Signal refresh complete if not initial load (hacky check: loading was true)
+		return v, ShowInfoToast(fmt.Sprintf("Loaded %d robots", len(v.robots)))
 
 	case robotDetailLoadedMsg:
 		v.loading = false
@@ -561,33 +549,32 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 	case envRebuildMsg:
 		v.loading = false
 		v.spinning = false
-		var toastCmd tea.Cmd
+		var cmd tea.Cmd
 		if msg.success {
 			v.envStatus = EnvStatusReady
 			v.envLastBuilt = time.Now()
-			toastCmd = v.addToast("Environment rebuilt successfully", "success")
+			cmd = ShowSuccessToast("Environment rebuilt successfully")
 		} else {
-			toastCmd = v.addToast("Rebuild failed: "+msg.message, "error")
+			cmd = ShowErrorToast("Rebuild failed: " + msg.message)
 		}
-		return v, toastCmd
+		return v, cmd
 
 	case pullRobotMsg:
 		v.spinning = false
-		v.message = ""
-		var toastCmd tea.Cmd
+		var cmd tea.Cmd
 		if msg.success {
-			toastCmd = v.addToast("Robot pulled successfully!", "success")
+			cmd = ShowSuccessToast("Robot pulled successfully!")
 			// Refresh robot list to show the new robot
-			return v, tea.Batch(toastCmd, v.scanForRobots)
+			return v, tea.Batch(cmd, v.scanForRobots)
 		} else {
 			// Truncate error message if too long
 			errMsg := msg.message
 			if len(errMsg) > 60 {
 				errMsg = errMsg[:57] + "..."
 			}
-			toastCmd = v.addToast("Pull failed: "+errMsg, "error")
+			cmd = ShowErrorToast("Pull failed: " + errMsg)
 		}
-		return v, toastCmd
+		return v, cmd
 
 	case spinner.TickMsg:
 		if v.spinning {
@@ -595,9 +582,6 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.spinner, cmd = v.spinner.Update(msg)
 			return v, cmd
 		}
-
-	case toastExpiredMsg:
-		v.cleanExpiredToasts()
 
 	case tea.WindowSizeMsg:
 		v.width = msg.Width
@@ -616,13 +600,20 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 			v.mode = modeList
 			return v, v.scanForRobots
 		}
+
+	case templatesLoadedMsg:
+		v.templates = msg.templates
 	}
 
 	return v, nil
 }
 
-func (v *RobotsView) handleListKeys(msg tea.KeyMsg) (View, tea.Cmd) {
-	switch msg.String() {
+func (v *RobotsView) handleListKeys(key interface{}) (View, tea.Cmd) {
+	kMsg, ok := key.(tea.KeyMsg)
+	if !ok {
+		return v, nil
+	}
+	switch kMsg.String() {
 	case "up", "k":
 		v.moveUpList()
 	case "down", "j":
@@ -631,7 +622,7 @@ func (v *RobotsView) handleListKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 		v.moveLeftList()
 	case "right", "l":
 		v.moveRightList()
-	case "R":
+	case "r", "R":
 		v.loading = true
 		return v, v.scanForRobots
 	case "esc":
@@ -646,7 +637,6 @@ func (v *RobotsView) handleListKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 			v.mode = modeDetail
 			v.detailFocus = focusDetailTask // Start on RUN, not config
 			v.configIdx = configEditRobot
-			v.message = ""
 			return v, v.loadRobotDetails
 		}
 	}
@@ -654,29 +644,35 @@ func (v *RobotsView) handleListKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 }
 
 func (v *RobotsView) handleListAction() (View, tea.Cmd) {
-	// Handle pull robot - enter input mode for URL
-	if v.actionIdx == actionPullRobot {
+	// Action 0 is Pull
+	if v.actionIdx == 0 {
 		v.inputMode = true
 		v.inputBuffer = ""
 		return v, nil
 	}
 
-	// Handle templates - execute directly
-	templates := map[int]string{
-		actionTemplateBasic:     "01-python",
-		actionTemplateBrowser:   "02-python-browser",
-		actionTemplateWorkitems: "03-python-workitems",
-		actionTemplateAI:        "04-python-assistant-ai",
+	// Action 1 is Create New (replaces old template actions)
+	if v.actionIdx == 1 {
+		v.creating = true
+		v.createStep = 0
+		v.createName = ""
+		v.tmplListIdx = 0
+		v.templates = nil
+		return v, func() tea.Msg {
+			// Load templates in background
+			tmpls, err := wizard.LoadTemplates(false)
+			if err != nil {
+				return nil
+			}
+			return templatesLoadedMsg{templates: tmpls}
+		}
 	}
 
-	if templateName, ok := templates[v.actionIdx]; ok {
-		action := ActionResult{
-			Type:    ActionRunCommand,
-			Command: "rcc robot init --template " + templateName,
-		}
-		return v, func() tea.Msg { return actionMsg{action: action} }
-	}
 	return v, nil
+}
+
+type templatesLoadedMsg struct {
+	templates []wizard.Template
 }
 
 func (v *RobotsView) handleInputMode(msg tea.Msg) (View, tea.Cmd) {
@@ -707,7 +703,6 @@ func (v *RobotsView) handleInputMode(msg tea.Msg) (View, tea.Cmd) {
 					v.inputStep = 0
 					v.pullURL = ""
 					v.spinning = true
-					v.message = "Pulling robot into " + dir + "..."
 					return v, tea.Batch(v.spinner.Tick, v.pullRobot(url, dir))
 				}
 			}
@@ -752,6 +747,7 @@ func (v *RobotsView) pullRobot(url, directory string) tea.Cmd {
 
 		// rcc pull <url> -d <directory>
 		cmd := exec.Command(rccPath, "pull", url, "-d", directory)
+		// cmd.Dir = directory -- DO NOT SET executing directory to the target, it doesn't exist yet!
 		output, err := cmd.CombinedOutput()
 		if err != nil {
 			errMsg := string(output)
@@ -772,7 +768,6 @@ func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 	case "esc":
 		// Return to list mode
 		v.mode = modeList
-		v.message = ""
 		return v, nil
 
 	case "up", "k":
@@ -789,9 +784,9 @@ func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 		if r != nil {
 			cmd := v.buildCommandPreview(r)
 			if err := copyToClipboard(cmd); err == nil {
-				return v, v.addToast("Command copied to clipboard", "success")
+				return v, v.addToast("Command copied to clipboard", ToastSuccess)
 			} else {
-				return v, v.addToast("Failed to copy: "+err.Error(), "error")
+				return v, v.addToast("Failed to copy: "+err.Error(), ToastError)
 			}
 		}
 
@@ -1102,6 +1097,9 @@ func (v *RobotsView) runRobot() tea.Cmd {
 }
 
 func (v *RobotsView) View() string {
+	if v.creating {
+		return v.renderCreateView()
+	}
 	if v.inputMode {
 		return v.renderInputMode()
 	}
@@ -1118,9 +1116,6 @@ func (v *RobotsView) renderListView() string {
 	boxWidth := v.width - 8
 	if boxWidth < 60 {
 		boxWidth = 60
-	}
-	if boxWidth > 100 {
-		boxWidth = 100
 	}
 	contentWidth := boxWidth - 6
 
@@ -1161,10 +1156,7 @@ func (v *RobotsView) renderListView() string {
 		desc  string
 	}{
 		{"Pull Robot from Git", "Clone robot from any git repository"},
-		{"Python Basic", "Simple Python robot (01-python)"},
-		{"Python Browser", "Browser automation with Playwright (02-python-browser)"},
-		{"Python Work Items", "Work items processing (03-python-workitems)"},
-		{"Python AI Assistant", "AI assistant robot (04-python-assistant-ai)"},
+		{"Create New Robot", "Create a new robot from a template"},
 	}
 
 	for i, action := range actions {
@@ -1262,33 +1254,12 @@ func (v *RobotsView) renderListView() string {
 		b.WriteString("\n")
 		b.WriteString("  ")
 		b.WriteString(v.spinner.View())
-		if v.message != "" {
-			b.WriteString(vs.Info.Render(" " + v.message))
-		}
+		b.WriteString(vs.Info.Render(" Pulling robot..."))
 		b.WriteString("\n")
 	}
 
-	// Toast notifications
-	if len(v.toasts) > 0 {
-		b.WriteString("\n")
-		for _, toast := range v.toasts {
-			icon := "  "
-			style := vs.Info
-			switch toast.Type {
-			case "success":
-				icon = "  [OK] "
-				style = vs.Success
-			case "error":
-				icon = "  [X] "
-				style = vs.Error
-			case "info":
-				icon = "  [i] "
-				style = vs.Info
-			}
-			b.WriteString(style.Render(icon + toast.Message))
-			b.WriteString("\n")
-		}
-	}
+	// Render toasts overlay
+	// Handled by App global toast system now
 
 	// Footer
 	b.WriteString("\n")
@@ -1390,8 +1361,8 @@ func (v *RobotsView) renderDetailView() string {
 	if totalWidth < 100 {
 		totalWidth = 100
 	}
-	if totalWidth > 140 {
-		totalWidth = 140
+	if totalWidth < 60 {
+		totalWidth = 60
 	}
 
 	leftWidth := (totalWidth / 2) - 2
@@ -1464,17 +1435,6 @@ func (v *RobotsView) renderDetailView() string {
 		left.WriteString("\n")
 		left.WriteString(v.spinner.View())
 		left.WriteString(vs.Info.Render(" Rebuilding..."))
-	}
-	for _, toast := range v.toasts {
-		left.WriteString("\n")
-		switch toast.Type {
-		case "success":
-			left.WriteString(vs.Success.Render("OK " + toast.Message))
-		case "error":
-			left.WriteString(vs.Error.Render("X " + toast.Message))
-		default:
-			left.WriteString(vs.Info.Render("* " + toast.Message))
-		}
 	}
 
 	// ═══ RIGHT COLUMN: Robot & Conda Info Dashboard ═══
@@ -1724,4 +1684,174 @@ func timeAgo(t time.Time) string {
 		return "1 day ago"
 	}
 	return fmt.Sprintf("%d days ago", days)
+}
+
+// Creation Wizard Logic
+
+func (v *RobotsView) handleCreateKeys(msg tea.Msg) (View, tea.Cmd) {
+	keyMsg, ok := msg.(tea.KeyMsg)
+	if !ok {
+		return v, nil
+	}
+
+	switch keyMsg.String() {
+	case "esc":
+		v.creating = false
+		v.createStep = 0
+		v.createName = ""
+		return v, nil
+	}
+
+	if v.createStep == 0 {
+		// Name Input
+		switch keyMsg.String() {
+		case "enter":
+			if v.createName != "" {
+				v.createStep = 1
+				v.tmplListIdx = 0
+			}
+		case "backspace":
+			if len(v.createName) > 0 {
+				v.createName = v.createName[:len(v.createName)-1]
+			}
+		default:
+			// Allow typing valid filename chars
+			if len(keyMsg.String()) == 1 {
+				v.createName += keyMsg.String()
+			}
+		}
+	} else {
+		// Template Selection
+		switch keyMsg.String() {
+		case "up", "k":
+			if v.tmplListIdx > 0 {
+				v.tmplListIdx--
+			}
+		case "down", "j":
+			if v.tmplListIdx < len(v.templates)-1 {
+				v.tmplListIdx++
+			}
+		case "enter":
+			// Create robot
+			return v, v.createRobot
+		}
+	}
+	return v, nil
+}
+
+func (v *RobotsView) createRobot() tea.Msg {
+	if v.tmplListIdx < 0 || v.tmplListIdx >= len(v.templates) {
+		return pullRobotMsg{success: false, message: "Invalid template selection"}
+	}
+
+	template := v.templates[v.tmplListIdx]
+	targetDir := v.createName
+
+	// Check if directory exists
+	if _, err := os.Stat(targetDir); err == nil {
+		return pullRobotMsg{success: false, message: "Directory already exists: " + targetDir}
+	}
+
+	// Use operations to create
+	// InitializeWorkarea(fullpath, templateName, force, wrapper)
+	// We need absolute path for fullpath
+	absPath, err := filepath.Abs(targetDir)
+	if err != nil {
+		return pullRobotMsg{success: false, message: err.Error()}
+	}
+
+	err = operations.InitializeWorkarea(absPath, template.Name, false, false)
+	if err != nil {
+		return pullRobotMsg{success: false, message: "Creation failed: " + err.Error()}
+	}
+
+	return pullRobotMsg{success: true, message: "Robot created: " + targetDir, path: targetDir}
+}
+
+func (v *RobotsView) renderCreateView() string {
+	theme := v.styles.theme
+	vs := NewViewStyles(theme)
+
+	boxWidth := v.width - 8
+	if boxWidth < 60 {
+		boxWidth = 60
+	}
+	if boxWidth > 100 {
+		boxWidth = 100
+	}
+	contentWidth := boxWidth - 6
+
+	boxStyle := lipgloss.NewStyle().
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(theme.Border).
+		Padding(1, 2).
+		Width(boxWidth)
+
+	var b strings.Builder
+
+	if v.createStep == 0 {
+		b.WriteString(RenderHeader(vs, "New Robot", "Step 1/2", contentWidth))
+		b.WriteString("\n")
+
+		b.WriteString(vs.Accent.Bold(true).Render("ROBOT NAME"))
+		b.WriteString("\n\n")
+
+		b.WriteString(vs.Label.Render("Name "))
+		b.WriteString(vs.Selected.Render(v.createName + "_"))
+		b.WriteString("\n\n")
+		b.WriteString(vs.Subtext.Render("Enter a name for your new robot."))
+		b.WriteString("\n")
+		b.WriteString(vs.Subtext.Render("A folder with this name will be created."))
+		b.WriteString("\n\n")
+
+		hints := []KeyHint{
+			{"Enter", "next"},
+			{"Esc", "cancel"},
+		}
+		b.WriteString(RenderFooter(vs, hints, contentWidth))
+	} else {
+		b.WriteString(RenderHeader(vs, "New Robot", "Step 2/2", contentWidth))
+		b.WriteString("\n")
+
+		b.WriteString(vs.Accent.Bold(true).Render("SELECT TEMPLATE"))
+		b.WriteString("\n\n")
+
+		// Template List
+		maxShow := 8
+		start := 0
+		if v.tmplListIdx > maxShow-1 {
+			start = v.tmplListIdx - (maxShow - 1)
+		}
+
+		for i := start; i < len(v.templates) && i < start+maxShow; i++ {
+			tmpl := v.templates[i]
+			prefix := "  "
+			style := vs.Normal
+			descStyle := vs.Subtext
+
+			if i == v.tmplListIdx {
+				prefix = "> "
+				style = vs.Selected
+				descStyle = vs.Info
+			}
+
+			line := fmt.Sprintf("%-20s %s", tmpl.DisplayName, descStyle.Render(tmpl.Description))
+			b.WriteString(style.Render(prefix + line))
+			b.WriteString("\n")
+		}
+
+		if len(v.templates) > maxShow {
+			b.WriteString(vs.Subtext.Render("..."))
+			b.WriteString("\n")
+		}
+		b.WriteString("\n")
+
+		hints := []KeyHint{
+			{"Enter", "create"},
+			{"Esc", "back"},
+		}
+		b.WriteString(RenderFooter(vs, hints, contentWidth))
+	}
+
+	return v.placeBox(boxStyle.Render(b.String()))
 }

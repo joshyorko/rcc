@@ -57,7 +57,6 @@ type confirmMsg struct {
 	action    ActionResult
 }
 
-
 // View interface that all views must implement
 type View interface {
 	Init() tea.Cmd
@@ -80,6 +79,8 @@ type App struct {
 	pendingAction *ActionResult
 	showConfirm   bool
 	confirmPrompt string
+	activeToast   *Toast
+	nextToastID   int64
 }
 
 // NewApp creates a new interactive application
@@ -130,63 +131,15 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		// Global key bindings
-		switch {
-		case key.Matches(msg, keys.Quit):
-			a.quitting = true
-			return a, tea.Quit
-
-		case key.Matches(msg, keys.Help):
-			a.showHelp = !a.showHelp
+		// Global key bindings first
+		if cmd, handled := a.handleGlobalKeys(msg); handled {
+			if cmd != nil {
+				return a, cmd
+			}
+			if a.quitting {
+				return a, tea.Quit
+			}
 			return a, nil
-
-		case key.Matches(msg, keys.ViewHome):
-			if a.activeView != ViewHome {
-				oldView := a.activeView
-				a.activeView = ViewHome
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewHome} })
-			}
-			return a, tea.Batch(cmds...)
-
-		case key.Matches(msg, keys.ViewCommands):
-			if a.activeView != ViewCommands {
-				oldView := a.activeView
-				a.activeView = ViewCommands
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewCommands} })
-			}
-			return a, tea.Batch(cmds...)
-
-		case key.Matches(msg, keys.ViewRobots):
-			if a.activeView != ViewRobots {
-				oldView := a.activeView
-				a.activeView = ViewRobots
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewRobots} })
-			}
-			return a, tea.Batch(cmds...)
-
-		case key.Matches(msg, keys.ViewEnvs):
-			if a.activeView != ViewEnvironments {
-				oldView := a.activeView
-				a.activeView = ViewEnvironments
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewEnvironments} })
-			}
-			return a, tea.Batch(cmds...)
-
-		case key.Matches(msg, keys.ViewLogs):
-			if a.activeView != ViewLogs {
-				oldView := a.activeView
-				a.activeView = ViewLogs
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewLogs} })
-			}
-			return a, tea.Batch(cmds...)
-
-		case key.Matches(msg, keys.ViewRemote):
-			if a.activeView != ViewRemote {
-				oldView := a.activeView
-				a.activeView = ViewRemote
-				cmds = append(cmds, func() tea.Msg { return viewChangedMsg{oldView, ViewRemote} })
-			}
-			return a, tea.Batch(cmds...)
 		}
 
 	case tea.WindowSizeMsg:
@@ -194,55 +147,131 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		a.height = msg.Height
 
 	case actionMsg:
-		// Handle action from views
-		switch msg.action.Type {
-		case ActionRunRobot:
-			// Run robot directly - exit TUI and execute
-			a.pendingAction = &msg.action
-			a.quitting = true
-			return a, tea.Quit
-		case ActionRunCommand:
-			// Show command usage - exit TUI and show
-			a.pendingAction = &msg.action
-			a.quitting = true
-			return a, tea.Quit
-		case ActionDeleteEnv:
-			// Show confirmation for delete
-			a.showConfirm = true
-			a.confirmPrompt = fmt.Sprintf("Delete environment '%s'?", msg.action.EnvID)
-			a.pendingAction = &msg.action
-			return a, nil
-		}
+		return a.handleAction(msg)
 
 	case confirmMsg:
-		a.showConfirm = false
-		if msg.confirmed && a.pendingAction != nil {
-			// Execute the confirmed action
-			a.quitting = true
-			return a, tea.Quit
-		}
-		a.pendingAction = nil
-		return a, nil
+		return a.handleConfirm(msg)
 
+	case ToastMsg:
+		return a.handleToast(msg)
+
+	case ToastTimeoutMsg:
+		if a.activeToast != nil && a.activeToast.ID == msg.ID {
+			a.activeToast = nil
+		}
+		return a, nil
 	}
 
-	// Handle confirmation dialog keys
+	// Handle confirmation dialog keys if active
 	if a.showConfirm {
-		if keyMsg, ok := msg.(tea.KeyMsg); ok {
-			switch keyMsg.String() {
-			case "y", "Y", "enter":
-				return a, func() tea.Msg { return confirmMsg{confirmed: true, action: *a.pendingAction} }
-			case "n", "N", "escape", "q":
-				return a, func() tea.Msg { return confirmMsg{confirmed: false} }
-			}
-		}
-		return a, nil
+		return a.handleConfirmKeys(msg)
 	}
 
-	// Key messages should only go to the active view to prevent action conflicts
-	// Other messages (like data loading results) go to all views
+	// Dispatch to views
+	cmds = append(cmds, a.updateViews(msg)...)
+
+	return a, tea.Batch(cmds...)
+}
+
+func (a *App) handleGlobalKeys(msg tea.KeyMsg) (tea.Cmd, bool) {
+	switch {
+	case key.Matches(msg, keys.Quit):
+		a.quitting = true
+		return tea.Quit, true
+
+	case key.Matches(msg, keys.Help):
+		a.showHelp = !a.showHelp
+		// If closing help, we don't need to do anything else
+		return nil, true
+	}
+
+	// View switching
+	var targetView ViewType = -1
+
+	switch {
+	case key.Matches(msg, keys.ViewHome):
+		targetView = ViewHome
+	case key.Matches(msg, keys.ViewCommands):
+		targetView = ViewCommands
+	case key.Matches(msg, keys.ViewRobots):
+		targetView = ViewRobots
+	case key.Matches(msg, keys.ViewEnvs):
+		targetView = ViewEnvironments
+	case key.Matches(msg, keys.ViewLogs):
+		targetView = ViewLogs
+	case key.Matches(msg, keys.ViewRemote):
+		targetView = ViewRemote
+	}
+
+	if targetView != -1 {
+		if a.activeView != targetView {
+			oldView := a.activeView
+			a.activeView = targetView
+			return func() tea.Msg { return viewChangedMsg{oldView, targetView} }, true
+		}
+		return nil, true
+	}
+
+	return nil, false
+}
+
+func (a *App) handleAction(msg actionMsg) (tea.Model, tea.Cmd) {
+	switch msg.action.Type {
+	case ActionRunRobot, ActionRunCommand:
+		a.pendingAction = &msg.action
+		a.quitting = true
+		return a, tea.Quit
+	case ActionDeleteEnv:
+		a.showConfirm = true
+		a.confirmPrompt = fmt.Sprintf("Delete environment '%s'?", msg.action.EnvID)
+		a.pendingAction = &msg.action
+		return a, nil
+	}
+	return a, nil
+}
+
+func (a *App) handleConfirm(msg confirmMsg) (tea.Model, tea.Cmd) {
+	a.showConfirm = false
+	if msg.confirmed && a.pendingAction != nil {
+		a.quitting = true
+		return a, tea.Quit
+	}
+	a.pendingAction = nil
+	return a, nil
+}
+
+func (a *App) handleConfirmKeys(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if keyMsg, ok := msg.(tea.KeyMsg); ok {
+		switch keyMsg.String() {
+		case "y", "Y", "enter":
+			return a, func() tea.Msg { return confirmMsg{confirmed: true, action: *a.pendingAction} }
+		case "n", "N", "escape", "q":
+			return a, func() tea.Msg { return confirmMsg{confirmed: false} }
+		}
+	}
+	return a, nil
+}
+
+func (a *App) handleToast(msg ToastMsg) (tea.Model, tea.Cmd) {
+	a.nextToastID++
+	id := a.nextToastID
+	a.activeToast = &Toast{
+		ID:        id,
+		Type:      msg.Type,
+		Message:   msg.Message,
+		StartTime: time.Now(),
+		Duration:  msg.Duration,
+	}
+	return a, tea.Tick(msg.Duration, func(t time.Time) tea.Msg {
+		return ToastTimeoutMsg{ID: id}
+	})
+}
+
+func (a *App) updateViews(msg tea.Msg) []tea.Cmd {
+	var cmds []tea.Cmd
+
+	// Key messages only go to active view
 	if _, isKeyMsg := msg.(tea.KeyMsg); isKeyMsg {
-		// Only active view gets key messages
 		if int(a.activeView) < len(a.views) {
 			newView, viewCmd := a.views[a.activeView].Update(msg)
 			a.views[a.activeView] = newView
@@ -250,18 +279,18 @@ func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmds = append(cmds, viewCmd)
 			}
 		}
-	} else {
-		// Non-key messages go to all views (for async results like catalogsLoadedMsg)
-		for i := range a.views {
-			newView, viewCmd := a.views[i].Update(msg)
-			a.views[i] = newView
-			if viewCmd != nil {
-				cmds = append(cmds, viewCmd)
-			}
-		}
+		return cmds
 	}
 
-	return a, tea.Batch(cmds...)
+	// Other messages go to all views
+	for i := range a.views {
+		newView, viewCmd := a.views[i].Update(msg)
+		a.views[i] = newView
+		if viewCmd != nil {
+			cmds = append(cmds, viewCmd)
+		}
+	}
+	return cmds
 }
 
 // View implements tea.Model
@@ -317,15 +346,44 @@ func (a *App) renderHeader() string {
 	logo := a.renderLogo()
 	status := a.renderStatus()
 
+	// If toast is active, replace status or overlay?
+	// Let's replace the gap with toast if it fits
+	var toast string
+	if a.activeToast != nil {
+		style := a.styles.ToastInfo
+		switch a.activeToast.Type {
+		case ToastSuccess:
+			style = a.styles.ToastSuccess
+		case ToastWarning:
+			style = a.styles.ToastWarning
+		case ToastError:
+			style = a.styles.ToastError
+		}
+		toast = style.Render(a.activeToast.Message)
+	}
+
 	// Calculate gap
 	logoWidth := lipgloss.Width(logo)
 	statusWidth := lipgloss.Width(status)
+	toastWidth := lipgloss.Width(toast)
+
 	gap := a.width - logoWidth - statusWidth
 	if gap < 1 {
 		gap = 1
 	}
 
-	topRow := lipgloss.JoinHorizontal(lipgloss.Top, logo, strings.Repeat(" ", gap), status)
+	// Render
+	var topRow string
+	if toast != "" && toastWidth < gap {
+		// Align toast to right, next to status
+		innerGap := gap - toastWidth - 1 // -1 for padding
+		if innerGap < 0 {
+			innerGap = 0
+		}
+		topRow = lipgloss.JoinHorizontal(lipgloss.Top, logo, strings.Repeat(" ", innerGap), toast, " ", status)
+	} else {
+		topRow = lipgloss.JoinHorizontal(lipgloss.Top, logo, strings.Repeat(" ", gap), status)
+	}
 
 	// === Row 2: Breadcrumbs ===
 	crumbs := a.renderCrumbs()

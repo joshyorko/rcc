@@ -29,6 +29,7 @@ type SystemInfo struct {
 	Username     string
 	HolotreeDir  string
 	EnvCount     int
+	RobotCount   int // Placeholder for future
 }
 
 // NewHomeView creates a new home view
@@ -85,103 +86,113 @@ func (v *HomeView) Update(msg tea.Msg) (View, tea.Cmd) {
 
 // View implements View
 func (v *HomeView) View() string {
-	theme := v.styles.theme
-	vs := NewViewStyles(theme)
+	vs := NewViewStyles(v.styles.theme)
 
-	// Dynamic box sizing
-	boxWidth := v.width - 8
-	if boxWidth < 60 {
-		boxWidth = 60
+	// Layout calculations
+	totalWidth := v.width - 4
+	if totalWidth < 60 {
+		totalWidth = 60
 	}
-	if boxWidth > 100 {
-		boxWidth = 100
-	}
-	contentWidth := boxWidth - 6
 
-	boxStyle := lipgloss.NewStyle().
+	// Create a grid layout
+	// Left: System Info
+	// Middle: Context / RCC Status
+	// Right: Quick Actions / Nav
+
+	colWidth := (totalWidth - 4) / 3
+	if colWidth < 25 {
+		colWidth = 25
+	}
+
+	// Panel Styles
+	panelStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(theme.Border).
-		Padding(1, 2).
-		Width(boxWidth)
+		BorderForeground(v.styles.theme.Border).
+		Padding(1, 1).
+		Width(colWidth).
+		Height(v.height - 8) // Reserve space for header/footer
 
-	var b strings.Builder
+	// --- Left Column: System ---
+	left := strings.Builder{}
+	left.WriteString(vs.Accent.Bold(true).Render("SYSTEM"))
+	left.WriteString("\n")
+	left.WriteString("Debug: Plain Text Check")
+	left.WriteString("\n\n")
 
-	// Header with RCC version (same as all other views)
-	b.WriteString(RenderHeader(vs, "Dashboard", "", contentWidth))
-	b.WriteString("\n")
+	left.WriteString(vs.Label.Render("Host"))
+	left.WriteString("\n")
+	left.WriteString(vs.Text.Render(v.info.Hostname))
+	left.WriteString("\n\n")
 
-	// Status line
-	b.WriteString(vs.Success.Render("[OK] Ready"))
-	b.WriteString("\n\n")
+	left.WriteString(vs.Label.Render("User"))
+	left.WriteString("\n")
+	left.WriteString(vs.Text.Render(v.info.Username))
+	left.WriteString("\n\n")
 
-	// Info grid
-	b.WriteString(vs.Label.Render("Version"))
-	b.WriteString(vs.Accent.Render(v.info.Version))
-	b.WriteString("\n")
+	left.WriteString(vs.Label.Render("Platform"))
+	left.WriteString("\n")
+	left.WriteString(vs.Info.Render(v.info.Platform + "/" + v.info.Architecture))
+	left.WriteString("\n\n")
 
-	b.WriteString(vs.Label.Render("Platform"))
-	b.WriteString(vs.Info.Render(v.info.Platform + "/" + v.info.Architecture))
-	b.WriteString("\n")
+	left.WriteString(vs.Label.Render("RCC Version"))
+	left.WriteString("\n")
+	left.WriteString(vs.Accent.Render(v.info.Version))
 
-	b.WriteString(vs.Label.Render("User"))
-	b.WriteString(vs.Text.Render(v.info.Username))
-	b.WriteString("\n")
+	// --- Middle Column: Context ---
+	mid := strings.Builder{}
+	mid.WriteString(vs.Accent.Bold(true).Render("CONTEXT"))
+	mid.WriteString("\n\n")
 
-	b.WriteString(vs.Label.Render("Host"))
-	b.WriteString(vs.Text.Render(v.info.Hostname))
-	b.WriteString("\n")
-
-	b.WriteString(vs.Label.Render("Environments"))
-	b.WriteString(vs.Success.Render(fmt.Sprintf("%d", v.info.EnvCount)))
-	b.WriteString("\n")
-
-	// Truncate holotree path
+	mid.WriteString(vs.Label.Render("Holotree"))
+	mid.WriteString("\n")
+	// Clean path for display
 	htPath := v.info.HolotreeDir
-	maxPathLen := contentWidth - 16
-	if len(htPath) > maxPathLen {
-		htPath = "..." + htPath[len(htPath)-(maxPathLen-3):]
+	if len(htPath) > colWidth-2 {
+		htPath = "..." + htPath[len(htPath)-(colWidth-5):]
 	}
-	b.WriteString(vs.Label.Render("Holotree"))
-	b.WriteString(vs.Subtext.Render(htPath))
-	b.WriteString("\n\n")
+	mid.WriteString(vs.Subtext.Render(htPath))
+	mid.WriteString("\n\n")
 
-	// Navigation section
-	b.WriteString(vs.Separator.Render(strings.Repeat("─", contentWidth)))
-	b.WriteString("\n")
-	b.WriteString(vs.Accent.Bold(true).Render("Navigation"))
-	b.WriteString("\n\n")
+	mid.WriteString(vs.Label.Render("Environments"))
+	mid.WriteString("\n")
+	mid.WriteString(vs.Success.Render(fmt.Sprintf("%d stored", v.info.EnvCount)))
+	mid.WriteString("\n\n")
 
-	navItems := []struct {
-		key  string
-		desc string
-	}{
+	mid.WriteString(vs.Label.Render("Status"))
+	mid.WriteString("\n")
+	mid.WriteString(vs.Success.Render("● Operational"))
+
+	// --- Right Column: Quick Nav ---
+	right := strings.Builder{}
+	right.WriteString(vs.Accent.Bold(true).Render("NAVIGATION"))
+	right.WriteString("\n\n")
+
+	navs := []struct{ key, label string }{
 		{"2", "Commands"},
 		{"3", "Robots"},
-		{"4", "Holotree"},
+		{"4", "Environments"},
 		{"5", "Logs"},
-		{"6", "Remote"},
+		{"6", "Remote Stats"},
 	}
 
-	for _, nav := range navItems {
-		b.WriteString("  ")
-		b.WriteString(vs.KeyHint.Render(nav.key))
-		b.WriteString(" ")
-		b.WriteString(vs.Subtext.Render(nav.desc))
-		b.WriteString("\n")
+	for _, n := range navs {
+		right.WriteString(vs.KeyHint.Render(n.key))
+		right.WriteString(" ")
+		right.WriteString(vs.Text.Render(n.label))
+		right.WriteString("\n")
 	}
 
-	// Footer
-	b.WriteString("\n")
-	hints := []KeyHint{
-		{"1-6", "views"},
-		{"?", "help"},
-		{"q", "quit"},
-	}
-	b.WriteString(RenderFooter(vs, hints, contentWidth))
+	// Join columns
+	content := lipgloss.JoinHorizontal(lipgloss.Top,
+		panelStyle.Render(left.String()),
+		panelStyle.Render(mid.String()),
+		panelStyle.Render(right.String()),
+	)
 
+	// Combine into full view
 	return lipgloss.Place(v.width, v.height,
 		lipgloss.Center, lipgloss.Center,
-		boxStyle.Render(b.String()),
+		content,
 	)
 }
 

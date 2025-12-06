@@ -141,8 +141,8 @@ func (v *EnvironmentsView) View() string {
 	if boxWidth < 60 {
 		boxWidth = 60
 	}
-	if boxWidth > 140 {
-		boxWidth = 140
+	if boxWidth < 60 {
+		boxWidth = 60
 	}
 	contentWidth := boxWidth - 6
 
