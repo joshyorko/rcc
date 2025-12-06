@@ -29,6 +29,16 @@ type ViewStyles struct {
 	ToastSuccess lipgloss.Style
 	ToastWarning lipgloss.Style
 	ToastError   lipgloss.Style
+
+	// Table/List styles
+	TableHeader      lipgloss.Style
+	TableRow         lipgloss.Style
+	TableRowAlt      lipgloss.Style
+	ListItemSelected lipgloss.Style
+
+	// Help styles
+	HelpKey  lipgloss.Style
+	HelpDesc lipgloss.Style
 }
 
 // NewViewStyles creates consistent styles from a theme
@@ -54,6 +64,16 @@ func NewViewStyles(theme Theme) ViewStyles {
 		ToastSuccess: lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Success).Padding(0, 1).Width(30),
 		ToastWarning: lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Warning).Padding(0, 1).Width(30),
 		ToastError:   lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).BorderForeground(theme.Error).Padding(0, 1).Width(30),
+
+		// Table/List
+		TableHeader:      lipgloss.NewStyle().Bold(true).Foreground(theme.Secondary).BorderBottom(true).BorderStyle(lipgloss.NormalBorder()).BorderForeground(theme.BorderDim),
+		TableRow:         lipgloss.NewStyle().Foreground(theme.Text),
+		TableRowAlt:      lipgloss.NewStyle().Foreground(theme.Text).Background(theme.Surface),
+		ListItemSelected: lipgloss.NewStyle().Foreground(theme.TextBright).Background(theme.Highlight).Bold(true),
+
+		// Help
+		HelpKey:  lipgloss.NewStyle().Bold(true).Foreground(theme.Accent),
+		HelpDesc: lipgloss.NewStyle().Foreground(theme.TextMuted),
 	}
 }
 
@@ -135,13 +155,13 @@ func RenderFooter(vs ViewStyles, hints []KeyHint, contentWidth int) string {
 		}
 		b.WriteString(vs.KeyHint.Render(hint.Key))
 		b.WriteString(" ")
-		b.WriteString(vs.Subtext.Render(hint.Action))
+		b.WriteString(vs.Subtext.Render(hint.Desc))
 	}
 	return b.String()
 }
 
 // KeyHint represents a keyboard shortcut hint
 type KeyHint struct {
-	Key    string
-	Action string
+	Key  string
+	Desc string
 }

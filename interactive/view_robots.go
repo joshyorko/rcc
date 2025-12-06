@@ -770,6 +770,20 @@ func (v *RobotsView) handleDetailKeys(msg tea.KeyMsg) (View, tea.Cmd) {
 		v.mode = modeList
 		return v, nil
 
+	case "tab":
+		// Cycle between panels: Task -> Env -> Task
+		if v.detailFocus == focusDetailTask {
+			if len(r.envFiles) > 0 {
+				v.detailFocus = focusDetailEnv
+				if v.envIdx < 0 {
+					v.envIdx = 0
+				}
+			}
+		} else {
+			v.detailFocus = focusDetailTask
+		}
+		return v, nil
+
 	case "up", "k":
 		v.moveUpDetail()
 	case "down", "j":
@@ -870,7 +884,7 @@ func (v *RobotsView) moveUpList() {
 		} else {
 			// At top of robot list, move to actions
 			v.focus = focusActions
-			v.actionIdx = actionTemplateAI // Last action
+			v.actionIdx = 1 // Last action
 		}
 	}
 }
@@ -878,7 +892,7 @@ func (v *RobotsView) moveUpList() {
 func (v *RobotsView) moveDownList() {
 	switch v.focus {
 	case focusActions:
-		if v.actionIdx < actionTemplateAI {
+		if v.actionIdx < 1 { // Only 2 actions (0 and 1)
 			v.actionIdx++
 		} else if len(v.robots) > 0 {
 			// Move to robot list
@@ -1356,238 +1370,310 @@ func (v *RobotsView) renderDetailView() string {
 	theme := v.styles.theme
 	vs := NewViewStyles(theme)
 
-	// Use more screen real estate
-	totalWidth := v.width - 4
-	if totalWidth < 100 {
-		totalWidth = 100
-	}
-	if totalWidth < 60 {
-		totalWidth = 60
-	}
-
-	leftWidth := (totalWidth / 2) - 2
-	rightWidth := totalWidth - leftWidth - 4
-
 	r := v.selectedRobot()
 	if r == nil {
-		return vs.Subtext.Render("No robot selected")
+		return lipgloss.NewStyle().Foreground(theme.TextBright).Render("No robot selected")
 	}
 
-	// Get relative path for display
-	relDir, _ := filepath.Rel(".", r.directory)
-	if relDir == "" || relDir == "." {
-		relDir = "./"
-	} else {
-		relDir = "./" + relDir
+	// Calculate layout dimensions
+	totalWidth := v.width - 4
+	if totalWidth < 80 {
+		totalWidth = 80
+	}
+	if totalWidth > 140 {
+		totalWidth = 140
 	}
 
-	// ═══ LEFT COLUMN: Run Configuration ═══
-	var left strings.Builder
+	// Two-column layout: Left (Tasks+Env) | Right (Deps+Info)
+	leftWidth := (totalWidth * 55) / 100  // 55% for tasks/env
+	rightWidth := totalWidth - leftWidth - 3 // Rest for deps, -3 for gap
 
-	left.WriteString(vs.Accent.Bold(true).Render("RUN"))
-	left.WriteString("\n")
-
-	// Task selector
-	left.WriteString(vs.Label.Render("Task "))
-	if len(r.tasks) == 0 {
-		left.WriteString(vs.Subtext.Render("(default)"))
-	} else {
-		task := r.tasks[v.taskIdx]
-		if v.detailFocus == focusDetailTask {
-			left.WriteString(vs.Selected.Render("< " + task + " >"))
-		} else {
-			left.WriteString(vs.Text.Render(task))
+	// Panel styling helper
+	makePanel := func(title string, content string, isActive bool, w int) string {
+		borderColor := theme.Border
+		titleBg := theme.Surface
+		if isActive {
+			borderColor = theme.Accent
+			titleBg = theme.Accent
 		}
-		left.WriteString(vs.Subtext.Render(fmt.Sprintf(" %d/%d", v.taskIdx+1, len(r.tasks))))
-	}
-	left.WriteString("\n")
 
-	// Env selector
-	left.WriteString(vs.Label.Render("Env  "))
-	currentEnv := "none"
-	if v.envIdx >= 0 && v.envIdx < len(r.envFiles) {
-		currentEnv = filepath.Base(r.envFiles[v.envIdx])
-	}
-	if v.detailFocus == focusDetailEnv {
-		left.WriteString(vs.Selected.Render("< " + currentEnv + " >"))
-	} else {
-		left.WriteString(vs.Text.Render(currentEnv))
-	}
-	if len(r.envFiles) > 0 {
-		left.WriteString(vs.Subtext.Render(fmt.Sprintf(" %d/%d", v.envIdx+2, len(r.envFiles)+1)))
-	}
-	left.WriteString("\n\n")
+		titleStyle := lipgloss.NewStyle().
+			Bold(true).
+			Foreground(theme.Background).
+			Background(titleBg).
+			Padding(0, 1)
 
-	// Command box
-	left.WriteString(vs.Accent.Render("CMD"))
-	left.WriteString(vs.Subtext.Render(" [c]copy"))
-	left.WriteString("\n")
-	cmd := v.buildShortCommand(r)
-	for _, line := range strings.Split(cmd, "\n") {
-		left.WriteString(vs.Info.Render(" " + line))
-		left.WriteString("\n")
+		contentStyle := lipgloss.NewStyle().
+			Foreground(theme.Text).
+			Padding(0, 1)
+
+		innerContent := lipgloss.JoinVertical(lipgloss.Left,
+			titleStyle.Render(title),
+			"",
+			contentStyle.Render(content),
+		)
+
+		return lipgloss.NewStyle().
+			Width(w).
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(borderColor).
+			Render(innerContent)
 	}
 
-	left.WriteString(vs.Subtext.Render("[Enter]Run [e]robot [E]conda [r]rebuild"))
-
-	// Spinner/Toast
-	if v.spinning {
-		left.WriteString("\n")
-		left.WriteString(v.spinner.View())
-		left.WriteString(vs.Info.Render(" Rebuilding..."))
-	}
-
-	// ═══ RIGHT COLUMN: Robot & Conda Info Dashboard ═══
-	var right strings.Builder
-
-	// TASKS section - compact, just show selected task's command
-	right.WriteString(vs.Accent.Bold(true).Render("TASKS"))
-	right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)", len(r.tasks))))
-	right.WriteString("\n")
-
+	// === BUILD TASKS PANEL ===
+	var tasksContent strings.Builder
 	if len(r.tasks) == 0 {
-		right.WriteString(vs.Subtext.Render(" (default)"))
+		tasksContent.WriteString(vs.Subtext.Render("  No tasks defined"))
 	} else {
-		// Show max 3 tasks inline
-		maxShow := 3
 		for i, task := range r.tasks {
-			if i >= maxShow {
-				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d", len(r.tasks)-maxShow)))
-				break
+			if i > 0 {
+				tasksContent.WriteString("\n")
 			}
+			prefix := "  ○"
+			style := vs.Normal
 			if i == v.taskIdx {
-				right.WriteString(vs.Text.Render(" [" + task + "]"))
-			} else {
-				right.WriteString(vs.Subtext.Render(" " + task))
+				if v.detailFocus == focusDetailTask {
+					prefix = "▶ ●"
+					style = lipgloss.NewStyle().
+						Bold(true).
+						Foreground(theme.TextBright).
+						Background(theme.Highlight).
+						Padding(0, 1)
+				} else {
+					prefix = "  ◉"
+					style = vs.Accent
+				}
+			}
+			// Show task command if selected
+			line := prefix + " " + task
+			tasksContent.WriteString(style.Render(line))
+			if i == v.taskIdx && v.taskCommands[task] != "" {
+				tasksContent.WriteString("\n")
+				cmd := v.taskCommands[task]
+				if len(cmd) > leftWidth-10 {
+					cmd = cmd[:leftWidth-13] + "..."
+				}
+				tasksContent.WriteString(vs.Subtext.Render("      └─ " + cmd))
 			}
 		}
 	}
-	right.WriteString("\n")
+	tasksPanel := makePanel("TASKS", tasksContent.String(), v.detailFocus == focusDetailTask, leftWidth)
 
-	// Show current task's command
-	if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
-		if cmd, ok := v.taskCommands[r.tasks[v.taskIdx]]; ok {
-			cmdDisplay := cmd
-			if len(cmdDisplay) > 40 {
-				cmdDisplay = cmdDisplay[:37] + "..."
-			}
-			right.WriteString(vs.Info.Render(" " + cmdDisplay))
-			right.WriteString("\n")
-		}
-	}
-
-	// ENVIRONMENT - single line
-	right.WriteString(vs.Accent.Bold(true).Render("ENV"))
-	switch v.envStatus {
-	case EnvStatusReady:
-		right.WriteString(vs.Success.Render(" Ready"))
-	case EnvStatusNeedsRebuild:
-		right.WriteString(vs.Warning.Render(" Rebuild"))
-	default:
-		right.WriteString(vs.Subtext.Render(" Not built"))
-	}
-	if v.pythonVer != "" {
-		right.WriteString(vs.Subtext.Render(" py" + v.pythonVer))
-	}
-	right.WriteString("\n")
-
-	// CONDA DEPS - compact
-	if len(v.condaDeps) > 0 {
-		right.WriteString(vs.Accent.Bold(true).Render("CONDA"))
-		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d) ", len(v.condaDeps))))
-		maxShow := 3
-		for i, dep := range v.condaDeps {
-			if i >= maxShow {
-				right.WriteString(vs.Subtext.Render(fmt.Sprintf("+%d", len(v.condaDeps)-maxShow)))
+	// === BUILD ENV FILES PANEL ===
+	var envContent strings.Builder
+	if len(r.envFiles) == 0 {
+		envContent.WriteString(vs.Subtext.Render("  No env files"))
+	} else {
+		maxEnv := 6
+		for i, envFile := range r.envFiles {
+			if i >= maxEnv {
+				envContent.WriteString("\n")
+				envContent.WriteString(vs.Subtext.Render(fmt.Sprintf("  ... +%d more", len(r.envFiles)-maxEnv)))
 				break
 			}
-			// Shorten dep name
-			d := dep
-			if len(d) > 15 {
-				d = d[:12] + "..."
+			if i > 0 {
+				envContent.WriteString("\n")
 			}
-			right.WriteString(vs.Subtext.Render(d + " "))
-		}
-		right.WriteString("\n")
-	}
-
-	// PIP DEPS - compact
-	if len(v.pipDeps) > 0 {
-		right.WriteString(vs.Accent.Bold(true).Render("PIP"))
-		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)\n", len(v.pipDeps))))
-		maxShow := 4
-		for i, dep := range v.pipDeps {
-			if i >= maxShow {
-				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d more", len(v.pipDeps)-maxShow)))
-				break
-			}
-			d := dep
-			if len(d) > 25 {
-				d = d[:22] + "..."
-			}
-			right.WriteString(vs.Subtext.Render(" " + d + "\n"))
-		}
-	}
-
-	// ENV FILES - compact
-	if len(r.envFiles) > 0 {
-		right.WriteString(vs.Accent.Bold(true).Render("FILES"))
-		right.WriteString(vs.Subtext.Render(fmt.Sprintf(" (%d)\n", len(r.envFiles))))
-		maxShow := 3
-		for i, env := range r.envFiles {
-			if i >= maxShow {
-				right.WriteString(vs.Subtext.Render(fmt.Sprintf(" +%d more", len(r.envFiles)-maxShow)))
-				break
-			}
-			name := filepath.Base(env)
-			if len(name) > 20 {
-				name = name[:17] + "..."
-			}
+			prefix := "  ○"
+			style := vs.Normal
 			if i == v.envIdx {
-				right.WriteString(vs.Text.Render(" [" + name + "]\n"))
-			} else {
-				right.WriteString(vs.Subtext.Render(" " + name + "\n"))
+				if v.detailFocus == focusDetailEnv {
+					prefix = "▶ ●"
+					style = lipgloss.NewStyle().
+						Bold(true).
+						Foreground(theme.TextBright).
+						Background(theme.Highlight).
+						Padding(0, 1)
+				} else {
+					prefix = "  ◉"
+					style = vs.Accent
+				}
 			}
+			envContent.WriteString(style.Render(prefix + " " + filepath.Base(envFile)))
 		}
 	}
+	envPanel := makePanel("ENV FILES", envContent.String(), v.detailFocus == focusDetailEnv, leftWidth)
 
-	// Create styled columns - reduced padding
-	leftStyle := lipgloss.NewStyle().
-		Width(leftWidth).
-		Padding(0, 1).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(theme.Border)
+	// === BUILD DEPENDENCIES PANEL ===
+	var depsContent strings.Builder
+	// Use brighter text for deps
+	depStyle := lipgloss.NewStyle().Foreground(theme.Text)
+	depDimStyle := lipgloss.NewStyle().Foreground(theme.TextMuted)
 
-	rightStyle := lipgloss.NewStyle().
-		Width(rightWidth).
-		Padding(0, 1).
-		Border(lipgloss.RoundedBorder()).
-		BorderForeground(theme.Border)
+	// Separate conda and pip deps for visual distinction
+	if len(v.condaDeps) == 0 && len(v.pipDeps) == 0 {
+		depsContent.WriteString(depDimStyle.Render("  No dependencies"))
+	} else {
+		maxDeps := 10
+		shown := 0
 
-	// Header - robot name and path
-	header := vs.Text.Bold(true).Render(r.name) + vs.Subtext.Render("  "+relDir)
+		// Conda deps with box symbol
+		for _, dep := range v.condaDeps {
+			if shown >= maxDeps {
+				break
+			}
+			if shown > 0 {
+				depsContent.WriteString("\n")
+			}
+			line := dep
+			if len(line) > rightWidth-8 {
+				line = line[:rightWidth-11] + "..."
+			}
+			depsContent.WriteString(depStyle.Render("  ■ " + line))
+			shown++
+		}
 
-	// Join columns horizontally
-	columns := lipgloss.JoinHorizontal(lipgloss.Top,
-		leftStyle.Render(left.String()),
-		" ",
-		rightStyle.Render(right.String()),
+		// Pip deps with diamond symbol
+		for _, dep := range v.pipDeps {
+			if shown >= maxDeps {
+				break
+			}
+			if shown > 0 {
+				depsContent.WriteString("\n")
+			}
+			line := dep
+			if len(line) > rightWidth-8 {
+				line = line[:rightWidth-11] + "..."
+			}
+			depsContent.WriteString(depStyle.Render("  ◆ " + line))
+			shown++
+		}
+
+		total := len(v.condaDeps) + len(v.pipDeps)
+		if total > maxDeps {
+			depsContent.WriteString("\n")
+			depsContent.WriteString(depDimStyle.Render(fmt.Sprintf("  ... +%d more", total-maxDeps)))
+		}
+	}
+	depsPanel := makePanel("DEPENDENCIES", depsContent.String(), false, rightWidth)
+
+	// === BUILD INFO PANEL ===
+	var infoContent strings.Builder
+	infoStyle := lipgloss.NewStyle().Foreground(theme.Text)
+	infoLabelStyle := lipgloss.NewStyle().Foreground(theme.TextMuted).Width(12)
+
+	pyVer := v.pythonVer
+	if pyVer == "" {
+		pyVer = "?"
+	}
+	// Python with lambda symbol
+	infoContent.WriteString(infoLabelStyle.Render("  λ Python"))
+	infoContent.WriteString(infoStyle.Render(pyVer))
+	infoContent.WriteString("\n")
+
+	// Tasks count
+	infoContent.WriteString(infoLabelStyle.Render("  ▶ Tasks"))
+	infoContent.WriteString(infoStyle.Render(fmt.Sprintf("%d", len(r.tasks))))
+	infoContent.WriteString("\n")
+
+	// Env files count
+	infoContent.WriteString(infoLabelStyle.Render("  ◇ Envs"))
+	infoContent.WriteString(infoStyle.Render(fmt.Sprintf("%d", len(r.envFiles))))
+	infoContent.WriteString("\n")
+
+	// Channels (useful info about where deps come from)
+	if len(v.condaChannels) > 0 {
+		infoContent.WriteString(infoLabelStyle.Render("  ≡ Channel"))
+		channelStr := v.condaChannels[0]
+		if len(v.condaChannels) > 1 {
+			channelStr += fmt.Sprintf(" +%d", len(v.condaChannels)-1)
+		}
+		infoContent.WriteString(infoStyle.Render(channelStr))
+		infoContent.WriteString("\n")
+	}
+
+	// Conda hash for identification
+	if v.condaHash != "" {
+		infoContent.WriteString(infoLabelStyle.Render("  # Hash"))
+		infoContent.WriteString(lipgloss.NewStyle().Foreground(theme.TextDim).Render(v.condaHash))
+	}
+
+	infoPanel := makePanel("INFO", infoContent.String(), false, rightWidth)
+
+	// === ASSEMBLE LEFT COLUMN ===
+	leftColumn := lipgloss.JoinVertical(lipgloss.Left,
+		tasksPanel,
+		"",
+		envPanel,
 	)
 
-	// Footer
-	hints := []KeyHint{
-		{"Enter", "run"},
-		{"←→", "cycle"},
-		{"↑↓", "section"},
-		{"Esc", "back"},
+	// === ASSEMBLE RIGHT COLUMN ===
+	rightColumn := lipgloss.JoinVertical(lipgloss.Left,
+		infoPanel,
+		"",
+		depsPanel,
+	)
+
+	// === JOIN COLUMNS ===
+	columns := lipgloss.JoinHorizontal(lipgloss.Top,
+		leftColumn,
+		"   ", // gap
+		rightColumn,
+	)
+
+	// === HEADER BAR ===
+	headerStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(theme.Primary).
+		Background(theme.Surface).
+		Padding(0, 2)
+
+	pathStyle := lipgloss.NewStyle().
+		Foreground(theme.TextMuted).
+		PaddingLeft(2)
+
+	relPath, _ := filepath.Rel(".", r.directory)
+	if relPath == "" {
+		relPath = r.directory
 	}
-	footer := RenderFooter(vs, hints, totalWidth)
 
-	// Combine all - minimal spacing
-	content := header + "\n" + columns + "\n" + footer
+	header := lipgloss.JoinHorizontal(lipgloss.Center,
+		headerStyle.Render(r.name),
+		pathStyle.Render(relPath),
+	)
 
-	// Use horizontal centering only, don't fill height (app handles that)
-	return lipgloss.NewStyle().Width(v.width).Align(lipgloss.Center).Render(content)
+	// === COMMAND PREVIEW BAR ===
+	cmd := v.buildShortCommand(r)
+	cmdStyle := lipgloss.NewStyle().
+		Foreground(theme.TextDim).
+		Background(theme.Surface).
+		Padding(0, 1).
+		Width(totalWidth)
+	cmdBar := cmdStyle.Render("> " + strings.ReplaceAll(cmd, "\n", " "))
+
+	// === FOOTER ===
+	footerStyle := lipgloss.NewStyle().
+		Foreground(theme.TextMuted).
+		Width(totalWidth)
+
+	keys := []string{
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Enter") + " Run",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Tab") + " cycle",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("e") + " edit",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("r") + " rebuild",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("c") + " copy cmd",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Esc") + " back",
+	}
+	footer := footerStyle.Render(strings.Join(keys, "  "))
+
+	// === FINAL ASSEMBLY ===
+	content := lipgloss.JoinVertical(lipgloss.Left,
+		header,
+		"",
+		columns,
+		"",
+		cmdBar,
+		footer,
+	)
+
+	// Center the whole thing
+	return lipgloss.Place(
+		v.width,
+		v.height,
+		lipgloss.Center,
+		lipgloss.Center,
+		content,
+	)
 }
 
 // buildShortCommand creates a clean, short command preview
