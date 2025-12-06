@@ -9,12 +9,14 @@ type KeyMap struct {
 	Help key.Binding
 
 	// View switching
-	ViewHome     key.Binding
-	ViewCommands key.Binding
-	ViewRobots   key.Binding
-	ViewEnvs     key.Binding
-	ViewLogs     key.Binding
-	ViewRemote   key.Binding
+	ViewHome        key.Binding
+	ViewCommands    key.Binding
+	ViewRobots      key.Binding
+	ViewEnvs        key.Binding
+	ViewHistory     key.Binding
+	ViewDiagnostics key.Binding
+	ViewLogs        key.Binding
+	ViewRemote      key.Binding
 
 	// Navigation (vim-style)
 	Up       key.Binding
@@ -70,13 +72,21 @@ func DefaultKeyMap() KeyMap {
 			key.WithKeys("4"),
 			key.WithHelp("4", "environments"),
 		),
-		ViewLogs: key.NewBinding(
+		ViewHistory: key.NewBinding(
 			key.WithKeys("5"),
-			key.WithHelp("5", "logs"),
+			key.WithHelp("5", "history"),
+		),
+		ViewDiagnostics: key.NewBinding(
+			key.WithKeys("6"),
+			key.WithHelp("6", "diagnostics"),
+		),
+		ViewLogs: key.NewBinding(
+			key.WithKeys("7"),
+			key.WithHelp("7", "logs"),
 		),
 		ViewRemote: key.NewBinding(
-			key.WithKeys("6"),
-			key.WithHelp("6", "remote"),
+			key.WithKeys("8"),
+			key.WithHelp("8", "remote"),
 		),
 
 		// Navigation (vim-style + arrows)

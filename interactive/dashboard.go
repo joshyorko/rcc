@@ -38,6 +38,7 @@ const (
 const (
 	ModeEnvironment = dashcore.ModeEnvironment
 	ModeRobotRun    = dashcore.ModeRobotRun
+	ModeRunComplete = dashcore.ModeRunComplete
 	ModeDiagnostics = dashcore.ModeDiagnostics
 	ModeDownload    = dashcore.ModeDownload
 )

@@ -50,8 +50,13 @@ func ChooseAction(prompt string, actions []Action) (*Action, error) {
 		common.Stdout("\n")
 	}
 
-	// Create validator for numeric input
+	// Create validator for numeric input with bounds checking
 	validator := func(input string) bool {
+		// Reject excessively long input (prevents parsing issues)
+		if len(input) > 10 {
+			common.Stdout("%sInput too long. Please enter a number between 1 and %d.%s\n\n", pretty.Red, len(actions), pretty.Reset)
+			return false
+		}
 		num, err := strconv.Atoi(input)
 		if err != nil {
 			common.Stdout("%sPlease enter a number between 1 and %d.%s\n\n", pretty.Red, len(actions), pretty.Reset)

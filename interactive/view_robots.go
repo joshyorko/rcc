@@ -527,8 +527,7 @@ func (v *RobotsView) Update(msg tea.Msg) (View, tea.Cmd) {
 		v.taskIdx = 0
 		v.envIdx = -1
 		v.mode = modeList
-		// Signal refresh complete if not initial load (hacky check: loading was true)
-		return v, ShowInfoToast(fmt.Sprintf("Loaded %d robots", len(v.robots)))
+		// Robot count is shown in header subtitle, no need for toast
 
 	case robotDetailLoadedMsg:
 		v.loading = false
@@ -915,55 +914,8 @@ func (v *RobotsView) moveRightList() {
 	// Nothing to cycle in list mode
 }
 
-// Detail mode navigation - order is Task -> Env -> Config (top to bottom)
+// Detail mode navigation - up/down cycles items within panel, tab switches panels
 func (v *RobotsView) moveUpDetail() {
-	r := v.selectedRobot()
-	if r == nil {
-		return
-	}
-
-	switch v.detailFocus {
-	case focusDetailTask:
-		// Already at top, do nothing
-	case focusDetailEnv:
-		v.detailFocus = focusDetailTask
-	case focusDetailConfig:
-		if v.configIdx > 0 {
-			v.configIdx--
-		} else if len(r.envFiles) > 0 {
-			v.detailFocus = focusDetailEnv
-		} else {
-			v.detailFocus = focusDetailTask
-		}
-	}
-}
-
-func (v *RobotsView) moveDownDetail() {
-	r := v.selectedRobot()
-	if r == nil {
-		return
-	}
-
-	switch v.detailFocus {
-	case focusDetailTask:
-		if len(r.envFiles) > 0 {
-			v.detailFocus = focusDetailEnv
-		} else {
-			v.detailFocus = focusDetailConfig
-			v.configIdx = 0
-		}
-	case focusDetailEnv:
-		v.detailFocus = focusDetailConfig
-		v.configIdx = 0
-	case focusDetailConfig:
-		if v.configIdx < configRebuildEnv {
-			v.configIdx++
-		}
-		// Already at bottom
-	}
-}
-
-func (v *RobotsView) moveLeftDetail() {
 	r := v.selectedRobot()
 	if r == nil {
 		return
@@ -982,10 +934,14 @@ func (v *RobotsView) moveLeftDetail() {
 		if v.envIdx < -1 {
 			v.envIdx = len(r.envFiles) - 1
 		}
+	case focusDetailConfig:
+		if v.configIdx > 0 {
+			v.configIdx--
+		}
 	}
 }
 
-func (v *RobotsView) moveRightDetail() {
+func (v *RobotsView) moveDownDetail() {
 	r := v.selectedRobot()
 	if r == nil {
 		return
@@ -1001,7 +957,19 @@ func (v *RobotsView) moveRightDetail() {
 		if v.envIdx >= len(r.envFiles) {
 			v.envIdx = -1
 		}
+	case focusDetailConfig:
+		if v.configIdx < configRebuildEnv {
+			v.configIdx++
+		}
 	}
+}
+
+func (v *RobotsView) moveLeftDetail() {
+	// Left/right no longer used for item navigation
+}
+
+func (v *RobotsView) moveRightDetail() {
+	// Left/right no longer used for item navigation
 }
 
 func (v *RobotsView) resetSelections() {
@@ -1095,8 +1063,9 @@ func (v *RobotsView) runRobot() tea.Cmd {
 	}
 
 	action := ActionResult{
-		Type:      ActionRunRobot,
-		RobotPath: r.path,
+		Type:         ActionRunRobot,
+		RobotPath:    r.path,
+		ReturnToView: ViewRobots, // Return to robots view after run completes
 	}
 
 	if len(r.tasks) > 0 && v.taskIdx < len(r.tasks) {
@@ -1633,13 +1602,20 @@ func (v *RobotsView) renderDetailView() string {
 	)
 
 	// === COMMAND PREVIEW BAR ===
-	cmd := v.buildShortCommand(r)
 	cmdStyle := lipgloss.NewStyle().
 		Foreground(theme.TextDim).
 		Background(theme.Surface).
 		Padding(0, 1).
 		Width(totalWidth)
-	cmdBar := cmdStyle.Render("> " + strings.ReplaceAll(cmd, "\n", " "))
+
+	var cmdBar string
+	if v.spinning {
+		// Show spinner during rebuild
+		cmdBar = cmdStyle.Render(v.spinner.View() + " Rebuilding environment...")
+	} else {
+		cmd := v.buildShortCommand(r)
+		cmdBar = cmdStyle.Render("> " + strings.ReplaceAll(cmd, "\n", " "))
+	}
 
 	// === FOOTER ===
 	footerStyle := lipgloss.NewStyle().
@@ -1648,10 +1624,11 @@ func (v *RobotsView) renderDetailView() string {
 
 	keys := []string{
 		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Enter") + " Run",
-		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Tab") + " cycle",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Tab") + " panel",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("j/k") + " select",
 		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("e") + " edit",
 		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("r") + " rebuild",
-		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("c") + " copy cmd",
+		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("c") + " copy",
 		lipgloss.NewStyle().Bold(true).Foreground(theme.Accent).Render("Esc") + " back",
 	}
 	footer := footerStyle.Render(strings.Join(keys, "  "))
@@ -1741,7 +1718,7 @@ func (v *RobotsView) ShortHelp() string {
 		return "Enter:pull Esc:cancel"
 	}
 	if v.mode == modeDetail {
-		return "Enter:run Arrows:nav Esc:back"
+		return "Enter:run Tab:panel j/k:select Esc:back"
 	}
 	return "Enter:select Arrows:nav R:refresh"
 }

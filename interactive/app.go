@@ -19,6 +19,8 @@ const (
 	ViewCommands
 	ViewRobots
 	ViewEnvironments
+	ViewHistory
+	ViewDiagnostics
 	ViewLogs
 	ViewRemote
 )
@@ -32,18 +34,22 @@ const (
 	ActionRunCommand
 	ActionDeleteEnv
 	ActionExportCatalog
+	ActionImportCatalog
+	ActionCheckIntegrity
 	ActionToggleServer
 )
 
 // ActionResult holds the result of a TUI action selection
 type ActionResult struct {
-	Type       ActionType
-	RobotPath  string // For ActionRunRobot
-	RobotTask  string // For ActionRunRobot (optional)
-	EnvFile    string // For ActionRunRobot - environment JSON file (optional)
-	Command    string // For ActionRunCommand
-	EnvID      string // For ActionDeleteEnv, ActionExportCatalog
-	OutputPath string // For ActionExportCatalog
+	Type         ActionType
+	RobotPath    string   // For ActionRunRobot
+	RobotTask    string   // For ActionRunRobot (optional)
+	EnvFile      string   // For ActionRunRobot - environment JSON file (optional)
+	Command      string   // For ActionRunCommand
+	EnvID        string   // For ActionDeleteEnv, ActionExportCatalog
+	OutputPath   string   // For ActionExportCatalog
+	InputPath    string   // For ActionImportCatalog
+	ReturnToView ViewType // View to return to after action completes
 }
 
 // actionMsg is sent when user triggers an action
@@ -101,6 +107,8 @@ func NewApp() *App {
 		NewCommandsView(styles),
 		NewRobotsView(styles),
 		NewEnvironmentsView(styles),
+		NewHistoryView(styles),
+		NewDiagnosticsView(styles),
 		NewLogsView(styles),
 		NewRemoteView(styles),
 	}
@@ -197,6 +205,10 @@ func (a *App) handleGlobalKeys(msg tea.KeyMsg) (tea.Cmd, bool) {
 		targetView = ViewRobots
 	case key.Matches(msg, keys.ViewEnvs):
 		targetView = ViewEnvironments
+	case key.Matches(msg, keys.ViewHistory):
+		targetView = ViewHistory
+	case key.Matches(msg, keys.ViewDiagnostics):
+		targetView = ViewDiagnostics
 	case key.Matches(msg, keys.ViewLogs):
 		targetView = ViewLogs
 	case key.Matches(msg, keys.ViewRemote):
@@ -217,7 +229,8 @@ func (a *App) handleGlobalKeys(msg tea.KeyMsg) (tea.Cmd, bool) {
 
 func (a *App) handleAction(msg actionMsg) (tea.Model, tea.Cmd) {
 	switch msg.action.Type {
-	case ActionRunRobot, ActionRunCommand:
+	case ActionRunRobot, ActionRunCommand, ActionCheckIntegrity, ActionExportCatalog, ActionImportCatalog:
+		// These actions exit TUI and run externally
 		a.pendingAction = &msg.action
 		a.quitting = true
 		return a, tea.Quit
@@ -413,7 +426,7 @@ func (a *App) renderStatus() string {
 
 func (a *App) renderCrumbs() string {
 	// Navigation breadcrumbs like k9s: <rcc> <view>
-	viewNames := []string{"Home", "Commands", "Robots", "Holotree", "Logs", "Remote"}
+	viewNames := []string{"Home", "Commands", "Robots", "Holotree", "History", "Diagnostics", "Logs", "Remote"}
 	currentView := viewNames[int(a.activeView)]
 
 	root := a.styles.CrumbInactive.Render(" <rcc> ")
@@ -455,7 +468,10 @@ func (a *App) renderHelp(height int) string {
 		{"2", "Commands - Browse available commands"},
 		{"3", "Robots - View and run detected robots"},
 		{"4", "Environments - Manage holotree environments"},
-		{"5", "Logs - View logs"},
+		{"5", "History - View robot run history"},
+		{"6", "Diagnostics - System health checks"},
+		{"7", "Logs - View logs"},
+		{"8", "Remote - Remote server management"},
 	}
 	for _, k := range navKeys {
 		b.WriteString("      " + a.styles.HelpKey.Render("<"+k.key+">") + " " + a.styles.HelpDesc.Render(k.desc) + "\n")
@@ -536,8 +552,10 @@ func (a *App) buildHints() string {
 		{"2", "Cmds"},
 		{"3", "Robots"},
 		{"4", "Holotree"},
-		{"5", "Logs"},
-		{"6", "Remote"},
+		{"5", "History"},
+		{"6", "Diag"},
+		{"7", "Logs"},
+		{"8", "Remote"},
 		{"?", "Help"},
 		{"q", "Quit"},
 	}
@@ -569,6 +587,18 @@ func (a *App) buildHints() string {
 			struct{ key, desc string }{"tab", "Switch"},
 			struct{ key, desc string }{"d", "Delete"},
 			struct{ key, desc string }{"c", "Check"},
+		)
+	case ViewHistory:
+		viewHints = append(viewHints,
+			struct{ key, desc string }{"j/k", "Nav"},
+			struct{ key, desc string }{"r", "Re-run"},
+			struct{ key, desc string }{"c", "Clear"},
+			struct{ key, desc string }{"R", "Refresh"},
+		)
+	case ViewDiagnostics:
+		viewHints = append(viewHints,
+			struct{ key, desc string }{"d", "Full diag"},
+			struct{ key, desc string }{"R", "Refresh"},
 		)
 	case ViewLogs:
 		viewHints = append(viewHints,
@@ -606,7 +636,13 @@ func (a *App) formatHint(key, desc string) string {
 
 // Run starts the interactive application and returns any action the user selected
 func Run() (*ActionResult, error) {
+	return RunWithStartView(ViewHome)
+}
+
+// RunWithStartView starts the interactive application at a specific view
+func RunWithStartView(startView ViewType) (*ActionResult, error) {
 	app := NewApp()
+	app.activeView = startView
 	p := tea.NewProgram(
 		app,
 		tea.WithAltScreen(),

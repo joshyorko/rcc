@@ -550,11 +550,24 @@ func ExecuteTask(flags *RunFlags, template []string, config robot.Robot, todo ro
 		}
 	})
 
-	// Stop dashboard IMMEDIATELY after robot execution completes
-	// This ensures clean transition before post-run output (RCC point of view, etc.)
+	// Transition dashboard to run complete mode after robot execution
+	// This shows the final results with scrollable logs
 	if dashboard != nil {
-		dashboard.Stop(err == nil)
-		dashboard = nil // Prevent double-stop in defer
+		if unified := pretty.GetUnifiedDashboard(); unified != nil {
+			// Get artifacts directory for log parsing
+			artifactsDir := config.ArtifactDirectory()
+			exitCode := 0
+			if err != nil {
+				exitCode = 1
+			}
+			unified.TransitionToRunComplete(err == nil, exitCode, artifactsDir)
+			// Don't stop dashboard - let user explore logs and press Esc to exit
+			// The dashboard will stop when user presses Esc or q
+		} else {
+			// Standalone dashboard - just stop it
+			dashboard.Stop(err == nil)
+			dashboard = nil
+		}
 	}
 
 	pretty.RccPointOfView(actualRun, err)

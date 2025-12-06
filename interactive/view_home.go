@@ -14,10 +14,12 @@ import (
 
 // HomeView displays the main dashboard with system status and quick actions
 type HomeView struct {
-	styles *Styles
-	info   SystemInfo
-	width  int
-	height int
+	styles       *Styles
+	info         SystemInfo
+	width        int
+	height       int
+	quickAction  int // Selected quick action
+	remoteOrigin string
 }
 
 // SystemInfo holds system information for display
@@ -46,6 +48,11 @@ func (v *HomeView) Init() tea.Cmd {
 	return v.loadSystemInfo
 }
 
+type homeInfoMsg struct {
+	info   SystemInfo
+	remote string
+}
+
 // loadSystemInfo loads system information
 func (v *HomeView) loadSystemInfo() tea.Msg {
 	info := SystemInfo{
@@ -67,19 +74,58 @@ func (v *HomeView) loadSystemInfo() tea.Msg {
 	catalogs := htfs.CatalogNames()
 	info.EnvCount = len(catalogs)
 
-	return systemInfoMsg(info)
+	return homeInfoMsg{info: info, remote: common.RccRemoteOrigin()}
 }
-
-type systemInfoMsg SystemInfo
 
 // Update implements View
 func (v *HomeView) Update(msg tea.Msg) (View, tea.Cmd) {
 	switch msg := msg.(type) {
-	case systemInfoMsg:
-		v.info = SystemInfo(msg)
+	case homeInfoMsg:
+		v.info = msg.info
+		v.remoteOrigin = msg.remote
 	case tea.WindowSizeMsg:
 		v.width = msg.Width
 		v.height = msg.Height
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "j", "down":
+			if v.quickAction < 2 { // 3 quick actions
+				v.quickAction++
+			}
+		case "k", "up":
+			if v.quickAction > 0 {
+				v.quickAction--
+			}
+		case "enter":
+			return v.handleQuickAction()
+		case "R":
+			return v, v.loadSystemInfo
+		}
+	}
+	return v, nil
+}
+
+func (v *HomeView) handleQuickAction() (View, tea.Cmd) {
+	switch v.quickAction {
+	case 0: // Run diagnostics
+		action := ActionResult{
+			Type: ActionCheckIntegrity,
+		}
+		return v, func() tea.Msg { return actionMsg{action: action} }
+	case 1: // Pull catalogs (if remote configured)
+		if v.remoteOrigin != "" {
+			action := ActionResult{
+				Type:    ActionRunCommand,
+				Command: fmt.Sprintf("rcc holotree pull -o %s", v.remoteOrigin),
+			}
+			return v, func() tea.Msg { return actionMsg{action: action} }
+		}
+	case 2: // Create new robot
+		action := ActionResult{
+			Type:    ActionRunCommand,
+			Command: "rcc robot init",
+		}
+		return v, func() tea.Msg { return actionMsg{action: action} }
 	}
 	return v, nil
 }
@@ -115,8 +161,6 @@ func (v *HomeView) View() string {
 	// --- Left Column: System ---
 	left := strings.Builder{}
 	left.WriteString(vs.Accent.Bold(true).Render("SYSTEM"))
-	left.WriteString("\n")
-	left.WriteString("Debug: Plain Text Check")
 	left.WriteString("\n\n")
 
 	left.WriteString(vs.Label.Render("Host"))
@@ -162,25 +206,37 @@ func (v *HomeView) View() string {
 	mid.WriteString("\n")
 	mid.WriteString(vs.Success.Render("● Operational"))
 
-	// --- Right Column: Quick Nav ---
+	// --- Right Column: Quick Actions ---
 	right := strings.Builder{}
-	right.WriteString(vs.Accent.Bold(true).Render("NAVIGATION"))
+	right.WriteString(vs.Accent.Bold(true).Render("QUICK ACTIONS"))
 	right.WriteString("\n\n")
 
-	navs := []struct{ key, label string }{
-		{"2", "Commands"},
-		{"3", "Robots"},
-		{"4", "Environments"},
-		{"5", "Logs"},
-		{"6", "Remote Stats"},
+	quickActions := []struct{ label, desc string }{
+		{"Check Integrity", "Verify holotree"},
+		{"Pull Catalogs", "From remote server"},
+		{"Create Robot", "Initialize new robot"},
 	}
 
-	for _, n := range navs {
-		right.WriteString(vs.KeyHint.Render(n.key))
-		right.WriteString(" ")
-		right.WriteString(vs.Text.Render(n.label))
+	for i, qa := range quickActions {
+		if i == v.quickAction {
+			right.WriteString(vs.Selected.Render("> " + qa.label))
+		} else {
+			right.WriteString(vs.Normal.Render("  " + qa.label))
+		}
 		right.WriteString("\n")
+		if i == 1 && v.remoteOrigin == "" {
+			right.WriteString(vs.Subtext.Render("    (no remote)"))
+			right.WriteString("\n")
+		}
 	}
+
+	right.WriteString("\n")
+	right.WriteString(vs.Subtext.Render("Enter to run, j/k nav"))
+	right.WriteString("\n\n")
+
+	right.WriteString(vs.Accent.Bold(true).Render("VIEWS"))
+	right.WriteString("\n")
+	right.WriteString(vs.Subtext.Render("1-7 to switch"))
 
 	// Join columns
 	content := lipgloss.JoinHorizontal(lipgloss.Top,
@@ -203,5 +259,5 @@ func (v *HomeView) Name() string {
 
 // ShortHelp implements View
 func (v *HomeView) ShortHelp() string {
-	return "1-6:switch views"
+	return "1-7:views j/k:nav Enter:action R:refresh"
 }

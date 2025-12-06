@@ -431,3 +431,55 @@ func (d *UnifiedDashboard) SetDevMode(devMode bool) {
 	d.model.EnvState.DevMode = devMode
 	d.mu.Unlock()
 }
+
+// TransitionToRunComplete switches the dashboard to run complete mode
+// This shows the final results with scrollable logs
+func (d *UnifiedDashboard) TransitionToRunComplete(success bool, exitCode int, artifactsDir string) {
+	if d == nil || d.model == nil {
+		return
+	}
+
+	d.mu.Lock()
+	// Record run time
+	d.model.RobotState.RunTime = time.Since(d.model.StartTime)
+	d.model.RobotState.Success = success
+	d.model.RobotState.ExitCode = exitCode
+	d.model.RobotState.ArtifactsDir = artifactsDir
+
+	// Parse log files for display
+	if artifactsDir != "" {
+		if logLines, err := ParseLogHTML(artifactsDir); err == nil {
+			d.model.RobotState.LogLines = logLines
+		}
+	}
+
+	// If no parsed logs, use the buffered logs
+	if len(d.model.RobotState.LogLines) == 0 && d.model.Logs != nil {
+		entries := d.model.Logs.Recent(500)
+		for _, e := range entries {
+			d.model.RobotState.LogLines = append(d.model.RobotState.LogLines, e.Message)
+		}
+	}
+
+	d.model.RobotState.LogScroll = 0
+	d.model.Mode = ModeRunComplete
+	d.mu.Unlock()
+
+	// Send phase change through update channel
+	phase := ModeRunComplete
+	select {
+	case d.updateChan <- UnifiedUpdateMsg{PhaseChange: &phase}:
+	default:
+	}
+}
+
+// SetArtifactsDir sets the artifacts directory path
+func (d *UnifiedDashboard) SetArtifactsDir(dir string) {
+	if d == nil || d.model == nil {
+		return
+	}
+
+	d.mu.Lock()
+	d.model.RobotState.ArtifactsDir = dir
+	d.mu.Unlock()
+}

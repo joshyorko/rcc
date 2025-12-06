@@ -127,25 +127,55 @@ func (m *RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			m.Quitting = true
 			return m, tea.Quit
+		case "esc":
+			// In run complete mode, Esc signals return to previous view
+			if m.Mode == ModeRunComplete {
+				m.Quitting = true
+				return m, tea.Quit
+			}
 		case "l":
 			m.ShowLogs = !m.ShowLogs
 		case "d":
 			m.ShowDetails = !m.ShowDetails
 		case "up", "k":
-			if m.ShowLogs {
+			if m.Mode == ModeRunComplete {
+				m.RobotState.LogScroll--
+				if m.RobotState.LogScroll < 0 {
+					m.RobotState.LogScroll = 0
+				}
+			} else if m.ShowLogs {
 				m.LogViewport.LineUp(1)
 			}
 		case "down", "j":
-			if m.ShowLogs {
+			if m.Mode == ModeRunComplete {
+				m.RobotState.LogScroll++
+			} else if m.ShowLogs {
 				m.LogViewport.LineDown(1)
 			}
 		case "pgup":
-			if m.ShowLogs {
+			if m.Mode == ModeRunComplete {
+				m.RobotState.LogScroll -= 10
+				if m.RobotState.LogScroll < 0 {
+					m.RobotState.LogScroll = 0
+				}
+			} else if m.ShowLogs {
 				m.LogViewport.HalfViewUp()
 			}
 		case "pgdown":
-			if m.ShowLogs {
+			if m.Mode == ModeRunComplete {
+				m.RobotState.LogScroll += 10
+			} else if m.ShowLogs {
 				m.LogViewport.HalfViewDown()
+			}
+		case "g":
+			// Go to top in run complete mode
+			if m.Mode == ModeRunComplete {
+				m.RobotState.LogScroll = 0
+			}
+		case "G":
+			// Go to bottom in run complete mode
+			if m.Mode == ModeRunComplete && len(m.RobotState.LogLines) > 0 {
+				m.RobotState.LogScroll = len(m.RobotState.LogLines)
 			}
 		}
 
@@ -245,6 +275,8 @@ func (m *RootModel) View() string {
 		sections = append(sections, m.renderEnvironment())
 	case ModeRobotRun:
 		sections = append(sections, m.renderRobotRun())
+	case ModeRunComplete:
+		sections = append(sections, m.renderRunComplete())
 	case ModeDiagnostics:
 		sections = append(sections, m.renderDiagnostics())
 	case ModeDownload:
@@ -298,6 +330,12 @@ func (m *RootModel) renderHeader() string {
 			contextInfo = m.RobotState.RobotName
 		} else {
 			contextInfo = "Running Robot"
+		}
+	case ModeRunComplete:
+		if m.RobotState != nil && m.RobotState.RobotName != "" {
+			contextInfo = m.RobotState.RobotName
+		} else {
+			contextInfo = "Run Complete"
 		}
 	case ModeDiagnostics:
 		contextInfo = "System Diagnostics"
@@ -501,6 +539,149 @@ func (m *RootModel) renderRobotRun() string {
 
 	b.WriteString(formatRow("Run Time", m.Styles.Success.Render(formatDurationShort(elapsed))))
 
+	// Single line log preview - show the most recent output line
+	if m.Logs != nil && m.Logs.Len() > 0 {
+		entries := m.Logs.Recent(1)
+		if len(entries) > 0 {
+			lastLine := entries[0].Message
+			// Truncate if too long
+			maxWidth := m.contentWidth() - 4
+			if len(lastLine) > maxWidth {
+				lastLine = lastLine[:maxWidth-3] + "..."
+			}
+			b.WriteString("\n")
+			b.WriteString(m.Styles.Subtext.Render("> " + lastLine))
+		}
+	}
+
+	return b.String()
+}
+
+func (m *RootModel) renderRunComplete() string {
+	var b strings.Builder
+
+	// Title with status
+	var titleIcon string
+	var titleStyle lipgloss.Style
+	if m.RobotState.Success {
+		if Iconic {
+			titleIcon = "✓ "
+		} else {
+			titleIcon = "[OK] "
+		}
+		titleStyle = m.Styles.Success
+	} else {
+		if Iconic {
+			titleIcon = "✗ "
+		} else {
+			titleIcon = "[FAIL] "
+		}
+		titleStyle = m.Styles.Error
+	}
+	b.WriteString(titleStyle.Bold(true).Render(titleIcon + "Run Complete"))
+	b.WriteString("\n\n")
+
+	// Summary info
+	labelWidth := 12
+	formatRow := func(label, value string) string {
+		paddedLabel := label + strings.Repeat(" ", labelWidth-len(label))
+		return m.Styles.Label.Render(paddedLabel) + value + "\n"
+	}
+
+	robotName := m.RobotState.RobotName
+	if robotName == "" {
+		robotName = "Unknown"
+	}
+	b.WriteString(formatRow("Robot", m.Styles.Text.Bold(true).Render(robotName)))
+
+	taskName := m.RobotState.TaskName
+	if taskName != "" {
+		b.WriteString(formatRow("Task", m.Styles.Subtitle.Render(taskName)))
+	}
+
+	// Timing
+	if m.RobotState.BuildTime > 0 {
+		b.WriteString(formatRow("Build", m.Styles.Subtext.Render(formatDurationShort(m.RobotState.BuildTime))))
+	}
+	b.WriteString(formatRow("Run Time", m.Styles.Success.Render(formatDurationShort(m.RobotState.RunTime))))
+
+	// Exit code if failed
+	if !m.RobotState.Success && m.RobotState.ExitCode != 0 {
+		b.WriteString(formatRow("Exit Code", m.Styles.Error.Render(fmt.Sprintf("%d", m.RobotState.ExitCode))))
+	}
+
+	b.WriteString("\n")
+
+	// Log viewer section
+	b.WriteString(m.Styles.Subtext.Render(strings.Repeat("─", m.contentWidth())))
+	b.WriteString("\n")
+
+	// Calculate visible log area
+	visibleLines := m.Height - 20 // Reserve space for header/footer
+	if visibleLines < 5 {
+		visibleLines = 5
+	}
+	if visibleLines > 30 {
+		visibleLines = 30
+	}
+
+	logLines := m.RobotState.LogLines
+	if len(logLines) == 0 {
+		b.WriteString(m.Styles.Subtext.Render("  No log output available"))
+		b.WriteString("\n")
+	} else {
+		// Calculate scroll bounds
+		maxScroll := len(logLines) - visibleLines
+		if maxScroll < 0 {
+			maxScroll = 0
+		}
+		if m.RobotState.LogScroll > maxScroll {
+			m.RobotState.LogScroll = maxScroll
+		}
+		if m.RobotState.LogScroll < 0 {
+			m.RobotState.LogScroll = 0
+		}
+
+		// Render visible lines
+		start := m.RobotState.LogScroll
+		end := start + visibleLines
+		if end > len(logLines) {
+			end = len(logLines)
+		}
+
+		for i := start; i < end; i++ {
+			line := logLines[i]
+			// Color based on content
+			var lineStyle lipgloss.Style
+			if strings.Contains(line, "[PASS]") || strings.Contains(line, "PASS") {
+				lineStyle = m.Styles.Success
+			} else if strings.Contains(line, "[FAIL]") || strings.Contains(line, "FAIL") {
+				lineStyle = m.Styles.Error
+			} else if strings.HasPrefix(line, "===") {
+				lineStyle = m.Styles.Text.Bold(true)
+			} else if strings.HasPrefix(line, "  >") {
+				lineStyle = m.Styles.Accent
+			} else {
+				lineStyle = m.Styles.Text
+			}
+			b.WriteString(lineStyle.Render(line))
+			b.WriteString("\n")
+		}
+
+		// Scroll indicator
+		if len(logLines) > visibleLines {
+			scrollPos := fmt.Sprintf(" [%d-%d of %d] ", start+1, end, len(logLines))
+			scrollHint := ""
+			if m.RobotState.LogScroll > 0 {
+				scrollHint += "↑"
+			}
+			if m.RobotState.LogScroll < maxScroll {
+				scrollHint += "↓"
+			}
+			b.WriteString(m.Styles.Subtext.Render(scrollPos + scrollHint))
+		}
+	}
+
 	return b.String()
 }
 
@@ -549,19 +730,31 @@ func (m *RootModel) renderFooter() string {
 		}
 	case ModeRobotRun:
 		status = m.Spinner.View() + " " + m.Styles.Text.Render("Running...")
+	case ModeRunComplete:
+		if m.RobotState.Success {
+			status = m.Styles.Success.Render("● Finished")
+		} else {
+			status = m.Styles.Error.Render("● Failed")
+		}
 	default:
 		status = m.Spinner.View() + " " + m.Styles.Text.Render("Working...")
 	}
 
 	// Right: Key hints
 	hints := []string{}
-	hints = append(hints, m.formatKeyHint("q", "quit"))
-	if m.Logs.Len() > 0 {
-		if m.ShowLogs {
-			hints = append(hints, m.formatKeyHint("l", "hide logs"))
-			hints = append(hints, m.formatKeyHint("↑↓", "scroll"))
-		} else {
-			hints = append(hints, m.formatKeyHint("l", "show logs"))
+	if m.Mode == ModeRunComplete {
+		hints = append(hints, m.formatKeyHint("↑↓", "scroll"))
+		hints = append(hints, m.formatKeyHint("g/G", "top/bottom"))
+		hints = append(hints, m.formatKeyHint("esc", "back"))
+	} else {
+		hints = append(hints, m.formatKeyHint("q", "quit"))
+		if m.Logs.Len() > 0 {
+			if m.ShowLogs {
+				hints = append(hints, m.formatKeyHint("l", "hide logs"))
+				hints = append(hints, m.formatKeyHint("↑↓", "scroll"))
+			} else {
+				hints = append(hints, m.formatKeyHint("l", "show logs"))
+			}
 		}
 	}
 	hintsStr := strings.Join(hints, "  ")

@@ -192,6 +192,7 @@ type DashboardMode int
 const (
 	ModeEnvironment DashboardMode = iota
 	ModeRobotRun
+	ModeRunComplete // Post-run view showing logs and results
 	ModeDiagnostics
 	ModeDownload
 )
@@ -202,6 +203,8 @@ func (m DashboardMode) String() string {
 		return "Environment"
 	case ModeRobotRun:
 		return "Robot"
+	case ModeRunComplete:
+		return "Complete"
 	case ModeDiagnostics:
 		return "Diagnostics"
 	case ModeDownload:
@@ -245,6 +248,12 @@ type RobotState struct {
 	Workers    int
 	BuildTime  time.Duration
 	RunTime    time.Duration
+
+	// Run complete state
+	ArtifactsDir string   // Path to output/artifacts directory
+	LogLines     []string // Parsed log content for terminal display
+	LogScroll    int      // Current scroll position in log view
+	Success      bool     // Whether the run succeeded
 }
 
 // EnvStep represents a single environment build step
