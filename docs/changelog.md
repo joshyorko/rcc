@@ -23,6 +23,13 @@
 - feature: updated autoupdate URLs to yorko-io organization placeholders
   - assistant, workforce-agent, setup-utility URLs point to yorko-io GitHub repos
 - docs: updated README.md and CLAUDE.md with new environment variables
+- docs: completely rewritten `rcc man tutorial` with modern workflow
+  - quick start guide with step-by-step instructions
+  - documents all available templates (python, browser, workitems, assistant)
+  - covers essential commands for running, environment management, and diagnostics
+  - includes project structure examples (robot.yaml, conda.yaml)
+  - adds pro tips including uv for faster builds
+  - updated repository link to joshyorko/rcc
 - tests: updated unit tests to expect empty default endpoints
 - tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
 
