@@ -32,6 +32,8 @@
   - updated repository link to joshyorko/rcc
 - tests: updated unit tests to expect empty default endpoints
 - tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
+- fix: `rcc feedback issue --dryrun` now works without issues endpoint configured
+  - dryrun mode generates and displays the report structure without requiring an endpoint
 
 ## v18.11.0 (date: 03.12.2025)
 
