@@ -34,7 +34,7 @@ var (
 // Returns nil if no environment overrides are found.
 func loadEnvOverrides() *Settings {
 	// Mapping of env var -> endpoints key in settings
-	mapping := map[string]string{
+	endpointMapping := map[string]string{
 		"RCC_ENDPOINT_CLOUD_API":     "cloud-api",
 		"RCC_ENDPOINT_CLOUD_LINKING": "cloud-linking",
 		"RCC_ENDPOINT_CLOUD_UI":      "cloud-ui",
@@ -47,13 +47,26 @@ func loadEnvOverrides() *Settings {
 		"RCC_ENDPOINT_CONDA":         "conda",
 	}
 
+	// Mapping of env var -> autoupdates key in settings
+	autoupdatesMapping := map[string]string{
+		"RCC_AUTOUPDATES_TEMPLATES": "templates",
+		"RCC_AUTOUPDATES_RCC_INDEX": "rcc-index",
+	}
+
 	overrides := &Settings{
-		Endpoints: make(StringMap),
+		Endpoints:   make(StringMap),
+		Autoupdates: make(StringMap),
 	}
 	haveAny := false
-	for envVar, key := range mapping {
+	for envVar, key := range endpointMapping {
 		if trimmed := strings.TrimSpace(os.Getenv(envVar)); len(trimmed) > 0 {
 			overrides.Endpoints[key] = trimmed
+			haveAny = true
+		}
+	}
+	for envVar, key := range autoupdatesMapping {
+		if trimmed := strings.TrimSpace(os.Getenv(envVar)); len(trimmed) > 0 {
+			overrides.Autoupdates[key] = trimmed
 			haveAny = true
 		}
 	}
@@ -180,6 +193,10 @@ func (it gateway) Description() string {
 
 func (it gateway) TemplatesYamlURL() string {
 	return it.settings().Autoupdates["templates"]
+}
+
+func (it gateway) RccIndexURL() string {
+	return it.settings().Autoupdates["rcc-index"]
 }
 
 func (it gateway) Diagnostics(target *common.DiagnosticStatus) {

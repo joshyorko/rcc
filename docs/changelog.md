@@ -1,4 +1,31 @@
 # rcc change log
+## v18.12.0 (date: 09.12.2025)
+
+- **breaking**: RCC is now fully decoupled from Robocorp infrastructure by default
+  - all cloud endpoints (cloud-api, cloud-linking, cloud-ui, telemetry, issues) are empty by default
+  - users who need Robocorp Control Room integration can set endpoints via `RCC_ENDPOINT_*` env vars or local `settings.yaml`
+  - telemetry is disabled by default (no data sent anywhere)
+- feature: default templates now pulled from community-maintained repository
+  - templates URL changed from Robocorp to https://github.com/joshyorko/robot-templates/releases/
+  - enables community contributions and faster template updates
+- feature: new `RCC_AUTOUPDATES_TEMPLATES` environment variable
+  - allows overriding the templates.yaml URL at runtime
+  - enables custom template registries for enterprise deployments
+- feature: RCC version check now uses GitHub releases
+  - version index (index.json) now fetched from GitHub releases instead of Robocorp
+  - new `RCC_AUTOUPDATES_RCC_INDEX` environment variable to override the index URL
+  - GitHub workflow automatically generates and publishes index.json on each release
+- feature: network diagnostics (`rcc configuration netdiag`) now test universal infrastructure
+  - checks GitHub (github.com, api.github.com, raw.githubusercontent.com)
+  - checks PyPI (pypi.org, files.pythonhosted.org)
+  - checks Conda (conda.anaconda.org)
+  - removed Robocorp-specific endpoint checks
+- feature: updated autoupdate URLs to yorko-io organization placeholders
+  - assistant, workforce-agent, setup-utility URLs point to yorko-io GitHub repos
+- docs: updated README.md and CLAUDE.md with new environment variables
+- tests: updated unit tests to expect empty default endpoints
+- tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
+
 ## v18.11.0 (date: 03.12.2025)
 
 - feature: switch micromamba source to official conda-forge releases

@@ -103,6 +103,8 @@ Environment variables (take precedence over builtin settings):
 - `RCC_ENDPOINT_PYPI`
 - `RCC_ENDPOINT_PYPI_TRUSTED`
 - `RCC_ENDPOINT_CONDA`
+- `RCC_AUTOUPDATES_TEMPLATES` - Override the templates.yaml URL for robot templates
+- `RCC_AUTOUPDATES_RCC_INDEX` - Override the index.json URL for version checking
 
 Example (zsh):
 
