@@ -1,0 +1,58 @@
+# RCC Robot Configuration Reference
+# https://github.com/joshyorko/rcc
+
+# Main tasks - run with: rcc run --task "Task Name"
+tasks:
+  Main:
+    shell: python main.py
+
+  # Alternative task definition formats:
+  # Using robocorp.tasks
+  # Producer:
+  #   shell: python -m robocorp.tasks run tasks.py -t producer
+
+  # Using Robot Framework
+  # RunTests:
+  #   shell: python -m robot --outputdir output tests/
+
+# Development tasks - run with: rcc run --dev --task "Task Name"
+devTasks:
+  Setup:
+    shell: python scripts/setup.py
+
+  Test:
+    shell: pytest tests/ -v
+
+# Environment configuration (priority order - first match wins)
+# Use freeze files for production stability
+environmentConfigs:
+  - environment_linux_amd64_freeze.yaml
+  - environment_windows_amd64_freeze.yaml
+  - environment_darwin_amd64_freeze.yaml
+  - conda.yaml  # Fallback for development
+
+# Alternative: single conda file (simpler but less reproducible)
+# condaConfigFile: conda.yaml
+
+# Output directory for artifacts
+artifactsDir: output
+
+# Add directories to PATH
+PATH:
+  - .
+  - bin
+
+# Add directories to PYTHONPATH
+PYTHONPATH:
+  - .
+  - src
+  - libraries
+
+# Files containing ignore patterns
+ignoreFiles:
+  - .gitignore
+
+# Pre-run scripts (optional, platform-specific naming supported)
+# preRunScripts:
+#   - setup_linux.sh
+#   - setup_windows.bat
