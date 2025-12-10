@@ -10,7 +10,7 @@ LICENSE in documentation            license            TERMS AND CONDITIONS FOR 
 Profiles in documentation           profiles           Profile is way to capture
 Recipes in documentation            recipes            Tips, tricks, and recipies
 Troubleshooting in documentation    troubleshooting    Troubleshooting guidelines and known solutions
-Tutorial in documentation           tutorial           Welcome to RCC tutorial
+Tutorial in documentation           tutorial           Welcome to RCC Tutorial
 Use-cases in documentation          usecases           Incomplete list of rcc use cases
 
 *** Keywords ***
