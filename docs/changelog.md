@@ -1,6 +1,8 @@
 # rcc change log
 ## v18.12.0 (date: 09.12.2025)
 
+### Breaking Changes
+
 - **breaking**: RCC is now fully decoupled from Robocorp infrastructure by default
   - all cloud endpoints (cloud-api, cloud-linking, cloud-ui, telemetry, issues) are empty by default
   - existing users relying on Robocorp Control Room must configure endpoints explicitly; previous defaults are no longer applied
@@ -10,6 +12,9 @@
 - **migration**: existing Robocorp Control Room users must configure endpoints to restore cloud functionality
   - without explicit configuration, cloud/feedback/telemetry commands will no longer reach Robocorp services
   - set `RCC_ENDPOINT_CLOUD_API`, `RCC_ENDPOINT_TELEMETRY`, etc. or use a local `settings.yaml`
+
+### New Features
+
 - feature: default templates now pulled from community-maintained repository
   - templates URL changed from Robocorp to https://github.com/joshyorko/robot-templates/releases/
   - enables community contributions and faster template updates
@@ -30,6 +35,29 @@
 - feature: updated autoupdate URLs to yorko-io organization placeholders
   - assistant, workforce-agent, setup-utility URLs point to yorko-io GitHub repos
   - these are placeholders while yorko-io repositories and release binaries are finalized
+
+### Documentation
+
+This release includes significant documentation improvements to help the community understand RCC's architecture and roadmap:
+
+- docs: **new `docs/history.md`** — comprehensive history of RCC from origins to community fork
+  - traces RCC's evolution through 6 distinct eras (v0.x Foundation through v18.6.0+ Community Fork)
+  - documents the lineage of community forks (mikaukora → admariner → vjmp → joshyorko → yorko-io)
+  - explains the "This Fork's Thesis" — why this fork exists and what it aims to accomplish
+  - positions RCC using the "Git for environments" mental model (RCC=Git, Holotree=object database, rccremote=origin)
+- docs: **new `docs/roadmap.md`** — concrete development roadmap for the community fork
+  - outlines 5 phases: Stabilization, rccremote UX Revamp, "Git for Environments" Mental Model, Control Room Foundation, Agent Integration
+  - documents what already exists (rccremote binary, `rcc ht pull`, env vars) vs. what's proposed
+  - includes tables of existing holotree commands and feature areas
+  - defines explicit non-goals to keep the project focused
+- docs: **new `docs/holotree.md`** — deep technical documentation of RCC's crown jewel
+  - Part I: Why Holotree is beautiful — architecture, content addressing, SipHash-128, relocation markers, catalog format, delta transfers
+  - Part II: Why Holotree is fast — restore vs build (15 min → 10 sec), parallel workers, dirty tracking, layer optimization
+  - Part III: What's wrong — discoverability, no push, catalog versioning, no GC knobs, opaque errors, single-writer limitation
+  - Part IV: How we plan to improve — documentation, `rcc remote` commands, Git-like UX, push protocol
+  - State of the Art appendix — compares Holotree to Nix, Docker, OSTree, uv, restic, pixi/rattler, IPFS
+  - Includes ranked improvement ideas (high impact: reference counting GC, hardlink restoration, better errors)
+  - Full source file reference and command reference tables
 - docs: updated README.md and CLAUDE.md with new environment variables
 - docs: completely rewritten `rcc man tutorial` with modern workflow
   - quick start guide with step-by-step instructions
@@ -38,10 +66,16 @@
   - includes project structure examples (robot.yaml, conda.yaml)
   - adds pro tips including uv for faster builds
   - updated repository link to joshyorko/rcc
-- tests: updated unit tests to expect empty default endpoints
-- tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
+
+### Bug Fixes
+
 - fix: `rcc feedback issue --dryrun` now works without issues endpoint configured
   - dryrun mode generates and displays the report structure without requiring an endpoint
+
+### Testing
+
+- tests: updated unit tests to expect empty default endpoints
+- tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
 
 ## v18.11.0 (date: 03.12.2025)
 
