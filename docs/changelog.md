@@ -3,25 +3,33 @@
 
 - **breaking**: RCC is now fully decoupled from Robocorp infrastructure by default
   - all cloud endpoints (cloud-api, cloud-linking, cloud-ui, telemetry, issues) are empty by default
-  - users who need Robocorp Control Room integration can set endpoints via `RCC_ENDPOINT_*` env vars or local `settings.yaml`
-  - telemetry is disabled by default (no data sent anywhere)
+  - existing users relying on Robocorp Control Room must configure endpoints explicitly; previous defaults are no longer applied
+  - configure via `RCC_ENDPOINT_*` env vars or local `settings.yaml`
+  - example: `RCC_ENDPOINT_CLOUD_API=https://api.eu1.robocorp.com/`
+  - telemetry is fully disabled by default; RCC does **not** send any metrics or usage data anywhere
+- **migration**: existing Robocorp Control Room users must configure endpoints to restore cloud functionality
+  - without explicit configuration, cloud/feedback/telemetry commands will no longer reach Robocorp services
+  - set `RCC_ENDPOINT_CLOUD_API`, `RCC_ENDPOINT_TELEMETRY`, etc. or use a local `settings.yaml`
 - feature: default templates now pulled from community-maintained repository
   - templates URL changed from Robocorp to https://github.com/joshyorko/robot-templates/releases/
   - enables community contributions and faster template updates
+  - Robocorp users can restore old behavior by setting `RCC_AUTOUPDATES_TEMPLATES` to the previous templates.yaml URL
 - feature: new `RCC_AUTOUPDATES_TEMPLATES` environment variable
   - allows overriding the templates.yaml URL at runtime
   - enables custom template registries for enterprise deployments
 - feature: RCC version check now uses GitHub releases
   - version index (index.json) now fetched from GitHub releases instead of Robocorp
+  - default index.json lives under GitHub Releases assets for `joshyorko/rcc`
   - new `RCC_AUTOUPDATES_RCC_INDEX` environment variable to override the index URL
   - GitHub workflow automatically generates and publishes index.json on each release
-- feature: network diagnostics (`rcc configuration netdiag`) now test universal infrastructure
+- feature: network diagnostics (`rcc configuration netdiag`) now test public core endpoints (GitHub/PyPI/Conda)
   - checks GitHub (github.com, api.github.com, raw.githubusercontent.com)
   - checks PyPI (pypi.org, files.pythonhosted.org)
   - checks Conda (conda.anaconda.org)
   - removed Robocorp-specific endpoint checks
 - feature: updated autoupdate URLs to yorko-io organization placeholders
   - assistant, workforce-agent, setup-utility URLs point to yorko-io GitHub repos
+  - these are placeholders while yorko-io repositories and release binaries are finalized
 - docs: updated README.md and CLAUDE.md with new environment variables
 - docs: completely rewritten `rcc man tutorial` with modern workflow
   - quick start guide with step-by-step instructions
