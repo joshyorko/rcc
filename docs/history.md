@@ -1,45 +1,150 @@
-# History of rcc
+# History of RCC
 
-This is quick recap of rcc history. Just major topics and breaking changes.
-There has already been 500+ commits, with lots of fixes and minor improvements,
-and they are not listed here.
+RCC (Repeatable, Contained Code) is a tool for creating, managing, and
+distributing self-contained Python automation packages with isolated environments.
 
-## Community Fork Era: November 2024 onwards
+> "Repeatable, movable and isolated Python environments for your automation."
 
-### The Closure
+This document traces RCC's journey from its origins solving Python dependency
+hell, through its evolution as the backbone of Robocorp's automation platform,
+to its current life as a community-maintained open source project.
 
-In October 2024, Robocorp was acquired by Sema4.ai. On November 11, 2024,
-Sema4.ai re-released RCC under a proprietary EULA, effectively closing the
-source code that had been open under Apache 2.0 since November 2020.
+---
 
-The last open source version was **v18.5.0** (October 25, 2024).
+## The Problem RCC Was Built to Solve
 
-robocorp.com now redirects to sema4.ai, and the robocorp/rcc repository
-contains only the closed-source EULA-licensed version.
+Before RCC, Python automation faced a fundamental challenge: **dependency hell**.
 
-### The Community Response
+- "Works on my machine" was the norm, not the exception
+- System Python installations conflicted with project requirements
+- Deploying automation to new machines required manual environment setup
+- Teams couldn't reliably share automation packages
+- Virtual environments helped but weren't portable or self-contained
 
-The community maintained access to the open source codebase through forks:
+RCC solved this by providing:
 
-- **mikaukora/rcc** - Original public mirror (November 2020), 97 forks
-- **vjmp/rcc** - Juha Pohjalainen's fork (July 2024), 531 commits of full history
-- **admariner/rcc** - Active fork (May 2021), 540 commits synced through October 2024
-- **joshyorko/rcc** - Current community fork (September 2025)
+- **No Python required** - RCC embeds everything needed to run
+- **Exact reproducibility** - Same Python version, same packages, every time
+- **Portable packages** - Move automation between machines without setup
+- **Isolated environments** - No conflicts with system or other projects
+- **Cross-platform** - Windows, macOS, Linux from same configuration
 
-On January 17, 2025, Juha Pohjalainen (vjmp), the original primary author of RCC,
-removed telemetry and metrics code from his personal fork with the commit:
-"Removed feedback, metrics, and process tree (performance improvement)."
+---
 
-### Version 18.12.x: Community Fork (December 2025 onwards)
+## The Robocorp Era (2019-2024)
 
-This fork (joshyorko/rcc, moving to yorko-io/rcc) continues RCC development
-as a vendor-neutral, community-maintained project:
+### Founding Vision (2019)
 
-- RCC fully decoupled from Robocorp/Sema4.ai infrastructure by default
-- All cloud endpoints empty by default (telemetry disabled)
-- Templates served from community GitHub repository
-- Version checking via GitHub releases
-- Users can still configure Robocorp endpoints if needed via environment variables
+Robocorp was founded in 2019 with a mission to bring open source to the
+Robotic Process Automation (RPA) industry, which was dominated by expensive,
+proprietary tools like UiPath and Automation Anywhere.
+
+The vision: democratize automation by making it accessible to developers
+through open source tools and Python—a language they already knew.
+
+### Birth of "Conman" (April 2020)
+
+On April 1, 2020, Juha Pohjalainen made the first commit to a private repo
+called "conman" (short for "conda manager"). The goal was simple: manage
+conda environments reliably for automation packages.
+
+On May 8, 2020, the project was renamed to **RCC** (Robocorp Control Center,
+later "Repeatable, Contained Code").
+
+### Going Open Source (November 2020)
+
+On November 10, 2020, Robocorp open-sourced RCC under the Apache 2.0 license.
+The commit message read:
+
+> "Initial commit for open sourced rcc. This is snapshot from original
+> development repo. All new development will continue in this new open
+> rcc repository."
+
+This was version 5.x, and RCC already had ~120 commits of development behind it.
+
+### The Holotree Revolution (2021)
+
+Version 11.x introduced **Holotree**, a completely new approach to environment
+management that became RCC's defining feature:
+
+- Immutable, content-addressed environment storage
+- Shared environments across users on the same machine
+- Air-gapped deployment via hololib.zip exports
+- Dramatic performance improvements for environment creation
+
+Holotree made RCC not just a convenience tool but a production-grade
+environment management system.
+
+### The Agentic Pivot (2023-2024)
+
+As AI capabilities exploded, Robocorp recognized a shift in the automation
+landscape. Traditional RPA (clicking buttons, scraping screens) was giving
+way to AI agents that could reason, plan, and take actions.
+
+In March 2023, Robocorp began developing **Action Server** (github.com/sema4ai/actions),
+a platform for creating AI actions and tools. The very first feature commits
+included "Vendor rcc into CLI"—RCC became the environment backbone for AI agents.
+
+Action Server allowed developers to:
+- Write Python functions decorated with `@action` or `@tool`
+- Automatically expose them as APIs for AI agents
+- Connect to OpenAI GPTs, LangChain, MCP, and other AI platforms
+- All while RCC handled the Python environment complexity
+
+Version 18.x of RCC added dual product strategy support (`--robocorp` and
+`--sema4ai` flags), preparing for the transition.
+
+### The Acquisition and Closure (October-November 2024)
+
+In October 2024, Robocorp was acquired by Sema4.ai. robocorp.com now redirects
+to sema4.ai.
+
+On November 11, 2024, Sema4.ai re-released RCC under a proprietary EULA,
+ending four years of open source development. The last open source version
+was **v18.5.0** (October 25, 2024).
+
+---
+
+## The Community Fork Era (2024-Present)
+
+### Preserving the Open Source Legacy
+
+The community maintained access to the open source codebase through forks
+created before the closure:
+
+| Fork | Created | Commits | Status |
+|------|---------|---------|--------|
+| mikaukora/rcc | Nov 2020 | 19 | Original public mirror, 97+ forks |
+| admariner/rcc | May 2021 | 540 | Synced through Oct 2024 |
+| vjmp/rcc | Jul 2024 | 531 | Original author's personal fork |
+| joshyorko/rcc | Sep 2025 | Active | Current community fork |
+
+### The Original Author's Statement
+
+On January 17, 2025, Juha Pohjalainen (@vjmp)—who wrote 495 of the 531 commits
+in RCC's history—made a significant commit to his personal fork:
+
+> "Removed feedback, metrics, and process tree (performance improvement)."
+
+The primary author of RCC surgically removed the telemetry code he himself
+had written, signaling a clear stance on the direction of the tool.
+
+### Community Fork: v18.6.0+ (2025 onwards)
+
+This fork (joshyorko/rcc → yorko-io/rcc) continues RCC development as a
+**vendor-neutral, community-maintained project**:
+
+- **Decoupled by default** - No Robocorp/Sema4.ai infrastructure dependencies
+- **Telemetry disabled** - No metrics sent anywhere
+- **Community templates** - Served from community GitHub repositories
+- **Version checking via GitHub** - No proprietary download servers
+- **Configurable** - Users can still point to any control room via env vars
+
+The mission remains unchanged from what Juha wrote in the first open source
+commit: provide repeatable, movable, and isolated Python environments for
+automation—now including AI agents.
+
+---
 
 ## Original Contributors (Open Source Era 2020-2024)
 
@@ -47,29 +152,27 @@ The following individuals contributed to RCC during its open source period:
 
 | Contributor | GitHub | Commits | Notable Work |
 |-------------|--------|---------|--------------|
-| Juha Pohjalainen | @vjmp | 495 | Primary author, created "conman"/rcc |
+| Juha Pohjalainen | @vjmp | 495 | Primary author, architect of holotree |
 | Kari Harju | @kariharju | 21 | Initial repo setup, infrastructure |
 | Fabio Zadrozny | @fabioz | ~10 | v18.x features, Windows support |
 | Antti Karjalainen | @aikarjal | 5 | Documentation, README |
 | Raivo Link | @raivolink | 2 | Documentation updates |
-| Sampo Ahokas | @sahokas | 1 | Documentation, EULA notice |
+| Sampo Ahokas | @sahokas | 1 | Documentation |
 | And others | | | cmin764, mchece, jaukia, machafulla, orlof, SoloJacobs |
 
-## Robocorp Era: Version 12.x through 18.5.x (2021-2024)
+---
 
-Versions 12 through 18.5 continued active development under Robocorp with
-major features including:
+## Version History Summary
 
-- Version 18.x: Sema4.ai/Robocorp dual product strategy, batch metrics
-- Version 17.x: uv support experiments, package.yaml as conda.yaml replacement,
-  micromamba upgrades, improved cleanup procedures
-- Version 16.x: Various improvements and bug fixes
-- Version 15.x: Continued holotree improvements
-- Version 14.x: Performance optimizations
-- Version 13.x: Stability improvements
-- Version 12.x: Post-holotree maturation
+For the detailed version-by-version breakdown, see below. Here's the high-level arc:
 
-For detailed version 12-18.5 changes, see `docs/changelog.md`.
+| Era | Versions | Dates | Focus |
+|-----|----------|-------|-------|
+| Private Development | 0.x-4.x | Apr-Nov 2020 | Core conda/environment management |
+| Early Open Source | 5.x-10.x | Nov 2020-Sep 2021 | Community features, stabilization |
+| Holotree Era | 11.x-17.x | Sep 2021-May 2024 | Revolutionary environment caching |
+| Agentic Pivot | 18.0-18.5 | Jun-Oct 2024 | Sema4.ai integration, AI support |
+| Community Fork | 18.6+ | Sep 2025- | Vendor-neutral, decoupled |
 
 ## Version 11.x: between Sep 6, 2021 and ...
 
