@@ -4,6 +4,73 @@ This is quick recap of rcc history. Just major topics and breaking changes.
 There has already been 500+ commits, with lots of fixes and minor improvements,
 and they are not listed here.
 
+## Community Fork Era: November 2024 onwards
+
+### The Closure
+
+In October 2024, Robocorp was acquired by Sema4.ai. On November 11, 2024,
+Sema4.ai re-released RCC under a proprietary EULA, effectively closing the
+source code that had been open under Apache 2.0 since November 2020.
+
+The last open source version was **v18.5.0** (October 25, 2024).
+
+robocorp.com now redirects to sema4.ai, and the robocorp/rcc repository
+contains only the closed-source EULA-licensed version.
+
+### The Community Response
+
+The community maintained access to the open source codebase through forks:
+
+- **mikaukora/rcc** - Original public mirror (November 2020), 97 forks
+- **vjmp/rcc** - Juha Pohjalainen's fork (July 2024), 531 commits of full history
+- **admariner/rcc** - Active fork (May 2021), 540 commits synced through October 2024
+- **joshyorko/rcc** - Current community fork (September 2025)
+
+On January 17, 2025, Juha Pohjalainen (vjmp), the original primary author of RCC,
+removed telemetry and metrics code from his personal fork with the commit:
+"Removed feedback, metrics, and process tree (performance improvement)."
+
+### Version 18.12.x: Community Fork (December 2025 onwards)
+
+This fork (joshyorko/rcc, moving to yorko-io/rcc) continues RCC development
+as a vendor-neutral, community-maintained project:
+
+- RCC fully decoupled from Robocorp/Sema4.ai infrastructure by default
+- All cloud endpoints empty by default (telemetry disabled)
+- Templates served from community GitHub repository
+- Version checking via GitHub releases
+- Users can still configure Robocorp endpoints if needed via environment variables
+
+## Original Contributors (Open Source Era 2020-2024)
+
+The following individuals contributed to RCC during its open source period:
+
+| Contributor | GitHub | Commits | Notable Work |
+|-------------|--------|---------|--------------|
+| Juha Pohjalainen | @vjmp | 495 | Primary author, created "conman"/rcc |
+| Kari Harju | @kariharju | 21 | Initial repo setup, infrastructure |
+| Fabio Zadrozny | @fabioz | ~10 | v18.x features, Windows support |
+| Antti Karjalainen | @aikarjal | 5 | Documentation, README |
+| Raivo Link | @raivolink | 2 | Documentation updates |
+| Sampo Ahokas | @sahokas | 1 | Documentation, EULA notice |
+| And others | | | cmin764, mchece, jaukia, machafulla, orlof, SoloJacobs |
+
+## Robocorp Era: Version 12.x through 18.5.x (2021-2024)
+
+Versions 12 through 18.5 continued active development under Robocorp with
+major features including:
+
+- Version 18.x: Sema4.ai/Robocorp dual product strategy, batch metrics
+- Version 17.x: uv support experiments, package.yaml as conda.yaml replacement,
+  micromamba upgrades, improved cleanup procedures
+- Version 16.x: Various improvements and bug fixes
+- Version 15.x: Continued holotree improvements
+- Version 14.x: Performance optimizations
+- Version 13.x: Stability improvements
+- Version 12.x: Post-holotree maturation
+
+For detailed version 12-18.5 changes, see `docs/changelog.md`.
+
 ## Version 11.x: between Sep 6, 2021 and ...
 
 Version "eleven" is work in progress and has already 100+ commits, and at least
@@ -84,7 +151,8 @@ Version "nine" had 101 commits, and had following improvements:
   means faster startup time for assistants
 - environments are activated once, on creation (stored on `rcc_activate.json`)
 - installation plan is also stored as `rcc_plan.log` inside environment and
-  there is command to show it
+  there is command to show itMika Kaukoranta
+
 - introduction of `settings.yaml` file for configurable items
 - introduced holotree command subtree into source code base
 - holotree implementation is build parallel to existing environment management
