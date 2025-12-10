@@ -24,8 +24,7 @@ type (
 )
 
 func rccReleaseInfoURL() string {
-	// https://downloads.robocorp.com/rcc/releases/index.json
-	return settings.Global.DownloadsLink("/rcc/releases/index.json")
+	return settings.Global.RccIndexURL()
 }
 
 func rccVersionsJsonPart() string {

@@ -1,4 +1,82 @@
 # rcc change log
+## v18.12.0 (date: 09.12.2025)
+
+### Breaking Changes
+
+- **breaking**: RCC is now fully decoupled from Robocorp infrastructure by default
+  - all cloud endpoints (cloud-api, cloud-linking, cloud-ui, telemetry, issues) are empty by default
+  - existing users relying on Robocorp Control Room must configure endpoints explicitly; previous defaults are no longer applied
+  - configure via `RCC_ENDPOINT_*` env vars or local `settings.yaml`
+  - example: `RCC_ENDPOINT_CLOUD_API=https://api.eu1.robocorp.com/`
+  - telemetry is fully disabled by default; RCC does **not** send any metrics or usage data anywhere
+- **migration**: existing Robocorp Control Room users must configure endpoints to restore cloud functionality
+  - without explicit configuration, cloud/feedback/telemetry commands will no longer reach Robocorp services
+  - set `RCC_ENDPOINT_CLOUD_API`, `RCC_ENDPOINT_TELEMETRY`, etc. or use a local `settings.yaml`
+
+### New Features
+
+- feature: default templates now pulled from community-maintained repository
+  - templates URL changed from Robocorp to https://github.com/joshyorko/robot-templates/releases/
+  - enables community contributions and faster template updates
+  - Robocorp users can restore old behavior by setting `RCC_AUTOUPDATES_TEMPLATES` to the previous templates.yaml URL
+- feature: new `RCC_AUTOUPDATES_TEMPLATES` environment variable
+  - allows overriding the templates.yaml URL at runtime
+  - enables custom template registries for enterprise deployments
+- feature: RCC version check now uses GitHub releases
+  - version index (index.json) now fetched from GitHub releases instead of Robocorp
+  - default index.json lives under GitHub Releases assets for `joshyorko/rcc`
+  - new `RCC_AUTOUPDATES_RCC_INDEX` environment variable to override the index URL
+  - GitHub workflow automatically generates and publishes index.json on each release
+- feature: network diagnostics (`rcc configuration netdiag`) now test public core endpoints (GitHub/PyPI/Conda)
+  - checks GitHub (github.com, api.github.com, raw.githubusercontent.com)
+  - checks PyPI (pypi.org, files.pythonhosted.org)
+  - checks Conda (conda.anaconda.org)
+  - removed Robocorp-specific endpoint checks
+- feature: updated autoupdate URLs to yorko-io organization placeholders
+  - assistant, workforce-agent, setup-utility URLs point to yorko-io GitHub repos
+  - these are placeholders while yorko-io repositories and release binaries are finalized
+
+### Documentation
+
+This release includes significant documentation improvements to help the community understand RCC's architecture and roadmap:
+
+- docs: **new `docs/history.md`** — comprehensive history of RCC from origins to community fork
+  - traces RCC's evolution through 6 distinct eras (v0.x Foundation through v18.6.0+ Community Fork)
+  - documents the lineage of community forks (mikaukora → admariner → vjmp → joshyorko → yorko-io)
+  - explains the "This Fork's Thesis" — why this fork exists and what it aims to accomplish
+  - positions RCC using the "Git for environments" mental model (RCC=Git, Holotree=object database, rccremote=origin)
+- docs: **new `docs/roadmap.md`** — concrete development roadmap for the community fork
+  - outlines 5 phases: Stabilization, rccremote UX Revamp, "Git for Environments" Mental Model, Control Room Foundation, Agent Integration
+  - documents what already exists (rccremote binary, `rcc ht pull`, env vars) vs. what's proposed
+  - includes tables of existing holotree commands and feature areas
+  - defines explicit non-goals to keep the project focused
+- docs: **new `docs/holotree.md`** — deep technical documentation of RCC's crown jewel
+  - Part I: Why Holotree is beautiful — architecture, content addressing, SipHash-128, relocation markers, catalog format, delta transfers
+  - Part II: Why Holotree is fast — restore vs build (15 min → 10 sec), parallel workers, dirty tracking, layer optimization
+  - Part III: What's wrong — discoverability, no push, catalog versioning, no GC knobs, opaque errors, single-writer limitation
+  - Part IV: How we plan to improve — documentation, `rcc remote` commands, Git-like UX, push protocol
+  - State of the Art appendix — compares Holotree to Nix, Docker, OSTree, uv, restic, pixi/rattler, IPFS
+  - Includes ranked improvement ideas (high impact: reference counting GC, hardlink restoration, better errors)
+  - Full source file reference and command reference tables
+- docs: updated README.md and CLAUDE.md with new environment variables
+- docs: completely rewritten `rcc man tutorial` with modern workflow
+  - quick start guide with step-by-step instructions
+  - documents all available templates (python, browser, workitems, assistant)
+  - covers essential commands for running, environment management, and diagnostics
+  - includes project structure examples (robot.yaml, conda.yaml)
+  - adds pro tips including uv for faster builds
+  - updated repository link to joshyorko/rcc
+
+### Bug Fixes
+
+- fix: `rcc feedback issue --dryrun` now works without issues endpoint configured
+  - dryrun mode generates and displays the report structure without requiring an endpoint
+
+### Testing
+
+- tests: updated unit tests to expect empty default endpoints
+- tests: updated robot_tests/settings.yaml with rcc-index stub for test isolation
+
 ## v18.11.0 (date: 03.12.2025)
 
 - feature: switch micromamba source to official conda-forge releases

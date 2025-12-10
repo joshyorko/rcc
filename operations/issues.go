@@ -74,7 +74,7 @@ func virtualName(filename string) (string, error) {
 
 func ReportIssue(email, robotFile, reportFile string, attachmentsFiles []string, dryrun bool) error {
 	issueHost := settings.Global.IssuesURL()
-	if len(issueHost) == 0 {
+	if len(issueHost) == 0 && !dryrun {
 		return nil
 	}
 	cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.submit.issue", common.Version)

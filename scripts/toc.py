@@ -18,6 +18,7 @@ IGNORE_LIST = ("changelog.md", "toc.md", "BUILD.md", "README.md")
 PRIORITY_LIST = (
     "docs/usecases.md",
     "docs/features.md",
+    "docs/holotree.md",
     "docs/recipes.md",
     "docs/profile_configuration.md",
     "docs/environment-caching.md",
@@ -26,6 +27,7 @@ PRIORITY_LIST = (
     "docs/troubleshooting.md",
     "docs/vocabulary.md",
     "docs/history.md",
+    "docs/roadmap.md",
 )
 
 
