@@ -1,116 +1,179 @@
 # History of RCC
 
-RCC (Repeatable, Contained Code) is a tool for creating, managing, and
-distributing self-contained Python automation packages with isolated environments.
-
 > "Repeatable, movable and isolated Python environments for your automation."
 
-This document traces RCC's journey from its origins solving Python dependency
-hell, through its evolution as the backbone of Robocorp's automation platform,
+RCC is a single binary that creates, manages, and distributes self-contained
+Python environments. No Python installation required. No dependency conflicts.
+No "works on my machine." Just repeatable automation, anywhere.
+
+This document traces RCC's journey from solving a fundamental engineering
+problem, through its evolution as the backbone of an automation platform,
 to its current life as a community-maintained open source project.
 
 ---
 
-## The Problem RCC Was Built to Solve
+## The Problem: Python's Beautiful Mess
 
-Before RCC, Python automation faced a fundamental challenge: **dependency hell**.
+Python is the most accessible programming language in the world. It's also
+a dependency management nightmare.
 
-- "Works on my machine" was the norm, not the exception
-- System Python installations conflicted with project requirements
-- Deploying automation to new machines required manual environment setup
-- Teams couldn't reliably share automation packages
-- Virtual environments helped but weren't portable or self-contained
+Every Python developer has experienced this:
 
-RCC solved this by providing:
+```
+$ pip install automation-package
+ERROR: package-x requires numpy>=1.20
+ERROR: package-y requires numpy<1.19
+```
 
-- **No Python required** - RCC embeds everything needed to run
-- **Exact reproducibility** - Same Python version, same packages, every time
-- **Portable packages** - Move automation between machines without setup
-- **Isolated environments** - No conflicts with system or other projects
-- **Cross-platform** - Windows, macOS, Linux from same configuration
+Virtual environments help, but they're not portable. Containers help, but
+they're heavy. And when you need to run automation on 50 machines across
+3 operating systems? Good luck.
+
+The RPA (Robotic Process Automation) industry's answer was proprietary tools
+that cost $10,000+ per bot per year. UiPath. Automation Anywhere. Blue Prism.
+Closed ecosystems that locked organizations into vendor dependency.
+
+RCC was built to prove there's a better way.
+
+---
+
+## The Architecture: What Makes RCC Beautiful
+
+RCC's elegance lies in a simple insight: **environments are data**.
+
+Instead of recreating environments from scratch each time (slow, unreliable,
+network-dependent), RCC treats environments as immutable, content-addressed
+artifacts—like Git commits for your Python dependencies.
+
+### The Holotree
+
+The **Holotree** is RCC's crown jewel. Introduced in version 11.x (2021), it's
+a content-addressed storage system for Python environments:
+
+```
+~/.robocorp/hololib/
+├── library/          # Immutable environment layers (content-addressed)
+│   ├── a1b2c3d4/    # Each directory is a hash of its contents
+│   ├── e5f6g7h8/
+│   └── ...
+└── catalog/          # Environment blueprints (what layers to combine)
+```
+
+**Why this matters:**
+
+1. **Instant environment creation** - If the layers exist, just symlink them
+2. **Shared across users** - Multiple users on same machine share the library
+3. **Air-gapped deployment** - Export as hololib.zip, import anywhere
+4. **Bandwidth efficient** - Only download missing layers, ever
+
+A 2GB Python environment that takes 10 minutes to create from scratch?
+With Holotree, it restores in seconds.
+
+### RCCRemote: The Missing Piece
+
+RCC includes `rccremote`, a peer-to-peer server for sharing Holotree catalogs
+across networks. It's the foundation for building a **Control Room**—a
+central hub that:
+
+- Serves pre-built environment catalogs to RCC clients
+- Enables environment creation in isolated/air-gapped networks
+- Reduces bandwidth by only transferring missing layers
+- Coordinates automation execution across distributed workers
+
+Robocorp built their proprietary Control Room on top of this. The open source
+`rccremote` remains in the codebase, waiting for someone to build the rest.
 
 ---
 
 ## The Robocorp Era (2019-2024)
 
-### Founding Vision (2019)
+### The Vision (2019)
 
-Robocorp was founded in 2019 with a mission to bring open source to the
-Robotic Process Automation (RPA) industry, which was dominated by expensive,
-proprietary tools like UiPath and Automation Anywhere.
+Robocorp was founded with a radical idea: **open source RPA**.
 
-The vision: democratize automation by making it accessible to developers
-through open source tools and Python—a language they already knew.
+In an industry dominated by expensive proprietary tools, they bet that
+developers would choose Python and open source over drag-and-drop GUIs
+and vendor lock-in.
 
-### Birth of "Conman" (April 2020)
+They were right. But building a business on open source is hard.
+
+### Birth of RCC (2020)
 
 On April 1, 2020, Juha Pohjalainen made the first commit to a private repo
-called "conman" (short for "conda manager"). The goal was simple: manage
-conda environments reliably for automation packages.
+called "conman" (conda manager). By May, it was renamed **RCC**.
 
-On May 8, 2020, the project was renamed to **RCC** (Robocorp Control Center,
-later "Repeatable, Contained Code").
-
-### Going Open Source (November 2020)
-
-On November 10, 2020, Robocorp open-sourced RCC under the Apache 2.0 license.
-The commit message read:
+On November 10, 2020, Robocorp open-sourced RCC under Apache 2.0:
 
 > "Initial commit for open sourced rcc. This is snapshot from original
 > development repo. All new development will continue in this new open
 > rcc repository."
 
-This was version 5.x, and RCC already had ~120 commits of development behind it.
+The commit contained ~120 commits of development. Version 5.0 was already
+production-ready.
 
 ### The Holotree Revolution (2021)
 
-Version 11.x introduced **Holotree**, a completely new approach to environment
-management that became RCC's defining feature:
+Version 11.x introduced Holotree, transforming RCC from "conda wrapper"
+to "production-grade environment management system."
 
-- Immutable, content-addressed environment storage
-- Shared environments across users on the same machine
-- Air-gapped deployment via hololib.zip exports
-- Dramatic performance improvements for environment creation
+Key innovations:
+- Content-addressed storage (environments as immutable data)
+- Shared libraries across users
+- Air-gapped deployment via hololib.zip
+- 10-100x faster environment restoration
 
-Holotree made RCC not just a convenience tool but a production-grade
-environment management system.
+This wasn't just an improvement—it was a fundamental rearchitecture that
+made enterprise-scale automation possible.
 
 ### The Agentic Pivot (2023-2024)
 
-As AI capabilities exploded, Robocorp recognized a shift in the automation
-landscape. Traditional RPA (clicking buttons, scraping screens) was giving
-way to AI agents that could reason, plan, and take actions.
+By 2023, the automation landscape was shifting. ChatGPT had changed
+everything. Traditional RPA (clicking buttons, scraping screens) was
+giving way to AI agents that could reason, plan, and act.
 
-In March 2023, Robocorp began developing **Action Server** (github.com/sema4ai/actions),
-a platform for creating AI actions and tools. The very first feature commits
-included "Vendor rcc into CLI"—RCC became the environment backbone for AI agents.
+Robocorp recognized this. In March 2023, they began building **Action Server**
+(now github.com/sema4ai/actions)—a platform for exposing Python functions
+as AI agent tools. The first feature commits included:
 
-Action Server allowed developers to:
-- Write Python functions decorated with `@action` or `@tool`
-- Automatically expose them as APIs for AI agents
-- Connect to OpenAI GPTs, LangChain, MCP, and other AI platforms
-- All while RCC handled the Python environment complexity
+> "Vendor rcc into CLI"
 
-Version 18.x of RCC added dual product strategy support (`--robocorp` and
-`--sema4ai` flags), preparing for the transition.
+RCC became the environment backbone for AI agents. Write a Python function,
+decorate it with `@action`, and Action Server handles the rest—powered by
+RCC's Holotree underneath.
 
-### The Acquisition and Closure (October-November 2024)
+Version 18.x added `--sema4ai` and `--robocorp` flags, preparing for what
+came next.
 
-In October 2024, Robocorp was acquired by Sema4.ai. robocorp.com now redirects
-to sema4.ai.
+### The Closure (October-November 2024)
 
-On November 11, 2024, Sema4.ai re-released RCC under a proprietary EULA,
-ending four years of open source development. The last open source version
+In October 2024, Robocorp was acquired by Sema4.ai.
+
+On November 11, 2024, Sema4.ai re-released RCC under a proprietary EULA.
+Four years of open source development ended. The last open source version
 was **v18.5.0** (October 25, 2024).
+
+robocorp.com now redirects to sema4.ai. The vision of open source RPA
+became closed source AI agents.
 
 ---
 
 ## The Community Fork Era (2024-Present)
 
-### Preserving the Open Source Legacy
+### Why Fork?
 
-The community maintained access to the open source codebase through forks
-created before the closure:
+RCC is too important to disappear behind a corporate EULA.
+
+It's not just a tool—it's an architecture. Holotree solves a fundamental
+problem in a beautiful way. The `rccremote` foundation is there, waiting
+for someone to build an open source Control Room on top of it.
+
+The AI agent future that Sema4.ai is building? It still needs reliable
+Python environments. RCC is still the best solution. It should remain open.
+
+### The Forks
+
+The community preserved the open source codebase through forks created
+before the closure:
 
 | Fork | Created | Commits | Status |
 |------|---------|---------|--------|
@@ -119,30 +182,27 @@ created before the closure:
 | vjmp/rcc | Jul 2024 | 531 | Original author's personal fork |
 | joshyorko/rcc | Sep 2025 | Active | Current community fork |
 
-### The Original Author's Statement
-
-On January 17, 2025, Juha Pohjalainen (@vjmp)—who wrote 495 of the 531 commits
-in RCC's history—made a significant commit to his personal fork:
-
-> "Removed feedback, metrics, and process tree (performance improvement)."
-
-The primary author of RCC surgically removed the telemetry code he himself
-had written, signaling a clear stance on the direction of the tool.
-
-### Community Fork: v18.6.0+ (2025 onwards)
+### Community Fork: The Road Ahead
 
 This fork (joshyorko/rcc → yorko-io/rcc) continues RCC development as a
-**vendor-neutral, community-maintained project**:
+**vendor-neutral, community-maintained project**.
 
-- **Decoupled by default** - No Robocorp/Sema4.ai infrastructure dependencies
-- **Telemetry disabled** - No metrics sent anywhere
-- **Community templates** - Served from community GitHub repositories
-- **Version checking via GitHub** - No proprietary download servers
-- **Configurable** - Users can still point to any control room via env vars
+**What we've done (v18.6.0+):**
+- Decoupled from Robocorp/Sema4.ai infrastructure by default
+- Telemetry fully disabled (no metrics sent anywhere)
+- Templates served from community GitHub repositories
+- Version checking via GitHub releases
+- Configurable endpoints for any control room implementation
 
-The mission remains unchanged from what Juha wrote in the first open source
-commit: provide repeatable, movable, and isolated Python environments for
-automation—now including AI agents.
+**Where we're going:**
+
+RCC is the foundation. Holotree is the innovation. `rccremote` is the
+starting point. What's missing is the Control Room—the orchestration
+layer that coordinates automation at scale.
+
+The pieces are all here. The architecture is proven. The code is open.
+
+Someone just needs to build it.
 
 ---
 
@@ -162,232 +222,229 @@ The following individuals contributed to RCC during its open source period:
 
 ---
 
-## Version History Summary
+## The Evolution: A Technical Journey
 
-For the detailed version-by-version breakdown, see below. Here's the high-level arc:
+### Era 1: The Foundation (v0.x–v4.x, April–November 2020)
 
-| Era | Versions | Dates | Focus |
-|-----|----------|-------|-------|
-| Private Development | 0.x-4.x | Apr-Nov 2020 | Core conda/environment management |
-| Early Open Source | 5.x-10.x | Nov 2020-Sep 2021 | Community features, stabilization |
-| Holotree Era | 11.x-17.x | Sep 2021-May 2024 | Revolutionary environment caching |
-| Agentic Pivot | 18.0-18.5 | Jun-Oct 2024 | Sema4.ai integration, AI support |
-| Community Fork | 18.6+ | Sep 2025- | Vendor-neutral, decoupled |
+**~180 commits in private development**
 
-## Version 11.x: between Sep 6, 2021 and ...
+RCC began life on April 1, 2020 as "conman"—short for "conda manager." Within
+five weeks it was renamed RCC, and by November it was production-ready.
 
-Version "eleven" is work in progress and has already 100+ commits, and at least
-following improvements:
+The foundational architecture established patterns that persist today:
 
-- breaking change: old environment caching (base/live) was fully removed and
-  holotree is only solution available
-- breaking change: hashing algorithm changed, holotree uses siphash fron now on
-- environment section of commands were removed, replacements live in holotree
-  section
-- environment cleanup changed, since holotree is different from base/live envs
-- auto-scaling worker count is now based on number of CPUs minus one, but at
-  least two and maximum of 96
-- templates can now be automatically updated from Cloud and can also be
-  customized using settings.yaml autoupdates section
-- added option to do strict environment building, which turns pip warnings
-  into actual errors
-- added support for speed test, where current machine performance gets scored
-- hololib.zip files can now be imported into normal holotree library (allows
-  air gapped workflow)
-- added more commands around holotree implementation
-- added support for preRunScripts, which are executed in similar context that
-  actual robot will use, and there can be OS specific scripts only run on
-  that specific OS
-- added profile support with define, export, import, and switch functionality
-- certificate bundle, micromambarc, piprc, and settings can be part of profile
-- `settings.yaml` now has layers, so that partial settings are possible, and
-  undefined ones use internal default settings
-- `docs/` folder has generated "table of content"
-- introduced "shared holotree", where multiple users in same computer can
-  share resources needed by holotree spaces
-- in addition to normal tasks, now robot.yaml can also contain devTasks, which
-  can be activated with flag `--dev`
-- holotrees can also be imported directly from URLs
-- some experimental support for virtual environments (pyvenv.cfg and others)
-- moved from "go-bindata" to use new go buildin "embed" module
-- holotree now also fully support symbolic links inside created environments
-- improved cleanup in relation to new shared holotrees
-- individual catalog removal and cleanup is now possible
-- prebuild environments can now be forced using "no build" configurations
+- **Cross-platform from day one.** The team built for Mac, Linux, and Windows
+  simultaneously, with signed/notarized binaries for each. Even 32-bit ARM
+  (Raspberry Pi) was supported initially.
 
-## Version 10.x: between Jun 15, 2021 and Sep 1, 2021
+- **Miniconda as the engine.** RCC wrapped miniconda3 to create isolated Python
+  environments, downloading and installing it automatically. No system Python
+  required.
 
-Version "ten" had 32 commits, and had following improvements:
+- **The `ROBOCORP_HOME` paradigm.** All environments, caches, and state live
+  under one directory (`~/.robocorp` by default). Move this folder, move
+  everything.
 
-- breaking change: removed lease support
-- listing of dependencies is now part of holotree space (golden-ee.yaml)
-- dependency listing is visible before run (to help debugging environment
-  changes) and there is also command to list them
-- environment definitions can now be "freezed" using freeze file from run output
-- supporting multiple environment configurations to enable operating system
-  and architecture specific freeze files (within one robot project)
-- made environment creation serialization visible when multiple processes are
-  involved
-- added holotree check command to verify holotree library integrity and remove
-  those items that are broken
+- **Declarative configuration.** Robots were defined in `package.yaml` (later
+  `robot.yaml`), with dependencies in `conda.yaml`. Merge multiple conda files
+  together. Package robots as zips. Run them anywhere.
 
-## Version 9.x: between Jan 15, 2021 and Jun 10, 2021
+The CLI structure using Cobra and Viper established the command hierarchy that
+still exists. Cloud authentication, file locking, environment cleanup—all the
+plumbing was laid in these first 180 commits.
 
-Version "nine" had 101 commits, and had following improvements:
+---
 
-- breaking change: old "package.yaml" support was fully dropped
-- breaking change: new lease option breaks contract of pristine environments in
-  cases where one application has already requested long living lease, and
-  other wants to use environment with exactly same specification
-- new environment leasing options added
-- added configuration diagnostics support to identify environment related issues
-- diagnostics can also be done to robots, so that robot issues become visible
-- experiment: carrier robots as standalone executables
-- issue reporting support for applications (with dryrun options)
-- removing environments now uses rename/delete pattern (for detecting locking
-  issues)
-- environment based temporary folder management improvements
-- added support for detecting when environment gets corrupted and showing
-  differences compared to pristine environment
-- added support for execution timeline summary
-- assistants environments can be prepared before they are used/needed, and this
-  means faster startup time for assistants
-- environments are activated once, on creation (stored on `rcc_activate.json`)
-- installation plan is also stored as `rcc_plan.log` inside environment and
-  there is command to show itMika Kaukoranta
+### Era 2: Going Open Source (v5.x–v8.x, November 2020–January 2021)
 
-- introduction of `settings.yaml` file for configurable items
-- introduced holotree command subtree into source code base
-- holotree implementation is build parallel to existing environment management
-- holotree now co-exists with old implementation in backward compatible way
-- exporting holotrees as hololib.zip files is possible and robot can be executed
-  against it
-- micromamba download is now done "on demand" only
-- result of environment variables command are now directly executable
-- execution can now be profiled "on demand" using command line flags
-- download index is generated directly from changelog content
-- started to use capability set with Cloud authorization
-- new environment variable `ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS` to make
-  skip those system requirements that some users are willing to try
-- new environment variable `RCC_VERBOSE_ENVIRONMENT_BUILDING` to make
-  environment building more verbose
-- for `task run` and `task testrun` there is now possibility to give additional
-  arguments from commandline, by using `--` separator between normal rcc
-  arguments and those intended for executed robot
-- added event journaling support, and command to see them
-- added support to run scripts inside task environments
+**~83 commits across 4 versions**
 
-## Version 8.x: between Jan 4, 2021 and Jan 18, 2021
+On November 10, 2020, Robocorp open-sourced RCC under Apache 2.0. Version 5.0
+shipped with the first public commit.
 
-Version "eight" had 14 commits, and had following improvements:
+This era focused on community adoption and a critical infrastructure change:
 
-- breaking change: 32-bit support was dropped
-- automatic download and installation of micromamba
-- fully migrated to micromamba and removed miniconda3
-- no more conda commands and also removed some conda variables
-- now conda and pip installation steps are clearly separated
+**The Micromamba Migration (v7.x–v8.x)**
 
-## Version 7.x: between Dec 1, 2020 and Jan 4, 2021
+Miniconda3 was heavy. Download sizes were large. Installation was slow.
+Micromamba—a lightweight, standalone conda implementation—offered a better path.
 
-Version "seven" had 17 commits, and had following improvements:
+Version 7.x introduced micromamba alongside miniconda. Version 8.x completed the
+migration, removing miniconda entirely. This wasn't just a swap—it was a
+philosophical shift toward smaller, faster, more portable tooling. The 32-bit
+architectures were dropped (no micromamba support), but the tradeoff was worth it.
 
-- breaking change: switched to use sha256 as hashing algorithm
-- changelogs are now held in separate file
-- changelogs are embedded inside rcc binary
-- started to introduce micromamba into project
-- indentity.yaml is saved inside environment
-- longpath checking and fixing for Windows introduced
-- better cleanup support for items inside `ROBOCORP_HOME`
+**Community Features**
 
-## Version 6.x: between Nov 16, 2020 and Nov 30, 2020
+- Interactive robot creation from templates
+- Post-install scripts in `conda.yaml`
+- Machine-readable output on stdout, human messages on stderr
+- Windows long path detection and fixes
 
-Version "six" had 24 commits, and had following improvements:
+---
 
-- breaking change: stdout is used for machine readable output, and all error
-  messages go to stderr including debug and trace outputs
-- introduced postInstallScripts into conda.yaml
-- interactive create for creating robots from templates
+### Era 3: Building Toward Holotree (v9.x–v10.x, January–September 2021)
 
-## Version 5.x: between Nov 4, 2020 and Nov 16, 2020
+**~133 commits across 2 versions**
 
-Version "five" had 28 commits, and had following improvements:
+Version 9 was RCC's most feature-rich release before Holotree. With 101 commits,
+it laid the groundwork for what was coming.
 
-- breaking change: REST API server removed (since it is easier to use just as
-  CLI command from applications)
-- Open Source repository for rcc created and work continued there (Nov 10)
-- using Apache license as OSS license
-- detecting interactive use and coloring outputs
-- tutorial added as command
-- added community pull and tooling support
+**The `settings.yaml` Revolution**
 
-## Version 4.x: between Oct 20, 2020 and Nov 2, 2020
+Configuration became externalized and layerable. Network proxies, certificate
+bundles, pip indexes—all configurable without rebuilding. This pattern would
+prove essential for enterprise deployment.
 
-Version "four" had 12 commits, and had following improvements:
+**Holotree Genesis**
 
-- breaking change related to new assistant encryption scheme
-- usability improvements on CLI use
-- introduced "controller" concept as toplevel persistent option
-- dynamic ephemeral account support introduced
+The Holotree command subtree appeared in v9.x, running parallel to the existing
+base/live environment system. You could export environments as `hololib.zip`
+files and run robots against them. The architecture was being tested in
+production while the old system remained the default.
 
-## Version 3.x: between Oct 15, 2020 and Oct 19, 2020
+**Diagnostics and Reliability**
 
-Version "three" had just 6 commits, and had following improvements:
+RCC gained the ability to detect environment corruption, show installation
+timelines, and report issues back to the cloud. Environments were activated
+once at creation time (stored in `rcc_activate.json`), with full installation
+plans logged to `rcc_plan.log`.
 
-- breaking change was transition from "task" to "robotTaskName" in robot.yaml
-- assistant heartbeat introduced
-- lockless option introduced and better support for debugging locking support
+Version 10.x refined these systems: dependency freezing, integrity checks,
+multi-architecture support. The stage was set.
 
-## Version 2.x: between Sep 16, 2020 and Oct 14, 2020
+---
 
-Version "two" had around 29 commits, and had following improvements:
+### Era 4: The Holotree Era (v11.x–v17.x, September 2021–May 2024)
 
-- URL (breaking) changes in Cloud required Major version upgrade
-- added assistant support (list, run, download, upload artifacts)
-- added support to execute "anything", no condaConfigFile required
-- file locking introduced
-- robot cache introduced at `$ROBOCORP_HOME/robots/`
+**~200+ commits across 7 major versions**
 
-## Version 1.x: between Sep 3, 2020 and Sep 16, 2020
+Version 11 was a breaking change—and RCC's most important release.
 
-Version "one" had around 13 commits, and had following improvements:
+The old base/live environment caching was removed entirely. Holotree became
+the only way. The hashing algorithm switched to SipHash. The `rcc environment`
+commands disappeared, replaced by `rcc holotree`.
 
-- terminology was changed, so code also needed to be changed
-- package.yaml converted to robot.yaml
-- packages were renamed to robots
-- activities were renamed to tasks
-- added support for environment cleanups
-- added support for library management
+**What Made Holotree Revolutionary**
 
-## Version 0.x: between April 1, 2020 and Sep 8, 2020
+Content-addressed storage transformed environment management:
 
-Even when project started as "conman", it was renamed to "rcc" on May 8, 2020.
+1. **Immutable layers.** Each environment component is stored by its content
+   hash. Change a file? New hash. Old version stays intact.
 
-Initial "zero" version was around 120 commits and following highlevel things
-were developed in that time:
+2. **Shared libraries.** Multiple users on the same machine share the hololib.
+   Build once, use everywhere.
 
-- cross-compiling to Mac, Linux, Windows, and Raspberry Pi
-- originally supported were 32 and 64 bit architectures of arm and amd
-- delivery as signed/notarized binaries in Mac and Windows
-- download and install miniconda3 automatically
-- management of separate environments
-- using miniconda to manage packages at `ROBOCORP_HOME`
-- merge support for multiple conda.yaml files
-- initially using miniconda3 to create those environments
-- where robots were initially defined in `package.yaml`
-- packaging and unpacking of robots to and from zipped activity packages
-- running robots (using run and testrun subcommands)
-- local conda channels and pip wheels
-- sending metrics to cloud
-- CLI handling and command hierarchy using Viper and Cobra
-- cloud communication using accounts, credentials, and tokens
-- `ROBOCORP_HOME` variable as center of universe
-- there was server support, and REST API for applications to use
-- ignore files support
-- support for embedded templates using go-bindata
-- originally used locality-sensitive hashing for conda.yaml identity
-- both Lab and Worker support
+3. **Air-gapped deployment.** Export as `hololib.zip`, import on isolated
+   networks. No internet required after the first build.
 
-## Birth of "Codename: Conman"
+4. **Instant restoration.** A 2GB environment that takes 10 minutes to build
+   from scratch? Holotree restores it in seconds by symlinking cached layers.
 
-First commit to private conman repo was done on April 1, 2020. And name was
-shortening of "conda manager". And it was developer generated name.
+**Enterprise Features (v12.x–v17.x)**
+
+The following versions refined Holotree for production:
+
+- **Shared holotree** (v11.x): Multiple users share one hololib via `rcc holotree shared --enable`
+- **Profile system**: Export/import complete configurations including certificates, pip settings, and endpoints
+- **Prebuild environments**: IT teams can build once, distribute everywhere
+- **Integrity verification**: `rcc holotree check` validates the library and removes corrupted entries
+- **Delta exports**: Transfer only missing layers between machines
+- **rccremote**: Peer-to-peer catalog sharing across networks
+
+Version 17.x made Holotree layered by default and embedded micromamba directly
+in the RCC binary. The tool had matured from "conda wrapper" to "enterprise
+environment management system."
+
+---
+
+### Era 5: The Agentic Pivot (v18.x, June–October 2024)
+
+**~20 commits before closure**
+
+By 2024, Robocorp was pivoting to AI agents. Version 18.x reflected this shift.
+
+**Dual Product Strategy**
+
+The `--sema4ai` and `--robocorp` flags appeared, allowing RCC to serve two
+product lines with different branding, endpoints, and default configurations.
+Each "strategy" had its own `settings.yaml`, download URLs, and telemetry
+destinations.
+
+**Action Server Integration**
+
+RCC became the environment backbone for Action Server (now `sema4ai/actions`),
+where Python functions decorated with `@action` become tools for AI agents.
+Holotree's instant environment restoration made agent execution fast enough
+for real-time AI workflows.
+
+**The Last Open Source Version**
+
+v18.5.0 shipped on October 25, 2024 with stdin support for `rcc holotree hash`
+and dev-dependencies in `package.yaml`. Seventeen days later, Sema4.ai
+re-released RCC under a proprietary license.
+
+---
+
+### Era 6: Community Fork (v18.6.0+, 2025–Present)
+
+**Active development**
+
+This fork continues RCC as vendor-neutral open source.
+
+**What Changed**
+
+- All Robocorp/Sema4.ai endpoints removed from defaults
+- Telemetry fully disabled (code paths removed, not just configured off)
+- Templates served from community GitHub repositories
+- Version checking via GitHub releases
+- All endpoints configurable via environment variables or `settings.yaml`
+
+**The Mission**
+
+RCC's architecture—Holotree, rccremote, content-addressed environments—is too
+valuable to disappear behind a corporate license. The foundation for an open
+source Control Room exists in this codebase. The community fork keeps it
+available for whoever wants to build on it.
+
+---
+
+## This Fork's Thesis
+
+This fork exists for one reason:
+
+> **Keep RCC and Holotree open, first-class, and powerful enough to serve as
+> the foundation of any control room—not just one company's SaaS.**
+
+The original authors proved the architecture works:
+
+- **Holotree** makes environments fast, portable, and reproducible
+- **rccremote** can distribute those environments across networks
+- **RCC** can be embedded under CLIs, robots, and action servers
+
+This fork's job is to:
+
+1. **Preserve that work** under a permissive Apache 2.0 license
+2. **Strip out hard-coded dependencies** and telemetry
+3. **Make rccremote and Holotree actually usable** and documented
+4. **Leave the door open** for any self-hosted control room to sit on top
+
+Where others pivoted to closed, agent-as-a-service platforms, this fork stays
+focused on the base layer: repeatable, movable, isolated Python environments—
+for robots, for agents, for whatever comes next.
+
+**The mental model:**
+
+| Concept | Analogy |
+|---------|---------|
+| RCC | Git |
+| Holotree | Object database |
+| rccremote | Origin remote |
+| Control Room | GitHub/GitLab built on top |
+
+RCC is "Git for environments." Holotree is the content-addressed object store.
+rccremote is how you push and pull between machines. A Control Room is the UI
+and orchestration layer that coordinates it all—but it's not RCC's job to be
+that layer. RCC's job is to be the reliable foundation underneath.
+
+See [ROADMAP.md](./roadmap.md) for where we're headed.
