@@ -106,7 +106,7 @@ Environment variables (take precedence over builtin settings):
 - `RCC_AUTOUPDATES_TEMPLATES` - Override the templates.yaml URL for robot templates
 - `RCC_AUTOUPDATES_RCC_INDEX` - Override the index.json URL for version checking
 
-Example (zsh):
+Example (`~/.zshrc`):
 
 ```zsh
 # Point rcc at your own control plane endpoints
@@ -123,11 +123,16 @@ export RCC_ENDPOINT_PYPI="https://pypi.org/simple/"
 export RCC_ENDPOINT_PYPI_TRUSTED="https://pypi.org/"
 export RCC_ENDPOINT_CONDA="https://conda.anaconda.org/"
 
+# Optional: override where rcc checks for updates
+# (defaults shown here; replace with your own mirror/private registry if needed)
+export RCC_AUTOUPDATES_TEMPLATES="https://github.com/joshyorko/robot-templates/releases/latest/download/templates.yaml"
+export RCC_AUTOUPDATES_RCC_INDEX="https://github.com/joshyorko/rcc/releases/latest/download/index.json"
+
 # Validate your overrides
 build/rcc configuration diagnostics --quick --json | jq .
 ```
 
-Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/rcc_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
+Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
 
 ### Notes
 
