@@ -12,87 +12,21 @@ on:
 
     tags:
       - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
+    paths-ignore:
+      - ".github/workflows/**"
+      - ".dagger/**"
 
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - ".github/workflows/**"
+      - ".dagger/**"
 
 permissions:
   contents: read
 
 jobs:
-  changes:
-    name: Detect relevant changes
-    runs-on: ubuntu-latest
-    outputs:
-      run_robot: ${{ steps.decide.outputs.run_robot }}
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Decide whether to run robot tests
-        id: decide
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "event_name=${GITHUB_EVENT_NAME}"
-          echo "ref=${GITHUB_REF}"
-
-          # Release flows always run robot tests (release depends on them).
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]] || [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            echo "run_robot=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          base=""
-          head="${GITHUB_SHA}"
-
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            base="${{ github.event.before }}"
-          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            base="${{ github.event.pull_request.base.sha }}"
-            head="${{ github.event.pull_request.head.sha }}"
-          else
-            # Safe default: run tests.
-            echo "run_robot=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [[ -z "${base}" ]]; then
-            echo "run_robot=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          files=$(git diff --name-only "${base}" "${head}" || true)
-          echo "Changed files:" 
-          echo "${files}" | sed -e 's/^/  - /' || true
-
-          # Empty commits should still exercise CI (run robot tests).
-          if [[ -z "${files}" ]]; then
-            echo "run_robot=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          ignored_only=true
-          while IFS= read -r f; do
-            [[ -z "${f}" ]] && continue
-            if [[ "${f}" == .github/workflows/* || "${f}" == .dagger/* ]]; then
-              continue
-            fi
-            ignored_only=false
-            break
-          done <<< "${files}"
-
-          if [[ "${ignored_only}" == "true" ]]; then
-            echo "Only workflow/.dagger changes detected; skipping robot tests."
-            echo "run_robot=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Non-workflow changes detected; running robot tests."
-            echo "run_robot=true" >> "$GITHUB_OUTPUT"
-          fi
-
   build:
     name: Build RCC
     runs-on: rcc-runner-k8s
@@ -137,9 +71,6 @@ jobs:
   robot:
     name: Robot Tests
     runs-on: ${{ matrix.os }}
-    needs:
-      - changes
-    if: needs.changes.outputs.run_robot == 'true'
     strategy:
       fail-fast: false
       matrix:
