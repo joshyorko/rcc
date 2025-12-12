@@ -21,7 +21,7 @@ autoupdates:
   assistant: https://github.com/yorko-io/assistant/releases/
   workforce-agent: https://github.com/yorko-io/workforce-agent/releases/
   setup-utility: https://github.com/yorko-io/setup-utility/releases/
-  templates: https://github.com/joshyorko/robot-templates/releases/download/v1.0.0/templates.yaml
+  templates: https://github.com/joshyorko/robot-templates/releases/latest/download/templates.yaml
   rcc-index: https://github.com/joshyorko/rcc/releases/latest/download/index.json
 
 certificates:
