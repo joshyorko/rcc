@@ -1,4 +1,12 @@
 # rcc change log
+## v18.12.1 (date: 12.12.2025)
+
+### Fixes
+
+- fix: templates URL now uses `latest` release instead of hardcoded `v1.0.0`
+  - RCC will now automatically pull the latest templates when new versions are released
+  - previously, the URL pointed to a static v1.0.0 release which prevented template updates
+
 ## v18.12.0 (date: 09.12.2025)
 
 ### Breaking Changes
