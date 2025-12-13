@@ -12,7 +12,7 @@ Complete reference for all RCC commands and options.
 - [rcc robot](#rcc-robot)
 - [rcc holotree](#rcc-holotree)
 - [rcc configure](#rcc-configure)
-- [rcc docs](#rcc-docs)
+- [rcc man (docs)](#rcc-man-docs)
 - [rcc cloud](#rcc-cloud)
 - [rcc venv](#rcc-venv)
 
@@ -83,37 +83,22 @@ rcc run --interactive
 
 ## rcc create
 
-Create a new robot from templates.
+Create a new robot interactively.
 
 ```bash
-rcc create [flags]
+rcc create
 ```
 
-### Flags
+`rcc create` is intended for interactive/human use and is **not** appropriate for CI/scripting.
 
-| Flag | Description |
-|------|-------------|
-| `--directory` | Target directory (default: current) |
-| `--template` | Template name to use |
+For non-interactive creation (script/CI friendly), use `rcc robot initialize`.
 
 ### Examples
 
 ```bash
-# Interactive template selection
+# Interactive template selection (prompts)
 rcc create
-
-# Create in specific directory
-rcc create --directory my-robot
-
-# Use specific template
-rcc create --template python
 ```
-
-### Available Templates
-
-- `python` - Basic Python template
-- `extended` - Extended Robot Framework template
-- `standard` - Standard Robot Framework template
 
 ---
 
@@ -211,6 +196,35 @@ rcc task shell --space my-space
 ## rcc robot
 
 Robot management commands.
+
+### rcc robot initialize
+
+Create a robot directory structure from templates.
+
+```bash
+rcc robot initialize [flags]
+```
+
+#### Flags
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--directory` | `-d` | Root directory to create the new robot in (default: `.`) |
+| `--template` | `-t` | Template name to generate |
+| `--force` | `-f` | Overwrite existing data |
+| `--list` | `-l` | List available templates |
+| `--json` | `-j` | List available templates as JSON |
+
+#### Examples
+
+```bash
+# List templates
+rcc robot initialize --list
+rcc robot initialize --json
+
+# Create a robot from a specific template
+rcc robot initialize -t <template-name> -d <directory>
+```
 
 ### rcc robot dependencies
 
@@ -509,24 +523,26 @@ rcc configure identity
 
 ---
 
-## rcc docs
+## rcc man (docs)
 
 View built-in documentation.
 
-### rcc docs changelog
+`rcc man` has multiple aliases, including `rcc docs` and `rcc doc`.
+
+### rcc man changelog
 
 View changelog.
 
 ```bash
-rcc docs changelog
+rcc man changelog
 ```
 
-### rcc docs recipes
+### rcc man recipes
 
 View tips, tricks, and recipes.
 
 ```bash
-rcc docs recipes
+rcc man recipes
 ```
 
 ---
@@ -657,8 +673,8 @@ channels:
 # Dependencies (required)
 dependencies:
   # Conda packages
-  - python=3.9.13
-  - pip=22.1.2
+  - python=3.10.14
+  - pip=24.0
 
   # Pip packages
   - pip:
