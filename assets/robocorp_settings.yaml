@@ -1,14 +1,15 @@
 endpoints:
-  cloud-api: https://api.eu1.robocorp.com/
-  cloud-linking: https://cloud.robocorp.com/link/
-  cloud-ui: https://cloud.robocorp.com/
+  # Cloud endpoints - override via RCC_ENDPOINT_* env vars or local settings.yaml
+  cloud-api: # https://api.eu1.robocorp.com/
+  cloud-linking: # https://cloud.robocorp.com/link/
+  cloud-ui: # https://cloud.robocorp.com/
   pypi: # https://pypi.org/simple/
   pypi-trusted: # https://pypi.org/
   conda: # https://conda.anaconda.org/
-  downloads: https://downloads.robocorp.com/
-  docs: https://robocorp.com/docs/
-  telemetry: https://telemetry.robocorp.com/
-  issues: https://telemetry.robocorp.com/
+  downloads: # https://downloads.robocorp.com/
+  docs: # https://robocorp.com/docs/
+  telemetry: # disabled by default
+  issues: # disabled by default
 
 diagnostics-hosts:
   - files.pythonhosted.org
@@ -17,10 +18,11 @@ diagnostics-hosts:
   - pypi.org
 
 autoupdates:
-  assistant: https://downloads.robocorp.com/assistant/releases/
-  workforce-agent: https://downloads.robocorp.com/workforce-agent/releases/
-  setup-utility: https://downloads.robocorp.com/setup-utility/releases/
-  templates: https://downloads.robocorp.com/templates/templates.yaml
+  assistant: https://github.com/yorko-io/assistant/releases/
+  workforce-agent: https://github.com/yorko-io/workforce-agent/releases/
+  setup-utility: https://github.com/yorko-io/setup-utility/releases/
+  templates: https://github.com/joshyorko/robot-templates/releases/latest/download/templates.yaml
+  rcc-index: https://github.com/joshyorko/rcc/releases/latest/download/index.json
 
 certificates:
   verify-ssl: true
@@ -36,11 +38,11 @@ network:
   http-proxy: # no proxy by default
 
 branding:
-  logo: https://downloads.robocorp.com/company/press-kit/logos/robocorp-logo-black.svg
+  logo: # https://github.com/yorko-io/.github/blob/main/logo.svg
   theme-color: FF0000
 
 meta:
   name: default
-  description: Robocorp.com default settings.yaml internal to rcc
+  description: yorko-io default settings.yaml internal to rcc
   source: builtin
-  version: 2023.09
+  version: 2025.12

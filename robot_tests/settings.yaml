@@ -1,2 +1,3 @@
 autoupdates:
   templates: https://downloads.robocorp.com/templates/not_available.yaml
+  rcc-index: https://github.com/not_available/index.json

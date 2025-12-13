@@ -71,6 +71,8 @@ Telemetry is disabled by default in this fork. Endpoints can be overridden via e
 - `RCC_ENDPOINT_CLOUD_API`, `RCC_ENDPOINT_CLOUD_UI`, `RCC_ENDPOINT_CLOUD_LINKING`
 - `RCC_ENDPOINT_DOWNLOADS`, `RCC_ENDPOINT_DOCS`
 - `RCC_ENDPOINT_PYPI`, `RCC_ENDPOINT_PYPI_TRUSTED`, `RCC_ENDPOINT_CONDA`
+- `RCC_AUTOUPDATES_TEMPLATES` - Override the templates.yaml URL
+- `RCC_AUTOUPDATES_RCC_INDEX` - Override the index.json URL for version checking
 
 Or via `settings.yaml` in `$ROBOCORP_HOME`.
 

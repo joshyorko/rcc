@@ -24,12 +24,14 @@ on:
       - ".dagger/**"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     name: Build RCC
-    runs-on: rcc-runner-k8s
+    runs-on: ubuntu-latest
+    # Build only as part of a release flow (tag push or manual dispatch).
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@v5
@@ -72,7 +74,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["rcc-runner-k8s", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@v5
@@ -98,8 +100,8 @@ jobs:
 
   release:
     name: Create GitHub Release
-    runs-on: rcc-runner-k8s
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     needs:
       - build
       - robot
@@ -121,6 +123,66 @@ jobs:
         with:
           name: RCC-Binaries
           path: rcc-builds/
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+      - name: Generate index.json
+        env:
+          VERSION: ${{ inputs.tag || github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          export DATE=$(date +"%d.%-m.%Y")
+
+          # Try to fetch existing index.json from latest release
+          curl -sL "https://github.com/${REPO}/releases/latest/download/index.json" -o existing.json 2>/dev/null || echo '{"tested":[],"edge":[]}' > existing.json
+
+          # Generate new index.json with this version prepended
+          python3 << 'PYEOF'
+          import json
+          import os
+
+          version = os.environ["VERSION"]
+          date = os.environ.get("DATE", "")
+          repo = os.environ["REPO"]
+
+          # Load existing or create new
+          try:
+              with open('existing.json') as f:
+                  data = json.load(f)
+          except:
+              data = {"tested": [], "edge": []}
+
+          # Build download URLs for GitHub releases
+          base_url = f"https://github.com/{repo}/releases/download/{version}"
+          # Generate changelog anchor (v18.12.0 -> v18120)
+          changelog_anchor = version.replace(".", "")
+
+          new_entry = {
+              "version": version,
+              "when": date,
+              "changelog": f"https://github.com/{repo}/blob/main/docs/changelog.md#{changelog_anchor}",
+              "windows": f"{base_url}/rcc-windows64.exe",
+              "linux": f"{base_url}/rcc-linux64",
+              "macos": f"{base_url}/rcc-darwin64"
+          }
+
+          # Remove duplicate if exists
+          data["tested"] = [v for v in data.get("tested", []) if v["version"] != version]
+
+          # Prepend new version
+          data["tested"] = [new_entry] + data["tested"]
+
+          # Keep last 20 versions
+          data["tested"] = data["tested"][:20]
+
+          with open('rcc-builds/index.json', 'w') as f:
+              json.dump(data, f, indent=1)
+
+          print(f"Generated index.json with {len(data['tested'])} versions")
+          PYEOF
+
+          cat rcc-builds/index.json
       - name: Publish Release
         uses: softprops/action-gh-release@v2.3.2
         with:
