@@ -32,7 +32,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 ### Jobs
 
 #### 1. Build (`build`)
-- **Runner:** `rcc-runner-k8s`
+- **Runner:** `ubuntu-latest`
 - **Condition:** Only runs on version tag pushes or manual dispatch
 - **Steps:**
   - Checkout code
@@ -239,10 +239,7 @@ The recommended release process uses these workflows:
 | Invoke | latest | rcc.yaml |
 | Dagger | latest | dagger.yaml |
 
-## Self-Hosted Runners
 
-Some workflows use custom runners:
-- `rcc-runner-k8s` - Kubernetes-based runner for builds
 
 ## Troubleshooting
 
