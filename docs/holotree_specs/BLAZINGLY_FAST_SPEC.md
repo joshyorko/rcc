@@ -2,8 +2,8 @@
 
 **Revised approach: Keep compression, replace the algorithm**
 
-**Version:** 2.1
-**Date:** 2025-12-12
+**Version:** 2.2
+**Date:** 2025-12-13
 **Core Principle:** Compression is non-negotiable. Speed gains must work for ALL robots.
 
 ---
@@ -30,7 +30,7 @@
 | Phase | Risk | Recommendation |
 |-------|------|----------------|
 | **Phase 1: zstd** | LOW | ✅ Implement - well-understood, proven library |
-| **Phase 2: Skip verification** | HIGH | ⚠️ Reconsider - security implications |
+| **Phase 2: Hash optimization** | UNKNOWN | ⏸️ Profile first - may not be needed after Phase 1 |
 | **Phase 3: Reflinks** | HIGH | ❌ Future - OS/FS complexity |
 
 ---
@@ -270,7 +270,69 @@ defer encoder.Close()
 - Concurrent decompression support
 - Well-maintained, widely used
 
-### Phase 2: Configurable Hash Verification (RECONSIDERED - SEE WARNINGS)
+### Phase 2: Hash Verification Optimization (PROFILE FIRST)
+
+**Status: CONTINGENT ON PROFILING RESULTS**
+
+We don't know if hash verification is a bottleneck until we profile after Phase 1 (zstd).
+
+#### The Math: Is This Even a Problem?
+
+| Component | Speed | Notes |
+|-----------|-------|-------|
+| zstd decompression | ~1000 MB/s | New bottleneck after Phase 1 |
+| SHA256 (with SHA-NI) | ~1500 MB/s | Hardware acceleration on modern CPUs |
+| SHA256 (software) | ~500 MB/s | Fallback on older CPUs |
+| Disk I/O (SSD) | ~500-3000 MB/s | Varies widely |
+
+**Key insight:** Hash verification happens via `io.MultiWriter` - it computes the hash WHILE copying, not as a separate pass. On CPUs with SHA-NI (Intel 2016+, AMD 2017+), SHA256 is likely **faster than zstd decompression**.
+
+**Action required:** After implementing Phase 1, profile with `--pprof` to determine:
+1. What percentage of restore time is `crypto/sha256.block`?
+2. Is SHA-NI being used? (Look for `sha256block` vs `sha256blockAvx2`)
+
+#### If Profiling Shows Hash IS a Bottleneck (>20% of time)
+
+**Contingency A: Verify SHA-NI is Active (Zero Dependencies)**
+
+Go's `crypto/sha256` auto-detects hardware acceleration. First verify it's working:
+
+```go
+// Add diagnostic to check SHA-NI usage
+import "crypto/sha256"
+import _ "crypto/sha256" // triggers init that detects SHA-NI
+
+// In profile, look for:
+// sha256blockAvx2 or sha256block_ni = hardware accelerated ✅
+// sha256block (generic) = software fallback ❌
+```
+
+If SHA-NI isn't being used, investigate why before adding dependencies.
+
+**Contingency B: BLAKE3 (Adds 2 Dependencies)**
+
+| Pro | Con |
+|-----|-----|
+| 4+ GB/s - definitely faster than zstd | Adds `github.com/zeebo/blake3` |
+| Well-audited algorithm | Adds `github.com/klauspost/cpuid/v2` |
+| | Two more packages to audit and maintain |
+| | Storage format change (must store both hashes) |
+
+**Implementation if chosen:**
+```go
+type File struct {
+    Digest  string   `json:"digest"`        // SHA256 - storage identity (unchanged)
+    Blake3  string   `json:"blake3,omitempty"` // Fast verification (new, optional)
+    // ...
+}
+```
+
+Only pursue this if:
+1. Profiling proves SHA256 is >20% of restore time
+2. SHA-NI is confirmed active (ruling out Contingency A)
+3. The 2 additional dependencies are acceptable
+
+**Contingency C: Optional Verification Skip (⚠️ SECURITY RISK)**
 
 > **⚠️ WARNING from vjmp (original author):**
 > *"This proposal is kind of dangerous, because:*
@@ -278,15 +340,6 @@ defer encoder.Close()
 > - *writes to hololib could fail and corrupt file when it is coming in*
 > - *disks can corrupt (for example NFS mounts)*
 > - *so both accidental and intentional corruption can happen in local hololib (on rest)"*
-
-**Current behavior:** Every `DropFile()` re-hashes the entire file to verify integrity.
-
-```go
-// htfs/functions.go:274-284
-digester := common.NewDigester(Compress())
-many := io.MultiWriter(sink, digester)
-_, err = io.Copy(many, reader)
-```
 
 **Why verification exists (security boundary):**
 
@@ -297,11 +350,7 @@ _, err = io.Copy(many, reader)
 | **Disk corruption** | Bad sectors, NFS timeouts | Broken environments |
 | **Supply chain** | Tampered cached packages | Security breach |
 
-**Recommendation: DO NOT IMPLEMENT unless absolutely necessary.**
-
-The hash verification is a **security boundary**, not just a performance optimization. The 20-30% gain is not worth the security trade-off for most users.
-
-**If still considering (isolated local environments ONLY):**
+**If still considering after ruling out A and B (isolated local environments ONLY):**
 
 ```go
 // DANGER: Only for isolated, single-user, local-disk environments
@@ -321,7 +370,44 @@ if common.VerifyOnRestore() {
 - `RCC_VERIFY_ON_RESTORE=true` (default, KEEP THIS)
 - `RCC_VERIFY_ON_RESTORE=false` - **DANGEROUS**, only for isolated local environments
 
-**Expected impact:** ~20-30% faster, but **not recommended** due to security implications
+#### Phase 2 Decision Tree
+
+```
+After Phase 1 is complete:
+        │
+        ▼
+Profile with --pprof
+        │
+        ▼
+Is crypto/sha256 >20% of restore time?
+        │
+    NO ──────► STOP. Phase 2 not needed. Ship Phase 1.
+        │
+       YES
+        │
+        ▼
+Is SHA-NI being used?
+        │
+    NO ──────► Investigate why. Fix if possible. Re-profile.
+        │
+       YES
+        │
+        ▼
+Are 2 extra dependencies acceptable?
+        │
+    YES ─────► Contingency B: Add BLAKE3
+        │
+    NO
+        │
+        ▼
+Is security trade-off acceptable for your use case?
+        │
+    YES ─────► Contingency C: Optional skip flag (with warnings)
+        │
+    NO ──────► Accept current performance. Ship Phase 1 only.
+```
+
+**Expected impact:** Unknown until profiling. Could be 0% (not a bottleneck) to 20-30% (if it is)
 
 ### Phase 3: Reflinks for Uncompressed Mode (FUTURE CONSIDERATION - HIGH COMPLEXITY)
 
@@ -928,14 +1014,18 @@ The path to BLAZINGLY FAST holotree **while keeping compression**:
 - [ ] Test: New RCC writes zstd, reads it back
 - [ ] **PROFILE AFTER:** Run `rcc run --pprof after.pprof` and compare
 
-### Phase 2: Verification Skip (⚠️ NOT RECOMMENDED - Security Risk)
+### Phase 2: Hash Verification Optimization (⏸️ PROFILE FIRST)
 
-> **vjmp warning:** "This proposal is kind of dangerous" - see full explanation above.
+**Do NOT start until Phase 1 is complete and profiled.**
 
-- [ ] ⚠️ **RECONSIDER** - Is 20-30% gain worth the security trade-off?
-- [ ] If proceeding: Add `RCC_VERIFY_ON_RESTORE` to `common/variables.go`
-- [ ] If proceeding: Modify `DropFile()` with explicit opt-in only
-- [ ] If proceeding: Document security implications thoroughly
+- [ ] **PROFILE:** After Phase 1, run `--pprof` and analyze `crypto/sha256` time
+- [ ] **DECISION POINT:** Is SHA256 >20% of restore time?
+  - If NO → Phase 2 not needed. Ship Phase 1 only.
+  - If YES → Continue below
+- [ ] Check if SHA-NI is active (look for `sha256block_ni` or `sha256blockAvx2` in profile)
+- [ ] **CONTINGENCY A:** If SHA-NI not active, investigate and fix
+- [ ] **CONTINGENCY B:** If SHA-NI active but still slow, consider BLAKE3 (adds 2 dependencies)
+- [ ] **CONTINGENCY C:** If dependencies unacceptable, consider optional skip flag (security risk)
 
 ### Phase 3: Reflinks (❌ FUTURE - High Complexity)
 
