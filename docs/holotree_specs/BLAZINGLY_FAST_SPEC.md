@@ -2,9 +2,36 @@
 
 **Revised approach: Keep compression, replace the algorithm**
 
-**Version:** 2.0
+**Version:** 2.1
 **Date:** 2025-12-12
 **Core Principle:** Compression is non-negotiable. Speed gains must work for ALL robots.
+
+---
+
+## ⚠️ Implementer Responsibility (Read First)
+
+> **From vjmp (original author):**
+> *"Important question: do you understand all those proposed improvements, or is it AI that only understands those improvements? Like all three OS optimizations and their filesystem variations?*
+>
+> *There are easy to understand trade-offs (compression: space vs. time; but with rcc, people easily run out of diskspace). Making OS specific FS optimizations on syscall levels brings in multiple trade-offs (like how antivirus affects those; maintenance burden; testing responsibility on different OS/FS combos; enough hands to do testing/profiling before/after changes).*
+>
+> *Important thing to remember: If you break it, you own the pieces, AI does not."*
+
+**Before implementing ANY part of this spec, you MUST:**
+
+1. **Understand the code you're changing** - Read `htfs/functions.go`, `htfs/delegates.go`, `htfs/directory.go` thoroughly
+2. **Profile before changes** - Use `--pprof` to establish baselines
+3. **Test on YOUR systems** - You cannot rely on AI to test edge cases
+4. **Own the maintenance** - You will fix bugs, not the AI
+5. **Start small** - Phase 1 (zstd) only. Do NOT implement Phases 2-3 until Phase 1 is proven.
+
+**Risk assessment by phase:**
+
+| Phase | Risk | Recommendation |
+|-------|------|----------------|
+| **Phase 1: zstd** | LOW | ✅ Implement - well-understood, proven library |
+| **Phase 2: Skip verification** | HIGH | ⚠️ Reconsider - security implications |
+| **Phase 3: Reflinks** | HIGH | ❌ Future - OS/FS complexity |
 
 ---
 
@@ -21,6 +48,90 @@ After comprehensive analysis of:
 **The REAL solution: Replace gzip with zstd - 3x faster decompression while KEEPING compression.**
 
 **Key Insight:** ~60-70% of files in typical Python environments have NO relocations and can benefit from all optimizations.
+
+---
+
+## Critical: Profile Before and After (--pprof)
+
+> **From vjmp:** *"Note on all optimizations. Always profile, before and after. Have you noticed --pprof option in rcc? It is there for a reason ..."*
+
+### How --pprof Works
+
+RCC uses Go's standard `runtime/pprof` for CPU profiling (see `cmd/root.go:145-152`):
+
+```go
+// When --pprof is passed:
+sink, err := pathlib.Create(profilefile)
+err = pprof.StartCPUProfile(sink)  // Start recording
+// ... command executes ...
+pprof.StopCPUProfile()  // Stop and write to file
+```
+
+### Step-by-Step Profiling Guide
+
+**1. Create a reproducible test environment:**
+
+```bash
+# Clean hololib for fresh baseline
+rm -rf ~/.robocorp/hololib
+
+# Create test robot with significant dependencies
+cat > conda.yaml << 'EOF'
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - pandas
+EOF
+```
+
+**2. Profile environment CREATION (LiftFile path):**
+
+```bash
+rcc task run -r robot.yaml --pprof profile_create.pprof
+```
+
+**3. Profile environment RESTORE (DropFile path):**
+
+```bash
+# Force restore by clearing holotree
+rm -rf ~/.robocorp/holotree/*
+rcc task run -r robot.yaml --pprof profile_restore.pprof
+```
+
+**4. Analyze the profiles:**
+
+```bash
+# Interactive web view with flame graphs (BEST)
+go tool pprof -http=:8080 profile_restore.pprof
+
+# Text summary
+go tool pprof profile_restore.pprof
+(pprof) top20           # Top 20 functions by CPU
+(pprof) list DropFile   # Line-by-line for DropFile
+
+# Compare before/after
+go tool pprof -base profile_before.pprof profile_after.pprof
+```
+
+**5. What to look for in the profile:**
+
+```
+Current (gzip):
+├── compress/gzip.(*Reader).Read    ← Decompression (target!)
+├── crypto/sha256.block             ← Hash computation
+├── syscall.write                   ← File I/O
+└── runtime.memmove                 ← Memory copying
+
+After zstd:
+├── zstd.(*Decoder).DecodeAll       ← Should be faster
+├── crypto/sha256.block             ← Same
+├── syscall.write                   ← Same
+└── runtime.memmove                 ← Same
+```
+
+**DO NOT assume improvements - MEASURE them.**
 
 ---
 
@@ -159,7 +270,14 @@ defer encoder.Close()
 - Concurrent decompression support
 - Well-maintained, widely used
 
-### Phase 2: Configurable Hash Verification (SECONDARY)
+### Phase 2: Configurable Hash Verification (RECONSIDERED - SEE WARNINGS)
+
+> **⚠️ WARNING from vjmp (original author):**
+> *"This proposal is kind of dangerous, because:*
+> - *if hololib has shared access (mounted from host machine; used from shared disk location), then someone can modify file, and if integrity is not checked, attacker has access*
+> - *writes to hololib could fail and corrupt file when it is coming in*
+> - *disks can corrupt (for example NFS mounts)*
+> - *so both accidental and intentional corruption can happen in local hololib (on rest)"*
 
 **Current behavior:** Every `DropFile()` re-hashes the entire file to verify integrity.
 
@@ -170,62 +288,88 @@ many := io.MultiWriter(sink, digester)
 _, err = io.Copy(many, reader)
 ```
 
-**Proposed change:** Make verification configurable (default: enabled).
+**Why verification exists (security boundary):**
+
+| Threat | Scenario | Without Verification |
+|--------|----------|---------------------|
+| **Shared access attack** | Hololib on NFS/shared mount | Attacker can inject malicious code |
+| **Write corruption** | Power loss during LiftFile() | Silent data corruption |
+| **Disk corruption** | Bad sectors, NFS timeouts | Broken environments |
+| **Supply chain** | Tampered cached packages | Security breach |
+
+**Recommendation: DO NOT IMPLEMENT unless absolutely necessary.**
+
+The hash verification is a **security boundary**, not just a performance optimization. The 20-30% gain is not worth the security trade-off for most users.
+
+**If still considering (isolated local environments ONLY):**
 
 ```go
-func DropFile(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
-    return func() {
-        // ... existing symlink handling ...
-
-        reader, closer, err := library.Open(digest)
-        defer closer()
-
-        sink, err := os.Create(partname)
-
-        if common.VerifyOnRestore() {
-            // Current path with verification
-            digester := common.NewDigester(...)
-            many := io.MultiWriter(sink, digester)
-            io.Copy(many, reader)
-            // verify hash...
-        } else {
-            // Fast path: direct copy, no hashing
-            io.Copy(sink, reader)
-        }
-
-        // ... rest of function ...
-    }
+// DANGER: Only for isolated, single-user, local-disk environments
+// NOT for: NFS, shared mounts, CI/CD, production, containers
+if common.VerifyOnRestore() {
+    // Current path with verification (KEEP AS DEFAULT)
+    digester := common.NewDigester(...)
+    many := io.MultiWriter(sink, digester)
+    io.Copy(many, reader)
+} else {
+    // DANGEROUS: Skip verification
+    io.Copy(sink, reader)
 }
 ```
 
-**Configuration:**
-- `RCC_VERIFY_ON_RESTORE=true` (default) - always verify
-- `RCC_VERIFY_ON_RESTORE=false` - skip for trusted local environments
+**If implemented, require explicit opt-in with warnings:**
+- `RCC_VERIFY_ON_RESTORE=true` (default, KEEP THIS)
+- `RCC_VERIFY_ON_RESTORE=false` - **DANGEROUS**, only for isolated local environments
 
-**Expected impact:** Additional 20-30% faster for files that need copying
+**Expected impact:** ~20-30% faster, but **not recommended** due to security implications
 
-### Phase 3: Reflinks for Uncompressed Mode (OPTIONAL OPTIMIZATION)
+### Phase 3: Reflinks for Uncompressed Mode (FUTURE CONSIDERATION - HIGH COMPLEXITY)
 
-**For users who CHOOSE to disable compression**, reflinks provide instant file operations.
+> **⚠️ WARNING from vjmp:**
+> *"Making OS specific FS optimizations on syscall levels brings in multiple trade-offs:*
+> - *how antivirus affects those*
+> - *maintenance burden*
+> - *testing responsibility on different OS/FS combos*
+> - *enough hands to do testing/profiling before/after changes*
+>
+> *Important thing to remember: If you break it, you own the pieces, AI does not."*
 
-This remains available via the existing `compress.no` marker file for users who:
-- Have abundant disk space
-- Want maximum possible speed
-- Are on CoW filesystems (Btrfs, XFS, APFS)
+**Status: FUTURE CONSIDERATION - Not recommended for initial implementation.**
+
+**Why this is complex:**
+
+| OS | Syscall | Filesystems | Edge Cases |
+|----|---------|-------------|------------|
+| Linux | FICLONE ioctl | Btrfs, XFS (4.1+) | Antivirus hooks, SELinux, AppArmor |
+| macOS | clonefile(2) | APFS only | Gatekeeper, code signing, quarantine |
+| Windows | FSCTL_DUPLICATE_EXTENTS | ReFS only | Antivirus, NTFS doesn't support it |
+
+**Questions you MUST be able to answer before implementing:**
+1. What happens when antivirus intercepts FICLONE?
+2. How does macOS quarantine attribute affect clonefile?
+3. What's the fallback when reflink fails silently?
+4. How do you test this on CI without the actual filesystems?
+5. What's the maintenance burden for 3 OS × multiple FS combinations?
+
+**If you cannot answer these confidently, DO NOT IMPLEMENT.**
+
+**For users who absolutely want this (and understand the risks):**
 
 ```go
-// Only applies when compression is disabled
-if len(details.Rewrite) == 0 && !Compress() {
+// FUTURE: Only for users who explicitly enable AND understand trade-offs
+// Requires: uncompressed mode + CoW filesystem + no relocations
+if len(details.Rewrite) == 0 && !Compress() && common.ReflinkEnabled() {
     srcPath := library.ExactLocation(digest)
     if TryReflink(srcPath, sinkname) {
         os.Chmod(sinkname, details.Mode)
         os.Chtimes(sinkname, motherTime, motherTime)
         return  // INSTANT!
     }
+    // Fallback to normal copy - reflink failed silently
 }
 ```
 
-**This is now OPTIONAL, not the primary solution.**
+**Recommendation: Focus on Phase 1 (zstd) first. It provides 3x improvement with LOW risk.**
 
 ---
 
@@ -615,29 +759,37 @@ rcc holotree migrate --to-zstd
 4. Test with existing hololib (should read gzip, write zstd)
 5. Benchmark improvements
 
-### Phase 2: Verification Skip
+### Phase 2: Verification Skip (⚠️ NOT RECOMMENDED - Security Risk)
 
+> **vjmp warned this is dangerous.** See Phase 2 section above for full explanation.
+
+**If you still want to proceed (not recommended):**
 1. Add `RCC_VERIFY_ON_RESTORE` environment variable
 2. Modify DropFile to check verification setting
-3. Document when it's safe to disable verification
+3. **REQUIRE explicit opt-in** with clear warnings
+4. Document security implications thoroughly
 
-### Phase 3: Reflink Support (Optional)
+### Phase 3: Reflink Support (❌ FUTURE - High Complexity)
 
-**Note:** Reference implementations already exist in this directory:
-- [REFLINK_EXAMPLE.go](REFLINK_EXAMPLE.go) - Cross-platform reflink implementations (Linux FICLONE, macOS clonefile, Windows stub)
-- [FILESYSTEM_DETECTION_EXAMPLE.go](FILESYSTEM_DETECTION_EXAMPLE.go) - Filesystem capability detection
+> **vjmp warned about OS/FS complexity.** Only proceed if you can answer the questions in Phase 3 section above.
 
-1. Move `TryReflink()` implementations from example files to `pathlib/`
-2. Integrate into DropFile for uncompressed mode
-3. Add filesystem detection using example code as reference
+**Reference implementations exist but are NOT production-ready:**
+- [REFLINK_EXAMPLE.go](REFLINK_EXAMPLE.go) - Example code only
+- [FILESYSTEM_DETECTION_EXAMPLE.go](FILESYSTEM_DETECTION_EXAMPLE.go) - Example code only
 
-### Phase 4: Migration Tooling
+**DO NOT implement until Phase 1 is proven and you understand:**
+- Antivirus interaction with FICLONE
+- macOS code signing and quarantine
+- Windows ReFS limitations
+- Fallback behavior on failure
 
-**Note:** `rcc holotree check` already exists with `--retries/-r` flag. Evaluate if it can be extended for post-migration verification or if a separate command is needed.
+### Phase 4: Migration Tooling (After Phase 1 is stable)
+
+**Note:** `rcc holotree check` already exists with `--retries/-r` flag.
 
 1. Add `rcc holotree migrate --to-zstd` command
 2. Progress reporting for large hololibs
-3. Extend existing `rcc holotree check` for post-migration verification (or document its existing capability)
+3. Verify existing `rcc holotree check` meets post-migration needs
 
 ---
 
@@ -759,8 +911,11 @@ The path to BLAZINGLY FAST holotree **while keeping compression**:
 
 ## Implementation Checklist
 
-### Phase 1: zstd Migration (Required)
+### Phase 1: zstd Migration (✅ RECOMMENDED - Low Risk)
 
+**Do this first. Profile before and after with `--pprof`.**
+
+- [ ] **PROFILE FIRST:** Run `rcc run --pprof baseline.pprof` to establish baseline
 - [ ] Add `github.com/klauspost/compress` to `go.mod`
 - [ ] Add `detectFormat()` helper function with magic byte detection
 - [ ] Update `htfs/delegates.go` - dual-format read for hololib files
@@ -768,31 +923,35 @@ The path to BLAZINGLY FAST holotree **while keeping compression**:
 - [ ] Update `htfs/functions.go` - `CheckHasher()` dual-format read
 - [ ] Update `htfs/directory.go` - `LoadFrom()` dual-format read for catalogs
 - [ ] Update `htfs/directory.go` - `SaveAs()` writes zstd for catalogs
-- [ ] Test: New RCC reads old gzip hololib ✓
-- [ ] Test: New RCC reads old gzip catalogs ✓
-- [ ] Test: New RCC writes zstd, reads it back ✓
-- [ ] Benchmark: Compare restore times gzip vs zstd
+- [ ] Test: New RCC reads old gzip hololib
+- [ ] Test: New RCC reads old gzip catalogs
+- [ ] Test: New RCC writes zstd, reads it back
+- [ ] **PROFILE AFTER:** Run `rcc run --pprof after.pprof` and compare
 
-### Phase 2: Verification Skip (Optional Performance)
+### Phase 2: Verification Skip (⚠️ NOT RECOMMENDED - Security Risk)
 
-- [ ] Add `RCC_VERIFY_ON_RESTORE` to `common/variables.go`
-- [ ] Modify `DropFile()` to skip hash verification when disabled
-- [ ] Document security implications of disabling verification
+> **vjmp warning:** "This proposal is kind of dangerous" - see full explanation above.
 
-### Phase 3: Reflinks (Optional, Advanced)
+- [ ] ⚠️ **RECONSIDER** - Is 20-30% gain worth the security trade-off?
+- [ ] If proceeding: Add `RCC_VERIFY_ON_RESTORE` to `common/variables.go`
+- [ ] If proceeding: Modify `DropFile()` with explicit opt-in only
+- [ ] If proceeding: Document security implications thoroughly
 
-**Reference:** Use existing [REFLINK_EXAMPLE.go](REFLINK_EXAMPLE.go) and [FILESYSTEM_DETECTION_EXAMPLE.go](FILESYSTEM_DETECTION_EXAMPLE.go) as starting point.
+### Phase 3: Reflinks (❌ FUTURE - High Complexity)
 
-- [ ] Move `pathlib/reflink_linux.go` from REFLINK_EXAMPLE.go - FICLONE ioctl
-- [ ] Move `pathlib/reflink_darwin.go` from REFLINK_EXAMPLE.go - clonefile syscall
-- [ ] Move `pathlib/reflink_windows.go` from REFLINK_EXAMPLE.go - FSCTL_DUPLICATE_EXTENTS_TO_FILE
-- [ ] Integrate reflink into `DropFile()` for uncompressed mode
+> **vjmp warning:** "If you break it, you own the pieces, AI does not."
 
-### Phase 4: Tooling (Optional)
+**DO NOT IMPLEMENT until you can answer:**
+1. What happens when antivirus intercepts FICLONE?
+2. How does macOS quarantine attribute affect clonefile?
+3. What's the fallback when reflink fails silently?
+4. How do you test this on CI without the actual filesystems?
 
-**Note:** `rcc holotree check` already exists with `--retries/-r` flag.
+- [ ] ❌ BLOCKED: Answer all questions above first
+- [ ] ❌ BLOCKED: Phase 1 must be stable in production first
+
+### Phase 4: Tooling (After Phase 1 is stable)
 
 - [ ] Add `rcc holotree migrate --to-zstd` command
-- [x] ~~Add `rcc holotree check` integrity verification~~ (ALREADY EXISTS)
+- [x] ~~Add `rcc holotree check`~~ (ALREADY EXISTS)
 - [ ] Add progress reporting for migration
-- [ ] Verify existing `rcc holotree check` meets post-migration verification needs
