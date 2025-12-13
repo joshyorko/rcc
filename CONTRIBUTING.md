@@ -106,6 +106,79 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
 | `templates/` | Robot templates zipped into `blobs/assets/*.zip` |
 | `robot_tests/` | Robot Framework acceptance tests (HTML logs under `tmp/output/`) |
 | `developer/` | The "repeatable, contained" dev environment bootstrap |
+| `.dagger/` | Dagger CI module for containerized builds and tests |
+
+---
+
+## Dagger: CI you can run locally (before CI yells at you)
+
+The `.dagger/` directory contains a [Dagger](https://dagger.io) module for running builds and tests in containers. Think of it as "CI on your laptop"—same containers, same isolation, no more "but it passed locally."
+
+*Yes, we use containers to test a tool that creates isolated environments. It's containers all the way down. 🐳*
+
+### Prerequisites
+
+- [Dagger CLI](https://docs.dagger.io/install) installed
+- Docker (or a compatible container runtime) running
+
+### Available functions
+
+| Function | What it does |
+|----------|--------------|
+| `RunRobotTests` | Spins up a Go container, installs RCC from our releases, runs `rcc run -r developer/toolkit.yaml -t robot` |
+| `ContainerEcho` | Returns a container that echoes a string (useful for sanity checks) |
+| `GrepDir` | Greps through a directory in a container (for when you need to search without polluting your host) |
+
+### Running Dagger locally
+
+From the repo root:
+
+```bash
+# Run the robot tests in a container
+dagger call run-robot-tests --source .
+
+# Sanity check that Dagger is working
+dagger call container-echo --string-arg "Hello from the container"
+
+# Grep through the codebase in a container
+dagger call grep-dir --directory-arg . --pattern "TODO"
+```
+
+The `RunRobotTests` function:
+1. Pulls a `golang:1.22` base image
+2. Installs curl, git, and friends
+3. Downloads `rcc` from [our releases](https://github.com/joshyorko/rcc/releases)
+4. Mounts your source directory
+5. Runs the holotree setup and robot tests
+6. Caches Go modules and the `.robocorp` home directory (so subsequent runs are faster)
+
+### Why bother?
+
+- **Catch CI failures before pushing.** "Works on my machine" is not a valid excuse when you can run the same container locally.
+- **Reproducible builds.** Same Go version, same dependencies, same environment—every time.
+- **Cacheable.** Dagger caches aggressively, so subsequent runs are fast.
+
+### Extending the Dagger module
+
+The module lives in `.dagger/main.go`. It's just Go code—add functions, modify the container setup, go wild. Just remember: if you break it, you own the pieces.
+
+```go
+// Example: Add a new function to run unit tests
+func (m *RccCi) RunUnitTests(ctx context.Context, source *dagger.Directory) (string, error) {
+    return dag.Container().
+        From("golang:1.22").
+        WithMountedDirectory("/src", source).
+        WithWorkdir("/src").
+        WithExec([]string{"go", "test", "./..."}).
+        Stdout(ctx)
+}
+```
+
+Then call it:
+
+```bash
+dagger call run-unit-tests --source .
+```
 
 ---
 
