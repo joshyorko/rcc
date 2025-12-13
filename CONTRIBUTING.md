@@ -112,9 +112,28 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
 
 ## Dagger: CI you can run locally (before CI yells at you)
 
-The `.dagger/` directory contains a [Dagger](https://dagger.io) module for running builds and tests in containers. Think of it as "CI on your laptop"—same containers, same isolation, no more "but it passed locally."
+The `.dagger/` directory contains a [Dagger](https://dagger.io) module for running builds and tests in containers.
 
 *Yes, we use containers to test a tool that creates isolated environments. It's containers all the way down. 🐳*
+
+### Why Dagger instead of just running CLI commands?
+
+You could just run `go test ./...` or `rcc run` directly. And honestly, for quick iteration, you should. But Dagger solves a different problem.
+
+Dagger describes itself as "a modular, composable platform designed to replace complex systems glued together with artisanal scripts." Translation: it's for when your `Makefile` starts growing `if` statements for different OSes, your CI YAML becomes a nightmare, and "works on my machine" becomes a daily standup punchline.
+
+**What makes it different:**
+
+| Problem | Shell scripts / Makefiles | Dagger |
+|---------|---------------------------|--------|
+| "Works on my machine" | Runs on your host, inherits your mess | Every function runs in a container—same environment everywhere |
+| Caching | DIY or pray Docker layer cache cooperates | Built-in intelligent caching at the function level |
+| CI/local parity | Write it twice (local script + CI YAML) | Write once, run anywhere—laptop, GitHub Actions, whatever |
+| Reproducibility | "Did you install the right Go version?" | Pinned container images, sandboxed execution |
+| Debugging CI failures | Push, wait, read logs, cry, repeat | Run the exact same containers locally, step through failures |
+| Composability | Source a bunch of scripts and hope | Type-safe functions you can chain together |
+
+**The meta-containment angle:** RCC creates isolated Python environments. Dagger wraps *that* in an isolated container. So when you run `dagger call run-robot-tests`, you're testing RCC's environment isolation inside Dagger's container isolation. It's isolation all the way down. If something breaks, you know it's not because your laptop has a weird `~/.bashrc` or a rogue Python in your PATH.
 
 ### Prerequisites
 
@@ -125,16 +144,16 @@ The `.dagger/` directory contains a [Dagger](https://dagger.io) module for runni
 
 | Function | What it does |
 |----------|--------------|
-| `RunRobotTests` | Spins up a Go container, installs RCC from our releases, runs `rcc run -r developer/toolkit.yaml -t robot` |
-| `ContainerEcho` | Returns a container that echoes a string (useful for sanity checks) |
-| `GrepDir` | Greps through a directory in a container (for when you need to search without polluting your host) |
+| `RunRobotTests` | Spins up a Go container, installs RCC from our releases, runs the robot tests |
+| `ContainerEcho` | Returns a container that echoes a string (sanity check) |
+| `GrepDir` | Greps through a directory in a container |
 
 ### Running Dagger locally
 
 From the repo root:
 
 ```bash
-# Run the robot tests in a container
+# Run the robot tests in a container (the big one)
 dagger call run-robot-tests --source .
 
 # Sanity check that Dagger is working
@@ -144,23 +163,29 @@ dagger call container-echo --string-arg "Hello from the container"
 dagger call grep-dir --directory-arg . --pattern "TODO"
 ```
 
-The `RunRobotTests` function:
+**What `RunRobotTests` actually does:**
+
 1. Pulls a `golang:1.22` base image
 2. Installs curl, git, and friends
 3. Downloads `rcc` from [our releases](https://github.com/joshyorko/rcc/releases)
-4. Mounts your source directory
+4. Mounts your source directory (read-only, nothing gets mutated on your host)
 5. Runs the holotree setup and robot tests
-6. Caches Go modules and the `.robocorp` home directory (so subsequent runs are faster)
+6. Caches Go modules and `.robocorp` home (subsequent runs are fast)
 
-### Why bother?
+First run downloads images and builds caches—grab a coffee. Subsequent runs reuse everything that hasn't changed.
 
-- **Catch CI failures before pushing.** "Works on my machine" is not a valid excuse when you can run the same container locally.
-- **Reproducible builds.** Same Go version, same dependencies, same environment—every time.
-- **Cacheable.** Dagger caches aggressively, so subsequent runs are fast.
+### When to use what
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Quick iteration while coding | `inv test`, `inv local`, `rcc run` directly |
+| Pre-push sanity check | `dagger call run-robot-tests --source .` |
+| Debugging "works locally, fails in CI" | Dagger—same containers as CI |
+| Experimenting with environment changes | Dagger—won't pollute your host |
 
 ### Extending the Dagger module
 
-The module lives in `.dagger/main.go`. It's just Go code—add functions, modify the container setup, go wild. Just remember: if you break it, you own the pieces.
+The module lives in `.dagger/main.go`. It's just Go code with the Dagger SDK—add functions, chain containers, go wild. Just remember: if you break it, you own the pieces.
 
 ```go
 // Example: Add a new function to run unit tests
@@ -179,6 +204,8 @@ Then call it:
 ```bash
 dagger call run-unit-tests --source .
 ```
+
+The Dagger docs are solid: https://docs.dagger.io/quickstart
 
 ---
 
