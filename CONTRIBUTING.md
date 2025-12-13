@@ -118,6 +118,8 @@ The `.dagger/` directory contains a [Dagger](https://dagger.io) module for runni
 
 ### Why Dagger instead of just running CLI commands?
 
+**The meta-containment angle:** RCC creates isolated Python environments. Dagger wraps *that* in an isolated container. So when you run `dagger call run-robot-tests`, you're testing RCC's environment isolation inside Dagger's container isolation. It's isolation all the way down. If something breaks, you know it's not because your laptop has a weird `~/.bashrc` or a rogue Python in your PATH.
+
 You could just run `go test ./...` or `rcc run` directly. And honestly, for quick iteration, you should. But Dagger solves a different problem.
 
 Dagger describes itself as "a modular, composable platform designed to replace complex systems glued together with artisanal scripts." Translation: it's for when your `Makefile` starts growing `if` statements for different OSes, your CI YAML becomes a nightmare, and "works on my machine" becomes a daily standup punchline.
@@ -133,7 +135,6 @@ Dagger describes itself as "a modular, composable platform designed to replace c
 | Debugging CI failures | Push, wait, read logs, cry, repeat | Run the exact same containers locally, step through failures |
 | Composability | Source a bunch of scripts and hope | Type-safe functions you can chain together |
 
-**The meta-containment angle:** RCC creates isolated Python environments. Dagger wraps *that* in an isolated container. So when you run `dagger call run-robot-tests`, you're testing RCC's environment isolation inside Dagger's container isolation. It's isolation all the way down. If something breaks, you know it's not because your laptop has a weird `~/.bashrc` or a rogue Python in your PATH.
 
 ### Prerequisites
 
