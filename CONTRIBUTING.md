@@ -28,7 +28,7 @@ Pinned tool versions live in `developer/setup.yaml`:
 
 - `git` (you're reading this, so probably yes)
 - An existing `rcc` binary available on your `PATH`
-    - Pop quiz: What if you don't have one yet? See the repo `README.md` section "Installing RCC from the command line", or the upstream docs: https://sema4.ai/docs/automation/rcc/installation
+    - Pop quiz: What if you don't have one yet? Grab one from [our releases](https://github.com/joshyorko/rcc/releases) or see the `README.md` for installation options.
 
 ### 2) Clone and run tasks (toolkit)
 
