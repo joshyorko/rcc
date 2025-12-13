@@ -6,7 +6,7 @@ This repo is a Go CLI that builds and runs **movable, isolated Python environmen
 
 This guide is intentionally practical: copy/paste the commands, get a working dev loop, and ship a PR. We'll go easy on the theory part.
 
-
+> **Parental advisory**: May contain failed attempts at "humor."
 
 ---
 
