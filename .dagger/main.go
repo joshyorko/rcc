@@ -22,7 +22,7 @@ import (
 type RccCi struct{}
 
 // Returns a container that echoes whatever string argument is provided
-func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {
+func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {---
 	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg})
 }
 
@@ -32,7 +32,7 @@ func (m *RccCi) RunRobotTests(ctx context.Context, source *dagger.Directory) (st
 		From("golang:1.22").
 		WithExec([]string{"apt-get", "update"}).
 		WithExec([]string{"apt-get", "install", "-y", "curl", "git", "unzip", "ca-certificates"}).
-		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", "https://github.com/joshyorko/rcc/releases/download/v18.10.0/rcc-linux64"}).
+		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", "https://github.com/joshyorko/rcc/releases/download/v18.12.1/rcc-linux64"}).
 		WithExec([]string{"chmod", "+x", "/usr/local/bin/rcc"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
