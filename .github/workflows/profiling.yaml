@@ -84,13 +84,13 @@ jobs:
       - name: Profile small env - Fresh build
         shell: bash
         run: |
+          mkdir -p tmp/profiles
           echo "## Small Environment (python=3.7.8)" >> $GITHUB_STEP_SUMMARY
           echo "### Fresh Build" >> $GITHUB_STEP_SUMMARY
           
           START=$(date +%s)
           ./build/rcc ht vars --space profile-small \
             --controller profiling \
-            --timeline tmp/profiles/small-fresh-timeline.json \
             robot_tests/conda.yaml 2>&1 | tee tmp/profiles/small-fresh.log
           END=$(date +%s)
           
@@ -106,7 +106,6 @@ jobs:
           START=$(date +%s)
           ./build/rcc ht vars --space profile-small \
             --controller profiling \
-            --timeline tmp/profiles/small-restore-timeline.json \
             robot_tests/conda.yaml 2>&1 | tee tmp/profiles/small-restore.log
           END=$(date +%s)
           
@@ -124,7 +123,6 @@ jobs:
           START=$(date +%s)
           ./build/rcc ht vars --space profile-medium \
             --controller profiling \
-            --timeline tmp/profiles/medium-fresh-timeline.json \
             robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/medium-fresh.log
           END=$(date +%s)
           
@@ -140,7 +138,6 @@ jobs:
           START=$(date +%s)
           ./build/rcc ht vars --space profile-medium \
             --controller profiling \
-            --timeline tmp/profiles/medium-restore-timeline.json \
             robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/medium-restore.log
           END=$(date +%s)
           
@@ -159,7 +156,6 @@ jobs:
           START=$(date +%s)
           ./build/rcc ht vars --space profile-heavy \
             --controller profiling \
-            --timeline tmp/profiles/heavy-fresh-timeline.json \
             robot_tests/profile_conda_heavy.yaml 2>&1 | tee tmp/profiles/heavy-fresh.log
           END=$(date +%s)
           
@@ -176,7 +172,6 @@ jobs:
           START=$(date +%s)
           ./build/rcc ht vars --space profile-heavy \
             --controller profiling \
-            --timeline tmp/profiles/heavy-restore-timeline.json \
             robot_tests/profile_conda_heavy.yaml 2>&1 | tee tmp/profiles/heavy-restore.log
           END=$(date +%s)
           
