@@ -3,10 +3,10 @@ name: Compression Profiling
 on:
   workflow_dispatch:
     inputs:
-      compare_main:
-        description: 'Also build and profile main branch for comparison'
+      run_heavy:
+        description: 'Run heavy environment tests (slower)'
         required: false
-        default: false
+        default: true
         type: boolean
   pull_request:
     branches:
@@ -29,10 +29,8 @@ jobs:
         include:
           - os: linux
             runner: ubuntu-latest
-            rcc_binary: ./build/rcc
           - os: windows
             runner: windows-latest
-            rcc_binary: ./build/rcc.exe
 
     steps:
       - uses: actions/checkout@v5
@@ -45,222 +43,165 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Build RCC (current branch)
+      - name: Install invoke
+        run: python -m pip install invoke
+
+      - name: Setup Robot Environment
+        run: inv robotsetup
+
+      - name: Show commit info
+        run: inv what
+
+      - name: Build RCC
+        run: inv local
+
+      - name: Show RCC version
         shell: bash
         run: |
-          go build -o build/rcc ./cmd/rcc
           echo "### RCC Version" >> $GITHUB_STEP_SUMMARY
-          ${{ matrix.rcc_binary }} version >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ./build/rcc version >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Create output directories
         shell: bash
-        run: |
-          mkdir -p tmp/profiles
-          mkdir -p tmp/output
+        run: mkdir -p tmp/profiles tmp/output
 
       # ============================================
       # SMALL ENVIRONMENT PROFILING
       # ============================================
-      - name: Profile small environment - Fresh build
+      - name: Clean holotree
         shell: bash
         run: |
-          echo "## Small Environment (python=3.10)" >> $GITHUB_STEP_SUMMARY
-          echo "### Fresh Build (no cache)" >> $GITHUB_STEP_SUMMARY
+          ./build/rcc ht delete profile-small --controller profiling 2>/dev/null || true
+          ./build/rcc ht delete profile-medium --controller profiling 2>/dev/null || true
+          ./build/rcc ht delete profile-heavy --controller profiling 2>/dev/null || true
+          ./build/rcc config cleanup --controller profiling 2>/dev/null || true
+
+      - name: Profile small env - Fresh build
+        shell: bash
+        run: |
+          echo "## Small Environment (python=3.7.8)" >> $GITHUB_STEP_SUMMARY
+          echo "### Fresh Build" >> $GITHUB_STEP_SUMMARY
           
-          # Clean any existing holotree
-          ${{ matrix.rcc_binary }} ht delete profile-small --controller profiling 2>/dev/null || true
-          ${{ matrix.rcc_binary }} config cleanup --controller profiling 2>/dev/null || true
-          
-          # Time the fresh build
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-small \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-small \
             --controller profiling \
             --timeline tmp/profiles/small-fresh-timeline.json \
-            --pprof tmp/profiles/small-fresh.pprof \
             robot_tests/conda.yaml 2>&1 | tee tmp/profiles/small-fresh.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Fresh build time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fresh build time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
-      - name: Profile small environment - Restore from hololib
+      - name: Profile small env - Restore
         shell: bash
         run: |
-          echo "### Restore from Hololib (cached)" >> $GITHUB_STEP_SUMMARY
+          echo "### Restore from Hololib" >> $GITHUB_STEP_SUMMARY
           
-          # Delete holotree but keep hololib
-          ${{ matrix.rcc_binary }} ht delete profile-small --controller profiling
+          ./build/rcc ht delete profile-small --controller profiling
           
-          # Time the restore
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-small \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-small \
             --controller profiling \
             --timeline tmp/profiles/small-restore-timeline.json \
-            --pprof tmp/profiles/small-restore.pprof \
             robot_tests/conda.yaml 2>&1 | tee tmp/profiles/small-restore.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Restore time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Restore time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
       # MEDIUM ENVIRONMENT PROFILING  
       # ============================================
-      - name: Profile medium environment - Fresh build
+      - name: Profile medium env - Fresh build
         shell: bash
         run: |
           echo "## Medium Environment (numpy, pandas, requests)" >> $GITHUB_STEP_SUMMARY
           echo "### Fresh Build" >> $GITHUB_STEP_SUMMARY
           
-          ${{ matrix.rcc_binary }} ht delete profile-medium --controller profiling 2>/dev/null || true
-          
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-medium \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-medium \
             --controller profiling \
             --timeline tmp/profiles/medium-fresh-timeline.json \
-            --pprof tmp/profiles/medium-fresh.pprof \
             robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/medium-fresh.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Fresh build time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fresh build time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
-      - name: Profile medium environment - Restore
+      - name: Profile medium env - Restore
         shell: bash
         run: |
           echo "### Restore from Hololib" >> $GITHUB_STEP_SUMMARY
           
-          ${{ matrix.rcc_binary }} ht delete profile-medium --controller profiling
+          ./build/rcc ht delete profile-medium --controller profiling
           
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-medium \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-medium \
             --controller profiling \
             --timeline tmp/profiles/medium-restore-timeline.json \
-            --pprof tmp/profiles/medium-restore.pprof \
             robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/medium-restore.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Restore time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Restore time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
-      # HEAVY ENVIRONMENT PROFILING
+      # HEAVY ENVIRONMENT PROFILING (optional)
       # ============================================
-      - name: Profile heavy environment - Fresh build
+      - name: Profile heavy env - Fresh build
+        if: ${{ inputs.run_heavy != false }}
         shell: bash
         run: |
           echo "## Heavy Environment (data science stack)" >> $GITHUB_STEP_SUMMARY
           echo "### Fresh Build" >> $GITHUB_STEP_SUMMARY
           
-          ${{ matrix.rcc_binary }} ht delete profile-heavy --controller profiling 2>/dev/null || true
-          
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-heavy \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-heavy \
             --controller profiling \
             --timeline tmp/profiles/heavy-fresh-timeline.json \
-            --pprof tmp/profiles/heavy-fresh.pprof \
             robot_tests/profile_conda_heavy.yaml 2>&1 | tee tmp/profiles/heavy-fresh.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Fresh build time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fresh build time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
-      - name: Profile heavy environment - Restore
+      - name: Profile heavy env - Restore
+        if: ${{ inputs.run_heavy != false }}
         shell: bash
         run: |
           echo "### Restore from Hololib" >> $GITHUB_STEP_SUMMARY
           
-          ${{ matrix.rcc_binary }} ht delete profile-heavy --controller profiling
+          ./build/rcc ht delete profile-heavy --controller profiling
           
-          START=$(date +%s.%N)
-          ${{ matrix.rcc_binary }} ht vars --space profile-heavy \
+          START=$(date +%s)
+          ./build/rcc ht vars --space profile-heavy \
             --controller profiling \
             --timeline tmp/profiles/heavy-restore-timeline.json \
-            --pprof tmp/profiles/heavy-restore.pprof \
             robot_tests/profile_conda_heavy.yaml 2>&1 | tee tmp/profiles/heavy-restore.log
-          END=$(date +%s.%N)
+          END=$(date +%s)
           
-          DURATION=$(echo "$END - $START" | bc)
-          echo "- **Restore time**: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+          echo "- **Restore time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
-      # ANALYZE PROFILING DATA
+      # VERIFY ZSTD COMPRESSION
       # ============================================
-      - name: Analyze timeline data
-        shell: bash
-        run: |
-          echo "## Timeline Analysis" >> $GITHUB_STEP_SUMMARY
-          
-          # Parse timeline JSON for key metrics
-          python3 << 'EOF' >> $GITHUB_STEP_SUMMARY
-          import json
-          import os
-          from pathlib import Path
-          
-          profiles_dir = Path("tmp/profiles")
-          
-          for timeline_file in sorted(profiles_dir.glob("*-timeline.json")):
-              name = timeline_file.stem.replace("-timeline", "")
-              try:
-                  with open(timeline_file) as f:
-                      data = json.load(f)
-                  
-                  # Extract key phases
-                  phases = {}
-                  for event in data:
-                      if isinstance(event, dict) and "name" in event:
-                          phase = event.get("name", "unknown")
-                          dur = event.get("dur", 0) / 1000000  # microseconds to seconds
-                          if phase not in phases:
-                              phases[phase] = 0
-                          phases[phase] += dur
-                  
-                  if phases:
-                      print(f"\n### {name}")
-                      print("| Phase | Duration (s) |")
-                      print("|-------|--------------|")
-                      for phase, dur in sorted(phases.items(), key=lambda x: -x[1])[:10]:
-                          print(f"| {phase} | {dur:.2f} |")
-              except Exception as e:
-                  print(f"\n### {name}")
-                  print(f"Error parsing: {e}")
-          EOF
-
-      - name: Holotree statistics
-        shell: bash
-        run: |
-          echo "## Holotree Statistics" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          ${{ matrix.rcc_binary }} ht stats --controller profiling >> $GITHUB_STEP_SUMMARY 2>&1 || true
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          
-          echo "### Catalog Info" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          ${{ matrix.rcc_binary }} ht catalogs --controller profiling >> $GITHUB_STEP_SUMMARY 2>&1 || true
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
       - name: Verify zstd compression
         shell: bash
         run: |
           echo "## Compression Verification" >> $GITHUB_STEP_SUMMARY
           
-          # Find hololib files and check magic bytes
-          if [[ "${{ matrix.os }}" == "windows" ]]; then
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
             HOLOLIB_PATH="$LOCALAPPDATA/robocorp/hololib"
           else
             HOLOLIB_PATH="$HOME/.robocorp/hololib"
           fi
           
-          echo "Checking files in: $HOLOLIB_PATH" >> $GITHUB_STEP_SUMMARY
+          echo "Checking files in: $HOLOLIB_PATH"
           
           if [ -d "$HOLOLIB_PATH" ]; then
-            # Sample a few files
             ZSTD_COUNT=0
             GZIP_COUNT=0
             OTHER_COUNT=0
             TOTAL=0
             
-            for f in $(find "$HOLOLIB_PATH" -type f | head -50); do
+            for f in $(find "$HOLOLIB_PATH" -type f 2>/dev/null | head -100); do
               TOTAL=$((TOTAL + 1))
               MAGIC=$(xxd -l 4 -p "$f" 2>/dev/null || echo "error")
               if [[ "$MAGIC" == "28b52ffd" ]]; then
@@ -275,53 +216,42 @@ jobs:
             echo "| Format | Count |" >> $GITHUB_STEP_SUMMARY
             echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
             echo "| zstd | $ZSTD_COUNT |" >> $GITHUB_STEP_SUMMARY
-            echo "| gzip | $GZIP_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| gzip (legacy) | $GZIP_COUNT |" >> $GITHUB_STEP_SUMMARY
             echo "| other/catalog | $OTHER_COUNT |" >> $GITHUB_STEP_SUMMARY
             echo "| **Total sampled** | $TOTAL |" >> $GITHUB_STEP_SUMMARY
+            
+            if [[ $ZSTD_COUNT -gt 0 && $GZIP_COUNT -eq 0 ]]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "✅ **All compressed files are using zstd!**" >> $GITHUB_STEP_SUMMARY
+            elif [[ $GZIP_COUNT -gt 0 ]]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "⚠️ **Found legacy gzip files** - this may be expected if reading old cache" >> $GITHUB_STEP_SUMMARY
+            fi
           else
-            echo "Hololib directory not found" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Hololib directory not found at $HOLOLIB_PATH" >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: Holotree statistics
+        shell: bash
+        run: |
+          echo "## Holotree Statistics" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          ./build/rcc ht stats --controller profiling >> $GITHUB_STEP_SUMMARY 2>&1 || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Upload profiling artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: profiling-${{ matrix.os }}
-          path: |
-            tmp/profiles/
+          path: tmp/profiles/
           retention-days: 30
 
       - name: Cleanup
         if: always()
         shell: bash
         run: |
-          ${{ matrix.rcc_binary }} ht delete profile-small --controller profiling 2>/dev/null || true
-          ${{ matrix.rcc_binary }} ht delete profile-medium --controller profiling 2>/dev/null || true
-          ${{ matrix.rcc_binary }} ht delete profile-heavy --controller profiling 2>/dev/null || true
-          ${{ matrix.rcc_binary }} config cleanup --controller profiling 2>/dev/null || true
-
-  summary:
-    name: Generate Summary
-    runs-on: ubuntu-latest
-    needs: profile
-    if: always()
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Generate comparison summary
-        run: |
-          echo "# Compression Profiling Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "See individual job summaries for detailed results." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
-          echo "- profiling-linux: Linux timeline and pprof data" >> $GITHUB_STEP_SUMMARY
-          echo "- profiling-windows: Windows timeline and pprof data" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## What to look for" >> $GITHUB_STEP_SUMMARY
-          echo "1. **Restore times** should be faster than main branch" >> $GITHUB_STEP_SUMMARY
-          echo "2. **zstd count** should be > 0, gzip count should be 0 for new files" >> $GITHUB_STEP_SUMMARY
-          echo "3. **Timeline phases** - decompression should be minimal" >> $GITHUB_STEP_SUMMARY
+          ./build/rcc ht delete profile-small --controller profiling 2>/dev/null || true
+          ./build/rcc ht delete profile-medium --controller profiling 2>/dev/null || true
+          ./build/rcc ht delete profile-heavy --controller profiling 2>/dev/null || true
+          ./build/rcc config cleanup --controller profiling 2>/dev/null || true
