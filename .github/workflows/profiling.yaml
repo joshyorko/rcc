@@ -34,8 +34,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0  # Need full history to checkout main
       
       - uses: actions/setup-go@v6
         with:
@@ -56,86 +54,37 @@ jobs:
         run: mkdir -p tmp/profiles tmp/output
 
       # ============================================
-      # BUILD AND PROFILE MAIN BRANCH (GZIP BASELINE)
+      # DOWNLOAD RELEASE RCC (GZIP BASELINE)
       # ============================================
-      - name: Checkout main branch
+      - name: Download release RCC (gzip baseline)
         shell: bash
         run: |
-          git checkout main
-          echo "## 📊 Compression Comparison: main (gzip) vs PR (zstd)" >> $GITHUB_STEP_SUMMARY
+          mkdir -p tmp/baseline
+          echo "## 📊 Compression Comparison: v18.12.1 (gzip) vs PR (zstd)" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            curl -sL "https://github.com/joshyorko/rcc/releases/download/v18.12.1/rcc-windows64.exe" -o tmp/baseline/rcc.exe
+            chmod +x tmp/baseline/rcc.exe
+            echo "BASELINE_RCC=tmp/baseline/rcc.exe" >> $GITHUB_ENV
+          else
+            curl -sL "https://github.com/joshyorko/rcc/releases/download/v18.12.1/rcc-linux64" -o tmp/baseline/rcc
+            chmod +x tmp/baseline/rcc
+            echo "BASELINE_RCC=tmp/baseline/rcc" >> $GITHUB_ENV
+          fi
 
-      - name: Build main branch RCC
-        run: |
-          inv assets
-          inv local
-
-      - name: Show main RCC version
+      - name: Show baseline RCC version
         shell: bash
         run: |
-          echo "### Main Branch (gzip baseline)" >> $GITHUB_STEP_SUMMARY
+          echo "### Baseline (gzip)" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          ./build/rcc version >> $GITHUB_STEP_SUMMARY
+          $BASELINE_RCC version >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Clean holotree for main
-        shell: bash
-        run: |
-          ./build/rcc ht delete main-small --controller profiling 2>/dev/null || true
-          ./build/rcc ht delete main-medium --controller profiling 2>/dev/null || true
-          ./build/rcc config cleanup --controller profiling 2>/dev/null || true
-
-      - name: Main - Small env fresh build
-        shell: bash
-        run: |
-          START=$(date +%s)
-          ./build/rcc ht vars --space main-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/main-small-fresh.log
-          END=$(date +%s)
-          echo "MAIN_SMALL_FRESH=$((END - START))" >> $GITHUB_ENV
-
-      - name: Main - Small env restore
-        shell: bash
-        run: |
-          ./build/rcc ht delete main-small --controller profiling
-          START=$(date +%s)
-          ./build/rcc ht vars --space main-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/main-small-restore.log
-          END=$(date +%s)
-          echo "MAIN_SMALL_RESTORE=$((END - START))" >> $GITHUB_ENV
-
-      - name: Main - Medium env fresh build
-        shell: bash
-        run: |
-          START=$(date +%s)
-          ./build/rcc ht vars --space main-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/main-medium-fresh.log || true
-          END=$(date +%s)
-          echo "MAIN_MEDIUM_FRESH=$((END - START))" >> $GITHUB_ENV
-
-      - name: Main - Medium env restore
-        shell: bash
-        run: |
-          ./build/rcc ht delete main-medium --controller profiling 2>/dev/null || true
-          START=$(date +%s)
-          ./build/rcc ht vars --space main-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/main-medium-restore.log || true
-          END=$(date +%s)
-          echo "MAIN_MEDIUM_RESTORE=$((END - START))" >> $GITHUB_ENV
-
-      - name: Cleanup main holotree
-        shell: bash
-        run: |
-          ./build/rcc ht delete main-small --controller profiling 2>/dev/null || true
-          ./build/rcc ht delete main-medium --controller profiling 2>/dev/null || true
-          ./build/rcc config cleanup --controller profiling 2>/dev/null || true
-
-      # ============================================
-      # BUILD AND PROFILE PR BRANCH (ZSTD)
-      # ============================================
-      - name: Checkout PR branch
-        shell: bash
-        run: git checkout ${{ github.head_ref || github.ref_name }}
+      - name: Prepare assets
+        run: inv assets
 
       - name: Build PR branch RCC
-        run: |
-          inv assets
-          inv local
+        run: inv local
 
       - name: Show PR RCC version
         shell: bash
@@ -145,6 +94,60 @@ jobs:
           ./build/rcc version >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
+      # ============================================
+      # BASELINE (GZIP) PROFILING
+      # ============================================
+      - name: Clean holotree for baseline
+        shell: bash
+        run: |
+          $BASELINE_RCC ht delete baseline-small --controller profiling 2>/dev/null || true
+          $BASELINE_RCC ht delete baseline-medium --controller profiling 2>/dev/null || true
+          $BASELINE_RCC config cleanup --controller profiling 2>/dev/null || true
+
+      - name: Baseline - Small env fresh build
+        shell: bash
+        run: |
+          START=$(date +%s)
+          $BASELINE_RCC ht vars --space baseline-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/baseline-small-fresh.log
+          END=$(date +%s)
+          echo "BASELINE_SMALL_FRESH=$((END - START))" >> $GITHUB_ENV
+
+      - name: Baseline - Small env restore
+        shell: bash
+        run: |
+          $BASELINE_RCC ht delete baseline-small --controller profiling
+          START=$(date +%s)
+          $BASELINE_RCC ht vars --space baseline-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/baseline-small-restore.log
+          END=$(date +%s)
+          echo "BASELINE_SMALL_RESTORE=$((END - START))" >> $GITHUB_ENV
+
+      - name: Baseline - Medium env fresh build
+        shell: bash
+        run: |
+          START=$(date +%s)
+          $BASELINE_RCC ht vars --space baseline-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/baseline-medium-fresh.log || true
+          END=$(date +%s)
+          echo "BASELINE_MEDIUM_FRESH=$((END - START))" >> $GITHUB_ENV
+
+      - name: Baseline - Medium env restore
+        shell: bash
+        run: |
+          $BASELINE_RCC ht delete baseline-medium --controller profiling 2>/dev/null || true
+          START=$(date +%s)
+          $BASELINE_RCC ht vars --space baseline-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/baseline-medium-restore.log || true
+          END=$(date +%s)
+          echo "BASELINE_MEDIUM_RESTORE=$((END - START))" >> $GITHUB_ENV
+
+      - name: Cleanup baseline holotree
+        shell: bash
+        run: |
+          $BASELINE_RCC ht delete baseline-small --controller profiling 2>/dev/null || true
+          $BASELINE_RCC ht delete baseline-medium --controller profiling 2>/dev/null || true
+          $BASELINE_RCC config cleanup --controller profiling 2>/dev/null || true
+
+      # ============================================
+      # PR (ZSTD) PROFILING
+      # ============================================
       - name: Clean holotree for PR
         shell: bash
         run: |
@@ -195,28 +198,28 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## ⚡ Performance Comparison" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Environment | Operation | main (gzip) | PR (zstd) | Δ |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------------|-----------|-------------|-----------|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | Operation | v18.12.1 (gzip) | PR (zstd) | Δ |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------------|-----------|-----------------|-----------|---|" >> $GITHUB_STEP_SUMMARY
           
           # Small fresh
-          DIFF=$((MAIN_SMALL_FRESH - PR_SMALL_FRESH))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Small | Fresh build | ${MAIN_SMALL_FRESH}s | ${PR_SMALL_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          DIFF=$((BASELINE_SMALL_FRESH - PR_SMALL_FRESH))
+          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
+          echo "| Small | Fresh build | ${BASELINE_SMALL_FRESH}s | ${PR_SMALL_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
           
           # Small restore
-          DIFF=$((MAIN_SMALL_RESTORE - PR_SMALL_RESTORE))
+          DIFF=$((BASELINE_SMALL_RESTORE - PR_SMALL_RESTORE))
           if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Small | **Restore** | ${MAIN_SMALL_RESTORE}s | ${PR_SMALL_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          echo "| Small | **Restore** | ${BASELINE_SMALL_RESTORE}s | ${PR_SMALL_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
           
           # Medium fresh
-          DIFF=$((MAIN_MEDIUM_FRESH - PR_MEDIUM_FRESH))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Medium | Fresh build | ${MAIN_MEDIUM_FRESH}s | ${PR_MEDIUM_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          DIFF=$((BASELINE_MEDIUM_FRESH - PR_MEDIUM_FRESH))
+          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
+          echo "| Medium | Fresh build | ${BASELINE_MEDIUM_FRESH}s | ${PR_MEDIUM_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
           
           # Medium restore  
-          DIFF=$((MAIN_MEDIUM_RESTORE - PR_MEDIUM_RESTORE))
+          DIFF=$((BASELINE_MEDIUM_RESTORE - PR_MEDIUM_RESTORE))
           if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Medium | **Restore** | ${MAIN_MEDIUM_RESTORE}s | ${PR_MEDIUM_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          echo "| Medium | **Restore** | ${BASELINE_MEDIUM_RESTORE}s | ${PR_MEDIUM_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
       # HEAVY ENVIRONMENT PROFILING (optional)
@@ -324,8 +327,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          ./build/rcc ht delete main-small --controller profiling 2>/dev/null || true
-          ./build/rcc ht delete main-medium --controller profiling 2>/dev/null || true
+          $BASELINE_RCC ht delete baseline-small --controller profiling 2>/dev/null || true
+          $BASELINE_RCC ht delete baseline-medium --controller profiling 2>/dev/null || true
           ./build/rcc ht delete pr-small --controller profiling 2>/dev/null || true
           ./build/rcc ht delete pr-medium --controller profiling 2>/dev/null || true
           ./build/rcc ht delete profile-heavy --controller profiling 2>/dev/null || true
