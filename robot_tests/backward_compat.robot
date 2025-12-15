@@ -28,9 +28,10 @@ Verify Dual Format Detection
 Goal: Verify version shows zstd support
     [Documentation]    Check that the RCC version is built with zstd support
     Step    build/rcc version --controller citests
-    Use STDERR
-    Must Have    v18
-    Comment    The version itself doesn't show compression, but building proves it
+    Use STDOUT
+    Must Have    v19
+    Must Have    zstd
+    Comment    Version shows beta with zstd build metadata
 
 Goal: New environment writes zstd, restore reads it back
     [Documentation]    Round-trip test: write zstd, delete holotree, restore from zstd
