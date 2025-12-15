@@ -147,7 +147,7 @@ jobs:
       # HEAVY ENVIRONMENT PROFILING (optional)
       # ============================================
       - name: Profile heavy env - Fresh build
-        if: ${{ inputs.run_heavy != false }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_heavy != false }}
         shell: bash
         run: |
           echo "## Heavy Environment (data science stack)" >> $GITHUB_STEP_SUMMARY
@@ -162,7 +162,7 @@ jobs:
           echo "- **Fresh build time**: $((END - START))s" >> $GITHUB_STEP_SUMMARY
 
       - name: Profile heavy env - Restore
-        if: ${{ inputs.run_heavy != false }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_heavy != false }}
         shell: bash
         run: |
           echo "### Restore from Hololib" >> $GITHUB_STEP_SUMMARY
