@@ -118,6 +118,16 @@ def normalize_output(output: str) -> str:
     return output.strip().replace("\r\n", "\n").replace("\r", "\n")
 
 
+def is_windows():
+    """Return True if running on Windows, False otherwise."""
+    return sys.platform == "win32"
+
+
+def is_linux():
+    """Return True if running on Linux, False otherwise."""
+    return sys.platform.startswith("linux")
+
+
 def run_and_check_expected_output(
     command: str,
     expected_output: str,

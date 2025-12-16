@@ -3,6 +3,13 @@
 		"github/github-mcp-server": {
 			"url": "https://api.githubcopilot.com/mcp/",
 			"type": "http"
+		},
+		"container-use": {
+			"type": "stdio",
+			"command": "cu",
+			"args": [
+				"stdio"
+			]
 		}
 	},
 	"inputs": []

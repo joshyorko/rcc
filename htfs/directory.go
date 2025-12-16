@@ -16,6 +16,7 @@ import (
 	"github.com/joshyorko/rcc/fail"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/set"
+	"github.com/klauspost/compress/zstd"
 )
 
 var (
@@ -320,7 +321,8 @@ func (it *Root) SaveAs(filename string) error {
 	}
 	defer sink.Close()
 	defer sink.Sync()
-	writer, err := gzip.NewWriterLevel(sink, gzip.BestSpeed)
+	// Use zstd for ~3x faster decompression with similar compression ratio
+	writer, err := zstd.NewWriter(sink, zstd.WithEncoderLevel(zstd.SpeedFastest))
 	if err != nil {
 		return err
 	}
@@ -343,13 +345,36 @@ func (it *Root) LoadFrom(filename string) error {
 		return err
 	}
 	defer source.Close()
-	reader, err := gzip.NewReader(source)
+
+	// Detect format using magic bytes for dual-format support (zstd/gzip)
+	format, err := detectFormat(source)
 	if err != nil {
 		return err
 	}
+
+	var reader io.Reader
+	switch format {
+	case "zstd":
+		zr, zErr := zstd.NewReader(source)
+		if zErr != nil {
+			return zErr
+		}
+		defer zr.Close()
+		reader = zr
+	case "gzip":
+		gr, gErr := gzip.NewReader(source)
+		if gErr != nil {
+			return gErr
+		}
+		defer gr.Close()
+		reader = gr
+	default:
+		// Raw JSON (unlikely but handle gracefully)
+		reader = source
+	}
+
 	it.source = filename
 	defer common.Timeline("holotree catalog %q loaded", filename)
-	defer reader.Close()
 	return it.ReadFrom(reader)
 }
 

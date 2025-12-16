@@ -4,6 +4,8 @@
 
 **Version:** 2.2
 **Date:** 2025-12-13
+**Branch:** `feature/63-holotree-zstd-compression`
+**Issue:** [#63](https://github.com/joshyorko/rcc/issues/63)
 **Core Principle:** Compression is non-negotiable. Speed gains must work for ALL robots.
 
 ---
