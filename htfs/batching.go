@@ -127,21 +127,16 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 				return
 			}
 
-			// Process subdirectories in parallel FIRST
-			// This maximizes parallelism by exploring the tree breadth-first
-			for name, subdir := range it.Dirs {
-				if !subdir.Shadow && !subdir.IsSymlink() {
-					subpath := filepath.Join(path, name)
-					// Schedule subdirectory processing immediately
-					anywork.Backlog(RestoreDirectoryBatched(library, fs, current, stats)(subpath, subdir))
-				}
-			}
+			// NOTE: We CANNOT schedule subdirectory work here because AllDirs already
+			// handles directory traversal and scheduling. Trying to schedule more work
+			// from within a worker leads to deadlock when all workers are busy.
 
 			existingEntries, err := os.ReadDir(path)
 			anywork.OnErrPanicCloseAll(err)
 
 			// Collect files that need to be restored
 			var smallBatch []FileTask
+			var removeWork []anywork.Work  // Collect removal work to avoid deadlock
 			files := make(map[string]bool)
 
 			for _, part := range existingEntries {
@@ -150,7 +145,7 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 					_, ok := it.Dirs[part.Name()]
 					if !ok {
 						common.Trace("* Holotree: remove extra directory %q", directpath)
-						anywork.Backlog(RemoveDirectory(directpath))
+						removeWork = append(removeWork, RemoveDirectory(directpath))
 					}
 					stats.Dirty(!ok)
 					continue
@@ -164,7 +159,7 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 				found, ok := it.Files[part.Name()]
 				if !ok {
 					common.Trace("* Holotree: remove extra file      %q", directpath)
-					anywork.Backlog(RemoveFile(directpath))
+					removeWork = append(removeWork, RemoveFile(directpath))
 					stats.Dirty(true)
 					continue
 				}
@@ -190,8 +185,8 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 							Rewrite:  fs.Rewrite(),
 						})
 					} else {
-						// Process large files individually
-						anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+						// Process large files individually (collect work to avoid deadlock)
+						removeWork = append(removeWork, DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
 					}
 				}
 			}
@@ -213,20 +208,31 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 							Rewrite:  fs.Rewrite(),
 						})
 					} else {
-						// Process large files individually
-						anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+						// Process large files individually (collect work to avoid deadlock)
+						removeWork = append(removeWork, DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
 					}
 				}
 			}
 
 			// Schedule batches of small files
+			var batchWork []anywork.Work
 			for i := 0; i < len(smallBatch); i += BatchSize {
 				end := i + BatchSize
 				if end > len(smallBatch) {
 					end = len(smallBatch)
 				}
 				batch := smallBatch[i:end]
-				anywork.Backlog(ProcessBatch(batch))
+				batchWork = append(batchWork, ProcessBatch(batch))
+			}
+
+			// Process removal work synchronously to avoid deadlock
+			for _, work := range removeWork {
+				work()  // Execute directly, don't schedule
+			}
+
+			// Process file batches synchronously to avoid deadlock
+			for _, work := range batchWork {
+				work()  // Execute directly, don't schedule
 			}
 		}
 	}
