@@ -111,7 +111,8 @@ Goal: Export and import preserves zstd format
     Comment    Get the fingerprint for export
     ${fingerprint}=    Capture Flat Output    build/rcc ht hash --silent robot_tests/conda.yaml
     
-    Comment    Export the catalog with the fingerprint
+    Comment    Create output directory and export the catalog with the fingerprint
+    Create Directory    tmp/compression_test
     Step    build/rcc holotree export --controller citests --zipfile tmp/compression_test/export.zip ${fingerprint}
     Use STDERR
     Must Have    OK.

@@ -11,8 +11,9 @@ Goal: Verify initial call with do-not-track (GH#7)
   Must Have   anonymous health tracking is: disabled
 
 Bug in virtual holotree with gzipped files
-  Comment    Delete any existing environment to ensure clean state
+  Comment    Delete any existing environment AND catalog to ensure clean state
   Fire And Forget    build/rcc holotree delete 8b2083d2 --controller citests
+  Fire And Forget    build/rcc holotree remove 8b2083d2 --controller citests
   
   Step        build/rcc holotree blueprint --controller citests robot_tests/spellbug/conda.yaml
   Use STDERR
