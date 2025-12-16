@@ -114,15 +114,25 @@ jobs:
       # ============================================
       # BASELINE (GZIP) PROFILING - ISOLATED HOME
       # ============================================
+      # ============================================
+      # Helper function to extract timing from RCC logs
+      # RCC outputs: "####  Progress: 14/15  vX.X.X     0.569s  Restore space from library"
+      # We extract the time from Progress 14/15 (restore phase) for accurate measurement
+      # Uses Python for cross-platform timing (date +%s%N doesn't work on Windows)
+      # ============================================
       - name: Baseline - Small env fresh build
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/baseline-small-fresh.log
-          END=$(date +%s)
-          echo "BASELINE_SMALL_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_SMALL_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          # Extract restore phase time from log (Progress 14/15) - cross-platform regex
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-small-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_SMALL_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: Baseline - Small env restore
         shell: bash
@@ -130,20 +140,26 @@ jobs:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
           $BASELINE_RCC ht delete baseline-small --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/baseline-small-restore.log
-          END=$(date +%s)
-          echo "BASELINE_SMALL_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_SMALL_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-small-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_SMALL_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: Baseline - Medium env fresh build
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/baseline-medium-fresh.log
-          END=$(date +%s)
-          echo "BASELINE_MEDIUM_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_MEDIUM_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-medium-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_MEDIUM_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: Baseline - Medium env restore
         shell: bash
@@ -151,20 +167,26 @@ jobs:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
           $BASELINE_RCC ht delete baseline-medium --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/baseline-medium-restore.log
-          END=$(date +%s)
-          echo "BASELINE_MEDIUM_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_MEDIUM_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-medium-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_MEDIUM_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: Baseline - Large env fresh build
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/baseline-large-fresh.log
-          END=$(date +%s)
-          echo "BASELINE_LARGE_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_LARGE_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-large-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_LARGE_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: Baseline - Large env restore
         shell: bash
@@ -172,10 +194,13 @@ jobs:
           ROBOCORP_HOME: ${{ env.BASELINE_HOME }}
         run: |
           $BASELINE_RCC ht delete baseline-large --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           $BASELINE_RCC ht vars --space baseline-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/baseline-large-restore.log
-          END=$(date +%s)
-          echo "BASELINE_LARGE_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "BASELINE_LARGE_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/baseline-large-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "BASELINE_LARGE_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       # ============================================
       # PR (ZSTD) PROFILING - ISOLATED HOME
@@ -185,10 +210,13 @@ jobs:
         env:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/pr-small-fresh.log
-          END=$(date +%s)
-          echo "PR_SMALL_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_SMALL_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-small-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_SMALL_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: PR - Small env restore
         shell: bash
@@ -196,20 +224,26 @@ jobs:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
           ./build/rcc ht delete pr-small --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-small --controller profiling robot_tests/conda.yaml 2>&1 | tee tmp/profiles/pr-small-restore.log
-          END=$(date +%s)
-          echo "PR_SMALL_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_SMALL_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-small-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_SMALL_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: PR - Medium env fresh build
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/pr-medium-fresh.log
-          END=$(date +%s)
-          echo "PR_MEDIUM_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_MEDIUM_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-medium-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_MEDIUM_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: PR - Medium env restore
         shell: bash
@@ -217,20 +251,26 @@ jobs:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
           ./build/rcc ht delete pr-medium --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/pr-medium-restore.log
-          END=$(date +%s)
-          echo "PR_MEDIUM_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_MEDIUM_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-medium-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_MEDIUM_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: PR - Large env fresh build
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-fresh.log
-          END=$(date +%s)
-          echo "PR_LARGE_FRESH=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_LARGE_FRESH_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-large-fresh.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_LARGE_FRESH_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       - name: PR - Large env restore
         shell: bash
@@ -238,10 +278,13 @@ jobs:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
         run: |
           ./build/rcc ht delete pr-large --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-restore.log
-          END=$(date +%s)
-          echo "PR_LARGE_RESTORE=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_LARGE_RESTORE_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-large-restore.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_LARGE_RESTORE=${RESTORE_TIME}" >> $GITHUB_ENV
 
       # ============================================
       # MAX WORKERS MODE: RCC_WORKER_COUNT=128
@@ -254,10 +297,13 @@ jobs:
           RCC_WORKER_COUNT: "128"
         run: |
           ./build/rcc ht delete pr-large --controller profiling
-          START=$(date +%s)
+          START_MS=$(python3 -c "import time; print(int(time.time()*1000))")
           ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-maxworkers.log
-          END=$(date +%s)
-          echo "PR_LARGE_MAXWORKERS=$((END - START))" >> $GITHUB_ENV
+          END_MS=$(python3 -c "import time; print(int(time.time()*1000))")
+          WALL_MS=$((END_MS - START_MS))
+          echo "PR_LARGE_MAXWORKERS_MS=$WALL_MS" >> $GITHUB_ENV
+          RESTORE_TIME=$(python3 -c "import re; f=open('tmp/profiles/pr-large-maxworkers.log').read(); m=re.search(r'Progress: 14/15.*?(\d+\.\d+)s', f); print(m.group(1) if m else '0')" 2>/dev/null || echo "0")
+          echo "PR_LARGE_MAXWORKERS=${RESTORE_TIME}" >> $GITHUB_ENV
 
       # ============================================
       # HEAVY ENVIRONMENT PROFILING (optional, slower)
@@ -310,6 +356,7 @@ jobs:
 
       # ============================================
       # COMPARISON SUMMARY TABLE
+      # Uses RCC's internal timing (Progress 14/15) for precise restore phase measurement
       # ============================================
       - name: Generate comparison table
         shell: bash
@@ -317,38 +364,87 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## ⚡ Performance Comparison" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> **Note:** Wall-clock times are shown, plus **precise restore phase timing** extracted from RCC logs" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Wall-clock comparison table (total command time in ms)
+          echo "### Total Command Time (wall-clock)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Environment | Operation | v18.12.1 (gzip) | PR (zstd) | Δ |" >> $GITHUB_STEP_SUMMARY
           echo "|-------------|-----------|-----------------|-----------|---|" >> $GITHUB_STEP_SUMMARY
 
+          # Convert ms to human-readable format using python
+          format_time() {
+            python3 -c "ms=int('${1:-0}'); print(f'{ms/1000:.1f}s' if ms>=1000 else f'{ms}ms')" 2>/dev/null || echo "${1}ms"
+          }
+
           # Small fresh
-          DIFF=$((BASELINE_SMALL_FRESH - PR_SMALL_FRESH))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Small | Fresh build | ${BASELINE_SMALL_FRESH}s | ${PR_SMALL_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          BASELINE_T="${BASELINE_SMALL_FRESH_MS:-0}"
+          PR_T="${PR_SMALL_FRESH_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Small | Fresh build | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
 
           # Small restore
-          DIFF=$((BASELINE_SMALL_RESTORE - PR_SMALL_RESTORE))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Small | **Restore** | ${BASELINE_SMALL_RESTORE}s | ${PR_SMALL_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          BASELINE_T="${BASELINE_SMALL_RESTORE_MS:-0}"
+          PR_T="${PR_SMALL_RESTORE_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Small | Restore | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
 
           # Medium fresh
-          DIFF=$((BASELINE_MEDIUM_FRESH - PR_MEDIUM_FRESH))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Medium | Fresh build | ${BASELINE_MEDIUM_FRESH}s | ${PR_MEDIUM_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          BASELINE_T="${BASELINE_MEDIUM_FRESH_MS:-0}"
+          PR_T="${PR_MEDIUM_FRESH_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Medium | Fresh build | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
 
-          # Medium restore  
-          DIFF=$((BASELINE_MEDIUM_RESTORE - PR_MEDIUM_RESTORE))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Medium | **Restore** | ${BASELINE_MEDIUM_RESTORE}s | ${PR_MEDIUM_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          # Medium restore
+          BASELINE_T="${BASELINE_MEDIUM_RESTORE_MS:-0}"
+          PR_T="${PR_MEDIUM_RESTORE_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Medium | Restore | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
 
           # Large fresh
-          DIFF=$((BASELINE_LARGE_FRESH - PR_LARGE_FRESH))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Large | Fresh build | ${BASELINE_LARGE_FRESH}s | ${PR_LARGE_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          BASELINE_T="${BASELINE_LARGE_FRESH_MS:-0}"
+          PR_T="${PR_LARGE_FRESH_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Large | Fresh build | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
 
           # Large restore
-          DIFF=$((BASELINE_LARGE_RESTORE - PR_LARGE_RESTORE))
-          if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
-          echo "| Large | **Restore** | ${BASELINE_LARGE_RESTORE}s | ${PR_LARGE_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+          BASELINE_T="${BASELINE_LARGE_RESTORE_MS:-0}"
+          PR_T="${PR_LARGE_RESTORE_MS:-0}"
+          DIFF_MS=$((BASELINE_T - PR_T))
+          if [ $DIFF_MS -gt 100 ]; then ICON="🟢 -$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; elif [ $DIFF_MS -lt -100 ]; then ICON="🔴 +$(python3 -c "print(f'{abs($DIFF_MS)/1000:.1f}s')")"; else ICON="⚪ ~same"; fi
+          echo "| Large | Restore | $(python3 -c "print(f'{${BASELINE_T}/1000:.1f}s')") | $(python3 -c "print(f'{${PR_T}/1000:.1f}s')") | $ICON |" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Restore Phase Only (RCC internal timing)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> This is the **actual decompression + file write time** - the metric that matters for zstd vs gzip comparison." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | v18.12.1 (gzip) | PR (zstd) | Speedup |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------------|-----------------|-----------|---------|" >> $GITHUB_STEP_SUMMARY
+
+          # Small restore phase
+          BASELINE_R="${BASELINE_SMALL_RESTORE:-0}"
+          PR_R="${PR_SMALL_RESTORE:-0}"
+          SPEEDUP=$(python3 -c "b=float('${BASELINE_R}'); p=float('${PR_R}'); print(f'{((b-p)/b)*100:.1f}%' if b>0 and p>0 else 'N/A')" 2>/dev/null || echo "N/A")
+          echo "| Small | ${BASELINE_R}s | ${PR_R}s | $SPEEDUP |" >> $GITHUB_STEP_SUMMARY
+
+          # Medium restore phase
+          BASELINE_R="${BASELINE_MEDIUM_RESTORE:-0}"
+          PR_R="${PR_MEDIUM_RESTORE:-0}"
+          SPEEDUP=$(python3 -c "b=float('${BASELINE_R}'); p=float('${PR_R}'); print(f'{((b-p)/b)*100:.1f}%' if b>0 and p>0 else 'N/A')" 2>/dev/null || echo "N/A")
+          echo "| Medium | ${BASELINE_R}s | ${PR_R}s | $SPEEDUP |" >> $GITHUB_STEP_SUMMARY
+
+          # Large restore phase
+          BASELINE_R="${BASELINE_LARGE_RESTORE:-0}"
+          PR_R="${PR_LARGE_RESTORE:-0}"
+          SPEEDUP=$(python3 -c "b=float('${BASELINE_R}'); p=float('${PR_R}'); print(f'{((b-p)/b)*100:.1f}%' if b>0 and p>0 else 'N/A')" 2>/dev/null || echo "N/A")
+          echo "| Large | ${BASELINE_R}s | ${PR_R}s | $SPEEDUP |" >> $GITHUB_STEP_SUMMARY
 
           # Add max workers section
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -356,14 +452,16 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Higher worker count for I/O-bound file restoration operations." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Mode | Large Restore | vs Normal |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|---------------|-----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Normal | ${PR_LARGE_RESTORE}s | baseline |" >> $GITHUB_STEP_SUMMARY
+          echo "| Mode | Large Restore (internal) | vs Default Workers |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------------------------|-------------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Default (8 workers) | ${PR_LARGE_RESTORE:-N/A}s | baseline |" >> $GITHUB_STEP_SUMMARY
 
           # Max workers
-          if [ -n "$PR_LARGE_MAXWORKERS" ] && [ "${PR_LARGE_RESTORE:-0}" -gt 0 ]; then
-            SPEEDUP=$(python -c "a=float('${PR_LARGE_RESTORE:-0}'); b=float('${PR_LARGE_MAXWORKERS:-0}'); print(f'{(a-b)*100/a:.1f}') if a>0 else print('N/A')" 2>/dev/null || echo "N/A")
-            echo "| Max Workers (128) | ${PR_LARGE_MAXWORKERS}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
+          if [ -n "$PR_LARGE_MAXWORKERS" ]; then
+            NORMAL_R="${PR_LARGE_RESTORE:-0}"
+            MAX_R="${PR_LARGE_MAXWORKERS:-0}"
+            SPEEDUP=$(python3 -c "a=float('${NORMAL_R}'); b=float('${MAX_R}'); print(f'{((a-b)/a)*100:.1f}%' if a>0 else 'N/A')" 2>/dev/null || echo "N/A")
+            echo "| Max Workers (128) | ${MAX_R}s | $SPEEDUP faster |" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Generate heavy comparison (if run)
