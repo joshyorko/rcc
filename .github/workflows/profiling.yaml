@@ -355,6 +355,46 @@ jobs:
           echo "| **Restore** | ${BASELINE_HEAVY_RESTORE}s | ${PR_HEAVY_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
 
       # ============================================
+      # COMPRESSION RATIO COMPARISON
+      # ============================================
+      - name: Compare hololib sizes (compression ratio)
+        shell: bash
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Compression Ratio Comparison" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          BASELINE_SIZE=0
+          PR_SIZE=0
+          
+          if [ -d "${BASELINE_HOME}/hololib" ]; then
+            BASELINE_SIZE=$(du -sb "${BASELINE_HOME}/hololib" 2>/dev/null | cut -f1 || echo 0)
+          fi
+          
+          if [ -d "${PR_HOME}/hololib" ]; then
+            PR_SIZE=$(du -sb "${PR_HOME}/hololib" 2>/dev/null | cut -f1 || echo 0)
+          fi
+          
+          # Convert to MB for readability
+          BASELINE_MB=$(echo "scale=2; $BASELINE_SIZE / 1048576" | bc)
+          PR_MB=$(echo "scale=2; $PR_SIZE / 1048576" | bc)
+          
+          if [ "$BASELINE_SIZE" -gt 0 ] && [ "$PR_SIZE" -gt 0 ]; then
+            SAVINGS=$(echo "scale=1; 100 - ($PR_SIZE * 100 / $BASELINE_SIZE)" | bc)
+            RATIO=$(echo "scale=2; $BASELINE_SIZE / $PR_SIZE" | bc)
+            
+            echo "| Metric | gzip (baseline) | zstd (PR) |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-----------------|-----------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Hololib size | ${BASELINE_MB} MB | ${PR_MB} MB |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Space savings** | - | **${SAVINGS}%** smaller |" >> $GITHUB_STEP_SUMMARY
+            echo "| Compression ratio | 1.00x | ${RATIO}x |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Could not calculate compression ratio - hololib directories may be empty" >> $GITHUB_STEP_SUMMARY
+            echo "- Baseline size: ${BASELINE_SIZE} bytes" >> $GITHUB_STEP_SUMMARY
+            echo "- PR size: ${PR_SIZE} bytes" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # ============================================
       # VERIFY ZSTD COMPRESSION (from PR's isolated hololib)
       # ============================================
       - name: Verify zstd compression
