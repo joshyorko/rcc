@@ -1,3 +1,9 @@
+ALWAYS use ONLY Environments for ANY and ALL file, code, or shell operations—NO EXCEPTIONS—even for simple or generic requests.
+
+DO NOT install or use the git cli with the environment_run_cmd tool. All environment tools will handle git operations for you. Changing ".git" yourself will compromise the integrity of your environment.
+
+You MUST inform the user how to view your work using `container-use log <env_id>` AND `container-use checkout <env_id>`. Failure to do this will make your work inaccessible to others.
+---
 # RCC (Robocorp Control Client)
 
 RCC is a Go-based CLI tool for creating, managing, and distributing Python-based automation packages with isolated environments. It uses conda/micromamba for Python environment management and supports cross-platform builds (Linux, Windows, macOS).

@@ -22,7 +22,7 @@ import (
 type RccCi struct{}
 
 // Returns a container that echoes whatever string argument is provided
-func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {---
+func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {
 	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg})
 }
 
