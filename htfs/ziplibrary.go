@@ -2,6 +2,7 @@ package htfs
 
 import (
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/joshyorko/rcc/journal"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/klauspost/compress/zstd"
 )
 
 type ziplibrary struct {
