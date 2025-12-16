@@ -21,10 +21,17 @@ import (
 )
 
 const (
+	// epoc is a fixed timestamp (January 7, 2021 06:13:20 UTC) used for all holotree files.
+	// Using a constant timestamp ensures reproducible builds and makes it easy to identify
+	// holotree-managed files. This specific date was chosen as it predates the holotree
+	// feature release while being recent enough to avoid issues with very old timestamps.
 	epoc = 1610000000
 )
 
 var (
+	// motherTime is the standard modification time applied to all holotree files.
+	// Using a fixed time ensures file content hashes remain stable and enables
+	// fast change detection by comparing mtimes instead of file contents.
 	motherTime = time.Unix(epoc, 0)
 )
 
@@ -424,8 +431,14 @@ func (it *hololib) RestoreTo(blueprint []byte, label, controller, space string, 
 	common.TimelineEnd()
 	fail.On(err != nil, "Failed to make branches -> %v", err)
 	score := &stats{}
-	common.TimelineBegin("holotree restore start")
-	err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	// Use batched restoration by default, fall back to individual files if disabled
+	if common.DisableBatching() {
+		common.TimelineBegin("holotree restore start")
+		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	} else {
+		common.TimelineBegin("holotree restore start (batched)")
+		err = fs.AllDirs(RestoreDirectoryBatched(it, fs, currentstate, score))
+	}
 	fail.On(err != nil, "Failed to restore directories -> %v", err)
 	common.TimelineEnd()
 	defer common.Timeline("- dirty %d/%d (duplicate: %d, links: %d)", score.dirty, score.total, score.duplicate, score.links)

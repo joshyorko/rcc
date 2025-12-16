@@ -303,25 +303,18 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 		buf := GetCopyBuffer()
 		defer PutCopyBuffer(buf)
 
-		// Optionally skip hash validation for 40-60% speedup
-		// Security note: Only skip in trusted environments
-		if common.SkipHashValidation() {
-			// Fast path: direct copy without hashing
-			_, err = io.CopyBuffer(sink, reader, *buf)
-			anywork.OnErrPanicCloseAll(err, sink)
-		} else {
-			// Secure path: copy with hash verification
-			digester := common.NewDigester(Compress())
-			many := io.MultiWriter(sink, digester)
+		// Always verify hash - this is the security fence that guarantees
+		// holotree integrity. Never skip this check.
+		digester := common.NewDigester(Compress())
+		many := io.MultiWriter(sink, digester)
 
-			_, err = io.CopyBuffer(many, reader, *buf)
-			anywork.OnErrPanicCloseAll(err, sink)
+		_, err = io.CopyBuffer(many, reader, *buf)
+		anywork.OnErrPanicCloseAll(err, sink)
 
-			hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
-			if digest != hexdigest {
-				err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
-				anywork.OnErrPanicCloseAll(err, sink)
-			}
+		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
+		if digest != hexdigest {
+			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
+			anywork.OnErrPanicCloseAll(err, sink)
 		}
 
 		for _, position := range details.Rewrite {

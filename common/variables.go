@@ -32,7 +32,9 @@ const (
 	VERBOSE_ENVIRONMENT_BUILDING          = `RCC_VERBOSE_ENVIRONMENT_BUILDING`
 	ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS = `ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS`
 	RCC_VERBOSITY                         = `RCC_VERBOSITY`
-	RCC_SKIP_HASH_VALIDATION              = `RCC_SKIP_HASH_VALIDATION`
+	RCC_WORKER_COUNT                      = `RCC_WORKER_COUNT`
+	RCC_USE_ARCHIVES                      = `RCC_USE_ARCHIVES`
+	RCC_DISABLE_BATCHING                  = `RCC_DISABLE_BATCHING`
 	SILENTLY                              = `silent`
 	TRACING                               = `trace`
 	DEBUGGING                             = `debug`
@@ -128,12 +130,64 @@ func DisablePycManagement() bool {
 	return NoPycManagement || len(os.Getenv(RCC_NO_PYC_MANAGEMENT)) > 0
 }
 
-// SkipHashValidation returns true if SHA256 hash validation should be skipped
-// during environment restore. This can provide 40-60% speedup but reduces
-// integrity verification. Use only in trusted environments.
-// Set RCC_SKIP_HASH_VALIDATION=1 to enable.
-func SkipHashValidation() bool {
-	return len(os.Getenv(RCC_SKIP_HASH_VALIDATION)) > 0
+// DisableBatching returns true if small file batching should be disabled.
+// Batching groups small files (<100KB) into batches of 32 for reduced overhead.
+// Set RCC_DISABLE_BATCHING=1 if you experience issues with batched restoration.
+// This is an escape hatch for enterprise environments with unusual disk subsystems.
+func DisableBatching() bool {
+	return len(os.Getenv(RCC_DISABLE_BATCHING)) > 0
+}
+
+// WorkerCountFromEnv returns the worker count from RCC_WORKER_COUNT environment
+// variable, or 0 if not set or invalid. This allows users to override the
+// automatic worker pool sizing for I/O-bound operations.
+func WorkerCountFromEnv() int {
+	val := os.Getenv(RCC_WORKER_COUNT)
+	if len(val) == 0 {
+		return 0
+	}
+	var count int
+	_, err := fmt.Sscanf(val, "%d", &count)
+	if err != nil || count < 1 {
+		return 0
+	}
+	return count
+}
+
+// OptimalWorkerCount returns the recommended worker count for I/O-bound
+// operations based on CPU count. This is more aggressive than the default
+// NumCPU-1 formula because holotree restoration is I/O-bound, not CPU-bound.
+func OptimalWorkerCount() int {
+	cpus := runtime.NumCPU()
+
+	// Check environment variable override first
+	if envCount := WorkerCountFromEnv(); envCount > 0 {
+		return envCount
+	}
+
+	// Adaptive formula for I/O-bound file restoration.
+	// Uses 2x CPU count as baseline - higher multipliers show diminishing returns
+	// and can cause excessive context switching on some systems.
+	// Users can override with RCC_WORKER_COUNT for their specific hardware.
+	limit := cpus * 2
+
+	// Conservative cap at 64 workers by default.
+	// Beyond this point, file I/O becomes the bottleneck, not parallelism.
+	// Users can set RCC_WORKER_COUNT=128 or higher if they have fast NVMe storage.
+	if limit > 64 {
+		limit = 64
+	}
+	if limit < 4 {
+		limit = 4
+	}
+
+	return limit
+}
+
+// UseArchives returns true if archive-based storage should be used for
+// holotree restoration. Set RCC_USE_ARCHIVES=1 to enable.
+func UseArchives() bool {
+	return len(os.Getenv(RCC_USE_ARCHIVES)) > 0
 }
 
 func RccRemoteOrigin() string {

@@ -244,32 +244,20 @@ jobs:
           echo "PR_LARGE_RESTORE=$((END - START))" >> $GITHUB_ENV
 
       # ============================================
-      # TURBO MODE: RCC_SKIP_HASH_VALIDATION=1
-      # Shows maximum potential speedup by skipping SHA256 verification
+      # MAX WORKERS MODE: RCC_WORKER_COUNT=128
+      # Shows impact of worker pool optimization
       # ============================================
-      - name: PR Turbo - Large env restore (skip hash validation)
+      - name: PR Max Workers - Large env restore (128 workers)
         shell: bash
         env:
           ROBOCORP_HOME: ${{ env.PR_HOME }}
-          RCC_SKIP_HASH_VALIDATION: "1"
+          RCC_WORKER_COUNT: "128"
         run: |
           ./build/rcc ht delete pr-large --controller profiling
           START=$(date +%s)
-          ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-turbo.log
+          ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-maxworkers.log
           END=$(date +%s)
-          echo "PR_LARGE_TURBO=$((END - START))" >> $GITHUB_ENV
-
-      - name: PR Turbo - Medium env restore (skip hash validation)
-        shell: bash
-        env:
-          ROBOCORP_HOME: ${{ env.PR_HOME }}
-          RCC_SKIP_HASH_VALIDATION: "1"
-        run: |
-          ./build/rcc ht delete pr-medium --controller profiling
-          START=$(date +%s)
-          ./build/rcc ht vars --space pr-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/pr-medium-turbo.log
-          END=$(date +%s)
-          echo "PR_MEDIUM_TURBO=$((END - START))" >> $GITHUB_ENV
+          echo "PR_LARGE_MAXWORKERS=$((END - START))" >> $GITHUB_ENV
 
       # ============================================
       # HEAVY ENVIRONMENT PROFILING (optional, slower)
@@ -362,25 +350,20 @@ jobs:
           if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
           echo "| Large | **Restore** | ${BASELINE_LARGE_RESTORE}s | ${PR_LARGE_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
 
-          # Add turbo mode section
+          # Add max workers section
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🚀 Turbo Mode (RCC_SKIP_HASH_VALIDATION=1)" >> $GITHUB_STEP_SUMMARY
+          echo "### ⚡ Max Workers Mode (RCC_WORKER_COUNT=128)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Skipping SHA256 hash validation for maximum restore speed in trusted environments." >> $GITHUB_STEP_SUMMARY
+          echo "Higher worker count for I/O-bound file restoration operations." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Environment | Normal Restore | Turbo Restore | Speedup |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------------|----------------|---------------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Mode | Large Restore | vs Normal |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------------|-----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Normal | ${PR_LARGE_RESTORE}s | baseline |" >> $GITHUB_STEP_SUMMARY
 
-          # Medium turbo
-          if [ -n "$PR_MEDIUM_TURBO" ] && [ "$PR_MEDIUM_RESTORE" -gt 0 ]; then
-            SPEEDUP=$(echo "scale=1; ($PR_MEDIUM_RESTORE - $PR_MEDIUM_TURBO) * 100 / $PR_MEDIUM_RESTORE" | bc 2>/dev/null || echo "N/A")
-            echo "| Medium | ${PR_MEDIUM_RESTORE}s | ${PR_MEDIUM_TURBO}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          # Large turbo
-          if [ -n "$PR_LARGE_TURBO" ] && [ "$PR_LARGE_RESTORE" -gt 0 ]; then
-            SPEEDUP=$(echo "scale=1; ($PR_LARGE_RESTORE - $PR_LARGE_TURBO) * 100 / $PR_LARGE_RESTORE" | bc 2>/dev/null || echo "N/A")
-            echo "| Large | ${PR_LARGE_RESTORE}s | ${PR_LARGE_TURBO}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
+          # Max workers
+          if [ -n "$PR_LARGE_MAXWORKERS" ] && [ "$PR_LARGE_RESTORE" -gt 0 ]; then
+            SPEEDUP=$(echo "scale=1; ($PR_LARGE_RESTORE - $PR_LARGE_MAXWORKERS) * 100 / $PR_LARGE_RESTORE" | bc 2>/dev/null || echo "N/A")
+            echo "| Max Workers (128) | ${PR_LARGE_MAXWORKERS}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Generate heavy comparison (if run)

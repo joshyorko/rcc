@@ -181,8 +181,14 @@ func (it *ziplibrary) RestoreTo(blueprint []byte, label, controller, space strin
 	common.TimelineEnd()
 	fail.On(err != nil, "Failed to make branches %q -> %v", targetdir, err)
 	score := &stats{}
-	common.TimelineBegin("holotree restore start (zip)")
-	err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	// Use batched restoration by default, fall back to individual files if disabled
+	if common.DisableBatching() {
+		common.TimelineBegin("holotree restore start (zip)")
+		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	} else {
+		common.TimelineBegin("holotree restore start (zip, batched)")
+		err = fs.AllDirs(RestoreDirectoryBatched(it, fs, currentstate, score))
+	}
 	fail.On(err != nil, "Failed to restore directory %q -> %v", targetdir, err)
 	common.TimelineEnd()
 	defer common.Timeline("- dirty %d/%d", score.dirty, score.total)
