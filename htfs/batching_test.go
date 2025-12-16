@@ -78,8 +78,8 @@ func TestBatchConstants(t *testing.T) {
 	if SmallFileThreshold != 100*1024 {
 		t.Errorf("SmallFileThreshold = %d, want 100KB", SmallFileThreshold)
 	}
-	if BatchSize != 32 {
-		t.Errorf("BatchSize = %d, want 32", BatchSize)
+	if BatchSize != 16 {
+		t.Errorf("BatchSize = %d, want 16 (smaller batches = better parallelism)", BatchSize)
 	}
 }
 

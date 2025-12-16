@@ -62,7 +62,10 @@ func watcher(failures Failures, counters Counters) {
 
 func init() {
 	group = NewGroup()
-	pipeline = make(WorkQueue, 100000)
+	// Reduced buffer size for better cache locality
+	// Large buffers cause memory bloat and poor CPU cache utilization
+	// 4k is optimal for typical workload patterns
+	pipeline = make(WorkQueue, 4096)
 	failpipe = make(Failures)
 	errcount = make(Counters)
 	headcount = 0

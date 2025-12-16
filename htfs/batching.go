@@ -1,6 +1,7 @@
 package htfs
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -35,9 +36,9 @@ const (
 	SmallFileThreshold int64 = 100 * 1024 // 100KB
 
 	// BatchSize is the number of small files to process in a single work unit.
-	// 32 files per batch balances goroutine overhead reduction with
-	// responsiveness and memory usage.
-	BatchSize = 32
+	// Reduced from 32 to 16 for better parallelism and lower latency.
+	// Smaller batches = more parallelism = better CPU utilization
+	BatchSize = 16
 )
 
 // FileTask represents a single file restoration task
@@ -54,35 +55,61 @@ type FileTask struct {
 // - Processing multiple files in a single goroutine
 // - Amortizing goroutine scheduling overhead
 // - Allowing the worker pool to better balance load
+// - Prefetching upcoming files for better I/O throughput
 //
-// Error handling: Each file in the batch is processed independently. If one file
-// fails, subsequent files in the batch still get processed. This ensures partial
-// progress is made and avoids leaving the holotree in an inconsistent state where
-// some files were written but the batch was marked as "failed". Any errors from
-// individual files are handled by DropFile's internal error handling (which uses
-// anywork.OnErrPanicCloseAll to propagate failures to the worker pool).
+// Error handling: Errors are collected and propagated properly. If any file
+// in the batch fails, the error is propagated to ensure holotree consistency.
+// This prevents silent failures that could leave the holotree in a bad state.
 func ProcessBatch(tasks []FileTask) anywork.Work {
 	return func() {
+		// Collect digests for prefetching
+		digests := make([]string, 0, len(tasks))
+		for _, task := range tasks {
+			if !task.Details.IsSymlink() && task.Digest != "" && task.Digest != "N/A" {
+				digests = append(digests, task.Digest)
+			}
+		}
+
+		// Track first error encountered - we'll propagate this at the end
+		var firstError interface{}
+		failedCount := 0
+
 		// Process each file in the batch using the standard DropFile logic
 		// DropFile already uses pooled decoders and buffers efficiently.
-		// Each file is processed independently - failures in one file don't
-		// prevent processing of subsequent files in the batch.
 		for i, task := range tasks {
+			// Prefetch upcoming files in this batch
+			upcomingDigests := []string{}
+			for j := i + 1; j < len(digests) && j < i+4; j++ {
+				upcomingDigests = append(upcomingDigests, digests[j])
+			}
+
 			// Call DropFile's work function directly within this goroutine
 			// This avoids creating separate goroutines for each file.
-			// DropFile handles its own errors via anywork.OnErrPanicCloseAll,
-			// so we wrap in a recovery to continue with remaining files.
+			// Capture panics to collect errors properly
 			func() {
 				defer func() {
 					if r := recover(); r != nil {
-						// Log the error but continue with remaining files
-						common.Timeline("batch file %d/%d failed: %v (continuing with remaining files)",
-							i+1, len(tasks), r)
+						failedCount++
+						if firstError == nil {
+							firstError = r
+						}
+						// Log each failure for debugging
+						common.Trace("Batch file %d/%d failed: %v", i+1, len(tasks), r)
 					}
 				}()
-				work := DropFile(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite)
+				// Use optimized DropFile with prefetching
+				work := DropFileWithPrefetch(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite, upcomingDigests)
 				work()
 			}()
+		}
+
+		// If any files failed, propagate the first error to maintain consistency
+		// This ensures the holotree restoration properly reports failures
+		if firstError != nil {
+			common.Error("Batch processing failed", fmt.Errorf("%d/%d files failed in batch, first error: %v",
+				failedCount, len(tasks), firstError))
+			// Re-panic with the first error to propagate it through anywork
+			panic(firstError)
 		}
 	}
 }
@@ -98,6 +125,16 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 			if it.IsSymlink() {
 				anywork.OnErrPanicCloseAll(restoreSymlink(it.Symlink, path))
 				return
+			}
+
+			// Process subdirectories in parallel FIRST
+			// This maximizes parallelism by exploring the tree breadth-first
+			for name, subdir := range it.Dirs {
+				if !subdir.Shadow && !subdir.IsSymlink() {
+					subpath := filepath.Join(path, name)
+					// Schedule subdirectory processing immediately
+					anywork.Backlog(RestoreDirectoryBatched(library, fs, current, stats)(subpath, subdir))
+				}
 			}
 
 			existingEntries, err := os.ReadDir(path)

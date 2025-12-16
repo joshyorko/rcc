@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/cloud"
@@ -36,7 +36,8 @@ var (
 )
 
 type stats struct {
-	sync.Mutex
+	// Use atomic operations instead of mutex for high-performance counters
+	// This eliminates lock contention in hot paths
 	total     uint64
 	dirty     uint64
 	links     uint64
@@ -44,36 +45,30 @@ type stats struct {
 }
 
 func (it *stats) Dirtyness() float64 {
-	it.Lock()
-	defer it.Unlock()
-
-	dirtyness := (1000 * it.dirty) / it.total
+	// Atomic reads for lock-free access
+	total := atomic.LoadUint64(&it.total)
+	dirty := atomic.LoadUint64(&it.dirty)
+	if total == 0 {
+		return 0.0
+	}
+	dirtyness := (1000 * dirty) / total
 	return float64(dirtyness) / 10.0
 }
 
 func (it *stats) Duplicate() {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
-	it.duplicate++
+	atomic.AddUint64(&it.total, 1)
+	atomic.AddUint64(&it.duplicate, 1)
 }
 
 func (it *stats) Link() {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
-	it.links++
+	atomic.AddUint64(&it.total, 1)
+	atomic.AddUint64(&it.links, 1)
 }
 
 func (it *stats) Dirty(dirty bool) {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
+	atomic.AddUint64(&it.total, 1)
 	if dirty {
-		it.dirty++
+		atomic.AddUint64(&it.dirty, 1)
 	}
 }
 

@@ -155,27 +155,26 @@ func WorkerCountFromEnv() int {
 }
 
 // OptimalWorkerCount returns the recommended worker count for I/O-bound
-// operations based on CPU count. This is more aggressive than the default
-// NumCPU-1 formula because holotree restoration is I/O-bound, not CPU-bound.
+// operations based on CPU count. Conservative formula for enterprise safety.
 func OptimalWorkerCount() int {
 	cpus := runtime.NumCPU()
 
-	// Check environment variable override first
+	// Check environment variable override first - power users can tune this
 	if envCount := WorkerCountFromEnv(); envCount > 0 {
 		return envCount
 	}
 
-	// Adaptive formula for I/O-bound file restoration.
-	// Uses 2x CPU count as baseline - higher multipliers show diminishing returns
-	// and can cause excessive context switching on some systems.
-	// Users can override with RCC_WORKER_COUNT for their specific hardware.
+	// Conservative formula: 2x CPU count for I/O-bound operations
+	// This balances performance with enterprise safety:
+	// - Windows with antivirus won't melt
+	// - File handle limits (512-2048 on Windows) won't be exceeded
+	// - Network shares can handle this load
 	limit := cpus * 2
 
-	// Conservative cap at 64 workers by default.
-	// Beyond this point, file I/O becomes the bottleneck, not parallelism.
-	// Users can set RCC_WORKER_COUNT=128 or higher if they have fast NVMe storage.
-	if limit > 64 {
-		limit = 64
+	// Conservative cap at 32 workers - safe for enterprise environments
+	// Still provides good parallelism without overwhelming systems
+	if limit > 32 {
+		limit = 32
 	}
 	if limit < 4 {
 		limit = 4

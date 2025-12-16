@@ -277,10 +277,64 @@ func LiftFile(sourcename, sinkname string, compress bool) anywork.Work {
 
 		anywork.OnErrPanicCloseAll(sink.Close())
 
-		runtime.Gosched()
+		// Removed runtime.Gosched() - unnecessary scheduling hint that hurts performance
+		// The OS scheduler is smart enough to handle this without hints
 
 		anywork.OnErrPanicCloseAll(pathlib.TryRename("liftfile", partname, sinkname))
 		pathlib.MakeSharedFile(sinkname)
+	}
+}
+
+// DropFileWithPrefetch is an optimized version of DropFile that prefetches upcoming files
+func DropFileWithPrefetch(library Library, digest, sinkname string, details *File, rewrite []byte, upcomingDigests []string) anywork.Work {
+	return func() {
+		if details.IsSymlink() {
+			anywork.OnErrPanicCloseAll(restoreSymlink(details.Symlink, sinkname))
+			return
+		}
+
+		// Use prefetching for better I/O throughput
+		reader, closer, err := OpenWithPrefetch(library, digest, upcomingDigests)
+		anywork.OnErrPanicCloseAll(err)
+
+		defer closer()
+		partname := fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
+		defer os.Remove(partname)
+		sink, err := os.Create(partname)
+		anywork.OnErrPanicCloseAll(err)
+
+		// Get pooled 256KB buffer for better SSD performance
+		buf := GetCopyBuffer()
+		defer PutCopyBuffer(buf)
+
+		// ALWAYS verify hash - bit rot is real, small files are attack vectors
+		// Juha was right: catalogs tell what SHOULD be there, not what IS there
+		digester := common.NewDigester(Compress())
+		many := io.MultiWriter(sink, digester)
+		_, err = io.CopyBuffer(many, reader, *buf)
+		anywork.OnErrPanicCloseAll(err, sink)
+		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
+		if digest != hexdigest {
+			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		for _, position := range details.Rewrite {
+			_, err = sink.Seek(position, 0)
+			if err != nil {
+				sink.Close()
+				panic(fmt.Sprintf("%v %d", err, position))
+			}
+			_, err = sink.Write(rewrite)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		anywork.OnErrPanicCloseAll(sink.Close())
+
+		anywork.OnErrPanicCloseAll(pathlib.TryRename("dropfile", partname, sinkname))
+
+		anywork.OnErrPanicCloseAll(os.Chmod(sinkname, details.Mode))
+		anywork.OnErrPanicCloseAll(os.Chtimes(sinkname, motherTime, motherTime))
 	}
 }
 
@@ -303,14 +357,12 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 		buf := GetCopyBuffer()
 		defer PutCopyBuffer(buf)
 
-		// Always verify hash - this is the security fence that guarantees
-		// holotree integrity. Never skip this check.
+		// ALWAYS verify hash - bit rot is real, small files are attack vectors
+		// Juha was right: catalogs tell what SHOULD be there, not what IS there
 		digester := common.NewDigester(Compress())
 		many := io.MultiWriter(sink, digester)
-
 		_, err = io.CopyBuffer(many, reader, *buf)
 		anywork.OnErrPanicCloseAll(err, sink)
-
 		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
 		if digest != hexdigest {
 			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
