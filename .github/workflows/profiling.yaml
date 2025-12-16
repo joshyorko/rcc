@@ -361,8 +361,8 @@ jobs:
           echo "| Normal | ${PR_LARGE_RESTORE}s | baseline |" >> $GITHUB_STEP_SUMMARY
 
           # Max workers
-          if [ -n "$PR_LARGE_MAXWORKERS" ] && [ "$PR_LARGE_RESTORE" -gt 0 ]; then
-            SPEEDUP=$(echo "scale=1; ($PR_LARGE_RESTORE - $PR_LARGE_MAXWORKERS) * 100 / $PR_LARGE_RESTORE" | bc 2>/dev/null || echo "N/A")
+          if [ -n "$PR_LARGE_MAXWORKERS" ] && [ "${PR_LARGE_RESTORE:-0}" -gt 0 ]; then
+            SPEEDUP=$(python -c "a=float('${PR_LARGE_RESTORE:-0}'); b=float('${PR_LARGE_MAXWORKERS:-0}'); print(f'{(a-b)*100/a:.1f}') if a>0 else print('N/A')" 2>/dev/null || echo "N/A")
             echo "| Max Workers (128) | ${PR_LARGE_MAXWORKERS}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
           fi
 
@@ -407,13 +407,13 @@ jobs:
             PR_SIZE=$(du -sb "${PR_HOME}/hololib" 2>/dev/null | cut -f1 || echo 0)
           fi
 
-          # Convert to MB for readability
-          BASELINE_MB=$(echo "scale=2; $BASELINE_SIZE / 1048576" | bc)
-          PR_MB=$(echo "scale=2; $PR_SIZE / 1048576" | bc)
+          # Convert to MB for readability (use Python for cross-platform float math)
+          BASELINE_MB=$(python -c "s=int('${BASELINE_SIZE:-0}'); print(f'{s/1048576:.2f}')" 2>/dev/null || echo "0.00")
+          PR_MB=$(python -c "s=int('${PR_SIZE:-0}'); print(f'{s/1048576:.2f}')" 2>/dev/null || echo "0.00")
 
           if [ "$BASELINE_SIZE" -gt 0 ] && [ "$PR_SIZE" -gt 0 ]; then
-            SAVINGS=$(echo "scale=1; 100 - ($PR_SIZE * 100 / $BASELINE_SIZE)" | bc)
-            RATIO=$(echo "scale=2; $BASELINE_SIZE / $PR_SIZE" | bc)
+            SAVINGS=$(python -c "b=int('${BASELINE_SIZE:-0}'); p=int('${PR_SIZE:-0}'); print(f'{100 - (p*100/b):.1f}') if b>0 else print('N/A')" 2>/dev/null || echo "N/A")
+            RATIO=$(python -c "b=int('${BASELINE_SIZE:-0}'); p=int('${PR_SIZE:-0}'); print(f'{(b/p):.2f}') if p>0 else print('N/A')" 2>/dev/null || echo "N/A")
             
             echo "| Metric | gzip (baseline) | zstd (PR) |" >> $GITHUB_STEP_SUMMARY
             echo "|--------|-----------------|-----------|" >> $GITHUB_STEP_SUMMARY
