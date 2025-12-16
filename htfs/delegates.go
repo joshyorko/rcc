@@ -10,10 +10,18 @@ import (
 	"github.com/klauspost/compress/zstd"
 )
 
-// Magic bytes for format detection
-var (
-	gzipMagic = []byte{0x1f, 0x8b}             // gzip header
-	zstdMagic = []byte{0x28, 0xb5, 0x2f, 0xfd} // zstd frame magic
+// Magic byte constants for compression format detection.
+// Note: Go doesn't support const for byte slices, but these values are
+// immutable format identifiers and should never be modified.
+const (
+	// gzip magic bytes (RFC 1952)
+	gzipMagic0 = 0x1f
+	gzipMagic1 = 0x8b
+	// zstd frame magic (RFC 8878)
+	zstdMagic0 = 0x28
+	zstdMagic1 = 0xb5
+	zstdMagic2 = 0x2f
+	zstdMagic3 = 0xfd
 )
 
 // Decoder pool to eliminate per-file allocation overhead.
@@ -99,11 +107,11 @@ func detectFormat(r io.ReadSeeker) (string, error) {
 	if seekErr != nil {
 		return "", seekErr
 	}
-	if n >= 4 && header[0] == zstdMagic[0] && header[1] == zstdMagic[1] &&
-		header[2] == zstdMagic[2] && header[3] == zstdMagic[3] {
+	if n >= 4 && header[0] == zstdMagic0 && header[1] == zstdMagic1 &&
+		header[2] == zstdMagic2 && header[3] == zstdMagic3 {
 		return "zstd", nil
 	}
-	if n >= 2 && header[0] == gzipMagic[0] && header[1] == gzipMagic[1] {
+	if n >= 2 && header[0] == gzipMagic0 && header[1] == gzipMagic1 {
 		return "gzip", nil
 	}
 	return "raw", nil

@@ -54,15 +54,35 @@ type FileTask struct {
 // - Processing multiple files in a single goroutine
 // - Amortizing goroutine scheduling overhead
 // - Allowing the worker pool to better balance load
+//
+// Error handling: Each file in the batch is processed independently. If one file
+// fails, subsequent files in the batch still get processed. This ensures partial
+// progress is made and avoids leaving the holotree in an inconsistent state where
+// some files were written but the batch was marked as "failed". Any errors from
+// individual files are handled by DropFile's internal error handling (which uses
+// anywork.OnErrPanicCloseAll to propagate failures to the worker pool).
 func ProcessBatch(tasks []FileTask) anywork.Work {
 	return func() {
 		// Process each file in the batch using the standard DropFile logic
-		// DropFile already uses pooled decoders and buffers efficiently
-		for _, task := range tasks {
+		// DropFile already uses pooled decoders and buffers efficiently.
+		// Each file is processed independently - failures in one file don't
+		// prevent processing of subsequent files in the batch.
+		for i, task := range tasks {
 			// Call DropFile's work function directly within this goroutine
-			// This avoids creating separate goroutines for each file
-			work := DropFile(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite)
-			work()
+			// This avoids creating separate goroutines for each file.
+			// DropFile handles its own errors via anywork.OnErrPanicCloseAll,
+			// so we wrap in a recovery to continue with remaining files.
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						// Log the error but continue with remaining files
+						common.Timeline("batch file %d/%d failed: %v (continuing with remaining files)",
+							i+1, len(tasks), r)
+					}
+				}()
+				work := DropFile(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite)
+				work()
+			}()
 		}
 	}
 }

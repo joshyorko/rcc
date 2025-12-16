@@ -46,21 +46,21 @@ func NewMetadataCacheWithLimit(maxEntries int) *MetadataCache {
 // GetOrLoad retrieves a cached Root or loads it from disk if not cached
 // or if the file has been modified since last load.
 // Returns the Root and any error encountered during loading.
-func (mc *MetadataCache) GetOrLoad(path string) (*Root, error) {
+func (it *MetadataCache) GetOrLoad(path string) (*Root, error) {
 	// Fast path: check if we have a valid cached entry
-	mc.mu.RLock()
-	cached, exists := mc.roots[path]
-	cachedTime := mc.timestamps[path]
-	mc.mu.RUnlock()
+	it.mu.RLock()
+	cached, exists := it.roots[path]
+	cachedTime := it.timestamps[path]
+	it.mu.RUnlock()
 
 	if exists {
 		// Validate cache by checking file modification time
 		stat, err := os.Stat(path)
 		if err == nil && !stat.ModTime().After(cachedTime) {
 			// Cache is still valid - update access order
-			mc.mu.Lock()
-			mc.promoteToFront(path)
-			mc.mu.Unlock()
+			it.mu.Lock()
+			it.promoteToFront(path)
+			it.mu.Unlock()
 			common.Timeline("holotree metadata cache hit for %q", path)
 			return cached, nil
 		}
@@ -90,81 +90,81 @@ func (mc *MetadataCache) GetOrLoad(path string) (*Root, error) {
 	}
 
 	// Update cache with write lock
-	mc.mu.Lock()
-	mc.roots[path] = root
-	mc.timestamps[path] = modTime
-	mc.promoteToFront(path)
-	mc.evictIfNeeded()
-	mc.mu.Unlock()
+	it.mu.Lock()
+	it.roots[path] = root
+	it.timestamps[path] = modTime
+	it.promoteToFront(path)
+	it.evictIfNeeded()
+	it.mu.Unlock()
 
 	return root, nil
 }
 
 // promoteToFront moves the path to the front of the access order (most recently used).
 // Must be called with write lock held.
-func (mc *MetadataCache) promoteToFront(path string) {
+func (it *MetadataCache) promoteToFront(path string) {
 	// Remove from current position if exists
-	for i, p := range mc.accessOrder {
+	for i, p := range it.accessOrder {
 		if p == path {
-			mc.accessOrder = append(mc.accessOrder[:i], mc.accessOrder[i+1:]...)
+			it.accessOrder = append(it.accessOrder[:i], it.accessOrder[i+1:]...)
 			break
 		}
 	}
 	// Add to front (most recently used)
-	mc.accessOrder = append([]string{path}, mc.accessOrder...)
+	it.accessOrder = append([]string{path}, it.accessOrder...)
 }
 
 // evictIfNeeded removes the least recently used entries if cache exceeds maxEntries.
 // Must be called with write lock held.
-func (mc *MetadataCache) evictIfNeeded() {
-	for len(mc.accessOrder) > mc.maxEntries {
+func (it *MetadataCache) evictIfNeeded() {
+	for len(it.accessOrder) > it.maxEntries {
 		// Remove the last entry (least recently used)
-		oldest := mc.accessOrder[len(mc.accessOrder)-1]
-		mc.accessOrder = mc.accessOrder[:len(mc.accessOrder)-1]
-		delete(mc.roots, oldest)
-		delete(mc.timestamps, oldest)
+		oldest := it.accessOrder[len(it.accessOrder)-1]
+		it.accessOrder = it.accessOrder[:len(it.accessOrder)-1]
+		delete(it.roots, oldest)
+		delete(it.timestamps, oldest)
 		common.Timeline("holotree metadata cache evicted LRU entry %q", oldest)
 	}
 }
 
 // Invalidate removes a specific entry from the cache.
 // This is useful when you know a file has been modified externally.
-func (mc *MetadataCache) Invalidate(path string) {
-	mc.mu.Lock()
-	delete(mc.roots, path)
-	delete(mc.timestamps, path)
+func (it *MetadataCache) Invalidate(path string) {
+	it.mu.Lock()
+	delete(it.roots, path)
+	delete(it.timestamps, path)
 	// Remove from access order
-	for i, p := range mc.accessOrder {
+	for i, p := range it.accessOrder {
 		if p == path {
-			mc.accessOrder = append(mc.accessOrder[:i], mc.accessOrder[i+1:]...)
+			it.accessOrder = append(it.accessOrder[:i], it.accessOrder[i+1:]...)
 			break
 		}
 	}
-	mc.mu.Unlock()
+	it.mu.Unlock()
 	common.Timeline("holotree metadata cache invalidated for %q", path)
 }
 
 // Clear removes all entries from the cache.
 // This is useful for testing or when doing bulk operations.
-func (mc *MetadataCache) Clear() {
-	mc.mu.Lock()
-	mc.roots = make(map[string]*Root)
-	mc.timestamps = make(map[string]time.Time)
-	mc.accessOrder = make([]string, 0, mc.maxEntries)
-	mc.mu.Unlock()
+func (it *MetadataCache) Clear() {
+	it.mu.Lock()
+	it.roots = make(map[string]*Root)
+	it.timestamps = make(map[string]time.Time)
+	it.accessOrder = make([]string, 0, it.maxEntries)
+	it.mu.Unlock()
 	common.Timeline("holotree metadata cache cleared")
 }
 
 // Size returns the current number of cached entries.
 // This is primarily useful for monitoring and testing.
-func (mc *MetadataCache) Size() int {
-	mc.mu.RLock()
-	size := len(mc.roots)
-	mc.mu.RUnlock()
+func (it *MetadataCache) Size() int {
+	it.mu.RLock()
+	size := len(it.roots)
+	it.mu.RUnlock()
 	return size
 }
 
 // MaxEntries returns the maximum number of entries the cache can hold.
-func (mc *MetadataCache) MaxEntries() int {
-	return mc.maxEntries
+func (it *MetadataCache) MaxEntries() int {
+	return it.maxEntries
 }

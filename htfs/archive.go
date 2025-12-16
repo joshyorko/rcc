@@ -51,6 +51,9 @@ func ArchiveExists(blueprint string) bool {
 //	├── manifest.json     # File metadata
 //	└── files/
 //	    └── <digest>      # Uncompressed file content
+//
+// Archives are created atomically using temp file + rename to prevent
+// corruption if the process crashes mid-write.
 func CreateArchive(archivePath string, files map[string]*File, library Library) (err error) {
 	defer fail.Around(&err)
 
@@ -61,19 +64,41 @@ func CreateArchive(archivePath string, files map[string]*File, library Library) 
 	err = os.MkdirAll(archiveDir, 0o755)
 	fail.On(err != nil, "Failed to create archive directory %q -> %v", archiveDir, err)
 
-	// Create archive file
-	archiveFile, err := os.Create(archivePath)
-	fail.On(err != nil, "Failed to create archive file %q -> %v", archivePath, err)
-	defer archiveFile.Close()
+	// Create archive in temp file for atomic write
+	tempPath := archivePath + ".tmp"
+	archiveFile, err := os.Create(tempPath)
+	fail.On(err != nil, "Failed to create temp archive file %q -> %v", tempPath, err)
+
+	// Cleanup temp file on error
+	success := false
+	defer func() {
+		archiveFile.Close()
+		if !success {
+			os.Remove(tempPath)
+		}
+	}()
 
 	// Create zstd writer
+	// Note: writers are closed explicitly before atomic rename, not via defer
 	zw, err := zstd.NewWriter(archiveFile, zstd.WithEncoderLevel(zstd.SpeedBetterCompression))
 	fail.On(err != nil, "Failed to create zstd writer -> %v", err)
-	defer zw.Close()
 
 	// Create tar writer
 	tw := tar.NewWriter(zw)
-	defer tw.Close()
+
+	// Write version marker as first entry for future compatibility.
+	// This allows detection of archive format version without parsing the manifest.
+	versionMarker := []byte("RCCARCHIVE/1.0\n")
+	versionHeader := &tar.Header{
+		Name:    "RCCARCHIVE",
+		Mode:    0o644,
+		Size:    int64(len(versionMarker)),
+		ModTime: motherTime,
+	}
+	err = tw.WriteHeader(versionHeader)
+	fail.On(err != nil, "Failed to write version marker header -> %v", err)
+	_, err = tw.Write(versionMarker)
+	fail.On(err != nil, "Failed to write version marker -> %v", err)
 
 	// Build manifest
 	manifest := &ArchiveManifest{
@@ -156,6 +181,19 @@ func CreateArchive(archivePath string, files map[string]*File, library Library) 
 	_, err = tw.Write(manifestData)
 	fail.On(err != nil, "Failed to write manifest data -> %v", err)
 
+	// Close writers in order before rename
+	err = tw.Close()
+	fail.On(err != nil, "Failed to close tar writer -> %v", err)
+	err = zw.Close()
+	fail.On(err != nil, "Failed to close zstd writer -> %v", err)
+	err = archiveFile.Close()
+	fail.On(err != nil, "Failed to close archive file -> %v", err)
+
+	// Atomic rename to final location
+	err = os.Rename(tempPath, archivePath)
+	fail.On(err != nil, "Failed to rename temp archive to final location -> %v", err)
+
+	success = true
 	common.Timeline("archive created with %d unique files", len(writtenDigests))
 	return nil
 }
@@ -191,6 +229,18 @@ func ExtractArchive(archivePath, targetDir string) (err error) {
 		}
 		fail.On(err != nil, "Failed to read tar header -> %v", err)
 
+		// Handle version marker (first entry in archive)
+		if header.Name == "RCCARCHIVE" {
+			versionData, err := io.ReadAll(tr)
+			fail.On(err != nil, "Failed to read version marker -> %v", err)
+			version := strings.TrimSpace(string(versionData))
+			if !strings.HasPrefix(version, "RCCARCHIVE/") {
+				fail.On(true, "Invalid archive version marker: %q", version)
+			}
+			common.Timeline("archive version: %s", version)
+			continue
+		}
+
 		// Handle manifest.json
 		if header.Name == "manifest.json" {
 			manifestData, err := io.ReadAll(tr)
@@ -206,6 +256,12 @@ func ExtractArchive(archivePath, targetDir string) (err error) {
 		// Handle files
 		if strings.HasPrefix(header.Name, "files/") {
 			digest := strings.TrimPrefix(header.Name, "files/")
+
+			// Security: validate digest to prevent path traversal attacks
+			// Digests should be hex strings only, no path separators or parent references
+			if strings.Contains(digest, "..") || strings.Contains(digest, "/") || strings.Contains(digest, "\\") {
+				fail.On(true, "Invalid digest path in archive (possible path traversal): %q", digest)
+			}
 
 			// Determine target location for the file
 			location := guessLocation(digest)
