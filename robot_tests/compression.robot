@@ -108,8 +108,11 @@ Goal: Full task run works with zstd compressed environment
 
 Goal: Export and import preserves zstd format
     [Documentation]    Test holotree export/import with zstd files
-    Comment    Export the catalog
-    Step    build/rcc holotree export --controller citests --zipfile tmp/compression_test/export.zip robot_tests/conda.yaml
+    Comment    Get the fingerprint for export
+    ${fingerprint}=    Capture Flat Output    build/rcc ht hash --silent robot_tests/conda.yaml
+    
+    Comment    Export the catalog with the fingerprint
+    Step    build/rcc holotree export --controller citests --zipfile tmp/compression_test/export.zip ${fingerprint}
     Use STDERR
     Must Have    OK.
     Must Exist    tmp/compression_test/export.zip

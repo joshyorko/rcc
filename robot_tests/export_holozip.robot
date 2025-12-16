@@ -84,7 +84,7 @@ Goal: Can delete author space
 Goal: Can run as guest
     Fire And Forget    build/rcc ht delete 4e67cd8
     Prepare Robocorp Home    tmp/guest
-  Step        build/rcc task run --controller citests -s guest -r tmp/standalone/robot.yaml -t "run example task"
+    Step        build/rcc task run --controller citests -s guest -r tmp/standalone/robot.yaml -t "run example task"
     Use STDERR
     Must Have    point of view, "actual main robot run" was SUCCESS.
     Must Have    OK.
