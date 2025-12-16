@@ -12,7 +12,7 @@ Fullrun setup
 
 Goal: Show rcc version information.
   Step        build/rcc version --controller citests
-  Must Have   v19.
+  Must Have   v18.
 
 Goal: There is debug message when bundled case.
   Step        build/rcc version --controller citests --debug --bundled

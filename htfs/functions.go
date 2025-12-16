@@ -13,7 +13,6 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/fail"
 	"github.com/joshyorko/rcc/pathlib"
-	"github.com/klauspost/compress/zstd"
 )
 
 func justFileExistCheck(location string, path, name, digest string) anywork.Work {
@@ -106,35 +105,13 @@ func CheckHasher(known map[string]map[string]bool) Filetask {
 			}
 			defer source.Close()
 
-			// Use dual-format detection for reading
-			format, err := detectFormat(source)
+			var reader io.ReadCloser
+			reader, err = gzip.NewReader(source)
 			if err != nil {
-				anywork.Backlog(RemoveFile(fullpath))
-				panic(fmt.Sprintf("Format[check] %q, reason: %v", fullpath, err))
-			}
-
-			var reader io.Reader
-			switch format {
-			case "zstd":
-				zr, zErr := zstd.NewReader(source)
-				if zErr != nil {
-					anywork.Backlog(RemoveFile(fullpath))
-					panic(fmt.Sprintf("Zstd[check] %q, reason: %v", fullpath, zErr))
-				}
-				defer zr.Close()
-				reader = zr
-			case "gzip":
-				gr, gErr := gzip.NewReader(source)
-				if gErr != nil {
-					anywork.Backlog(RemoveFile(fullpath))
-					panic(fmt.Sprintf("Gzip[check] %q, reason: %v", fullpath, gErr))
-				}
-				defer gr.Close()
-				reader = gr
-			default:
+				_, err = source.Seek(0, 0)
+				fail.On(err != nil, "Failed to seek %q -> %v", fullpath, err)
 				reader = source
 			}
-
 			digest := common.NewDigester(Compress())
 			_, err = io.Copy(digest, reader)
 			if err != nil {
@@ -259,8 +236,7 @@ func LiftFile(sourcename, sinkname string, compress bool) anywork.Work {
 		var writer io.WriteCloser
 		writer = sink
 		if compress {
-			// Use zstd for ~3x faster decompression with similar compression ratio
-			writer, err = zstd.NewWriter(sink, zstd.WithEncoderLevel(zstd.SpeedFastest))
+			writer, err = gzip.NewWriterLevel(sink, gzip.BestSpeed)
 			anywork.OnErrPanicCloseAll(err, sink)
 		}
 

@@ -34,7 +34,9 @@ Goal: See variables from specific unamanged space
   Must Have   This is unmanaged holotree space
   Must Have   Progress: 01/15
   Must Have   Progress: 02/15
-  # Note: Progress steps 03-13 are skipped when environment is restored from cache
+  Must Have   Progress: 04/15
+  Must Have   Progress: 05/15
+  Must Have   Progress: 06/15
   Must Have   Progress: 14/15
   Must Have   Progress: 15/15
 
@@ -83,7 +85,9 @@ Goal: Allows different unmanaged space for different conda.yaml
   Must Have   This is unmanaged holotree space
   Must Have   Progress: 01/15
   Must Have   Progress: 02/15
-  # Note: Progress steps 03-13 are skipped when environment is restored from cache
+  Must Have   Progress: 04/15
+  Must Have   Progress: 05/15
+  Must Have   Progress: 06/15
   Must Have   Progress: 14/15
   Must Have   Progress: 15/15
 

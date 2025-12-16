@@ -11,10 +11,6 @@ Goal: Verify initial call with do-not-track (GH#7)
   Must Have   anonymous health tracking is: disabled
 
 Bug in virtual holotree with gzipped files
-  Comment    Delete any existing environment AND catalog to ensure clean state
-  Fire And Forget    build/rcc holotree delete 8b2083d2 --controller citests
-  Fire And Forget    build/rcc holotree remove 8b2083d2 --controller citests
-  
   Step        build/rcc holotree blueprint --controller citests robot_tests/spellbug/conda.yaml
   Use STDERR
   Must Have   Blueprint "8b2083d262262cbd" is available: false
@@ -23,7 +19,6 @@ Bug in virtual holotree with gzipped files
   Use STDOUT
   Must Have   Bug fixed!
 
-  Comment    After liveonly run, blueprint should still not be available (virtual env)
   Step        build/rcc holotree blueprint --controller citests robot_tests/spellbug/conda.yaml
   Use STDERR
   Must Have   Blueprint "8b2083d262262cbd" is available: false
@@ -32,7 +27,6 @@ Bug in virtual holotree with gzipped files
   Use STDOUT
   Must Have   Bug fixed!
 
-  Comment    After non-liveonly run, blueprint should now be available
   Step        build/rcc holotree blueprint --controller citests robot_tests/spellbug/conda.yaml
   Use STDERR
   Must Have   Blueprint "8b2083d262262cbd" is available: true
