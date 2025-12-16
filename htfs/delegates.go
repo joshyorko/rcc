@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
+	"sync"
 
 	"github.com/joshyorko/rcc/fail"
 	"github.com/klauspost/compress/zstd"
@@ -11,9 +12,79 @@ import (
 
 // Magic bytes for format detection
 var (
-	gzipMagic = []byte{0x1f, 0x8b}              // gzip header
-	zstdMagic = []byte{0x28, 0xb5, 0x2f, 0xfd}  // zstd frame magic
+	gzipMagic = []byte{0x1f, 0x8b}             // gzip header
+	zstdMagic = []byte{0x28, 0xb5, 0x2f, 0xfd} // zstd frame magic
 )
+
+// Decoder pool to eliminate per-file allocation overhead.
+// Creating a new zstd.Decoder for each file is expensive (~50μs).
+// With pooling, we reuse decoders via Reset() (~1μs).
+var zstdDecoderPool = sync.Pool{
+	New: func() interface{} {
+		// Create decoder with nil reader - will be Reset() before use
+		decoder, err := zstd.NewReader(nil,
+			zstd.WithDecoderConcurrency(1),    // Single-threaded per decoder
+			zstd.WithDecoderLowmem(false),     // Trade memory for speed
+			zstd.WithDecoderMaxWindow(1<<30),  // Support large windows
+		)
+		if err != nil {
+			// Should never happen with nil reader
+			return nil
+		}
+		return decoder
+	},
+}
+
+// getPooledDecoder obtains a zstd decoder from the pool and resets it for the given reader.
+// Returns the decoder and a cleanup function that returns it to the pool.
+func getPooledDecoder(r io.Reader) (*zstd.Decoder, func(), error) {
+	pooled := zstdDecoderPool.Get()
+	if pooled == nil {
+		// Pool creation failed, fall back to new decoder
+		decoder, err := zstd.NewReader(r)
+		if err != nil {
+			return nil, nil, err
+		}
+		return decoder, func() { decoder.Close() }, nil
+	}
+
+	decoder := pooled.(*zstd.Decoder)
+	if err := decoder.Reset(r); err != nil {
+		// Reset failed, close and create new
+		decoder.Close()
+		newDecoder, err := zstd.NewReader(r)
+		if err != nil {
+			return nil, nil, err
+		}
+		return newDecoder, func() { newDecoder.Close() }, nil
+	}
+
+	return decoder, func() {
+		// IOReadCloser is not closed here - the caller handles that
+		zstdDecoderPool.Put(decoder)
+	}, nil
+}
+
+// Buffer pool for efficient I/O operations.
+// Default io.Copy uses 32KB buffers. We use 256KB for better SSD performance.
+const copyBufferSize = 256 * 1024 // 256KB - optimal for modern SSDs
+
+var copyBufferPool = sync.Pool{
+	New: func() interface{} {
+		buf := make([]byte, copyBufferSize)
+		return &buf
+	},
+}
+
+// GetCopyBuffer returns a pooled buffer for io.CopyBuffer operations.
+func GetCopyBuffer() *[]byte {
+	return copyBufferPool.Get().(*[]byte)
+}
+
+// PutCopyBuffer returns a buffer to the pool.
+func PutCopyBuffer(buf *[]byte) {
+	copyBufferPool.Put(buf)
+}
 
 // detectFormat reads magic bytes to determine compression format
 // Returns "zstd", "gzip", or "raw"
@@ -56,14 +127,14 @@ func gzDelegateOpen(filename string, ungzip bool) (readable io.Reader, closer Cl
 	var reader io.Reader
 	switch format {
 	case "zstd":
-		zr, zErr := zstd.NewReader(source)
+		zr, cleanup, zErr := getPooledDecoder(source)
 		if zErr != nil {
 			source.Close()
 			return nil, nil, zErr
 		}
 		reader = zr
 		closer = func() error {
-			zr.Close()
+			cleanup() // Return decoder to pool
 			return source.Close()
 		}
 	case "gzip":

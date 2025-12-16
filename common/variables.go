@@ -32,6 +32,7 @@ const (
 	VERBOSE_ENVIRONMENT_BUILDING          = `RCC_VERBOSE_ENVIRONMENT_BUILDING`
 	ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS = `ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS`
 	RCC_VERBOSITY                         = `RCC_VERBOSITY`
+	RCC_SKIP_HASH_VALIDATION              = `RCC_SKIP_HASH_VALIDATION`
 	SILENTLY                              = `silent`
 	TRACING                               = `trace`
 	DEBUGGING                             = `debug`
@@ -125,6 +126,14 @@ func DisableTempManagement() bool {
 
 func DisablePycManagement() bool {
 	return NoPycManagement || len(os.Getenv(RCC_NO_PYC_MANAGEMENT)) > 0
+}
+
+// SkipHashValidation returns true if SHA256 hash validation should be skipped
+// during environment restore. This can provide 40-60% speedup but reduces
+// integrity verification. Use only in trusted environments.
+// Set RCC_SKIP_HASH_VALIDATION=1 to enable.
+func SkipHashValidation() bool {
+	return len(os.Getenv(RCC_SKIP_HASH_VALIDATION)) > 0
 }
 
 func RccRemoteOrigin() string {

@@ -244,6 +244,34 @@ jobs:
           echo "PR_LARGE_RESTORE=$((END - START))" >> $GITHUB_ENV
 
       # ============================================
+      # TURBO MODE: RCC_SKIP_HASH_VALIDATION=1
+      # Shows maximum potential speedup by skipping SHA256 verification
+      # ============================================
+      - name: PR Turbo - Large env restore (skip hash validation)
+        shell: bash
+        env:
+          ROBOCORP_HOME: ${{ env.PR_HOME }}
+          RCC_SKIP_HASH_VALIDATION: "1"
+        run: |
+          ./build/rcc ht delete pr-large --controller profiling
+          START=$(date +%s)
+          ./build/rcc ht vars --space pr-large --controller profiling robot_tests/profile_conda_large.yaml 2>&1 | tee tmp/profiles/pr-large-turbo.log
+          END=$(date +%s)
+          echo "PR_LARGE_TURBO=$((END - START))" >> $GITHUB_ENV
+
+      - name: PR Turbo - Medium env restore (skip hash validation)
+        shell: bash
+        env:
+          ROBOCORP_HOME: ${{ env.PR_HOME }}
+          RCC_SKIP_HASH_VALIDATION: "1"
+        run: |
+          ./build/rcc ht delete pr-medium --controller profiling
+          START=$(date +%s)
+          ./build/rcc ht vars --space pr-medium --controller profiling robot_tests/profile_conda_medium.yaml 2>&1 | tee tmp/profiles/pr-medium-turbo.log
+          END=$(date +%s)
+          echo "PR_MEDIUM_TURBO=$((END - START))" >> $GITHUB_ENV
+
+      # ============================================
       # HEAVY ENVIRONMENT PROFILING (optional, slower)
       # ============================================
       - name: Baseline - Heavy env fresh build
@@ -329,10 +357,31 @@ jobs:
           if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
           echo "| Large | Fresh build | ${BASELINE_LARGE_FRESH}s | ${PR_LARGE_FRESH}s | $ICON |" >> $GITHUB_STEP_SUMMARY
 
-          # Large restore  
+          # Large restore
           DIFF=$((BASELINE_LARGE_RESTORE - PR_LARGE_RESTORE))
           if [ $DIFF -gt 0 ]; then ICON="🟢 -${DIFF}s"; elif [ $DIFF -eq 0 ]; then ICON="⚪ 0s"; else ICON="🔴 +$((-DIFF))s"; fi
           echo "| Large | **Restore** | ${BASELINE_LARGE_RESTORE}s | ${PR_LARGE_RESTORE}s | $ICON |" >> $GITHUB_STEP_SUMMARY
+
+          # Add turbo mode section
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Turbo Mode (RCC_SKIP_HASH_VALIDATION=1)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Skipping SHA256 hash validation for maximum restore speed in trusted environments." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | Normal Restore | Turbo Restore | Speedup |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------------|----------------|---------------|---------|" >> $GITHUB_STEP_SUMMARY
+
+          # Medium turbo
+          if [ -n "$PR_MEDIUM_TURBO" ] && [ "$PR_MEDIUM_RESTORE" -gt 0 ]; then
+            SPEEDUP=$(echo "scale=1; ($PR_MEDIUM_RESTORE - $PR_MEDIUM_TURBO) * 100 / $PR_MEDIUM_RESTORE" | bc 2>/dev/null || echo "N/A")
+            echo "| Medium | ${PR_MEDIUM_RESTORE}s | ${PR_MEDIUM_TURBO}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Large turbo
+          if [ -n "$PR_LARGE_TURBO" ] && [ "$PR_LARGE_RESTORE" -gt 0 ]; then
+            SPEEDUP=$(echo "scale=1; ($PR_LARGE_RESTORE - $PR_LARGE_TURBO) * 100 / $PR_LARGE_RESTORE" | bc 2>/dev/null || echo "N/A")
+            echo "| Large | ${PR_LARGE_RESTORE}s | ${PR_LARGE_TURBO}s | ${SPEEDUP}% faster |" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Generate heavy comparison (if run)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_heavy == true }}
@@ -363,22 +412,22 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## 📦 Compression Ratio Comparison" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           BASELINE_SIZE=0
           PR_SIZE=0
-          
+
           if [ -d "${BASELINE_HOME}/hololib" ]; then
             BASELINE_SIZE=$(du -sb "${BASELINE_HOME}/hololib" 2>/dev/null | cut -f1 || echo 0)
           fi
-          
+
           if [ -d "${PR_HOME}/hololib" ]; then
             PR_SIZE=$(du -sb "${PR_HOME}/hololib" 2>/dev/null | cut -f1 || echo 0)
           fi
-          
+
           # Convert to MB for readability
           BASELINE_MB=$(echo "scale=2; $BASELINE_SIZE / 1048576" | bc)
           PR_MB=$(echo "scale=2; $PR_SIZE / 1048576" | bc)
-          
+
           if [ "$BASELINE_SIZE" -gt 0 ] && [ "$PR_SIZE" -gt 0 ]; then
             SAVINGS=$(echo "scale=1; 100 - ($PR_SIZE * 100 / $BASELINE_SIZE)" | bc)
             RATIO=$(echo "scale=2; $BASELINE_SIZE / $PR_SIZE" | bc)
