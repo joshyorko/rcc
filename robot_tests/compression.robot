@@ -1,5 +1,6 @@
 *** Settings ***
 Library     OperatingSystem
+Library     BuiltIn
 Library     supporting.py
 Resource    resources.robot
 Suite Setup     Compression Suite Setup
@@ -10,6 +11,11 @@ Compression Suite Setup
     Remove Directory    tmp/compression_test    True
     Remove Directory    tmp/hololib_backup    True
     Fire And Forget    build/rcc ht delete 4e67cd8
+
+Skip If Windows
+    [Documentation]    Skip the test if running on Windows (uses Unix-specific commands)
+    ${is_win}=    Is Windows
+    Skip If    ${is_win}    Test uses Unix-specific commands (find, head, od)
 
 Verify File Is Zstd Compressed
     [Arguments]    ${filepath}
@@ -27,14 +33,15 @@ Verify File Is Gzip Compressed
 
 Goal: Build environment and verify hololib files are zstd compressed
     [Documentation]    Create a new environment and verify files in hololib use zstd
+    Skip If Windows
     Step    build/rcc holotree variables --space zstdtest --controller citests robot_tests/conda.yaml
     Must Have    ROBOCORP_HOME=
     Must Have    CONDA_PREFIX=
-    
+
     Comment    Verify catalog file is zstd compressed
     ${catalog_files}=    Capture Flat Output    find %{ROBOCORP_HOME}/hololib/catalog -name "*.linux_amd64" -type f 2>/dev/null | head -1
     Verify File Is Zstd Compressed    ${catalog_files}
-    
+
     Comment    Verify library files are zstd compressed
     ${lib_file}=    Capture Flat Output    find %{ROBOCORP_HOME}/hololib/library -type f 2>/dev/null | head -1
     Verify File Is Zstd Compressed    ${lib_file}
@@ -78,10 +85,11 @@ Goal: Blueprint command works with zstd catalogs
 
 Goal: Multiple environment builds use zstd consistently
     [Documentation]    Build multiple environments and verify all use zstd
+    Skip If Windows
     Comment    Build a second environment
     Step    build/rcc holotree variables --space zstdtest2 --controller citests robot_tests/python3913.yaml
     Must Have    CONDA_PREFIX=
-    
+
     Comment    Verify new files are also zstd
     ${lib_files}=    Capture Flat Output    find %{ROBOCORP_HOME}/hololib/library -type f -newer %{ROBOCORP_HOME}/hololib/catalog 2>/dev/null | head -1
     Run Keyword If    '${lib_files}' != ''    Verify File Is Zstd Compressed    ${lib_files}
