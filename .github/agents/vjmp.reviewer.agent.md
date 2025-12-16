@@ -1,5 +1,7 @@
 ---
 description: Senior Go code review from the perspective of the original RCC creator (Juha P. / vjmp / Jippo). Invoke after completing Go code changes, especially for holotree, conda environments, filesystem operations, or security-sensitive modifications.
+target: vscode
+model: GPT-5.2 (Preview) (copilot)
 ---
 
 ## User Input
