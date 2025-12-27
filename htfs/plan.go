@@ -152,6 +152,10 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 		existingFiles[entry.Name()] = true
 		found, ok := dir.Files[entry.Name()]
 		if !ok {
+			// Skip temporary .part#N files created by concurrent write operations
+			if isTemporaryPartFile(entry.Name()) {
+				continue
+			}
 			// Extra file that shouldn't exist
 			plan.FilesToRemove = append(plan.FilesToRemove, entryPath)
 			continue

@@ -20,6 +20,25 @@ type HardlinkBatch struct {
 	Targets []string
 }
 
+// verifyFileHash verifies the hash of a file and returns true if it matches
+// This is a helper function to avoid file descriptor leaks from defer inside loops
+func verifyFileHash(filePath, expectedDigest string) bool {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return false
+	}
+	defer file.Close()
+
+	hasher := common.NewDigester(CompressionEnabled())
+	_, err = io.Copy(hasher, file)
+	if err != nil {
+		return false
+	}
+
+	hexdigest := fmt.Sprintf("%02x", hasher.Sum(nil))
+	return hexdigest == expectedDigest
+}
+
 // HardlinkManager manages parallel hardlink creation with safety limits
 type HardlinkManager struct {
 	batches     []HardlinkBatch
@@ -239,8 +258,12 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 				if part.IsDir() {
 					_, ok := it.Dirs[part.Name()]
 					if !ok {
-						common.Trace("* Holotree: remove extra directory %q", directpath)
-						anywork.Backlog(RemoveDirectory(directpath))
+						// NOTE: We intentionally DO NOT delete extra directories during restoration
+						// Deleting directories while parallel file operations are running causes
+						// race conditions where files fail to write because their parent directory
+						// was deleted mid-operation. Extra directories from previous environments
+						// don't break anything - they just take up space. Use "rcc ht delete" for cleanup.
+						common.Trace("* Holotree: skipping removal of extra directory %q (parallel safety)", directpath)
 					}
 					stats.Dirty(!ok)
 					continue
@@ -256,6 +279,13 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 				found, ok := it.Files[part.Name()]
 
 				if !ok {
+					// Skip temporary .part#N files created by concurrent write operations
+					// to avoid race condition where we try to delete a file that's being
+					// renamed or cleaned up by its creator
+					if isTemporaryPartFile(part.Name()) {
+						common.Trace("* Holotree: skipping temporary file %q (concurrent write)", directpath)
+						continue
+					}
 					common.Trace("* Holotree: remove extra file %q", directpath)
 					anywork.Backlog(RemoveFile(directpath))
 					stats.Dirty(true)
@@ -286,40 +316,15 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 							sourceFilePath := filepath.Join(sourceFile, found.Digest)
 
 							// CRITICAL: Verify hash before creating hardlink (Juha's rule: "Always verify hash. No shortcuts.")
-							if pathlib.IsFile(sourceFilePath) {
-								// Verify the source file hash before using it
-								hasher := common.NewDigester(CompressionEnabled())
-								file, err := os.Open(sourceFilePath)
-								if err == nil {
-									defer file.Close()
-									_, err = io.Copy(hasher, file)
-									hexdigest := fmt.Sprintf("%02x", hasher.Sum(nil))
-									if err == nil && hexdigest == found.Digest {
-										// Hash verified - safe to create hardlink
-										hardlinkManager.AddHardlink(sourceFilePath, directpath)
-									} else {
-										// Hash mismatch or read error - restore normally
-										common.Trace("Hash verification failed for %s, restoring normally", found.Digest[:8])
-										filesToRestore = append(filesToRestore, FileTask{
-											Library:  library,
-											Digest:   found.Digest,
-											SinkPath: directpath,
-											Details:  found,
-											Rewrite:  fs.Rewrite(),
-										})
-									}
-								} else {
-									// Could not open source - restore normally
-									filesToRestore = append(filesToRestore, FileTask{
-										Library:  library,
-										Digest:   found.Digest,
-										SinkPath: directpath,
-										Details:  found,
-										Rewrite:  fs.Rewrite(),
-									})
-								}
+							// Use helper function to avoid file descriptor leak from defer inside loop
+							if pathlib.IsFile(sourceFilePath) && verifyFileHash(sourceFilePath, found.Digest) {
+								// Hash verified - safe to create hardlink
+								hardlinkManager.AddHardlink(sourceFilePath, directpath)
 							} else {
-								// Source doesn't exist - restore normally
+								// Source doesn't exist or hash mismatch - restore normally
+								if pathlib.IsFile(sourceFilePath) {
+									common.Trace("Hash verification failed for %s, restoring normally", found.Digest[:8])
+								}
 								filesToRestore = append(filesToRestore, FileTask{
 									Library:  library,
 									Digest:   found.Digest,
@@ -360,40 +365,15 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 							sourceFilePath := filepath.Join(sourceFile, found.Digest)
 
 							// CRITICAL: Verify hash before creating hardlink (Juha's rule: "Always verify hash. No shortcuts.")
-							if pathlib.IsFile(sourceFilePath) {
-								// Verify the source file hash before using it
-								hasher := common.NewDigester(CompressionEnabled())
-								file, err := os.Open(sourceFilePath)
-								if err == nil {
-									defer file.Close()
-									_, err = io.Copy(hasher, file)
-									hexdigest := fmt.Sprintf("%02x", hasher.Sum(nil))
-									if err == nil && hexdigest == found.Digest {
-										// Hash verified - safe to create hardlink
-										hardlinkManager.AddHardlink(sourceFilePath, directpath)
-									} else {
-										// Hash mismatch or read error - restore normally
-										common.Trace("Hash verification failed for %s, restoring normally", found.Digest[:8])
-										filesToRestore = append(filesToRestore, FileTask{
-											Library:  library,
-											Digest:   found.Digest,
-											SinkPath: directpath,
-											Details:  found,
-											Rewrite:  fs.Rewrite(),
-										})
-									}
-								} else {
-									// Could not open source - restore normally
-									filesToRestore = append(filesToRestore, FileTask{
-										Library:  library,
-										Digest:   found.Digest,
-										SinkPath: directpath,
-										Details:  found,
-										Rewrite:  fs.Rewrite(),
-									})
-								}
+							// Use helper function to avoid file descriptor leak from defer inside loop
+							if pathlib.IsFile(sourceFilePath) && verifyFileHash(sourceFilePath, found.Digest) {
+								// Hash verified - safe to create hardlink
+								hardlinkManager.AddHardlink(sourceFilePath, directpath)
 							} else {
-								// Source doesn't exist - restore normally
+								// Source doesn't exist or hash mismatch - restore normally
+								if pathlib.IsFile(sourceFilePath) {
+									common.Trace("Hash verification failed for %s, restoring normally", found.Digest[:8])
+								}
 								filesToRestore = append(filesToRestore, FileTask{
 									Library:  library,
 									Digest:   found.Digest,

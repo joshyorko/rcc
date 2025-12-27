@@ -190,6 +190,13 @@ func processDirectoryWithLocality(path string, it *Dir, library Library, fs *Roo
 		found, ok := it.Files[part.Name()]
 
 		if !ok {
+			// Skip temporary .part#N files created by concurrent write operations
+			// to avoid race condition where we try to delete a file that's being
+			// renamed or cleaned up by its creator
+			if isTemporaryPartFile(part.Name()) {
+				common.Trace("* Holotree: skipping temporary file %q (concurrent write)", directpath)
+				continue
+			}
 			common.Trace("* Holotree: remove extra file %q", directpath)
 			// DEFER file deletion - schedule it to avoid blocking
 			anywork.Backlog(RemoveFile(directpath))

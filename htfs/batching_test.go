@@ -281,3 +281,82 @@ func TestPartialBatches(t *testing.T) {
 		}
 	}
 }
+
+func TestIsTemporaryPartFile(t *testing.T) {
+	tests := []struct {
+		name     string
+		filename string
+		expected bool
+	}{
+		{
+			name:     "simple .part#N file",
+			filename: "error.py.part#6599",
+			expected: true,
+		},
+		{
+			name:     "single digit",
+			filename: "file.txt.part#1",
+			expected: true,
+		},
+		{
+			name:     "large number",
+			filename: "script.py.part#123456789",
+			expected: true,
+		},
+		{
+			name:     "regular python file",
+			filename: "error.py",
+			expected: false,
+		},
+		{
+			name:     "file with hash in name",
+			filename: "file#123.txt",
+			expected: false,
+		},
+		{
+			name:     "file ending with .part but no hash",
+			filename: "file.part",
+			expected: false,
+		},
+		{
+			name:     "file with .part in middle",
+			filename: "file.part.txt",
+			expected: false,
+		},
+		{
+			name:     "file with .part# but no digits",
+			filename: "file.part#abc",
+			expected: false,
+		},
+		{
+			name:     "file with .part# but mixed chars",
+			filename: "file.part#123abc",
+			expected: false,
+		},
+		{
+			name:     "empty string",
+			filename: "",
+			expected: false,
+		},
+		{
+			name:     "short string",
+			filename: ".part#1",
+			expected: true,
+		},
+		{
+			name:     "too short for .part prefix",
+			filename: "pt#1",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isTemporaryPartFile(tt.filename)
+			if result != tt.expected {
+				t.Errorf("isTemporaryPartFile(%q) = %v, want %v",
+					tt.filename, result, tt.expected)
+			}
+		})
+	}
+}
