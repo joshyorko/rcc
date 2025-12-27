@@ -3,7 +3,6 @@
 package htfs
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 )
