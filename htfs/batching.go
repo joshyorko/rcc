@@ -353,6 +353,14 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 		anywork.OnErrPanicCloseAll(err)
 		defer closer()
 
+		// DEFENSIVE: Ensure parent directory exists before creating file
+		// This handles race conditions between parallel directory processing
+		// and cleanup operations that may delete directories concurrently
+		parentDir := filepath.Dir(sinkname)
+		if err := os.MkdirAll(parentDir, 0750); err != nil {
+			common.Trace("Failed to ensure parent directory %s: %v", parentDir, err)
+		}
+
 		// Use atomic write pattern
 		partname := fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
 		// FIX: Don't use defer - it runs even after successful rename!
