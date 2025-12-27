@@ -168,9 +168,12 @@ func processDirectoryWithLocality(path string, it *Dir, library Library, fs *Roo
 		if part.IsDir() {
 			_, ok := it.Dirs[part.Name()]
 			if !ok {
-				common.Trace("* Holotree: remove extra directory %q", directpath)
-				// Execute synchronously to avoid deadlock
-				RemoveDirectory(directpath)()
+				// NOTE: We intentionally DO NOT delete extra directories during restoration
+				// Deleting directories while parallel file operations are running causes
+				// race conditions where files fail to write because their parent directory
+				// was deleted mid-operation. Extra directories from previous environments
+				// don't break anything - they just take up space. Use "rcc ht delete" for cleanup.
+				common.Trace("* Holotree: skipping removal of extra directory %q (parallel safety)", directpath)
 			}
 			stats.Dirty(!ok)
 			continue
@@ -188,8 +191,8 @@ func processDirectoryWithLocality(path string, it *Dir, library Library, fs *Roo
 
 		if !ok {
 			common.Trace("* Holotree: remove extra file %q", directpath)
-			// Execute synchronously to avoid deadlock
-			RemoveFile(directpath)()
+			// DEFER file deletion - schedule it to avoid blocking
+			anywork.Backlog(RemoveFile(directpath))
 			stats.Dirty(true)
 			continue
 		}
@@ -412,8 +415,18 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 		anywork.OnErrPanicCloseAll(sink.Sync())
 		anywork.OnErrPanicCloseAll(sink.Close())
 
-		// Atomic rename
-		anywork.OnErrPanicCloseAll(pathlib.TryRename("dropfile", partname, sinkname))
+		// Atomic rename with retry on directory deletion race
+		// Race condition: parallel cleanup can delete directory between file creation and rename
+		err = pathlib.TryRename("dropfile", partname, sinkname)
+		if err != nil && os.IsNotExist(err) {
+			// Directory was deleted by parallel cleanup - recreate and retry
+			common.Trace("Directory deleted during file write, recreating: %s", parentDir)
+			if mkErr := os.MkdirAll(parentDir, 0750); mkErr == nil {
+				// Retry the rename
+				err = pathlib.TryRename("dropfile", partname, sinkname)
+			}
+		}
+		anywork.OnErrPanicCloseAll(err)
 
 		// Success! Don't cleanup the part file (it's been renamed)
 		cleanupPartFile = false
@@ -462,4 +475,37 @@ func (it *ParallelStats) Report() string {
 
 	return fmt.Sprintf("Dirs: %d, Files: %d, Bytes: %d, Dirty: %.1f%%",
 		it.dirCount, it.fileCount, it.byteCount, it.Dirtyness())
+}
+
+// CleanupExtraDirectories removes directories that exist on disk but not in the tree
+// This should be called AFTER all file operations are complete (via anywork.Sync)
+// to avoid race conditions during parallel restoration
+func CleanupExtraDirectories(basePath string, tree *Dir) Dirtask {
+	return func(path string, it *Dir) anywork.Work {
+		return func() {
+			if it.Shadow || it.IsSymlink() {
+				return
+			}
+
+			entries, err := os.ReadDir(path)
+			if err != nil {
+				return // Directory might not exist, that's ok
+			}
+
+			for _, entry := range entries {
+				if !entry.IsDir() {
+					continue
+				}
+
+				name := entry.Name()
+				if _, exists := it.Dirs[name]; !exists {
+					// Extra directory not in tree - safe to remove now
+					// (all file operations are complete)
+					dirPath := filepath.Join(path, name)
+					common.Trace("* Holotree: cleanup extra directory %q", dirPath)
+					os.RemoveAll(dirPath)
+				}
+			}
+		}
+	}
 }

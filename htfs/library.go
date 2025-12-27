@@ -441,6 +441,16 @@ func (it *hololib) RestoreTo(blueprint []byte, label, controller, space string, 
 	}
 	fail.On(err != nil, "Failed to restore directories -> %v", err)
 	common.TimelineEnd()
+
+	// Post-restoration cleanup: remove extra directories AFTER all file operations are done
+	// This avoids the race condition where directories are deleted while files are being written
+	common.TimelineBegin("holotree cleanup")
+	err = fs.AllDirs(CleanupExtraDirectories(fs.Path, fs.Tree))
+	if err != nil {
+		common.Trace("Cleanup had errors (non-fatal): %v", err)
+	}
+	common.TimelineEnd()
+
 	defer common.Timeline("- dirty %d/%d (duplicate: %d, links: %d)", score.dirty, score.total, score.duplicate, score.links)
 	common.Debug("Holotree dirty workload: %d/%d\n", score.dirty, score.total)
 	journal.CurrentBuildEvent().Dirty(score.Dirtyness())
