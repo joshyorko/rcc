@@ -59,11 +59,11 @@ func (m *RccCi) GrepDir(ctx context.Context, directoryArg *dagger.Directory, pat
 
 // ProfileResult holds timing data for comparison
 type ProfileResult struct {
-	Name             string
-	BaselineWallMs   int64
-	BaselineRestore  float64
-	PRWallMs         int64
-	PRRestore        float64
+	Name            string
+	BaselineWallMs  int64
+	BaselineRestore float64
+	PRWallMs        int64
+	PRRestore       float64
 }
 
 // Run REAL Linux profiling comparing baseline (gzip) vs PR (zstd)

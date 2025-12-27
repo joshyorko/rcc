@@ -18,11 +18,11 @@ const (
 // to avoid redundant filesystem queries and JSON parsing operations.
 // Implements LRU eviction when the cache exceeds maxEntries.
 type MetadataCache struct {
-	roots      map[string]*Root
-	timestamps map[string]time.Time
+	roots       map[string]*Root
+	timestamps  map[string]time.Time
 	accessOrder []string // Track access order for LRU eviction
-	maxEntries int
-	mu         sync.RWMutex
+	maxEntries  int
+	mu          sync.RWMutex
 }
 
 // NewMetadataCache creates a new empty metadata cache with default max entries.

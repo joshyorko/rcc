@@ -135,7 +135,7 @@ func CheckHasher(known map[string]map[string]bool) Filetask {
 				reader = source
 			}
 
-			digest := common.NewDigester(Compress())
+			digest := common.NewDigester(CompressionEnabled())
 			_, err = io.Copy(digest, reader)
 			if err != nil {
 				anywork.Backlog(RemoveFile(fullpath))
@@ -154,7 +154,7 @@ func Locator(seek string) Filetask {
 				panic(fmt.Sprintf("Open[Locator] %q, reason: %v", fullpath, err))
 			}
 			defer source.Close()
-			digest := common.NewDigester(Compress())
+			digest := common.NewDigester(CompressionEnabled())
 			locator := RelocateWriter(digest, seek)
 			_, err = io.Copy(locator, source)
 			if err != nil {
@@ -204,7 +204,7 @@ detector:
 
 func ScheduleLifters(library MutableLibrary, stats *stats) Treetop {
 	var scheduler Treetop
-	compress := Compress()
+	compress := CompressionEnabled()
 	seen := make(map[string]bool)
 	scheduler = func(path string, it *Dir) error {
 		if it.IsSymlink() {
@@ -309,7 +309,7 @@ func DropFileWithPrefetch(library Library, digest, sinkname string, details *Fil
 
 		// ALWAYS verify hash - bit rot is real, small files are attack vectors
 		// Juha was right: catalogs tell what SHOULD be there, not what IS there
-		digester := common.NewDigester(Compress())
+		digester := common.NewDigester(CompressionEnabled())
 		many := io.MultiWriter(sink, digester)
 		_, err = io.CopyBuffer(many, reader, *buf)
 		anywork.OnErrPanicCloseAll(err, sink)
@@ -338,7 +338,7 @@ func DropFileWithPrefetch(library Library, digest, sinkname string, details *Fil
 	}
 }
 
-func DropFile(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
+func DropFileSimple(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
 	return func() {
 		if details.IsSymlink() {
 			anywork.OnErrPanicCloseAll(restoreSymlink(details.Symlink, sinkname))
@@ -359,7 +359,7 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 
 		// ALWAYS verify hash - bit rot is real, small files are attack vectors
 		// Juha was right: catalogs tell what SHOULD be there, not what IS there
-		digester := common.NewDigester(Compress())
+		digester := common.NewDigester(CompressionEnabled())
 		many := io.MultiWriter(sink, digester)
 		_, err = io.CopyBuffer(many, reader, *buf)
 		anywork.OnErrPanicCloseAll(err, sink)
@@ -447,7 +447,7 @@ func restoreSymlink(source, target string) error {
 	return os.Symlink(source, target)
 }
 
-func RestoreDirectory(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
+func RestoreDirectorySimple(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
 	return func(path string, it *Dir) anywork.Work {
 		return func() {
 			if it.Shadow {
@@ -496,7 +496,7 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				stats.Dirty(!ok)
 				if !ok {
 					common.Trace("* Holotree: update changed file    %q", directpath)
-					anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+					anywork.Backlog(DropFileSimple(library, found.Digest, directpath, found, fs.Rewrite()))
 				}
 			}
 			for name, found := range it.Files {
@@ -505,7 +505,7 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				if !seen {
 					stats.Dirty(true)
 					common.Trace("* Holotree: add missing file       %q", directpath)
-					anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+					anywork.Backlog(DropFileSimple(library, found.Digest, directpath, found, fs.Rewrite()))
 				}
 			}
 		}

@@ -105,7 +105,7 @@ type hololib struct {
 }
 
 func (it *hololib) Open(digest string) (readable io.Reader, closer Closer, err error) {
-	return delegateOpen(it, digest, Compress())
+	return delegateOpen(it, digest, CompressionEnabled())
 }
 
 func (it *hololib) Location(digest string) string {
@@ -290,8 +290,13 @@ func (it *hololib) ValidateBlueprint(blueprint []byte) error {
 	return nil
 }
 
-func Compress() bool {
+func CompressionEnabled() bool {
 	return !pathlib.IsFile(common.HololibCompressMarker())
+}
+
+// Compress is kept for backward compatibility - use CompressionEnabled instead
+func Compress() bool {
+	return CompressionEnabled()
 }
 
 func (it *hololib) HasBlueprint(blueprint []byte) bool {
@@ -426,13 +431,13 @@ func (it *hololib) RestoreTo(blueprint []byte, label, controller, space string, 
 	common.TimelineEnd()
 	fail.On(err != nil, "Failed to make branches -> %v", err)
 	score := &stats{}
-	// Use batched restoration by default, fall back to individual files if disabled
+	// Use batched restoration by default, fall back to simple mode if disabled
 	if common.DisableBatching() {
+		common.TimelineBegin("holotree restore start (simple)")
+		err = fs.AllDirs(RestoreDirectorySimple(it, fs, currentstate, score))
+	} else {
 		common.TimelineBegin("holotree restore start")
 		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
-	} else {
-		common.TimelineBegin("holotree restore start (batched)")
-		err = fs.AllDirs(RestoreDirectoryBatched(it, fs, currentstate, score))
 	}
 	fail.On(err != nil, "Failed to restore directories -> %v", err)
 	common.TimelineEnd()

@@ -34,9 +34,9 @@ type RestorationPlan struct {
 	DirsToRemove []string
 
 	// File operations
-	FilesToCreate  []PlanFileTask // New files that don't exist
-	FilesToUpdate  []PlanFileTask // Files that exist but need updating
-	FilesToRemove  []string       // Files that exist but shouldn't
+	FilesToCreate []PlanFileTask // New files that don't exist
+	FilesToUpdate []PlanFileTask // Files that exist but need updating
+	FilesToRemove []string       // Files that exist but shouldn't
 
 	// Symlink operations
 	SymlinksToCreate []SymlinkTask
@@ -46,11 +46,11 @@ type RestorationPlan struct {
 	LargeFiles []PlanFileTask // Files >= 100KB
 
 	// Statistics for reporting
-	TotalFiles      int
-	TotalDirs       int
-	TotalSymlinks   int
-	DirtyFiles      int
-	DirtyDirs       int
+	TotalFiles    int
+	TotalDirs     int
+	TotalSymlinks int
+	DirtyFiles    int
+	DirtyDirs     int
 }
 
 // PlanRestoration walks the filesystem tree once and collects all restoration tasks
@@ -66,13 +66,13 @@ func PlanRestoration(library Library, fs *Root, targetPath string, current map[s
 		SmallFiles:       make([]PlanFileTask, 0),
 		LargeFiles:       make([]PlanFileTask, 0),
 	}
-	
+
 	// Walk the tree and collect all decisions
 	err := planDirectory(library, fs, targetPath, fs.Tree, current, plan)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Categorize files by size for optimal batching
 	allFiles := append(plan.FilesToCreate, plan.FilesToUpdate...)
 	for _, task := range allFiles {
@@ -82,7 +82,7 @@ func PlanRestoration(library Library, fs *Root, targetPath string, current map[s
 			plan.LargeFiles = append(plan.LargeFiles, task)
 		}
 	}
-	
+
 	// Sort for deterministic execution and better cache locality
 	sort.Slice(plan.SmallFiles, func(i, j int) bool {
 		return plan.SmallFiles[i].Path < plan.SmallFiles[j].Path
@@ -90,14 +90,14 @@ func PlanRestoration(library Library, fs *Root, targetPath string, current map[s
 	sort.Slice(plan.LargeFiles, func(i, j int) bool {
 		return plan.LargeFiles[i].Path < plan.LargeFiles[j].Path
 	})
-	
+
 	// Update statistics
 	plan.TotalFiles = len(plan.FilesToCreate) + len(plan.FilesToUpdate)
 	plan.TotalDirs = len(plan.DirsToCreate)
 	plan.TotalSymlinks = len(plan.SymlinksToCreate)
 	plan.DirtyFiles = len(plan.FilesToCreate) + len(plan.FilesToUpdate) + len(plan.FilesToRemove)
 	plan.DirtyDirs = len(plan.DirsToCreate) + len(plan.DirsToRemove)
-	
+
 	return plan, nil
 }
 
@@ -107,7 +107,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 	if dir.Shadow {
 		return nil
 	}
-	
+
 	if dir.IsSymlink() {
 		plan.SymlinksToCreate = append(plan.SymlinksToCreate, SymlinkTask{
 			Source: dir.Symlink,
@@ -115,19 +115,19 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 		})
 		return nil
 	}
-	
+
 	// Check existing entries in the directory
 	existingEntries, err := os.ReadDir(path)
 	if err != nil {
 		// Directory doesn't exist, will be created by MakeBranches
 		return nil
 	}
-	
+
 	existingFiles := make(map[string]bool)
-	
+
 	for _, entry := range existingEntries {
 		entryPath := filepath.Join(path, entry.Name())
-		
+
 		// Handle directories
 		if entry.IsDir() {
 			if _, ok := dir.Dirs[entry.Name()]; !ok {
@@ -136,7 +136,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			}
 			continue
 		}
-		
+
 		// Check if it's a symlink directory in the tree
 		link, ok := dir.Dirs[entry.Name()]
 		if ok && link.IsSymlink() {
@@ -147,7 +147,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			})
 			continue
 		}
-		
+
 		// Handle files
 		existingFiles[entry.Name()] = true
 		found, ok := dir.Files[entry.Name()]
@@ -156,7 +156,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			plan.FilesToRemove = append(plan.FilesToRemove, entryPath)
 			continue
 		}
-		
+
 		// Check if file is a symlink
 		if found.IsSymlink() {
 			if !isCorrectSymlink(found.Symlink, entryPath) {
@@ -167,11 +167,11 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			}
 			continue
 		}
-		
+
 		// Check if file needs updating
 		shadow, ok := current[entryPath]
 		golden := !ok || found.Digest == shadow
-		
+
 		info, err := entry.Info()
 		if err != nil {
 			// If we can't stat it, schedule for update
@@ -182,7 +182,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			})
 			continue
 		}
-		
+
 		needsUpdate := !(golden && found.Match(info))
 		if needsUpdate {
 			plan.FilesToUpdate = append(plan.FilesToUpdate, PlanFileTask{
@@ -192,7 +192,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			})
 		}
 	}
-	
+
 	// Check for missing files that need to be created
 	for name, file := range dir.Files {
 		if !existingFiles[name] {
@@ -204,7 +204,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			})
 		}
 	}
-	
+
 	// Recursively plan subdirectories
 	for name, subdir := range dir.Dirs {
 		subPath := filepath.Join(path, name)
@@ -213,7 +213,7 @@ func planDirectory(library Library, fs *Root, path string, dir *Dir, current map
 			return err
 		}
 	}
-	
+
 	return nil
 }
 
@@ -295,4 +295,3 @@ func fileExists(path string) bool {
 	}
 	return !info.IsDir()
 }
-

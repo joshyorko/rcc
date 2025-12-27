@@ -16,24 +16,27 @@ import (
 
 // HardlinkBatch represents a batch of hardlinks to create
 type HardlinkBatch struct {
-	Source string
+	Source  string
 	Targets []string
 }
 
 // HardlinkManager manages parallel hardlink creation with safety limits
 type HardlinkManager struct {
-	batches    []HardlinkBatch
-	mu         sync.Mutex
-	maxWorkers int
-	stats      *HardlinkStats
+	batches     []HardlinkBatch
+	fallback    []string // Targets that need regular copy due to cross-filesystem
+	mu          sync.Mutex
+	maxWorkers  int
+	stats       *HardlinkStats
+	deviceCache *DeviceCache // Cache device IDs for BLAZINGLY FAST filesystem checks
 }
 
 // HardlinkStats tracks hardlink creation performance
 type HardlinkStats struct {
-	created   uint64
-	failed    uint64
-	skipped   uint64
-	totalTime int64 // nanoseconds
+	created       uint64
+	failed        uint64
+	skipped       uint64
+	crossFS       uint64 // skipped due to cross-filesystem
+	totalTime     int64  // nanoseconds
 }
 
 // NewHardlinkManager creates a manager for parallel hardlink operations
@@ -46,46 +49,48 @@ func NewHardlinkManager() *HardlinkManager {
 	}
 
 	return &HardlinkManager{
-		batches:    make([]HardlinkBatch, 0, 100),
-		maxWorkers: maxWorkers,
-		stats:      &HardlinkStats{},
+		batches:     make([]HardlinkBatch, 0, 100),
+		fallback:    make([]string, 0, 50),
+		maxWorkers:  maxWorkers,
+		stats:       &HardlinkStats{},
+		deviceCache: NewDeviceCache(),
 	}
 }
 
 // AddHardlink queues a hardlink for batch creation
-func (hm *HardlinkManager) AddHardlink(source, target string) {
-	hm.mu.Lock()
-	defer hm.mu.Unlock()
+func (it *HardlinkManager) AddHardlink(source, target string) {
+	it.mu.Lock()
+	defer it.mu.Unlock()
 
 	// Check if we can add to existing batch
-	for i := range hm.batches {
-		if hm.batches[i].Source == source {
-			hm.batches[i].Targets = append(hm.batches[i].Targets, target)
+	for i := range it.batches {
+		if it.batches[i].Source == source {
+			it.batches[i].Targets = append(it.batches[i].Targets, target)
 			return
 		}
 	}
 
 	// Create new batch
-	hm.batches = append(hm.batches, HardlinkBatch{
+	it.batches = append(it.batches, HardlinkBatch{
 		Source:  source,
 		Targets: []string{target},
 	})
 }
 
 // CreateAll creates all queued hardlinks in parallel
-func (hm *HardlinkManager) CreateAll() error {
-	if len(hm.batches) == 0 {
+func (it *HardlinkManager) CreateAll() error {
+	if len(it.batches) == 0 {
 		return nil
 	}
 
-	common.Timeline("Creating %d hardlink batches", len(hm.batches))
+	common.Timeline("Creating %d hardlink batches", len(it.batches))
 
 	// Use a semaphore to limit concurrent hardlink operations
-	sem := make(chan struct{}, hm.maxWorkers)
+	sem := make(chan struct{}, it.maxWorkers)
 	var wg sync.WaitGroup
-	errors := make(chan error, len(hm.batches))
+	errors := make(chan error, len(it.batches))
 
-	for _, batch := range hm.batches {
+	for _, batch := range it.batches {
 		wg.Add(1)
 		go func(b HardlinkBatch) {
 			defer wg.Done()
@@ -95,7 +100,7 @@ func (hm *HardlinkManager) CreateAll() error {
 			defer func() { <-sem }()
 
 			// Create hardlinks for this batch
-			if err := hm.createBatch(b); err != nil {
+			if err := it.createBatch(b); err != nil {
 				errors <- err
 			}
 		}(batch)
@@ -116,12 +121,13 @@ func (hm *HardlinkManager) CreateAll() error {
 	}
 
 	// Report statistics
-	created := atomic.LoadUint64(&hm.stats.created)
-	failed := atomic.LoadUint64(&hm.stats.failed)
-	skipped := atomic.LoadUint64(&hm.stats.skipped)
+	created := atomic.LoadUint64(&it.stats.created)
+	failed := atomic.LoadUint64(&it.stats.failed)
+	skipped := atomic.LoadUint64(&it.stats.skipped)
+	crossFS := atomic.LoadUint64(&it.stats.crossFS)
 
-	common.Debug("Hardlink stats: created=%d, failed=%d, skipped=%d",
-		created, failed, skipped)
+	common.Debug("Hardlink stats: created=%d, failed=%d, skipped=%d, cross-fs=%d",
+		created, failed, skipped, crossFS)
 
 	if errorCount > 0 {
 		return fmt.Errorf("hardlink creation had %d errors, first: %v", errorCount, firstError)
@@ -131,10 +137,10 @@ func (hm *HardlinkManager) CreateAll() error {
 }
 
 // createBatch creates all hardlinks in a batch
-func (hm *HardlinkManager) createBatch(batch HardlinkBatch) error {
+func (it *HardlinkManager) createBatch(batch HardlinkBatch) error {
 	// Verify source exists
 	if !pathlib.IsFile(batch.Source) {
-		atomic.AddUint64(&hm.stats.failed, uint64(len(batch.Targets)))
+		atomic.AddUint64(&it.stats.failed, uint64(len(batch.Targets)))
 		return fmt.Errorf("hardlink source does not exist: %s", batch.Source)
 	}
 
@@ -144,7 +150,7 @@ func (hm *HardlinkManager) createBatch(batch HardlinkBatch) error {
 		if pathlib.IsFile(target) {
 			// Verify it's already a hardlink to the same source
 			if isSameFile(batch.Source, target) {
-				atomic.AddUint64(&hm.stats.skipped, 1)
+				atomic.AddUint64(&it.stats.skipped, 1)
 				continue
 			}
 			// Different file, remove it
@@ -154,19 +160,31 @@ func (hm *HardlinkManager) createBatch(batch HardlinkBatch) error {
 		// Ensure target directory exists
 		targetDir := filepath.Dir(target)
 		if err := os.MkdirAll(targetDir, 0750); err != nil {
-			atomic.AddUint64(&hm.stats.failed, 1)
+			atomic.AddUint64(&it.stats.failed, 1)
 			common.Trace("Failed to create directory for hardlink: %v", err)
+			continue
+		}
+
+		// PROACTIVE CHECK: Verify source and target are on same filesystem
+		// Uses cached device IDs for BLAZINGLY FAST cross-filesystem detection
+		if !it.deviceCache.SameDevice(batch.Source, targetDir) {
+			atomic.AddUint64(&it.stats.crossFS, 1)
+			common.Trace("Skipping hardlink across filesystem boundary: %s -> %s", batch.Source, target)
+			// Track this file for fallback processing
+			it.mu.Lock()
+			it.fallback = append(it.fallback, target)
+			it.mu.Unlock()
 			continue
 		}
 
 		// Create the hardlink
 		if err := os.Link(batch.Source, target); err != nil {
-			atomic.AddUint64(&hm.stats.failed, 1)
+			atomic.AddUint64(&it.stats.failed, 1)
 			common.Trace("Failed to create hardlink %s -> %s: %v", batch.Source, target, err)
 			continue
 		}
 
-		atomic.AddUint64(&hm.stats.created, 1)
+		atomic.AddUint64(&it.stats.created, 1)
 	}
 
 	return nil
@@ -270,7 +288,7 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 							// CRITICAL: Verify hash before creating hardlink (Juha's rule: "Always verify hash. No shortcuts.")
 							if pathlib.IsFile(sourceFilePath) {
 								// Verify the source file hash before using it
-								hasher := common.NewDigester(Compress())
+								hasher := common.NewDigester(CompressionEnabled())
 								file, err := os.Open(sourceFilePath)
 								if err == nil {
 									defer file.Close()
@@ -344,7 +362,7 @@ func RestoreDirectoryWithHardlinks(library Library, fs *Root, current map[string
 							// CRITICAL: Verify hash before creating hardlink (Juha's rule: "Always verify hash. No shortcuts.")
 							if pathlib.IsFile(sourceFilePath) {
 								// Verify the source file hash before using it
-								hasher := common.NewDigester(Compress())
+								hasher := common.NewDigester(CompressionEnabled())
 								file, err := os.Open(sourceFilePath)
 								if err == nil {
 									defer file.Close()
@@ -454,15 +472,15 @@ func NewHardlinkCache() *HardlinkCache {
 }
 
 // IsEligible checks if a digest can be hardlinked
-func (hc *HardlinkCache) IsEligible(digest string) bool {
-	hc.mu.RLock()
-	defer hc.mu.RUnlock()
-	return hc.eligible[digest]
+func (it *HardlinkCache) IsEligible(digest string) bool {
+	it.mu.RLock()
+	defer it.mu.RUnlock()
+	return it.eligible[digest]
 }
 
 // SetEligible marks a digest as eligible for hardlinking
-func (hc *HardlinkCache) SetEligible(digest string, eligible bool) {
-	hc.mu.Lock()
-	defer hc.mu.Unlock()
-	hc.eligible[digest] = eligible
+func (it *HardlinkCache) SetEligible(digest string, eligible bool) {
+	it.mu.Lock()
+	defer it.mu.Unlock()
+	it.eligible[digest] = eligible
 }

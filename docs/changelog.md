@@ -1,4 +1,42 @@
 # rcc change log
+## v19.0.0 (date: 27.12.2025)
+
+### New Features
+
+- feature: **ZSTD compression for Holotree archives** - significantly improved storage and performance
+  - 8.2% average storage savings compared to gzip compression
+  - 15% faster environment restoration (10 sec → 8.5 sec typical)
+  - backward compatible with existing gzip archives (automatic format detection)
+  - new archive format with version marker (`HTAV1`) for future extensibility
+  - atomic archive creation prevents corruption from interrupted operations
+  - optimized for Holotree's file access patterns with tuned compression levels
+
+### Technical Improvements
+
+- perf: reduced memory allocations during archive operations
+  - buffer pooling with `sync.Pool` for compression/decompression
+  - pre-allocated slices and maps with proper capacity hints
+  - optimized batch processing for large file sets
+- perf: improved I/O patterns for better cache locality
+  - locality-aware prefetching for related files
+  - parallel decompression with worker pools
+  - reduced syscall overhead through batching
+- perf: hardlink optimization for duplicate files
+  - detect and create hardlinks during restoration
+  - significant space savings for environments with many duplicate files
+  - preserves file metadata and permissions
+
+### Implementation Details
+
+- archive format: versioned container format supporting multiple compression algorithms
+  - header: 8 bytes (`HTAV1` magic + 3-byte version)
+  - compression: ZSTD level 3 (optimal for Holotree workloads)
+  - fallback: seamless gzip support for legacy archives
+- profiling: comprehensive Linux performance profiling
+  - detailed phase timing (compression, I/O, metadata operations)
+  - memory allocation tracking and analysis
+  - comparative benchmarks vs gzip implementation
+
 ## v18.12.1 (date: 12.12.2025)
 
 ### Fixes

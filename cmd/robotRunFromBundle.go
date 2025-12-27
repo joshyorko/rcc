@@ -138,8 +138,6 @@ func copyDir(source, target string) error {
 	})
 }
 
-
-
 func init() {
 	robotCmd.AddCommand(robotRunFromBundleCmd)
 	robotRunFromBundleCmd.Flags().StringVarP(&runTask, "task", "t", "", "Task to run from the configuration file.")

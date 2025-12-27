@@ -31,9 +31,9 @@ var zstdDecoderPool = sync.Pool{
 	New: func() interface{} {
 		// Create decoder with nil reader - will be Reset() before use
 		decoder, err := zstd.NewReader(nil,
-			zstd.WithDecoderConcurrency(1),    // Single-threaded per decoder
-			zstd.WithDecoderLowmem(false),     // Trade memory for speed
-			zstd.WithDecoderMaxWindow(1<<30),  // Support large windows
+			zstd.WithDecoderConcurrency(1),   // Single-threaded per decoder
+			zstd.WithDecoderLowmem(false),    // Trade memory for speed
+			zstd.WithDecoderMaxWindow(1<<30), // Support large windows
 		)
 		if err != nil {
 			// Should never happen with nil reader

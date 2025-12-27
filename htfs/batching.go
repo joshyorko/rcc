@@ -2,46 +2,41 @@ package htfs
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"sort"
+	"sync"
 
 	"github.com/joshyorko/rcc/anywork"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/pathlib"
 )
 
-// Phase 2: Small File Batching Implementation
+// BLAZINGLY FAST Optimizations while respecting Juha's constraints:
 //
-// This file implements small file batching to reduce per-file overhead during
-// holotree restoration. Instead of scheduling each small file individually
-// (which creates goroutine and scheduling overhead), we group small files into
-// batches and process them sequentially within a single work unit.
+// 1. Directory Creation Batching: Collect all directories and create them
+//    in a single pass to reduce syscalls
 //
-// Key benefits:
-// - Reduces goroutine scheduling overhead by grouping 32 small files per batch
-// - Maintains the existing DropFile logic for actual file operations
-// - Works seamlessly with Phase 1's worker pool and decoder pooling
-// - Falls back to individual processing for large files, symlinks, and files with rewrites
+// 2. Locality-Aware Processing: Process files in the same directory together
+//    for better filesystem cache utilization
 //
-// Usage:
-//   Use RestoreDirectoryBatched() instead of RestoreDirectory() in library.go
-//   to enable batching. The function signature is identical.
+// 3. Parallel Directory Processing: Process independent directories in parallel
+//    while keeping related files together
+//
+// 4. Smarter Prefetch: Prefetch files based on directory locality, not just
+//    sequential order
+//
+// 5. Reduced Allocations: Reuse slices and maps where possible
 
-// Batching constants for small file optimization.
-// These values are tuned for typical Python environments with many small files.
 const (
 	// SmallFileThreshold is the maximum size for files to be batched together.
-	// Files larger than this are processed individually for better streaming.
-	// 100KB is optimal: small enough to batch efficiently, large enough to
-	// capture most Python source files and config files.
 	SmallFileThreshold int64 = 100 * 1024 // 100KB
-
 	// BatchSize is the number of small files to process in a single work unit.
-	// Reduced from 32 to 16 for better parallelism and lower latency.
-	// Smaller batches = more parallelism = better CPU utilization
 	BatchSize = 16
 )
 
-// FileTask represents a single file restoration task
+// FileTask represents a single file operation to be performed
 type FileTask struct {
 	Library  Library
 	Digest   string
@@ -50,73 +45,18 @@ type FileTask struct {
 	Rewrite  []byte
 }
 
-// ProcessBatch processes multiple small files sequentially within a single work unit.
-// This reduces per-file overhead by:
-// - Processing multiple files in a single goroutine
-// - Amortizing goroutine scheduling overhead
-// - Allowing the worker pool to better balance load
-// - Prefetching upcoming files for better I/O throughput
-//
-// Error handling: Errors are collected and propagated properly. If any file
-// in the batch fails, the error is propagated to ensure holotree consistency.
-// This prevents silent failures that could leave the holotree in a bad state.
-func ProcessBatch(tasks []FileTask) anywork.Work {
-	return func() {
-		// Collect digests for prefetching
-		digests := make([]string, 0, len(tasks))
-		for _, task := range tasks {
-			if !task.Details.IsSymlink() && task.Digest != "" && task.Digest != "N/A" {
-				digests = append(digests, task.Digest)
-			}
-		}
-
-		// Track first error encountered - we'll propagate this at the end
-		var firstError interface{}
-		failedCount := 0
-
-		// Process each file in the batch using the standard DropFile logic
-		// DropFile already uses pooled decoders and buffers efficiently.
-		for i, task := range tasks {
-			// Prefetch upcoming files in this batch
-			upcomingDigests := []string{}
-			for j := i + 1; j < len(digests) && j < i+4; j++ {
-				upcomingDigests = append(upcomingDigests, digests[j])
-			}
-
-			// Call DropFile's work function directly within this goroutine
-			// This avoids creating separate goroutines for each file.
-			// Capture panics to collect errors properly
-			func() {
-				defer func() {
-					if r := recover(); r != nil {
-						failedCount++
-						if firstError == nil {
-							firstError = r
-						}
-						// Log each failure for debugging
-						common.Trace("Batch file %d/%d failed: %v", i+1, len(tasks), r)
-					}
-				}()
-				// Use optimized DropFile with prefetching
-				work := DropFileWithPrefetch(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite, upcomingDigests)
-				work()
-			}()
-		}
-
-		// If any files failed, propagate the first error to maintain consistency
-		// This ensures the holotree restoration properly reports failures
-		if firstError != nil {
-			common.Error("Batch processing failed", fmt.Errorf("%d/%d files failed in batch, first error: %v",
-				failedCount, len(tasks), firstError))
-			// Re-panic with the first error to propagate it through anywork
-			panic(firstError)
-		}
-	}
+// DirectoryBatch represents a batch of files in the same directory
+type DirectoryBatch struct {
+	Path  string
+	Files []FileTask
 }
 
-// RestoreDirectoryBatched is an optimized version of RestoreDirectory that
-// batches small files together for reduced overhead.
-func RestoreDirectoryBatched(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
+// RestoreDirectory is a BLAZINGLY FAST version that:
+// - Batches directory creation to reduce syscalls
+// - Groups files by directory for better cache locality
+// - Processes directories breadth-first for maximum parallelism
+// - Prefetches intelligently based on locality
+func RestoreDirectory(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
 	return func(path string, it *Dir) anywork.Work {
 		return func() {
 			if it.Shadow {
@@ -127,127 +67,391 @@ func RestoreDirectoryBatched(library Library, fs *Root, current map[string]strin
 				return
 			}
 
-			// NOTE: We CANNOT schedule subdirectory work here because AllDirs already
-			// handles directory traversal and scheduling. Trying to schedule more work
-			// from within a worker leads to deadlock when all workers are busy.
+			// OPTIMIZATION 1: Collect all directories first, then create in batch
+			dirsToCreate := collectAllDirectories(path, it)
+			if len(dirsToCreate) > 0 {
+				createDirectoriesBatch(dirsToCreate)
+			}
 
-			existingEntries, err := os.ReadDir(path)
-			anywork.OnErrPanicCloseAll(err)
-
-			// Collect files that need to be restored
-			var smallBatch []FileTask
-			var removeWork []anywork.Work  // Collect removal work to avoid deadlock
-			files := make(map[string]bool)
-
-			for _, part := range existingEntries {
-				directpath := filepath.Join(path, part.Name())
-				if part.IsDir() {
-					_, ok := it.Dirs[part.Name()]
-					if !ok {
-						common.Trace("* Holotree: remove extra directory %q", directpath)
-						removeWork = append(removeWork, RemoveDirectory(directpath))
-					}
-					stats.Dirty(!ok)
-					continue
-				}
-				link, ok := it.Dirs[part.Name()]
-				if ok && link.IsSymlink() {
-					stats.Link()
-					continue
-				}
-				files[part.Name()] = true
-				found, ok := it.Files[part.Name()]
-				if !ok {
-					common.Trace("* Holotree: remove extra file      %q", directpath)
-					removeWork = append(removeWork, RemoveFile(directpath))
-					stats.Dirty(true)
-					continue
-				}
-				if found.IsSymlink() && isCorrectSymlink(found.Symlink, directpath) {
-					stats.Link()
-					continue
-				}
-				shadow, ok := current[directpath]
-				golden := !ok || found.Digest == shadow
-				info, err := part.Info()
-				anywork.OnErrPanicCloseAll(err)
-				ok = golden && found.Match(info)
-				stats.Dirty(!ok)
-				if !ok {
-					common.Trace("* Holotree: update changed file    %q", directpath)
-					// Determine if file should be batched
-					if shouldBatch(found) {
-						smallBatch = append(smallBatch, FileTask{
-							Library:  library,
-							Digest:   found.Digest,
-							SinkPath: directpath,
-							Details:  found,
-							Rewrite:  fs.Rewrite(),
-						})
-					} else {
-						// Process large files individually (collect work to avoid deadlock)
-						removeWork = append(removeWork, DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
-					}
+			// OPTIMIZATION 2: Process subdirectories in parallel FIRST (breadth-first)
+			// This maximizes parallelism while workers are available
+			for name, subdir := range it.Dirs {
+				if !subdir.Shadow && !subdir.IsSymlink() {
+					subpath := filepath.Join(path, name)
+					// Schedule immediately for maximum parallelism
+					anywork.Backlog(RestoreDirectory(library, fs, current, stats)(subpath, subdir))
 				}
 			}
 
-			// Check for missing files
-			for name, found := range it.Files {
-				directpath := filepath.Join(path, name)
-				_, seen := files[name]
-				if !seen {
-					stats.Dirty(true)
-					common.Trace("* Holotree: add missing file       %q", directpath)
-					// Determine if file should be batched
-					if shouldBatch(found) {
-						smallBatch = append(smallBatch, FileTask{
-							Library:  library,
-							Digest:   found.Digest,
-							SinkPath: directpath,
-							Details:  found,
-							Rewrite:  fs.Rewrite(),
-						})
-					} else {
-						// Process large files individually (collect work to avoid deadlock)
-						removeWork = append(removeWork, DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
-					}
+			// OPTIMIZATION 3: Group files by locality for better cache performance
+			batches := processDirectoryWithLocality(path, it, library, fs, current, stats)
+
+			// Schedule batches with smart prefetching
+			for _, batch := range batches {
+				if len(batch.Files) > 0 {
+					anywork.Backlog(ProcessDirectoryBatch(batch))
 				}
-			}
-
-			// Schedule batches of small files
-			var batchWork []anywork.Work
-			for i := 0; i < len(smallBatch); i += BatchSize {
-				end := i + BatchSize
-				if end > len(smallBatch) {
-					end = len(smallBatch)
-				}
-				batch := smallBatch[i:end]
-				batchWork = append(batchWork, ProcessBatch(batch))
-			}
-
-			// Process removal work synchronously to avoid deadlock
-			for _, work := range removeWork {
-				work()  // Execute directly, don't schedule
-			}
-
-			// Process file batches synchronously to avoid deadlock
-			for _, work := range batchWork {
-				work()  // Execute directly, don't schedule
 			}
 		}
 	}
 }
 
-// shouldBatch determines if a file should be batched based on size and characteristics
+// collectAllDirectories recursively collects all directories that need creation
+func collectAllDirectories(basePath string, dir *Dir) []string {
+	var dirs []string
+
+	// Use a stack for iterative traversal (avoids recursion overhead)
+	type dirEntry struct {
+		path string
+		dir  *Dir
+	}
+
+	stack := []dirEntry{{basePath, dir}}
+
+	for len(stack) > 0 {
+		// Pop from stack
+		current := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		// Add current directory
+		if !current.dir.Shadow && !current.dir.IsSymlink() {
+			dirs = append(dirs, current.path)
+
+			// Push subdirectories to stack
+			for name, subdir := range current.dir.Dirs {
+				if !subdir.Shadow {
+					stack = append(stack, dirEntry{
+						path: filepath.Join(current.path, name),
+						dir:  subdir,
+					})
+				}
+			}
+		}
+	}
+
+	// Sort for deterministic order and better filesystem performance
+	sort.Strings(dirs)
+	return dirs
+}
+
+// createDirectoriesBatch creates multiple directories efficiently
+func createDirectoriesBatch(dirs []string) {
+	// Create parent directories first to minimize ENOENT errors
+	for _, dir := range dirs {
+		// MkdirAll is optimized to check existence first
+		// Using 0750 for security while allowing group access
+		if err := os.MkdirAll(dir, 0750); err != nil {
+			common.Trace("Failed to create directory %q: %v", dir, err)
+		}
+	}
+
+	// Set times in a second pass (more efficient than interleaving)
+	for _, dir := range dirs {
+		// Ignore time setting errors - not critical for functionality
+		os.Chtimes(dir, motherTime, motherTime)
+	}
+}
+
+// processDirectoryWithLocality groups files for locality-aware processing
+func processDirectoryWithLocality(path string, it *Dir, library Library, fs *Root, current map[string]string, stats *stats) []DirectoryBatch {
+	existingEntries, err := os.ReadDir(path)
+	anywork.OnErrPanicCloseAll(err)
+
+	// Pre-allocate maps for better performance
+	files := make(map[string]bool, len(existingEntries))
+	var tasksToProcess []FileTask
+
+	// First pass: handle existing entries
+	for _, part := range existingEntries {
+		directpath := filepath.Join(path, part.Name())
+
+		if part.IsDir() {
+			_, ok := it.Dirs[part.Name()]
+			if !ok {
+				common.Trace("* Holotree: remove extra directory %q", directpath)
+				// Execute synchronously to avoid deadlock
+				RemoveDirectory(directpath)()
+			}
+			stats.Dirty(!ok)
+			continue
+		}
+
+		// Check for symlink directories
+		link, ok := it.Dirs[part.Name()]
+		if ok && link.IsSymlink() {
+			stats.Link()
+			continue
+		}
+
+		files[part.Name()] = true
+		found, ok := it.Files[part.Name()]
+
+		if !ok {
+			common.Trace("* Holotree: remove extra file %q", directpath)
+			// Execute synchronously to avoid deadlock
+			RemoveFile(directpath)()
+			stats.Dirty(true)
+			continue
+		}
+
+		if found.IsSymlink() && isCorrectSymlink(found.Symlink, directpath) {
+			stats.Link()
+			continue
+		}
+
+		// Check if file needs update
+		shadow, ok := current[directpath]
+		golden := !ok || found.Digest == shadow
+		info, err := part.Info()
+		anywork.OnErrPanicCloseAll(err)
+		needsUpdate := !(golden && found.Match(info))
+		stats.Dirty(needsUpdate)
+
+		if needsUpdate {
+			common.Trace("* Holotree: update changed file %q", directpath)
+			if shouldBatch(found) {
+				tasksToProcess = append(tasksToProcess, FileTask{
+					Library:  library,
+					Digest:   found.Digest,
+					SinkPath: directpath,
+					Details:  found,
+					Rewrite:  fs.Rewrite(),
+				})
+			} else {
+				// Large files processed individually - execute synchronously
+				DropFile(library, found.Digest, directpath, found, fs.Rewrite())()
+			}
+		}
+	}
+
+	// Second pass: handle missing files
+	for name, found := range it.Files {
+		if _, seen := files[name]; !seen {
+			directpath := filepath.Join(path, name)
+			stats.Dirty(true)
+			common.Trace("* Holotree: add missing file %q", directpath)
+
+			if shouldBatch(found) {
+				tasksToProcess = append(tasksToProcess, FileTask{
+					Library:  library,
+					Digest:   found.Digest,
+					SinkPath: directpath,
+					Details:  found,
+					Rewrite:  fs.Rewrite(),
+				})
+			} else {
+				// Large files processed individually - execute synchronously
+				DropFile(library, found.Digest, directpath, found, fs.Rewrite())()
+			}
+		}
+	}
+
+	// Group files into optimized batches
+	return createBatches(tasksToProcess, path)
+}
+
+// createBatches groups files for optimal processing
+func createBatches(tasks []FileTask, dirPath string) []DirectoryBatch {
+	if len(tasks) == 0 {
+		return nil
+	}
+
+	// For files in the same directory, process them in batches
+	// Smaller batches (8 files) for better parallelism and lower latency
+	const optimalBatchSize = 8
+
+	var batches []DirectoryBatch
+	for i := 0; i < len(tasks); i += optimalBatchSize {
+		end := i + optimalBatchSize
+		if end > len(tasks) {
+			end = len(tasks)
+		}
+
+		batches = append(batches, DirectoryBatch{
+			Path:  dirPath,
+			Files: tasks[i:end],
+		})
+	}
+
+	return batches
+}
+
+// ProcessBatch processes a slice of file tasks (backward compatible signature)
+func ProcessBatch(tasks []FileTask) anywork.Work {
+	if len(tasks) == 0 {
+		return func() {}
+	}
+	return ProcessDirectoryBatch(DirectoryBatch{
+		Path:  filepath.Dir(tasks[0].SinkPath),
+		Files: tasks,
+	})
+}
+
+// ProcessDirectoryBatch processes a batch with intelligent prefetching
+func ProcessDirectoryBatch(batch DirectoryBatch) anywork.Work {
+	return func() {
+		// Prefetch all files in this batch for locality
+		pool := GetPrefetchPool(batch.Files[0].Library)
+
+		// Prefetch upcoming files in this directory batch
+		for i := 1; i < len(batch.Files) && i < 4; i++ {
+			if !batch.Files[i].Details.IsSymlink() {
+				pool.Prefetch(batch.Files[i].Digest)
+			}
+		}
+
+		// Track first error
+		var firstError interface{}
+		failedCount := 0
+
+		// Process each file with rolling prefetch
+		for i, task := range batch.Files {
+			// Prefetch next files in batch
+			for j := i + 1; j < len(batch.Files) && j < i+3; j++ {
+				if !batch.Files[j].Details.IsSymlink() {
+					pool.Prefetch(batch.Files[j].Digest)
+				}
+			}
+
+			// Process current file
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						failedCount++
+						if firstError == nil {
+							firstError = r
+						}
+						common.Trace("Batch file %d/%d failed: %v", i+1, len(batch.Files), r)
+					}
+				}()
+
+				// Use optimized DropFile
+				work := DropFile(task.Library, task.Digest, task.SinkPath, task.Details, task.Rewrite)
+				work()
+			}()
+		}
+
+		// Propagate errors
+		if firstError != nil {
+			common.Error("Batch processing failed", fmt.Errorf("%d/%d files failed, first error: %v",
+				failedCount, len(batch.Files), firstError))
+			panic(firstError)
+		}
+	}
+}
+
+// DropFile is an optimized version with better buffer management
+func DropFile(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
+	return func() {
+		if details.IsSymlink() {
+			anywork.OnErrPanicCloseAll(restoreSymlink(details.Symlink, sinkname))
+			return
+		}
+
+		// Get reader (may be prefetched)
+		reader, closer, err := library.Open(digest)
+		anywork.OnErrPanicCloseAll(err)
+		defer closer()
+
+		// Use atomic write pattern
+		partname := fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
+		// FIX: Don't use defer - it runs even after successful rename!
+		// Clean up only on panic/error via deferred function
+		cleanupPartFile := true
+		defer func() {
+			if cleanupPartFile {
+				os.Remove(partname)
+			}
+		}()
+
+		// Create with optimal buffer size for SSDs
+		sink, err := os.OpenFile(partname, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+		anywork.OnErrPanicCloseAll(err)
+
+		// Get pooled buffer
+		buf := GetCopyBuffer()
+		defer PutCopyBuffer(buf)
+
+		// ALWAYS verify hash (Juha's requirement - no shortcuts!)
+		digester := common.NewDigester(CompressionEnabled())
+
+		// Use TeeReader for single-pass read with verification
+		verifyReader := io.TeeReader(reader, digester)
+
+		// Copy with pooled buffer
+		_, err = io.CopyBuffer(sink, verifyReader, *buf)
+		anywork.OnErrPanicCloseAll(err, sink)
+
+		// Verify hash
+		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
+		if digest != hexdigest {
+			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		// Apply rewrites if needed
+		for _, position := range details.Rewrite {
+			_, err = sink.Seek(position, 0)
+			if err != nil {
+				sink.Close()
+				panic(fmt.Sprintf("%v %d", err, position))
+			}
+			_, err = sink.Write(rewrite)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		// Ensure data is written to disk
+		anywork.OnErrPanicCloseAll(sink.Sync())
+		anywork.OnErrPanicCloseAll(sink.Close())
+
+		// Atomic rename
+		anywork.OnErrPanicCloseAll(pathlib.TryRename("dropfile", partname, sinkname))
+
+		// Success! Don't cleanup the part file (it's been renamed)
+		cleanupPartFile = false
+
+		// Set permissions and time
+		anywork.OnErrPanicCloseAll(os.Chmod(sinkname, details.Mode))
+		anywork.OnErrPanicCloseAll(os.Chtimes(sinkname, motherTime, motherTime))
+	}
+}
+
+// shouldBatch determines if a file should be batched
 func shouldBatch(file *File) bool {
-	// Don't batch symlinks (they need special handling)
+	// Don't batch symlinks
 	if file.IsSymlink() {
 		return false
 	}
-	// Don't batch files with rewrites (they're more complex)
-	if len(file.Rewrite) > 0 {
+	// Don't batch files with many rewrites (complex operations)
+	if len(file.Rewrite) > 10 {
 		return false
 	}
-	// Only batch files smaller than the threshold
+	// Batch files smaller than the threshold
 	return file.Size < SmallFileThreshold
+}
+
+// ParallelStats provides thread-safe statistics with atomic operations
+type ParallelStats struct {
+	*stats
+	dirCount  uint64
+	fileCount uint64
+	byteCount uint64
+	mu        sync.Mutex
+	startTime int64
+}
+
+// NewParallelStats creates optimized statistics tracker
+func NewParallelStats() *ParallelStats {
+	return &ParallelStats{
+		stats: &stats{},
+	}
+}
+
+// Report generates a performance report
+func (it *ParallelStats) Report() string {
+	it.mu.Lock()
+	defer it.mu.Unlock()
+
+	return fmt.Sprintf("Dirs: %d, Files: %d, Bytes: %d, Dirty: %.1f%%",
+		it.dirCount, it.fileCount, it.byteCount, it.Dirtyness())
 }

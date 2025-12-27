@@ -16,19 +16,19 @@ import (
 
 // BenchmarkResults tracks performance metrics
 type BenchmarkResults struct {
-	Name          string
-	Duration      time.Duration
-	FilesPerSec   float64
-	BytesPerSec   float64
-	TotalFiles    int
-	TotalBytes    int64
-	Allocations   int64
-	AllocBytes    int64
-	DirtyPercent  float64
+	Name         string
+	Duration     time.Duration
+	FilesPerSec  float64
+	BytesPerSec  float64
+	TotalFiles   int
+	TotalBytes   int64
+	Allocations  int64
+	AllocBytes   int64
+	DirtyPercent float64
 }
 
 // String formats benchmark results for display
-func (br *BenchmarkResults) String() string {
+func (it *BenchmarkResults) String() string {
 	return fmt.Sprintf(`
 Benchmark: %s
 Duration: %v
@@ -38,13 +38,13 @@ Total Files: %d
 Total MB: %.2f
 Dirty: %.1f%%
 `,
-		br.Name,
-		br.Duration,
-		br.FilesPerSec,
-		br.BytesPerSec/(1024*1024),
-		br.TotalFiles,
-		float64(br.TotalBytes)/(1024*1024),
-		br.DirtyPercent,
+		it.Name,
+		it.Duration,
+		it.FilesPerSec,
+		it.BytesPerSec/(1024*1024),
+		it.TotalFiles,
+		float64(it.TotalBytes)/(1024*1024),
+		it.DirtyPercent,
 	)
 }
 
@@ -92,16 +92,12 @@ func BenchmarkRestoreDirectory(b *testing.B) {
 		fn   Dirtask
 	}{
 		{
-			name: "Original",
-			fn:   RestoreDirectory(library, fs, make(map[string]string), &stats{}),
+			name: "Simple",
+			fn:   RestoreDirectorySimple(library, fs, make(map[string]string), &stats{}),
 		},
 		{
 			name: "Batched",
-			fn:   RestoreDirectoryBatched(library, fs, make(map[string]string), &stats{}),
-		},
-		{
-			name: "Optimized",
-			fn:   RestoreDirectoryOptimized(library, fs, make(map[string]string), &stats{}),
+			fn:   RestoreDirectory(library, fs, make(map[string]string), &stats{}),
 		},
 		{
 			name: "WithHardlinks",
@@ -203,7 +199,7 @@ func BenchmarkPrefetch(b *testing.B) {
 		{
 			name: "OptimizedPrefetch",
 			fn: func(digests []string) {
-				pool := GetOptimizedPrefetchPool(library)
+				pool := GetPrefetchPool(library)
 				pool.PrefetchBatch(digests[:10]) // Prefetch first batch
 
 				for i, digest := range digests {

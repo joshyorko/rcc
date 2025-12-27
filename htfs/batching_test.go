@@ -31,17 +31,25 @@ func TestShouldBatch(t *testing.T) {
 			expected: false,
 		},
 		{
-			name: "small file with rewrites",
+			name: "small file with few rewrites",
 			file: &File{
 				Size:    50 * 1024, // 50KB
 				Rewrite: []int64{0, 100},
 			},
-			expected: false,
+			expected: true, // Up to 10 rewrites is OK in optimized version
+		},
+		{
+			name: "small file with many rewrites",
+			file: &File{
+				Size:    50 * 1024, // 50KB
+				Rewrite: make([]int64, 11), // More than 10 rewrites
+			},
+			expected: false, // Too many rewrites
 		},
 		{
 			name: "file at threshold boundary",
 			file: &File{
-				Size:    SmallFileThreshold,
+				Size:    SmallFileThreshold, // 100KB
 				Rewrite: nil,
 			},
 			expected: false, // Should not batch files >= threshold
@@ -186,16 +194,27 @@ func TestBatchSymlinkFiltering(t *testing.T) {
 	}
 }
 
-// TestBatchRewriteFiltering verifies that files with rewrites are never batched,
+// TestBatchRewriteFiltering verifies that files with many rewrites are not batched,
 // as they require special handling for path relocations.
 func TestBatchRewriteFiltering(t *testing.T) {
-	rewriteFile := &File{
+	// Files with few rewrites can be batched (up to 10)
+	fewRewritesFile := &File{
 		Size:    100, // Small enough to batch
 		Rewrite: []int64{0, 100, 200},
 	}
 
-	if shouldBatch(rewriteFile) {
-		t.Error("Files with rewrites should never be batched")
+	if !shouldBatch(fewRewritesFile) {
+		t.Error("Files with few rewrites (<=10) should be batched")
+	}
+
+	// Files with many rewrites should NOT be batched
+	manyRewritesFile := &File{
+		Size:    100, // Small enough to batch
+		Rewrite: make([]int64, 11), // More than 10 rewrites
+	}
+
+	if shouldBatch(manyRewritesFile) {
+		t.Error("Files with many rewrites (>10) should not be batched")
 	}
 }
 
