@@ -7,6 +7,8 @@ Suite Setup     Compression Suite Setup
 
 *** Keywords ***
 Compression Suite Setup
+    Comment    First run standard local preparation to set ROBOCORP_HOME
+    Prepare Local
     Comment    Clean up any previous test artifacts
     Remove Directory    tmp/compression_test    True
     Remove Directory    tmp/hololib_backup    True
