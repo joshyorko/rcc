@@ -1,0 +1,69 @@
+{
+ "tested": [
+  {
+   "version": "v18.12.0",
+   "when": "9.12.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v18120-date-09122025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.12.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.12.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.12.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.11.0",
+   "when": "3.12.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v18110-date-03122025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.11.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.11.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.11.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.10.0",
+   "when": "23.11.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v18100-date-23112025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.10.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.10.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.10.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.9.1",
+   "when": "21.11.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v1891-date-21112025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.9.1/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.9.1/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.9.1/rcc-darwin64"
+  },
+  {
+   "version": "v18.9.0",
+   "when": "21.11.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v1890-date-21112025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.9.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.9.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.9.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.8.0",
+   "when": "20.11.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v1880-date-20112025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.8.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.8.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.8.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.7.0",
+   "when": "9.6.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v1870-date-09062025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.7.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.7.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.7.0/rcc-darwin64"
+  },
+  {
+   "version": "v18.6.0",
+   "when": "6.9.2025",
+   "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v1860-date-06092025",
+   "windows": "https://github.com/joshyorko/rcc/releases/download/v18.6.0/rcc-windows64.exe",
+   "linux": "https://github.com/joshyorko/rcc/releases/download/v18.6.0/rcc-linux64",
+   "macos": "https://github.com/joshyorko/rcc/releases/download/v18.6.0/rcc-darwin64"
+  }
+ ],
+ "edge": []
+}

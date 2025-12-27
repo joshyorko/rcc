@@ -115,7 +115,7 @@ func NewEnvironment(condafile, holozip string, restore, force bool, puller Catal
 	}
 
 	if restore {
-		pretty.Progress(14, "Restore space from library [with %d workers on %d CPUs; with compression: %v].", anywork.Scale(), runtime.NumCPU(), Compress())
+		pretty.Progress(14, "Restore space from library [with %d workers on %d CPUs; with compression: %v].", anywork.Scale(), runtime.NumCPU(), CompressionEnabled())
 		path, err = library.Restore(holotreeBlueprint, []byte(common.ControllerIdentity()), []byte(common.HolotreeSpace))
 		fail.On(err != nil, "Failed to restore blueprint %q, reason: %v", string(holotreeBlueprint), err)
 		journal.CurrentBuildEvent().RestoreComplete()
