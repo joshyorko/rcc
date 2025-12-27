@@ -3,6 +3,7 @@
 package htfs
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -30,7 +31,14 @@ func sameMountPoint(path1, path2 string) bool {
 
 // getDeviceID returns a pseudo device ID for a path on Windows
 // Returns the volume name hash as a simple identifier
+// Returns -1 if the path doesn't exist or can't be resolved
 func getDeviceID(path string) int64 {
+	// Check if path exists first - on Windows, filepath.Abs succeeds even
+	// for nonexistent paths by resolving relative to current drive
+	if _, err := os.Stat(path); err != nil {
+		return -1
+	}
+
 	absPath, err := filepath.Abs(path)
 	if err != nil {
 		return -1
