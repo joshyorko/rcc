@@ -49,12 +49,17 @@ var zstdDecoderPool = sync.Pool{
 var zstdEncoderPool = sync.Pool{
 	New: func() interface{} {
 		// Create encoder with nil writer - will be Reset() before use
-		// Use SpeedFastest for best compression throughput
+		// Optimized for encoding speed across all platforms:
+		// - SpeedFastest: fastest compression level
+		// - 256KB window: reduces memory operations (helps Windows significantly)
+		// - NoEntropyCompression: skips Huffman encoding of literals for speed
+		// - Single-threaded: we parallelize at file level instead
 		encoder, err := zstd.NewWriter(nil,
 			zstd.WithEncoderLevel(zstd.SpeedFastest),
-			zstd.WithEncoderConcurrency(1), // Single-threaded per encoder
-			zstd.WithWindowSize(1<<20),     // 1MB window - good balance of speed/ratio
-			zstd.WithEncoderCRC(false),     // Skip CRC for speed (we verify hash separately)
+			zstd.WithEncoderConcurrency(1),
+			zstd.WithWindowSize(1<<18),            // 256KB window - faster encoding
+			zstd.WithNoEntropyCompression(true),   // Skip entropy coding for speed
+			zstd.WithEncoderCRC(false),            // Skip CRC (we verify hash separately)
 		)
 		if err != nil {
 			return nil
@@ -73,7 +78,8 @@ func GetPooledEncoder(w io.Writer) (*zstd.Encoder, func(), error) {
 		encoder, err := zstd.NewWriter(w,
 			zstd.WithEncoderLevel(zstd.SpeedFastest),
 			zstd.WithEncoderConcurrency(1),
-			zstd.WithWindowSize(1<<20),
+			zstd.WithWindowSize(1<<18),
+			zstd.WithNoEntropyCompression(true),
 			zstd.WithEncoderCRC(false),
 		)
 		if err != nil {

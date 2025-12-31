@@ -321,8 +321,12 @@ func (it *Root) SaveAs(filename string) error {
 	}
 	defer sink.Close()
 	defer sink.Sync()
-	// Use zstd for ~3x faster decompression with similar compression ratio
-	writer, err := zstd.NewWriter(sink, zstd.WithEncoderLevel(zstd.SpeedFastest))
+	// Use zstd for fast decompression - optimized for encoding speed
+	writer, err := zstd.NewWriter(sink,
+		zstd.WithEncoderLevel(zstd.SpeedFastest),
+		zstd.WithWindowSize(1<<18),
+		zstd.WithNoEntropyCompression(true),
+	)
 	if err != nil {
 		return err
 	}
