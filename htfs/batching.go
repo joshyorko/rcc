@@ -5,7 +5,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sort"
 	"sync"
 
 	"github.com/joshyorko/rcc/anywork"
@@ -15,17 +14,16 @@ import (
 
 // BLAZINGLY FAST Optimizations while respecting Juha's constraints:
 //
-// 1. Directory Creation Batching: Collect all directories and create them
-//    in a single pass to reduce syscalls
+// 1. O(n) Directory Creation: Each directory creates only itself (not all subdirs)
+//    This avoids O(n²) MkdirAll calls that caused 50M+ syscalls on large trees
 //
-// 2. Locality-Aware Processing: Process files in the same directory together
+// 2. Inline Batch Processing: Process file batches inline instead of scheduling
+//    via Backlog to avoid nested scheduling deadlocks
+//
+// 3. Locality-Aware Processing: Process files in the same directory together
 //    for better filesystem cache utilization
 //
-// 3. Parallel Directory Processing: Process independent directories in parallel
-//    while keeping related files together
-//
-// 4. Smarter Prefetch: Prefetch files based on directory locality, not just
-//    sequential order
+// 4. Smarter Prefetch: Prefetch files based on directory locality
 //
 // 5. Reduced Allocations: Reuse slices and maps where possible
 
@@ -52,9 +50,9 @@ type DirectoryBatch struct {
 }
 
 // RestoreDirectory is a BLAZINGLY FAST version that:
-// - Batches directory creation to reduce syscalls
+// - Creates only the current directory (subdirs are created by their own tasks)
 // - Groups files by directory for better cache locality
-// - Processes directories breadth-first for maximum parallelism
+// - Processes files in batches for efficient I/O
 // - Prefetches intelligently based on locality
 func RestoreDirectory(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
 	return func(path string, it *Dir) anywork.Work {
@@ -67,11 +65,15 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				return
 			}
 
-			// OPTIMIZATION 1: Collect all directories first, then create in batch
-			dirsToCreate := collectAllDirectories(path, it)
-			if len(dirsToCreate) > 0 {
-				createDirectoriesBatch(dirsToCreate)
+			// Create ONLY this directory - subdirectories will be created by their own
+			// tasks scheduled via AllDirs(). The previous implementation called
+			// collectAllDirectories() which recursively collected ALL subdirectories,
+			// causing O(n²) MkdirAll calls for trees with n directories. For a 10,000
+			// directory conda environment, this was 50+ million syscalls!
+			if err := os.MkdirAll(path, 0750); err != nil {
+				common.Trace("Failed to create directory %q: %v", path, err)
 			}
+			os.Chtimes(path, motherTime, motherTime)
 
 			// NOTE: Subdirectories are already scheduled by AllDirs() in directory.go
 			// which recursively schedules all directories depth-first. DO NOT schedule
@@ -79,74 +81,21 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 			// work queue when the pipeline channel (4096 entries) overflows with
 			// large conda environments that have 10,000+ directories.
 
-			// OPTIMIZATION 2: Group files by locality for better cache performance
+			// Group files by locality for better cache performance
 			batches := processDirectoryWithLocality(path, it, library, fs, current, stats)
 
-			// Schedule batches with smart prefetching
+			// Process batches inline to avoid nested scheduling which can deadlock
+			// the work queue. When all workers are blocked trying to schedule work,
+			// and the main thread is also blocked, no progress can be made.
 			for _, batch := range batches {
 				if len(batch.Files) > 0 {
-					anywork.Backlog(ProcessDirectoryBatch(batch))
+					ProcessDirectoryBatch(batch)()
 				}
 			}
 		}
 	}
 }
 
-// collectAllDirectories recursively collects all directories that need creation
-func collectAllDirectories(basePath string, dir *Dir) []string {
-	var dirs []string
-
-	// Use a stack for iterative traversal (avoids recursion overhead)
-	type dirEntry struct {
-		path string
-		dir  *Dir
-	}
-
-	stack := []dirEntry{{basePath, dir}}
-
-	for len(stack) > 0 {
-		// Pop from stack
-		current := stack[len(stack)-1]
-		stack = stack[:len(stack)-1]
-
-		// Add current directory
-		if !current.dir.Shadow && !current.dir.IsSymlink() {
-			dirs = append(dirs, current.path)
-
-			// Push subdirectories to stack
-			for name, subdir := range current.dir.Dirs {
-				if !subdir.Shadow {
-					stack = append(stack, dirEntry{
-						path: filepath.Join(current.path, name),
-						dir:  subdir,
-					})
-				}
-			}
-		}
-	}
-
-	// Sort for deterministic order and better filesystem performance
-	sort.Strings(dirs)
-	return dirs
-}
-
-// createDirectoriesBatch creates multiple directories efficiently
-func createDirectoriesBatch(dirs []string) {
-	// Create parent directories first to minimize ENOENT errors
-	for _, dir := range dirs {
-		// MkdirAll is optimized to check existence first
-		// Using 0750 for security while allowing group access
-		if err := os.MkdirAll(dir, 0750); err != nil {
-			common.Trace("Failed to create directory %q: %v", dir, err)
-		}
-	}
-
-	// Set times in a second pass (more efficient than interleaving)
-	for _, dir := range dirs {
-		// Ignore time setting errors - not critical for functionality
-		os.Chtimes(dir, motherTime, motherTime)
-	}
-}
 
 // processDirectoryWithLocality groups files for locality-aware processing
 func processDirectoryWithLocality(path string, it *Dir, library Library, fs *Root, current map[string]string, stats *stats) []DirectoryBatch {

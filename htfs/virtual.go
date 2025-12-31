@@ -155,7 +155,10 @@ func (it *virtual) RestoreTo(blueprint []byte, label, controller, space string, 
 }
 
 func (it *virtual) Open(digest string) (readable io.Reader, closer Closer, err error) {
-	return delegateOpen(it, digest, CompressionEnabled())
+	// Virtual holotree stage files are NOT compressed - they are the original
+	// environment files from conda/pip install. Do NOT try to decompress them.
+	// This is different from hololib which stores compressed blobs.
+	return delegateOpen(it, digest, false)
 }
 
 func (it *virtual) ExactLocation(key string) string {
