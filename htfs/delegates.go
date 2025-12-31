@@ -4,11 +4,38 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
+	"runtime"
 	"sync"
 
 	"github.com/joshyorko/rcc/fail"
 	"github.com/klauspost/compress/zstd"
 )
+
+// Platform-specific encoder options.
+// Windows uses faster settings to compensate for slower pure Go encoder performance.
+// Linux/macOS use better compression since encoding is already fast.
+func encoderOptions() []zstd.EOption {
+	baseOpts := []zstd.EOption{
+		zstd.WithEncoderLevel(zstd.SpeedFastest),
+		zstd.WithEncoderConcurrency(1), // Single-threaded per encoder (we parallelize at file level)
+		zstd.WithEncoderCRC(false),     // Skip CRC (we verify hash separately)
+	}
+
+	if runtime.GOOS == "windows" {
+		// Windows: optimize for encoding speed
+		// - Smaller window reduces memory operations
+		// - Skip entropy compression for faster encoding
+		return append(baseOpts,
+			zstd.WithWindowSize(1<<18),          // 256KB window
+			zstd.WithNoEntropyCompression(true), // Skip Huffman coding
+		)
+	}
+
+	// Linux/macOS: better compression (encoder is fast anyway)
+	return append(baseOpts,
+		zstd.WithWindowSize(1<<20), // 1MB window for better compression
+	)
+}
 
 // Magic byte constants for compression format detection.
 // Note: Go doesn't support const for byte slices, but these values are
@@ -49,18 +76,8 @@ var zstdDecoderPool = sync.Pool{
 var zstdEncoderPool = sync.Pool{
 	New: func() interface{} {
 		// Create encoder with nil writer - will be Reset() before use
-		// Optimized for encoding speed across all platforms:
-		// - SpeedFastest: fastest compression level
-		// - 256KB window: reduces memory operations (helps Windows significantly)
-		// - NoEntropyCompression: skips Huffman encoding of literals for speed
-		// - Single-threaded: we parallelize at file level instead
-		encoder, err := zstd.NewWriter(nil,
-			zstd.WithEncoderLevel(zstd.SpeedFastest),
-			zstd.WithEncoderConcurrency(1),
-			zstd.WithWindowSize(1<<18),            // 256KB window - faster encoding
-			zstd.WithNoEntropyCompression(true),   // Skip entropy coding for speed
-			zstd.WithEncoderCRC(false),            // Skip CRC (we verify hash separately)
-		)
+		// Uses platform-specific options (see encoderOptions())
+		encoder, err := zstd.NewWriter(nil, encoderOptions()...)
 		if err != nil {
 			return nil
 		}
@@ -75,13 +92,7 @@ func GetPooledEncoder(w io.Writer) (*zstd.Encoder, func(), error) {
 	pooled := zstdEncoderPool.Get()
 	if pooled == nil {
 		// Pool creation failed, fall back to new encoder with matching options
-		encoder, err := zstd.NewWriter(w,
-			zstd.WithEncoderLevel(zstd.SpeedFastest),
-			zstd.WithEncoderConcurrency(1),
-			zstd.WithWindowSize(1<<18),
-			zstd.WithNoEntropyCompression(true),
-			zstd.WithEncoderCRC(false),
-		)
+		encoder, err := zstd.NewWriter(w, encoderOptions()...)
 		if err != nil {
 			return nil, nil, err
 		}
