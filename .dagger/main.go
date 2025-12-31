@@ -177,6 +177,9 @@ ENVS=(
 echo "=== BASELINE PROFILING (gzip) ==="
 echo ""
 
+# Let each version use its default worker count for fair comparison
+unset RCC_WORKER_COUNT
+
 for ENV in "${ENVS[@]}"; do
     IFS=',' read -r NAME YAML <<< "$ENV"
     profile_env "Baseline $NAME" "$YAML" "/baseline/rcc" "/tmp/baseline_home" "baseline-$(echo $NAME | tr '[:upper:]' '[:lower:]')"
@@ -184,6 +187,9 @@ done
 
 echo "=== PR PROFILING (zstd) ==="
 echo ""
+
+# Let each version use its default worker count for fair comparison
+unset RCC_WORKER_COUNT
 
 for ENV in "${ENVS[@]}"; do
     IFS=',' read -r NAME YAML <<< "$ENV"
@@ -318,7 +324,7 @@ IFS=',' read -r _ _ NORMAL_MS NORMAL_R <<< "$NORMAL_DATA"
 
 if [ "$NORMAL_MS" -gt 0 ] && [ "$MAX_MS" -gt 0 ]; then
     WORKER_SPEEDUP=$(python3 -c "print(f'{$NORMAL_MS/$MAX_MS:.2f}x')")
-    echo "  Normal (8 workers): $(python3 -c "print(f'{$NORMAL_MS/1000:.1f}s')")"
+    echo "  Normal (default workers): $(python3 -c "print(f'{$NORMAL_MS/1000:.1f}s')")"
     echo "  Max (128 workers): $(python3 -c "print(f'{$MAX_MS/1000:.1f}s')")"
     echo "  Speedup: $WORKER_SPEEDUP"
 else

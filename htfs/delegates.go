@@ -43,6 +43,55 @@ var zstdDecoderPool = sync.Pool{
 	},
 }
 
+// Encoder pool to eliminate per-file allocation overhead.
+// Creating a new zstd.Encoder for each file is expensive (~50μs).
+// With pooling, we reuse encoders via Reset() (~1μs).
+var zstdEncoderPool = sync.Pool{
+	New: func() interface{} {
+		// Create encoder with nil writer - will be Reset() before use
+		// Use SpeedFastest for best compression throughput
+		encoder, err := zstd.NewWriter(nil,
+			zstd.WithEncoderLevel(zstd.SpeedFastest),
+			zstd.WithEncoderConcurrency(1), // Single-threaded per encoder
+			zstd.WithWindowSize(1<<20),     // 1MB window - good balance of speed/ratio
+			zstd.WithEncoderCRC(false),     // Skip CRC for speed (we verify hash separately)
+		)
+		if err != nil {
+			return nil
+		}
+		return encoder
+	},
+}
+
+// GetPooledEncoder obtains a zstd encoder from the pool and resets it for the given writer.
+// Returns the encoder and a cleanup function that returns it to the pool.
+// The cleanup function MUST be called after Close() to return the encoder to the pool.
+func GetPooledEncoder(w io.Writer) (*zstd.Encoder, func(), error) {
+	pooled := zstdEncoderPool.Get()
+	if pooled == nil {
+		// Pool creation failed, fall back to new encoder with matching options
+		encoder, err := zstd.NewWriter(w,
+			zstd.WithEncoderLevel(zstd.SpeedFastest),
+			zstd.WithEncoderConcurrency(1),
+			zstd.WithWindowSize(1<<20),
+			zstd.WithEncoderCRC(false),
+		)
+		if err != nil {
+			return nil, nil, err
+		}
+		// No-op cleanup - caller handles Close() which releases resources
+		return encoder, func() {}, nil
+	}
+
+	encoder := pooled.(*zstd.Encoder)
+	encoder.Reset(w)
+
+	return encoder, func() {
+		// Return to pool for reuse
+		zstdEncoderPool.Put(encoder)
+	}, nil
+}
+
 // getPooledDecoder obtains a zstd decoder from the pool and resets it for the given reader.
 // Returns the decoder and a cleanup function that returns it to the pool.
 func getPooledDecoder(r io.Reader) (*zstd.Decoder, func(), error) {
