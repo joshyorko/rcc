@@ -256,13 +256,23 @@ func LiftFile(sourcename, sinkname string, compress bool) anywork.Work {
 		defer sink.Close()
 
 		var writer io.WriteCloser
+		var encoderCleanup func()
 		writer = sink
 		if compress {
-			// Use pooled zstd encoder for ~50μs savings per file
-			encoder, encoderCleanup, err := GetPooledEncoder(sink)
-			anywork.OnErrPanicCloseAll(err, sink)
-			defer encoderCleanup() // Return encoder to pool after Close()
-			writer = encoder
+			if runtime.GOOS == "windows" {
+				// Windows: use gzip for faster compression (zstd encoder is slow on Windows)
+				// Decompression still handles both formats via magic byte detection
+				gzWriter := gzip.NewWriter(sink)
+				writer = gzWriter
+				encoderCleanup = func() {} // gzip has no pool
+			} else {
+				// Linux/macOS: use pooled zstd encoder for better compression
+				encoder, cleanup, err := GetPooledEncoder(sink)
+				anywork.OnErrPanicCloseAll(err, sink)
+				writer = encoder
+				encoderCleanup = cleanup
+			}
+			defer encoderCleanup()
 		}
 
 		// Use pooled 256KB buffer for better SSD performance
