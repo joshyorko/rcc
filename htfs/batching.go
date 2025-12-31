@@ -73,17 +73,13 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				createDirectoriesBatch(dirsToCreate)
 			}
 
-			// OPTIMIZATION 2: Process subdirectories in parallel FIRST (breadth-first)
-			// This maximizes parallelism while workers are available
-			for name, subdir := range it.Dirs {
-				if !subdir.Shadow && !subdir.IsSymlink() {
-					subpath := filepath.Join(path, name)
-					// Schedule immediately for maximum parallelism
-					anywork.Backlog(RestoreDirectory(library, fs, current, stats)(subpath, subdir))
-				}
-			}
+			// NOTE: Subdirectories are already scheduled by AllDirs() in directory.go
+			// which recursively schedules all directories depth-first. DO NOT schedule
+			// them again here as that causes double-scheduling and can deadlock the
+			// work queue when the pipeline channel (4096 entries) overflows with
+			// large conda environments that have 10,000+ directories.
 
-			// OPTIMIZATION 3: Group files by locality for better cache performance
+			// OPTIMIZATION 2: Group files by locality for better cache performance
 			batches := processDirectoryWithLocality(path, it, library, fs, current, stats)
 
 			// Schedule batches with smart prefetching
