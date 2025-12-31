@@ -155,7 +155,7 @@ func (it *virtual) RestoreTo(blueprint []byte, label, controller, space string, 
 }
 
 func (it *virtual) Open(digest string) (readable io.Reader, closer Closer, err error) {
-	return delegateOpen(it, digest, false)
+	return delegateOpen(it, digest, CompressionEnabled())
 }
 
 func (it *virtual) ExactLocation(key string) string {
