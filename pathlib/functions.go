@@ -174,7 +174,7 @@ func TryRemove(context, target string) (err error) {
 	for delay := 0; delay < 5; delay += 1 {
 		time.Sleep(time.Duration(delay*100) * time.Millisecond)
 		err = os.Remove(target)
-		if err == nil {
+		if err == nil || os.IsNotExist(err) {
 			return nil
 		}
 	}

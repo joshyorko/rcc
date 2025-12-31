@@ -32,6 +32,9 @@ const (
 	VERBOSE_ENVIRONMENT_BUILDING          = `RCC_VERBOSE_ENVIRONMENT_BUILDING`
 	ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS = `ROBOCORP_OVERRIDE_SYSTEM_REQUIREMENTS`
 	RCC_VERBOSITY                         = `RCC_VERBOSITY`
+	RCC_WORKER_COUNT                      = `RCC_WORKER_COUNT`
+	RCC_USE_ARCHIVES                      = `RCC_USE_ARCHIVES`
+	RCC_DISABLE_BATCHING                  = `RCC_DISABLE_BATCHING`
 	SILENTLY                              = `silent`
 	TRACING                               = `trace`
 	DEBUGGING                             = `debug`
@@ -113,6 +116,7 @@ func init() {
 	ensureDirectory(WheelCache())
 	ensureDirectory(RobotCache())
 	ensureDirectory(MambaPackages())
+	ensureDirectory(ProductTempRoot())
 }
 
 func RandomIdentifier() string {
@@ -125,6 +129,69 @@ func DisableTempManagement() bool {
 
 func DisablePycManagement() bool {
 	return NoPycManagement || len(os.Getenv(RCC_NO_PYC_MANAGEMENT)) > 0
+}
+
+// DisableBatching returns true if small file batching should be disabled.
+// Batching groups small files (<100KB) into batches of 32 for reduced overhead.
+// Set RCC_DISABLE_BATCHING=1 if you experience issues with batched restoration.
+// This is an escape hatch for enterprise environments with unusual disk subsystems.
+func DisableBatching() bool {
+	return len(os.Getenv(RCC_DISABLE_BATCHING)) > 0
+}
+
+// WorkerCountFromEnv returns the worker count from RCC_WORKER_COUNT environment
+// variable, or 0 if not set or invalid. This allows users to override the
+// automatic worker pool sizing for I/O-bound operations.
+func WorkerCountFromEnv() int {
+	val := os.Getenv(RCC_WORKER_COUNT)
+	if len(val) == 0 {
+		return 0
+	}
+	var count int
+	_, err := fmt.Sscanf(val, "%d", &count)
+	if err != nil || count < 1 {
+		return 0
+	}
+	return count
+}
+
+// OptimalWorkerCount returns the recommended worker count for I/O-bound
+// operations based on CPU count. Platform-specific formulas for best performance.
+func OptimalWorkerCount() int {
+	cpus := runtime.NumCPU()
+
+	// Check environment variable override first - power users can tune this
+	if envCount := WorkerCountFromEnv(); envCount > 0 {
+		return envCount
+	}
+
+	var limit int
+	if runtime.GOOS == "windows" {
+		// Windows: use conservative formula (matches baseline v18.12.1)
+		// Higher parallelism causes file system contention and Windows Defender bottlenecks
+		limit = cpus - 1
+		if limit < 2 {
+			limit = 2
+		}
+	} else {
+		// Linux/macOS: use aggressive formula for I/O-bound operations
+		// These platforms handle high parallelism well
+		limit = cpus * 2
+		if limit > 32 {
+			limit = 32
+		}
+		if limit < 4 {
+			limit = 4
+		}
+	}
+
+	return limit
+}
+
+// UseArchives returns true if archive-based storage should be used for
+// holotree restoration. Set RCC_USE_ARCHIVES=1 to enable.
+func UseArchives() bool {
+	return len(os.Getenv(RCC_USE_ARCHIVES)) > 0
 }
 
 func RccRemoteOrigin() string {
@@ -203,9 +270,6 @@ func ProductTemp() string {
 		fullpath = tempLocation
 	}
 	ensureDirectory(fullpath)
-	if err != nil {
-		Log("WARNING (%v) -> %v", tempLocation, err)
-	}
 	return fullpath
 }
 

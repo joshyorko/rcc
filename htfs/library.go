@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/cloud"
@@ -21,15 +21,23 @@ import (
 )
 
 const (
+	// epoc is a fixed timestamp (January 7, 2021 06:13:20 UTC) used for all holotree files.
+	// Using a constant timestamp ensures reproducible builds and makes it easy to identify
+	// holotree-managed files. This specific date was chosen as it predates the holotree
+	// feature release while being recent enough to avoid issues with very old timestamps.
 	epoc = 1610000000
 )
 
 var (
+	// motherTime is the standard modification time applied to all holotree files.
+	// Using a fixed time ensures file content hashes remain stable and enables
+	// fast change detection by comparing mtimes instead of file contents.
 	motherTime = time.Unix(epoc, 0)
 )
 
 type stats struct {
-	sync.Mutex
+	// Use atomic operations instead of mutex for high-performance counters
+	// This eliminates lock contention in hot paths
 	total     uint64
 	dirty     uint64
 	links     uint64
@@ -37,36 +45,30 @@ type stats struct {
 }
 
 func (it *stats) Dirtyness() float64 {
-	it.Lock()
-	defer it.Unlock()
-
-	dirtyness := (1000 * it.dirty) / it.total
+	// Atomic reads for lock-free access
+	total := atomic.LoadUint64(&it.total)
+	dirty := atomic.LoadUint64(&it.dirty)
+	if total == 0 {
+		return 0.0
+	}
+	dirtyness := (1000 * dirty) / total
 	return float64(dirtyness) / 10.0
 }
 
 func (it *stats) Duplicate() {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
-	it.duplicate++
+	atomic.AddUint64(&it.total, 1)
+	atomic.AddUint64(&it.duplicate, 1)
 }
 
 func (it *stats) Link() {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
-	it.links++
+	atomic.AddUint64(&it.total, 1)
+	atomic.AddUint64(&it.links, 1)
 }
 
 func (it *stats) Dirty(dirty bool) {
-	it.Lock()
-	defer it.Unlock()
-
-	it.total++
+	atomic.AddUint64(&it.total, 1)
 	if dirty {
-		it.dirty++
+		atomic.AddUint64(&it.dirty, 1)
 	}
 }
 
@@ -103,7 +105,7 @@ type hololib struct {
 }
 
 func (it *hololib) Open(digest string) (readable io.Reader, closer Closer, err error) {
-	return delegateOpen(it, digest, Compress())
+	return delegateOpen(it, digest, CompressionEnabled())
 }
 
 func (it *hololib) Location(digest string) string {
@@ -288,8 +290,13 @@ func (it *hololib) ValidateBlueprint(blueprint []byte) error {
 	return nil
 }
 
-func Compress() bool {
+func CompressionEnabled() bool {
 	return !pathlib.IsFile(common.HololibCompressMarker())
+}
+
+// Compress is kept for backward compatibility - use CompressionEnabled instead
+func Compress() bool {
+	return CompressionEnabled()
 }
 
 func (it *hololib) HasBlueprint(blueprint []byte) bool {
@@ -424,10 +431,26 @@ func (it *hololib) RestoreTo(blueprint []byte, label, controller, space string, 
 	common.TimelineEnd()
 	fail.On(err != nil, "Failed to make branches -> %v", err)
 	score := &stats{}
-	common.TimelineBegin("holotree restore start")
-	err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	// Use batched restoration by default, fall back to simple mode if disabled
+	if common.DisableBatching() {
+		common.TimelineBegin("holotree restore start (simple)")
+		err = fs.AllDirs(RestoreDirectorySimple(it, fs, currentstate, score))
+	} else {
+		common.TimelineBegin("holotree restore start")
+		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	}
 	fail.On(err != nil, "Failed to restore directories -> %v", err)
 	common.TimelineEnd()
+
+	// Post-restoration cleanup: remove extra directories AFTER all file operations are done
+	// This avoids the race condition where directories are deleted while files are being written
+	common.TimelineBegin("holotree cleanup")
+	err = fs.AllDirs(CleanupExtraDirectories(fs.Path, fs.Tree))
+	if err != nil {
+		common.Trace("Cleanup had errors (non-fatal): %v", err)
+	}
+	common.TimelineEnd()
+
 	defer common.Timeline("- dirty %d/%d (duplicate: %d, links: %d)", score.dirty, score.total, score.duplicate, score.links)
 	common.Debug("Holotree dirty workload: %d/%d\n", score.dirty, score.total)
 	journal.CurrentBuildEvent().Dirty(score.Dirtyness())

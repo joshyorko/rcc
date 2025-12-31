@@ -10,6 +10,7 @@ Clean Local
 Prepare Robocorp Home
     [Arguments]    ${location}
     Create Directory    ${location}
+    Create Directory    ${location}/temp
     Set Environment Variable    ROBOCORP_HOME    ${location}
     Copy File    robot_tests/settings.yaml    ${location}/settings.yaml
 
