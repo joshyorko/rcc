@@ -6,13 +6,13 @@ Suite Setup  Fullrun setup
 
 *** Keywords ***
 Fullrun setup
-  Fire And Forget   build/rcc ht delete 4e67cd8
+  Prepare Local
 
 *** Test cases ***
 
 Goal: Show rcc version information.
   Step        build/rcc version --controller citests
-  Must Have   v18.
+  Must Have   v19.
 
 Goal: There is debug message when bundled case.
   Step        build/rcc version --controller citests --debug --bundled

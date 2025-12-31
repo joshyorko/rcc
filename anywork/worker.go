@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"runtime"
+
+	"github.com/joshyorko/rcc/common"
 )
 
 var (
@@ -60,7 +62,10 @@ func watcher(failures Failures, counters Counters) {
 
 func init() {
 	group = NewGroup()
-	pipeline = make(WorkQueue, 100000)
+	// Reduced buffer size for better cache locality
+	// Large buffers cause memory bloat and poor CPU cache utilization
+	// 4k is optimal for typical workload patterns
+	pipeline = make(WorkQueue, 4096)
 	failpipe = make(Failures)
 	errcount = make(Counters)
 	headcount = 0
@@ -73,16 +78,18 @@ func Scale() uint64 {
 }
 
 func AutoScale() {
-	limit := uint64(runtime.NumCPU() - 1)
+	// Use the optimal worker count for I/O-bound operations
+	// This is more aggressive than NumCPU-1 because holotree
+	// restoration is I/O-bound, not CPU-bound.
+	var limit uint64
 	if WorkerCount > 1 {
+		// Legacy: respect explicit WorkerCount if set programmatically
 		limit = uint64(WorkerCount)
+	} else {
+		// Use adaptive formula from common package
+		limit = uint64(common.OptimalWorkerCount())
 	}
-	if limit > 96 {
-		limit = 96
-	}
-	if limit < 2 {
-		limit = 2
-	}
+
 	for headcount < limit {
 		go member(headcount)
 		headcount += 1

@@ -26,7 +26,7 @@ func Virtual() MutableLibrary {
 	}
 }
 
-func (it *virtual) Compress() bool {
+func (it *virtual) CompressionEnabled() bool {
 	return true
 }
 
@@ -130,8 +130,14 @@ func (it *virtual) RestoreTo(blueprint []byte, label, controller, space string, 
 		return "", err
 	}
 	score := &stats{}
-	common.Timeline("holotree restore start (virtual)")
-	err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	// Use batched restoration by default, fall back to simple mode if disabled
+	if common.DisableBatching() {
+		common.Timeline("holotree restore start (virtual, simple)")
+		err = fs.AllDirs(RestoreDirectorySimple(it, fs, currentstate, score))
+	} else {
+		common.Timeline("holotree restore start (virtual)")
+		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	}
 	if err != nil {
 		return "", err
 	}

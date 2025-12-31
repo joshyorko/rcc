@@ -19,12 +19,10 @@ Practical examples for common RCC use cases.
 ### Create Your First Robot
 
 ```bash
-# Script/CI-friendly creation (recommended)
-rcc robot initialize --list
-rcc robot initialize -t <template-name> -d my-robot
-
-# Interactive creation (human use; not for CI)
-# rcc create
+# Create a new robot interactively
+rcc create
+# Select: python
+# Enter project name
 
 cd my-robot
 rcc run
@@ -42,11 +40,9 @@ rcc run
 
 ## Project Templates
 
-### Minimal Python Robot
+### Minimal Python Robot (with UV)
 
-These examples default to **Python 3.10.x** for broad compatibility across the Robot Framework / RPA ecosystem.
-
-If you want faster pip installs and your environment allows it, you may optionally add `uv` as a conda dependency.
+> **Note:** All examples use `uv` for faster package installation. Always include `uv` in your conda.yaml dependencies.
 
 **robot.yaml:**
 ```yaml
@@ -70,8 +66,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  # - uv           # Optional speed-up for pip installs
+  - python=3.12.11
+  - uv=0.8.17      # Fast package installer (RECOMMENDED)
   - pip:
       - requests==2.32.5
 ```
@@ -126,8 +122,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  # - uv           # Optional
+  - python=3.12.11
+  - uv=0.8.17
   - pip:
       - requests==2.32.5
       - beautifulsoup4==4.12.3
@@ -165,12 +161,13 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - nodejs=22.9.0
-  - pip=24.0
+  - python=3.12.11
+  - nodejs=18.17.1
+  - uv=0.8.17
   - pip:
-      - robotframework-browser==18.8.1
-      - rpaframework==28.6.3
+      - robotframework==7.1.1
+      - robotframework-browser==18.9.1
+      - rpaframework==28.6.1
 
 rccPostInstall:
   - rfbrowser init
@@ -213,8 +210,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - pip=24.0
+  - python=3.12.11
+  - uv=0.8.17
   - pandas=2.2.3
   - numpy=2.1.3
   - scikit-learn=1.5.2
@@ -258,8 +255,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - pip=24.0
+  - python=3.12.11
+  - uv=0.8.17
   - pip:
       - fastapi==0.115.5
       - uvicorn==0.32.1

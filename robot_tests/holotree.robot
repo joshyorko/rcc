@@ -96,7 +96,7 @@ Goal: See variables from specific environment with robot.yaml knowledge in JSON 
   Wont Have   (virtual)
 
 Goal: Liveonly works and uses virtual holotree
-  Step        build/rcc holotree vars --liveonly --space jam --controller citests robot_tests/certificates.yaml --config tmp/alternative.yaml --timeline
+  Step        build/rcc holotree vars --liveonly --space liveonly --controller citests robot_tests/certificates.yaml --config tmp/alternative.yaml --timeline
   Must Have   ROBOCORP_HOME=
   Must Have   CONDA_DEFAULT_ENV=rcc
   Must Have   CONDA_PREFIX=
@@ -133,7 +133,7 @@ Goal: Do quick cleanup on environments
   Must Have   OK
 
 Goal: Liveonly works and uses virtual holotree and can give output in JSON form
-  Step        build/rcc ht vars --liveonly --space jam --controller citests --json robot_tests/certificates.yaml --config tmp/alternative.yaml --timeline
+  Step        build/rcc ht vars --liveonly --space liveonly --controller citests --json robot_tests/certificates.yaml --config tmp/alternative.yaml --timeline
   Must Be Json Response
   Use STDERR
   Must Have   (virtual)
