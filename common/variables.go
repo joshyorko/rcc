@@ -156,7 +156,7 @@ func WorkerCountFromEnv() int {
 }
 
 // OptimalWorkerCount returns the recommended worker count for I/O-bound
-// operations based on CPU count. Conservative formula for enterprise safety.
+// operations based on CPU count. Platform-specific formulas for best performance.
 func OptimalWorkerCount() int {
 	cpus := runtime.NumCPU()
 
@@ -165,20 +165,24 @@ func OptimalWorkerCount() int {
 		return envCount
 	}
 
-	// Conservative formula: 2x CPU count for I/O-bound operations
-	// This balances performance with enterprise safety:
-	// - Windows with antivirus won't melt
-	// - File handle limits (512-2048 on Windows) won't be exceeded
-	// - Network shares can handle this load
-	limit := cpus * 2
-
-	// Conservative cap at 32 workers - safe for enterprise environments
-	// Still provides good parallelism without overwhelming systems
-	if limit > 32 {
-		limit = 32
-	}
-	if limit < 4 {
-		limit = 4
+	var limit int
+	if runtime.GOOS == "windows" {
+		// Windows: use conservative formula (matches baseline v18.12.1)
+		// Higher parallelism causes file system contention and Windows Defender bottlenecks
+		limit = cpus - 1
+		if limit < 2 {
+			limit = 2
+		}
+	} else {
+		// Linux/macOS: use aggressive formula for I/O-bound operations
+		// These platforms handle high parallelism well
+		limit = cpus * 2
+		if limit > 32 {
+			limit = 32
+		}
+		if limit < 4 {
+			limit = 4
+		}
 	}
 
 	return limit
