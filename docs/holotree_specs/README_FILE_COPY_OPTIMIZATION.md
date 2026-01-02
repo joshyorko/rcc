@@ -207,7 +207,7 @@ golang.org/x/sys v0.13.0
 No new dependencies required!
 
 ### Go Version
-Project uses Go 1.20 (confirmed in `go.mod`)
+Project uses Go 1.23 (confirmed in `go.mod`)
 
 ### Build Tags
 Platform-specific files use standard build tags:

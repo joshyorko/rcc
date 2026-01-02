@@ -36,7 +36,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 - **Condition:** Only runs on version tag pushes or manual dispatch
 - **Steps:**
   - Checkout code
-  - Set up Go 1.20 and Python 3.10
+  - Set up Go 1.23 and Python 3.10
   - Install Invoke build tool
   - Build RCC using `inv build`
   - Upload artifacts for Linux, Windows, and macOS
@@ -234,7 +234,7 @@ The recommended release process uses these workflows:
 
 | Requirement | Version | Used By |
 |-------------|---------|---------|
-| Go | 1.20.x | rcc.yaml |
+| Go | 1.23.x | rcc.yaml |
 | Python | 3.10 | rcc.yaml |
 | Invoke | latest | rcc.yaml |
 | Dagger | latest | dagger.yaml |

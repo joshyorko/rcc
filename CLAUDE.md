@@ -58,7 +58,7 @@ rcc run -r developer/toolkit.yaml --dev -t robot
 
 ## Coding Conventions
 
-- Go 1.20; format with `gofmt`
+- Go 1.23; format with `gofmt`
 - Packages/files: lowercase without underscores
 - Exported names: PascalCase; locals: mixedCaps
 - CLI flags/commands follow verb-first patterns (`run`, `pull`, `configure`)
