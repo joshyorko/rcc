@@ -2,7 +2,7 @@
 
 **RCC (Repeatable, Contained Code)** is a CLI tool designed to create, manage, and distribute self-contained Python-based automation packages. It ensures reproducibility by isolating environments and freezing dependencies.
 
-*   **Language:** Go (1.20+)
+*   **Language:** Go (1.23+)
 *   **Core Purpose:** Managing Python environments (using `micromamba`), executing automation tasks, and distributing `robot.yaml` based projects.
 *   **Key Technologies:**
     *   **CLI Framework:** [Cobra](https://github.com/spf13/cobra)
@@ -24,7 +24,7 @@ The project uses `invoke` (Python) to manage build tasks. Ensure you have Python
 
 ## Prerequisites
 
-*   Go 1.20+
+*   Go 1.23+
 *   Python 3.x
 *   `pip install invoke`
 

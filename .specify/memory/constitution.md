@@ -9,7 +9,7 @@ Sync Impact Report:
   - .specify/templates/spec-template.md: ✅ No update needed (generic)
   - .specify/templates/tasks-template.md: ✅ No update needed (generic)
   - .github/copilot-instructions.md: ✅ Updated (Go version clarified)
-- Clarifications: Go version pinned to 1.20 (removed ambiguous "+")
+- Clarifications: Go version updated from 1.20 to 1.23 (CVE mitigation)
 - Follow-up TODOs: None
 -->
 # RCC Constitution
@@ -51,7 +51,7 @@ telemetry or add new tracking MUST be explicitly documented and opt-in only.
 
 ## Technical Stack
 
-**Language**: Go 1.20 (Core), Python 3.10+ (Environment Management/Scripting).
+**Language**: Go 1.23 (Core), Python 3.10+ (Environment Management/Scripting).
 **Build System**: Invoke (`tasks.py`).
 **Testing**: Go `testing` package (Unit), Robot Framework (Acceptance).
 **Dependencies**: Micromamba (for Python envs), Cobra (CLI), Viper (Config).

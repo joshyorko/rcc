@@ -15,7 +15,7 @@
 - `python3 -m robot -L DEBUG -d tmp/output robot_tests` or `rcc run -r developer/toolkit.yaml --dev -t robot`: robot acceptance suites.
 
 ## Coding Style & Naming Conventions
-- Use Go 1.20 tooling; format with `gofmt` before committing.
+- Use Go 1.23 tooling; format with `gofmt` before committing.
 - Packages and files stay lowercase without underscores; exported names use PascalCase, locals use mixedCaps.
 - CLI flag and command names follow verb-first patterns (e.g., `run`, `pull`, `configure`).
 - Prefer small, composable functions and table-driven tests; avoid platform-specific logic leaks across `command_*.go` files.
