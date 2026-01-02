@@ -1,4 +1,17 @@
 # rcc change log
+## v18.13.0 (date: 02.01.2026)
+
+### Security
+
+- security: upgraded Go from 1.20 to 1.23 to fix critical stdlib CVEs
+  - **Critical CVEs fixed**: CVE-2025-22871, CVE-2024-24790, CVE-2023-24531
+  - **High severity CVEs fixed**: CVE-2025-61729, CVE-2025-61725, CVE-2025-61723, CVE-2025-58188, CVE-2025-58187, CVE-2025-47907, CVE-2025-4674, CVE-2024-34158, CVE-2024-34156, CVE-2024-24791, CVE-2024-24784, CVE-2023-45288
+  - updated `go.mod` to Go 1.23
+  - updated GitHub Actions workflow to use Go 1.23.x
+  - updated developer environment to Go 1.23.0
+  - ran `go mod tidy` to update dependencies
+  - all builds, tests, and security scans pass with no new alerts
+
 ## v18.12.1 (date: 12.12.2025)
 
 ### Fixes
