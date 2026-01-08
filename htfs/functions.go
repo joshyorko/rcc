@@ -105,14 +105,36 @@ func CheckHasher(known map[string]map[string]bool) Filetask {
 			}
 			defer source.Close()
 
-			var reader io.ReadCloser
-			reader, err = gzip.NewReader(source)
+			// Use dual-format detection for reading
+			format, err := detectFormat(source)
 			if err != nil {
-				_, err = source.Seek(0, 0)
-				fail.On(err != nil, "Failed to seek %q -> %v", fullpath, err)
+				anywork.Backlog(RemoveFile(fullpath))
+				panic(fmt.Sprintf("Format[check] %q, reason: %v", fullpath, err))
+			}
+
+			var reader io.Reader
+			switch format {
+			case "zstd":
+				zr, cleanup, zErr := getPooledDecoder(source)
+				if zErr != nil {
+					anywork.Backlog(RemoveFile(fullpath))
+					panic(fmt.Sprintf("Zstd[check] %q, reason: %v", fullpath, zErr))
+				}
+				defer cleanup() // Return decoder to pool
+				reader = zr
+			case "gzip":
+				gr, gErr := gzip.NewReader(source)
+				if gErr != nil {
+					anywork.Backlog(RemoveFile(fullpath))
+					panic(fmt.Sprintf("Gzip[check] %q, reason: %v", fullpath, gErr))
+				}
+				defer gr.Close()
+				reader = gr
+			default:
 				reader = source
 			}
-			digest := common.NewDigester(Compress())
+
+			digest := common.NewDigester(CompressionEnabled())
 			_, err = io.Copy(digest, reader)
 			if err != nil {
 				anywork.Backlog(RemoveFile(fullpath))
@@ -131,7 +153,7 @@ func Locator(seek string) Filetask {
 				panic(fmt.Sprintf("Open[Locator] %q, reason: %v", fullpath, err))
 			}
 			defer source.Close()
-			digest := common.NewDigester(Compress())
+			digest := common.NewDigester(CompressionEnabled())
 			locator := RelocateWriter(digest, seek)
 			_, err = io.Copy(locator, source)
 			if err != nil {
@@ -181,7 +203,7 @@ detector:
 
 func ScheduleLifters(library MutableLibrary, stats *stats) Treetop {
 	var scheduler Treetop
-	compress := Compress()
+	compress := CompressionEnabled()
 	seen := make(map[string]bool)
 	scheduler = func(path string, it *Dir) error {
 		if it.IsSymlink() {
@@ -234,13 +256,30 @@ func LiftFile(sourcename, sinkname string, compress bool) anywork.Work {
 		defer sink.Close()
 
 		var writer io.WriteCloser
+		var encoderCleanup func()
 		writer = sink
 		if compress {
-			writer, err = gzip.NewWriterLevel(sink, gzip.BestSpeed)
-			anywork.OnErrPanicCloseAll(err, sink)
+			if runtime.GOOS == "windows" {
+				// Windows: use gzip for faster compression (zstd encoder is slow on Windows)
+				// Decompression still handles both formats via magic byte detection
+				gzWriter := gzip.NewWriter(sink)
+				writer = gzWriter
+				encoderCleanup = func() {} // gzip has no pool
+			} else {
+				// Linux/macOS: use pooled zstd encoder for better compression
+				encoder, cleanup, err := GetPooledEncoder(sink)
+				anywork.OnErrPanicCloseAll(err, sink)
+				writer = encoder
+				encoderCleanup = cleanup
+			}
+			defer encoderCleanup()
 		}
 
-		_, err = io.Copy(writer, source)
+		// Use pooled 256KB buffer for better SSD performance
+		buf := GetCopyBuffer()
+		defer PutCopyBuffer(buf)
+
+		_, err = io.CopyBuffer(writer, source, *buf)
 		anywork.OnErrPanicCloseAll(err, sink)
 
 		if compress {
@@ -249,34 +288,57 @@ func LiftFile(sourcename, sinkname string, compress bool) anywork.Work {
 
 		anywork.OnErrPanicCloseAll(sink.Close())
 
-		runtime.Gosched()
+		// Removed runtime.Gosched() - unnecessary scheduling hint that hurts performance
+		// The OS scheduler is smart enough to handle this without hints
 
 		anywork.OnErrPanicCloseAll(pathlib.TryRename("liftfile", partname, sinkname))
 		pathlib.MakeSharedFile(sinkname)
 	}
 }
 
-func DropFile(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
+// DropFileWithPrefetch is an optimized version of DropFile that prefetches upcoming files
+func DropFileWithPrefetch(library Library, digest, sinkname string, details *File, rewrite []byte, upcomingDigests []string) anywork.Work {
 	return func() {
 		if details.IsSymlink() {
 			anywork.OnErrPanicCloseAll(restoreSymlink(details.Symlink, sinkname))
 			return
 		}
-		reader, closer, err := library.Open(digest)
+
+		// Use prefetching for better I/O throughput
+		reader, closer, err := OpenWithPrefetch(library, digest, upcomingDigests)
 		anywork.OnErrPanicCloseAll(err)
 
 		defer closer()
+
+		// DEFENSIVE: Ensure parent directory exists before creating file
+		parentDir := filepath.Dir(sinkname)
+		if err := os.MkdirAll(parentDir, 0750); err != nil {
+			common.Trace("Failed to ensure parent directory %s: %v", parentDir, err)
+		}
+
 		partname := fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
-		defer os.Remove(partname)
+		// FIX: Don't use defer - it runs even after successful rename!
+		// Clean up only on panic/error via deferred function
+		cleanupPartFile := true
+		defer func() {
+			if cleanupPartFile {
+				os.Remove(partname)
+			}
+		}()
+
 		sink, err := os.Create(partname)
 		anywork.OnErrPanicCloseAll(err)
 
-		digester := common.NewDigester(Compress())
+		// Get pooled 256KB buffer for better SSD performance
+		buf := GetCopyBuffer()
+		defer PutCopyBuffer(buf)
+
+		// ALWAYS verify hash - bit rot is real, small files are attack vectors
+		// Juha was right: catalogs tell what SHOULD be there, not what IS there
+		digester := common.NewDigester(CompressionEnabled())
 		many := io.MultiWriter(sink, digester)
-
-		_, err = io.Copy(many, reader)
+		_, err = io.CopyBuffer(many, reader, *buf)
 		anywork.OnErrPanicCloseAll(err, sink)
-
 		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
 		if digest != hexdigest {
 			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
@@ -295,7 +357,96 @@ func DropFile(library Library, digest, sinkname string, details *File, rewrite [
 
 		anywork.OnErrPanicCloseAll(sink.Close())
 
-		anywork.OnErrPanicCloseAll(pathlib.TryRename("dropfile", partname, sinkname))
+		// Atomic rename with retry on directory deletion race
+		err = pathlib.TryRename("dropfile", partname, sinkname)
+		if err != nil && os.IsNotExist(err) {
+			// Directory was deleted by parallel cleanup - recreate and retry
+			common.Trace("Directory deleted during file write, recreating: %s", parentDir)
+			if mkErr := os.MkdirAll(parentDir, 0750); mkErr == nil {
+				err = pathlib.TryRename("dropfile", partname, sinkname)
+			}
+		}
+		anywork.OnErrPanicCloseAll(err)
+
+		// Success! Don't cleanup the part file (it's been renamed)
+		cleanupPartFile = false
+
+		anywork.OnErrPanicCloseAll(os.Chmod(sinkname, details.Mode))
+		anywork.OnErrPanicCloseAll(os.Chtimes(sinkname, motherTime, motherTime))
+	}
+}
+
+func DropFileSimple(library Library, digest, sinkname string, details *File, rewrite []byte) anywork.Work {
+	return func() {
+		if details.IsSymlink() {
+			anywork.OnErrPanicCloseAll(restoreSymlink(details.Symlink, sinkname))
+			return
+		}
+		reader, closer, err := library.Open(digest)
+		anywork.OnErrPanicCloseAll(err)
+
+		defer closer()
+
+		// DEFENSIVE: Ensure parent directory exists before creating file
+		parentDir := filepath.Dir(sinkname)
+		if err := os.MkdirAll(parentDir, 0750); err != nil {
+			common.Trace("Failed to ensure parent directory %s: %v", parentDir, err)
+		}
+
+		partname := fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
+		// FIX: Don't use defer - it runs even after successful rename!
+		// Clean up only on panic/error via deferred function
+		cleanupPartFile := true
+		defer func() {
+			if cleanupPartFile {
+				os.Remove(partname)
+			}
+		}()
+
+		sink, err := os.Create(partname)
+		anywork.OnErrPanicCloseAll(err)
+
+		// Get pooled 256KB buffer for better SSD performance
+		buf := GetCopyBuffer()
+		defer PutCopyBuffer(buf)
+
+		// ALWAYS verify hash - bit rot is real, small files are attack vectors
+		// Juha was right: catalogs tell what SHOULD be there, not what IS there
+		digester := common.NewDigester(CompressionEnabled())
+		many := io.MultiWriter(sink, digester)
+		_, err = io.CopyBuffer(many, reader, *buf)
+		anywork.OnErrPanicCloseAll(err, sink)
+		hexdigest := fmt.Sprintf("%02x", digester.Sum(nil))
+		if digest != hexdigest {
+			err := fmt.Errorf("Corrupted hololib, expected %s, actual %s", digest, hexdigest)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		for _, position := range details.Rewrite {
+			_, err = sink.Seek(position, 0)
+			if err != nil {
+				sink.Close()
+				panic(fmt.Sprintf("%v %d", err, position))
+			}
+			_, err = sink.Write(rewrite)
+			anywork.OnErrPanicCloseAll(err, sink)
+		}
+
+		anywork.OnErrPanicCloseAll(sink.Close())
+
+		// Atomic rename with retry on directory deletion race
+		err = pathlib.TryRename("dropfile", partname, sinkname)
+		if err != nil && os.IsNotExist(err) {
+			// Directory was deleted by parallel cleanup - recreate and retry
+			common.Trace("Directory deleted during file write, recreating: %s", parentDir)
+			if mkErr := os.MkdirAll(parentDir, 0750); mkErr == nil {
+				err = pathlib.TryRename("dropfile", partname, sinkname)
+			}
+		}
+		anywork.OnErrPanicCloseAll(err)
+
+		// Success! Don't cleanup the part file (it's been renamed)
+		cleanupPartFile = false
 
 		anywork.OnErrPanicCloseAll(os.Chmod(sinkname, details.Mode))
 		anywork.OnErrPanicCloseAll(os.Chtimes(sinkname, motherTime, motherTime))
@@ -312,6 +463,32 @@ func RemoveDirectory(dirname string) anywork.Work {
 	return func() {
 		anywork.OnErrPanicCloseAll(pathlib.TryRemoveAll("directory", dirname))
 	}
+}
+
+// isTemporaryPartFile checks if a filename is a temporary .part#N file
+// created during atomic file write operations. These files should be
+// skipped during directory cleanup to avoid race conditions with
+// concurrent file write operations.
+func isTemporaryPartFile(name string) bool {
+	// Pattern: filename.part#N where N is a number
+	// Generated by: fmt.Sprintf("%s.part%s", sinkname, <-common.Identities)
+	// where Identities returns "#N"
+	for i := len(name) - 1; i >= 0; i-- {
+		if name[i] == '#' {
+			// Check if prefix ends with ".part"
+			if i >= 5 && name[i-5:i] == ".part" {
+				// Verify suffix is all digits
+				for j := i + 1; j < len(name); j++ {
+					if name[j] < '0' || name[j] > '9' {
+						return false
+					}
+				}
+				return true
+			}
+			return false
+		}
+	}
+	return false
 }
 
 type TreeStats struct {
@@ -354,14 +531,34 @@ func isCorrectSymlink(source, target string) bool {
 }
 
 func restoreSymlink(source, target string) error {
+	// Fast path: symlink already exists and is correct
 	if isCorrectSymlink(source, target) {
 		return nil
 	}
+
+	// Try to create symlink - handles the common case where target doesn't exist
+	err := os.Symlink(source, target)
+	if err == nil {
+		return nil
+	}
+
+	// If creation failed with "file exists", another worker may have created it
+	// or there's a stale file. Check if it's now correct (race condition handling).
+	if os.IsExist(err) {
+		if isCorrectSymlink(source, target) {
+			return nil // Another worker created it correctly
+		}
+		// Stale file/symlink exists - remove and retry
+		os.RemoveAll(target)
+		return os.Symlink(source, target)
+	}
+
+	// For other errors (e.g., parent dir doesn't exist), try remove + create
 	os.RemoveAll(target)
 	return os.Symlink(source, target)
 }
 
-func RestoreDirectory(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
+func RestoreDirectorySimple(library Library, fs *Root, current map[string]string, stats *stats) Dirtask {
 	return func(path string, it *Dir) anywork.Work {
 		return func() {
 			if it.Shadow {
@@ -379,8 +576,12 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				if part.IsDir() {
 					_, ok := it.Dirs[part.Name()]
 					if !ok {
-						common.Trace("* Holotree: remove extra directory %q", directpath)
-						anywork.Backlog(RemoveDirectory(directpath))
+						// NOTE: We intentionally DO NOT delete extra directories during restoration
+						// Deleting directories while parallel file operations are running causes
+						// race conditions where files fail to write because their parent directory
+						// was deleted mid-operation. Extra directories from previous environments
+						// don't break anything - they just take up space. Use "rcc ht delete" for cleanup.
+						common.Trace("* Holotree: skipping removal of extra directory %q (parallel safety)", directpath)
 					}
 					stats.Dirty(!ok)
 					continue
@@ -393,6 +594,13 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				files[part.Name()] = true
 				found, ok := it.Files[part.Name()]
 				if !ok {
+					// Skip temporary .part#N files created by concurrent write operations
+					// to avoid race condition where we try to delete a file that's being
+					// renamed or cleaned up by its creator
+					if isTemporaryPartFile(part.Name()) {
+						common.Trace("* Holotree: skipping temporary file %q (concurrent write)", directpath)
+						continue
+					}
 					common.Trace("* Holotree: remove extra file      %q", directpath)
 					anywork.Backlog(RemoveFile(directpath))
 					stats.Dirty(true)
@@ -410,7 +618,7 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				stats.Dirty(!ok)
 				if !ok {
 					common.Trace("* Holotree: update changed file    %q", directpath)
-					anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+					anywork.Backlog(DropFileSimple(library, found.Digest, directpath, found, fs.Rewrite()))
 				}
 			}
 			for name, found := range it.Files {
@@ -419,7 +627,7 @@ func RestoreDirectory(library Library, fs *Root, current map[string]string, stat
 				if !seen {
 					stats.Dirty(true)
 					common.Trace("* Holotree: add missing file       %q", directpath)
-					anywork.Backlog(DropFile(library, found.Digest, directpath, found, fs.Rewrite()))
+					anywork.Backlog(DropFileSimple(library, found.Digest, directpath, found, fs.Rewrite()))
 				}
 			}
 		}

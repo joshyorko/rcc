@@ -1,3 +1,4 @@
+
 # RCC (Robocorp Control Client)
 
 RCC is a Go-based CLI tool for creating, managing, and distributing Python-based automation packages with isolated environments. It uses conda/micromamba for Python environment management and supports cross-platform builds (Linux, Windows, macOS).
@@ -7,7 +8,7 @@ RCC is a Go-based CLI tool for creating, managing, and distributing Python-based
 ## Working Effectively
 
 ### Prerequisites and Setup
-- Install Go 1.23: `go version` (should show 1.23.x or later)
+- Install Go 1.20: `go version` (should show 1.20.x)
 - Install Python 3.10 or later: `python3 --version` 
 - Install invoke for build automation: `python3 -m pip install invoke`
 - Verify tools: `inv -l` (should list available tasks)
@@ -51,7 +52,7 @@ Use the bundled developer toolkit to bootstrap a consistent env and run common t
     - Environments are declared in `developer/setup.yaml` and pinned to:
         - Python 3.10.15, Invoke 2.2.0
         - Robot Framework 6.1.1 (matches `robot_requirements.txt`)
-        - Go 1.23.0, Git 2.46.0
+        - Go 1.20.7, Git 2.46.0
 
 Notes
 - If rcc downloads are blocked in your network, you can still use the direct Invoke/Go commands documented in this file.
@@ -131,7 +132,7 @@ inv robot       # Run full acceptance test suite
 - `build/` - Build output directory
 
 ### Key Files  
-- `go.mod` - Go module definition (Go 1.23)
+- `go.mod` - Go module definition (Go 1.20)
 - `tasks.py` - Invoke task definitions (build automation)
 - `robot_requirements.txt` - Robot Framework version (6.1.1)
 - `.github/workflows/rcc.yaml` - CI/CD pipeline
@@ -179,7 +180,7 @@ tasks.py             # Build tasks
 ### View go.mod
 ```
 module github.com/joshyorko/rcc
-go 1.23
+go 1.20
 require (
     github.com/spf13/cobra v1.7.0
     github.com/spf13/viper v1.17.0
@@ -207,7 +208,7 @@ what          Show latest HEAD with stats
 The GitHub Actions workflow (`.github/workflows/rcc.yaml`) builds on:
 - Ubuntu (Linux builds and Robot tests)
 - Windows (Robot tests)
-- Uses Go 1.23 and Python 3.10
+- Uses Go 1.20 and Python 3.10
 - Uploads artifacts for all platforms
 - Timeout expectations align with local development
 

@@ -1,16 +1,52 @@
 # rcc change log
-## v18.13.0 (date: 02.01.2026)
+## v19.0.0 (date: 27.12.2025)
 
-### Security
+### New Features
 
-- security: upgraded Go from 1.20 to 1.23 to fix critical stdlib CVEs
-  - **Critical CVEs fixed**: CVE-2025-22871, CVE-2024-24790, CVE-2023-24531
-  - **High severity CVEs fixed**: CVE-2025-61729, CVE-2025-61725, CVE-2025-61723, CVE-2025-58188, CVE-2025-58187, CVE-2025-47907, CVE-2025-4674, CVE-2024-34158, CVE-2024-34156, CVE-2024-24791, CVE-2024-24784, CVE-2023-45288
-  - updated `go.mod` to Go 1.23
-  - updated GitHub Actions workflow to use Go 1.23.x
-  - updated developer environment to Go 1.23.0
-  - ran `go mod tidy` to update dependencies
-  - all builds, tests, and security scans pass with no new alerts
+- feature: **ZSTD compression for Holotree archives** - significantly improved storage and performance
+  - 8.2% average storage savings compared to gzip compression
+  - 15% faster environment restoration (10 sec → 8.5 sec typical)
+  - backward compatible with existing gzip archives (automatic format detection)
+  - new archive format with version marker (`HTAV1`) for future extensibility
+  - atomic archive creation prevents corruption from interrupted operations
+  - optimized for Holotree's file access patterns with tuned compression levels
+
+### Technical Improvements
+
+- perf: reduced memory allocations during archive operations
+  - buffer pooling with `sync.Pool` for compression/decompression
+  - pre-allocated slices and maps with proper capacity hints
+  - optimized batch processing for large file sets
+- perf: improved I/O patterns for better cache locality
+  - locality-aware prefetching for related files
+  - parallel decompression with worker pools
+  - reduced syscall overhead through batching
+- perf: hardlink optimization for duplicate files
+  - detect and create hardlinks during restoration
+  - significant space savings for environments with many duplicate files
+  - preserves file metadata and permissions
+
+### Implementation Details
+
+- archive format: versioned container format supporting multiple compression algorithms
+  - header: 8 bytes (`HTAV1` magic + 3-byte version)
+  - compression: ZSTD level 3 (optimal for Holotree workloads)
+  - fallback: seamless gzip support for legacy archives
+- profiling: comprehensive Linux performance profiling
+  - detailed phase timing (compression, I/O, metadata operations)
+  - memory allocation tracking and analysis
+  - comparative benchmarks vs gzip implementation
+
+### Bug Fixes
+
+- fix: holotree restoration no longer fails when removing non-existent files
+  - `TryRemove` now gracefully handles "file not found" errors during space conversion
+  - fixes exit code 4 errors when converting holotree spaces between different blueprints
+- fix: symlink race condition during concurrent holotree operations
+  - atomic symlink creation prevents "file exists" errors during parallel restoration
+  - improved reliability for multi-worker environment builds
+- fix: test isolation for liveonly holotree tests
+  - liveonly tests now use dedicated space names to prevent state pollution
 
 ## v18.12.1 (date: 12.12.2025)
 

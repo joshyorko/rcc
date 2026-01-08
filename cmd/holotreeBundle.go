@@ -281,14 +281,16 @@ type envResult struct {
 // It returns a slice of envResult containing the result for each environment processed.
 //
 // Parameters:
-//   zr             - the zip.Reader for the bundle file
-//   bundleFilename - the name of the bundle file
-//   force          - if true, forces environment builds even if the blueprint is present
-//   restore        - if true, restores the environment to a space (not just build catalog)
+//
+//	zr             - the zip.Reader for the bundle file
+//	bundleFilename - the name of the bundle file
+//	force          - if true, forces environment builds even if the blueprint is present
+//	restore        - if true, restores the environment to a space (not just build catalog)
 //
 // Returns:
-//   []envResult - results for each environment processed
-//   error       - error if processing fails
+//
+//	[]envResult - results for each environment processed
+//	error       - error if processing fails
 func processBundleEnvs(zr *zip.Reader, bundleFilename string, force bool, restore bool) ([]envResult, error) {
 	envFiles := findEnvFiles(zr)
 	if len(envFiles) == 0 {
@@ -353,8 +355,8 @@ func processBundleEnvs(zr *zip.Reader, bundleFilename string, force bool, restor
 			err = htfs.RecordEnvironment(tree, blueprint, force, scorecard, operations.PullCatalog)
 			if err != nil {
 
-// importHololib checks for and imports a hololib.zip file from the bundle if present,
-// extracting it to a temporary location and calling ProtectedImport.
+				// importHololib checks for and imports a hololib.zip file from the bundle if present,
+				// extracting it to a temporary location and calling ProtectedImport.
 				results = append(results, result)
 				pretty.Warning("%d/%d: Failed to record environment for %q: %v", at+1, total, envName, err)
 			} else {

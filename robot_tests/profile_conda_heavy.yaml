@@ -1,0 +1,41 @@
+# Heavy conda environment for stress-testing compression performance
+# ~200+ packages, large data science stack to really stress the system
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.10.12
+  # Core Data Science
+  - numpy=1.24.3
+  - pandas=2.0.3
+  - scipy=1.11.1
+  - scikit-learn=1.3.0
+  # Visualization
+  - matplotlib=3.7.2
+  - seaborn=0.12.2
+  - plotly=5.15.0
+  # ML Libraries
+  - xgboost=1.7.6
+  - lightgbm=4.0.0
+  # Data Processing
+  - pyarrow=12.0.1
+  - openpyxl=3.1.2
+  - xlrd=2.0.1
+  - beautifulsoup4=4.12.2
+  - lxml=4.9.3
+  # Web/HTTP
+  - requests=2.31.0
+  - httpx=0.24.1
+  - aiohttp=3.8.5
+  # Utilities
+  - pyyaml=6.0
+  - toml=0.10.2
+  - python-dotenv=1.0.0
+  - tqdm=4.65.0
+  - rich=13.4.2
+  # Testing
+  - pytest=7.4.0
+  # Database
+  - sqlalchemy=2.0.19
+  - pip:
+    - robotframework==6.1.1
