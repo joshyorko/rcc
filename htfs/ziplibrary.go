@@ -2,6 +2,7 @@ package htfs
 
 import (
 	"archive/zip"
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/joshyorko/rcc/journal"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/klauspost/compress/zstd"
 )
 
 type ziplibrary struct {
@@ -59,15 +61,52 @@ func (it *ziplibrary) openFile(filename string) (readable io.Reader, closer Clos
 	if err != nil {
 		return nil, nil, err
 	}
-	wrapper, err := gzip.NewReader(file)
-	if err != nil {
+
+	// Read enough bytes to detect format
+	header := make([]byte, 4)
+	n, err := file.Read(header)
+	if err != nil && err != io.EOF {
+		file.Close()
 		return nil, nil, err
 	}
+
+	// Create a reader that replays the header bytes first
+	replayReader := io.MultiReader(bytes.NewReader(header[:n]), file)
+
+	// Detect format using magic bytes
+	if n >= 4 && header[0] == 0x28 && header[1] == 0xb5 && header[2] == 0x2f && header[3] == 0xfd {
+		// zstd format
+		zr, zErr := zstd.NewReader(replayReader)
+		if zErr != nil {
+			file.Close()
+			return nil, nil, zErr
+		}
+		closer = func() error {
+			zr.Close()
+			return file.Close()
+		}
+		return zr, closer, nil
+	}
+
+	if n >= 2 && header[0] == 0x1f && header[1] == 0x8b {
+		// gzip format
+		wrapper, gErr := gzip.NewReader(replayReader)
+		if gErr != nil {
+			file.Close()
+			return nil, nil, gErr
+		}
+		closer = func() error {
+			wrapper.Close()
+			return file.Close()
+		}
+		return wrapper, closer, nil
+	}
+
+	// Unknown format, return raw
 	closer = func() error {
-		wrapper.Close()
 		return file.Close()
 	}
-	return wrapper, closer, nil
+	return replayReader, closer, nil
 }
 
 func (it *ziplibrary) Open(digest string) (readable io.Reader, closer Closer, err error) {
@@ -142,8 +181,14 @@ func (it *ziplibrary) RestoreTo(blueprint []byte, label, controller, space strin
 	common.TimelineEnd()
 	fail.On(err != nil, "Failed to make branches %q -> %v", targetdir, err)
 	score := &stats{}
-	common.TimelineBegin("holotree restore start (zip)")
-	err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	// Use batched restoration by default, fall back to simple mode if disabled
+	if common.DisableBatching() {
+		common.TimelineBegin("holotree restore start (zip, simple)")
+		err = fs.AllDirs(RestoreDirectorySimple(it, fs, currentstate, score))
+	} else {
+		common.TimelineBegin("holotree restore start (zip)")
+		err = fs.AllDirs(RestoreDirectory(it, fs, currentstate, score))
+	}
 	fail.On(err != nil, "Failed to restore directory %q -> %v", targetdir, err)
 	common.TimelineEnd()
 	defer common.Timeline("- dirty %d/%d", score.dirty, score.total)

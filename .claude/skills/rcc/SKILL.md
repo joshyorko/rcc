@@ -1,6 +1,6 @@
 ---
 name: rcc
-description: Expert help with RCC (Repeatable, Contained Code): creating/running robots, robot.yaml + conda.yaml, holotree environment caching, rcc task testrun vs rcc run, dependency management (conda-forge + pip), Playwright/robotframework-browser install (rccPostInstall: rfbrowser init), Control Room (rcc cloud), troubleshooting enterprise networks/proxies, and performance profiling with --pprof/--timeline/--trace.
+description: You have expert knowledge of the RCC (Repeatable, Contained Code) RCC allows you to create, manage, and distribute Python-based self-contained automation packages. RCC also allows you to run your automations in isolated Python environments so they can still access the rest of your machine. Repeatable, Contained Code - movable and isolated Python environments for your automation. Together with robot.yaml configuration file, rcc is a foundation that allows anyone to build and share automation easily. RCC is actively maintained by JoshYorko. (project)
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob
 ---
 
@@ -13,72 +13,55 @@ RCC (Repeatable, Contained Code) is a Go CLI tool for creating, managing, and di
 
 ## Instructions
 
-### Creating a new robot (project scaffolding)
+### Creating a New Robot
 
-Prefer RCC’s built-in templates.
+Always use native rcc commands. NEVER create robot.yaml/conda.yaml manually when templates exist.
 
-There are two creation paths:
-
-1) **Non-interactive (script/CI friendly):** `rcc robot initialize`
+**IMPORTANT:** After creating a robot, ALWAYS run `rcc ht vars` to pre-build the environment so it's ready to use immediately.
 
 ```bash
-# List templates
-rcc robot initialize --list
-rcc robot initialize --json
+# 1. List templates to show user options
+rcc robot init --json
 
-# Create a robot directory from a template
-rcc robot initialize -t <template-name> -d <directory>
-```
+# 2. Create robot with specified template
+rcc robot init -t <template-name> -d <directory>
 
-2) **Interactive (human-driven):** `rcc create`
+# 3. Pre-build environment (REQUIRED - makes env ready to use)
+rcc ht vars -r <directory>/robot.yaml
 
-`rcc create` is interactive-only and should not be used in CI/scripting.
-
-After creation, verify:
-
-```bash
+# 4. Verify creation
 ls -la <directory>
 cat <directory>/robot.yaml
-cat <directory>/conda.yaml
 ```
+
+The `rcc ht vars` command (alias: `rcc holotree variables`):
+- Builds the holotree environment from conda.yaml
+- Caches the environment for instant reuse
+- Returns environment variables for the built environment
+- Use `-r` flag to specify robot.yaml path
+
+**Available Templates:**
+- `01-python` - Python Minimal
+- `02-python-browser` - Browser automation with Playwright
+- `03-python-workitems` - Producer-Consumer pattern
+- `04-python-assistant-ai` - Assistant AI Chat
 
 ### Running Robots
 
 ```bash
-# Run in-place (good for iterative debugging)
-rcc run
-rcc run --task "Task Name"
-rcc run --dev --task "Dev Task"
-
-# Run in a clean, temporary directory (closest to Control Room deploy behavior)
-rcc task testrun
+rcc run                           # Run default task
+rcc run --task "Task Name"        # Run specific task
+rcc run --dev --task "Dev Task"   # Run dev task
 ```
 
-When diagnosing “works locally but fails in CI/Control Room”, reach for `rcc task testrun` early.
+### Best Practice: Always Use UV
 
-### Dependency management (conda-forge first; pip when needed)
-
-RCC environments are typically described in `conda.yaml`. Default posture:
-
-- Prefer **conda-forge** packages when available.
-- Use **pip** only for packages not available on conda-forge.
-- Keep pins minimal while iterating; freeze/pin for production or when debugging solver drift.
-
-RCC can also help edit the environment file for you:
-
-```bash
-# Example from the upstream workflow docs (adds numpy as pip, updates conda.yaml)
-rcc robot libs -a numpy -p --conda conda.yaml
-```
-
-#### Optional speed-up: uv
-
-`uv` can be a good speed-up in some environments, but it is not universal (enterprise constraints, restricted indexes, policy, etc.). Treat it as an optional optimization.
+**IMPORTANT:** Always prefer `uv` over `pip` in conda.yaml for 10-100x faster builds:
 
 ```yaml
 dependencies:
-  - python=3.10
-  - uv
+  - python=3.12.11
+  - uv=0.8.17          # Add uv from conda-forge
   - pip:
       - your-package==1.0.0
 ```
@@ -86,22 +69,14 @@ dependencies:
 ### Environment Management
 
 ```bash
-rcc ht vars -r robot.yaml                   # Pre-build / print activation vars (advanced)
-rcc ht vars -r robot.yaml --json            # Activation vars as JSON
+rcc ht vars -r robot.yaml                   # Pre-build/rebuild environment (IMPORTANT)
+rcc ht vars -r robot.yaml --json            # Get env vars as JSON
 rcc task shell                              # Interactive shell
 rcc task script --silent -- python --version
+rcc task script --silent -- uv --version    # Verify uv
 rcc holotree list                           # List environments
 rcc configure diagnostics                   # System check
 ```
-
-Notes:
-
-- Most workflows don’t require `rcc ht vars` explicitly; `rcc run` / `rcc task testrun` will build on-demand.
-- Use `rcc ht vars` when you need activation variables (e.g., integrating with another tool) or you want to pre-warm builds.
-
-Local dev tip:
-
-- If your robot expects environment variables (common with Vault / Work Items integrations), a common convention is `devdata/env.json` in the robot root. RCC can load an env.json via `rcc holotree variables --environment devdata/env.json ...` (see `reference.md`).
 
 ### Debugging Environment Issues
 
@@ -144,14 +119,14 @@ ignoreFiles:
   - .gitignore
 ```
 
-**conda.yaml (example):**
+**conda.yaml (with UV):**
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  # - uv           # Optional speed-up for pip installs
+  - python=3.12.11
+  - uv=0.8.17
   - pip:
       - requests==2.32.5
       - pandas==2.2.3
@@ -172,8 +147,8 @@ See skill directory for:
 ```
 User: Create a new RCC robot for data processing
 Assistant: I'll create a new RCC robot using the Python template.
-[runs: rcc robot initialize -t <template-name> -d data-processor]
-[runs: rcc task testrun (or rcc run) to build the environment]
+[runs: rcc robot init -t 01-python -d data-processor]
+[runs: rcc ht vars -r data-processor/robot.yaml to pre-build environment]
 [reads and shows robot.yaml]
 [environment is now ready to use]
 ```
@@ -182,8 +157,8 @@ Assistant: I'll create a new RCC robot using the Python template.
 ```
 User: I need to automate web scraping with RCC
 Assistant: I'll create a browser automation robot with Playwright.
-[runs: rcc robot initialize -t <template-name> -d web-scraper]
-[runs: rcc task testrun (or rcc run) to build the environment]
+[runs: rcc robot init -t 02-python-browser -d web-scraper]
+[runs: rcc ht vars -r web-scraper/robot.yaml to pre-build environment]
 [environment builds with Playwright - ready to use]
 ```
 
@@ -200,7 +175,7 @@ Assistant: Let me diagnose the environment.
 ```
 User: What RCC templates are available?
 Assistant: Let me list the available templates.
-[runs: rcc robot initialize --json]
+[runs: rcc robot init --json]
 [displays template options with descriptions]
 ```
 
@@ -209,7 +184,7 @@ Assistant: Let me list the available templates.
 User: Add pandas to my RCC project
 Assistant: I'll update conda.yaml using uv for fast installation.
 [reads conda.yaml]
-[adds uv if desired/allowed]
+[adds uv=0.8.17 if missing]
 [adds pandas to pip section]
 [runs: rcc run to rebuild environment]
 ```
@@ -241,25 +216,7 @@ Assistant: I'll open an interactive shell in the RCC environment.
 ```
 User: I updated conda.yaml, rebuild the environment
 Assistant: I'll rebuild the holotree environment.
-[runs: rcc run or rcc task testrun]
+[runs: rcc ht vars -r robot.yaml]
 [environment rebuilds with new dependencies]
 [ready to use immediately]
-
----
-
-## “Think like RCC” (holotree + enterprise guardrails)
-
-When asked to “make RCC faster” or to change holotree behavior, keep these constraints in mind (distilled from maintainer discussions and hard-earned production experience):
-
-- **Hololib/holotree can be shared.** Treat it as a security and integrity boundary. Skipping hash verification or trusting “local” files can be dangerous in shared mounts/multi-user/NFS scenarios.
-- **Enterprises are weird.** Antivirus, network appliances, proxies, locked-down file permissions, and flaky network shares can surface edge cases that don’t reproduce on dev laptops.
-- **Profile before/after.** Use `--pprof` (and optionally `--timeline`/`--trace`) to confirm the bottleneck and validate improvements.
-- **Minimize new dependencies.** A smaller dependency tree reduces supply-chain risk and reduces friction with enterprise security tooling.
-- **If you break it, you own the pieces.** Avoid platform/filesystem-specific “cleverness” unless you can test and support it across OS + filesystem combinations.
-
-For deeper command syntax and recipes, use:
-
-- `reference.md` (command reference)
-- `examples.md` (practical recipes)
-- `scripts/env_check.py` and `scripts/validate_robot.py`
 ```
