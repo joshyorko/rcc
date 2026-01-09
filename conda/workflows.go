@@ -231,7 +231,7 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 	} else {
 		pretty.Progress(8, "Running uv install phase. (uv v%s) [layer: %s]", UvVersion(uv), fingerprint)
 		common.Debug("Updating new environment at %v with uv requirements from %v (size: %v)", targetFolder, requirementsText, size)
-		uvCommand := common.NewCommander(uv, "pip", "install", "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirementsText)
+		uvCommand := common.NewCommander(uv, "pip", "install", "--system", "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirementsText)
 		uvCommand.Option("--index-url", settings.Global.PypiURL())
 		// no "--trusted-host" on uv pip install
 		// uvCommand.Option("--trusted-host", settings.Global.PypiTrustedHost())

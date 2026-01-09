@@ -29,6 +29,13 @@ func TestCanParsePipVersion(t *testing.T) {
 	must_be.Equal("22.2.2", second(conda.AsVersion("pip 22.2.2 from /outer/space/python/blah (python 3.9)")))
 }
 
+func TestCanParseUvVersion(t *testing.T) {
+	must_be, _ := hamlet.Specifications(t)
+
+	must_be.Equal("0.9.22", second(conda.AsVersion("uv 0.9.22 (be460de64 2025-06-09)")))
+	must_be.Equal("0.4.24", second(conda.AsVersion("uv 0.4.24")))
+}
+
 func TestInternalMicromambaVersionConsistency(t *testing.T) {
 	must_be, _ := hamlet.Specifications(t)
 
