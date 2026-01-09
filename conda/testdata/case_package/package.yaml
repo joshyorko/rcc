@@ -7,7 +7,7 @@ documentation: https://github.com/joshyorko/rcc/
 dependencies:
   conda-forge:
     - python=3.10.12
-    - uv=0.4.24
+    - uv=0.9.22
   pypi:
     - robocorp=1.6.2
     - robocorp-actions=0.0.7

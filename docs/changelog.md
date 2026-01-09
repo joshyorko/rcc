@@ -1,4 +1,18 @@
 # rcc change log
+## v18.13.1 (date: 09.01.2026)
+
+### Fixes
+
+- fix: add `--system` flag to `uv pip install` for compatibility with uv >= 0.9.22 (GH#71)
+  - newer uv versions require explicit `--system` flag when installing into conda/micromamba environments
+  - without this flag, uv rejects installation with "No virtual environment found" error
+
+### Testing
+
+- tests: add robot test for uv 0.9.22 `--system` flag compatibility
+- tests: add unit test `TestCanParseUvVersion` for uv version parsing
+- tests: update test fixtures to use uv 0.9.22 (from 0.4.24)
+
 ## v18.13.0 (date: 02.01.2026)
 
 ### Security

@@ -137,3 +137,10 @@ Goal: Liveonly works and uses virtual holotree and can give output in JSON form
   Must Be Json Response
   Use STDERR
   Must Have   (virtual)
+
+Goal: Verify uv pip install works with --system flag (GH#71)
+  Step        build/rcc ht vars --space uvtest --controller citests robot_tests/uv_system_flag/conda.yaml
+  Use STDERR
+  Must Have   Running uv install phase
+  Must Have   environment creation" was SUCCESS
+  Wont Have   No virtual environment found
