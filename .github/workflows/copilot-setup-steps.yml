@@ -9,6 +9,9 @@ on:
         paths:
             - .github/workflows/copilot-setup-steps.yml
 
+env:
+    ROBOCORP_HOME: ${{ github.workspace }}/.rcc_home
+
 jobs:
     copilot-setup-steps:
         runs-on: ubuntu-latest
@@ -21,10 +24,25 @@ jobs:
 
             - name: Install RCC
               run: |
-                  curl -L -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
-                  chmod +x rcc
-                  sudo mv rcc /usr/local/bin/
+                  if [ ! -x .tools/rcc/latest/rcc ]; then
+                    mkdir -p .tools/rcc/latest
+                    curl -sSL https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64 -o .tools/rcc/latest/rcc
+                    chmod +x .tools/rcc/latest/rcc
+                  fi
+                  echo "${GITHUB_WORKSPACE}/.tools/rcc/latest" >> "$GITHUB_PATH"
+                  export PATH="${GITHUB_WORKSPACE}/.tools/rcc/latest:$PATH"
                   rcc version
+
+            - name: Cache ROBOCORP_HOME
+              uses: actions/cache@v5.0.1
+              with:
+                  path: ${{ env.ROBOCORP_HOME }}
+                  key: rcc-home-${{ runner.os }}-${{ hashFiles('developer/setup.yaml', 'developer/toolkit.yaml') }}
+                  restore-keys: |
+                      rcc-home-${{ runner.os }}-
+
+            - name: Disable RCC telemetry
+              run: rcc config identity -t
 
             - name: Show environment info
               run: rcc run -r developer/toolkit.yaml holotree vars
