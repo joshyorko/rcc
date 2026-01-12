@@ -45,4 +45,4 @@ jobs:
               run: rcc config identity -t
 
             - name: Show environment info
-              run: rcc ht vars -r developer/toolkit.yaml 
+              run: rcc ht vars developer/setup.yaml 
