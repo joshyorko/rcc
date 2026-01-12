@@ -44,4 +44,5 @@ jobs:
             - name: Disable RCC telemetry
               run: rcc config identity -t
 
-  
+            - name: Show environment info
+              run: rcc ht vars -r developer/toolkit.yaml 
