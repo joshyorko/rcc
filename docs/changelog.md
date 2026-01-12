@@ -1,4 +1,50 @@
 # rcc change log
+## v18.14.0 (date: 12.01.2026)
+
+### New Features
+
+- feature: add `--unused` flag for `rcc holotree delete` command
+  - automatically cleanup holotree spaces that haven't been used for a specified number of days
+  - usage: `rcc ht delete --unused 10` removes spaces unused for 10+ days
+  - supports `--dryrun` flag to preview what would be deleted
+  - uses existing `.use` file tracking in `$ROBOCORP_HOME/holotree/` for idle time detection
+  - mirrors the existing `--unused` functionality from `rcc ht remove` (catalogs)
+
+- feature: add macOS ARM (Apple Silicon) support
+  - RCC now builds natively for M1/M2/M3 Macs (darwin/arm64)
+  - downloads micromamba for osx-arm64 platform
+  - build system creates separate binaries for darwin/amd64 and darwin/arm64
+  - GitHub Actions workflow uploads both macOS architectures as artifacts
+  - no more Rosetta 2 translation overhead on Apple Silicon
+
+### Upgrades
+
+- upgrade: micromamba from v1.5.8 to v1.5.11
+  - updated `assets/micromamba_version.txt`
+  - updated `blobs/embedded.go` MicromambaVersionLimit constant (1_005_008 → 1_005_011)
+  - regenerated embedded assets
+
+- upgrade: Go from 1.23 to 1.23.12
+  - updated `go.mod` to Go 1.23.12
+  - updated GitHub Actions workflows to use Go 1.23.12
+  - includes latest security patches and bug fixes from Go 1.23.x series
+
+### Build System
+
+- refactor: improved cross-platform build support in tasks.py
+  - build task now handles multiple architectures per OS (amd64, arm64)
+  - added build target tuples: (OS, arch, output_dir)
+  - build output now shows architecture: "Built: build/macosarm64/rcc (darwin/arm64)"
+  - added build/macosarm64/ directory for ARM64 macOS builds
+
+### Developer Experience
+
+- all changes verified with developer toolkit workflow:
+  - `rcc run -r developer/toolkit.yaml -t assets --dev` (asset preparation)
+  - `rcc run -r developer/toolkit.yaml -t local --dev` (local builds)
+  - `rcc run -r developer/toolkit.yaml -t build --dev` (cross-platform builds)
+  - `rcc run -r developer/toolkit.yaml -t unitTests --dev` (unit tests)
+
 ## v18.13.1 (date: 09.01.2026)
 
 ### Fixes
