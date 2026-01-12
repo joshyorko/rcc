@@ -66,6 +66,7 @@ def get_official_micromamba_url(version, platform):
     platform_map = {
         "linux64": "linux-64",
         "macos64": "osx-64",
+        "macosarm64": "osx-arm64",
         "windows64": "win-64",
     }
     conda_platform = platform_map.get(platform)
@@ -95,6 +96,7 @@ def micromamba(c):
     platforms = {
         "linux64": "linux_amd64",
         "macos64": "darwin_amd64",
+        "macosarm64": "darwin_arm64",
         "windows64": "windows_amd64",
     }
 
@@ -213,7 +215,7 @@ def deadcode(c):
 @task(pre=[toc])
 def support(c):
     """Create necessary directories"""
-    for dir in ["tmp", "build/linux64", "build/macos64", "build/windows64"]:
+    for dir in ["tmp", "build/linux64", "build/macos64", "build/macosarm64", "build/windows64"]:
         os.makedirs(dir, exist_ok=True)
 
 
@@ -257,26 +259,37 @@ def build(c, platform="all"):
     from pathlib import Path
 
     os.environ["CGO_ENABLED"] = "0"
-    os.environ["GOARCH"] = "amd64"
 
-    build_platforms = ["linux", "darwin", "windows"]
+    # Define platform-arch combinations
+    build_targets = [
+        ("linux", "amd64", "linux64"),
+        ("darwin", "amd64", "macos64"),
+        ("darwin", "arm64", "macosarm64"),
+        ("windows", "amd64", "windows64"),
+    ]
 
     if platform == "all":
-        platforms = build_platforms
+        targets = build_targets
+    elif platform == "linux":
+        targets = [t for t in build_targets if t[0] == "linux"]
+    elif platform == "darwin":
+        targets = [t for t in build_targets if t[0] == "darwin"]
+    elif platform == "windows":
+        targets = [t for t in build_targets if t[0] == "windows"]
     else:
-        assert platform in build_platforms, f"Invalid platform: {platform}"
-        platforms = [platform]
+        raise ValueError(f"Invalid platform: {platform}")
 
-    for goos in platforms:
+    for goos, goarch, output_dir in targets:
         os.environ["GOOS"] = goos
-        output = f"build/{goos}64/"
+        os.environ["GOARCH"] = goarch
+        output = f"build/{output_dir}/"
 
         c.run(f"go build -ldflags -s -o {output} ./cmd/...")
 
         ext = ".exe" if goos == "windows" else ""
         f = f"{output}rcc{ext}"
         assert Path(f).exists(), f"File {f} does not exist"
-        print(f"Built: {f}")
+        print(f"Built: {f} ({goos}/{goarch})")
 
 
 @task
