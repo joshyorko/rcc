@@ -8,7 +8,7 @@ import (
 const (
 	// for micromamba upgrade, change following constants to match
 	// and also remember to update assets/micromamba_version.txt to match this
-	MicromambaVersionLimit = 1_005_008
+	MicromambaVersionLimit = 1_005_011
 )
 
 //go:embed assets/*.yaml docs/*.md
