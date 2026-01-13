@@ -71,6 +71,40 @@ For detailed instructions, visit the [RCC documentation](https://robocorp.com/do
 1. Add to path: `sudo mv rcc /usr/local/bin/`
 1. Test: `rcc`
 
+### Homebrew (macOS & Linux)
+
+RCC is available via Homebrew for both macOS and Linux:
+
+```bash
+brew tap joshyorko/tools
+brew install --cask rcc
+```
+
+#### Platform Support
+
+| Platform | Status | Binary |
+|----------|--------|--------|
+| Linux x64 | ✅ Native | rcc-linux64 |
+| macOS Intel | ✅ Native | rcc-darwin64 |
+| macOS Apple Silicon | ✅ Rosetta 2 | rcc-darwin64 |
+
+
+
+#### For Brewfile Users
+
+Add to your Brewfile:
+
+```ruby
+tap "joshyorko/tools"
+cask "rcc"
+```
+
+Or with the full path:
+
+```ruby
+cask "joshyorko/tools/rcc"
+```
+
 ## Documentation
 
 The changelog can be seen [here](/docs/changelog.md). It is also visible inside RCC using the command `rcc docs changelog`.
