@@ -83,10 +83,18 @@ var holotreeDeleteCmd = &cobra.Command{
 		if len(deleteSpace) > 0 {
 			partials = append(partials, htfs.ControllerSpaceName([]byte(common.ControllerIdentity()), []byte(deleteSpace)))
 		}
-		if deleteUnusedDays > 0 {
+		unusedProvided := deleteUnusedDays > 0
+		if unusedProvided {
 			partials = append(partials, allUnusedSpaces(deleteUnusedDays)...)
 		}
-		pretty.Guard(len(partials) > 0, 1, "Must provide either --space flag, --unused flag, or partial environment identity!")
+		if len(partials) == 0 {
+			if unusedProvided {
+				pretty.Note("No spaces found that have been idle for more than %d days.", deleteUnusedDays)
+				pretty.Ok()
+				return
+			}
+			pretty.Guard(false, 1, "Must provide either --space flag, --unused flag, or partial environment identity!")
+		}
 		deleteByPartialIdentity(partials)
 		pretty.Ok()
 	},
