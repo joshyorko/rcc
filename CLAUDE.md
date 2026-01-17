@@ -56,6 +56,10 @@ rcc run -r developer/toolkit.yaml --dev -t robot
 - `build/` - Build outputs
 - `assets/` - Source files for blobs (edit here, then regenerate)
 
+## Git Conventions
+
+- Never add `Co-Authored-By` lines to commit messages (no Claude/AI attribution)
+
 ## Coding Conventions
 
 - Go 1.23; format with `gofmt`
