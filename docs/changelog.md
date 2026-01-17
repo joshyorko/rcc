@@ -19,10 +19,11 @@
 
 ### Upgrades
 
-- upgrade: micromamba from v1.5.8 to v1.5.11
-  - updated `assets/micromamba_version.txt`
-  - updated `blobs/embedded.go` MicromambaVersionLimit constant (1_005_008 → 1_005_011)
+- upgrade: micromamba from v1.5.8 to v2.5.0 (major version bump)
+  - updated `assets/micromamba_version.txt` to v2.5.0
+  - updated `blobs/embedded.go` MicromambaVersionLimit constant (1_005_008 → 2_005_000)
   - regenerated embedded assets
+  - includes all micromamba 2.x improvements and bug fixes
 
 - upgrade: Go from 1.23 to 1.23.12
   - updated `go.mod` to Go 1.23.12
