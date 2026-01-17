@@ -203,11 +203,20 @@ jobs:
             echo "Deleting existing tag $TAG..."
             git push origin --delete "$TAG" || true
           fi
-      - name: Publish Release
+      - name: Create Draft Release with Assets
         uses: softprops/action-gh-release@v2.3.2
         with:
           files: rcc-builds/*
           tag_name: ${{ inputs.tag || github.ref_name }}
           target_commitish: ${{ github.sha }}
-          draft: false
+          draft: true
           prerelease: false
+
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          echo "Publishing draft release $TAG..."
+          gh release edit "$TAG" --draft=false
+          echo "Release $TAG is now public"
