@@ -1,5 +1,5 @@
 # rcc change log
-## v18.14.1 (date: 17.01.2026)
+## v18.15.0 (date: 17.01.2026)
 
 ### New Features
 
