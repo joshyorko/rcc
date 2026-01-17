@@ -185,16 +185,22 @@ jobs:
           PYEOF
 
           cat rcc-builds/index.json
-      - name: Delete existing release if present
+      - name: Delete existing release and tag if present
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="${{ inputs.tag || github.ref_name }}"
+          # Delete release if exists
           if gh release view "$TAG" &>/dev/null; then
             echo "Deleting existing release for $TAG..."
-            gh release delete "$TAG" --yes
+            gh release delete "$TAG" --yes --cleanup-tag
           else
             echo "No existing release for $TAG"
+          fi
+          # Also delete tag if it exists (GitHub taints tags used by published releases)
+          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
+            echo "Deleting existing tag $TAG..."
+            git push origin --delete "$TAG" || true
           fi
       - name: Publish Release
         uses: softprops/action-gh-release@v2.3.2
