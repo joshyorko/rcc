@@ -1,13 +1,13 @@
 endpoints:
   # Cloud endpoints - override via RCC_ENDPOINT_* env vars or local settings.yaml
-  cloud-api: # https://api.eu1.robocorp.com/
-  cloud-linking: # https://cloud.robocorp.com/link/
-  cloud-ui: # https://cloud.robocorp.com/
+  cloud-api: # https://api.example.com/
+  cloud-linking: # https://cloud.example.com/link/
+  cloud-ui: # https://cloud.example.com/
   pypi: # https://pypi.org/simple/
   pypi-trusted: # https://pypi.org/
   conda: # https://conda.anaconda.org/
-  downloads: # https://downloads.robocorp.com/
-  docs: # https://robocorp.com/docs/
+  downloads: # https://downloads.example.com/
+  docs: # https://docs.example.com/
   telemetry: # disabled by default
   issues: # disabled by default
 

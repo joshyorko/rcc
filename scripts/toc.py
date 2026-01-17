@@ -24,6 +24,7 @@ PRIORITY_LIST = (
     "docs/environment-caching.md",
     "docs/maintenance.md",
     "docs/venv.md",
+    "docs/cloud-commands.md",
     "docs/troubleshooting.md",
     "docs/vocabulary.md",
     "docs/history.md",

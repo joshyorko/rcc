@@ -1,5 +1,5 @@
 [externally-managed]
-Error=by Robocorp tooling called `rcc`.
+Error=by `rcc` tooling.
 
  To install Python packages into this managed environment, those should
  be added to `conda.yaml` file, or more generally into "environment
