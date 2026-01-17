@@ -8,5 +8,5 @@ dependencies:
   # Note: needs to match the version in robot_requirements.txt
   # Also in rcc-pipeline
   - robotframework=6.1.1
-  - go=1.23.0
+  - go=1.23.12
   - git=2.46.0

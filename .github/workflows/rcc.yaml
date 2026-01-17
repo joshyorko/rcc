@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
-          go-version: "1.23.x"
+          go-version: "1.23.12"
       - name: Set up Python 3.10
         uses: actions/setup-python@v6
         with:
@@ -60,8 +60,10 @@ jobs:
           cp build/linux64/rccremote rcc-builds/rccremote-linux64
           cp build/windows64/rcc.exe rcc-builds/rcc-windows64.exe
           cp build/windows64/rccremote.exe rcc-builds/rccremote-windows64.exe
-          cp build/darwin64/rcc rcc-builds/rcc-darwin64
-          cp build/darwin64/rccremote rcc-builds/rccremote-darwin64
+          cp build/macos64/rcc rcc-builds/rcc-macos64
+          cp build/macos64/rccremote rcc-builds/rccremote-macos64
+          cp build/macosarm64/rcc rcc-builds/rcc-macosarm64
+          cp build/macosarm64/rccremote rcc-builds/rccremote-macosarm64
       - name: Upload RCC Binaries
         uses: actions/upload-artifact@v4.6.2
         with:
@@ -80,7 +82,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
-          go-version: "1.23.x"
+          go-version: "1.23.12"
       - uses: actions/setup-python@v6
         with:
           python-version: "3.10"

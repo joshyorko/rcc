@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"os"
+	"path/filepath"
+
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/pretty"
@@ -9,8 +12,47 @@ import (
 )
 
 var (
-	deleteSpace string
+	deleteSpace      string
+	deleteUnusedDays int
 )
+
+func spaceUsedStats() map[string]int {
+	result := make(map[string]int)
+	holotreeDir := common.HolotreeLocation()
+	handle, err := os.Open(holotreeDir)
+	if err != nil {
+		return result
+	}
+	defer handle.Close()
+	entries, err := handle.Readdir(-1)
+	if err != nil {
+		return result
+	}
+	for _, entry := range entries {
+		name := entry.Name()
+		// Look for .use files
+		if filepath.Ext(name) == ".use" {
+			spaceName := name[:len(name)-4] // Remove .use extension
+			days := common.DayCountSince(entry.ModTime())
+			previous, ok := result[spaceName]
+			if !ok || days < previous {
+				result[spaceName] = days
+			}
+		}
+	}
+	return result
+}
+
+func allUnusedSpaces(limit int) []string {
+	result := []string{}
+	used := spaceUsedStats()
+	for name, idle := range used {
+		if idle > limit {
+			result = append(result, name)
+		}
+	}
+	return result
+}
 
 func deleteByPartialIdentity(partials []string) {
 	_, roots := htfs.LoadCatalogs()
@@ -41,7 +83,18 @@ var holotreeDeleteCmd = &cobra.Command{
 		if len(deleteSpace) > 0 {
 			partials = append(partials, htfs.ControllerSpaceName([]byte(common.ControllerIdentity()), []byte(deleteSpace)))
 		}
-		pretty.Guard(len(partials) > 0, 1, "Must provide either --space flag, or partial environment identity!")
+		unusedProvided := deleteUnusedDays > 0
+		if unusedProvided {
+			partials = append(partials, allUnusedSpaces(deleteUnusedDays)...)
+		}
+		if len(partials) == 0 {
+			if unusedProvided {
+				pretty.Note("No spaces found that have been idle for more than %d days.", deleteUnusedDays)
+				pretty.Ok()
+				return
+			}
+			pretty.Guard(false, 1, "Must provide either --space flag, --unused flag, or partial environment identity!")
+		}
 		deleteByPartialIdentity(partials)
 		pretty.Ok()
 	},
@@ -51,4 +104,5 @@ func init() {
 	holotreeCmd.AddCommand(holotreeDeleteCmd)
 	holotreeDeleteCmd.Flags().BoolVarP(&dryFlag, "dryrun", "d", false, "Don't delete environments, just show what would happen.")
 	holotreeDeleteCmd.Flags().StringVarP(&deleteSpace, "space", "s", "", "Client specific name to identify environment to delete.")
+	holotreeDeleteCmd.Flags().IntVarP(&deleteUnusedDays, "unused", "", 0, "Delete idle/unused space entries based on idle days when value is above given limit.")
 }
