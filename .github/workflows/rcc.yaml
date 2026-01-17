@@ -185,6 +185,17 @@ jobs:
           PYEOF
 
           cat rcc-builds/index.json
+      - name: Delete existing release if present
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          if gh release view "$TAG" &>/dev/null; then
+            echo "Deleting existing release for $TAG..."
+            gh release delete "$TAG" --yes
+          else
+            echo "No existing release for $TAG"
+          fi
       - name: Publish Release
         uses: softprops/action-gh-release@v2.3.2
         with:
