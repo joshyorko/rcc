@@ -7,7 +7,7 @@ channels:
 
 dependencies:
   - python=3.12.11
-  - uv=0.8.17
+  - uv=0.9.28
 
   # Data science packages from conda (better binary support)
   - pandas=2.2.3

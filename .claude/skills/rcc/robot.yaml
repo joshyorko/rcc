@@ -1,0 +1,42 @@
+# RCC Skill - Self-contained robot for Claude Code hooks and actions
+# This gives the skill its own holotree environment
+#
+# FIRST TIME SETUP (instant environment restore):
+#   rcc ht import .claude/skills/rcc/hololib.zip --silent
+#
+# Or build from scratch:
+#   rcc ht vars -r .claude/skills/rcc/robot.yaml --silent
+
+tasks:
+  # Hook tasks - run validation and post-processing
+  ValidateCommand:
+    shell: python hooks/validate-rcc-commands.py
+
+  PostRun:
+    shell: bash hooks/post-rcc-run.sh
+
+  # Future: Action Server MCP integration
+  # ServeActions:
+  #   shell: action-server start --actions-sync --port 8080
+
+devTasks:
+  # Test the skill's hooks
+  TestHooks:
+    shell: python -c "print('Hooks environment ready')"
+
+  # Interactive shell in skill environment
+  Shell:
+    shell: bash
+
+environmentConfigs:
+  - conda.yaml
+
+artifactsDir: output
+
+PATH:
+  - .
+  - hooks
+
+PYTHONPATH:
+  - .
+  - hooks

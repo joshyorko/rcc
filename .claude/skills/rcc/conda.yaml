@@ -1,0 +1,15 @@
+# RCC Skill Environment
+# Provides isolated holotree for skill hooks and future Action Server MCP
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12.11
+  - uv=0.9.28  # Fast package installer, available for future hook deps
+  - pip:
+      # Core for hooks (currently using stdlib only, but ready for more)
+      # - pydantic>=2.0  # Uncomment when hooks need validation
+      # Action Server MCP (future)
+      # - sema4ai-actions>=1.0.0
+      # - action-server>=0.20.0

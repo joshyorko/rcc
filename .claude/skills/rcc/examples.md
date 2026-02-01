@@ -19,12 +19,10 @@ Practical examples for common RCC use cases.
 ### Create Your First Robot
 
 ```bash
-# Script/CI-friendly creation (recommended)
-rcc robot initialize --list
-rcc robot initialize -t <template-name> -d my-robot
-
-# Interactive creation (human use; not for CI)
-# rcc create
+# Create a new robot interactively
+rcc create
+# Select: python
+# Enter project name
 
 cd my-robot
 rcc run
@@ -42,13 +40,12 @@ rcc run
 
 ## Project Templates
 
-### Minimal Python Robot
+### Minimal Python Robot (with UV)
 
-These examples default to **Python 3.10.x** for broad compatibility across the Robot Framework / RPA ecosystem.
-
-If you want faster pip installs and your environment allows it, you may optionally add `uv` as a conda dependency.
+> **Note:** All examples use `uv` for faster package installation. Always include `uv` in your conda.yaml dependencies.
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Main:
@@ -65,18 +62,20 @@ ignoreFiles:
 ```
 
 **conda.yaml:**
+
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  # - uv           # Optional speed-up for pip installs
+  - python=3.12.11
+  - uv=0.9.28 # Fast package installer (RECOMMENDED)
   - pip:
       - requests==2.32.5
 ```
 
 **main.py:**
+
 ```python
 def main():
     print("Hello from RCC!")
@@ -86,6 +85,7 @@ if __name__ == "__main__":
 ```
 
 **.gitignore:**
+
 ```
 output/
 __pycache__/
@@ -98,6 +98,7 @@ __pycache__/
 ### Web Scraping Robot
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Scrape:
@@ -121,13 +122,14 @@ ignoreFiles:
 ```
 
 **conda.yaml:**
+
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  # - uv           # Optional
+  - python=3.12.11
+  - uv=0.9.28
   - pip:
       - requests==2.32.5
       - beautifulsoup4==4.12.3
@@ -140,6 +142,7 @@ dependencies:
 ### Browser Automation Robot
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Run Browser Tests:
@@ -160,17 +163,19 @@ ignoreFiles:
 ```
 
 **conda.yaml:**
+
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - nodejs=22.9.0
-  - pip=24.0
+  - python=3.12.11
+  - nodejs=18.17.1
+  - uv=0.9.28
   - pip:
-      - robotframework-browser==18.8.1
-      - rpaframework==28.6.3
+      - robotframework==7.1.1
+      - robotframework-browser==18.9.1
+      - rpaframework==28.6.1
 
 rccPostInstall:
   - rfbrowser init
@@ -181,6 +186,7 @@ rccPostInstall:
 ### Data Science Robot
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Train Model:
@@ -208,13 +214,14 @@ ignoreFiles:
 ```
 
 **conda.yaml:**
+
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - pip=24.0
+  - python=3.12.11
+  - uv=0.9.28
   - pandas=2.2.3
   - numpy=2.1.3
   - scikit-learn=1.5.2
@@ -230,6 +237,7 @@ dependencies:
 ### FastAPI Service Robot
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Run Server:
@@ -253,13 +261,14 @@ ignoreFiles:
 ```
 
 **conda.yaml:**
+
 ```yaml
 channels:
   - conda-forge
 
 dependencies:
-  - python=3.10.14
-  - pip=24.0
+  - python=3.12.11
+  - uv=0.9.28
   - pip:
       - fastapi==0.115.5
       - uvicorn==0.32.1
@@ -275,6 +284,7 @@ dependencies:
 ### Activate Environment in Shell
 
 **Linux/macOS:**
+
 ```bash
 # With robot.yaml
 source <(rcc holotree variables --space dev --robot robot.yaml)
@@ -288,6 +298,7 @@ pip list
 ```
 
 **Windows:**
+
 ```cmd
 :: Save to file first
 rcc holotree variables --space dev --robot robot.yaml > activate.bat
@@ -378,12 +389,13 @@ cp output/environment_*_freeze.yaml .
 ```
 
 **Updated robot.yaml:**
+
 ```yaml
 environmentConfigs:
   - environment_linux_amd64_freeze.yaml
   - environment_windows_amd64_freeze.yaml
   - environment_darwin_amd64_freeze.yaml
-  - conda.yaml  # Fallback
+  - conda.yaml # Fallback
 
 tasks:
   Main:
@@ -411,6 +423,7 @@ rcc robot dependencies --space user --export
 ### GitHub Actions Example
 
 **.github/workflows/robot.yml:**
+
 ```yaml
 name: Run Robot
 
@@ -450,6 +463,7 @@ jobs:
 ### GitLab CI Example
 
 **.gitlab-ci.yml:**
+
 ```yaml
 stages:
   - test
@@ -477,6 +491,7 @@ run_robot:
 ### Jenkins Pipeline Example
 
 **Jenkinsfile:**
+
 ```groovy
 pipeline {
     agent any
@@ -531,6 +546,7 @@ chmod +x rcc
 ### Multiple Tasks with Shared Code
 
 **Project structure:**
+
 ```
 my-robot/
 ├── robot.yaml
@@ -546,6 +562,7 @@ my-robot/
 ```
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Task A:
@@ -567,6 +584,7 @@ PYTHONPATH:
 ### Pre-Run Scripts for Private Packages
 
 **robot.yaml:**
+
 ```yaml
 tasks:
   Main:
@@ -579,6 +597,7 @@ condaConfigFile: conda.yaml
 ```
 
 **install_private.sh:**
+
 ```bash
 #!/bin/bash
 # Install from private PyPI
@@ -591,6 +610,7 @@ pip install git+https://${GIT_TOKEN}@github.com/org/private-lib.git
 ### Platform-Specific Scripts
 
 **robot.yaml:**
+
 ```yaml
 preRunScripts:
   - setup_linux.sh
@@ -621,6 +641,7 @@ rcc robot run-from-bundle my-robot.py --task Main
 ### Custom Endpoints
 
 **Using environment variables:**
+
 ```bash
 export RCC_ENDPOINT_PYPI="https://pypi.internal.com/simple/"
 export RCC_ENDPOINT_CONDA="https://conda.internal.com/"
@@ -628,6 +649,7 @@ rcc run
 ```
 
 **Using settings.yaml ($ROBOCORP_HOME/settings.yaml):**
+
 ```yaml
 endpoints:
   pypi: https://pypi.internal.com/simple/
@@ -681,11 +703,13 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Control\FileSystem" /v LongPathsEnabled /
 ### Shared Holotree Permission Issues
 
 **Windows:**
+
 ```cmd
 icacls "C:\ProgramData\robocorp" /grant "*S-1-5-32-545:(OI)(CI)M" /T
 ```
 
 **Linux/macOS:**
+
 ```bash
 sudo chmod -R 777 /opt/robocorp  # or /Users/Shared/robocorp on macOS
 ```
@@ -739,6 +763,7 @@ rcc version
 ### Web Scraping with Error Handling
 
 **main.py:**
+
 ```python
 import os
 import json
@@ -782,6 +807,7 @@ if __name__ == "__main__":
 ### Scheduled Task with Logging
 
 **main.py:**
+
 ```python
 import os
 import logging
@@ -816,6 +842,539 @@ def main():
 if __name__ == "__main__":
     exit(main())
 ```
+
+---
+
+## Real-World GitHub Examples
+
+### ⭐ Best Practice: Full Producer-Consumer-Reporter (from joshyorko/fetch-repos-bot)
+
+**Source:** https://github.com/joshyorko/fetch-repos-bot
+
+This is the definitive example of the producer-consumer pattern with work items, Redis/SQLite adapters, proper error handling, and reporting.
+
+**robot.yaml:**
+```yaml
+tasks:
+  Producer:
+    shell: python -m robocorp.tasks run tasks.py -t producer
+  Consumer:
+    shell: python -m robocorp.tasks run tasks.py -t consumer
+  Reporter:
+    shell: python -m robocorp.tasks run tasks.py -t reporter
+  GenerateConsolidatedDashboard:
+    shell: python -m robocorp.tasks run generate_consolidated_dashboard.py -t generate_consolidated_dashboard
+  AssistantOrg:
+    shell: python -m robocorp.tasks run assistant.py -t assistant_org
+
+devTasks:
+  SeedSQLiteDB:
+    shell: python scripts/seed_sqlite_db.py
+  SeedRedisDB:
+    shell: python scripts/seed_redis_db.py
+  CheckSQLiteDB:
+    shell: python scripts/check_sqlite_db.py
+  RecoverOrphanedItems:
+    shell: python scripts/recover_orphaned_items.py
+  ListWorkItems:
+    shell: python -m robocorp.tasks run listworkitems.py -t list_work_items
+
+environmentConfigs:
+  - environment_windows_amd64_freeze.yaml
+  - environment_linux_amd64_freeze.yaml
+  - environment_darwin_amd64_freeze.yaml
+  - conda.yaml
+
+artifactsDir: output
+PATH:
+  - .
+PYTHONPATH:
+  - .
+ignoreFiles:
+  - .gitignore
+```
+
+**conda.yaml:**
+```yaml
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12.11
+  - uv=0.9.24
+  - pip:
+      - robocorp==3.0.0
+      - robocorp-truststore==0.9.1
+      - rpaframework-assistant==5.0.0
+      - requests==2.32.5
+      - gitpython==3.1.45
+      - pandas==2.3.3
+      - beautifulsoup4==4.14.3
+      - jinja2==3.1.6
+      - redis==7.1.0
+      - SQLAlchemy==2.0.45
+      - pymongo==4.15.5
+      - robocorp_adapters_custom==0.1.4  # Custom work item adapters
+```
+
+**tasks.py - Producer (key excerpts):**
+```python
+from robocorp import log, workitems
+from robocorp.tasks import get_output_dir, task
+
+@task
+def producer():
+    """Fetches repositories from GitHub org and creates work items."""
+    for item in workitems.inputs:
+        try:
+            payload = item.payload
+            if not isinstance(payload, dict):
+                item.fail("APPLICATION", code="INVALID_PAYLOAD",
+                          message="Payload must be a dictionary")
+                continue
+
+            org_name = payload.get("org")
+            if not org_name:
+                item.fail("APPLICATION", code="MISSING_ORG_NAME",
+                          message="Organization name is required")
+                continue
+
+            log.info(f"Processing organization: {org_name}")
+
+            # Fetch data and create work items
+            df = repos(org_name)
+            if df is not None and not df.empty:
+                for row in df.to_dict(orient="records"):
+                    repo_payload = {
+                        "org": org_name,
+                        "Name": row.get("Name"),
+                        "URL": row.get("URL"),
+                        "Description": row.get("Description"),
+                        # ... more fields
+                    }
+                    workitems.outputs.create(repo_payload)
+                item.done()
+            else:
+                item.fail("BUSINESS", code="NO_DATA",
+                          message="No repositories found")
+
+        except Exception as e:
+            log.exception(f"Unexpected error: {e}")
+            item.fail("APPLICATION", code="UNEXPECTED_ERROR", message=str(e))
+```
+
+**tasks.py - Consumer (key excerpts):**
+```python
+@task
+def consumer():
+    """Clones repositories from work items, zips them."""
+    output = get_output_dir() or Path("output")
+    shard_id = os.getenv("SHARD_ID", "0")  # For parallel processing
+    processed_repos = []
+
+    for item in workitems.inputs:
+        try:
+            payload = item.payload
+            url = payload.get("URL")
+            repo_name = payload.get("Name")
+
+            if not url:
+                item.fail("APPLICATION", code="MISSING_URL",
+                          message="URL is missing")
+                continue
+
+            repo_path = repos_dir / repo_name
+            log.info(f"[Shard {shard_id}] {org_name}/{repo_name} - cloning...")
+
+            try:
+                # Clone with GitPython
+                repo = Repo.clone_from(clone_url, repo_path, depth=1)
+                log.info(f"[Shard {shard_id}] {org_name}/{repo_name} - ✓")
+
+                # Create output work item for success
+                workitems.outputs.create({
+                    "name": repo_name, "url": url, "org": org_name,
+                    "status": "success",
+                    "commit_hash": repo.head.commit.hexsha[:8]
+                })
+                item.done()
+
+            except GitCommandError as git_err:
+                # Handle network errors differently (release for retry)
+                if "network" in str(git_err).lower():
+                    log.warn(f"Network error, releasing for retry")
+                    workitems.outputs.create({
+                        "name": repo_name, "status": "released",
+                        "error": str(git_err)
+                    })
+                    # Don't mark done/failed - allows retry
+                else:
+                    item.fail("BUSINESS", code="GIT_ERROR", message=str(git_err))
+
+        except Exception as e:
+            item.fail("APPLICATION", code="UNEXPECTED_ERROR", message=str(e))
+
+    # Generate report and zip
+    # ...
+```
+
+**tasks.py - Reporter (key excerpts):**
+```python
+@task
+def reporter():
+    """Generate comprehensive reports on work item processing status."""
+    summary_stats = {
+        "total_items_processed": 0,
+        "successful_items": 0,
+        "failed_items": 0,
+        "released_items": 0,
+        "organizations": set(),
+        "repositories": [],
+    }
+
+    for item in workitems.inputs:
+        try:
+            payload = item.payload
+            status = payload.get("status", "unknown")
+
+            summary_stats["total_items_processed"] += 1
+            if status == "success":
+                summary_stats["successful_items"] += 1
+            elif status == "failed":
+                summary_stats["failed_items"] += 1
+            elif status == "released":
+                summary_stats["released_items"] += 1
+
+            item.done()
+        except Exception as e:
+            item.fail("APPLICATION", code="UNEXPECTED_ERROR", message=str(e))
+
+    # Calculate success rate and log summary
+    success_rate = (summary_stats["successful_items"] /
+                    summary_stats["total_items_processed"] * 100)
+    log.info(f"✅ Successful: {summary_stats['successful_items']}")
+    log.info(f"❌ Failed: {summary_stats['failed_items']}")
+    log.info(f"📊 Success rate: {success_rate:.1f}%")
+```
+
+**Key Patterns Demonstrated:**
+- **Work item validation** - Check payload type and required fields
+- **Error classification** - BUSINESS vs APPLICATION errors
+- **Graceful retry** - Release items for retry on transient errors
+- **Parallel processing** - Shard ID for scaling across workers
+- **Output chaining** - Producer → Consumer → Reporter pipeline
+- **Custom adapters** - Redis/SQLite/MongoDB work item backends
+
+---
+
+### Producer-Consumer Pattern (from robocorp/example-advanced-python-template)
+
+**Source:** https://github.com/robocorp/example-advanced-python-template
+
+**robot.yaml:**
+```yaml
+tasks:
+  Produce:
+    shell: python -m robocorp.tasks run tasks -t "producer"
+
+  Consume:
+    shell: python -m robocorp.tasks run tasks -t "consumer"
+
+  Report:
+    shell: python -m robocorp.tasks run tasks -t "reporter"
+
+  UNIT TESTS:
+    shell: python -m pytest -v tests
+
+devTasks: {}
+
+environmentConfigs:
+  - environment_windows_amd64_freeze.yaml
+  - environment_linux_amd64_freeze.yaml
+  - environment_darwin_amd64_freeze.yaml
+  - conda.yaml
+
+ignoreFiles:
+  - .gitignore
+artifactsDir: output
+PATH:
+  - .
+PYTHONPATH:
+  - .
+```
+
+**tasks/producer_tasks.py:**
+```python
+"""Producer task using robocorp.tasks and robocorp.workitems."""
+from pathlib import Path
+
+from robocorp import log, workitems, excel
+from robocorp.tasks import task
+from robocorp.excel import tables
+
+from . import ARTIFACTS_DIR, setup_log
+
+INPUT_FILE_NAME = "orders.csv"
+
+@task
+def producer():
+    setup_log()
+    log.info("Producer task started.")
+
+    # Get input file from current work item
+    work_item = workitems.inputs.current
+    destination_path = Path(ARTIFACTS_DIR) / INPUT_FILE_NAME
+    input_filepath = work_item.get_file(INPUT_FILE_NAME, destination_path)
+    log.info(f"Reading orders from {input_filepath}")
+
+    # Parse CSV and group by customer
+    table = tables.Tables().read_table_from_csv(
+        str(input_filepath), encoding="utf-8-sig"
+    )
+    customers = table.group_by_column("Name")
+    log.info(f"Found {len(table)} rows. Creating work items.")
+
+    # Create work items for each customer
+    for customer in customers:
+        work_item_vars = {
+            "Name": customer.get_column("Name")[0],
+            "Zip": customer.get_column("Zip")[0],
+            "Items": [row["Item"] for row in customer],
+        }
+        workitems.outputs.create(work_item_vars, save=True)
+
+    log.info("Producer task completed.")
+```
+
+**tasks/consumer_tasks.py:**
+```python
+"""Consumer task with proper work item context management."""
+from robocorp import log, workitems
+from robocorp.tasks import task
+
+from . import setup_log, get_secret
+from libs.web.swaglabs import Swaglabs
+
+def process_order(swaglabs: Swaglabs, work_item: workitems.Input) -> None:
+    """Process a single order (work item)."""
+    log.info(f"Processing work item {work_item.id}")
+    swaglabs.clear_cart()
+    swaglabs.go_to_order_screen()
+
+    payload = work_item.payload
+    set_items = set(payload.get("Items", []))
+    log.info(f"Ordering {len(set_items)} items for {payload.get('Name')}")
+
+    for item in set_items:
+        swaglabs.add_item_to_cart(item)
+
+    # Submit order
+    first_name = payload.get("Name", "").split(" ")[0]
+    last_name = payload.get("Name", "").split(" ")[1]
+    order_number = swaglabs.submit_order(first_name, last_name, payload.get("Zip", ""))
+    log.info(f"Order submitted for work item {work_item.id}")
+
+    # Create output work item for reporter step
+    output = work_item.create_output()
+    output.payload = {
+        "Name": payload.get("Name"),
+        "Items": list(set_items),
+        "OrderNumber": order_number,
+    }
+    output.save()
+
+@task
+def consumer():
+    setup_log()
+    log.info("Consumer task started.")
+    credentials = get_secret("swaglabs")
+
+    with Swaglabs(
+        credentials["username"], credentials["password"], credentials["url"]
+    ) as swaglabs:
+        # Context manager ensures proper work item release
+        for work_item in workitems.inputs:
+            with work_item:
+                process_order(swaglabs, work_item)
+            log.info(f"Work item released with state '{work_item.state}'.")
+```
+
+---
+
+### Sema4ai Actions - Google Sheets (from sema4ai/gallery)
+
+**Source:** https://github.com/sema4ai/gallery/tree/main/actions/google-sheets
+
+**package.yaml:**
+```yaml
+name: Google Sheets
+description: Create and read spreadsheets. Add/update rows.
+version: 1.2.0
+spec-version: v2
+
+dependencies:
+  conda-forge:
+    - python=3.11.11
+    - python-dotenv=1.1.1
+    - uv=0.6.11
+  pypi:
+    - sema4ai-actions=1.5.0
+    - pydantic=2.11.7
+    - gspread=6.2.1
+
+external-endpoints:
+  - name: "Google API"
+    description: "Access Google API to retrieve informations."
+    additional-info-link: "https://developers.google.com/explorer-help"
+    rules:
+      - host: "www.googleapis.com"
+        port: 443
+
+packaging:
+  exclude:
+    - ./.git/**
+    - ./devdata/**
+    - ./output/**
+    - ./**/*.pyc
+```
+
+**actions.py (key excerpts):**
+```python
+"""Google Sheets Actions with OAuth2Secret."""
+from typing import Annotated, List, Literal
+
+import gspread
+from pydantic import BaseModel, Field
+from sema4ai.actions import ActionError, OAuth2Secret, Response, action
+
+class Row(BaseModel):
+    columns: Annotated[List[str], Field(description="The columns that make up the row")]
+
+class RowData(BaseModel):
+    rows: Annotated[List[Row], Field(description="The rows to be added")]
+
+    def to_raw_data(self) -> List[List[str]]:
+        return [row.columns for row in self.rows]
+
+@action(is_consequential=True)
+def create_spreadsheet(
+    oauth_access_token: OAuth2Secret[
+        Literal["google"],
+        list[
+            Literal[
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive.file",
+            ],
+        ],
+    ],
+    name: str,
+) -> Response[str]:
+    """Creates a new Spreadsheet.
+
+    Args:
+        oauth_access_token: The OAuth2 access token.
+        name: Name of the Spreadsheet.
+    Returns:
+        Message containing the spreadsheet title and url.
+    """
+    gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
+    spreadsheet = gc.create(name)
+    return Response(result=f"Sheet created: {spreadsheet.title}: {spreadsheet.url}")
+
+@action(is_consequential=False)
+def get_sheet_content(
+    oauth_access_token: OAuth2Secret[
+        Literal["google"],
+        list[
+            Literal[
+                "https://www.googleapis.com/auth/spreadsheets.readonly",
+                "https://www.googleapis.com/auth/drive.readonly",
+            ],
+        ],
+    ],
+    spreadsheet: str,
+    worksheet: str,
+    from_row: int = 1,
+    limit: int = 100,
+) -> Response[str]:
+    """Get content from a Google Spreadsheet Sheet.
+
+    Args:
+        spreadsheet: Name, ID, or URL of the spreadsheet.
+        worksheet: Name of the worksheet within the spreadsheet.
+        from_row: Starting row for pagination (default: 1).
+        limit: How many rows to retrieve (default: 100).
+        oauth_access_token: The OAuth2 access token.
+
+    Returns:
+        The sheet's content.
+    """
+    gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
+    spreadsheet_obj = _open_spreadsheet(gc, spreadsheet)
+    worksheet = spreadsheet_obj.worksheet(worksheet)
+    return Response(result=_get_sheet_content(worksheet, from_row, limit))
+
+@action(is_consequential=True)
+def add_sheet_rows(
+    oauth_access_token: OAuth2Secret[
+        Literal["google"],
+        list[
+            Literal[
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive.file",
+            ],
+        ],
+    ],
+    spreadsheet: str,
+    worksheet: str,
+    rows_to_add: RowData,
+) -> Response[str]:
+    """Add multiple rows to a Google sheet.
+
+    Args:
+        spreadsheet: Name, ID, or URL of the spreadsheet.
+        worksheet: Name of the sheet where data is added.
+        rows_to_add: The rows to be added to the end of the sheet.
+        oauth_access_token: The OAuth2 access token.
+
+    Returns:
+        Message indicating the success of the operation.
+    """
+    gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
+    spreadsheet_obj = _open_spreadsheet(gc, spreadsheet)
+    worksheet = spreadsheet_obj.worksheet(worksheet)
+    worksheet.append_rows(values=rows_to_add.to_raw_data())
+    return Response(result="Row(s) were successfully added.")
+```
+
+---
+
+### Available Gallery Actions (sema4ai/gallery)
+
+The Sema4ai Gallery provides production-ready actions for many integrations:
+
+| Action Package | Description |
+|----------------|-------------|
+| `google-sheets` | Create/read spreadsheets, add/update rows |
+| `google-mail` | Send/read Gmail with OAuth2 |
+| `google-calendar` | Manage Google Calendar events |
+| `google-drive` | File operations on Google Drive |
+| `microsoft-mail` | Outlook email operations |
+| `microsoft-excel` | Excel file operations via OneDrive |
+| `microsoft-calendar` | Outlook calendar management |
+| `microsoft-sharepoint` | SharePoint document operations |
+| `microsoft-teams` | Teams messaging |
+| `slack` | Slack messaging and channel management |
+| `hubspot` | CRM operations |
+| `salesforce` | Salesforce CRM operations |
+| `servicenow` | ITSM ticket management |
+| `zendesk` | Support ticket operations |
+| `snowflake-*` | Snowflake data/AI operations |
+| `pdf` | PDF manipulation |
+| `excel` | Local Excel file operations |
+| `browsing` | Web automation |
+
+**Browse all:** https://github.com/sema4ai/gallery/tree/main/actions
 
 ---
 

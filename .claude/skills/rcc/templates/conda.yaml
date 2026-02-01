@@ -11,7 +11,7 @@ dependencies:
 
   # UV - fast Python package installer (RECOMMENDED over pip)
   # Install uv via conda, then use pip: section for packages
-  - uv=0.8.17
+  - uv=0.9.28
 
   # Pip packages - uv will handle these faster than pip
   - pip:

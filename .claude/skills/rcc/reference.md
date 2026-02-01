@@ -12,7 +12,7 @@ Complete reference for all RCC commands and options.
 - [rcc robot](#rcc-robot)
 - [rcc holotree](#rcc-holotree)
 - [rcc configure](#rcc-configure)
-- [rcc man (docs)](#rcc-man-docs)
+- [rcc docs](#rcc-docs)
 - [rcc cloud](#rcc-cloud)
 - [rcc venv](#rcc-venv)
 
@@ -26,10 +26,29 @@ Available on all commands:
 |------|-------------|
 | `--debug` | Enable debug output |
 | `--trace` | Enable trace output (more verbose than debug) |
-| `--silent` | Suppress non-essential output |
+| `--silent` | **Suppress RCC progress output** - shows only task/command output |
 | `--timeline` | Show execution timeline |
 | `--pprof <file>` | Write profiling data to file |
 | `--robocorp` | Use Robocorp product family settings |
+
+### Recommended: Always Use --silent
+
+The `--silent` flag is highly recommended for cleaner output:
+
+```bash
+# Noisy (default) - shows all RCC progress
+rcc run --task Main
+# ####  Progress: 01/15  v18.16.0 ...
+# ####  Progress: 02/15  v18.16.0 ...
+
+# Clean - only shows your task's output
+rcc run --task Main --silent
+
+# Useful for all commands
+rcc ht vars --silent           # Just env vars export statements
+rcc task script --silent -- python script.py  # Just script output
+rcc configure diagnostics --silent  # Just diagnostic results
+```
 
 ---
 
@@ -83,22 +102,37 @@ rcc run --interactive
 
 ## rcc create
 
-Create a new robot interactively.
+Create a new robot from templates.
 
 ```bash
-rcc create
+rcc create [flags]
 ```
 
-`rcc create` is intended for interactive/human use and is **not** appropriate for CI/scripting.
+### Flags
 
-For non-interactive creation (script/CI friendly), use `rcc robot initialize`.
+| Flag | Description |
+|------|-------------|
+| `--directory` | Target directory (default: current) |
+| `--template` | Template name to use |
 
 ### Examples
 
 ```bash
-# Interactive template selection (prompts)
+# Interactive template selection
 rcc create
+
+# Create in specific directory
+rcc create --directory my-robot
+
+# Use specific template
+rcc create --template python
 ```
+
+### Available Templates
+
+- `python` - Basic Python template
+- `extended` - Extended Robot Framework template
+- `standard` - Standard Robot Framework template
 
 ---
 
@@ -196,35 +230,6 @@ rcc task shell --space my-space
 ## rcc robot
 
 Robot management commands.
-
-### rcc robot initialize
-
-Create a robot directory structure from templates.
-
-```bash
-rcc robot initialize [flags]
-```
-
-#### Flags
-
-| Flag | Short | Description |
-|------|-------|-------------|
-| `--directory` | `-d` | Root directory to create the new robot in (default: `.`) |
-| `--template` | `-t` | Template name to generate |
-| `--force` | `-f` | Overwrite existing data |
-| `--list` | `-l` | List available templates |
-| `--json` | `-j` | List available templates as JSON |
-
-#### Examples
-
-```bash
-# List templates
-rcc robot initialize --list
-rcc robot initialize --json
-
-# Create a robot from a specific template
-rcc robot initialize -t <template-name> -d <directory>
-```
 
 ### rcc robot dependencies
 
@@ -523,26 +528,24 @@ rcc configure identity
 
 ---
 
-## rcc man (docs)
+## rcc docs
 
 View built-in documentation.
 
-`rcc man` has multiple aliases, including `rcc docs` and `rcc doc`.
-
-### rcc man changelog
+### rcc docs changelog
 
 View changelog.
 
 ```bash
-rcc man changelog
+rcc docs changelog
 ```
 
-### rcc man recipes
+### rcc docs recipes
 
 View tips, tricks, and recipes.
 
 ```bash
-rcc man recipes
+rcc docs recipes
 ```
 
 ---
@@ -673,8 +676,8 @@ channels:
 # Dependencies (required)
 dependencies:
   # Conda packages
-  - python=3.10.14
-  - pip=24.0
+  - python=3.9.13
+  - pip=22.1.2
 
   # Pip packages
   - pip:
@@ -689,7 +692,47 @@ rccPostInstall:
 
 ## Environment Variables Reference
 
-### RCC Configuration
+### Robot Environment Variables (Automatically Injected)
+
+**CRITICAL:** These are set automatically by RCC when running tasks. Do NOT set these manually.
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `ROBOT_ROOT` | Directory containing robot.yaml - the "center of the universe" for the robot | `/home/user/my-robot` |
+| `ROBOT_ARTIFACTS` | Artifact output directory (from `artifactsDir` in robot.yaml) | `/home/user/my-robot/output` |
+
+**Path Resolution:** All relative paths in robot.yaml (PATH, PYTHONPATH, artifactsDir) are resolved relative to `ROBOT_ROOT`.
+
+**Access in Python:**
+```python
+import os
+
+# Get artifact directory for output files
+artifacts = os.environ.get("ROBOT_ARTIFACTS", "output")
+
+# Get robot root for relative path resolution
+root = os.environ.get("ROBOT_ROOT", ".")
+```
+
+### Work Items Environment Variables
+
+For local development with `robocorp.workitems`:
+
+| Variable | Description |
+|----------|-------------|
+| `RC_WORKITEM_ADAPTER` | Custom adapter class (e.g., `FileAdapter`) |
+| `RC_WORKITEM_INPUT_PATH` | Path to input work items JSON |
+| `RC_WORKITEM_OUTPUT_PATH` | Path for output work items JSON |
+| `RC_WORKITEMS_PATH` | Local work items directory (devdata) |
+
+**Local Development Setup:**
+```bash
+export RC_WORKITEM_ADAPTER=FileAdapter
+export RC_WORKITEM_INPUT_PATH=/path/to/input.json
+export RC_WORKITEM_OUTPUT_PATH=/path/to/output.json
+```
+
+### RCC Configuration Variables
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -701,7 +744,7 @@ rccPostInstall:
 | `RCC_NO_PYC_MANAGEMENT` | Disable .pyc management | unset |
 | `RCC_CREDENTIALS_ID` | Control Room credentials | unset |
 
-### Custom Endpoints (Fork-Specific)
+### Custom Endpoints (Air-Gapped/Private Networks)
 
 | Variable | Description |
 |----------|-------------|
@@ -715,14 +758,12 @@ rccPostInstall:
 | `RCC_ENDPOINT_PYPI_TRUSTED` | PyPI trusted host |
 | `RCC_ENDPOINT_CONDA` | Conda channel |
 
-### Robot Environment Variables
-
-Set automatically when running robots:
-
-| Variable | Description |
-|----------|-------------|
-| `ROBOT_ROOT` | Robot root directory |
-| `ROBOT_ARTIFACTS` | Artifacts directory |
+**Air-Gapped Example:**
+```bash
+export RCC_ENDPOINT_PYPI="https://pypi.internal.com/simple/"
+export RCC_ENDPOINT_CONDA="https://conda.internal.com/"
+rcc run --silent
+```
 
 ---
 
@@ -744,3 +785,67 @@ Set automatically when running robots:
 | Windows | `C:\ProgramData\robocorp` |
 | macOS | `/Users/Shared/robocorp` |
 | Linux | `/opt/robocorp` |
+
+---
+
+## Holotree Deep Dive
+
+### Architecture
+
+Holotree is RCC's content-addressed storage system for Python environments:
+
+**Three Components:**
+1. **Library (Hololib)** - Content-addressed file store organized by hash
+   - Files stored once, referenced by SipHash-128 content hash
+   - Storage structure: `{hash_prefix}/{hash}/{full_hash}`
+   - 50MB binary in 20 environments = 50MB disk (not 1GB)
+
+2. **Catalog** - JSON manifests describing environments
+   - Lists every file with hash, permissions, size, relocation offsets
+   - Platform-specific: `{blueprint_hash}v12.{platform}`
+   - Enables surgical path relocation
+
+3. **Spaces** - Live working environments
+   - Populated from catalogs by linking files from library
+   - Each space is pristine copy that can become "dirty"
+
+### Path Relocation
+
+Python installations embed absolute paths in:
+- Shebangs (`#!/path/to/python`)
+- `__pycache__` files
+- Compiled extensions
+
+**Holotree solution:** Records byte offsets during catalog creation, performs surgical rewrites at exact offsets when restoring to new location. No regex, no pattern matching - direct byte manipulation.
+
+### Performance
+
+| Operation | Time |
+|-----------|------|
+| Fresh build from scratch | 5-15 minutes |
+| Restore from cache | 2-10 seconds |
+
+### Freeze Files (Environment Snapshots)
+
+**Generated automatically** to `ROBOT_ARTIFACTS` (output/) on every `rcc run`:
+
+| File | Platform |
+|------|----------|
+| `environment_linux_amd64_freeze.yaml` | Linux x64 |
+| `environment_windows_amd64_freeze.yaml` | Windows x64 |
+| `environment_darwin_amd64_freeze.yaml` | macOS Intel |
+| `environment_darwin_arm64_freeze.yaml` | macOS Apple Silicon |
+
+**Key Points:**
+- Generated since RCC v10.3.0 (June 2021)
+- Contains exact pinned versions for reproducibility
+- NOT meant to be committed unless you want locked builds
+- Listed in `environmentConfigs` with conda.yaml as fallback
+
+```yaml
+# robot.yaml - environmentConfigs with freeze file priority
+environmentConfigs:
+  - environment_linux_amd64_freeze.yaml    # Use if exists
+  - environment_windows_amd64_freeze.yaml  # Use if exists
+  - conda.yaml                              # Fallback
+```

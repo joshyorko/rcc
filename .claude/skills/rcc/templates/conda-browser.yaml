@@ -7,8 +7,8 @@ channels:
 
 dependencies:
   - python=3.12.11
-  - nodejs=18.17.1  # Required for Playwright/Browser library
-  - uv=0.8.17       # Fast package installer
+  - nodejs=18.17.1 # Required for Playwright/Browser library
+  - uv=0.9.28 # Fast package installer
 
   - pip:
       - robotframework==7.1.1
