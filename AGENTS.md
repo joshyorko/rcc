@@ -1,35 +1,219 @@
-# Repository Guidelines
+# AGENTS.md
 
-## Project Structure & Module Organization
-- Go module lives at the repo root; CLI entrypoints and Cobra commands are in `cmd/`.
-- Core behaviors (auth, bundles, diagnostics) sit under `operations/`; shared helpers in `common/`, `pathlib/`, and `shell/`.
-- Environment packaging is in `conda/`; robot automation helpers live in `robot/`, `wizard/`, and `templates/`.
-- Acceptance tests and fixtures are under `robot_tests/`; generated assets land in `blobs/` and build outputs in `build/`.
-- Documentation is under `docs/` and `developer/`; keep `assets/` as the source for files copied into `blobs/`.
+RCC (Repeatable, Contained Code) is a Go CLI that creates isolated, reproducible Python environments for automation packages. It embeds micromamba binaries so target machines don't need Python installed.
 
-## Build, Test, and Development Commands
-- `inv -l`: list available Invoke tasks.
-- `GOARCH=amd64 go build -o build/ ./cmd/...`: fast local build for the current OS.
-- `inv build`: cross-platform binaries (runs with `CGO_ENABLED=0`, `GOARCH=amd64`); run `inv assets` first if blobs are stale.
-- `GOARCH=amd64 go test ./...` or `inv test --cover`: unit tests; coverage report in `tmp/cover.out`.
-- `python3 -m robot -L DEBUG -d tmp/output robot_tests` or `rcc run -r developer/toolkit.yaml --dev -t robot`: robot acceptance suites.
+## Quick Context
 
-## Coding Style & Naming Conventions
-- Use Go 1.23 tooling; format with `gofmt` before committing.
-- Packages and files stay lowercase without underscores; exported names use PascalCase, locals use mixedCaps.
-- CLI flag and command names follow verb-first patterns (e.g., `run`, `pull`, `configure`).
-- Prefer small, composable functions and table-driven tests; avoid platform-specific logic leaks across `command_*.go` files.
+- **Language:** Go 1.23 with Cobra/Viper CLI framework
+- **Build System:** Python Invoke (`tasks.py`) orchestrates Go builds and asset generation
+- **Testing:** Go unit tests (`_test.go`) + Robot Framework acceptance tests (`robot_tests/`)
+- **Key Innovation:** Holotree—content-addressed environment caching with delta transfers
 
-## Testing Guidelines
-- Place unit tests beside code in `_test.go` files; mirror package names and use clear subtests for scenarios.
-- Keep tests deterministic (no live network unless stubbed) and clean temporary files under `tmp/` or `tmp/output/`.
-- Robot suites generate HTML logs; inspect `tmp/output/log.html` on failures and keep new suites platform-aware.
+## Capabilities & Limits
 
-## Commit & Pull Request Guidelines
-- Write short, imperative commit subjects (~72 chars), e.g., `Update permissions in create-release-tag workflow`.
-- For PRs, link related issues, describe behavioral changes, and include sample commands/output when the CLI UX shifts; add screenshots only for doc-facing changes.
-- Note which tests you ran (`go test`, `inv test --cover`, robot suites) and any produced artifacts.
+### You Can
+- Modify Go source code in `cmd/`, `operations/`, `common/`, `conda/`, and other packages
+- Add or update CLI commands (each command is a separate file in `cmd/`)
+- Run build and test commands via `inv` (Invoke) or direct Go commands
+- Update embedded templates by editing `assets/` and regenerating with `inv assets`
 
-## Security & Configuration Notes
-- Do not hardcode endpoints or credentials; prefer the environment variable overrides in `README.md` (e.g., `RCC_ENDPOINT_*`) or `settings.yaml` under `ROBOCORP_HOME`.
-- Treat `blobs/` and `build/` as generated outputs; source edits belong in `assets/` and Go packages, then regenerate via Invoke tasks.
+### Escalate When
+- Changes affect Holotree caching (`htfs/`, `hamlet/`) — dragons here
+- Modifying micromamba integration or conda environment creation
+- Security-sensitive changes (auth, TLS, credential handling)
+- Breaking changes to CLI command interfaces
+
+### Never
+- Edit `blobs/` or `build/` directly—these are generated artifacts
+- Hardcode endpoints, credentials, or API keys—use `RCC_ENDPOINT_*` environment variables
+- Add telemetry, tracking, or background metrics—this fork has telemetry disabled
+- Make live network calls in tests without stubbing
+- Commit secrets or credentials
+
+## Development Workflow
+
+### Prerequisites
+Assets must be generated before building. If you see `pattern assets/*.py: no matching files`:
+```bash
+inv assets    # Zips templates, copies configs, prepares embedded micromamba → blobs/
+```
+
+### Build Commands
+```bash
+inv local                                  # Build for current platform
+inv build                                  # Cross-platform build (linux64, macos64, macosarm64, windows64)
+GOARCH=amd64 go build -o build/ ./cmd/...  # Direct Go build
+```
+
+### Test Commands
+```bash
+# Unit tests (GOARCH=amd64 is required)
+GOARCH=amd64 go test ./...
+inv test                                   # Via Invoke
+inv test --cover                           # With coverage → tmp/cover.out
+
+# Acceptance tests (Robot Framework)
+inv robot                                  # Full suite → tmp/output/log.html
+
+# Single test file
+python3 -m robot -L DEBUG -d tmp/output robot_tests/holotree.robot
+```
+
+## Architecture
+
+```
+rcc/
+├── cmd/                    # CLI commands (Cobra). Entry: cmd/rcc/main.go
+│   ├── *.go                # One file per command (run.go, pull.go, configure.go)
+│   └── command_*.go        # Platform-specific (darwin, linux, windows)
+├── operations/             # Core business logic (auth, bundling, diagnostics, running)
+├── common/                 # Shared utilities (logging, caching, version, platform detection)
+├── conda/                  # Conda/micromamba environment management
+├── htfs/, hamlet/          # Holotree virtual filesystem and directory utilities 🐉
+├── pathlib/, shell/        # Cross-platform path and shell execution
+├── settings/, xviper/      # Configuration management (Viper-based)
+├── fail/                   # Error handling package (use instead of if err != nil)
+├── assets/                 # Source files for embedded assets (edit these)
+├── blobs/                  # Generated embedded assets (DO NOT edit)
+├── build/                  # Build outputs (DO NOT edit)
+├── robot_tests/            # Robot Framework acceptance tests
+└── developer/              # Dev environment bootstrap (toolkit.yaml, setup.yaml)
+```
+
+### Task → Location Mapping
+
+| Task | Look In |
+|------|---------|
+| Add/modify CLI command | `cmd/` (each command is a file) |
+| Platform-specific CLI logic | `cmd/command_darwin.go`, `command_linux.go`, `command_windows.go` |
+| Change core behavior | `operations/` (auth, bundling, diagnostics, running, zipping) |
+| Modify environment creation | `conda/` |
+| Update Holotree caching | `htfs/`, `hamlet/` — 🐉 dragons here |
+| Add shared utility | `common/`, `pathlib/`, `shell/` |
+| Update embedded templates | `assets/` then run `inv assets` |
+| Add acceptance test | `robot_tests/*.robot` |
+
+## RCC Code Patterns
+
+### Error Handling — Use `fail` Package
+
+**Do NOT use `if err != nil` everywhere.** Use the `fail` package:
+
+```go
+func SomeOperation() (err error) {
+    defer fail.Around(&err)                    // Recover at function boundary
+
+    fail.On(err != nil, "context: %v", err)    // Panic with wrapped error
+    fail.Fast(err)                             // Panic if err != nil
+    return nil
+}
+```
+
+### Logging — Use `common` Package
+
+**Do NOT use `fmt.Print`.** Use the `common` package:
+
+```go
+common.Log("Normal: %s", msg)      // Always shown (unless silent)
+common.Debug("Debug: %s", msg)     // Only with --debug flag
+common.Trace("Trace: %s", msg)     // Only with --trace flag
+common.Timeline("op start %s", k)  // Performance timeline
+```
+
+### Testing — Use `hamlet` Package
+
+```go
+func TestSomething(t *testing.T) {
+    must_be, wont_be := hamlet.Specifications(t)
+
+    must_be.Nil(err)
+    must_be.Equal("expected", actual)
+    must_be.True(condition)
+    wont_be.True(badCondition)
+}
+```
+
+### Table-Driven Tests
+
+```go
+func TestOperation(t *testing.T) {
+    tests := []struct {
+        name     string
+        input    string
+        expected string
+    }{
+        {"normal case", "input", "output"},
+        {"edge case", "", ""},
+    }
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result := Operation(tt.input)
+            must_be, _ := hamlet.Specifications(t)
+            must_be.Equal(tt.expected, result)
+        })
+    }
+}
+```
+
+## Code Style
+
+```go
+// Package names: lowercase, no underscores
+package operations
+
+// Exported names: PascalCase
+func SummonCache() {}
+
+// Local variables: mixedCaps
+func example() {
+    myVar := 42
+}
+
+// CLI commands: verb-first
+// Good: run, pull, configure, push
+// Bad: runner, puller, configuration
+```
+
+- Run `gofmt` before committing
+- Prefer small, composable functions
+- Platform-specific code in `command_darwin.go`, `command_linux.go`, `command_windows.go`
+- Tests colocated in `_test.go` files
+
+## Critical Rules
+
+1. **Generated files are read-only.** Never edit `blobs/` or `build/`. Edit sources in `assets/` and Go packages, then regenerate with `inv assets`.
+
+2. **Configuration over hardcoding.** Use environment variables for endpoints:
+   ```
+   RCC_ENDPOINT_CLOUD_API    RCC_ENDPOINT_PYPI       RCC_ENDPOINT_CONDA
+   RCC_ENDPOINT_CLOUD_UI     RCC_ENDPOINT_DOWNLOADS  RCC_ENDPOINT_DOCS
+   ```
+
+3. **No telemetry.** This fork disables all tracking. Do not add metrics, analytics, or background reporting.
+
+4. **Platform isolation.** Keep OS-specific logic in `command_darwin.go`, `command_linux.go`, `command_windows.go`. Do not leak platform conditionals elsewhere.
+
+5. **Test determinism.** No live network calls in tests. Stub external dependencies. Write temp files under `tmp/`.
+
+6. **GOARCH requirement.** Always set `GOARCH=amd64` when running `go test` directly.
+
+## Common Errors
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `pattern assets/*.py: no matching files` | Assets not generated | Run `inv assets` |
+| Tests fail with GOARCH mismatch | Missing env var | Set `GOARCH=amd64` |
+| Micromamba download fails | Network restriction | Set `RCC_MICROMAMBA_BASE` to override URL |
+| Build fails after template change | Stale blobs | Run `inv assets` then rebuild |
+
+## PR Checklist
+
+- [ ] `gofmt` applied to all changed files
+- [ ] `GOARCH=amd64 go test ./...` passes
+- [ ] `inv robot` passes (or relevant subset for the change)
+- [ ] Uses `fail` package for error handling (not raw `if err != nil`)
+- [ ] Uses `common.Log/Debug/Trace` for output (not `fmt.Print`)
+- [ ] No hardcoded endpoints or credentials
+- [ ] No telemetry or tracking code added
+- [ ] Commit message: imperative mood, ~72 chars
+- [ ] If CLI UX changed: include sample command output in PR description
