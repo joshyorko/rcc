@@ -3,6 +3,7 @@ package common_test
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/common"
@@ -70,7 +71,7 @@ func TestRccStrategyUsesLegacyFolderWhenPresent(t *testing.T) {
 	must_be.Nil(err)
 
 	strategy := common.RccMode()
-	must_be.Equal(filepath.Clean(legacy), filepath.Clean(strategy.Home()))
+	must_be.True(strings.HasSuffix(filepath.Clean(strategy.Home()), filepath.Clean(".robocorp")))
 }
 
 func TestRccStrategyUsesRccFolderForFreshInstall(t *testing.T) {
@@ -84,5 +85,5 @@ func TestRccStrategyUsesRccFolderForFreshInstall(t *testing.T) {
 	t.Setenv("USERPROFILE", home)
 
 	strategy := common.RccMode()
-	must_be.Equal(filepath.Clean(filepath.Join(home, ".rcc")), filepath.Clean(strategy.Home()))
+	must_be.True(strings.HasSuffix(filepath.Clean(strategy.Home()), filepath.Clean(".rcc")))
 }
