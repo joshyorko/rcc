@@ -792,6 +792,31 @@ Channels should be in priority order, where first one has highest priority.
 Example above uses `conda-forge` as its only channel.
 For more details about conda-forge, see this [link.](https://anaconda.org/conda-forge)
 
+### What if I only need Python and pip packages?
+
+If your conda.yaml has no `channels:` field and specifies both `python` and
+`uv` versions in the dependencies, rcc uses the **uv-native fast path**.
+This bypasses micromamba and conda-forge entirely, downloading uv at runtime
+to install Python directly. This is significantly faster for Python-only
+workflows.
+
+```yaml
+dependencies:
+- python=3.12.8
+- uv=0.6.1
+- pip:
+  - robotframework==7.0
+  - rpaframework==28.6.1
+```
+
+The uv binary is downloaded once per version and cached locally. Python is
+installed via `uv python install` using python-build-standalone. All files
+are real copies (no symlinks), so holotree caching works identically to the
+conda-forge path.
+
+Use `RCC_ENDPOINT_UV_RELEASES` to point uv downloads at an internal mirror
+if GitHub is not reachable.
+
 ### What are `dependencies:`?
 
 These are libraries that are needed to be installed in environment that is

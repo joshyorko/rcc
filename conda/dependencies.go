@@ -129,6 +129,22 @@ func goldenMaster(targetFolder string, pipUsed bool) (err error) {
 	return pathlib.WriteFile(goldenfile, body, 0644)
 }
 
+func goldenMasterUvNative(targetFolder string, hasPip bool) (err error) {
+	defer fail.Around(&err)
+
+	seen := make(map[string]string)
+	collector := make(dependencies, 0, 100)
+	if hasPip {
+		collector, err = fillDependencies("pypi", targetFolder, seen, collector, "pip", "list", "--isolated", "--local", "--format", "json")
+		fail.On(err != nil, "Failed to list pip dependencies, reason: %v", err)
+	}
+	body, err := yaml.Marshal(collector.sorted())
+	fail.On(err != nil, "Failed to make yaml, reason: %v", err)
+	goldenfile := GoldenMasterFilename(targetFolder)
+	common.Debug("%sGolden EE (uv-native) file at: %v%s", pretty.Yellow, goldenfile, pretty.Reset)
+	return pathlib.WriteFile(goldenfile, body, 0644)
+}
+
 func LoadWantedDependencies(filename string) dependencies {
 	body, err := os.ReadFile(filename)
 	if err != nil {

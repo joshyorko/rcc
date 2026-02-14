@@ -28,3 +28,6 @@
   by the spec, but after that, does not do additional management of it
 * support for creating self-contained robot bundles (zipapps) that include both code and environment
 * support for running tasks directly from bundle files without manual extraction
+* uv-native fast path for Python-only environments: omit `channels:` from
+  conda.yaml and specify `python` and `uv` versions to bypass micromamba/conda-forge
+  entirely, downloading uv at runtime for faster environment creation

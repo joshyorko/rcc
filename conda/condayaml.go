@@ -182,6 +182,33 @@ func (it *Environment) HasCondaDependency(name string) bool {
 	return false
 }
 
+func (it *Environment) CondaDependencyVersion(name string) string {
+	for _, dependency := range it.Conda {
+		if dependency.Match(name) {
+			return dependency.Versions
+		}
+	}
+	return ""
+}
+
+func (it *Environment) IsUvNative() bool {
+	return len(it.Channels) == 0 &&
+		it.HasCondaDependency("python") &&
+		it.HasCondaDependency("uv")
+}
+
+func (it *Environment) ValidateUvNative() error {
+	pythonVersion := it.CondaDependencyVersion("python")
+	if len(pythonVersion) == 0 {
+		return fmt.Errorf("uv-native mode requires an exact python version (e.g., python=3.10.12), but no version was specified")
+	}
+	uvVersion := it.CondaDependencyVersion("uv")
+	if len(uvVersion) == 0 {
+		return fmt.Errorf("uv-native mode requires an exact uv version (e.g., uv=0.5.1), but no version was specified")
+	}
+	return nil
+}
+
 func (it *Environment) IsCacheable() bool {
 	for _, dependency := range it.Conda {
 		if !dependency.IsCacheable() {

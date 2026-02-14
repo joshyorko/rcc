@@ -137,6 +137,7 @@ Environment variables (take precedence over builtin settings):
 - `RCC_ENDPOINT_PYPI`
 - `RCC_ENDPOINT_PYPI_TRUSTED`
 - `RCC_ENDPOINT_CONDA`
+- `RCC_ENDPOINT_UV_RELEASES` - Override the uv binary download URL (default: GitHub releases)
 - `RCC_AUTOUPDATES_TEMPLATES` - Override the templates.yaml URL for robot templates
 - `RCC_AUTOUPDATES_RCC_INDEX` - Override the index.json URL for version checking
 
@@ -170,7 +171,7 @@ Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with a
 
 ### Notes
 
-Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
+Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed for the conda-forge path. The uv-native path (conda.yaml with no `channels`) downloads uv on-demand and caches it locally. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
 
 ```zsh
 export RCC_DOWNLOADS_BASE="https://downloads.your-domain.com"

@@ -129,6 +129,9 @@ func (it InstallObserver) HasFailures(targetFolder string) bool {
 }
 
 func newLive(yaml, condaYaml, requirementsText, key string, force, freshInstall bool, skip SkipLayer, finalEnv *Environment, recorder Recorder) (bool, error) {
+	if finalEnv.IsUvNative() {
+		return newLiveUvNative(yaml, requirementsText, key, force, freshInstall, skip, finalEnv, recorder)
+	}
 	if !MustMicromamba() {
 		return false, fmt.Errorf("Could not get micromamba installed.")
 	}
@@ -161,6 +164,114 @@ func newLive(yaml, condaYaml, requirementsText, key string, force, freshInstall 
 		journal.CurrentBuildEvent().Successful()
 	}
 	return success, nil
+}
+
+func newLiveUvNative(yaml, requirementsText, key string, force, freshInstall bool, skip SkipLayer, finalEnv *Environment, recorder Recorder) (bool, error) {
+	err := finalEnv.ValidateUvNative()
+	if err != nil {
+		return false, err
+	}
+	uvVersion := finalEnv.CondaDependencyVersion("uv")
+	pythonVersion := finalEnv.CondaDependencyVersion("python")
+	if !MustUv(uvVersion) {
+		return false, fmt.Errorf("Could not get uv v%s installed.", uvVersion)
+	}
+	uvBinary := UvBinaryPath(uvVersion)
+
+	targetFolder := common.StageFolder
+	if skip == SkipNoLayers {
+		common.Debug("===  pre cleanup phase (uv-native) ===")
+		common.Timeline("pre cleanup phase (uv-native).")
+		err := renameRemove(targetFolder)
+		if err != nil {
+			return false, err
+		}
+	}
+	common.Debug("===  first try phase (uv-native) ===")
+	common.Timeline("first try (uv-native).")
+	success, fatal := newLiveUvNativeInternal(yaml, requirementsText, key, force, freshInstall, skip, finalEnv, recorder, uvBinary, pythonVersion)
+	if !success && !force && !fatal && !common.NoRetryBuild {
+		journal.CurrentBuildEvent().Rebuild()
+		cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.creation.retry.uvnative", common.Version)
+		common.Debug("===  second try phase (uv-native) ===")
+		common.Timeline("second try (uv-native).")
+		common.ForceDebug()
+		common.Log("Retry! First try failed ... now retrying with debug and force options!")
+		err := renameRemove(targetFolder)
+		if err != nil {
+			return false, err
+		}
+		success, _ = newLiveUvNativeInternal(yaml, requirementsText, key, true, freshInstall, SkipNoLayers, finalEnv, recorder, uvBinary, pythonVersion)
+	}
+	if success {
+		journal.CurrentBuildEvent().Successful()
+	}
+	return success, nil
+}
+
+func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshInstall bool, skip SkipLayer, finalEnv *Environment, recorder Recorder, uvBinary, pythonVersion string) (bool, bool) {
+	targetFolder := common.StageFolder
+	theplan := NewPlanWriter(filepath.Join(targetFolder, "rcc_plan.log"))
+	failure := true
+	defer func() {
+		if failure {
+			common.Log("%s", theplan.AsText())
+		}
+	}()
+
+	planalyzer := NewPlanAnalyzer(true)
+	defer planalyzer.Close()
+
+	planWriter := io.MultiWriter(theplan, planalyzer)
+	fmt.Fprintf(planWriter, "---  installation plan (uv-native) %q %s [force: %v, fresh: %v| rcc %s]  ---\n\n", key, time.Now().Format(time.RFC3339), force, freshInstall, common.Version)
+	stopwatch := common.Stopwatch("installation plan (uv-native)")
+	fmt.Fprintf(planWriter, "---  plan blueprint @%ss  ---\n\n", stopwatch)
+	fmt.Fprintf(planWriter, "%s\n", yaml)
+
+	success, fatal, pipUsed, python := uvNativeHolotreeLayers(requirementsText, finalEnv, targetFolder, uvBinary, pythonVersion, stopwatch, planWriter, theplan, skip, recorder)
+	if !success {
+		return success, fatal
+	}
+
+	pretty.Progress(10, "Activate environment started phase.")
+	common.Debug("===  activate phase (uv-native) ===")
+	fmt.Fprintf(planWriter, "\n---  activation plan @%ss  ---\n\n", stopwatch)
+	err := Activate(planWriter, targetFolder)
+	if err != nil {
+		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
+	}
+	for _, line := range LoadActivationEnvironment(targetFolder) {
+		fmt.Fprintf(planWriter, "%s\n", line)
+	}
+	err = goldenMasterUvNative(targetFolder, pipUsed)
+	if err != nil {
+		common.Log("%sGolden EE failure: %v%s", pretty.Yellow, err, pretty.Reset)
+	}
+	fmt.Fprintf(planWriter, "\n---  pip check plan @%ss  ---\n\n", stopwatch)
+	if common.StrictFlag && pipUsed {
+		pretty.Progress(11, "Running pip check phase.")
+		pipCommand := common.NewCommander(python, "-m", "pip", "check", "--no-color")
+		pipCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
+		common.Debug("===  pip check phase (uv-native) ===")
+		code, err := LiveExecution(planWriter, targetFolder, pipCommand.CLI()...)
+		if err != nil || code != 0 {
+			cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.fatal.pipcheck.uvnative", fmt.Sprintf("%d_%x", code, code))
+			common.Timeline("pip check fail (uv-native).")
+			common.Fatal(fmt.Sprintf("Pip check [%d/%x]", code, code), err)
+			return false, false
+		}
+		common.Timeline("pip check done (uv-native).")
+	} else {
+		pretty.Progress(11, "Pip check skipped.")
+	}
+	fmt.Fprintf(planWriter, "\n---  installation plan complete (uv-native) @%ss  ---\n\n", stopwatch)
+	pretty.Progress(12, "Update installation plan.")
+	common.Error("saving rcc_plan.log", theplan.Save())
+	common.Debug("===  finalize phase (uv-native) ===")
+
+	failure = false
+
+	return true, false
 }
 
 func assertStageFolder(location string) {

@@ -113,6 +113,8 @@ func init() {
 	ensureDirectory(WheelCache())
 	ensureDirectory(RobotCache())
 	ensureDirectory(MambaPackages())
+	ensureDirectory(UvBinaryCache())
+	ensureDirectory(UvPythonCache())
 }
 
 func RandomIdentifier() string {
@@ -284,6 +286,14 @@ func BadHololibScriptsLocation() string {
 
 func UsesHolotree() bool {
 	return len(HolotreeSpace) > 0
+}
+
+func UvBinaryCache() string {
+	return filepath.Join(Product.Home(), "uv")
+}
+
+func UvPythonCache() string {
+	return filepath.Join(Product.Home(), "uvpython")
 }
 
 func UvCache() string {
