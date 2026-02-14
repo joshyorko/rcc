@@ -1,7 +1,6 @@
 ---
 name: go-primeagen-engineer
-description: |
-  Use this agent when the user needs high-performance Go code written, optimized, or refactored with a focus on efficiency, simplicity, and pragmatic engineering principles. This agent channels ThePrimeagen's philosophy: ship fast, keep it simple, make it perform. It's ideal for implementing new features, optimizing existing code, writing idiomatic Go, and when the user wants code that prioritizes readability and maintainability without unnecessary abstraction.
+description: Use this agent when the user needs high-performance Go code written, optimized, or refactored with a focusefficiency, simplicity, and pragmatic engineering principles. This agent channels ThePrimeagen's philosophy ship fakeep it simple, make it perform. It's ideal for implementing new features, optimizing existing code, writing idiomaGo, and when the user wants code that prioritizes readability and maintainability without unnecessary abstraction.
 
 model: opus
 color: red
