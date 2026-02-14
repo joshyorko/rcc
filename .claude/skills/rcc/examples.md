@@ -901,7 +901,7 @@ channels:
 
 dependencies:
   - python=3.12.11
-  - uv=0.9.24
+  - uv=0.9.28
   - pip:
       - robocorp==3.0.0
       - robocorp-truststore==0.9.1
@@ -1201,33 +1201,36 @@ def consumer():
 
 ---
 
-### Sema4ai Actions - Google Sheets (from sema4ai/gallery)
+### Sema4AI Actions - Google Sheets (from sema4ai/gallery)
 
 **Source:** https://github.com/sema4ai/gallery/tree/main/actions/google-sheets
 
-**package.yaml:**
+The gallery package is a good baseline for OAuth2 + Google Sheets workflows.
+For new packages, prefer current dependency pins and typed `Response` subclasses.
+
+**package.yaml (modernized baseline):**
 ```yaml
 name: Google Sheets
-description: Create and read spreadsheets. Add/update rows.
+description: Create and read spreadsheets. Add or update rows.
 version: 1.2.0
 spec-version: v2
 
 dependencies:
   conda-forge:
-    - python=3.11.11
+    - python=3.12.11
     - python-dotenv=1.1.1
-    - uv=0.6.11
+    - uv=0.9.28
   pypi:
-    - sema4ai-actions=1.5.0
+    - sema4ai-actions=1.6.6
     - pydantic=2.11.7
     - gspread=6.2.1
 
 external-endpoints:
-  - name: "Google API"
-    description: "Access Google API to retrieve informations."
-    additional-info-link: "https://developers.google.com/explorer-help"
+  - name: Google API
+    description: Access Google API resources.
+    additional-info-link: https://developers.google.com/explorer-help
     rules:
-      - host: "www.googleapis.com"
+      - host: www.googleapis.com
         port: 443
 
 packaging:
@@ -1238,23 +1241,41 @@ packaging:
     - ./**/*.pyc
 ```
 
-**actions.py (key excerpts):**
+Version note: pins above are current as of 2026-02-07.
+
+**actions.py (typed response model pattern):**
 ```python
-"""Google Sheets Actions with OAuth2Secret."""
-from typing import Annotated, List, Literal
+from typing import Annotated, Literal
 
 import gspread
 from pydantic import BaseModel, Field
 from sema4ai.actions import ActionError, OAuth2Secret, Response, action
 
+
 class Row(BaseModel):
-    columns: Annotated[List[str], Field(description="The columns that make up the row")]
+    columns: Annotated[list[str], Field(description="Columns that make up one row")]
+
 
 class RowData(BaseModel):
-    rows: Annotated[List[Row], Field(description="The rows to be added")]
+    rows: Annotated[list[Row], Field(description="Rows to add or update")]
 
-    def to_raw_data(self) -> List[List[str]]:
+    def to_raw_data(self) -> list[list[str]]:
         return [row.columns for row in self.rows]
+
+
+class SpreadsheetMutationResponse(Response[str]):
+    spreadsheet: str = ""
+    worksheet: str | None = None
+    rows_written: int = 0
+
+
+class SheetContentResponse(Response[str]):
+    spreadsheet: str = ""
+    worksheet: str = ""
+    from_row: int = 1
+    limit: int = 100
+    row_count: int = 0
+
 
 @action(is_consequential=True)
 def create_spreadsheet(
@@ -1264,22 +1285,18 @@ def create_spreadsheet(
             Literal[
                 "https://www.googleapis.com/auth/spreadsheets",
                 "https://www.googleapis.com/auth/drive.file",
-            ],
+            ]
         ],
     ],
     name: str,
-) -> Response[str]:
-    """Creates a new Spreadsheet.
-
-    Args:
-        oauth_access_token: The OAuth2 access token.
-        name: Name of the Spreadsheet.
-    Returns:
-        Message containing the spreadsheet title and url.
-    """
+) -> SpreadsheetMutationResponse:
     gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
-    spreadsheet = gc.create(name)
-    return Response(result=f"Sheet created: {spreadsheet.title}: {spreadsheet.url}")
+    spreadsheet_obj = gc.create(name)
+    return SpreadsheetMutationResponse(
+        result=f"Created spreadsheet: {spreadsheet_obj.url}",
+        spreadsheet=spreadsheet_obj.title,
+    )
+
 
 @action(is_consequential=False)
 def get_sheet_content(
@@ -1289,30 +1306,29 @@ def get_sheet_content(
             Literal[
                 "https://www.googleapis.com/auth/spreadsheets.readonly",
                 "https://www.googleapis.com/auth/drive.readonly",
-            ],
+            ]
         ],
     ],
     spreadsheet: str,
     worksheet: str,
     from_row: int = 1,
     limit: int = 100,
-) -> Response[str]:
-    """Get content from a Google Spreadsheet Sheet.
-
-    Args:
-        spreadsheet: Name, ID, or URL of the spreadsheet.
-        worksheet: Name of the worksheet within the spreadsheet.
-        from_row: Starting row for pagination (default: 1).
-        limit: How many rows to retrieve (default: 100).
-        oauth_access_token: The OAuth2 access token.
-
-    Returns:
-        The sheet's content.
-    """
+) -> SheetContentResponse:
     gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
     spreadsheet_obj = _open_spreadsheet(gc, spreadsheet)
-    worksheet = spreadsheet_obj.worksheet(worksheet)
-    return Response(result=_get_sheet_content(worksheet, from_row, limit))
+    ws = spreadsheet_obj.worksheet(worksheet)
+
+    content = _get_sheet_content(ws, from_row, limit)
+    row_count = len([line for line in content.splitlines() if line.strip()])
+    return SheetContentResponse(
+        result=content,
+        spreadsheet=spreadsheet,
+        worksheet=worksheet,
+        from_row=from_row,
+        limit=limit,
+        row_count=row_count,
+    )
+
 
 @action(is_consequential=True)
 def add_sheet_rows(
@@ -1322,30 +1338,62 @@ def add_sheet_rows(
             Literal[
                 "https://www.googleapis.com/auth/spreadsheets",
                 "https://www.googleapis.com/auth/drive.file",
-            ],
+            ]
         ],
     ],
     spreadsheet: str,
     worksheet: str,
     rows_to_add: RowData,
-) -> Response[str]:
-    """Add multiple rows to a Google sheet.
+) -> SpreadsheetMutationResponse:
+    if not rows_to_add.rows:
+        raise ActionError("rows_to_add must contain at least one row")
 
-    Args:
-        spreadsheet: Name, ID, or URL of the spreadsheet.
-        worksheet: Name of the sheet where data is added.
-        rows_to_add: The rows to be added to the end of the sheet.
-        oauth_access_token: The OAuth2 access token.
-
-    Returns:
-        Message indicating the success of the operation.
-    """
     gc = gspread.authorize(_Credentials.from_oauth2_secret(oauth_access_token))
     spreadsheet_obj = _open_spreadsheet(gc, spreadsheet)
-    worksheet = spreadsheet_obj.worksheet(worksheet)
-    worksheet.append_rows(values=rows_to_add.to_raw_data())
-    return Response(result="Row(s) were successfully added.")
+    ws = spreadsheet_obj.worksheet(worksheet)
+    ws.append_rows(values=rows_to_add.to_raw_data())
+
+    return SpreadsheetMutationResponse(
+        result="Rows appended successfully",
+        spreadsheet=spreadsheet,
+        worksheet=worksheet,
+        rows_written=len(rows_to_add.rows),
+    )
 ```
+
+This style mirrors your LinkedIn example: each action returns a concrete response model that adds validated metadata in addition to `result`/`error`.
+
+---
+
+### Community Fork: `actions-work-items` Drop-In Pattern
+
+**Source:** `joshyorko/actions` `community` branch (`work-items/` package)
+
+Use this when you want `robocorp-workitems` style producer-consumer flows outside classic robot-only contexts.
+
+**conda.yaml (pip section):**
+```yaml
+dependencies:
+  - python=3.12.11
+  - uv=0.9.28
+  - pip:
+      - actions-work-items==0.2.1
+```
+
+**Python usage:**
+```python
+from actions.work_items import inputs, outputs
+
+def process_queue() -> None:
+    for item in inputs:
+        with item:
+            payload = item.payload
+            outputs.create(payload={"processed": True, "source": payload})
+```
+
+**Migration map:**
+- before: `from robocorp import workitems`
+- after: `from actions.work_items import inputs, outputs`
 
 ---
 

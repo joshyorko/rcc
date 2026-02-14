@@ -1,378 +1,288 @@
-# Sema4ai Actions Framework
+# Sema4AI Actions and MCP (Current Patterns)
 
-Build MCP tools and AI Actions that connect AI agents with the real world.
+Use this reference when creating or reviewing Action Packages, MCP tools, and typed action responses.
 
-## Quick Start
+## What this stack provides
+
+- `sema4ai-action-server`: hosts Python actions and MCP endpoints.
+- `sema4ai-actions`: `@action`, `Response`, `ActionError`, `Secret`, `OAuth2Secret`, `Request`.
+- `sema4ai-mcp`: `@tool`, `@resource`, `@prompt` decorators for MCP.
+- `actions-work-items` (community fork package): drop-in replacement for `robocorp-workitems` API with `actions.work_items` import path.
+
+Action Server exposes:
+- `http://localhost:8080/openapi.json`
+- `http://localhost:8080/docs`
+- `http://localhost:8080/mcp`
+- `http://localhost:8080/runs`
+
+## Community fork specifics (`joshyorko/actions`, `community`)
+
+From the `community` branch:
+- keeps `sema4ai-actions` and `sema4ai-mcp` for Actions/MCP.
+- adds `actions-work-items` as a standalone package for producer-consumer workflows.
+- maintains dual-tier frontend build logic (`community` and `enterprise`) with vendored design-system packages for community builds.
+
+Key commands:
 
 ```bash
-# Build from source (recommended)
-git clone https://github.com/joshyorko/actions.git
-cd actions
+# Build community binary from source
 rcc run -r action_server/developer/toolkit.yaml -t community
 
-# Or install from PyPI
-pip install sema4ai-action-server
-
-# Create new project
-action-server new
-
-# Start server
-cd my-project
-action-server start  # Available at http://localhost:8080
+# Frontend tier build
+cd action_server/frontend
+inv build-frontend --tier=community
 ```
 
-## package.yaml (v2 Spec)
+## Quick start
 
-The modern configuration format for Actions:
+```bash
+# 1) Install Action Server
+pip install sema4ai-action-server
+
+# 2) Bootstrap package
+action-server new
+cd my-project
+
+# 3) Start server
+action-server start
+```
+
+You can also run actions directly without Action Server:
+
+```bash
+python -m sema4ai.actions run actions.py
+python -m sema4ai.actions run . -t my_action --json-input input.json
+```
+
+## package.yaml (v2)
+
+Use `package.yaml` for Action Packages. `conda.yaml`/`action-server.yaml` are legacy formats.
 
 ```yaml
+name: My Action Package
+description: Production actions for internal systems
+version: 0.1.0
 spec-version: v2
-
-name: my-actions-package
-description: Custom automation actions
 
 dependencies:
   conda-forge:
-    - python=3.12.10
-    - uv=0.6.11
+    - python=3.12.11
+    - uv=0.9.28
   pypi:
-    - sema4ai-actions=1.3.15
-    - sema4ai-mcp=0.0.1
-    - requests>=2.32.0
-
-pythonpath:
-  - src
-  - tests
+    - sema4ai-actions=1.6.6
+    - sema4ai-mcp=0.0.3
+    - pydantic=2.11.7
 
 dev-dependencies:
   pypi:
     - pytest=8.3.3
-    - black=24.10.0
+    - ruff=0.8.6
 
 dev-tasks:
   test: pytest tests
-  format: black src tests
-  lint: ruff check src
+  lint: ruff check .
+
+pythonpath:
+  - src
 
 packaging:
   exclude:
     - ./.git/**
     - ./output/**
-    - ./**/__pycache__
-    - ./.venv/**
+    - ./**/*.pyc
 ```
 
-## Creating Actions
+Version note: pins above are current as of 2026-02-07. Recheck PyPI before bumping.
 
-### Basic Action
+## Action definitions
+
+### Basic action
 
 ```python
 from sema4ai.actions import action
 
-@action
-def greet_user(name: str) -> str:
-    """
-    Greets a user by name
+@action(is_consequential=False)
+def summarize_note(text: str) -> str:
+    """Summarize a short note.
 
     Args:
-        name: The user's name to greet
+        text: Input note.
 
     Returns:
-        A personalized greeting message
+        Concise summary.
     """
-    return f"Hello, {name}! Welcome to the automation platform."
+    return text[:140]
 ```
 
-### Action with Complex Types
+### Typed response models (recommended)
+
+Prefer returning typed `Response` subclasses instead of untyped dict payloads.
 
 ```python
-from sema4ai.actions import action
-from pydantic import BaseModel
-from typing import List
+from typing import Any
+from pydantic import Field
+from sema4ai.actions import Response, action
 
-class EmailData(BaseModel):
-    subject: str
-    body: str
-    recipients: List[str]
+class JobSearchResponse(Response[str]):
+    run_id: str = ""
+    total_jobs: int = 0
+    easy_apply_count: int = 0
+    filters: dict[str, bool] = Field(default_factory=dict)
 
-class EmailResult(BaseModel):
-    success: bool
-    message_id: str | None
-    error: str | None
+class JobDetailsResponse(Response[dict[str, Any]]):
+    job_id: str = ""
+    company: str = ""
+    title: str = ""
 
-@action
-def send_email(email: EmailData) -> EmailResult:
-    """
-    Send an email through the automation platform
-
-    Args:
-        email: Email data including subject, body, and recipients
-
-    Returns:
-        Result indicating success or failure
-    """
-    try:
-        # Send email logic here
-        return EmailResult(success=True, message_id="msg-123", error=None)
-    except Exception as e:
-        return EmailResult(success=False, message_id=None, error=str(e))
+@action(is_consequential=False)
+def search_jobs(query: str) -> JobSearchResponse:
+    """Search jobs and return typed metadata."""
+    return JobSearchResponse(
+        result=f"Found jobs for: {query}",
+        run_id="run_123",
+        total_jobs=24,
+        easy_apply_count=11,
+        filters={"remote": True},
+    )
 ```
 
-## Creating MCP Tools
+Why this pattern is preferred:
+- validates fields with Pydantic,
+- exposes schemas cleanly to OpenAPI/MCP consumers,
+- keeps outputs stable across action calls.
 
-MCP (Model Context Protocol) tools enable AI agents to perform actions. Use `sema4ai.mcp` decorators:
+### Expected failures with `ActionError`
 
-### @tool Decorator
+If an action returns `Response[...]`, raise `ActionError` for expected business failures.
 
 ```python
-from sema4ai.mcp import tool
+from sema4ai.actions import ActionError, Response, action
 
-@tool
-def search_documents(query: str, max_results: int = 10) -> str:
-    """
-    Search through document archive
-
-    Args:
-        query: The search query string
-        max_results: Maximum number of results to return
-
-    Returns:
-        JSON string with search results
-    """
-    results = perform_search(query, max_results)
-    return json.dumps(results)
+@action(is_consequential=True)
+def cancel_run(run_id: str) -> Response[str]:
+    if not run_id:
+        raise ActionError("run_id is required")
+    return Response(result=f"Run {run_id} canceled")
 ```
 
-### Tool Hints (Behavior Descriptors)
+## Secrets and request context
 
-The `@tool` decorator accepts hints to describe tool behavior:
+### `Secret`
 
 ```python
-from sema4ai.mcp import tool
-
-@tool(
-    read_only_hint=True,      # Tool only reads data, doesn't modify
-    destructive_hint=False,   # Tool doesn't permanently delete/modify
-    idempotent_hint=True,     # Same inputs produce same results
-    open_world_hint=False     # Tool operates in closed system
-)
-def get_user_profile(user_id: str) -> dict:
-    """Fetch user profile (read-only operation)."""
-    return fetch_profile(user_id)
-
-@tool(destructive_hint=True)
-def delete_record(record_id: str) -> bool:
-    """Delete a record permanently."""
-    return perform_delete(record_id)
-```
-
-### @prompt and @resource Decorators
-
-```python
-from sema4ai.mcp import prompt, resource
-
-@prompt
-def generate_summary_prompt(context: str) -> str:
-    """Generate a prompt for LLM summarization."""
-    return f"Summarize the following: {context}"
-
-@resource
-def get_system_status() -> dict:
-    """Provide system status data to the LLM."""
-    return {"status": "healthy", "uptime": get_uptime()}
-```
-
-### Full MCP Example
-
-```python
-from sema4ai.mcp import tool, prompt, resource
-import json
-
-@tool
-def assign_ticket(ticket_id: str, user_id: str) -> bool:
-    """
-    Assign a ticket to a user.
-
-    Args:
-        ticket_id: The ID of the ticket to assign
-        user_id: The ID of the user to assign the ticket to
-
-    Returns:
-        True if successful, False otherwise
-    """
-    # Ticket assignment logic
-    return True
-
-@resource
-def get_open_tickets() -> str:
-    """Get all open tickets as JSON."""
-    tickets = fetch_open_tickets()
-    return json.dumps(tickets)
-
-@prompt
-def ticket_summary_prompt(ticket_data: str) -> str:
-    """Generate prompt for ticket summarization."""
-    return f"Summarize this ticket: {ticket_data}"
-```
-
-## Running the Action Server
-
-```bash
-# Start with default settings
-action-server start
-
-# Custom port
-action-server start --port 9000
-
-# With specific actions directory
-action-server start --actions-dir ./my_actions
-
-# Development mode (auto-reload)
-action-server start --reload
-```
-
-**Endpoints:**
-- UI: `http://localhost:8080`
-- API: `http://localhost:8080/api/actions`
-- MCP: `http://localhost:8080/mcp`
-- OpenAPI: `http://localhost:8080/openapi.json`
-
-## Integration with Claude Code
-
-Configure the action server as an MCP server in `.mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "my-actions": {
-      "type": "http",
-      "url": "http://localhost:8080/mcp"
-    }
-  }
-}
-```
-
-## Action Secrets
-
-Handle sensitive configuration securely:
-
-```python
-from sema4ai.actions import action, Secret
+from sema4ai.actions import Secret, action
 
 @action
-def fetch_data(api_key: Secret, endpoint: str) -> str:
-    """
-    Fetch data from external API
-
-    Args:
-        api_key: API key for authentication (handled securely)
-        endpoint: API endpoint to call
-
-    Returns:
-        Response data from the API
-    """
-    headers = {"Authorization": f"Bearer {api_key.value}"}
-    response = requests.get(endpoint, headers=headers)
-    return response.text
+def call_api(secret: Secret, endpoint: str) -> str:
+    token = secret.value
+    return f"Calling {endpoint} with token length {len(token)}"
 ```
 
-## OAuth2 Integration (Typed Scopes)
-
-Sema4ai Actions supports typed OAuth2 secrets with explicit provider and scope definitions:
+### `OAuth2Secret`
 
 ```python
 from typing import Literal
 from sema4ai.actions import OAuth2Secret, action
 
-@action
-def read_google_spreadsheet(
-    name: str,
+@action(is_consequential=False)
+def read_sheet(
+    sheet_id: str,
     google_secret: OAuth2Secret[
-        Literal["google"],  # Provider
+        Literal["google"],
         list[
             Literal[
                 "https://www.googleapis.com/auth/spreadsheets.readonly",
                 "https://www.googleapis.com/auth/drive.readonly",
             ]
-        ],  # Required scopes
+        ],
     ],
 ) -> str:
-    """
-    Read data from a Google Spreadsheet.
-
-    Args:
-        name: Spreadsheet name or ID
-        google_secret: Google OAuth2 credentials (auto-managed)
-
-    Returns:
-        Spreadsheet data as JSON string
-    """
-    headers = {"Authorization": f"Bearer {google_secret.access_token}"}
-    # Use Google Sheets API
-    return fetch_spreadsheet(name, headers)
+    return f"Read {sheet_id} using provider={google_secret.provider}"
 ```
 
-**OAuth2 Secret Payload Structure (sent by action server):**
-```json
-{
-  "google_secret": {
-    "provider": "google",
-    "scopes": ["https://www.googleapis.com/auth/spreadsheets.readonly"],
-    "access_token": "<managed-access-token>",
-    "metadata": { "any": "additional info" }
-  }
-}
+### `Request`
+
+```python
+from sema4ai.actions import Request, action
+
+@action
+def inspect_request(request: Request) -> dict[str, str | None]:
+    return {
+        "user_agent": request.headers.get("user-agent"),
+        "session_cookie": request.cookies.get("session"),
+    }
 ```
 
-## Project Structure
+## MCP tools/resources/prompts
 
-```
-my-actions/
-├── package.yaml           # Dependencies and config
-├── actions/
-│   ├── __init__.py
-│   ├── email_actions.py   # Email-related actions
-│   ├── file_actions.py    # File processing actions
-│   └── api_actions.py     # External API actions
-├── tests/
-│   ├── test_email.py
-│   └── test_files.py
-└── output/                # Generated artifacts
-```
+Use `sema4ai.mcp` when building MCP-native interfaces.
 
-## CI/CD Integration
+```python
+from sema4ai.mcp import prompt, resource, tool
 
-### GitHub Actions
+@tool(read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=False)
+def get_ticket(ticket_id: str) -> dict[str, str]:
+    """Fetch ticket data by id."""
+    return {"id": ticket_id, "status": "open"}
 
-```yaml
-name: Test Actions
+@resource("tickets://{ticket_id}")
+def ticket_resource(ticket_id: str) -> dict[str, str]:
+    """Provide ticket resource payload."""
+    return {"id": ticket_id, "summary": "Login issue"}
 
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install RCC
-        run: |
-          curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
-          chmod +x rcc && sudo mv rcc /usr/local/bin/
-
-      - name: Run tests
-        run: rcc run -t test
-
-      - name: Lint
-        run: rcc run -t lint
+@prompt
+def summarize_ticket(ticket_text: str) -> str:
+    """Create prompt text for LLM summarization."""
+    return f"Summarize ticket:\n{ticket_text}"
 ```
 
-## Best Practices
+## Work items in community builds (`actions-work-items`)
 
-1. **Type Hints**: Always use type hints for action parameters and returns
-2. **Docstrings**: Write clear docstrings - they become action descriptions
-3. **Pydantic Models**: Use Pydantic for complex input/output types
-4. **Error Handling**: Return structured error responses, don't raise exceptions
-5. **Secrets**: Never hardcode credentials, use Secret types
-6. **Testing**: Write tests for all actions
-7. **Versioning**: Pin dependency versions in package.yaml
+If you are using the community fork's published library (`actions-work-items`, PyPI `0.2.1` as of 2026-02-07), use:
+
+```bash
+pip install actions-work-items
+```
+
+```python
+from actions.work_items import inputs, outputs
+
+for item in inputs:
+    with item:
+        outputs.create(payload=item.payload)
+```
+
+Migration mapping:
+- old: `from robocorp import workitems`
+- new: `from actions.work_items import inputs, outputs`
+
+Behavior goal is drop-in compatibility for core producer-consumer patterns.
+
+## Multi-package serving pattern
+
+When serving actions from multiple directories, import each into a shared datadir and start with sync disabled.
+
+```bash
+action-server import --dir=./actions-a --datadir=./.action-server
+action-server import --dir=./actions-b --datadir=./.action-server
+action-server start --actions-sync=false --datadir=./.action-server
+```
+
+## Practical quality rules
+
+1. Use explicit return types for every action.
+2. Prefer typed `Response` subclasses for non-trivial outputs.
+3. Keep docstrings in Google style so schemas stay understandable.
+4. Mark side-effecting actions with `is_consequential=True`.
+5. Keep `package.yaml` pins intentional and date-stamped.
+6. Never hardcode secrets; use `Secret`/`OAuth2Secret`.
+7. Keep MCP tools small and deterministic unless open-world behavior is intentional.
+
+## Primary references
+
+- https://github.com/Sema4AI/actions
+- https://github.com/Sema4AI/actions/blob/master/action_server/docs/guides/00-startup-command-line.md
+- https://github.com/Sema4AI/actions/blob/master/action_server/docs/guides/01-package-yaml.md
+- https://github.com/Sema4AI/actions/blob/master/action_server/docs/guides/07-secrets.md
+- https://github.com/Sema4AI/actions/blob/master/actions/docs/api/sema4ai.actions.md
+- https://github.com/Sema4AI/actions/blob/master/mcp/docs/api/sema4ai.mcp.md

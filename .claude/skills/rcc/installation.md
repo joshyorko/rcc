@@ -1,8 +1,18 @@
-# RCC & Action Server Installation Guide
+# RCC & Action Server Installation Guide (Community Fork)
+
+This guide is aligned to the community toolchain:
+- RCC: `joshyorko/rcc`
+- Action Server: `joshyorko/actions` (`community` branch)
+
+Recommended install order:
+1. Homebrew casks (macOS/Linux)
+2. Source build from `community` branch (when you need fork-specific behavior)
+3. Direct binary downloads (CI/CD, containers, air-gapped staging)
+4. PyPI install (`sema4ai-action-server`) for quick compatibility setup
+
+---
 
 ## Recommended: Homebrew (macOS & Linux)
-
-Homebrew is the **recommended** installation method for both macOS and Linux. It provides automatic updates and easy management.
 
 ### RCC Installation
 
@@ -34,7 +44,6 @@ action-server version
 ### Updates
 
 ```bash
-# Update Homebrew and all casks
 brew update
 brew upgrade --cask rcc
 brew upgrade --cask action-server
@@ -49,8 +58,6 @@ brew uninstall --cask joshyorko/tools/action-server
 
 ### Brewfile (for dotfiles/DevContainers)
 
-Add to your `Brewfile`:
-
 ```ruby
 tap "joshyorko/tools"
 cask "rcc"
@@ -64,6 +71,32 @@ cask "action-server"
 | Linux x64 | ✅ Native | ✅ Native |
 | macOS Intel | ✅ Native | ✅ Native |
 | macOS Apple Silicon | ✅ Native | ✅ Native |
+
+---
+
+## Build from Source (Community Branch)
+
+Use this when you need community-branch frontend behavior or build-time customization.
+
+```bash
+# Clone community fork
+git clone https://github.com/joshyorko/actions.git
+cd actions
+
+# Build action-server binary (community tier)
+rcc run -r action_server/developer/toolkit.yaml -t community
+
+# Output binary
+action_server/dist/final/action-server
+```
+
+Optional frontend-only build:
+
+```bash
+cd action_server/frontend
+npm ci
+inv build-frontend --tier=community
+```
 
 ---
 
@@ -109,11 +142,29 @@ chmod +x action-server && sudo mv action-server /usr/local/bin/
 
 ---
 
-## Alternative: PyPI (Action Server only)
+## Alternative: PyPI (Compatibility Path)
 
 ```bash
 pip install sema4ai-action-server
 action-server version
+```
+
+Use source/binary installs from `joshyorko/actions` when you specifically need community-fork build behavior.
+
+---
+
+## Optional: Community Work Items Library
+
+Install the published drop-in work-items replacement:
+
+```bash
+pip install actions-work-items
+```
+
+Import style:
+
+```python
+from actions.work_items import inputs, outputs
 ```
 
 ---
@@ -125,19 +176,17 @@ action-server version
 ```yaml
 - name: Install RCC & Action Server
   run: |
-    # Install Homebrew (if not present)
     if ! command -v brew &> /dev/null; then
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
       eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
-    # Install tools
     brew install --cask joshyorko/tools/rcc
     brew install --cask joshyorko/tools/action-server
 ```
 
-Or direct download (faster in CI):
+Or direct downloads:
 
 ```yaml
 - name: Install RCC
@@ -145,12 +194,17 @@ Or direct download (faster in CI):
     curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64
     chmod +x rcc && sudo mv rcc /usr/local/bin/
     rcc version
+
+- name: Install Action Server
+  run: |
+    curl -o action-server https://github.com/joshyorko/actions/releases/latest/download/action-server-linux64
+    chmod +x action-server && sudo mv action-server /usr/local/bin/
+    action-server version
 ```
 
 ### Docker
 
 ```dockerfile
-# Using direct download
 RUN curl -o /usr/local/bin/rcc \
     https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64 && \
     chmod +x /usr/local/bin/rcc
@@ -167,32 +221,21 @@ RUN curl -o /usr/local/bin/action-server \
 ### Verify Installation
 
 ```bash
-# Check versions
 rcc version
 action-server version
-
-# Run diagnostics
 rcc configure diagnostics
 ```
 
-### Shell Completion (Optional)
-
-If commands aren't found after installation:
+### Shell Refresh
 
 ```bash
-# Refresh shell hash table
 hash -r
-
-# Or start a new terminal session
 ```
 
-### Initialize Shared Holotree (Optional, for teams)
+### Initialize Shared Holotree (Optional, team setups)
 
 ```bash
-# Requires sudo/admin
 sudo rcc holotree shared --enable
-
-# Initialize for current user
 rcc holotree init
 ```
 
@@ -200,35 +243,30 @@ rcc holotree init
 
 ## Troubleshooting
 
-### "Command not found" after installation
+### "Command not found" after install
 
 ```bash
-# Refresh shell
 hash -r
-
-# Or add to PATH manually
 export PATH="/usr/local/bin:$PATH"
 ```
 
 ### Homebrew cask conflicts
 
-If you have the upstream `robocorp/tools/rcc` installed:
-
 ```bash
-# Uninstall upstream first
-brew uninstall --cask robocorp/tools/rcc
+# Remove upstream casks first if present
+brew uninstall --cask robocorp/tools/rcc || true
+brew uninstall --cask robocorp/tools/action-server || true
 
-# Install community fork
+# Install community casks
 brew install --cask joshyorko/tools/rcc
+brew install --cask joshyorko/tools/action-server
 ```
 
 ### Permission denied on Linux
 
 ```bash
-# Ensure binary is executable
 chmod +x /usr/local/bin/rcc
-
-# If using shared holotree
+chmod +x /usr/local/bin/action-server
 sudo chmod -R 777 /opt/robocorp
 ```
 
@@ -236,6 +274,8 @@ sudo chmod -R 777 /opt/robocorp
 
 ## Resources
 
+- **Community Actions Repo**: https://github.com/joshyorko/actions/tree/community
 - **Homebrew Tap**: https://github.com/joshyorko/homebrew-tools
 - **RCC Releases**: https://github.com/joshyorko/rcc/releases
 - **Action Server Releases**: https://github.com/joshyorko/actions/releases
+- **actions-work-items (PyPI)**: https://pypi.org/project/actions-work-items/

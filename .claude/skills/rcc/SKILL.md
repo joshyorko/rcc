@@ -212,10 +212,22 @@ RCC automatically injects these environment variables when running tasks:
 
 ```python
 import os
+from pathlib import Path
 
-# Access in your code
-artifacts_dir = os.environ.get("ROBOT_ARTIFACTS", "output")
-robot_root = os.environ.get("ROBOT_ROOT", ".")
+from robocorp.tasks import get_current_task, get_output_dir
+
+def resolve_output_dir() -> Path:
+    output_dir = get_output_dir()
+    if output_dir is not None:
+        return output_dir.resolve()
+    # Fallback for code paths running outside robocorp.tasks runtime.
+    return Path(os.environ.get("ROBOT_ARTIFACTS", "output")).resolve()
+
+def current_task_name() -> str:
+    current = get_current_task()
+    return current.name if current is not None else "<outside-task>"
+
+robot_root = Path(os.environ.get("ROBOT_ROOT", ".")).resolve()
 ```
 
 ## Dependency Freezing for Production
@@ -271,14 +283,31 @@ rcc holotree shared --enable       # Windows (admin)
 
 ## Robocorp Python Libraries
 
-### robocorp.tasks - Task Decorator
+### robocorp.tasks - Task Decorator + Runtime Helpers
 
 ```python
-from robocorp.tasks import task
+from pathlib import Path
+import os
+
+from robocorp.tasks import get_current_task, get_output_dir, task
+
+def resolve_output_dir() -> Path:
+    output = get_output_dir()
+    if output is not None:
+        return output.resolve()
+    # Fallback for execution outside robocorp.tasks runtime.
+    return Path(os.environ.get("ROBOT_ARTIFACTS", "output")).resolve()
+
+def current_task_name() -> str:
+    current = get_current_task()
+    return current.name if current is not None else "<outside-task>"
 
 @task
 def my_task():
     """Task entry point - discovered and run by RCC."""
+    output = resolve_output_dir()
+    output.mkdir(parents=True, exist_ok=True)
+    print(f"Running {current_task_name()} with artifacts in {output}")
     process_data()
 ```
 

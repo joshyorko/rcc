@@ -706,12 +706,22 @@ rccPostInstall:
 **Access in Python:**
 ```python
 import os
+from pathlib import Path
 
-# Get artifact directory for output files
-artifacts = os.environ.get("ROBOT_ARTIFACTS", "output")
+from robocorp.tasks import get_current_task, get_output_dir
 
-# Get robot root for relative path resolution
-root = os.environ.get("ROBOT_ROOT", ".")
+def resolve_output_dir() -> Path:
+    output_dir = get_output_dir()
+    if output_dir is not None:
+        return output_dir.resolve()
+    # Fallback for code paths running outside robocorp.tasks runtime.
+    return Path(os.environ.get("ROBOT_ARTIFACTS", "output")).resolve()
+
+def current_task_name() -> str:
+    current = get_current_task()
+    return current.name if current is not None else "<outside-task>"
+
+root = Path(os.environ.get("ROBOT_ROOT", ".")).resolve()
 ```
 
 ### Work Items Environment Variables
