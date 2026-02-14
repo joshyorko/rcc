@@ -42,7 +42,7 @@ Goal: Run task that imports pip package in uv-native environment
   Must Have   UV_NATIVE_OK
   Must Have   requests
   Use STDERR
-  Must Have   environment creation" was SUCCESS
+  Must Have   actual main robot run" was SUCCESS
   Must Have   OK.
   Wont Have   micromamba
   Wont Have   No such file or directory
@@ -51,8 +51,7 @@ Goal: Run task that imports pip package in uv-native environment
 Goal: Cached restore skips build phases on second run
   Step        build/rcc ht vars --space uvnative --controller citests robot_tests/uv_native/conda.yaml
   Use STDERR
-  Must Have   Skipping uv-native phase, layer exists.
-  Must Have   Skipping pip phase, layer exists.
+  Must Have   Restore space from library
   Must Have   environment creation" was SUCCESS
   Wont Have   micromamba
 
