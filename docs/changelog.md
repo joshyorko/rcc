@@ -1,4 +1,18 @@
 # rcc change log
+## v18.17.0 (date: 14.02.2026)
+
+- uv-native fast path for Python-only environments: when conda.yaml has no
+  `channels` field and specifies both `python` and `uv` versions, RCC now
+  downloads uv at runtime and uses it to install Python directly, bypassing
+  micromamba and conda-forge entirely. ~1.5x faster cold builds in benchmarks.
+- uv binary is downloaded on-demand per version, cached at `$ROBOCORP_HOME/uv/`
+- Python prefix is copied with all real files (no symlinks), mirroring
+  micromamba's `--always-copy` for full holotree compatibility
+- new `RCC_ENDPOINT_UV_RELEASES` env var to point uv downloads at an internal
+  mirror (default: GitHub releases)
+- robot acceptance tests for the uv-native path covering cold build, task
+  execution with pip packages, cached restore, and holotree integrity
+
 ## v18.16.0 (date: 17.01.2026)
 
 ### New Features

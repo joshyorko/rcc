@@ -187,11 +187,17 @@ func CondaExecutionEnvironment(location string, inject []string, full bool) []st
 	} else {
 		common.Timeline("temp directory management was disabled.")
 	}
+	if pathlib.IsFile(filepath.Join(location, "pyvenv.cfg")) {
+		environment = append(environment, "VIRTUAL_ENV="+location)
+	} else {
+		environment = append(environment,
+			"CONDA_DEFAULT_ENV=rcc",
+			"CONDA_PREFIX="+location,
+			"CONDA_PROMPT_MODIFIER=(rcc) ",
+			"CONDA_SHLVL=1",
+		)
+	}
 	environment = append(environment,
-		"CONDA_DEFAULT_ENV=rcc",
-		"CONDA_PREFIX="+location,
-		"CONDA_PROMPT_MODIFIER=(rcc) ",
-		"CONDA_SHLVL=1",
 		"PYTHONHOME=",
 		"PYTHONSTARTUP=",
 		"PYTHONEXECUTABLE=",

@@ -86,4 +86,4 @@ In the robot dimension, this means we have each file once on the Hololib side wi
 
 Each hotel room in the analogy is a Holotree space, and we can load in different content to each space and keep them independent and free from file locking.
 
-> When we encounter a new environment, we still need to use conda and pip stacks to build the new setup. Environment building will take anything between one to five minutes, depending on the disk and network speeds of the building machine.
+> When we encounter a new environment, we still need to build it. The conda-forge path uses micromamba and pip, while the uv-native path (no `channels:` in conda.yaml) uses uv to install Python and pip packages directly, which is faster for Python-only workflows. Either way, environment building depends on disk and network speeds of the building machine.

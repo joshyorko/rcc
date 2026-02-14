@@ -45,6 +45,7 @@ func loadEnvOverrides() *Settings {
 		"RCC_ENDPOINT_PYPI":          "pypi",
 		"RCC_ENDPOINT_PYPI_TRUSTED":  "pypi-trusted",
 		"RCC_ENDPOINT_CONDA":         "conda",
+		"RCC_ENDPOINT_UV_RELEASES":   "uv-releases",
 	}
 
 	// Mapping of env var -> autoupdates key in settings
@@ -234,6 +235,14 @@ func (it gateway) PypiTrustedHost() string {
 
 func (it gateway) CondaURL() string {
 	return it.Endpoint("conda")
+}
+
+func (it gateway) UvReleasesURL() string {
+	endpoint := it.Endpoint("uv-releases")
+	if len(endpoint) == 0 {
+		return "https://github.com/astral-sh/uv/releases/download"
+	}
+	return endpoint
 }
 
 func (it gateway) NoProxy() string {

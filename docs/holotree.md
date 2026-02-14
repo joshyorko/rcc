@@ -323,8 +323,9 @@ stats.Statsline(tabbed, "Dirty", asPercent, func(the *BuildEvent) float64 {
 
 ### Layer Optimization
 
-Environments are built in layers: micromamba packages first, then pip packages,
-then post-install scripts. Each layer gets its own catalog:
+Environments are built in layers: base packages first (micromamba for
+conda-forge path, or uv python install for the uv-native path), then pip
+packages, then post-install scripts. Each layer gets its own catalog:
 
 ```go
 // From htfs/commands.go

@@ -1,0 +1,6 @@
+tasks:
+  Verify UV Native:
+    shell: python task.py
+environmentConfigs:
+  - conda.yaml
+artifactsDir: output
