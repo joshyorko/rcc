@@ -47,12 +47,6 @@ func capturePreformatted(incoming string) ([]string, string) {
 	return result, strings.Join(other, "")
 }
 
-const uvNativeActivateScript = `#!/bin/bash
-
-export PATH="{{.Live}}/bin:$PATH"
-"{{.Rcc}}" internal env -l after
-`
-
 func createScript(targetFolder string) (string, error) {
 	scriptTemplate := activateScript
 	if pathlib.IsFile(filepath.Join(targetFolder, "pyvenv.cfg")) || pathlib.IsFile(filepath.Join(targetFolder, ".rcc_uv_prefix")) {

@@ -122,19 +122,51 @@ func copyPythonPrefix(uvPythonCache, pythonVersion, targetFolder string, planWri
 // removeExternallyManaged deletes the PEP 668 EXTERNALLY-MANAGED marker from
 // the Python prefix so uv pip install can install packages directly into it.
 func removeExternallyManaged(targetFolder string) {
-	libDir := filepath.Join(targetFolder, "lib")
-	entries, err := os.ReadDir(libDir)
-	if err != nil {
-		return
-	}
-	for _, entry := range entries {
-		if entry.IsDir() && strings.HasPrefix(entry.Name(), "python") {
-			marker := filepath.Join(libDir, entry.Name(), "EXTERNALLY-MANAGED")
-			if err := os.Remove(marker); err == nil {
-				common.Debug("Removed EXTERNALLY-MANAGED marker from %s", marker)
+	candidates := make([]string, 0, 8)
+	for _, dirname := range []string{"lib", "Lib"} {
+		libDir := filepath.Join(targetFolder, dirname)
+		candidates = append(candidates, filepath.Join(libDir, EXTERNALLY_MANAGED))
+		entries, err := os.ReadDir(libDir)
+		if err != nil {
+			continue
+		}
+		for _, entry := range entries {
+			name := strings.ToLower(entry.Name())
+			if entry.IsDir() && strings.HasPrefix(name, "python") {
+				candidates = append(candidates, filepath.Join(libDir, entry.Name(), EXTERNALLY_MANAGED))
 			}
 		}
 	}
+
+	removed := false
+	seen := make(map[string]bool, len(candidates))
+	for _, marker := range candidates {
+		if seen[marker] {
+			continue
+		}
+		seen[marker] = true
+
+		err := os.Remove(marker)
+		if err == nil {
+			removed = true
+			common.Debug("Removed EXTERNALLY-MANAGED marker from %s", marker)
+			continue
+		}
+		if !os.IsNotExist(err) {
+			common.Debug("Could not remove EXTERNALLY-MANAGED marker from %s: %v", marker, err)
+		}
+	}
+
+	if !removed {
+		common.Debug("No EXTERNALLY-MANAGED marker found under %s", targetFolder)
+	}
+}
+
+func uvPythonTarget(python, targetFolder string) string {
+	if strings.TrimSpace(python) != "" {
+		return python
+	}
+	return targetFolder
 }
 
 // copyPrefixFile copies a single file preserving permissions
@@ -262,9 +294,11 @@ func uvNativePipLayer(fingerprint, requirementsText, targetFolder, uvBinary stri
 		pretty.Progress(8, "Running uv pip install phase. [layer: %s]", fingerprint)
 		common.Debug("Updating new environment at %v with uv pip requirements from %v (size: %v)", targetFolder, requirementsText, size)
 
-		uvCommand := common.NewCommander(uvBinary, "pip", "install", "--python", targetFolder, "--link-mode", "copy", "--color", "never", "--cache-dir", common.UvCache(), "--find-links", common.WheelCache(), "--requirement", requirementsText)
+		uvTarget := uvPythonTarget(python, targetFolder)
+		uvCommand := common.NewCommander(uvBinary, "pip", "install", "--python", uvTarget, "--link-mode", "copy", "--color", "never", "--cache-dir", common.UvCache(), "--find-links", common.WheelCache(), "--requirement", requirementsText)
 		uvCommand.Option("--index-url", settings.Global.PypiURL())
 		uvCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
+		common.Debug("uv-native pip will target: %s", uvTarget)
 
 		common.Debug("===  uv pip install phase ===")
 		code, err := LiveExecution(planWriter, targetFolder, uvCommand.CLI()...)

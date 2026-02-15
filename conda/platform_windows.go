@@ -26,6 +26,9 @@ const (
 		"set \"MAMBA_ROOT_PREFIX={{.MambaRootPrefix}}\"\n" +
 		"for /f \"tokens=* usebackq\" %%a in ( `call \"{{.Micromamba}}\" shell activate -s cmd.exe -p \"{{.Live}}\"` ) do ( call \"%%a\" )\n" +
 		"call \"{{.Rcc}}\" internal env -l after\n"
+	uvNativeActivateScript = "@echo off\n" +
+		"set \"PATH={{.Live}}\\Library\\mingw-w64\\bin;{{.Live}}\\Library\\usr\\bin;{{.Live}}\\Library\\bin;{{.Live}}\\Scripts;{{.Live}}\\bin;{{.Live}};%PATH%\"\n" +
+		"call \"{{.Rcc}}\" internal env -l after\n"
 	commandSuffix = ".cmd"
 )
 

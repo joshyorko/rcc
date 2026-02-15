@@ -21,6 +21,11 @@ export MAMBA_ROOT_PREFIX={{.MambaRootPrefix}}
 eval "$('{{.Micromamba}}' shell activate -s bash -p {{.Live}})"
 "{{.Rcc}}" internal env -l after
 `
+	uvNativeActivateScript = `#!/bin/bash
+
+export PATH="{{.Live}}/bin:$PATH"
+"{{.Rcc}}" internal env -l after
+`
 	commandSuffix = ".sh"
 )
 

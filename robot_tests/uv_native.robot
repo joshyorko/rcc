@@ -32,6 +32,25 @@ Goal: Build uv-native environment and see correct variables
   Wont Have   micromamba
   Wont Have   No such file or directory
 
+Goal: Windows uv-native activation script uses cmd semantics
+  [Tags]    windows
+  ${is_windows}=    Is Windows
+  IF    not ${is_windows}
+    Skip    Windows-specific activation script check
+  END
+  Step        build/rcc ht vars --space uvnative --controller citests robot_tests/uv_native/conda.yaml
+  ${conda_prefix}=    Extract Env Value    ${robot_stdout}    CONDA_PREFIX
+  ${activate_cmd}=    Join Path    ${conda_prefix}    rcc_activate.cmd
+  ${activate_sh}=    Join Path    ${conda_prefix}    rcc_activate.sh
+  Must Exist    ${activate_cmd}
+  Wont Exist    ${activate_sh}
+  ${script}=    Get File    ${activate_cmd}
+  Should Contain    ${script}    @echo off
+  Should Contain    ${script}    set "PATH=
+  Should Contain    ${script}    call "
+  Should Not Contain    ${script}    \#!/bin/bash
+  Should Not Contain    ${script}    export PATH=
+
 Goal: Holotree integrity check passes after uv-native build
   Step        build/rcc holotree check --controller citests
   Use STDERR

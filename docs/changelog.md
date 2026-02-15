@@ -1,4 +1,18 @@
 # rcc change log
+## v18.17.1 (date: 15.02.2026)
+
+- fix: uv-native activation script on Windows now generates .cmd batch
+  script instead of bash; activation scripts defined per-platform
+- fix: `removeExternallyManaged` checks both `lib/` and `Lib/` for
+  Windows Python layout compatibility
+- fix: `uv pip install --python` now resolves to actual python binary
+  when available, fixing pip target detection on Windows
+- tests: added unit tests for `removeExternallyManaged` and `uvPythonTarget`
+- tests: Windows-specific robot test for activation script semantics
+- tests: `extract_env_value` helper handles case-insensitive `SET` output
+- fix: `ValidateUvNative` now rejects conda deps other than `python` and
+  `uv`, preventing silent package omission when channels are missing (GH#82)
+
 ## v18.17.0 (date: 14.02.2026)
 
 - uv-native fast path for Python-only environments: when conda.yaml has no
