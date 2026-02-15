@@ -181,6 +181,31 @@ func TestCanGetLayersFromCondaYaml(t *testing.T) {
 	must_be.Equal("d310697aca0840a1", fingerprints[2])
 }
 
+func TestValidateUvNativeRejectsExtraDeps(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	valid, err := conda.CondaYamlFrom([]byte(`
+dependencies:
+  - python=3.10.15
+  - uv=0.10.2
+`))
+	must_be.Nil(err)
+	must_be.True(valid.IsUvNative())
+	must_be.Nil(valid.ValidateUvNative())
+
+	invalid, err := conda.CondaYamlFrom([]byte(`
+dependencies:
+  - python=3.10.15
+  - uv=0.10.2
+  - invoke=2.2.0
+`))
+	must_be.Nil(err)
+	must_be.True(invalid.IsUvNative())
+	err = invalid.ValidateUvNative()
+	wont_be.Nil(err)
+	must_be.True(len(err.Error()) > 0)
+}
+
 func TestCacheability(t *testing.T) {
 	must_be, wont_be := hamlet.Specifications(t)
 

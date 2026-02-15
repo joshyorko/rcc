@@ -206,6 +206,11 @@ func (it *Environment) ValidateUvNative() error {
 	if len(uvVersion) == 0 {
 		return fmt.Errorf("uv-native mode requires an exact uv version (e.g., uv=0.5.1), but no version was specified")
 	}
+	for _, dependency := range it.Conda {
+		if !dependency.Match("python") && !dependency.Match("uv") {
+			return fmt.Errorf("uv-native mode (no channels) only supports python and uv as conda dependencies, but found %q -- add channels: [conda-forge] if you need conda packages", dependency.Original)
+		}
+	}
 	return nil
 }
 

@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -91,6 +92,17 @@ def parse_json(content):
     parsed = json.loads(content)
     assert isinstance(parsed, (list, dict)), f"Expecting list or dict; got {parsed!r}"
     return parsed
+
+
+def is_windows() -> bool:
+    return sys.platform == "win32"
+
+
+def extract_env_value(output: str, key: str) -> str:
+    pattern = rf"(?m)^(?:SET\s+)?{re.escape(key)}=(.*)$"
+    match = re.search(pattern, output, re.IGNORECASE)
+    assert match, f"Could not find environment variable {key!r} in output: {output!r}"
+    return match.group(1).strip()
 
 
 def run_with_env(
