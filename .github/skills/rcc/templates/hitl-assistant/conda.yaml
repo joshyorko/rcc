@@ -1,0 +1,13 @@
+# Conda config for HITL Assistant + Work Items
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12.11
+  - uv=0.9.28
+  - pip:
+      - robocorp
+      - rpaframework==<pin>
+      - rpaframework-assistant==<pin>
+      - robocorp-adapters-custom==0.1.3  # Verify latest on PyPI before pinning

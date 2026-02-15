@@ -1,0 +1,5 @@
+{
+  "RC_WORKITEM_ADAPTER": "robocorp_adapters_custom._sqlite.SQLiteAdapter",
+  "RC_WORKITEM_QUEUE_NAME": "hitl_queue",
+  "RC_WORKITEM_DB_PATH": "./devdata/workitems.db"
+}

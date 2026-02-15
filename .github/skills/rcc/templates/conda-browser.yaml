@@ -1,0 +1,20 @@
+# RCC Conda Configuration for Browser Automation
+# Uses uv for fast package installation + Playwright
+# https://github.com/joshyorko/rcc
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12.11
+  - nodejs=18.17.1 # Required for Playwright/Browser library
+  - uv=0.9.28 # Fast package installer
+
+  - pip:
+      - robotframework==7.1.1
+      - robotframework-browser==18.9.1
+      - rpaframework==28.6.1
+
+# Initialize browser after environment creation
+rccPostInstall:
+  - rfbrowser init

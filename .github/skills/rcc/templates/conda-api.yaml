@@ -1,0 +1,19 @@
+# RCC Conda Configuration for FastAPI Services
+# Uses uv for fast package installation
+# https://github.com/joshyorko/rcc
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12.11
+  - uv=0.9.28
+
+  - pip:
+      - fastapi==0.115.5
+      - uvicorn==0.32.1
+      - pydantic==2.10.0
+      - httpx==0.28.0
+      - python-multipart==0.0.17
+      - pytest==8.3.3
+      - pytest-asyncio==0.24.0

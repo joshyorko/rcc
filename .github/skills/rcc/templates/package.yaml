@@ -1,0 +1,45 @@
+# Sema4AI Actions package.yaml (v2 spec)
+# Community fork compatible:
+# https://github.com/joshyorko/actions/tree/community
+# Pins below are current as of 2026-02-07.
+
+spec-version: v2
+
+name: my-actions
+description: Custom AI actions and MCP tools
+
+dependencies:
+  conda-forge:
+    - python=3.12.11
+    - uv=0.9.28
+  pypi:
+    - sema4ai-actions=1.6.6
+    - sema4ai-mcp=0.0.3
+    - requests>=2.32.0
+    - pydantic>=2.11.7
+    # Optional community drop-in replacement for robocorp-workitems:
+    # - actions-work-items=0.2.1
+
+pythonpath:
+  - src
+  - tests
+
+dev-dependencies:
+  pypi:
+    - pytest=8.3.3
+    - black=24.10.0
+    - ruff=0.8.6
+
+dev-tasks:
+  test: pytest tests -v
+  format: black src tests
+  lint: ruff check src
+
+packaging:
+  exclude:
+    - ./.git/**
+    - ./output/**
+    - ./**/__pycache__
+    - ./.venv/**
+    - ./tests/**
+    - ./*.md

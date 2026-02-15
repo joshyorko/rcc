@@ -1,0 +1,30 @@
+# HITL Assistant + Work Items (RPA Framework + custom adapter)
+# Run:
+#   rcc ht vars -r robot.yaml
+#   rcc run -t Producer
+#   rcc run -t Consumer -e devdata/env-sqlite.json
+
+# Tasks
+# - Producer: creates example work items
+# - Consumer: asks a human to approve each item via Assistant UI
+
+tasks:
+  Producer:
+    shell: python tasks.py -t producer
+
+  Consumer:
+    shell: python tasks.py -t consumer
+
+environmentConfigs:
+  - conda.yaml
+
+artifactsDir: output
+
+PATH:
+  - .
+
+PYTHONPATH:
+  - .
+
+ignoreFiles:
+  - .gitignore

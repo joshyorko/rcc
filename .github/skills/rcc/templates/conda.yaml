@@ -1,0 +1,27 @@
+# RCC Conda Configuration with UV (Recommended)
+# uv provides faster package installation than pip
+# https://github.com/joshyorko/rcc
+
+channels:
+  - conda-forge
+
+dependencies:
+  # Python version - pin to specific version for reproducibility
+  - python=3.12.11
+
+  # UV - fast Python package installer (RECOMMENDED over pip)
+  # Install uv via conda, then use pip: section for packages
+  - uv=0.9.28
+
+  # Pip packages - uv will handle these faster than pip
+  - pip:
+      # Core packages - always pin versions
+      - requests==2.32.5
+      - pydantic==2.10.0
+
+      # Add your dependencies here with pinned versions
+      # - package-name==x.y.z
+
+# Post-install scripts (optional)
+# rccPostInstall:
+#   - rfbrowser init  # For browser automation
