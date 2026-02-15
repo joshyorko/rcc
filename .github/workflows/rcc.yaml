@@ -12,16 +12,30 @@ on:
 
     tags:
       - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
-    paths-ignore:
-      - ".github/workflows/**"
-      - ".dagger/**"
+    # Keep CI strict: only run for changes that affect RCC binaries/embedded artifacts.
+    # Note: GitHub does not evaluate `paths` filters for tag pushes.
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - "tasks.py"
+      - "assets/**"
+      - "templates/**"
+      - "docs/*.md"
+      - "blobs/**"
 
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - ".github/workflows/**"
-      - ".dagger/**"
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - "tasks.py"
+      - "assets/**"
+      - "templates/**"
+      - "docs/*.md"
+      - "blobs/**"
 
 permissions:
   contents: read
