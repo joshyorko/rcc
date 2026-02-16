@@ -148,7 +148,7 @@ func (it *internalClient) does(method string, request *Request) *Response {
 	}
 	// Only send installation identifier if tracking is allowed
 	if xviper.CanTrack() {
-		httpRequest.Header.Add("robocorp-installation-id", xviper.TrackingIdentity())
+		httpRequest.Header.Add("rcc-installation-id", xviper.TrackingIdentity())
 	}
 	httpRequest.Header.Add("User-Agent", common.UserAgent())
 	for name, value := range request.Headers {

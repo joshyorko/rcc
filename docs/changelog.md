@@ -244,7 +244,7 @@ This release includes significant documentation improvements to help the communi
 - docs: README.md updated with instructions for endpoint overrides and asset pipeline configuration
 - bugfix: fixed missing import (strings) in settings/settings.go after adding env override logic
 - build: validated all packages and developer toolkit after changes
-- note: default settings assets (robocorp_settings.yaml, sema4ai_settings.yaml) still point to Robocorp/Sema4.ai endpoints by default; override as needed
+- note: default settings assets (rcc_settings.yaml, sema4ai_settings.yaml) still point to Robocorp/Sema4.ai endpoints by default; override as needed
 
 ## v18.6.0 (date: 06.09.2025)
 

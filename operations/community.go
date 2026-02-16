@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	httpsPrefix    = "https:/"
-	githubPrefix   = "github.com"
-	robocorpPrefix = "robocorp"
-	archiveSuffix  = "archive"
-	zipFormat      = "%s.zip"
+	httpsPrefix   = "https:/"
+	githubPrefix  = "github.com"
+	rccPrefix     = "rcc"
+	archiveSuffix = "archive"
+	zipFormat     = "%s.zip"
 )
 
 var (
@@ -39,7 +39,7 @@ func CommunityLocation(name, branch string) string {
 		result = append(result, githubPrefix)
 	}
 	if size < 2 {
-		result = append(result, robocorpPrefix)
+		result = append(result, rccPrefix)
 	}
 	result = append(result, parts...)
 	result = append(result, archiveSuffix, fmt.Sprintf(zipFormat, branch))

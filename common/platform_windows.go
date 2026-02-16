@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	defaultRobocorpLocation = "%LOCALAPPDATA%\\robocorp"
-	defaultHoloLocation     = "%ProgramData%\\robocorp\\ht"
+	defaultLegacyLocation = "%LOCALAPPDATA%\\robocorp"
+	defaultRccLocation    = "%LOCALAPPDATA%\\rcc"
+	defaultHoloLocation   = "%ProgramData%\\rcc\\ht"
 )
 
 var (

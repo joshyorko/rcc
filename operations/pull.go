@@ -82,7 +82,7 @@ func downloadMissingEnvironmentParts(count int, origin, catalogName, selection s
 	request, err := http.NewRequest("POST", url, body)
 	fail.On(err != nil, "Failed create request to %q failed, reason: %v", url, err)
 
-	request.Header.Add("robocorp-installation-id", xviper.TrackingIdentity())
+	request.Header.Add("rcc-installation-id", xviper.TrackingIdentity())
 	request.Header.Add("User-Agent", common.UserAgent())
 	request.Header.Add(X_RCC_RANDOM_IDENTITY, common.RandomIdentifier())
 	authorization, ok := common.RccRemoteAuthorization()

@@ -167,7 +167,7 @@ export RCC_AUTOUPDATES_RCC_INDEX="https://github.com/joshyorko/rcc/releases/late
 build/rcc configuration diagnostics --quick --json | jq .
 ```
 
-Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
+Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/rcc_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
 
 ### Notes
 
