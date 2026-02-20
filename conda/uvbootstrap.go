@@ -208,8 +208,10 @@ func extractTarGz(tarGzPath, destDir string) (err error) {
 		// Construct the target path
 		target := filepath.Join(destDir, header.Name)
 
-		// Ensure the target path is within destDir (prevent path traversal)
-		if !strings.HasPrefix(filepath.Clean(target), filepath.Clean(destDir)) {
+		// Ensure the target path is within destDir (prevent path traversal / Zip Slip).
+		// Use a trailing separator so "/tmp/dest" does not match "/tmp/destevil".
+		cleanDest := filepath.Clean(destDir) + string(os.PathSeparator)
+		if !strings.HasPrefix(filepath.Clean(target)+string(os.PathSeparator), cleanDest) {
 			fail.On(true, "tar entry outside of target directory: %s", header.Name)
 		}
 
@@ -238,8 +240,18 @@ func extractTarGz(tarGzPath, destDir string) (err error) {
 			fail.Fast(err)
 
 		case tar.TypeSymlink:
-			// Create symlink
-			err = os.Symlink(header.Linkname, target)
+			// Validate symlink target to prevent symlink-based file write attacks.
+			// Reject absolute symlink targets and relative targets that escape destDir.
+			// [ref: GitHub CodeQL alerts #5/#6 — arbitrary file write via symlinks]
+			linkTarget := header.Linkname
+			if filepath.IsAbs(linkTarget) {
+				fail.On(true, "tar symlink with absolute target is not allowed: %s -> %s", header.Name, linkTarget)
+			}
+			resolvedLink := filepath.Join(filepath.Dir(target), linkTarget)
+			if !strings.HasPrefix(filepath.Clean(resolvedLink)+string(os.PathSeparator), cleanDest) {
+				fail.On(true, "tar symlink target outside of target directory: %s -> %s", header.Name, linkTarget)
+			}
+			err = os.Symlink(linkTarget, target)
 			fail.Fast(err)
 
 		default:
@@ -277,8 +289,10 @@ func extractZip(zipPath, destDir string) (err error) {
 		// Construct the target path
 		target := filepath.Join(destDir, file.Name)
 
-		// Ensure the target path is within destDir (prevent path traversal)
-		if !strings.HasPrefix(filepath.Clean(target), filepath.Clean(destDir)) {
+		// Ensure the target path is within destDir (prevent path traversal / Zip Slip).
+		// Use a trailing separator so "/tmp/dest" does not match "/tmp/destevil".
+		cleanDest := filepath.Clean(destDir) + string(os.PathSeparator)
+		if !strings.HasPrefix(filepath.Clean(target)+string(os.PathSeparator), cleanDest) {
 			fail.On(true, "zip entry outside of target directory: %s", file.Name)
 		}
 
