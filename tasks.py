@@ -223,6 +223,7 @@ def support(c):
 def test(c, cover=False):
     """Run tests"""
     os.environ["GOARCH"] = "amd64"
+    os.environ["CGO_ENABLED"] = "0"
     if cover:
         c.run("go test -cover -coverprofile=tmp/cover.out ./...")
         c.run("go tool cover -func=tmp/cover.out")
@@ -324,6 +325,7 @@ def robotsetup(c):
 @task
 def local(c, do_test=True):
     """Build local, operating system specific rcc"""
+    os.environ["CGO_ENABLED"] = "0"
     tooling(c)
     if do_test:
         test(c)

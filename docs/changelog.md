@@ -1,4 +1,15 @@
 # rcc change log
+## v18.17.2 (date: 22.02.2026)
+
+### Security
+
+- security: rebuilt RCC release toolchain with Go 1.25.7 to address stdlib
+  vulnerabilities flagged in binary/image scans
+- security: addresses stdlib findings for CVE-2025-58185, CVE-2025-58183,
+  and CVE-2025-47912 in released binaries
+- build: updated Go pins in `go.mod`, `.github/workflows/rcc.yaml`, and
+  `developer/setup.yaml` to 1.25.7 for consistent local/CI/release builds
+
 ## v18.17.1 (date: 15.02.2026)
 
 - fix: uv-native activation script on Windows now generates .cmd batch
