@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -244,7 +245,7 @@ func extractTarGz(tarGzPath, destDir string) (err error) {
 			// Reject absolute symlink targets and relative targets that escape destDir.
 			// [ref: GitHub CodeQL alerts #5/#6 — arbitrary file write via symlinks]
 			linkTarget := header.Linkname
-			if filepath.IsAbs(linkTarget) {
+			if filepath.IsAbs(linkTarget) || path.IsAbs(linkTarget) {
 				fail.On(true, "tar symlink with absolute target is not allowed: %s -> %s", header.Name, linkTarget)
 			}
 			resolvedLink := filepath.Join(filepath.Dir(target), linkTarget)
