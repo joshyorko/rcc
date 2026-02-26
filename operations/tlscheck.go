@@ -183,10 +183,16 @@ func configurationVariations(root *x509.CertPool) tlsConfigs {
 	configs := make(tlsConfigs, len(knownVersions))
 	for at, version := range knownVersions {
 		configs[at] = &tls.Config{
-			InsecureSkipVerify: true,
-			RootCAs:            root,
-			MinVersion:         version,
-			MaxVersion:         version,
+			InsecureSkipVerify: true, // #nosec G402
+			// InsecureSkipVerify and legacy MinVersion are intentionally set here
+			// so that TLSProbe can connect to servers that present self-signed or
+			// invalid certificates and report on each TLS protocol version they
+			// support.  This config is only ever used for diagnostic probing; no
+			// application data is sent over these connections.
+			// [ref: GitHub CodeQL alerts #1/#3 — intentional diagnostic use]
+			RootCAs:    root,
+			MinVersion: version,
+			MaxVersion: version,
 		}
 	}
 	return configs
