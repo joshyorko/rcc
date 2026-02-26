@@ -1,4 +1,10 @@
 # rcc change log
+## v18.17.3 (date: 26.02.2026)
+
+### Security
+
+- fix: block slash-absolute tar symlink targets on Windows to address CodeQL security alerts
+
 ## v18.17.2 (date: 22.02.2026)
 
 ### Security
