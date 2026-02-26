@@ -1,4 +1,10 @@
 # rcc change log
+## v18.17.4 (date: 26.02.2026)
+
+### Security
+
+- fix: raise TLS diagnostics head-check minimum protocol from SSLv3 to TLS 1.0 to address CodeQL insecure TLS alert while preserving legacy diagnostics reach
+
 ## v18.17.3 (date: 26.02.2026)
 
 ### Security

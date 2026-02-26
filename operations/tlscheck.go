@@ -55,7 +55,7 @@ func init() {
 func tlsCheckHeadOnly(url string) (*tls.ConnectionState, error) {
 	transport := settings.Global.ConfiguredHttpTransport()
 	transport.TLSClientConfig.InsecureSkipVerify = true
-	transport.TLSClientConfig.MinVersion = tls.VersionSSL30
+	transport.TLSClientConfig.MinVersion = tls.VersionTLS10
 	// above two setting are needed for TLS checks
 	// they weaken security, and that is why this code is only used
 	// to get TLS connection state and nothing else
