@@ -273,10 +273,10 @@ func (it *unzipper) Extract(directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
-		target, err := zipEntryTarget(directory, slashed(entry.Name)[limit:])
-		if err != nil {
-			return fmt.Errorf("Problem while extracting zip, reason: %v", err)
-		}
+			target, err := zipEntryTarget(directory, slashed(entry.Name)[limit:])
+			if err != nil {
+				return fmt.Errorf("Problem while extracting zip, reason: %v", err)
+			}
 		todo := WriteTarget{
 			Source: entry,
 			Target: target,
