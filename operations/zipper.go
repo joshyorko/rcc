@@ -48,12 +48,23 @@ func slashed(text string) string {
 }
 
 func zipEntryTarget(directory, entry string) (string, error) {
-	target := filepath.Join(directory, slashed(entry))
-	relative, err := filepath.Rel(directory, target)
+	base, err := filepath.Abs(directory)
 	if err != nil {
 		return "", err
 	}
-	if relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) {
+	base = filepath.Clean(base)
+
+	name := slashed(entry)
+	if filepath.IsAbs(name) || filepath.VolumeName(name) != "" {
+		return "", fmt.Errorf("invalid archive entry path: %q", entry)
+	}
+
+	target := filepath.Clean(filepath.Join(base, name))
+	relative, err := filepath.Rel(base, target)
+	if err != nil {
+		return "", err
+	}
+	if relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) {
 		return "", fmt.Errorf("invalid archive entry path: %q", entry)
 	}
 	return target, nil
