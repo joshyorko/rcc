@@ -25,7 +25,6 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 - **Push** to `main` branch
 - **Version tags** matching `v*` pattern
 - **Pull requests** to `main` branch
-- **Manual dispatch** with optional version input
 
 > Note: Changes to `.github/workflows/` and `.dagger/` directories are ignored.
 
@@ -33,7 +32,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 #### 1. Build (`build`)
 - **Runner:** `ubuntu-latest`
-- **Condition:** Only runs on version tag pushes or manual dispatch
+- **Condition:** Only runs on trusted version tag pushes
 - **Steps:**
   - Checkout code
   - Set up Go 1.25.7 and Python 3.10
@@ -42,7 +41,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Upload artifacts for Linux, Windows, and macOS
 
 #### 2. Robot Tests (`robot`)
-- **Matrix:** Kubernetes and Windows runners
+- **Matrix:** Ubuntu and Windows runners
 - **Steps:**
   - Set up development environment
   - Install dependencies
@@ -50,7 +49,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Upload test reports as artifacts
 
 #### 3. Release (`release`)
-- **Condition:** Runs after successful build and robot test jobs
+- **Condition:** Runs after successful tag-push build
 - **Steps:**
   - Download built RCC binaries
   - Generate `index.json` with version metadata
@@ -65,7 +64,7 @@ None explicitly required (uses GitHub token for releases).
 
 **Release Trigger Workflow**
 
-A manual workflow that extracts the version from source code and triggers the main release pipeline.
+A manual workflow that extracts the version from source code, validates it, and creates the release tag that starts the main release pipeline.
 
 ### Triggers
 - **Manual dispatch only** (`workflow_dispatch`)
@@ -73,16 +72,17 @@ A manual workflow that extracts the version from source code and triggers the ma
 ### How It Works
 1. Checks out the repository with full Git history
 2. Extracts version from `common/version.go`
-3. Triggers the `rcc.yaml` workflow with the extracted version
+3. Validates the version string
+4. Creates and pushes the matching `v*` release tag
+5. Dispatches the Homebrew cask update workflow
 
 ### Permissions
-- `contents: write` - For repository access
-- `actions: write` - For triggering other workflows
+- `contents: write` - For creating the release tag
 
 ### Usage
 1. Navigate to Actions > "Create Release Tag"
 2. Click "Run workflow"
-3. The workflow will read the version and trigger a release
+3. The workflow will read the version, create the tag, and the tag push will trigger a release
 
 ---
 
@@ -213,6 +213,7 @@ The recommended release process uses these workflows:
 ┌─────────────────────────┐
 │  Update version in      │
 │  common/version.go      │
+│  and docs/changelog.md  │
 └───────────┬─────────────┘
             │
             ▼
@@ -223,9 +224,9 @@ The recommended release process uses these workflows:
             │
             ▼
 ┌─────────────────────────┐
-│  rcc.yaml triggers      │
+│  Tag push triggers      │
+│  rcc.yaml release path  │
 │  - Build all platforms  │
-│  - Run robot tests      │
 │  - Create GitHub release│
 └─────────────────────────┘
 ```
@@ -236,8 +237,8 @@ The recommended release process uses these workflows:
 |-------------|---------|---------|
 | Go | 1.25.7 | rcc.yaml |
 | Python | 3.10 | rcc.yaml |
-| Invoke | latest | rcc.yaml |
-| Dagger | latest | dagger.yaml |
+| Invoke | 2.2.0 | rcc.yaml |
+| Dagger | v0.20.8 | dagger.yaml |
 
 
 
@@ -253,7 +254,8 @@ The recommended release process uses these workflows:
 
 ### Release not triggering
 - Verify version tag matches `v*` pattern
-- Check that `create-release-tag.yml` successfully triggered `rcc.yaml`
+- Check that `create-release-tag.yml` created and pushed the expected tag
+- Check that `rcc.yaml` started from the tag push
 
 ## Contributing
 
