@@ -24,20 +24,20 @@ jobs:
   build:
     name: Build RCC
     runs-on: ubuntu-latest
-    # Build only as part of a release flow (tag push).
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Build only for trusted version tag pushes.
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
-      - uses: actions/checkout@v5
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: "1.25.7"
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
       - name: Install invoke
-        run: python -m pip install invoke
+        run: python -m pip install invoke==2.2.0
       - name: Show commit info
         run: inv what
       - name: Debug Build Job
@@ -59,7 +59,7 @@ jobs:
           cp build/macosarm64/rcc rcc-builds/rcc-macosarm64
           cp build/macosarm64/rccremote rcc-builds/rccremote-macosarm64
       - name: Upload RCC Binaries
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: RCC-Binaries
           path: rcc-builds/
@@ -75,22 +75,22 @@ jobs:
         os: ["ubuntu-latest", "windows-latest"]
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
-      - uses: actions/checkout@v5
-      - uses: actions/setup-go@v6
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: "1.25.7"
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
       - name: Install invoke
-        run: python -m pip install invoke
+        run: python -m pip install invoke==2.2.0
       - name: Setup Robot Environment
         run: inv robotsetup
       - name: Show commit info
         run: inv what
       - name: Run Robot Framework Tests
         run: inv robot
-      - uses: actions/upload-artifact@v4.6.2
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:
           name: ${{ matrix.os }}-test-reports
@@ -99,7 +99,7 @@ jobs:
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs:
       - build
     # Only run this job on tag pushes (e.g., refs/tags/v18.5.0)
@@ -114,14 +114,14 @@ jobs:
           echo "GitHub ref: ${{ github.ref }}"
           echo "GitHub event name: ${{ github.event_name }}"
           echo "Build job status: ${{ needs.build.result }}"
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
       - name: Download Built RCC Binaries
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           name: RCC-Binaries
           path: rcc-builds/
       - name: Set up Python 3.10
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
       - name: Generate index.json
@@ -192,7 +192,7 @@ jobs:
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Create Draft Release with Assets
-        uses: softprops/action-gh-release@v2.3.2
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
         with:
           files: rcc-builds/*
           tag_name: ${{ steps.validate_tag.outputs.tag }}
