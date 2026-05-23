@@ -168,7 +168,12 @@ func unpack(content []byte, directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
-		target := filepath.Join(directory, entry.Name)
+		target, err := zipEntryTarget(directory, entry.Name)
+		if err != nil {
+			common.Error("zip extract", err)
+			success = false
+			continue
+		}
 		todo := WriteTarget{
 			Source: entry,
 			Target: target,
