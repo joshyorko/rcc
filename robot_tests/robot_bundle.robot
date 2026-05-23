@@ -6,6 +6,9 @@ Suite Setup  Bundle setup
 
 *** Keywords ***
 Bundle setup
+  Remove Directory    tmp/robocorp    True
+  Prepare Robocorp Home    tmp/robocorp
+  Fire And Forget   build/rcc ht init --revoke
   Fire And Forget   build/rcc ht delete 4e67cd8
   Create Bundle Files
 
@@ -100,9 +103,9 @@ Goal: Unpack missing bundle fails
   Use STDERR
   Must Have    does not exist
 
-Goal: Unpack path traversal bundle fails
-  Step    python3 -c "import zipfile; zf = zipfile.ZipFile('tmp/traversal_bundle.zip', 'w', zipfile.ZIP_DEFLATED); zf.writestr('../../outside.txt', 'owned'); zf.close()"
-  Step    build/rcc robot unpack --bundle tmp/traversal_bundle.zip --output tmp/unpack_test/traversal --force    1
+Goal: Unwrap path traversal zip fails
+  Create Traversal Bundle
+  Step    build/rcc robot unwrap --zipfile tmp/traversal_bundle.zip --directory tmp/unpack_test/traversal --force    1
   Use STDERR
   Must Have    invalid archive entry path
   Wont Exist    tmp/outside.txt
