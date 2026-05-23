@@ -157,6 +157,11 @@ func updateTemplates() (err error) {
 
 func unpack(content []byte, directory string) error {
 	common.Debug("Initializing:")
+	base, err := filepath.Abs(directory)
+	if err != nil {
+		return err
+	}
+	base = filepath.Clean(base)
 	size := int64(len(content))
 	byter := bytes.NewReader(content)
 	reader, err := zip.NewReader(byter, size)
@@ -168,7 +173,12 @@ func unpack(content []byte, directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
-		target := filepath.Join(directory, entry.Name)
+		target, err := safeTemplateTarget(base, entry.Name)
+		if err != nil {
+			common.Debug("Ignoring unsafe template path %q, reason: %v", entry.Name, err)
+			success = false
+			continue
+		}
 		todo := WriteTarget{
 			Source: entry,
 			Target: target,
@@ -180,6 +190,19 @@ func unpack(content []byte, directory string) error {
 		return fmt.Errorf("Problems while initializing robot. Use --debug to see details.")
 	}
 	return nil
+}
+
+func safeTemplateTarget(base, name string) (string, error) {
+	target := filepath.Join(base, name)
+	cleaned := filepath.Clean(target)
+	relative, err := filepath.Rel(base, cleaned)
+	if err != nil {
+		return "", err
+	}
+	if relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return "", fmt.Errorf("target escapes destination: %s", name)
+	}
+	return cleaned, nil
 }
 
 func ListTemplatesWithDescription(internal bool) StringPairList {
