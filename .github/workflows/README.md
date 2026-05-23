@@ -41,7 +41,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Upload artifacts for Linux, Windows, and macOS
 
 #### 2. Robot Tests (`robot`)
-- **Matrix:** Ubuntu and Windows runners
+- **Matrix:** Ubuntu, macOS, and Windows runners
 - **Steps:**
   - Set up development environment
   - Install dependencies
