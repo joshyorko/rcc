@@ -100,6 +100,13 @@ Goal: Unpack missing bundle fails
   Use STDERR
   Must Have    does not exist
 
+Goal: Unpack path traversal bundle fails
+  Step    python3 -c "import zipfile; zf = zipfile.ZipFile('tmp/traversal_bundle.zip', 'w', zipfile.ZIP_DEFLATED); zf.writestr('../../outside.txt', 'owned'); zf.close()"
+  Step    build/rcc robot unpack --bundle tmp/traversal_bundle.zip --output tmp/unpack_test/traversal --force    1
+  Use STDERR
+  Must Have    invalid archive entry path
+  Wont Exist    tmp/outside.txt
+
 Goal: Cleanup
-  Fire And Forget    rm -f tmp/robot_bundle.zip tmp/robot_sfx.py tmp/robot_sfx.exe tmp/rcc_created_bundle.py
+  Fire And Forget    rm -f tmp/robot_bundle.zip tmp/robot_sfx.py tmp/robot_sfx.exe tmp/rcc_created_bundle.py tmp/traversal_bundle.zip tmp/outside.txt
   Remove Directory  tmp/unpack_test  True
