@@ -1,11 +1,5 @@
 name: Rcc
 on:
-  workflow_dispatch: # Enables manual triggering
-    inputs:
-      tag:
-        description: "Tag name to release (e.g., v18.5.0)"
-        required: false
-        type: string
   push:
     branches:
       - main
@@ -30,8 +24,8 @@ jobs:
   build:
     name: Build RCC
     runs-on: ubuntu-latest
-    # Build only as part of a release flow (tag push or manual dispatch).
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    # Build only as part of a release flow (tag push).
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@v5
@@ -105,10 +99,10 @@ jobs:
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - build
-    # Only run this job on tag pushes (e.g., refs/tags/v18.5.0) or manual dispatch
+    # Only run this job on tag pushes (e.g., refs/tags/v18.5.0)
     # Robot tests run on push to main, so code is already validated before release
     # Grant only the permissions needed to publish a release
     permissions:
@@ -132,7 +126,7 @@ jobs:
           python-version: "3.10"
       - name: Generate index.json
         env:
-          VERSION: ${{ inputs.tag || github.ref_name }}
+          VERSION: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
         run: |
           export DATE=$(date +"%d.%-m.%Y")
@@ -190,7 +184,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="${{ inputs.tag || github.ref_name }}"
+          TAG="${{ github.ref_name }}"
           # Delete release if exists
           if gh release view "$TAG" &>/dev/null; then
             echo "Deleting existing release for $TAG..."
@@ -207,7 +201,7 @@ jobs:
         uses: softprops/action-gh-release@v2.3.2
         with:
           files: rcc-builds/*
-          tag_name: ${{ inputs.tag || github.ref_name }}
+          tag_name: ${{ github.ref_name }}
           target_commitish: ${{ github.sha }}
           draft: true
           prerelease: false
@@ -216,7 +210,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="${{ inputs.tag || github.ref_name }}"
+          TAG="${{ github.ref_name }}"
           echo "Publishing draft release $TAG..."
           gh release edit "$TAG" --draft=false
           echo "Release $TAG is now public"
