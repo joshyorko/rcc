@@ -16,8 +16,14 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"path"
+	"strings"
+
 	"dagger/rcc-ci/internal/dagger"
 )
+
+const defaultRccVersion = "v18.17.3"
 
 type RccCi struct{}
 
@@ -42,6 +48,136 @@ func (m *RccCi) RunRobotTests(ctx context.Context, source *dagger.Directory) (st
 		WithExec([]string{"rcc", "holotree", "variables", "-r", "developer/toolkit.yaml"}).
 		WithExec([]string{"rcc", "run", "-r", "developer/toolkit.yaml", "-t", "robot"}).
 		Stdout(ctx)
+}
+
+// Build a Linux container with RCC installed and the source mounted at /src.
+func (m *RccCi) buildRccContainer(
+	source *dagger.Directory,
+	rccVersion string,
+) *dagger.Container {
+	if rccVersion == "" {
+		rccVersion = defaultRccVersion
+	}
+	rccURL := fmt.Sprintf("https://github.com/joshyorko/rcc/releases/download/%s/rcc-linux64", rccVersion)
+
+	return dag.
+		Container(dagger.ContainerOpts{Platform: dagger.Platform("linux/amd64")}).
+		From("python:3.11-slim").
+		WithExec([]string{"apt-get", "update"}).
+		WithExec([]string{"apt-get", "install", "-y", "curl", "ca-certificates"}).
+		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", rccURL}).
+		WithExec([]string{"chmod", "+x", "/usr/local/bin/rcc"}).
+		WithMountedCache("/root/.robocorp", dag.CacheVolume("robocorp-home")).
+		WithEnvVariable("ROBOCORP_HOME", "/root/.robocorp").
+		WithMountedDirectory("/src", source).
+		WithWorkdir("/src")
+}
+
+// Run any RCC command and return stdout.
+func (m *RccCi) Rcc(
+	ctx context.Context,
+	// The RCC command, for example: "run -t ProcessLocal".
+	c string,
+	// +defaultPath="."
+	source *dagger.Directory,
+	// RCC release version to install in the container.
+	// +default="v18.17.3"
+	rccVersion string,
+) (string, error) {
+	args, err := splitCommand(c)
+	if err != nil {
+		return "", err
+	}
+
+	container := m.buildRccContainer(source, rccVersion)
+	return container.WithExec(append([]string{"rcc"}, args...)).Stdout(ctx)
+}
+
+// Run any RCC command and return an output directory from the container.
+func (m *RccCi) RccWithOutput(
+	ctx context.Context,
+	// The RCC command, for example: "run -t ProcessLocal".
+	c string,
+	// +defaultPath="."
+	source *dagger.Directory,
+	// Container path to return after the RCC command runs.
+	// +default="./output"
+	outputPath string,
+	// RCC release version to install in the container.
+	// +default="v18.17.3"
+	rccVersion string,
+) (*dagger.Directory, error) {
+	args, err := splitCommand(c)
+	if err != nil {
+		return nil, err
+	}
+
+	container := m.buildRccContainer(source, rccVersion)
+	result := container.WithExec(append([]string{"rcc"}, args...))
+	return result.Directory(containerOutputPath(outputPath)), nil
+}
+
+func containerOutputPath(outputPath string) string {
+	if outputPath == "" || outputPath == "." {
+		return "/src/output"
+	}
+	if strings.HasPrefix(outputPath, "/") {
+		return path.Clean(outputPath)
+	}
+	return path.Join("/src", outputPath)
+}
+
+func splitCommand(command string) ([]string, error) {
+	var args []string
+	var current strings.Builder
+	var quote rune
+	escaped := false
+
+	for _, r := range command {
+		if escaped {
+			current.WriteRune(r)
+			escaped = false
+			continue
+		}
+
+		if r == '\\' && quote != '\'' {
+			escaped = true
+			continue
+		}
+
+		if quote != 0 {
+			if r == quote {
+				quote = 0
+			} else {
+				current.WriteRune(r)
+			}
+			continue
+		}
+
+		switch r {
+		case '\'', '"':
+			quote = r
+		case ' ', '\t', '\n', '\r':
+			if current.Len() > 0 {
+				args = append(args, current.String())
+				current.Reset()
+			}
+		default:
+			current.WriteRune(r)
+		}
+	}
+
+	if escaped {
+		current.WriteRune('\\')
+	}
+	if quote != 0 {
+		return nil, fmt.Errorf("unterminated quote in RCC command")
+	}
+	if current.Len() > 0 {
+		args = append(args, current.String())
+	}
+
+	return args, nil
 }
 
 // Returns lines that match a pattern in the files of the provided Directory
