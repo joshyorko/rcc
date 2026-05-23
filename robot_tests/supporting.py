@@ -1,11 +1,36 @@
 import json
 import logging
+import os
 import re
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 log = logging.getLogger(__name__)
+
+RCC_ACTIVATION_ENV = {
+    "CONDA_BACKUP_GOROOT",
+    "CONDA_DEFAULT_ENV",
+    "CONDA_PREFIX",
+    "CONDA_PROMPT_MODIFIER",
+    "CONDA_SHLVL",
+    "GOROOT",
+    "MAMBA_ROOT_PREFIX",
+    "PYTHON_EXE",
+    "PYTHONDONTWRITEBYTECODE",
+    "PYTHONEXECUTABLE",
+    "PYTHONHOME",
+    "PYTHONNOUSERSITE",
+    "PYTHONPYCACHEPREFIX",
+    "PYTHONSTARTUP",
+    "RCC_ENVIRONMENT_HASH",
+    "RCC_EXE",
+    "RCC_HOLOTREE_SPACE_ROOT",
+    "RCC_INSTALLATION_ID",
+    "RCC_TRACKING_ALLOWED",
+    "RCC_VERSION",
+}
 
 
 def fix_command(command):
@@ -15,9 +40,21 @@ def fix_command(command):
     return command
 
 
-def get_cwd():
-    import os
+def clean_rcc_subprocess_env(command: str, env: dict[str, str] | None):
+    if env is not None:
+        return env
 
+    command = command.strip()
+    if not (command.startswith("build/rcc") or command.startswith(".\\build\\rcc.exe")):
+        return None
+
+    clean_env = os.environ.copy()
+    for key in RCC_ACTIVATION_ENV:
+        clean_env.pop(key, None)
+    return clean_env
+
+
+def get_cwd():
     cwd = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     detail = (
         "(rcc doesn't seem to be built, please run `inv local` before running tests)"
@@ -66,6 +103,7 @@ def run_and_return_code_output_error(
     stdin_contents: str | None = None,
 ) -> tuple[int, str, str]:
     command = fix_command(command)
+    env = clean_rcc_subprocess_env(command, env)
     cwd = get_cwd() if cwd is None else cwd
     log_command(command, cwd)
 
@@ -96,6 +134,22 @@ def parse_json(content):
 
 def is_windows() -> bool:
     return sys.platform == "win32"
+
+
+def create_traversal_bundle(
+    source: str = "robot_tests/testdata/robot_bundle",
+    target: str = "tmp/traversal_bundle.zip",
+):
+    root = Path(get_cwd())
+    source_root = root / source
+    target_path = root / target
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with zipfile.ZipFile(target_path, "w", zipfile.ZIP_DEFLATED) as bundle:
+        for path in source_root.rglob("*"):
+            if path.is_file():
+                bundle.write(path, path.relative_to(source_root).as_posix())
+        bundle.writestr("../../outside.txt", "owned")
 
 
 def extract_env_value(output: str, key: str) -> str:

@@ -88,6 +88,7 @@ def micromamba(c):
     """Download micromamba files from official conda-forge source"""
     import gzip
     import tempfile
+    import tarfile
 
     with open("assets/micromamba_version.txt", "r", encoding="utf-8") as f:
         version = f.read().strip()
@@ -100,8 +101,16 @@ def micromamba(c):
         "windows64": "windows_amd64",
     }
 
-    # Use a cross-platform temporary directory
-    tmp_dir = tempfile.gettempdir()
+    def _validate_archive_members(tar):
+        for member in tar.getmembers():
+            member_path = member.name
+            if os.path.isabs(member_path):
+                raise ValueError(f"Unsafe absolute path in archive: {member_path}")
+            normalized = os.path.normpath(member_path)
+            if normalized.startswith("..") or os.path.isabs(normalized):
+                raise ValueError(f"Unsafe path traversal in archive: {member_path}")
+            if member.issym() or member.islnk():
+                raise ValueError(f"Unsafe link entry in archive: {member_path}")
 
     for platform, arch in platforms.items():
         output = f"blobs/assets/micromamba.{arch}"
@@ -113,9 +122,8 @@ def micromamba(c):
         url = get_official_micromamba_url(version, platform)
         print(f"Downloading from official source: {url}")
 
-        # Create extraction directory
-        extract_dir = os.path.join(tmp_dir, "rcc_micromamba_extract")
-        os.makedirs(extract_dir, exist_ok=True)
+        # Create unique extraction directory
+        extract_dir = tempfile.mkdtemp(prefix="rcc_micromamba_extract_")
 
         # Download the archive
         archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
@@ -123,8 +131,8 @@ def micromamba(c):
 
         # Extract the binary from the archive
         # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
-        import tarfile
         with tarfile.open(archive_path, "r:bz2") as tar:
+            _validate_archive_members(tar)
             tar.extractall(path=extract_dir)
 
         # Find and move the binary

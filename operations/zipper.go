@@ -47,6 +47,29 @@ func slashed(text string) string {
 	return strings.Replace(text, backslash, slash, -1)
 }
 
+func zipEntryTarget(directory, entry string) (string, error) {
+	base, err := filepath.Abs(directory)
+	if err != nil {
+		return "", err
+	}
+	base = filepath.Clean(base)
+
+	name := slashed(entry)
+	if filepath.IsAbs(name) || filepath.VolumeName(name) != "" {
+		return "", fmt.Errorf("invalid archive entry path: %q", entry)
+	}
+
+	target := filepath.Clean(filepath.Join(base, name))
+	relative, err := filepath.Rel(base, target)
+	if err != nil {
+		return "", err
+	}
+	if relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) {
+		return "", fmt.Errorf("invalid archive entry path: %q", entry)
+	}
+	return target, nil
+}
+
 func HololibZipShape(file *zip.File) error {
 	library := libraryPattern.MatchString(file.Name)
 	catalog := catalogPattern.MatchString(file.Name)
@@ -161,9 +184,13 @@ func (it *unzipper) Explode(workers int, directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
+		target, err := zipEntryTarget(directory, entry.Name)
+		if err != nil {
+			return err
+		}
 		todo <- &WriteTarget{
 			Source: entry,
-			Target: filepath.Join(directory, slashed(entry.Name)),
+			Target: target,
 		}
 	}
 
@@ -246,12 +273,15 @@ func (it *unzipper) Extract(directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
-		target := filepath.Join(directory, slashed(entry.Name)[limit:])
+			target, err := zipEntryTarget(directory, slashed(entry.Name)[limit:])
+			if err != nil {
+				return fmt.Errorf("Problem while extracting zip, reason: %v", err)
+			}
 		todo := WriteTarget{
 			Source: entry,
 			Target: target,
 		}
-		err := todo.execute()
+		err = todo.execute()
 		if err != nil {
 			return fmt.Errorf("Problem while extracting zip, reason: %v", err)
 		}

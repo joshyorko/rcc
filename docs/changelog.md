@@ -1,9 +1,25 @@
 # rcc change log
-## v18.17.4 (date: 26.02.2026)
+## v18.17.4 (date: 23.05.2026)
 
 ### Security
 
 - fix: raise TLS diagnostics head-check minimum protocol from SSLv3 to TLS 1.0 to address CodeQL insecure TLS alert while preserving legacy diagnostics reach
+- security: reject unsafe zip archive entries during general unzip, hololib import, and template unpacking paths
+  - prevents path traversal entries from escaping the requested destination directory
+  - adds regression coverage for malicious traversal entries and normal nested-file extraction
+- security: validate micromamba tar archive members before extraction
+  - rejects absolute paths, path traversal entries, symlinks, and hard links before `tar.extractall`
+  - uses a unique temporary extraction directory per downloaded archive
+- security: harden release workflows
+  - release builds and publishing now run from trusted `v*` tag pushes only
+  - release tags are validated before publishing assets
+  - removes release/tag deletion from the release job
+  - pins GitHub Actions dependencies and `invoke` in the RCC workflow
+
+### Developer Experience
+
+- add Dagger RCC runner helpers for containerized local RCC commands and output-directory collection
+- update the manual release-tag workflow so it validates `common/version.go`, creates the release tag, and lets the tag push trigger the RCC release workflow
 
 ## v18.17.3 (date: 26.02.2026)
 
