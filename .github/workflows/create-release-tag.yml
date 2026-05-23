@@ -7,7 +7,6 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write
-            actions: write
         steps:
             - uses: actions/checkout@v6.0.0
               with:
@@ -21,24 +20,20 @@ jobs:
                       echo "Invalid version format: $VERSION"
                       exit 1
                   fi
-                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
                   echo "Detected version: $VERSION"
 
-            - name: Trigger RCC Release Workflow
-              uses: actions/github-script@v8.0.0
+            - name: Create Release Tag
               env:
                   VERSION: ${{ steps.get_version.outputs.version }}
-              with:
-                  script: |
-                      await github.rest.actions.createWorkflowDispatch({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          workflow_id: 'rcc.yaml',
-                          ref: 'main',
-                          inputs: {
-                              tag: process.env.VERSION
-                          }
-                      });
+              run: |
+                  git fetch --tags --force
+                  if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
+                      echo "Release tag already exists: $VERSION"
+                      exit 1
+                  fi
+                  git tag "$VERSION"
+                  git push origin "refs/tags/$VERSION"
 
             - name: Trigger Homebrew Cask Update
               uses: actions/github-script@v8.0.0
