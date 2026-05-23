@@ -47,6 +47,15 @@ func slashed(text string) string {
 	return strings.Replace(text, backslash, slash, -1)
 }
 
+func safeExtractTarget(directory, entry string) (string, error) {
+	cleanDirectory := filepath.Clean(directory)
+	cleanTarget := filepath.Clean(filepath.Join(cleanDirectory, entry))
+	if cleanTarget != cleanDirectory && !strings.HasPrefix(cleanTarget, cleanDirectory+string(os.PathSeparator)) {
+		return "", fmt.Errorf("zip entry %q escapes destination directory", entry)
+	}
+	return cleanTarget, nil
+}
+
 func HololibZipShape(file *zip.File) error {
 	library := libraryPattern.MatchString(file.Name)
 	catalog := catalogPattern.MatchString(file.Name)
@@ -246,12 +255,15 @@ func (it *unzipper) Extract(directory string) error {
 		if entry.FileInfo().IsDir() {
 			continue
 		}
-		target := filepath.Join(directory, slashed(entry.Name)[limit:])
+		target, err := safeExtractTarget(directory, slashed(entry.Name)[limit:])
+		if err != nil {
+			return err
+		}
 		todo := WriteTarget{
 			Source: entry,
 			Target: target,
 		}
-		err := todo.execute()
+		err = todo.execute()
 		if err != nil {
 			return fmt.Errorf("Problem while extracting zip, reason: %v", err)
 		}
