@@ -180,28 +180,22 @@ jobs:
           PYEOF
 
           cat rcc-builds/index.json
-      - name: Delete existing release and tag if present
+      - name: Validate release tag
+        id: validate_tag
         env:
-          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          TAG="${{ github.ref_name }}"
-          # Delete release if exists
-          if gh release view "$TAG" &>/dev/null; then
-            echo "Deleting existing release for $TAG..."
-            gh release delete "$TAG" --yes --cleanup-tag
-          else
-            echo "No existing release for $TAG"
+          TAG="$RELEASE_TAG"
+          if [[ ! "$TAG" =~ ^v[0-9]+(\.[0-9]+)*([-.][0-9A-Za-z]+)*$ ]]; then
+            echo "Invalid release tag: $TAG"
+            exit 1
           fi
-          # Also delete tag if it exists (GitHub taints tags used by published releases)
-          if git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
-            echo "Deleting existing tag $TAG..."
-            git push origin --delete "$TAG" || true
-          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: Create Draft Release with Assets
         uses: softprops/action-gh-release@v2.3.2
         with:
           files: rcc-builds/*
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ steps.validate_tag.outputs.tag }}
           target_commitish: ${{ github.sha }}
           draft: true
           prerelease: false
@@ -209,8 +203,8 @@ jobs:
       - name: Publish Release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.validate_tag.outputs.tag }}
         run: |
-          TAG="${{ github.ref_name }}"
           echo "Publishing draft release $TAG..."
           gh release edit "$TAG" --draft=false
           echo "Release $TAG is now public"
