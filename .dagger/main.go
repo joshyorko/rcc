@@ -23,7 +23,7 @@ import (
 	"dagger/rcc-ci/internal/dagger"
 )
 
-const defaultRccVersion = "v18.17.3"
+const defaultRccVersion = "v18.17.4"
 
 type RccCi struct{}
 
@@ -81,7 +81,7 @@ func (m *RccCi) Rcc(
 	// +defaultPath="."
 	source *dagger.Directory,
 	// RCC release version to install in the container.
-	// +default="v18.17.3"
+	// +default="v18.17.4"
 	rccVersion string,
 ) (string, error) {
 	args, err := splitCommand(c)
@@ -104,7 +104,7 @@ func (m *RccCi) RccWithOutput(
 	// +default="./output"
 	outputPath string,
 	// RCC release version to install in the container.
-	// +default="v18.17.3"
+	// +default="v18.17.4"
 	rccVersion string,
 ) (*dagger.Directory, error) {
 	args, err := splitCommand(c)

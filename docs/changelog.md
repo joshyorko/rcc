@@ -1,4 +1,22 @@
 # rcc change log
+## v18.17.5 (date: 30.05.2026)
+
+### Dependency Updates
+
+- upgrade the Go toolchain pin from 1.25.7 to 1.26.3 across `go.mod`, the RCC release/test workflow, and `developer/setup.yaml`
+- update PatchRaptor-managed Go modules:
+  - `github.com/mattn/go-isatty` to v0.0.22
+  - `github.com/spf13/cobra` to v1.10.2
+  - `github.com/spf13/viper` to v1.21.0
+  - `golang.org/x/sys` to v0.45.0
+  - `golang.org/x/term` to v0.43.0
+  - add `gopkg.in/yaml.v3` at v3.0.1 for the yaml major-update lane
+
+### Release Automation
+
+- add conservative PatchRaptor/Renovate configuration so RCC dependency updates require dashboard approval, run one at a time, and do not inherit central automerge rules
+- add the PatchRaptor RCC release workflow that can bump RCC patch versions and dispatch the release-tag workflow after release-relevant PatchRaptor PRs pass RCC CI on `main`
+
 ## v18.17.4 (date: 23.05.2026)
 
 ### Security
