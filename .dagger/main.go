@@ -38,7 +38,7 @@ func (m *RccCi) RunRobotTests(ctx context.Context, source *dagger.Directory) (st
 		From("golang:1.25.7").
 		WithExec([]string{"apt-get", "update"}).
 		WithExec([]string{"apt-get", "install", "-y", "curl", "git", "unzip", "ca-certificates"}).
-		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", "https://github.com/joshyorko/rcc/releases/download/v18.13.1/rcc-linux64"}).
+		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", "https://github.com/joshyorko/rcc/releases/download/v18.17.4/rcc-linux64"}).
 		WithExec([]string{"chmod", "+x", "/usr/local/bin/rcc"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
