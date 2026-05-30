@@ -23,7 +23,10 @@ import (
 	"dagger/rcc-ci/internal/dagger"
 )
 
-const defaultRccVersion = "v18.17.4"
+const (
+	defaultGoVersion  = "1.26.3"
+	defaultRccVersion = "v18.17.4"
+)
 
 type RccCi struct{}
 
@@ -34,11 +37,13 @@ func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {
 
 // Run tests using the Go container
 func (m *RccCi) RunRobotTests(ctx context.Context, source *dagger.Directory) (string, error) {
+	rccURL := fmt.Sprintf("https://github.com/joshyorko/rcc/releases/download/%s/rcc-linux64", defaultRccVersion)
+
 	return dag.Container().
-		From("golang:1.25.7").
+		From(fmt.Sprintf("golang:%s", defaultGoVersion)).
 		WithExec([]string{"apt-get", "update"}).
 		WithExec([]string{"apt-get", "install", "-y", "curl", "git", "unzip", "ca-certificates"}).
-		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", "https://github.com/joshyorko/rcc/releases/download/v18.17.4/rcc-linux64"}).
+		WithExec([]string{"curl", "-L", "-o", "/usr/local/bin/rcc", rccURL}).
 		WithExec([]string{"chmod", "+x", "/usr/local/bin/rcc"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
