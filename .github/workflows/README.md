@@ -73,7 +73,7 @@ A manual workflow that extracts the version from source code, validates it, and 
 1. Checks out the repository with full Git history
 2. Extracts version from `common/version.go`
 3. Validates the version string
-4. Creates and pushes the matching `v*` release tag
+4. Creates and pushes the matching `v*` release tag with the release PAT
 5. Dispatches the Homebrew cask update workflow
 
 ### Permissions
@@ -83,6 +83,7 @@ A manual workflow that extracts the version from source code, validates it, and 
 1. Navigate to Actions > "Create Release Tag"
 2. Click "Run workflow"
 3. The workflow will read the version, create the tag, and the tag push will trigger a release
+4. If the tag was already created but the release workflow needs to run again, rerun with `recreate_existing_tag=true`
 
 ---
 

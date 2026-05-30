@@ -1,6 +1,12 @@
 name: Create Release Tag
 on:
     workflow_dispatch:
+        inputs:
+            recreate_existing_tag:
+                description: Delete and recreate the version tag if it already points at this commit
+                required: false
+                default: false
+                type: boolean
 
 jobs:
     tag-and-release:
@@ -11,10 +17,12 @@ jobs:
             - uses: actions/checkout@v6.0.0
               with:
                   fetch-depth: 0
+                  persist-credentials: false
 
             - name: Read Version
               id: get_version
               run: |
+                  set -euo pipefail
                   VERSION=$(grep 'Version =' common/version.go | cut -d '`' -f 2)
                   if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                       echo "Invalid version format: $VERSION"
@@ -23,16 +31,48 @@ jobs:
                   echo "version=$VERSION" >> "$GITHUB_OUTPUT"
                   echo "Detected version: $VERSION"
 
+            - name: Validate Release Token
+              env:
+                  RELEASE_TOKEN: ${{ secrets.HOMEBREW_TOOLS_PAT }}
+              run: |
+                  set -euo pipefail
+                  if [[ -z "$RELEASE_TOKEN" ]]; then
+                      echo "HOMEBREW_TOOLS_PAT is required so tag pushes trigger release workflows and the Homebrew tap can be updated."
+                      exit 1
+                  fi
+
             - name: Create Release Tag
               env:
                   VERSION: ${{ steps.get_version.outputs.version }}
+                  RECREATE_EXISTING_TAG: ${{ inputs.recreate_existing_tag }}
+                  GH_TOKEN: ${{ secrets.HOMEBREW_TOOLS_PAT }}
               run: |
-                  git fetch --tags --force
-                  if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
-                      echo "Release tag already exists: $VERSION"
-                      exit 1
+                  set -euo pipefail
+
+                  git config user.name "RCC Release Bot"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  gh auth setup-git
+
+                  git fetch origin --tags --force
+                  target_sha="$(git rev-parse HEAD)"
+
+                  if git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
+                      tag_sha="$(git rev-parse "refs/tags/$VERSION^{commit}")"
+                      if [[ "$tag_sha" != "$target_sha" ]]; then
+                          echo "Release tag $VERSION already points at $tag_sha, not current commit $target_sha."
+                          exit 1
+                      fi
+                      if [[ "$RECREATE_EXISTING_TAG" != "true" ]]; then
+                          echo "Release tag already exists: $VERSION"
+                          echo "Rerun with recreate_existing_tag=true to retrigger the tag-push release."
+                          exit 1
+                      fi
+                      git push origin ":refs/tags/$VERSION"
+                      git tag -f "$VERSION" "$target_sha"
+                  else
+                      git tag "$VERSION" "$target_sha"
                   fi
-                  git tag "$VERSION"
+
                   git push origin "refs/tags/$VERSION"
 
             - name: Trigger Homebrew Cask Update
