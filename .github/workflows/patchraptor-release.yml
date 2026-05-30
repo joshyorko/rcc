@@ -1,0 +1,138 @@
+name: PatchRaptor RCC Release
+
+on:
+  workflow_run:
+    workflows:
+      - Rcc
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: patchraptor-rcc-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Bump version and dispatch release tag
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+
+    steps:
+      - uses: actions/checkout@v6.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Inspect merged PatchRaptor PR
+        id: inspect
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+
+          subject="$(git log -1 --format=%s "$SHA")"
+          if [[ "$subject" =~ ^chore\(release\):\ bump\ RCC\ to\ v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "Release bump commit; skipping."
+            exit 0
+          fi
+
+          prs_json="$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${REPO}/commits/${SHA}/pulls")"
+
+          pr_number="$(jq -r '
+            map(select(
+              (.merged_at != null) and
+              (.base.ref == "main") and
+              (
+                (.head.ref | startswith("patchraptor/")) or
+                ((.user.login // "") | test("patchraptor"; "i"))
+              )
+            ))
+            | sort_by(.number)
+            | last
+            | .number // empty
+          ' <<<"$prs_json")"
+
+          if [[ -z "$pr_number" ]]; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "No merged PatchRaptor PR associated with $SHA."
+            exit 0
+          fi
+
+          files="$(gh pr view "$pr_number" --repo "$REPO" --json files --jq '.files[].path')"
+          echo "$files"
+
+          release_file_pattern='^(go\.mod|go\.sum|developer/setup\.ya?ml|robot_requirements\.txt|assets/micromamba_version\.txt)$'
+          if ! grep -Eq "$release_file_pattern" <<<"$files"; then
+            echo "release=false" >> "$GITHUB_OUTPUT"
+            echo "PatchRaptor PR #$pr_number did not touch release-relevant files."
+            exit 0
+          fi
+
+          echo "release=true" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: Bump RCC version
+        id: bump
+        if: steps.inspect.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TOOLS_PAT || github.token }}
+          PR_NUMBER: ${{ steps.inspect.outputs.pr_number }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "PatchRaptor Release Bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          gh auth setup-git
+
+          git fetch origin main --tags --force
+          git checkout main
+          git reset --hard origin/main
+
+          current="$(sed -nE 's/.*Version = `v([0-9]+)\.([0-9]+)\.([0-9]+)`.*/\1 \2 \3/p' common/version.go)"
+          if [[ -z "$current" ]]; then
+            echo "Could not read RCC version from common/version.go"
+            exit 1
+          fi
+
+          read -r major minor patch <<<"$current"
+          patch=$((patch + 1))
+          next="v${major}.${minor}.${patch}"
+
+          while git ls-remote --exit-code --tags origin "refs/tags/${next}" >/dev/null 2>&1; do
+            patch=$((patch + 1))
+            next="v${major}.${minor}.${patch}"
+          done
+
+          perl -0pi -e 's/Version = `v[0-9]+\.[0-9]+\.[0-9]+`/Version = `'"$next"'`/' common/version.go
+          git diff -- common/version.go
+
+          git add common/version.go
+          git commit -m "chore(release): bump RCC to ${next}" \
+            -m "Triggered after PatchRaptor PR #${PR_NUMBER} passed RCC CI on main."
+          git push origin HEAD:main
+
+          echo "version=${next}" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch release tag workflow
+        if: steps.inspect.outputs.release == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TOOLS_PAT || github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh workflow run create-release-tag.yml --ref main
+          echo "Dispatched create-release-tag.yml for ${VERSION}."
