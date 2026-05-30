@@ -74,7 +74,7 @@ A manual workflow that extracts the version from source code, validates it, and 
 2. Extracts version from `common/version.go`
 3. Validates the version string
 4. Creates and pushes the matching `v*` release tag with the release PAT
-5. Dispatches the Homebrew cask update workflow
+5. The tag push triggers `rcc.yaml`, which publishes the release and then dispatches the `rcc-daily` Homebrew tap update
 
 ### Permissions
 - `contents: write` - For creating the release tag
