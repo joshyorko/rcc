@@ -9,7 +9,7 @@ require (
 	github.com/mitchellh/go-ps v1.0.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.17.0
-	golang.org/x/sys v0.13.0
+	golang.org/x/sys v0.45.0
 	golang.org/x/term v0.13.0
 	gopkg.in/yaml.v2 v2.4.0
 )
