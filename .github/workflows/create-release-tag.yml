@@ -3,7 +3,7 @@ on:
     workflow_dispatch:
         inputs:
             recreate_existing_tag:
-                description: Delete and recreate the version tag if it already points at this commit
+                description: Delete and recreate an existing version tag at its current commit
                 required: false
                 default: false
                 type: boolean
@@ -58,17 +58,22 @@ jobs:
 
                   if git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
                       tag_sha="$(git rev-parse "refs/tags/$VERSION^{commit}")"
-                      if [[ "$tag_sha" != "$target_sha" ]]; then
-                          echo "Release tag $VERSION already points at $tag_sha, not current commit $target_sha."
-                          exit 1
-                      fi
                       if [[ "$RECREATE_EXISTING_TAG" != "true" ]]; then
                           echo "Release tag already exists: $VERSION"
                           echo "Rerun with recreate_existing_tag=true to retrigger the tag-push release."
                           exit 1
                       fi
+                      if ! git merge-base --is-ancestor "$tag_sha" "$target_sha"; then
+                          echo "Release tag $VERSION points at $tag_sha, which is not in the current main history."
+                          exit 1
+                      fi
+                      tagged_version="$(git show "$tag_sha:common/version.go" | grep 'Version =' | cut -d '`' -f 2)"
+                      if [[ "$tagged_version" != "$VERSION" ]]; then
+                          echo "Release tag $VERSION points at a commit whose source version is $tagged_version."
+                          exit 1
+                      fi
                       git push origin ":refs/tags/$VERSION"
-                      git tag -f "$VERSION" "$target_sha"
+                      git tag -f "$VERSION" "$tag_sha"
                   else
                       git tag "$VERSION" "$target_sha"
                   fi
