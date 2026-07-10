@@ -1,4 +1,18 @@
 # rcc change log
+## Unreleased
+
+### Dependency Updates
+
+- update `golang.org/x/term` from v0.43.0 to v0.45.0 and its required
+  `golang.org/x/sys` dependency from v0.45.0 to v0.47.0
+- update `gopkg.in/yaml.v2` from v2.2.8 to v2.4.0
+
+## v18.17.6 (date: 08.06.2026)
+
+### Security
+
+- update `gopkg.in/yaml.v2` from v2.2.2 to v2.2.8
+
 ## v18.17.5 (date: 30.05.2026)
 
 ### Dependency Updates
