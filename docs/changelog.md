@@ -1,6 +1,8 @@
 # rcc change log
 ## Unreleased
 
+## v18.17.7 (date: 12.07.2026)
+
 ### Dependency Updates
 
 - update the official Go toolchain from 1.26.3 to 1.26.5 across `go.mod`,
