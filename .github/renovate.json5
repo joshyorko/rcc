@@ -13,7 +13,8 @@
   "prHourlyLimit": 1,
 
   "ignorePaths": [
-    ".dagger/**",
+    ".dagger/go.mod",
+    ".dagger/go.sum",
     "blobs/**",
     "build/**",
     "tmp/**"
@@ -31,16 +32,16 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "Track the Go toolchain pin across RCC source, CI, and developer toolkit config.",
+      "description": "Track the official Go toolchain pin across RCC source, CI, and Dagger.",
       "managerFilePatterns": [
         "/^go\\.mod$/",
-        "/^developer/setup\\.ya?ml$/",
-        "/^\\.github/workflows/rcc\\.ya?ml$/"
+        "/^\\.github/workflows/rcc\\.ya?ml$/",
+        "/^\\.dagger/main\\.go$/"
       ],
       "matchStrings": [
         "(?:^|\\n)go\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)",
         "go-version:\\s*[\"']?(?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']?",
-        "-\\s*go=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "defaultGoVersion\\s*=\\s*[\"'](?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']"
       ],
       "depNameTemplate": "go",
       "datasourceTemplate": "golang-version",
@@ -69,7 +70,7 @@
     },
     {
       "description": [
-        "Keep Go runtime updates coordinated across go.mod, CI, and the RCC developer toolkit."
+        "Keep official Go runtime updates coordinated across go.mod, CI, and Dagger."
       ],
       "groupName": "Go toolchain",
       "matchManagers": [
@@ -79,6 +80,21 @@
       "matchPackageNames": [
         "go"
       ]
+    },
+    {
+      "description": [
+        "gopkg.in/yaml.v2 cannot take v3 releases without changing the module import path."
+      ],
+      "matchManagers": [
+        "gomod"
+      ],
+      "matchPackageNames": [
+        "gopkg.in/yaml.v2"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
     }
   ]
 }
