@@ -3,13 +3,16 @@
 
 ### Dependency Updates
 
-- update the Go toolchain from 1.26.3 to 1.26.5 across `go.mod`, the developer
-  toolkit, GitHub Actions, and the Dagger runner
+- update the official Go toolchain from 1.26.3 to 1.26.5 across `go.mod`,
+  GitHub Actions, and the Dagger runner; keep the contained developer toolkit
+  on the newest Conda Forge build, Go 1.26.3
 - update `golang.org/x/term` from v0.43.0 to v0.45.0 and its required
   `golang.org/x/sys` dependency from v0.45.0 to v0.47.0
 - update `gopkg.in/yaml.v2` from v2.2.8 to v2.4.0
 - stop PatchRaptor from reopening the invalid `gopkg.in/yaml.v2` v3 lane;
   v3 requires the separate `gopkg.in/yaml.v3` module path
+- stop the official Go release manager from updating the Conda-managed toolkit
+  pin before that version exists on Conda Forge
 
 ## v18.17.6 (date: 08.06.2026)
 

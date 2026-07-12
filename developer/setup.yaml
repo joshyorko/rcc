@@ -1,12 +1,12 @@
 channels:
   - conda-forge
 dependencies:
-  # Note: needs to match the version in the GitHub Actions workflow
-  # (both rcc and rcc-pipeline)
+  # Conda Forge can lag official Go patch releases. Keep this pinned to the
+  # newest version actually available from conda-forge; CI and Dagger may lead.
   - python=3.10.15
   - invoke=2.2.0
   # Note: needs to match the version in robot_requirements.txt
   # Also in rcc-pipeline
   - robotframework=6.1.1
-  - go=1.26.5
+  - go=1.26.3
   - git=2.46.0

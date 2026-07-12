@@ -21,7 +21,7 @@ Pinned tool versions live in `developer/setup.yaml`:
 - Python **3.10.15**
 - Invoke **2.2.0**
 - Robot Framework **6.1.1** (matches `robot_requirements.txt`)
-- Go **1.26.5**
+- Go **1.26.3** (latest available from Conda Forge; CI and Dagger use **1.26.5**)
 - Git **2.46.0**
 
 ### 1) Prerequisites
