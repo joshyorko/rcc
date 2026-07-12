@@ -25,7 +25,7 @@ rcc run -r developer/toolkit.yaml --dev -t local
 rcc run -r developer/toolkit.yaml -t robot
 ```
 
-If the host already has the pinned toolchain, `inv` is fine. `developer/setup.yaml`, CI, and `go.mod` pin Go `1.25.7`; `developer/setup.yaml` also pins Python `3.10.15`, Invoke `2.2.0`, Robot Framework `6.1.1`, and Git `2.46.0`.
+If the host already has the pinned toolchain, `inv` is fine. `developer/setup.yaml`, CI, `go.mod`, and the Dagger runner pin Go `1.26.5`; `developer/setup.yaml` also pins Python `3.10.15`, Invoke `2.2.0`, Robot Framework `6.1.1`, and Git `2.46.0`.
 
 ```bash
 inv assets
