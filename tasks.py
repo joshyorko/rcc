@@ -219,6 +219,13 @@ def deadcode(c):
     c.run(f"{PYTHON} scripts/deadcode.py")
 
 
+@task
+def agentdocs(c):
+    """Run tests and structural validation for repository-local agent guidance"""
+    c.run(f"{PYTHON} -m unittest scripts/test_validate_agent_docs.py")
+    c.run(f"{PYTHON} scripts/validate_agent_docs.py")
+
+
 @task(pre=[toc])
 def support(c):
     """Create necessary directories"""

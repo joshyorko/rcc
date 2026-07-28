@@ -1,7 +1,7 @@
 # RCC
 
 [![Build (caching)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml/badge.svg)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/joshyorko/rcc)](https://goreportcard.com/report/github.com/joshyorko/rcc)
+[![Lint](https://github.com/joshyorko/rcc/actions/workflows/lint.yml/badge.svg)](https://github.com/joshyorko/rcc/actions/workflows/lint.yml)
 [![codecov](https://codecov.io/gh/joshyorko/rcc/branch/master/graph/badge.svg)](https://codecov.io/gh/joshyorko/rcc)
 [![Release](https://img.shields.io/github/v/release/joshyorko/rcc)](https://github.com/joshyorko/rcc/releases)
 
