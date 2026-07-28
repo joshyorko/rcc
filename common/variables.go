@@ -82,13 +82,7 @@ func init() {
 	args := set.Set(lowargs)
 	WarrantyVoidedFlag = set.Member(args, "--warranty-voided")
 	BundledFlag = set.Member(args, "--bundled")
-	robocorp := set.Member(args, "--robocorp")
-	switch {
-	case robocorp:
-		Product = LegacyMode()
-	default:
-		Product = LegacyMode()
-	}
+	Product = LegacyMode()
 	NoTempManagement = set.Member(args, "--no-temp-management")
 	NoPycManagement = set.Member(args, "--no-pyc-management")
 	if set.Member(args, "--debug") {
