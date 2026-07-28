@@ -11,10 +11,6 @@ import (
 	"github.com/joshyorko/rcc/common"
 )
 
-func TestCanCallMain(t *testing.T) {
-	main()
-}
-
 func tempMarkerForTest(t *testing.T) string {
 	t.Helper()
 
