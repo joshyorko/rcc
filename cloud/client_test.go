@@ -1,12 +1,64 @@
 package cloud_test
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/hamlet"
 )
+
+func assertDownloadFailurePreservesDestination(t *testing.T, handler http.HandlerFunc) {
+	t.Helper()
+
+	server := httptest.NewServer(handler)
+	defer server.Close()
+
+	directory := t.TempDir()
+	destination := filepath.Join(directory, "download.bin")
+	original := []byte("original content")
+	if err := os.WriteFile(destination, original, 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := cloud.Download(server.URL, destination); err == nil {
+		t.Fatal("download unexpectedly succeeded")
+	}
+	content, err := os.ReadFile(destination)
+	if err != nil {
+		t.Fatalf("existing destination was removed: %v", err)
+	}
+	if string(content) != string(original) {
+		t.Fatalf("existing destination was replaced with %q", content)
+	}
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 1 || entries[0].Name() != filepath.Base(destination) {
+		t.Fatalf("download left temporary files behind: %v", entries)
+	}
+}
+
+func TestDownloadPreservesExistingDestinationOnHTTPError(t *testing.T) {
+	assertDownloadFailurePreservesDestination(t, func(response http.ResponseWriter, request *http.Request) {
+		http.Error(response, "failed", http.StatusInternalServerError)
+	})
+}
+
+func TestDownloadPreservesExistingDestinationOnInterruptedBody(t *testing.T) {
+	assertDownloadFailurePreservesDestination(t, func(response http.ResponseWriter, request *http.Request) {
+		connection, buffer, _ := response.(http.Hijacker).Hijack()
+		defer connection.Close()
+		fmt.Fprint(buffer, "HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\npartial")
+		buffer.Flush()
+	})
+}
 
 func TestCannotCreateClientForBadEndpoint(t *testing.T) {
 	must_be, wont_be := hamlet.Specifications(t)

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -220,13 +221,6 @@ func Download(url, filename string) error {
 	common.Timeline("start %s download", filename)
 	defer common.Timeline("done %s download", filename)
 
-	if pathlib.Exists(filename) {
-		err := os.Remove(filename)
-		if err != nil {
-			return err
-		}
-	}
-
 	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport()}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -243,10 +237,15 @@ func Download(url, filename string) error {
 		return fmt.Errorf("Downloading %q failed, reason: %q!", url, response.Status)
 	}
 
-	out, err := pathlib.Create(filename)
+	_, err = pathlib.EnsureParentDirectory(filename)
 	if err != nil {
 		return err
 	}
+	out, err := os.CreateTemp(filepath.Dir(filename), "."+filepath.Base(filename)+".*.part")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(out.Name())
 	defer out.Close()
 
 	digest := sha256.New()
@@ -262,6 +261,16 @@ func Download(url, filename string) error {
 	common.Timeline("downloaded %d bytes to %s", bytecount, filename)
 
 	err = out.Sync()
+	if err != nil {
+		return err
+	}
+
+	err = out.Close()
+	if err != nil {
+		return err
+	}
+
+	err = os.Rename(out.Name(), filename)
 	if err != nil {
 		return err
 	}
