@@ -228,7 +228,7 @@ func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshIns
 	fmt.Fprintf(planWriter, "---  plan blueprint @%ss  ---\n\n", stopwatch)
 	fmt.Fprintf(planWriter, "%s\n", yaml)
 
-	success, fatal, pipUsed, python := uvNativeHolotreeLayers(requirementsText, finalEnv, targetFolder, uvBinary, pythonVersion, stopwatch, planWriter, theplan, skip, recorder)
+	success, fatal, _, _ := uvNativeHolotreeLayers(requirementsText, finalEnv, targetFolder, uvBinary, pythonVersion, stopwatch, planWriter, theplan, skip, recorder)
 	if !success {
 		return success, fatal
 	}
@@ -243,26 +243,32 @@ func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshIns
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
 	}
-	err = goldenMasterUvNative(targetFolder, pipUsed)
+	python, pyok := FindPython(targetFolder)
+	if !pyok {
+		common.Fatal("Golden EE failure", fmt.Errorf("No python found in staged uv-native environment"))
+		return false, false
+	}
+	err = goldenMasterUvNative(targetFolder, uvBinary, python)
 	if err != nil {
-		common.Log("%sGolden EE failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		common.Fatal("Golden EE failure", err)
+		return false, false
 	}
 	fmt.Fprintf(planWriter, "\n---  pip check plan @%ss  ---\n\n", stopwatch)
-	if common.StrictFlag && pipUsed {
-		pretty.Progress(11, "Running pip check phase.")
-		pipCommand := common.NewCommander(python, "-m", "pip", "check", "--no-color")
+	if common.StrictFlag {
+		pretty.Progress(11, "Running uv pip check phase.")
+		pipCommand := common.NewCommander(uvPipCheckCommand(uvBinary, python, targetFolder)...)
 		pipCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
 		common.Debug("===  pip check phase (uv-native) ===")
-		code, err := LiveExecution(planWriter, targetFolder, pipCommand.CLI()...)
+		code, err := uvLiveExecution(planWriter, targetFolder, pipCommand.CLI()...)
 		if err != nil || code != 0 {
 			cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.fatal.pipcheck.uvnative", fmt.Sprintf("%d_%x", code, code))
 			common.Timeline("pip check fail (uv-native).")
-			common.Fatal(fmt.Sprintf("Pip check [%d/%x]", code, code), err)
+			common.Fatal(fmt.Sprintf("Uv pip check [%d/%x]", code, code), err)
 			return false, false
 		}
 		common.Timeline("pip check done (uv-native).")
 	} else {
-		pretty.Progress(11, "Pip check skipped.")
+		pretty.Progress(11, "Uv pip check skipped.")
 	}
 	fmt.Fprintf(planWriter, "\n---  installation plan complete (uv-native) @%ss  ---\n\n", stopwatch)
 	pretty.Progress(12, "Update installation plan.")

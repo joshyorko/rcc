@@ -153,7 +153,7 @@ def create_traversal_bundle(
 
 
 def extract_env_value(output: str, key: str) -> str:
-    pattern = rf"(?m)^(?:SET\s+)?{re.escape(key)}=(.*)$"
+    pattern = rf"(?m)^(?:(?:export|SET)\s+)?{re.escape(key)}=(.*)$"
     match = re.search(pattern, output, re.IGNORECASE)
     assert match, f"Could not find environment variable {key!r} in output: {output!r}"
     return match.group(1).strip()

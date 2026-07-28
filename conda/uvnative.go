@@ -27,19 +27,22 @@ func copyPythonPrefix(uvPythonCache, pythonVersion, targetFolder string, planWri
 		return fmt.Errorf("failed to read UV python cache: %w", err)
 	}
 
-	var prefixDir string
 	targetPrefix := fmt.Sprintf("cpython-%s", pythonVersion)
+	matches := make([]string, 0, 2)
 
 	for _, entry := range entries {
-		if entry.IsDir() && strings.HasPrefix(entry.Name(), targetPrefix) {
-			prefixDir = filepath.Join(uvPythonCache, entry.Name())
-			break
+		if entry.IsDir() && (entry.Name() == targetPrefix || strings.HasPrefix(entry.Name(), targetPrefix+"-")) {
+			matches = append(matches, filepath.Join(uvPythonCache, entry.Name()))
 		}
 	}
 
-	if prefixDir == "" {
+	if len(matches) == 0 {
 		return fmt.Errorf("Python %s not found in UV cache at %s", pythonVersion, uvPythonCache)
 	}
+	if len(matches) > 1 {
+		return fmt.Errorf("multiple Python %s installations found in UV cache at %s", pythonVersion, uvPythonCache)
+	}
+	prefixDir := matches[0]
 
 	common.Debug("Copying Python prefix from %s to %s", prefixDir, targetFolder)
 	fmt.Fprintf(planWriter, "Copying Python %s from %s\n", pythonVersion, prefixDir)
@@ -70,22 +73,24 @@ func copyPythonPrefix(uvPythonCache, pythonVersion, targetFolder string, planWri
 		}
 
 		// Check if it's a symlink
-		info, err := d.Info()
-		if err != nil {
-			return fmt.Errorf("failed to get file info for %s: %w", path, err)
-		}
-
 		// If it's a symlink, resolve and copy the target
-		if info.Mode()&fs.ModeSymlink != 0 {
+		if d.Type()&fs.ModeSymlink != 0 {
 			// Read where the symlink points
 			linkTarget, err := os.Readlink(path)
 			if err != nil {
 				return fmt.Errorf("failed to read symlink %s: %w", path, err)
 			}
+			if filepath.IsAbs(linkTarget) {
+				return fmt.Errorf("symlink target outside Python prefix: %s -> %s", path, linkTarget)
+			}
 
-			// Resolve to absolute path if relative
-			if !filepath.IsAbs(linkTarget) {
-				linkTarget = filepath.Join(filepath.Dir(path), linkTarget)
+			linkTarget, err = filepath.EvalSymlinks(filepath.Join(filepath.Dir(path), linkTarget))
+			if err != nil {
+				return fmt.Errorf("failed to resolve symlink %s: %w", path, err)
+			}
+			relativeTarget, err := filepath.Rel(prefixDir, linkTarget)
+			if err != nil || relativeTarget == ".." || strings.HasPrefix(relativeTarget, ".."+string(os.PathSeparator)) {
+				return fmt.Errorf("symlink target outside Python prefix: %s -> %s", path, linkTarget)
 			}
 
 			// Copy the actual file the symlink points to
@@ -169,6 +174,64 @@ func uvPythonTarget(python, targetFolder string) string {
 	return targetFolder
 }
 
+func uvCommandEnvironment(base []string, overrides ...string) []string {
+	environment := make([]string, 0, len(base)+len(overrides)+1)
+	for _, entry := range base {
+		name := entry
+		if at := strings.IndexByte(entry, '='); at >= 0 {
+			name = entry[:at]
+		}
+		if strings.HasPrefix(strings.ToUpper(name), "UV_") {
+			continue
+		}
+		environment = append(environment, entry)
+	}
+	environment = append(environment, "UV_NO_CONFIG=1")
+	return append(environment, overrides...)
+}
+
+func uvPipListCommand(uvBinary, python, targetFolder string) []string {
+	return []string{
+		uvBinary,
+		"pip",
+		"list",
+		"--python",
+		uvPythonTarget(python, targetFolder),
+		"--format",
+		"json",
+		"--color",
+		"never",
+	}
+}
+
+func uvPipCheckCommand(uvBinary, python, targetFolder string) []string {
+	return []string{
+		uvBinary,
+		"pip",
+		"check",
+		"--python",
+		uvPythonTarget(python, targetFolder),
+		"--color",
+		"never",
+	}
+}
+
+func uvLiveExecution(sink io.Writer, targetFolder string, command ...string) (int, error) {
+	fmt.Fprintf(sink, "Command %q at %q:\n", command, targetFolder)
+	environment := uvCommandEnvironment(
+		CondaExecutionEnvironment(targetFolder, nil, true),
+		"UV_PYTHON_DOWNLOADS=never",
+	)
+	return shell.New(environment, ".", command...).Tracked(sink, false)
+}
+
+func recordUvNativeLayer(recorder Recorder, layer []byte, inventory func() error) error {
+	if err := inventory(); err != nil {
+		return err
+	}
+	return recorder.Record(layer)
+}
+
 // copyPrefixFile copies a single file preserving permissions
 func copyPrefixFile(source, target string) error {
 	// Ensure target directory exists
@@ -222,8 +285,10 @@ func uvNativeLayer(fingerprint, targetFolder, pythonVersion, uvBinary string, st
 
 	pretty.Progress(7, "Running uv-native phase. [layer: %s]", fingerprint)
 
-	env := CondaEnvironment()
-	env = append(env, fmt.Sprintf("UV_PYTHON_INSTALL_DIR=%s", common.UvPythonCache()))
+	env := uvCommandEnvironment(
+		CondaEnvironment(),
+		fmt.Sprintf("UV_PYTHON_INSTALL_DIR=%s", common.UvPythonCache()),
+	)
 
 	common.Debug("Setting up new uv-native environment at %v with python %v", targetFolder, pythonVersion)
 	fmt.Fprintf(planWriter, "\n---  uv-native plan @%ss  ---\n\n", stopwatch)
@@ -301,7 +366,7 @@ func uvNativePipLayer(fingerprint, requirementsText, targetFolder, uvBinary stri
 		common.Debug("uv-native pip will target: %s", uvTarget)
 
 		common.Debug("===  uv pip install phase ===")
-		code, err := LiveExecution(planWriter, targetFolder, uvCommand.CLI()...)
+		code, err := uvLiveExecution(planWriter, targetFolder, uvCommand.CLI()...)
 		if err != nil || code != 0 {
 			cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.fatal.uv.pip", fmt.Sprintf("%d_%x", code, code))
 			common.Timeline("uv pip fail.")
@@ -338,8 +403,18 @@ func uvNativeHolotreeLayers(requirementsText string, finalEnv *Environment, targ
 		if pipNeeded || postInstall {
 			fmt.Fprintf(theplan, "\n---  uv-native layer complete [on layered holotree]  ---\n\n")
 			common.Error("saving rcc_plan.log", theplan.Save())
-			common.Error("saving golden master", goldenMasterUvNative(targetFolder, false))
-			recorder.Record([]byte(layers[0]))
+			python, ok := FindPython(targetFolder)
+			if !ok {
+				common.Fatal("Failed to save uv-native base layer", fmt.Errorf("No python found in staged uv-native environment"))
+				return false, false, false, ""
+			}
+			err := recordUvNativeLayer(recorder, []byte(layers[0]), func() error {
+				return goldenMasterUvNative(targetFolder, uvBinary, python)
+			})
+			if err != nil {
+				common.Fatal("Failed to save uv-native base layer", err)
+				return false, false, false, ""
+			}
 		}
 	} else {
 		pretty.Progress(7, "Skipping uv-native phase, layer exists.")
@@ -353,8 +428,18 @@ func uvNativeHolotreeLayers(requirementsText string, finalEnv *Environment, targ
 		if pipUsed && postInstall {
 			fmt.Fprintf(theplan, "\n---  uv pip layer complete [on layered holotree]  ---\n\n")
 			common.Error("saving rcc_plan.log", theplan.Save())
-			common.Error("saving golden master", goldenMasterUvNative(targetFolder, true))
-			recorder.Record([]byte(layers[1]))
+			stagedPython, ok := FindPython(targetFolder)
+			if !ok {
+				common.Fatal("Failed to save uv-native pip layer", fmt.Errorf("No python found in staged uv-native environment"))
+				return false, false, pipUsed, python
+			}
+			err := recordUvNativeLayer(recorder, []byte(layers[1]), func() error {
+				return goldenMasterUvNative(targetFolder, uvBinary, stagedPython)
+			})
+			if err != nil {
+				common.Fatal("Failed to save uv-native pip layer", err)
+				return false, false, pipUsed, python
+			}
 		}
 	} else {
 		pretty.Progress(8, "Skipping pip phase, layer exists.")

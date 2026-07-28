@@ -11,7 +11,11 @@ UV Native Setup
 *** Test cases ***
 
 Goal: Build uv-native environment and see correct variables
-  Step        build/rcc ht vars --space uvnative --controller citests robot_tests/uv_native/conda.yaml
+  Set Environment Variable    UV_INDEX_URL    http://127.0.0.1:9/simple
+  Set Environment Variable    UV_CONFIG_FILE    does-not-exist.toml
+  Step        build/rcc ht vars --strict --space uvnative --controller citests robot_tests/uv_native/conda.yaml
+  Remove Environment Variable    UV_INDEX_URL
+  Remove Environment Variable    UV_CONFIG_FILE
   Must Have   PYTHON_EXE=
   Must Have   CONDA_PREFIX=
   Must Have   PATH=
@@ -28,9 +32,22 @@ Goal: Build uv-native environment and see correct variables
   Wont Have   ROBOT_ARTIFACTS=
   Use STDERR
   Must Have   Running uv-native phase
+  Must Have   Running uv pip check phase
   Must Have   environment creation" was SUCCESS
   Wont Have   micromamba
+  Wont Have   Golden EE failure
   Wont Have   No such file or directory
+  Use STDOUT
+  ${conda_prefix}=    Extract Env Value    ${robot_stdout}    CONDA_PREFIX
+  ${golden_ee}=    Join Path    ${conda_prefix}    golden-ee.yaml
+  Must Exist    ${golden_ee}
+  ${inventory}=    Get File    ${golden_ee}
+  Should Contain    ${inventory}    name: requests
+  Should Contain    ${inventory}    origin: pypi
+  ${uv}=    Join Path    ${conda_prefix}    bin    uv
+  ${uv_exe}=    Join Path    ${conda_prefix}    Scripts    uv.exe
+  Wont Exist    ${uv}
+  Wont Exist    ${uv_exe}
 
 Goal: Windows uv-native activation script uses cmd semantics
   [Tags]    windows
