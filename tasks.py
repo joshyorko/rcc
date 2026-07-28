@@ -215,9 +215,8 @@ def toc(c):
 
 @task
 def deadcode(c):
-    """Update table of contents on docs/ directory"""
+    """Report Go functions unreachable in this build configuration"""
     c.run(f"{PYTHON} scripts/deadcode.py")
-    print("Ran scripts/deadcode.py")
 
 
 @task(pre=[toc])
