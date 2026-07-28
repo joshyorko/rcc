@@ -23,9 +23,7 @@ const (
 )
 
 var (
-	slashPattern      = regexp.MustCompile("[/\\\\]+")
-	underscorePattern = regexp.MustCompile("_+")
-	spacePattern      = regexp.MustCompile("\\s+")
+	separatorPattern = regexp.MustCompile(`[\s/\\_]+`)
 )
 
 type (
@@ -132,7 +130,7 @@ func LockpidFor(filename string) *Lockpid {
 	username := "anonymous"
 	who, err := user.Current()
 	if err == nil {
-		username = unslash(who.Username)
+		username = who.Username
 	}
 	return &Lockpid{
 		ParentID:   os.Getppid(),
@@ -197,21 +195,6 @@ forever:
 	}
 }
 
-func unspace(text string) string {
-	parts := spacePattern.Split(text, -1)
-	return strings.Join(parts, "_")
-}
-
-func unslash(text string) string {
-	parts := slashPattern.Split(text, -1)
-	return strings.Join(parts, "_")
-}
-
-func oneunderscore(text string) string {
-	parts := underscorePattern.Split(text, -1)
-	return strings.Join(parts, "_")
-}
-
 func unify(text string) string {
-	return oneunderscore(unslash(unspace(strings.TrimSpace(text))))
+	return separatorPattern.ReplaceAllString(strings.TrimSpace(text), "_")
 }

@@ -1,70 +1,65 @@
 # Repository Guidelines
 
-## Project Shape
+## Project Structure & Module Organization
 
-This is Josh's maintained fork of RCC, a Go CLI for creating, caching, and running contained automation environments from `robot.yaml` and `conda.yaml`. Treat this checkout as the current RCC source of truth. Upstream Robocorp/Sema4.ai docs are compatibility history unless a task explicitly asks for upstream alignment.
+RCC is a Go CLI for building, caching, and running contained automation environments. Treat this maintained fork as the release source of truth.
 
-Key areas:
+- `cmd/` contains Cobra commands; `operations/` implements user-facing workflows.
+- `conda/`, `htfs/`, and `remotree/` manage environments, holotree storage, and remote caches.
+- `common/`, `settings/`, `pathlib/`, and `shell/` provide shared infrastructure.
+- `assets/`, `templates/`, and `docs/` are embedded source inputs. `blobs/` and `build/` are generated; do not hand-edit them.
+- `developer/` defines the contained development toolkit. `robot_tests/` holds Robot Framework acceptance tests; Go unit tests live beside source as `*_test.go`.
 
-- `cmd/`: Cobra commands and platform command wiring.
-- `operations/`: user-visible run, pull, auth, diagnostics, bundle, and release behavior.
-- `conda/`, `htfs/`, `remotree/`: environment creation, holotree storage, archives, and remote cache behavior.
-- `common/`, `settings/`, `xviper/`, `pathlib/`, `shell/`: shared platform, config, logging, path, and process helpers.
-- `assets/`, `templates/`, `docs/`: source inputs embedded into the binary.
-- `blobs/` and `build/`: generated output. Do not hand-edit these.
-- `developer/`: contained toolkit; `robot_tests/`: Robot Framework acceptance tests.
+For historical archaeology, [`admariner/rcc`](https://github.com/admariner/rcc) preserves the public `robocorp/rcc` Git history through its last open-source revision. Use it for lineage and blame, not as this fork’s current release authority.
 
-## Environment And Commands
+## Build, Test, and Development Commands
 
-Josh is usually on Bluefin Linux. Do not mutate the host just to get Go, Python, or Robot Framework. This repo does not currently ship a devcontainer, so prefer the checked-in toolkit when host tools are missing:
+Prefer the checked-in toolkit for a contained development environment:
 
-```bash
-rcc run -r developer/toolkit.yaml --dev -t tools
+```sh
 rcc run -r developer/toolkit.yaml --dev -t unitTests
 rcc run -r developer/toolkit.yaml --dev -t local
 rcc run -r developer/toolkit.yaml -t robot
 ```
 
-If the host already has the pinned toolchain, `inv` is fine. CI, `go.mod`, and the Dagger runner pin Go `1.26.5`; the contained `developer/setup.yaml` environment pins the newest Conda Forge build, currently Go `1.26.3`, plus Python `3.10.15`, Invoke `2.2.0`, Robot Framework `6.1.1`, and Git `2.46.0`.
+With Go 1.26.5, Python 3.10+, and Invoke available:
 
-```bash
-inv assets
-GOARCH=amd64 CGO_ENABLED=0 go test ./...
-inv local
-inv robot
+```sh
+inv assets   # regenerate embedded blobs
+inv test     # run Go unit tests
+inv local    # build build/rcc
+inv robot    # run acceptance tests after inv robotsetup
 ```
 
-`inv test` sets `GOARCH=amd64` and `CGO_ENABLED=0`; set them yourself for direct `go test`. `inv local` builds into `build/`; `inv build` cross-builds Linux, Windows, and macOS artifacts. `inv robot` writes reports to `tmp/output/`.
+Run `inv assets` after changing embedded inputs. Use `inv build` only when cross-platform artifacts are required.
 
-## Editing Rules
+## Coding Style & Naming Conventions
 
-Edit `assets/*`, `assets/man/*`, `templates/*`, or `docs/*.md`, then run `inv assets` or `rcc run -r developer/toolkit.yaml --dev -t assets`. Do not manually patch generated files under `blobs/`. Micromamba assets are prepared through `tasks.py`; use `RCC_MICROMAMBA_BASE` only when that download source must be overridden.
+Run `gofmt` on changed Go files. Prefer small functions, table-driven tests, lowercase package names, and conventional Go `CamelCase` identifiers. Follow existing `fail` error handling, `common.Log/Debug/Trace` output, and `hamlet` test assertions. Keep OS-specific behavior in platform-specific files. Never hardcode credentials or service URLs; preserve `RCC_ENDPOINT_*` overrides and disabled telemetry.
 
-Keep existing RCC idioms:
+## Testing Guidelines
 
-```go
-defer fail.Around(&err)
-fail.On(condition, "message: %v", err)
-fail.Fast(err)
+Name Go tests `TestXxx` in `*_test.go`; name acceptance suites `*.robot`. Start with the affected package, for example `GOARCH=amd64 CGO_ENABLED=0 go test ./cmd/...`, then run `inv test`. Use `inv robot` for runtime, environment, or CLI workflow changes. Avoid live network dependencies unless explicitly isolated.
 
-common.Log("message: %s", value)
-common.Debug("debug: %s", value)
-common.Trace("trace: %s", value)
+## Commit & Pull Request Guidelines
 
-must_be, wont_be := hamlet.Specifications(t)
-must_be.Equal(expected, actual)
+Recent history follows Conventional Commits: `fix:`, `feat(scope):`, and `chore(scope):`. Keep subjects imperative and commits focused. Search existing issues; open one first for non-trivial work. Target PRs at `main`, link the issue, summarize behavior changes, and list exact verification commands plus relevant logs or before/after CLI output.
+
+## Repository-Local Skills & Durable Learning
+
+Use [`docs/skills/README.md`](docs/skills/README.md) to route recurring RCC development work and [`docs/agent-boundaries.md`](docs/agent-boundaries.md) to determine allowed actions. Apply the RCC development skill for source changes. Load the meta-skill-improvement skill only when evidence reveals stale or missing guidance, the task changes agent guidance, or closure produces durable learning.
+
+Inside this checkout, repository-local guidance is authoritative for RCC implementation and verification. The external `rcc` plugin provides broader cross-repository discovery and orientation, including source-work guidance, but defers to this repository when the two overlap.
+
+Treat verified, reusable knowledge as part of the deliverable. Update existing guidance when evidence proves it incomplete or stale, but do not create session diaries, issue backlogs, speculative rules, or cosmetic documentation churn. A documentation edit is required only when durable knowledge was learned. The documentation receipt remains mandatory for non-trivial work; a no-change receipt is valid.
+
+Close non-trivial work with:
+
+```text
+Documentation receipt
+- Canonical guidance: <file changed, exact proposed delta, or "no change">
+- Durable learning: <reusable fact or "none">
+- Evidence: <code, test, command, runtime output, or immutable history>
+- Stale guidance removed: <what was replaced or "none">
+- Remaining uncertainty: <specific unknown or "none">
 ```
-
-Prefer `fail` for error handling, `common.Log/Debug/Trace` for CLI output, and `hamlet` assertions in tests. Run `gofmt` on changed Go files.
-
-## Fork-Specific Rules
-
-- Telemetry stays disabled. Do not add background metrics, tracking, or installation identifiers.
-- Endpoints must stay configurable through `RCC_ENDPOINT_*` and `RCC_AUTOUPDATES_*`; do not hardcode service URLs.
-- Treat `ROBOCORP_HOME` as the primary RCC home/cache boundary unless current source proves otherwise.
-- Keep platform-specific behavior in the existing platform files and packages.
-- Avoid live network behavior in tests unless explicitly scoped and isolated.
-
-## Verification
-
-Run the narrowest relevant checks and report them: docs-only `git diff --check`; Go logic `GOARCH=amd64 CGO_ENABLED=0 go test ./...` or toolkit `unitTests`; build-sensitive changes `inv local` or toolkit `local`; runtime/environment changes `inv robot` or toolkit `robot`, then inspect `tmp/output/log.html` on failure.

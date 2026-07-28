@@ -32,11 +32,19 @@ RCC_ACTIVATION_ENV = {
     "RCC_VERSION",
 }
 
+WINDOWS_EXECUTABLES = {
+    "build/rcc": r".\build\rcc.exe",
+    "build/rccremote": r".\build\rccremote.exe",
+}
+RCC_TEST_EXECUTABLES = set(WINDOWS_EXECUTABLES) | set(WINDOWS_EXECUTABLES.values())
+
 
 def fix_command(command):
     if sys.platform == "win32":
-        if command.strip().startswith("build/rcc"):
-            command = command.replace("build/rcc", ".\\build\\rcc.exe", 1)
+        parts = command.strip().split(maxsplit=1)
+        if parts:
+            parts[0] = WINDOWS_EXECUTABLES.get(parts[0], parts[0])
+        return " ".join(parts)
     return command
 
 
@@ -44,8 +52,8 @@ def clean_rcc_subprocess_env(command: str, env: dict[str, str] | None):
     if env is not None:
         return env
 
-    command = command.strip()
-    if not (command.startswith("build/rcc") or command.startswith(".\\build\\rcc.exe")):
+    executable = command.strip().partition(" ")[0]
+    if executable not in RCC_TEST_EXECUTABLES:
         return None
 
     clean_env = os.environ.copy()
@@ -153,7 +161,7 @@ def create_traversal_bundle(
 
 
 def extract_env_value(output: str, key: str) -> str:
-    pattern = rf"(?m)^(?:SET\s+)?{re.escape(key)}=(.*)$"
+    pattern = rf"(?m)^(?:(?:export|SET)\s+)?{re.escape(key)}=(.*)$"
     match = re.search(pattern, output, re.IGNORECASE)
     assert match, f"Could not find environment variable {key!r} in output: {output!r}"
     return match.group(1).strip()

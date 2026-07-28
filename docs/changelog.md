@@ -1,6 +1,55 @@
 # rcc change log
 ## Unreleased
 
+## v18.18.0 (date: 28.07.2026)
+
+### New Features
+
+- harden uv-native environment creation around the exact `python` and `uv`
+  versions declared in `conda.yaml`
+  - isolate RCC from inherited `UV_*` configuration and force
+    `UV_NO_CONFIG=1`
+  - disable implicit Python downloads after the requested interpreter has
+    been staged
+  - use the pinned uv binary for dependency inventory and strict dependency
+    checks
+  - reject ambiguous cached Python installations and symlinks that escape the
+    selected Python prefix
+  - require dependency inventory to succeed before recording holotree layers
+- detect Linux distributions from `/etc/os-release` or
+  `/usr/lib/os-release`, including Bluefin, bootc image, variant, and OSTree
+  metadata; fall back to `lsb_release` and then `uname` when needed
+
+### Reliability
+
+- preserve an existing download destination when a replacement download
+  fails by writing to a temporary file and renaming it only after success
+- make RCC temporary-directory recycling deterministic across normal exits
+  and recovered exit-code panics
+- refactor `rccremote` command execution behind dependency-injected logic and
+  add coverage for version output, flag forwarding, shared-holotree
+  enforcement, server failures, and exit recovery
+- simplify legacy product initialization and remove redundant separator and
+  test-only code paths
+
+### Developer Experience
+
+- replace the regex-based dead-code heuristic with the pinned Go reachability
+  analyzer, native target detection, test-aware analysis, deterministic
+  reporting, and standard-library unit tests
+- add repository-local RCC development skills, agent authority boundaries, a
+  pull-request evidence template, and a contained structural-validation task
+- add scoped `golangci-lint` configuration and workflow coverage for pull
+  requests and pushes to `main`
+
+### Release Automation
+
+- require manual release tags to target the current `origin/main` commit
+- pin the Copilot setup RCC binary to a version and SHA-256 checksum instead
+  of downloading the mutable latest release
+- pin the Homebrew Cask update workflow's `actions/github-script` dependency
+  to an immutable commit
+
 ## v18.17.7 (date: 12.07.2026)
 
 ### Dependency Updates

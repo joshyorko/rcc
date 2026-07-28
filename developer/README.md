@@ -50,6 +50,19 @@ rcc run -r developer/toolkit.yaml --dev -t toc
 rcc run -r developer/toolkit.yaml --dev -t tools
 ```
 
+### Format and lint Go code
+
+```
+rcc run -r developer/toolkit.yaml --dev -t format
+rcc run -r developer/toolkit.yaml --dev -t lint
+rcc run -r developer/toolkit.yaml --dev -t lintAll
+rcc run -r developer/toolkit.yaml --dev -t lintFix
+```
+
+`lint` and `lintFix` operate on changed code. `lintFix` applies only fixes
+supported by golangci-lint, so review its diff before committing. `lintAll`
+reports the repository-wide backlog and exits nonzero while findings remain.
+
 ## Dependencies
 
 Needed dependencies are visible at `developer/setup.yaml` file.

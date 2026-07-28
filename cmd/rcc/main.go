@@ -26,10 +26,6 @@ const (
 	daily       = 60 * 60 * 24
 )
 
-var (
-	markedAlready = false
-)
-
 func EnsureUserRegistered() (string, error) {
 	var warning string
 
@@ -70,10 +66,10 @@ func TimezoneMetric() error {
 }
 
 func ExitProtection() {
-	runtime.Gosched()
 	status := recover()
+	runtime.Gosched()
+	markTempForRecycling()
 	if status != nil {
-		markTempForRecycling()
 		exit, ok := status.(common.ExitCode)
 		if ok {
 			exit.ShowMessage()
@@ -107,10 +103,11 @@ func startTempRecycling() {
 		folder := filepath.Dir(filename)
 		changed, err := pathlib.Modtime(folder)
 		if err == nil && time.Since(changed) > 48*time.Hour {
-			go os.RemoveAll(folder)
+			if err := os.RemoveAll(folder); err != nil {
+				_ = common.Debug("Recycling %q failed, reason: %v", folder, err)
+			}
 		}
 	}
-	runtime.Gosched()
 }
 
 func markTempForRecycling() {
@@ -118,15 +115,11 @@ func markTempForRecycling() {
 		common.Timeline("temp management disabled -- temp not marked for recycling")
 		return
 	}
-	if markedAlready {
-		return
-	}
 	target := common.ProductTempName()
 	if pathlib.Exists(target) {
 		filename := filepath.Join(target, "recycle.now")
 		pathlib.WriteFile(filename, []byte("True"), 0o644)
 		common.Debug("Marked %q for recycling.", target)
-		markedAlready = true
 	}
 }
 
@@ -152,9 +145,8 @@ func main() {
 	}
 	defer common.EndOfTimeline()
 	if common.OneOutOf(6) {
-		go startTempRecycling()
+		anywork.Backlog(startTempRecycling)
 	}
-	defer markTempForRecycling()
 	defer os.Stderr.Sync()
 	defer os.Stdout.Sync()
 	cmd.Execute()

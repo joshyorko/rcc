@@ -50,6 +50,7 @@ HTML logs land in `tmp/output/log.html`. Top-notch reporting right there.
 | Local build | `rcc run -r developer/toolkit.yaml --dev -t local` |
 | Cross-platform build | `rcc run -r developer/toolkit.yaml --dev -t build` |
 | Asset generation | `rcc run -r developer/toolkit.yaml --dev -t assets` |
+| Agent guidance structural validation | `rcc run -r developer/toolkit.yaml --dev -t agentDocs` |
 | Tooling info | `rcc run -r developer/toolkit.yaml --dev -t tools` |
 
 ### How the toolkit works (so you can debug it)
@@ -85,6 +86,7 @@ Sometimes, less (tools) is not more (productivity). But you do you.
 | Unit tests | `inv test` | Forces `GOARCH=amd64`; set it yourself if running `go test` directly |
 | Local build | `inv local` | |
 | Cross-platform build | `inv build` | |
+| Agent guidance structural validation | `inv agentdocs` | |
 | Acceptance tests (setup) | `inv robotsetup` | Run once |
 | Acceptance tests (run) | `inv robot` | |
 | Update docs TOC | `inv toc` | |

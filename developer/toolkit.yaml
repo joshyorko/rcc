@@ -15,6 +15,16 @@ devTasks:
     shell: python call_invoke.py toc
   deadcode:
     shell: python call_invoke.py deadcode
+  format:
+    shell: python call_invoke.py format
+  lint:
+    shell: python call_invoke.py lint
+  lintAll:
+    shell: python call_invoke.py lintAll
+  lintFix:
+    shell: python call_invoke.py lintFix
+  agentDocs:
+    shell: python call_invoke.py agentdocs
   assets:
     shell: python call_invoke.py assets
   unpackTest:

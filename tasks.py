@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 import sys
 
 from invoke import task
@@ -215,9 +216,41 @@ def toc(c):
 
 @task
 def deadcode(c):
-    """Update table of contents on docs/ directory"""
+    """Report Go functions unreachable in this build configuration"""
     c.run(f"{PYTHON} scripts/deadcode.py")
-    print("Ran scripts/deadcode.py")
+
+
+@task
+def format(c):
+    """Format tracked Go files"""
+    output = subprocess.check_output(["git", "ls-files", "-z", "--", "*.go"])
+    files = [path for path in output.decode().split("\0") if path]
+    subprocess.run(["gofmt", "-w", *files], check=True)
+
+
+@task
+def lint(c):
+    """Lint changed Go code"""
+    c.run("golangci-lint run --new", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintAll(c):
+    """Report all Go lint findings"""
+    c.run("golangci-lint run", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintFix(c):
+    """Apply supported lint fixes to changed Go code"""
+    c.run("golangci-lint run --new --fix", env={"CGO_ENABLED": "0"})
+
+
+@task
+def agentdocs(c):
+    """Run tests and structural validation for repository-local agent guidance"""
+    c.run(f"{PYTHON} -m unittest scripts/test_validate_agent_docs.py")
+    c.run(f"{PYTHON} scripts/validate_agent_docs.py")
 
 
 @task(pre=[toc])

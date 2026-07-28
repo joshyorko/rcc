@@ -1,260 +1,238 @@
-#!/bin/env python3
-"""
-Dead code detector for Go projects.
-
-Finds functions and methods that are potentially unused (only referenced at their definition).
-
-Usage:
-    python3 scripts/deadcode.py [options]
-
-Options:
-    --verbose, -v       Show detailed progress and statistics
-    --max-refs N        Show functions with at most N references (default: 1)
-    --include-exported  Include exported (capitalized) functions
-    --include-tests     Include Test* functions
-    --summary           Show only summary statistics
-"""
+#!/usr/bin/env python3
+"""Report Go functions unreachable in the current RCC build configuration."""
 
 import argparse
+import json
 import os
-import pathlib
-import re
+import subprocess
 import sys
-from collections import defaultdict
-
-# Match function definitions: func FuncName(...) or func (receiver) MethodName(...)
-FUNC_PATTERN = re.compile(r"^\s*func\s+(?:\([^)]+\)\s+)?(\w+)")
-# Match word boundaries for function usage
-WORD_BOUNDARY = re.compile(r"\b(\w+)\b")
+from itertools import groupby
+from pathlib import Path
+from typing import NamedTuple
 
 
-def log(msg, verbose=True):
-    """Print message if verbose mode is enabled."""
-    if verbose:
-        print(f"[INFO] {msg}", file=sys.stderr)
+ANALYZER = "golang.org/x/tools/cmd/deadcode"
+ANALYZER_VERSION = "v0.48.0"
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
 
-def read_file(filename):
-    """Read file and yield (line_number, line_content) tuples."""
-    try:
-        with open(filename, encoding="utf-8") as source:
-            for index, line in enumerate(source):
-                yield index + 1, line
-    except (IOError, UnicodeDecodeError) as e:
-        print(f"[WARN] Could not read {filename}: {e}", file=sys.stderr)
+class AnalysisError(RuntimeError):
+    """Raised when the Go analyzer cannot produce a trustworthy report."""
 
 
-def find_files(where, pattern):
-    """Find all files matching pattern, excluding vendor and test directories."""
-    excluded_dirs = {"vendor", ".git", "testdata", "mocks"}
-    results = []
-    for path in pathlib.Path(where).rglob(pattern):
-        # Skip excluded directories
-        if any(excluded in path.parts for excluded in excluded_dirs):
-            continue
-        results.append(path.relative_to(where))
-    return tuple(sorted(results))
+class BuildConfig(NamedTuple):
+    goos: str
+    goarch: str
 
 
-def find_function_definitions(files, verbose=False):
-    """Find all function/method definitions in Go files."""
-    functions = defaultdict(list)  # function_name -> [(filename, line_number), ...]
-    
-    for filename in files:
-        for number, line in read_file(filename):
-            match = FUNC_PATTERN.match(line)
-            if match:
-                func_name = match.group(1)
-                functions[func_name].append((str(filename), number))
-    
-    log(f"Found {len(functions)} unique function/method names", verbose)
-    return functions
+class Finding(NamedTuple):
+    package: str
+    file: str
+    line: int
+    column: int
+    name: str
 
 
-def count_references(files, function_names, verbose=False):
-    """Count how many times each function name appears in the codebase."""
-    counters = defaultdict(int)
-    references = defaultdict(list)  # function_name -> [(filename:line, context), ...]
-    
-    # Create a set for O(1) lookup
-    func_set = set(function_names)
-    total_files = len(files)
-    
-    for i, filename in enumerate(files):
-        if verbose and (i + 1) % 50 == 0:
-            log(f"Scanning file {i + 1}/{total_files}: {filename}", verbose)
-        
-        for number, line in read_file(filename):
-            # Find all word-like tokens in the line
-            for match in WORD_BOUNDARY.finditer(line):
-                word = match.group(1)
-                if word in func_set:
-                    counters[word] += 1
-                    references[word].append((f"{filename}:{number}", line.strip()[:80]))
-    
-    log(f"Scanned {total_files} files for references", verbose)
-    return counters, references
-
-
-def process(args):
-    """Main processing function."""
-    verbose = args.verbose
-    max_refs = args.max_refs
-    include_exported = args.include_exported
-    include_tests = args.include_tests
-    summary_only = args.summary
-    show_refs = args.show_refs
-    all_low_usage = args.all_low_usage
-    
-    log("Starting dead code detection...", verbose)
-    
-    # Find all Go files
-    files = find_files(os.getcwd(), "*.go")
-    log(f"Found {len(files)} Go files", verbose)
-    
-    if not files:
-        print("[ERROR] No Go files found in current directory", file=sys.stderr)
-        return
-    
-    # Find function definitions
-    functions = find_function_definitions(files, verbose)
-    
-    if not functions:
-        print("[ERROR] No functions found", file=sys.stderr)
-        return
-    
-    # Count references
-    counters, references = count_references(files, functions.keys(), verbose)
-    
-    # Analyze results
-    dead_candidates = []
-    low_usage = []
-    
-    for func_name, definitions in sorted(functions.items()):
-        # Skip test functions unless requested
-        if not include_tests and func_name.startswith("Test"):
-            continue
-        
-        # Skip exported functions unless requested (they might be used externally)
-        is_exported = func_name[0].isupper()
-        if not include_exported and is_exported:
-            continue
-        
-        # Skip common patterns that are often false positives
-        if func_name in ("init", "main", "String", "Error"):
-            continue
-        
-        ref_count = counters.get(func_name, 0)
-        def_count = len(definitions)
-        
-        # A function is "dead" if it's only referenced at its definition(s)
-        # (each definition line contains the function name once)
-        if ref_count <= def_count:
-            dead_candidates.append((func_name, ref_count, definitions))
-        elif ref_count <= max_refs + def_count:
-            low_usage.append((func_name, ref_count, def_count, definitions))
-    
-    # Print results
-    print("\n" + "=" * 70)
-    print("DEAD CODE ANALYSIS REPORT")
-    print("=" * 70)
-    
-    print(f"\nStatistics:")
-    print(f"  - Go files scanned:      {len(files)}")
-    print(f"  - Functions found:       {len(functions)}")
-    print(f"  - Potentially dead:      {len(dead_candidates)}")
-    print(f"  - Low usage (≤{max_refs} refs): {len(low_usage)}")
-    
-    if summary_only:
-        return
-    
-    if dead_candidates:
-        print(f"\n{'─' * 70}")
-        print("POTENTIALLY DEAD CODE (only referenced at definition)")
-        print(f"{'─' * 70}")
-        for func_name, ref_count, definitions in dead_candidates:
-            for filename, line_num in definitions:
-                print(f"  {filename}:{line_num:<6} {func_name}")
-            if show_refs and func_name in references:
-                print(f"    References ({len(references[func_name])}):")
-                for ref_loc, context in references[func_name]:
-                    print(f"      {ref_loc}")
-                    print(f"        → {context}")
-                print()
-    else:
-        print("\n✓ No dead code candidates found!")
-    
-    if low_usage and not summary_only:
-        print(f"\n{'─' * 70}")
-        print(f"LOW USAGE FUNCTIONS (≤{max_refs} references beyond definition)")
-        print(f"{'─' * 70}")
-        display_count = len(low_usage) if all_low_usage else min(20, len(low_usage))
-        for func_name, ref_count, def_count, definitions in low_usage[:display_count]:
-            actual_refs = ref_count - def_count
-            for filename, line_num in definitions:
-                print(f"  {filename}:{line_num:<6} {func_name} ({actual_refs} refs)")
-            if show_refs and func_name in references:
-                print(f"    All references ({len(references[func_name])}):")
-                for ref_loc, context in references[func_name]:
-                    print(f"      {ref_loc}")
-                    print(f"        → {context}")
-                print()
-        if not all_low_usage and len(low_usage) > 20:
-            print(f"  ... and {len(low_usage) - 20} more (use --all-low-usage to show all)")
-    
-    print("\n" + "=" * 70)
-    print("NOTE: Exported functions (capitalized) are excluded by default.")
-    print("      Use --include-exported to include them.")
-    print("      False positives may occur for reflection, interfaces, or external usage.")
-    print("=" * 70 + "\n")
-
-
-def main():
+def create_parser():
     parser = argparse.ArgumentParser(
-        description="Detect potentially unused Go functions and methods.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
-    )
-    parser.add_argument(
-        "-v", "--verbose",
-        action="store_true",
-        help="Show detailed progress and statistics"
-    )
-    parser.add_argument(
-        "--max-refs",
-        type=int,
-        default=1,
-        help="Show functions with at most N references beyond definition (default: 1)"
-    )
-    parser.add_argument(
-        "--include-exported",
-        action="store_true",
-        help="Include exported (capitalized) functions in analysis"
-    )
-    parser.add_argument(
-        "--include-tests",
-        action="store_true",
-        help="Include Test* functions in analysis"
+        description="Report Go functions unreachable on the current RCC target."
     )
     parser.add_argument(
         "--summary",
         action="store_true",
-        help="Show only summary statistics, no detailed list"
+        help="Show configuration and totals without individual findings.",
     )
     parser.add_argument(
-        "--show-refs",
+        "-v",
+        "--verbose",
         action="store_true",
-        help="Show all references for each function (where it's used)"
+        help="Show analyzer commands and diagnostics.",
     )
-    parser.add_argument(
-        "--all-low-usage",
-        action="store_true",
-        help="Show all low-usage functions (not just first 20)"
+    return parser
+
+
+def _relative_path(filename, repository_root):
+    normalized = filename.replace("\\", "/")
+    source = Path(normalized)
+    if source.is_absolute():
+        try:
+            source = source.relative_to(repository_root.resolve())
+        except ValueError:
+            pass
+    return source.as_posix()
+
+
+def parse_findings(payload, repository_root):
+    try:
+        packages = json.loads(payload)
+        if not isinstance(packages, list):
+            raise ValueError("top-level value is not an array")
+
+        findings = []
+        for package in packages:
+            package_path = package["Path"]
+            for function in package["Funcs"]:
+                position = function["Position"]
+                findings.append(
+                    Finding(
+                        package=package_path,
+                        file=_relative_path(position["File"], repository_root),
+                        line=int(position["Line"]),
+                        column=int(position["Col"]),
+                        name=function["Name"],
+                    )
+                )
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
+        raise AnalysisError(f"deadcode returned invalid JSON: {error}") from error
+
+    return sorted(
+        findings,
+        key=lambda item: (
+            item.package,
+            item.file,
+            item.line,
+            item.column,
+            item.name,
+        ),
     )
-    
-    args = parser.parse_args()
-    process(args)
+
+
+def _plural(count, singular, plural):
+    return singular if count == 1 else plural
+
+
+def format_report(findings, config, summary=False):
+    package_count = len({item.package for item in findings})
+    lines = [
+        "RCC DEAD CODE REPORT",
+        f"Analyzer: {ANALYZER} {ANALYZER_VERSION}",
+        f"Target: {config.goos}/{config.goarch} (CGO_ENABLED=0)",
+        "Scope: ./... (tests included)",
+    ]
+
+    if findings:
+        lines.append(
+            "Result: "
+            f"{len(findings)} {_plural(len(findings), 'unreachable function', 'unreachable functions')} "
+            f"across {package_count} {_plural(package_count, 'package', 'packages')}"
+        )
+    else:
+        lines.append("Result: no unreachable functions found")
+
+    if findings and not summary:
+        for package, package_findings in groupby(
+            findings, key=lambda item: item.package
+        ):
+            lines.extend(("", package))
+            for item in package_findings:
+                lines.append(
+                    f"  {item.file}:{item.line}:{item.column}  {item.name}"
+                )
+
+    lines.extend(
+        (
+            "",
+            "Advisory: Review findings before deletion; results are specific to this target.",
+        )
+    )
+    return "\n".join(lines) + "\n"
+
+
+def _run(command, runner, repository_root, environment, verbose, stderr):
+    if verbose:
+        print(f"$ {' '.join(command)}", file=stderr)
+    return runner(
+        command,
+        cwd=repository_root,
+        env=environment,
+        capture_output=True,
+        text=True,
+    )
+
+
+def _build_config(runner, repository_root, environment, verbose, stderr):
+    result = _run(
+        ["go", "env", "-json", "GOHOSTOS", "GOHOSTARCH"],
+        runner,
+        repository_root,
+        environment,
+        verbose,
+        stderr,
+    )
+    if result.returncode != 0:
+        details = result.stderr.strip() or result.stdout.strip()
+        raise AnalysisError(f"go env failed: {details or 'unknown error'}")
+    try:
+        values = json.loads(result.stdout)
+        return BuildConfig(
+            goos=values["GOHOSTOS"],
+            goarch=values["GOHOSTARCH"],
+        )
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AnalysisError(f"go env returned invalid JSON: {error}") from error
+
+
+def run_cli(
+    arguments=None,
+    *,
+    runner=subprocess.run,
+    stdout=sys.stdout,
+    stderr=sys.stderr,
+    repo_root=REPOSITORY_ROOT,
+):
+    options = create_parser().parse_args(arguments)
+    environment = os.environ.copy()
+    environment["CGO_ENABLED"] = "0"
+
+    try:
+        config = _build_config(
+            runner,
+            repo_root,
+            environment,
+            options.verbose,
+            stderr,
+        )
+        environment["GOOS"] = config.goos
+        environment["GOARCH"] = config.goarch
+        analyzer_environment = environment.copy()
+        # x/tools v0.48.0 calls telemetry.Start before parsing arguments.
+        # Its pinned child-process sentinel makes that call a no-op without
+        # changing the user's global Go telemetry configuration.
+        analyzer_environment["GO_TELEMETRY_CHILD"] = "2"
+        result = _run(
+            ["go", "tool", "deadcode", "-json", "-test", "./..."],
+            runner,
+            repo_root,
+            analyzer_environment,
+            options.verbose,
+            stderr,
+        )
+        if result.returncode != 0:
+            details = result.stderr.strip() or result.stdout.strip()
+            raise AnalysisError(
+                f"deadcode analysis failed: {details or 'unknown error'}"
+            )
+        if options.verbose and result.stderr:
+            print(result.stderr.rstrip(), file=stderr)
+        findings = parse_findings(result.stdout, repo_root)
+    except FileNotFoundError:
+        print(
+            "ERROR: Go toolchain was not found. "
+            "Run this through developer/toolkit.yaml.",
+            file=stderr,
+        )
+        return 1
+    except AnalysisError as error:
+        print(f"ERROR: {error}", file=stderr)
+        return 1
+
+    stdout.write(format_report(findings, config, options.summary))
+    return 0
+
+
+def main():
+    return run_cli()
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

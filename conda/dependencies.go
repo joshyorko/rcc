@@ -13,6 +13,7 @@ import (
 	"github.com/joshyorko/rcc/fail"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/shell"
 	"gopkg.in/yaml.v2"
 )
 
@@ -129,14 +130,28 @@ func goldenMaster(targetFolder string, pipUsed bool) (err error) {
 	return pathlib.WriteFile(goldenfile, body, 0644)
 }
 
-func goldenMasterUvNative(targetFolder string, hasPip bool) (err error) {
+func goldenMasterUvNative(targetFolder, uvBinary, python string) (err error) {
 	defer fail.Around(&err)
 
 	seen := make(map[string]string)
 	collector := make(dependencies, 0, 100)
-	if hasPip {
-		collector, err = fillDependencies("pypi", targetFolder, seen, collector, "pip", "list", "--isolated", "--local", "--format", "json")
-		fail.On(err != nil, "Failed to list pip dependencies, reason: %v", err)
+	command := uvPipListCommand(uvBinary, python, targetFolder)
+	environment := uvCommandEnvironment(
+		CondaExecutionEnvironment(targetFolder, nil, true),
+		"UV_PYTHON_DOWNLOADS=never",
+	)
+	task := shell.New(environment, ".", command...)
+	out, _, err := task.CaptureOutput()
+	fail.On(err != nil, "Failed to list uv-native dependencies, reason: %v", err)
+	listing, err := parseDependencies("pypi", []byte(out))
+	fail.On(err != nil, "Failed to parse uv-native dependencies, reason: %v", err)
+	for _, entry := range listing {
+		found, ok := seen[strings.ToLower(entry.Name)]
+		if ok && found == entry.Version {
+			continue
+		}
+		collector = append(collector, entry)
+		seen[strings.ToLower(entry.Name)] = entry.Version
 	}
 	body, err := yaml.Marshal(collector.sorted())
 	fail.On(err != nil, "Failed to make yaml, reason: %v", err)

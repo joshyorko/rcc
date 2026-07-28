@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/mitchellh/go-ps"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/pretty"
 	"github.com/joshyorko/rcc/set"
+	"github.com/mitchellh/go-ps"
 )
 
 type (
