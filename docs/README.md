@@ -256,3 +256,7 @@
 ### 12.7 [Non-Goals](https://github.com/joshyorko/rcc/blob/main/docs/roadmap.md#non-goals)
 ### 12.8 [Contributing](https://github.com/joshyorko/rcc/blob/main/docs/roadmap.md#contributing)
 ### 12.9 [Version Timeline](https://github.com/joshyorko/rcc/blob/main/docs/roadmap.md#version-timeline)
+## 13 [RCC Agent Boundaries](https://github.com/joshyorko/rcc/blob/main/docs/agent-boundaries.md#rcc-agent-boundaries)
+### 13.1 [Sources of Authority](https://github.com/joshyorko/rcc/blob/main/docs/agent-boundaries.md#sources-of-authority)
+### 13.2 [Change Classification](https://github.com/joshyorko/rcc/blob/main/docs/agent-boundaries.md#change-classification)
+### 13.3 [Required Evidence](https://github.com/joshyorko/rcc/blob/main/docs/agent-boundaries.md#required-evidence)
