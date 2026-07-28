@@ -24,13 +24,20 @@ jobs:
 
             - name: Install RCC
               run: |
-                  if [ ! -x .tools/rcc/latest/rcc ]; then
-                    mkdir -p .tools/rcc/latest
-                    curl -sSL https://github.com/joshyorko/rcc/releases/latest/download/rcc-linux64 -o .tools/rcc/latest/rcc
-                    chmod +x .tools/rcc/latest/rcc
+                  rcc_version="v18.17.7"
+                  rcc_sha256="b49c5bdf98f55694ca366d715a260a0c54943b835a6dd8571fdf5c3260df17cf"
+                  rcc_dir=".tools/rcc/${rcc_version}"
+                  rcc_path="${rcc_dir}/rcc"
+                  if [ ! -f "$rcc_path" ]; then
+                    mkdir -p "$rcc_dir"
+                    curl --fail --show-error --location \
+                      "https://github.com/joshyorko/rcc/releases/download/${rcc_version}/rcc-linux64" \
+                      --output "$rcc_path"
                   fi
-                  echo "${GITHUB_WORKSPACE}/.tools/rcc/latest" >> "$GITHUB_PATH"
-                  export PATH="${GITHUB_WORKSPACE}/.tools/rcc/latest:$PATH"
+                  echo "${rcc_sha256}  ${rcc_path}" | sha256sum --check -
+                  chmod +x "$rcc_path"
+                  echo "${GITHUB_WORKSPACE}/${rcc_dir}" >> "$GITHUB_PATH"
+                  export PATH="${GITHUB_WORKSPACE}/${rcc_dir}:$PATH"
                   rcc version
 
             - name: Cache ROBOCORP_HOME
