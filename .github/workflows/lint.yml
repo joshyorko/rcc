@@ -20,6 +20,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+
+      - name: Prepare embedded assets
+        run: |
+          python -m pip install invoke==2.2.0
+          inv assets
+
       - name: Lint pull request changes
         if: github.event_name == 'pull_request'
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
