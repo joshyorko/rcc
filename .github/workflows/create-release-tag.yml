@@ -53,8 +53,13 @@ jobs:
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                   gh auth setup-git
 
-                  git fetch origin --tags --force
+                  git fetch origin main --tags --force
                   target_sha="$(git rev-parse HEAD)"
+                  main_sha="$(git rev-parse refs/remotes/origin/main)"
+                  if [[ "$target_sha" != "$main_sha" ]]; then
+                      echo "Release tags must be created from origin/main ($main_sha), not $target_sha."
+                      exit 1
+                  fi
 
                   if git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
                       tag_sha="$(git rev-parse "refs/tags/$VERSION^{commit}")"
