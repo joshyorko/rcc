@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"testing"
 
@@ -96,6 +98,33 @@ func TestRunReturnsUsageErrorForInvalidOptions(t *testing.T) {
 	}
 	if !strings.Contains(status.Message, "flag provided but not defined") {
 		t.Fatalf("invalid option missing from message: %q", status.Message)
+	}
+}
+
+func TestRunReturnsUsageErrorWithoutWritingDirectlyToStderr(t *testing.T) {
+	originalStderr := os.Stderr
+	reader, writer, err := os.Pipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.Stderr = writer
+	defer func() {
+		os.Stderr = originalStderr
+	}()
+
+	status := run([]string{"-invalid-option"}, commandDependencies{})
+	if status == nil || status.Code != 2 {
+		t.Fatalf("unexpected status: %#v", status)
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	output, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(output) != 0 {
+		t.Fatalf("option parsing wrote directly to stderr: %q", output)
 	}
 }
 

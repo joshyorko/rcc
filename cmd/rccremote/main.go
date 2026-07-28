@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/pathlib"
@@ -38,14 +39,16 @@ func defaultHoldLocation() string {
 	return where
 }
 
-func parseOptions(arguments []string) (commandOptions, error) {
+func parseOptions(arguments []string) (commandOptions, string, error) {
 	options := commandOptions{
 		domain:   "personal",
 		hostname: "localhost",
 		port:     4653,
 		hold:     defaultHoldLocation(),
 	}
+	var output strings.Builder
 	flags := flag.NewFlagSet("rccremote", flag.ContinueOnError)
+	flags.SetOutput(&output)
 	flags.BoolVar(&options.debug, "debug", false, "Turn on debugging output.")
 	flags.BoolVar(&options.trace, "trace", false, "Turn on tracing output.")
 	flags.BoolVar(&options.version, "version", false, "Just show rccremote version and exit.")
@@ -53,7 +56,8 @@ func parseOptions(arguments []string) (commandOptions, error) {
 	flags.IntVar(&options.port, "port", options.port, "Port to bind server in given hostname.")
 	flags.StringVar(&options.hold, "hold", options.hold, "Directory where to put HOLD files once known.")
 	flags.StringVar(&options.domain, "domain", options.domain, "Symbolic domain that this peer serves.")
-	return options, flags.Parse(arguments)
+	err := flags.Parse(arguments)
+	return options, output.String(), err
 }
 
 func exitProtection(status interface{}, exitProcess func(int)) {
@@ -76,17 +80,18 @@ func ExitProtection() {
 }
 
 func run(arguments []string, dependencies commandDependencies) *common.ExitCode {
-	options, err := parseOptions(arguments)
-	if err == flag.ErrHelp {
-		return nil
-	}
-	if err != nil {
-		return &common.ExitCode{Code: 2, Message: err.Error()}
-	}
-	common.DefineVerbosity(false, options.debug, options.trace)
 	if dependencies.stdout == nil {
 		dependencies.stdout = common.Stdout
 	}
+	options, flagOutput, err := parseOptions(arguments)
+	if err == flag.ErrHelp {
+		dependencies.stdout("%s", flagOutput)
+		return nil
+	}
+	if err != nil {
+		return &common.ExitCode{Code: 2, Message: strings.TrimSpace(flagOutput)}
+	}
+	common.DefineVerbosity(false, options.debug, options.trace)
 	if options.version {
 		dependencies.stdout("%s\n", common.Version)
 		return nil
