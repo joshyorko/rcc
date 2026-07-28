@@ -103,10 +103,9 @@ func startTempRecycling() {
 		folder := filepath.Dir(filename)
 		changed, err := pathlib.Modtime(folder)
 		if err == nil && time.Since(changed) > 48*time.Hour {
-			go os.RemoveAll(folder)
+			os.RemoveAll(folder)
 		}
 	}
-	runtime.Gosched()
 }
 
 func markTempForRecycling() {
@@ -144,7 +143,7 @@ func main() {
 	}
 	defer common.EndOfTimeline()
 	if common.OneOutOf(6) {
-		go startTempRecycling()
+		anywork.Backlog(startTempRecycling)
 	}
 	defer os.Stderr.Sync()
 	defer os.Stdout.Sync()
