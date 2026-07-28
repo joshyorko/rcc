@@ -217,7 +217,9 @@ func uvPipCheckCommand(uvBinary, python, targetFolder string) []string {
 }
 
 func uvLiveExecution(sink io.Writer, targetFolder string, command ...string) (int, error) {
-	fmt.Fprintf(sink, "Command %q at %q:\n", command, targetFolder)
+	if _, err := fmt.Fprintf(sink, "Command %q at %q:\n", command, targetFolder); err != nil {
+		return 0, err
+	}
 	environment := uvCommandEnvironment(
 		CondaExecutionEnvironment(targetFolder, nil, true),
 		"UV_PYTHON_DOWNLOADS=never",
@@ -405,7 +407,7 @@ func uvNativeHolotreeLayers(requirementsText string, finalEnv *Environment, targ
 			common.Error("saving rcc_plan.log", theplan.Save())
 			python, ok := FindPython(targetFolder)
 			if !ok {
-				common.Fatal("Failed to save uv-native base layer", fmt.Errorf("No python found in staged uv-native environment"))
+				common.Fatal("Failed to save uv-native base layer", fmt.Errorf("no python found in staged uv-native environment"))
 				return false, false, false, ""
 			}
 			err := recordUvNativeLayer(recorder, []byte(layers[0]), func() error {
@@ -430,7 +432,7 @@ func uvNativeHolotreeLayers(requirementsText string, finalEnv *Environment, targ
 			common.Error("saving rcc_plan.log", theplan.Save())
 			stagedPython, ok := FindPython(targetFolder)
 			if !ok {
-				common.Fatal("Failed to save uv-native pip layer", fmt.Errorf("No python found in staged uv-native environment"))
+				common.Fatal("Failed to save uv-native pip layer", fmt.Errorf("no python found in staged uv-native environment"))
 				return false, false, pipUsed, python
 			}
 			err := recordUvNativeLayer(recorder, []byte(layers[1]), func() error {

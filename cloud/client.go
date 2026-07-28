@@ -245,7 +245,9 @@ func Download(url, filename string) error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(out.Name())
+	defer func() {
+		_ = os.Remove(out.Name())
+	}()
 	defer out.Close()
 
 	digest := sha256.New()

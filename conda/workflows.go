@@ -245,7 +245,7 @@ func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshIns
 	}
 	python, pyok := FindPython(targetFolder)
 	if !pyok {
-		common.Fatal("Golden EE failure", fmt.Errorf("No python found in staged uv-native environment"))
+		common.Fatal("Golden EE failure", fmt.Errorf("no python found in staged uv-native environment"))
 		return false, false
 	}
 	err = goldenMasterUvNative(targetFolder, uvBinary, python)

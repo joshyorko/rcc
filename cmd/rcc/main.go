@@ -103,7 +103,9 @@ func startTempRecycling() {
 		folder := filepath.Dir(filename)
 		changed, err := pathlib.Modtime(folder)
 		if err == nil && time.Since(changed) > 48*time.Hour {
-			os.RemoveAll(folder)
+			if err := os.RemoveAll(folder); err != nil {
+				_ = common.Debug("Recycling %q failed, reason: %v", folder, err)
+			}
 		}
 	}
 }

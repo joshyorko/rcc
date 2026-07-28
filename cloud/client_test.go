@@ -53,10 +53,23 @@ func TestDownloadPreservesExistingDestinationOnHTTPError(t *testing.T) {
 
 func TestDownloadPreservesExistingDestinationOnInterruptedBody(t *testing.T) {
 	assertDownloadFailurePreservesDestination(t, func(response http.ResponseWriter, request *http.Request) {
-		connection, buffer, _ := response.(http.Hijacker).Hijack()
-		defer connection.Close()
-		fmt.Fprint(buffer, "HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\npartial")
-		buffer.Flush()
+		connection, buffer, err := response.(http.Hijacker).Hijack()
+		if err != nil {
+			t.Errorf("hijacking response: %v", err)
+			return
+		}
+		defer func() {
+			if err := connection.Close(); err != nil {
+				t.Errorf("closing hijacked connection: %v", err)
+			}
+		}()
+		if _, err := fmt.Fprint(buffer, "HTTP/1.1 200 OK\r\nContent-Length: 100\r\n\r\npartial"); err != nil {
+			t.Errorf("writing interrupted response: %v", err)
+			return
+		}
+		if err := buffer.Flush(); err != nil {
+			t.Errorf("flushing interrupted response: %v", err)
+		}
 	})
 }
 
