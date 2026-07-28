@@ -132,13 +132,13 @@ if __name__ == "__main__":
 
 	// Add robot files
 	baseDir := filepath.Dir(robotYamlPath)
-	
+
 	// Get absolute path of output to avoid skipping wrong files
 	absOutputPath, err := filepath.Abs(outputPath)
 	if err != nil {
 		return err
 	}
-	
+
 	err = filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -158,7 +158,7 @@ if __name__ == "__main__":
 		if absPath == absOutputPath {
 			return nil
 		}
-		
+
 		if strings.HasPrefix(relPath, "output") || strings.HasPrefix(relPath, ".git") || strings.HasPrefix(relPath, ".") {
 			if info.IsDir() && relPath != "." {
 				return filepath.SkipDir
@@ -176,7 +176,7 @@ if __name__ == "__main__":
 		zipPath := filepath.Join("robot", relPath)
 		// Ensure forward slashes for zip
 		zipPath = filepath.ToSlash(zipPath)
-		
+
 		w, err := zw.Create(zipPath)
 		if err != nil {
 			return err

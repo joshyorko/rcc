@@ -3,8 +3,8 @@ package pretty
 import (
 	"os"
 
-	"github.com/mattn/go-isatty"
 	"github.com/joshyorko/rcc/common"
+	"github.com/mattn/go-isatty"
 )
 
 var (

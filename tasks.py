@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 import sys
 
 from invoke import task
@@ -217,6 +218,32 @@ def toc(c):
 def deadcode(c):
     """Report Go functions unreachable in this build configuration"""
     c.run(f"{PYTHON} scripts/deadcode.py")
+
+
+@task
+def format(c):
+    """Format tracked Go files"""
+    output = subprocess.check_output(["git", "ls-files", "-z", "--", "*.go"])
+    files = [path for path in output.decode().split("\0") if path]
+    subprocess.run(["gofmt", "-w", *files], check=True)
+
+
+@task
+def lint(c):
+    """Lint changed Go code"""
+    c.run("golangci-lint run --new", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintAll(c):
+    """Report all Go lint findings"""
+    c.run("golangci-lint run", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintFix(c):
+    """Apply supported lint fixes to changed Go code"""
+    c.run("golangci-lint run --new --fix", env={"CGO_ENABLED": "0"})
 
 
 @task
