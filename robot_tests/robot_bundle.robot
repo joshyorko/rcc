@@ -112,6 +112,7 @@ Goal: Forced unpack does not follow destination symlinks
   Must Exist    tmp/unpack_test/symlink-force/task.py
   ${outside}=    Get File    tmp/outside.txt
   Should Be Equal    ${outside}    outside
+  Remove File    tmp/outside.txt
   Use STDERR
   Must Have    OK.
 

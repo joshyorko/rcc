@@ -115,6 +115,21 @@ func writeBundleFile(f *zip.File, dest string) error {
 // represented by zr to the destination path dest. It returns an error if no 'robot/' directory
 // is found in the archive.
 func extractRobotTree(zr *zip.Reader, dest string) error {
+	info, err := os.Lstat(dest)
+	switch {
+	case err == nil && info.Mode()&os.ModeSymlink != 0:
+		return fmt.Errorf("refusing to extract into symbolic link %q", dest)
+	case err == nil && !info.IsDir():
+		return fmt.Errorf("refusing to extract into non-directory %q", dest)
+	case err == nil:
+	case os.IsNotExist(err):
+		if err := os.Mkdir(dest, 0o755); err != nil {
+			return err
+		}
+	default:
+		return err
+	}
+
 	found := false
 	for _, f := range zr.File {
 		name := filepath.ToSlash(f.Name)

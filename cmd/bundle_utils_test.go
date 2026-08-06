@@ -52,6 +52,21 @@ func TestExtractRobotTreeRejectsSymlinkComponent(t *testing.T) {
 	}
 }
 
+func TestExtractRobotTreeCreatesDestination(t *testing.T) {
+	dest := filepath.Join(t.TempDir(), "workarea")
+
+	err := extractRobotTree(testZipReader(t, map[string]string{
+		"robot/task.py": "print('ok')",
+	}), dest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	contents, err := os.ReadFile(filepath.Join(dest, "task.py"))
+	if err != nil || string(contents) != "print('ok')" {
+		t.Fatalf("extracted file missing: contents=%q err=%v", contents, err)
+	}
+}
+
 func TestUnpackRobotTreeForceReplacesDestination(t *testing.T) {
 	parent := t.TempDir()
 	dest := filepath.Join(parent, "robot")
