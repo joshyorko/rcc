@@ -363,7 +363,7 @@ func (it *zipper) Close() {
 	}
 }
 
-func defaultIgnores(selfie string) pathlib.Ignore {
+func DefaultIgnores(selfie string) pathlib.Ignore {
 	result := make([]pathlib.Ignore, 0, 10)
 	result = append(result, pathlib.IgnorePattern(selfie))
 	result = append(result, pathlib.IgnorePattern(".git"))
@@ -467,7 +467,7 @@ func Zip(directory, zipfile string, ignores []string) error {
 	if err != nil {
 		return err
 	}
-	defaults := defaultIgnores(zipfile)
+	defaults := DefaultIgnores(zipfile)
 	pathlib.ForceWalk(directory, pathlib.ForceFilename("hololib.zip"), pathlib.CompositeIgnore(defaults, ignored), zipper.Add)
 	return nil
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/joshyorko/rcc/operations"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/robot"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +25,14 @@ var (
 var bundleCmd = &cobra.Command{
 	Use:   "bundle",
 	Short: "Create a self-contained robot bundle.",
-	Long: `Create a self-contained robot bundle that includes the robot code and the
-environment (hololib). The output is an executable Python script that can be
-executed by 'rcc robot run-from-bundle'.`,
+	Long: `Create a robot bundle containing project files and an exported Holotree environment.
+
+Project files excluded by robot.yaml ignoreFiles are omitted. Project symlinks are
+rejected because their targets are outside the bundle's portable trust boundary.
+The output is replaced atomically only after the complete bundle is written.
+
+The generated Python file is a ZIP-compatible launcher that prints instructions;
+run the robot with 'rcc robot run-from-bundle'. It is not an RCC carrier executable.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if common.DebugFlag() {
 			defer common.Stopwatch("Bundle creation lasted").Report()
@@ -53,7 +59,13 @@ executed by 'rcc robot run-from-bundle'.`,
 		pretty.Guard(err == nil, 3, "Failed to create environment: %v", err)
 
 		// 2. Export holotree
-		tempHololib := filepath.Join(os.TempDir(), fmt.Sprintf("hololib_%s.zip", hash))
+		temp, err := os.CreateTemp("", fmt.Sprintf("rcc-hololib-%s-*.zip", hash))
+		pretty.Guard(err == nil, 6, "Failed to reserve temporary hololib file: %v", err)
+		tempHololib := temp.Name()
+		err = temp.Close()
+		pretty.Guard(err == nil, 6, "Failed to close temporary hololib file: %v", err)
+		err = os.Remove(tempHololib)
+		pretty.Guard(err == nil, 6, "Failed to prepare temporary hololib path: %v", err)
 		defer os.Remove(tempHololib)
 
 		common.Log("Exporting holotree to %s...", tempHololib)
@@ -90,12 +102,31 @@ func init() {
 }
 
 func createBundle(robotYamlPath, hololibPath, outputPath, condaConfigPath string) error {
-	// Create output file
-	out, err := os.Create(outputPath)
+	config, err := robot.LoadRobotYaml(robotYamlPath, false)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	ignored, err := pathlib.LoadIgnoreFiles(config.IgnoreFiles())
+	if err != nil {
+		return err
+	}
+
+	absOutputPath, err := filepath.Abs(outputPath)
+	if err != nil {
+		return err
+	}
+	out, err := os.CreateTemp(filepath.Dir(absOutputPath), "."+filepath.Base(absOutputPath)+"-*.tmp")
+	if err != nil {
+		return err
+	}
+	tempOutputPath := out.Name()
+	committed := false
+	defer func() {
+		if !committed {
+			out.Close()
+			os.Remove(tempOutputPath)
+		}
+	}()
 
 	// Make it executable
 	if err := out.Chmod(0755); err != nil {
@@ -128,16 +159,10 @@ if __name__ == "__main__":
 
 	// Create zip writer
 	zw := zip.NewWriter(out)
-	defer zw.Close()
 
 	// Add robot files
 	baseDir := filepath.Dir(robotYamlPath)
-
-	// Get absolute path of output to avoid skipping wrong files
-	absOutputPath, err := filepath.Abs(outputPath)
-	if err != nil {
-		return err
-	}
+	defaults := operations.DefaultIgnores(absOutputPath)
 
 	err = filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -149,25 +174,23 @@ if __name__ == "__main__":
 			return err
 		}
 
-		// Ignore output directory and .git, etc.
-		// Also ignore the bundle itself if it's being created inside the directory
 		absPath, err := filepath.Abs(path)
 		if err != nil {
 			return err
 		}
-		if absPath == absOutputPath {
+		if absPath == absOutputPath || absPath == tempOutputPath {
 			return nil
 		}
 
-		if strings.HasPrefix(relPath, "output") || strings.HasPrefix(relPath, ".git") || strings.HasPrefix(relPath, ".") {
-			if info.IsDir() && relPath != "." {
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("project path %q is a symbolic link", relPath)
+		}
+		if relPath != "." && (defaults(info) || ignored(info)) {
+			if info.IsDir() {
 				return filepath.SkipDir
 			}
-			if relPath != "." {
-				return nil
-			}
+			return nil
 		}
-
 		if info.IsDir() {
 			return nil
 		}
@@ -182,14 +205,7 @@ if __name__ == "__main__":
 			return err
 		}
 
-		f, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-
-		_, err = io.Copy(w, f)
-		return err
+		return copyBundleFile(w, path)
 	})
 	if err != nil {
 		return err
@@ -201,13 +217,7 @@ if __name__ == "__main__":
 		if err != nil {
 			return err
 		}
-		f, err := os.Open(condaConfigPath)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-		_, err = io.Copy(w, f)
-		if err != nil {
+		if err := copyBundleFile(w, condaConfigPath); err != nil {
 			return err
 		}
 	}
@@ -217,12 +227,31 @@ if __name__ == "__main__":
 	if err != nil {
 		return err
 	}
-	f, err := os.Open(hololibPath)
+	if err := copyBundleFile(w, hololibPath); err != nil {
+		return err
+	}
+	if err := zw.Close(); err != nil {
+		return err
+	}
+	if err := out.Close(); err != nil {
+		return err
+	}
+	if err := os.Rename(tempOutputPath, absOutputPath); err != nil {
+		return err
+	}
+	committed = true
+	return nil
+}
+
+func copyBundleFile(target io.Writer, sourcePath string) error {
+	source, err := os.Open(sourcePath)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	_, err = io.Copy(w, f)
-
-	return err
+	_, copyErr := io.Copy(target, source)
+	closeErr := source.Close()
+	if copyErr != nil {
+		return copyErr
+	}
+	return closeErr
 }

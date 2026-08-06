@@ -1,6 +1,20 @@
 # rcc change log
 ## Unreleased
 
+### Security
+
+- harden robot bundles against filesystem boundary escapes
+  - stage `robot unpack` extraction and replace the complete destination for
+    `--force` instead of following pre-existing symlinks during a merge
+  - reject unsafe archive paths, archive symlinks, and project symlinks
+  - apply `robot.yaml` `ignoreFiles` consistently during bundle creation
+
+### Reliability
+
+- create robot bundle outputs and temporary Holotree exports with unique
+  temporary files, publish completed outputs atomically, and propagate file
+  and archive finalization errors
+
 ## v18.18.0 (date: 28.07.2026)
 
 ### New Features

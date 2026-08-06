@@ -1000,7 +1000,7 @@ of "profile" that developers can use to setup all of required configurations.
 
 ## How to create and run a self-contained bundle?
 
-Starting from rcc v18.9.0, you can create self-contained robot bundles that include both your robot code and the required environment (Holotree). These bundles are single-file executables (Python zipapps) that can be easily distributed and run on other machines.
+Starting from rcc v18.9.0, you can create robot bundles that include robot code and an exported Holotree environment. A bundle is a ZIP-compatible Python launcher, not an RCC carrier executable and not a replacement for the `rcc` binary on the target machine.
 
 ### Creating a bundle
 
@@ -1014,7 +1014,12 @@ rcc robot bundle --robot robot.yaml --output my-robot.py
 This command will:
 1. Build the environment defined in `robot.yaml` (if not already built).
 2. Export the environment from Holotree.
-3. Package the robot code and the exported environment into a single Python script.
+3. Package non-ignored robot files and the exported environment into a single Python script.
+
+`ignoreFiles` entries from `robot.yaml` use the same ignore machinery as `rcc wrap`.
+Project symlinks are rejected instead of followed; replace them with regular project
+files before bundling. The output path is atomically replaced only after a complete
+bundle has been written, so an existing bundle remains intact if creation fails.
 
 ### Running a bundle
 
@@ -1032,11 +1037,28 @@ You can also execute the bundle directly if it has the executable permission:
 ```
 (Note: Direct execution prints instructions on how to run it with `rcc`)
 
+To recover only the robot source tree, use `rcc robot unpack --bundle my-robot.py
+--output robot-source`. The destination must be absent. `--force` stages extraction
+and atomically replaces the whole destination rather than merging with it, so files
+that exist only in the old destination are removed. Archive paths and symlinks are
+validated during extraction, but bundles should still be treated as untrusted input.
+
 ### Benefits
 
 - **Single-file distribution**: Everything needed to run the robot is in one file.
-- **Air-gapped support**: The bundle contains the full environment, so no internet connection is needed to build it on the target machine.
+- **Offline operation when complete**: No package download is needed only when the bundle contains every required artifact and the target platform is compatible with the exported environment. RCC itself must already be installed.
 - **Version pinning**: The environment in the bundle is exactly what was built at creation time.
+
+Bundles are platform-specific environment snapshots. Do not assume a bundle exported
+on one operating system or CPU architecture will run on another. Running a bundle
+imports and restores Holotree content into persistent state below `ROBOCORP_HOME`;
+the temporary robot workarea is removed, but the environment cache and catalog remain.
+
+If an offline run attempts network access, verify that `hololib/hololib.zip` is
+present and complete, that all conda/pip artifacts were exported, and that the target
+platform matches the build platform. If environment import or restore fails, confirm
+that `ROBOCORP_HOME` is writable and has enough free space. If bundling reports a
+symlink, replace it with a regular file or directory inside the robot project.
 
 
 ## Where can I find updates for rcc?
@@ -1066,4 +1088,3 @@ rcc docs changelog
 Sure. See following URL.
 
 https://github.com/joshyorko/rcc/blob/master/docs/recipes.md
-
