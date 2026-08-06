@@ -14,6 +14,8 @@
 - create robot bundle outputs and temporary Holotree exports with unique
   temporary files, publish completed outputs atomically, and propagate file
   and archive finalization errors
+- preserve `run-from-bundle` extraction into a newly created temporary
+  workarea while enforcing the hardened destination checks
 
 ## v18.18.0 (date: 28.07.2026)
 
