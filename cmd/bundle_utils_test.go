@@ -107,6 +107,25 @@ func TestUnpackRobotTreeForceReplacesDestination(t *testing.T) {
 	}
 }
 
+func TestUnpackRobotTreeForceRejectsFileDestination(t *testing.T) {
+	parent := t.TempDir()
+	dest := filepath.Join(parent, "robot")
+	if err := os.WriteFile(dest, []byte("keep"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	err := unpackRobotTree(testZipReader(t, map[string]string{
+		"robot/current.txt": "current",
+	}), dest, true)
+	if err == nil || !strings.Contains(err.Error(), "not a directory") {
+		t.Fatalf("expected non-directory rejection, got %v", err)
+	}
+	contents, readErr := os.ReadFile(dest)
+	if readErr != nil || string(contents) != "keep" {
+		t.Fatalf("existing file was modified: contents=%q err=%v", contents, readErr)
+	}
+}
+
 func TestUnpackRobotTreeFailurePreservesDestination(t *testing.T) {
 	parent := t.TempDir()
 	dest := filepath.Join(parent, "robot")

@@ -173,8 +173,13 @@ func unpackRobotTree(zr *zip.Reader, dest string, force bool) error {
 	if err := os.MkdirAll(parent, 0o755); err != nil {
 		return err
 	}
-	if _, err := os.Lstat(absDest); err == nil && !force {
-		return fmt.Errorf("output directory %q already exists; use --force to overwrite", dest)
+	if info, err := os.Lstat(absDest); err == nil {
+		if !info.IsDir() && info.Mode()&os.ModeSymlink == 0 {
+			return fmt.Errorf("output path %q exists but is not a directory", dest)
+		}
+		if !force {
+			return fmt.Errorf("output directory %q already exists; use --force to overwrite", dest)
+		}
 	} else if err != nil && !os.IsNotExist(err) {
 		return err
 	}
