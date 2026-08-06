@@ -22,7 +22,13 @@ var robotRunFromBundleCmd = &cobra.Command{
 
 This command extracts the robot/ tree from the bundle to a temporary
 workarea, builds any environments found in envs/, and runs the
-specified task.`,
+specified task. Treat bundles as untrusted input and obtain them only
+from sources you trust.
+
+Importing and restoring the bundled Holotree environment writes persistent cache
+and catalog state below ROBOCORP_HOME. A bundle can avoid package downloads only
+when it contains every required artifact and the target OS and architecture are
+compatible with the exported environment; it does not include RCC itself.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		bundleFile := args[0]

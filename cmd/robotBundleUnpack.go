@@ -18,8 +18,12 @@ var (
 var unpackCmd = &cobra.Command{
 	Use:   "unpack",
 	Short: "Unpack a robot bundle into a directory.",
-	Long: `Unpack a robot bundle into a directory. This command extracts the robot code
-from the bundle into the specified directory.`,
+	Long: `Unpack the robot/ tree from a robot bundle into a new directory.
+
+Bundle contents are untrusted input: unsafe archive paths and symlinks are rejected.
+The destination must not exist unless --force is used. With --force, extraction is
+staged beside the destination and replaces the complete destination; existing files
+are not merged or preserved.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if common.DebugFlag() {
 			defer common.Stopwatch("Bundle unpack lasted").Report()
@@ -50,7 +54,7 @@ from the bundle into the specified directory.`,
 		defer zr.Close()
 
 		// Extract robot tree
-		err = extractRobotTree(&zr.Reader, unpackOutput)
+		err = unpackRobotTree(&zr.Reader, unpackOutput, unpackForce)
 		if err != nil {
 			pretty.Exit(3, "Failed to unpack bundle: %v", err)
 		}
@@ -63,7 +67,7 @@ func init() {
 	robotCmd.AddCommand(unpackCmd)
 	unpackCmd.Flags().StringVarP(&unpackBundle, "bundle", "b", "", "Path to the bundle file.")
 	unpackCmd.Flags().StringVarP(&unpackOutput, "output", "o", "", "Output directory.")
-	unpackCmd.Flags().BoolVarP(&unpackForce, "force", "f", false, "Overwrite existing directory.")
+	unpackCmd.Flags().BoolVarP(&unpackForce, "force", "f", false, "Atomically replace the complete existing destination directory.")
 	unpackCmd.MarkFlagRequired("bundle")
 	unpackCmd.MarkFlagRequired("output")
 }

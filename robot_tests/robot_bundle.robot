@@ -93,8 +93,26 @@ Goal: Unpack to existing directory fails
 
 Goal: Unpack to existing directory with force succeeds
   Create Directory  tmp/unpack_test/force
+  Create File    tmp/unpack_test/force/stale.txt    stale
   Step    build/rcc robot unpack --bundle tmp/robot_bundle.zip --output tmp/unpack_test/force --force
   Must Exist    tmp/unpack_test/force/robot.yaml
+  Wont Exist    tmp/unpack_test/force/stale.txt
+  Use STDERR
+  Must Have    OK.
+
+Goal: Forced unpack does not follow destination symlinks
+  ${is_windows}=    Is Windows
+  IF    ${is_windows}
+    Skip    Symlink creation is not reliably available on Windows test hosts
+  END
+  Create Directory  tmp/unpack_test/symlink-force
+  Create File    tmp/outside.txt    outside
+  Step    ln -s ../../outside.txt tmp/unpack_test/symlink-force/task.py
+  Step    build/rcc robot unpack --bundle tmp/robot_bundle.zip --output tmp/unpack_test/symlink-force --force
+  Must Exist    tmp/unpack_test/symlink-force/task.py
+  ${outside}=    Get File    tmp/outside.txt
+  Should Be Equal    ${outside}    outside
+  Remove File    tmp/outside.txt
   Use STDERR
   Must Have    OK.
 
