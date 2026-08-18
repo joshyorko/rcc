@@ -2,17 +2,29 @@ package environmentlifecycle
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+type realConsumerReceipt struct {
+	ArtifactDigest    environmentartifact.Digest `json:"artifactDigest"`
+	MaterializationID string                     `json:"materializationId"`
+	Path              string                     `json:"path"`
+	CacheHit          CacheProvenance            `json:"cacheHit"`
+	ExitCode          int                        `json:"exitCode"`
+}
 
 func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if os.Getenv("RCC_REAL_ARTIFACT_TEST") != "1" {
@@ -65,7 +77,12 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	server := httptest.NewServer(artifactprovider.NewHandler(filesystem))
+	var providerRequests atomic.Int64
+	providerHandler := artifactprovider.NewHandler(filesystem)
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		providerRequests.Add(1)
+		providerHandler.ServeHTTP(writer, request)
+	}))
 	defer server.Close()
 	httpProvider, err := artifactprovider.NewHTTP(server.URL, server.Client())
 	if err != nil {
@@ -83,56 +100,112 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if published.ObjectCount == 0 || published.UploadedBytes == 0 {
 		t.Fatalf("real environment closure was empty: %+v", published)
 	}
+	providerRequests.Store(0)
 
 	consumerHome := filepath.Join(t.TempDir(), "consumer-home")
 	if producerHome == consumerHome {
 		t.Fatal("producer and consumer homes are not isolated")
 	}
-	common.Product.ForceHome(consumerHome)
-	common.SharedHolotree = false
-	for key, value := range map[string]string{
-		"ROBOCORP_HOME": consumerHome,
-		"CONDA_OFFLINE": "true", "MAMBA_OFFLINE": "true", "PIP_NO_INDEX": "1", "UV_NO_INDEX": "1",
-		"NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
-	} {
-		t.Setenv(key, value)
-	}
-
-	acquirer := NewAcquirer()
-	cold, err := acquirer.Acquire(context.Background(), AcquireRequest{
-		ArtifactDigest: published.ArtifactDigest, Provider: httpProvider,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if cold.CacheHit != CacheProvider || !strings.HasPrefix(cold.Path, filepath.Join(consumerHome, "holotree")+string(os.PathSeparator)) {
-		t.Fatalf("cold acquisition did not materialize in B: %+v", cold)
-	}
-
 	proofFile := filepath.Join(t.TempDir(), "python-proof.txt")
-	materialization := Materialization{
-		ArtifactDigest: cold.ArtifactDigest, ID: cold.MaterializationID, Path: cold.Path, CacheHit: cold.CacheHit,
+	cold := runRealConsumerProcess(t, "cold", consumerHome, published.ArtifactDigest, server.URL, proofFile)
+	if providerRequests.Load() == 0 {
+		t.Fatal("cold B process made no provider requests")
 	}
-	_, child, err := Execute(context.Background(), NewLocalMaterializer(), materialization, []string{
-		"python", "-c", "import os, pathlib, sys; assert os.environ['CONDA_OFFLINE'] == 'true'; assert os.environ['MAMBA_OFFLINE'] == 'true'; assert os.environ['PIP_NO_INDEX'] == '1'; assert os.environ['UV_NO_INDEX'] == '1'; pathlib.Path(sys.argv[1]).write_text('real-a-b-ok\\n')", proofFile,
-	})
-	if err != nil || child.ExitCode != 0 {
-		t.Fatalf("offline materialized Python execution = %+v, %v", child, err)
+	if cold.CacheHit != CacheProvider || !strings.HasPrefix(cold.Path, filepath.Join(consumerHome, "holotree")+string(os.PathSeparator)) || cold.ExitCode != 0 {
+		t.Fatalf("cold B process did not acquire, materialize, and execute: %+v", cold)
 	}
 	if content, err := os.ReadFile(proofFile); err != nil || string(content) != "real-a-b-ok\n" {
 		t.Fatalf("Python proof = %q, %v", content, err)
 	}
 
 	server.Close()
-	warm, err := acquirer.Acquire(context.Background(), AcquireRequest{
-		ArtifactDigest: published.ArtifactDigest, Provider: failOnTouchProvider{t: t},
+	warm := runRealConsumerProcess(t, "warm", consumerHome, published.ArtifactDigest, "", "")
+	if warm.CacheHit != CacheLocalMaterialization || warm.ArtifactDigest != cold.ArtifactDigest || warm.MaterializationID != cold.MaterializationID || warm.Path != cold.Path {
+		t.Fatalf("warm acquisition changed the local result: cold=%+v warm=%+v", cold, warm)
+	}
+}
+
+func TestRealCurrentRCCAtoBConsumer(t *testing.T) {
+	mode := os.Getenv("RCC_REAL_CONSUMER_MODE")
+	if mode == "" {
+		t.Skip("test helper is launched by TestRealCurrentRCCAtoBVertical")
+	}
+	if mode != "cold" && mode != "warm" {
+		t.Fatalf("invalid consumer mode %q", mode)
+	}
+	home := os.Getenv("ROBOCORP_HOME")
+	artifactDigest, err := environmentartifact.ParseDigest(os.Getenv("RCC_REAL_ARTIFACT_DIGEST"))
+	if home == "" || err != nil {
+		t.Fatalf("invalid consumer process input: home=%q digest=%v", home, err)
+	}
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+
+	var provider artifactprovider.Provider = failOnTouchProvider{t: t}
+	if mode == "cold" {
+		provider, err = artifactprovider.NewHTTP(os.Getenv("RCC_REAL_PROVIDER_URL"), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: provider,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if warm.CacheHit != CacheLocalMaterialization || warm.ArtifactDigest != cold.ArtifactDigest || warm.MaterializationID != cold.MaterializationID || warm.Path != cold.Path {
-		t.Fatalf("warm acquisition changed the local result: cold=%+v warm=%+v", cold, warm)
+	receipt := realConsumerReceipt{
+		ArtifactDigest: result.ArtifactDigest, MaterializationID: result.MaterializationID,
+		Path: result.Path, CacheHit: result.CacheHit, ExitCode: -1,
 	}
+	if mode == "cold" {
+		materialization := Materialization{
+			ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path, CacheHit: result.CacheHit,
+		}
+		_, child, err := Execute(context.Background(), NewLocalMaterializer(), materialization, []string{
+			"python", "-c", "import os, pathlib, sys; assert os.environ['CONDA_OFFLINE'] == 'true'; assert os.environ['MAMBA_OFFLINE'] == 'true'; assert os.environ['PIP_NO_INDEX'] == '1'; assert os.environ['UV_NO_INDEX'] == '1'; pathlib.Path(sys.argv[1]).write_text('real-a-b-ok\\n')", os.Getenv("RCC_REAL_PROOF_FILE"),
+		})
+		if err != nil || child.ExitCode != 0 {
+			t.Fatalf("offline materialized Python execution = %+v, %v", child, err)
+		}
+		receipt.ExitCode = child.ExitCode
+	}
+	content, err := json.Marshal(receipt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(os.Getenv("RCC_REAL_RECEIPT_FILE"), content, 0o640); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func runRealConsumerProcess(t *testing.T, mode, home string, digest environmentartifact.Digest, providerURL, proofFile string) realConsumerReceipt {
+	t.Helper()
+	testBinary, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	receiptFile := filepath.Join(t.TempDir(), mode+"-receipt.json")
+	command := exec.Command(testBinary, "-test.run=^TestRealCurrentRCCAtoBConsumer$", "-test.count=1", "-test.v")
+	command.Env = environmentWith(os.Environ(), map[string]string{
+		"RCC_REAL_CONSUMER_MODE": mode, "RCC_REAL_ARTIFACT_DIGEST": digest.String(),
+		"RCC_REAL_PROVIDER_URL": providerURL, "RCC_REAL_PROOF_FILE": proofFile, "RCC_REAL_RECEIPT_FILE": receiptFile,
+		"ROBOCORP_HOME": home,
+		"CONDA_OFFLINE": "true", "MAMBA_OFFLINE": "true", "PIP_NO_INDEX": "1", "UV_NO_INDEX": "1",
+		"NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
+	})
+	if output, err := command.CombinedOutput(); err != nil {
+		t.Fatalf("%s B process: %v\n%s", mode, err, output)
+	}
+	content, err := os.ReadFile(receiptFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var receipt realConsumerReceipt
+	if err := json.Unmarshal(content, &receipt); err != nil {
+		t.Fatal(err)
+	}
+	return receipt
 }
 
 func writeRealFixture(t *testing.T, path, content string) {
