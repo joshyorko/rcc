@@ -11,6 +11,10 @@ import (
 	"github.com/joshyorko/rcc/pathlib"
 )
 
+func platformProviderMutationSupported() bool {
+	return false
+}
+
 func acquireSettingsMutationLock(filename string) (pathlib.Releaser, error) {
 	completed := pathlib.LockWaitMessage(filename, "Serialized provider settings access [settings lock]")
 	locker, err := pathlib.Locker(filename, 125, false)

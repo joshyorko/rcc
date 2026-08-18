@@ -1,12 +1,26 @@
 package settings
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/joshyorko/rcc/common"
 	"gopkg.in/yaml.v2"
 )
+
+// ErrProviderMutationUnsupported reports platforms without the descriptor
+// relative no-follow storage primitives required for safe provider mutation.
+var ErrProviderMutationUnsupported = errors.New("provider settings mutation is unsupported on this platform")
+
+var providerMutationSupported = platformProviderMutationSupported
+
+func ensureProviderMutationSupported() error {
+	if !providerMutationSupported() {
+		return ErrProviderMutationUnsupported
+	}
+	return nil
+}
 
 // LoadCustomSettingsForMutation reads only the user-owned custom settings
 // layer. Defaults, environment overrides, and effective settings are never
@@ -33,6 +47,9 @@ func LoadCustomSettingsForMutation() (*Settings, error) {
 // UpdateCustomProvider performs a locked, custom-layer-only provider mutation.
 // A non-nil profile adds or replaces a provider; nil removes one.
 func UpdateCustomProvider(name string, profile *ProviderProfile, replace bool) error {
+	if err := ensureProviderMutationSupported(); err != nil {
+		return err
+	}
 	if err := ValidateProviderName(name); err != nil {
 		return err
 	}

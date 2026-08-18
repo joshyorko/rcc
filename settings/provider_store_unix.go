@@ -17,6 +17,10 @@ import (
 
 var settingsTemporarySequence atomic.Uint64
 
+func platformProviderMutationSupported() bool {
+	return true
+}
+
 type settingsMutationLock struct {
 	file *os.File
 }

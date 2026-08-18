@@ -1,6 +1,7 @@
 package settings
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -161,6 +162,25 @@ func TestCustomProviderMutationRejectsSymlinkedSettingsParent(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(target, "settings.yaml")); !os.IsNotExist(err) {
 		t.Fatalf("symlink target was touched: %v", err)
+	}
+}
+
+func TestCustomProviderMutationFailsClosedWhenPlatformUnsupported(t *testing.T) {
+	withProviderTestHome(t)
+	previous := providerMutationSupported
+	providerMutationSupported = func() bool { return false }
+	t.Cleanup(func() { providerMutationSupported = previous })
+
+	profile := ProviderProfile{Type: "http", URL: "https://cache.example"}
+	err := UpdateCustomProvider("cache", &profile, false)
+	if !errors.Is(err, ErrProviderMutationUnsupported) {
+		t.Fatalf("unsupported mutation error = %v, want %v", err, ErrProviderMutationUnsupported)
+	}
+	if _, statErr := os.Stat(common.SettingsFile()); !os.IsNotExist(statErr) {
+		t.Fatalf("unsupported mutation touched settings file: %v", statErr)
+	}
+	if _, statErr := os.Stat(common.SettingsFile() + ".lck"); !os.IsNotExist(statErr) {
+		t.Fatalf("unsupported mutation touched lock file: %v", statErr)
 	}
 }
 
