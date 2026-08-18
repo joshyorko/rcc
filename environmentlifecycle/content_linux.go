@@ -354,6 +354,25 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 		defer unix.Close(parent)
 	}
 	name := components[len(components)-1]
+	var leaf unix.Stat_t
+	if err := unix.Fstatat(parent, name, &leaf, unix.AT_SYMLINK_NOFOLLOW); err != nil {
+		if errors.Is(err, unix.ENOENT) {
+			return "", errExecutableMissing
+		}
+		return "", fmt.Errorf("%w: inspect executable without following links: %v", errUnsafeExecutablePath, err)
+	}
+	if leaf.Mode&unix.S_IFMT == unix.S_IFLNK {
+		buffer := make([]byte, 4096)
+		count, err := unix.Readlinkat(parent, name, buffer)
+		if err != nil || count == len(buffer) {
+			return "", fmt.Errorf("%w: read executable symlink", errUnsafeExecutablePath)
+		}
+		target := string(buffer[:count])
+		if !safeComponent(target) {
+			return "", fmt.Errorf("%w: executable symlink target %q is not a same-directory component", errUnsafeExecutablePath, target)
+		}
+		name = target
+	}
 	fd, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 	if err != nil {
 		if errors.Is(err, unix.ENOENT) {
@@ -367,5 +386,7 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o111 == 0 {
 		return "", fmt.Errorf("Python executable is not an executable regular file")
 	}
-	return filepath.Join(append([]string{rootPath}, components...)...), nil
+	resolved := append([]string(nil), components...)
+	resolved[len(resolved)-1] = name
+	return filepath.Join(append([]string{rootPath}, resolved...)...), nil
 }
