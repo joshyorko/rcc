@@ -19,5 +19,5 @@ jobs:
               uses: dagger/dagger-for-github@v7
               with:
                   verb: call
-                  args: test --source .
-                  version: "latest"
+                  args: run-robot-tests --source .
+                  version: "v0.21.3"

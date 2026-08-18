@@ -34,6 +34,12 @@ class ArtifactTaskTests(unittest.TestCase):
         assert f"  {name}:" in toolkit
         assert f"call_invoke.py {name}" in toolkit
 
+  def test_dagger_workflow_calls_pinned_module_entrypoint(self):
+    workflow = (ROOT / ".github" / "workflows" / "dagger.yaml").read_text()
+    engine = json.loads((ROOT / "dagger.json").read_text())["engineVersion"]
+    self.assertIn("args: run-robot-tests --source .", workflow)
+    self.assertIn(f'version: "{engine}"', workflow)
+
 
   def test_binary_inventory_matrix_is_exact(self):
     self.assertEqual(tasks._binary_inventory_targets(), [
