@@ -6,6 +6,9 @@
 - publish, acquire, and execute portable environment artifacts through the
   `rcc env` commands and serve immutable artifact content over loopback HTTP
   with `rcc cache serve`
+- add named HTTP provider profiles with strict URL, complete-header,
+  no-redirect, direct-URL, local-root, and warm-reuse contracts; retain
+  `rccremote` as the v18 compatibility-level-A protocol
 
 ### Compatibility and Release Hardening
 

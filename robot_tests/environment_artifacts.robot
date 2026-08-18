@@ -33,10 +33,40 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${provider_url}=    Set Variable    ${server_json}[url]
     Should Be Equal    ${server_json}[root]    ${PROVIDER_ROOT}
 
+    Set To Dictionary    ${A_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
+    ${a_profile_result}=    Run Process
+    ...    ${RCC}    provider    add    office
+    ...    --type    http
+    ...    --url    ${provider_url}
+    ...    --authorization-env    RCC_TEST_PROVIDER_AUTHORIZATION
+    ...    --json
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${a_profile_result.rc}    0
+    ${a_profile}=    Parse JSON    ${a_profile_result.stdout}
+    Should Be Equal    ${a_profile}[name]    office
+    Should Be Equal    ${a_profile}[type]    http
+    Should Be Equal    ${a_profile}[url]    ${provider_url}
+    Should Be Equal    ${a_profile}[authorizationEnv]    RCC_TEST_PROVIDER_AUTHORIZATION
+
+    Set To Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
+    ${b_profile_result}=    Run Process
+    ...    ${RCC}    provider    add    office
+    ...    --type    http
+    ...    --url    ${provider_url}
+    ...    --authorization-env    RCC_TEST_PROVIDER_AUTHORIZATION
+    ...    --json
+    ...    env=${B_ENV}
+    Should Be Equal As Integers    ${b_profile_result.rc}    0
+    ${b_profile}=    Parse JSON    ${b_profile_result.stdout}
+    Should Be Equal    ${b_profile}[name]    office
+    Should Be Equal    ${b_profile}[type]    http
+    Should Be Equal    ${b_profile}[url]    ${provider_url}
+    Should Be Equal    ${b_profile}[authorizationEnv]    RCC_TEST_PROVIDER_AUTHORIZATION
+
     ${published_result}=    Run Process
     ...    ${RCC}    env    publish
     ...    --robot    ${ROBOT}
-    ...    --provider    ${provider_url}
+    ...    --provider    office
     ...    --json
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${published_result.rc}    0
@@ -50,7 +80,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${cold_result}=    Run Process
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
-    ...    --provider    ${provider_url}
+    ...    --provider    office
     ...    --json
     ...    env=${B_ENV}
     Should Be Equal As Integers    ${cold_result.rc}    0
@@ -84,9 +114,12 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal As Integers    ${stopped.rc}    0
     Provider Should Be Unreachable    ${provider_url}
 
+    Remove From Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION
+
     ${warm_result}=    Run Process
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
+    ...    --provider    office
     ...    --json
     ...    env=${B_ENV}
     Should Be Equal As Integers    ${warm_result.rc}    0

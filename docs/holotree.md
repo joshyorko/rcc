@@ -1,5 +1,31 @@
 # Holotree: A Deep Dive
 
+## Environment artifact providers (v18)
+
+The public provider lifecycle is available through `rcc provider`:
+
+```sh
+rcc provider add office --type http --url http://127.0.0.1:8080 \
+  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --json
+rcc provider list --json
+rcc provider inspect office --json
+rcc provider test office --json
+rcc provider remove office --json
+```
+
+Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
+via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
+only the authorization environment variable name. Its runtime value must be a
+complete `Authorization` header such as `Bearer token`; the value is not stored
+or emitted. URLs are strict absolute HTTP(S) URLs without query/fragment, and
+redirects are not followed.
+
+The built-in `local` provider root is separate from the RCC cache and from each
+local materialization. Once an artifact is warm locally, acquire is independent
+of provider availability, authorization, and rebuilding. Provider references
+select transport; the immutable `sha256:` Artifact digest is the identity.
+For v18, legacy `rccremote` remains a compatibility-level-A protocol.
+
 Holotree is RCC's content-addressed storage system for Python environments. It is the
 innovation that transforms RCC from "a tool that creates Python environments" into
 "infrastructure for reproducible automation at scale."

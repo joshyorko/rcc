@@ -44,6 +44,34 @@ RCC is actively maintained by [JoshYorko](https://github.com/joshyorko).
 
 For detailed instructions, visit the [RCC documentation](https://robocorp.com/docs/rcc/overview) to get started. To build `rcc` from this repository, see the [Setup Guide](/docs/BUILD.md)
 
+### Environment artifact providers
+
+Named providers are stored per `ROBOCORP_HOME` and are used by the portable
+artifact commands:
+
+```sh
+rcc provider add office --type http --url http://127.0.0.1:8080 \
+  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --json
+rcc provider list --json
+rcc provider inspect office --json
+rcc provider test office --json
+rcc provider remove office --json
+rcc env publish --robot robot.yaml --provider office --json
+rcc env acquire --artifact sha256:<digest> --provider office --json
+```
+
+`authorization-env` stores only the environment-variable name. When present,
+its value must be a complete HTTP `Authorization` header (for example,
+`Bearer token`); the secret is never persisted or printed. Provider URLs must
+be absolute HTTP(S) URLs with no query or fragment, and redirects are rejected.
+The built-in `local` provider uses the local provider root; it is distinct from
+the RCC cache and local materializations. A warm acquire reuses a complete local
+materialization without contacting the provider or rebuilding, even when the
+provider authorization variable is absent. Existing direct HTTP(S) `--provider`
+URLs remain supported. Provider names select transport only; the immutable
+`sha256:` Artifact digest remains the identity. The legacy `rccremote` protocol
+is classified as compatibility level A for v18.
+
 ## Installing RCC from the command line
 
 > Links to changelog and different versions [available here](https://github.com/joshyorko/rcc/releases)
