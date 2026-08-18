@@ -1,6 +1,7 @@
 import argparse
 import json
 import re
+import stat
 from pathlib import Path
 
 ASSETS = {
@@ -20,9 +21,14 @@ TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.
 def validate(root, workflow, index, asset_root=None):
     errors = []
     if asset_root:
-        staged = {path.name for path in Path(asset_root).iterdir() if path.is_file()} if Path(asset_root).is_dir() else set()
+        asset_root = Path(asset_root)
+        children = list(asset_root.iterdir()) if asset_root.is_dir() and not asset_root.is_symlink() else []
+        staged = {path.name for path in children}
         if staged != PUBLISHED_ASSETS:
             errors.append(f"downloaded assets mismatch: {sorted(staged)}")
+        for path in children:
+            if path.name in PUBLISHED_ASSETS and (path.is_symlink() or not stat.S_ISREG(path.lstat().st_mode)):
+                errors.append(f"downloaded asset is not a regular file: {path.name}")
     else:
         for directory, binaries in TARGETS.items():
             for binary in binaries:

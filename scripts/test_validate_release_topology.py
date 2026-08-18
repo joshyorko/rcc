@@ -72,6 +72,34 @@ class ReleaseTopologyTests(unittest.TestCase):
         ], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_release_job_rejects_unexpected_asset_directory(self):
+        root, workflow, index = self.fixture()
+        assets = root / "rcc-builds"
+        assets.mkdir()
+        for name in ASSETS:
+            (assets / name).write_bytes(b"downloaded release asset")
+        published_index = assets / "index.json"
+        shutil.move(index, published_index)
+        (assets / "unexpected-directory").mkdir()
+
+        errors = validate(None, workflow, published_index, assets)
+        self.assertTrue(any("downloaded assets mismatch" in error for error in errors), errors)
+
+    def test_release_job_rejects_symlinked_asset(self):
+        root, workflow, index = self.fixture()
+        assets = root / "rcc-builds"
+        assets.mkdir()
+        for name in ASSETS:
+            (assets / name).write_bytes(b"downloaded release asset")
+        published_index = assets / "index.json"
+        shutil.move(index, published_index)
+        target = assets / "rcc-linux64-target"
+        (assets / "rcc-linux64").rename(target)
+        (assets / "rcc-linux64").symlink_to(target.name)
+
+        errors = validate(None, workflow, published_index, assets)
+        self.assertTrue(any("not a regular file" in error for error in errors), errors)
+
     def test_rejects_darwin_index_and_extra_asset(self):
         root, workflow, index = self.fixture()
         (root / "rcc-builds").mkdir()
