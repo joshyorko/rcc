@@ -18,7 +18,7 @@ type environmentCommandDependencies struct {
 
 func defaultEnvironmentCommandDependencies() environmentCommandDependencies {
 	return environmentCommandDependencies{
-		newProvider: func(value string) (artifactprovider.Provider, error) { return artifactprovider.NewHTTP(value, nil) },
+		newProvider: newProviderReference,
 		publish:     environmentlifecycle.Publish,
 		acquire: func(ctx context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
 			return environmentlifecycle.NewAcquirer().Acquire(ctx, request)
@@ -44,4 +44,5 @@ func newEnvironmentCommand(dependencies environmentCommandDependencies) *cobra.C
 
 func init() {
 	rootCmd.AddCommand(newEnvironmentCommand(defaultEnvironmentCommandDependencies()))
+	rootCmd.AddCommand(newProviderCommand(defaultProviderCommandDependencies()))
 }
