@@ -490,8 +490,7 @@ func providerResponseError(response *http.Response) error {
 	if response.StatusCode >= 200 && response.StatusCode < 300 {
 		return nil
 	}
-	content, _ := io.ReadAll(io.LimitReader(response.Body, maxProviderErrorBytes))
-	return fmt.Errorf("artifact provider HTTP %s: %s", response.Status, strings.TrimSpace(string(content)))
+	return fmt.Errorf("artifact provider HTTP %s", response.Status)
 }
 
 var _ Provider = (*HTTP)(nil)

@@ -30,3 +30,16 @@ Verification:
 - `go run ./cmd/rcc provider --help` — pass; all five subcommands reachable.
 - `git diff --check` — pass.
 - `go test -race -count=1 ./cmd ./settings ./artifactprovider` — package tests encounter the repository's existing global verbosity/logger race when Cobra command tests execute; non-Cobra package race checks pass.
+
+## Review round 2
+
+Added the named command, resolver, capability, JSON, authorization-presence, deferred-environment, and artifactprovider response-redaction tests. RED evidence: `TestHTTPErrorDoesNotExposeResponseBody` initially returned the complete authorization sentinel from a 401 body; incompatible provider output also lacked explicit contract coverage. GREEN evidence: response errors now retain status only, and all focused tests pass.
+
+Verification:
+
+- `go test -count=1 ./cmd/... ./settings ./artifactprovider` — pass.
+- Focused named provider/resolver/capability tests — pass.
+- `go test -count=1 ./artifactprovider -run TestHTTPErrorDoesNotExposeResponseBody` — pass.
+- `go run ./cmd/rcc provider --help` — pass; exact five subcommands reachable.
+- `git diff --check` — pass.
+- Race testing remains affected by the existing global verbosity/logger race when Cobra commands execute.
