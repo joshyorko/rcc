@@ -144,6 +144,35 @@ func TestFilesystemResolveManifestRejectsCorruptCommittedState(t *testing.T) {
 	}
 }
 
+func TestFilesystemResolveManifestRejectsCorruptReferencedClosure(t *testing.T) {
+	for target := range 5 {
+		t.Run(fixtureBlobName(target), func(t *testing.T) {
+			provider, err := NewFilesystem(t.TempDir())
+			if err != nil {
+				t.Fatal(err)
+			}
+			fixture := newProviderFixture(t)
+			for _, blob := range fixture.blobs {
+				putFixtureBlob(t, provider, blob)
+			}
+			if err := provider.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+				t.Fatal(err)
+			}
+			descriptor := fixture.blobs[target].Descriptor
+			if err := os.WriteFile(provider.objectPath(descriptor.Digest), bytes.Repeat([]byte("x"), int(descriptor.Size)), 0o640); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := provider.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest); err == nil {
+				t.Fatal("manifest resolved after referenced CAS corruption")
+			}
+		})
+	}
+}
+
+func fixtureBlobName(index int) string {
+	return []string{"specification", "legacy-blueprint", "catalog", "object-index", "stored-object"}[index]
+}
+
 func TestFilesystemGetObjectRejectsCorruptOrSymlinkedState(t *testing.T) {
 	provider, err := NewFilesystem(t.TempDir())
 	if err != nil {
@@ -204,6 +233,46 @@ func TestFilesystemConcurrentIdenticalManifestCommitIsIdempotent(t *testing.T) {
 	for err := range errors {
 		if err != nil {
 			t.Fatalf("concurrent commit: %v", err)
+		}
+	}
+}
+
+func TestFilesystemConcurrentCommitAcrossProviderInstancesIsIdempotent(t *testing.T) {
+	root := t.TempDir()
+	first, err := NewFilesystem(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := NewFilesystem(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixture := newProviderFixture(t)
+	for _, blob := range fixture.blobs {
+		putFixtureBlob(t, first, blob)
+	}
+	providers := []*Filesystem{first, second}
+	const workers = 12
+	errors := make(chan error, workers)
+	var group sync.WaitGroup
+	for worker := range workers {
+		group.Add(1)
+		go func(provider *Filesystem) {
+			defer group.Done()
+			errors <- provider.CommitManifest(context.Background(), fixture.manifestBytes)
+		}(providers[worker%len(providers)])
+	}
+	group.Wait()
+	close(errors)
+	for err := range errors {
+		if err != nil {
+			t.Fatalf("multi-instance concurrent commit: %v", err)
+		}
+	}
+	for _, provider := range providers {
+		resolved, err := provider.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest)
+		if err != nil || !bytes.Equal(resolved, fixture.manifestBytes) {
+			t.Fatalf("multi-instance resolved manifest = %q, %v", resolved, err)
 		}
 	}
 }

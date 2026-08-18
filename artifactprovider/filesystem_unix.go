@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 	"sync/atomic"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -20,7 +22,7 @@ import (
 var temporarySequence atomic.Uint64
 
 func (it *Filesystem) initialize() error {
-	root, err := openProviderRoot(it.root)
+	root, err := openProviderRootPath(it.root, true)
 	if err != nil {
 		return err
 	}
@@ -182,6 +184,23 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 	}
 	it.commitMu.Lock()
 	defer it.commitMu.Unlock()
+	if err := it.verifyManifestClosure(ctx, manifest); err != nil {
+		return err
+	}
+	root, err := openProviderRoot(it.root)
+	if err != nil {
+		return err
+	}
+	defer unix.Close(root)
+	directory, err := openManifestDirectory(root, manifest.ArtifactDigest, true)
+	if err != nil {
+		return err
+	}
+	defer unix.Close(directory)
+	return publishManifestBytesAt(ctx, directory, manifest.ArtifactDigest.Hex(), content)
+}
+
+func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest environmentartifact.Manifest) error {
 	indexBytes, err := it.getObjectBytes(ctx, manifest.ObjectIndex)
 	if err != nil {
 		return fmt.Errorf("resolve manifest object index: %w", err)
@@ -199,17 +218,7 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 			return fmt.Errorf("verify manifest dependency %s: %w", descriptor.Digest, err)
 		}
 	}
-	root, err := openProviderRoot(it.root)
-	if err != nil {
-		return err
-	}
-	defer unix.Close(root)
-	directory, err := openManifestDirectory(root, manifest.ArtifactDigest, true)
-	if err != nil {
-		return err
-	}
-	defer unix.Close(directory)
-	return publishManifestBytesAt(ctx, directory, manifest.ArtifactDigest.Hex(), content)
+	return nil
 }
 
 func (it *Filesystem) ResolveManifest(ctx context.Context, digest environmentartifact.Digest) ([]byte, error) {
@@ -237,15 +246,44 @@ func (it *Filesystem) ResolveManifest(ctx context.Context, digest environmentart
 	if manifest.ArtifactDigest != digest {
 		return nil, fmt.Errorf("resolved manifest identity mismatch")
 	}
+	if err := it.verifyManifestClosure(ctx, manifest); err != nil {
+		return nil, fmt.Errorf("verify resolved manifest closure: %w", err)
+	}
 	return content, nil
 }
 
 func openProviderRoot(path string) (int, error) {
-	fd, err := unix.Open(path, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
-	if err != nil {
-		return -1, fmt.Errorf("open provider root without following symlinks: %w", err)
+	return openProviderRootPath(path, false)
+}
+
+func openProviderRootPath(path string, create bool) (int, error) {
+	clean := filepath.Clean(path)
+	if !filepath.IsAbs(clean) || clean == string(filepath.Separator) {
+		return -1, fmt.Errorf("provider root must be a non-root absolute path")
 	}
-	return fd, nil
+	current, err := unix.Open(string(filepath.Separator), unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+	if err != nil {
+		return -1, fmt.Errorf("open filesystem root: %w", err)
+	}
+	components := strings.Split(strings.TrimPrefix(clean, string(filepath.Separator)), string(filepath.Separator))
+	for _, component := range components {
+		if component == "" || component == "." || component == ".." {
+			unix.Close(current)
+			return -1, fmt.Errorf("invalid provider root component %q", component)
+		}
+		var next int
+		if create {
+			next, err = ensureDirectoryAt(current, component)
+		} else {
+			next, err = unix.Openat(current, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+		}
+		unix.Close(current)
+		if err != nil {
+			return -1, fmt.Errorf("open provider root component %q without following symlinks: %w", component, err)
+		}
+		current = next
+	}
+	return current, nil
 }
 
 func ensureDirectoryAt(parent int, name string) (int, error) {

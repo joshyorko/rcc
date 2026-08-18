@@ -33,6 +33,25 @@ func TestCASRejectsSymlinkRoot(t *testing.T) {
 	}
 }
 
+func TestCASRejectsSymlinkAncestorOfProviderRoot(t *testing.T) {
+	outside := t.TempDir()
+	parent := t.TempDir()
+	link := filepath.Join(parent, "redirect")
+	if err := os.Symlink(outside, link); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := NewFilesystem(filepath.Join(link, "provider")); err == nil {
+		t.Fatal("symlinked provider-root ancestor accepted")
+	}
+	entries, err := os.ReadDir(outside)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 0 {
+		t.Fatalf("provider initialized through symlinked ancestor: %v", entries)
+	}
+}
+
 func TestCASRejectsSymlinkParentComponent(t *testing.T) {
 	root := t.TempDir()
 	provider, err := NewFilesystem(root)

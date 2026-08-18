@@ -3,7 +3,6 @@ package artifactprovider
 import (
 	"context"
 	"fmt"
-	"os"
 	"path/filepath"
 	"sort"
 	"sync"
@@ -23,15 +22,8 @@ func NewFilesystem(root string) (*Filesystem, error) {
 	if err != nil {
 		return nil, fmt.Errorf("resolve provider root: %w", err)
 	}
-	if err := os.MkdirAll(absolute, 0o750); err != nil {
-		return nil, fmt.Errorf("create provider root: %w", err)
-	}
-	info, err := os.Lstat(absolute)
-	if err != nil {
-		return nil, fmt.Errorf("inspect provider root: %w", err)
-	}
-	if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
-		return nil, fmt.Errorf("provider root must be a real directory")
+	if absolute == string(filepath.Separator) {
+		return nil, fmt.Errorf("provider root cannot be the filesystem root")
 	}
 	provider := &Filesystem{root: absolute}
 	if err := provider.initialize(); err != nil {
