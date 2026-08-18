@@ -45,7 +45,7 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 	if directory == nil {
 		return fmt.Errorf("nil catalog directory")
 	}
-	if !directory.IsSymlink() && directory.Mode.Type() != os.ModeDir {
+	if !directory.IsSymlink() && directory.Mode&^(os.ModeDir|os.ModePerm) != 0 {
 		return fmt.Errorf("unsupported directory mode %v", directory.Mode)
 	}
 	if directory.IsSymlink() {
@@ -79,7 +79,7 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 			}
 			continue
 		}
-		if file.Mode.Type() != 0 || file.Size < 0 {
+		if file.Mode&^os.ModePerm != 0 || file.Size < 0 {
 			return fmt.Errorf("unsupported file mode or size at %q", strings.Join(path, "/"))
 		}
 		entry, found := indexed[file.Digest]

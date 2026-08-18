@@ -3,6 +3,8 @@ package environmentartifact
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/joshyorko/rcc/htfs"
 )
 
 const (
@@ -152,8 +154,14 @@ func (it Manifest) Validate() error {
 	if len(it.Catalogs) != 1 || it.Catalogs[0].MediaType != CatalogV12MediaType {
 		return fmt.Errorf("manifest v1 requires exactly one v12 gzip catalog")
 	}
+	if it.Catalogs[0].LegacyName != htfs.CatalogName(it.LegacyBlueprint.LegacyBlueprintKey) {
+		return fmt.Errorf("catalog legacy name does not match legacy blueprint key")
+	}
 	if it.Requirements.CatalogReader != "v12" || it.Requirements.Encoding != "gzip" || it.Requirements.LegacyLogicalDigestAlgorithm != "sha256" || len(it.Requirements.RequiredFeatures) != 0 {
 		return fmt.Errorf("unsupported manifest requirements")
+	}
+	if it.Requirements.RequiredFeatures == nil {
+		return fmt.Errorf("requiredFeatures must be a canonical empty array")
 	}
 	for _, descriptor := range []Descriptor{it.Specification.Descriptor, it.LegacyBlueprint.Descriptor, it.Catalogs[0].Descriptor, it.ObjectIndex} {
 		if descriptor.Digest.hex == "" || descriptor.Size < 0 || descriptor.MediaType == "" {

@@ -125,3 +125,31 @@ func TestSemanticSpecificationAndLegacyBlueprintAreDistinctDescriptors(t *testin
 		t.Fatal("descriptor-specific compatibility fields were lost")
 	}
 }
+
+func TestManifestRejectsCatalogNameNotBoundToLegacyBlueprintKey(t *testing.T) {
+	input := testManifestInput(t)
+	input.Catalogs[0].LegacyName = "ffffffffffffffffv12.linux_amd64"
+	if _, _, err := NewManifest(input); err == nil {
+		t.Fatal("catalog name unrelated to legacy blueprint key accepted")
+	}
+}
+
+func TestDecodeManifestRejectsNullRequiredFeatures(t *testing.T) {
+	manifest, _, err := NewManifest(testManifestInput(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest.Requirements.RequiredFeatures = nil
+	identity, err := manifest.IdentityBytes()
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest.ArtifactDigest = DigestBytes(identity)
+	content, err := manifest.CanonicalBytes()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := DecodeManifest(content); err == nil {
+		t.Fatal("requiredFeatures:null accepted as a distinct no-feature identity")
+	}
+}

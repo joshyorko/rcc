@@ -89,6 +89,22 @@ func TestValidateV12CatalogRejectsUnsafeRewriteOffsets(t *testing.T) {
 	}
 }
 
+func TestValidateV12CatalogRejectsSpecialPermissionBits(t *testing.T) {
+	for name, mode := range map[string]os.FileMode{
+		"setuid": os.ModeSetuid | 0o750,
+		"setgid": os.ModeSetgid | 0o750,
+		"sticky": os.ModeSticky | 0o750,
+	} {
+		t.Run(name, func(t *testing.T) {
+			root, index, identity := validCatalogForValidation(t)
+			root.Tree.Files["python"].Mode = mode
+			if err := ValidateV12Catalog(root, index, identity); err == nil {
+				t.Fatalf("special file mode %v accepted", mode)
+			}
+		})
+	}
+}
+
 func TestValidateV12CatalogRejectsMissingOrUnindexedObjects(t *testing.T) {
 	root, index, identity := validCatalogForValidation(t)
 	index.Entries = nil
