@@ -26,3 +26,5 @@ type Provider interface {
 	GetObject(context.Context, environmentartifact.Descriptor) (io.ReadCloser, error)
 	CommitManifest(context.Context, []byte) error
 }
+
+var _ Provider = (*Filesystem)(nil)

@@ -6,12 +6,14 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"sync"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 type Filesystem struct {
-	root string
+	root     string
+	commitMu sync.Mutex
 }
 
 func NewFilesystem(root string) (*Filesystem, error) {
@@ -42,6 +44,14 @@ func (it *Filesystem) objectPath(digest environmentartifact.Digest) string {
 		return ""
 	}
 	return filepath.Join(it.root, "objects", "sha256", hex[:2], hex[2:4], hex)
+}
+
+func (it *Filesystem) manifestPath(digest environmentartifact.Digest) string {
+	hex := digest.Hex()
+	if len(hex) != 64 {
+		return ""
+	}
+	return filepath.Join(it.root, "manifests", "sha256", hex[:2], hex[2:4], hex)
 }
 
 func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
