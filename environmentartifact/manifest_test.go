@@ -70,6 +70,7 @@ func TestManifestDigestExcludesOnlySelfReference(t *testing.T) {
 
 	changed := testManifestInput(t)
 	changed.Builder.RCCVersion = "v0.changed"
+	changed.Specification.Builder.RCCVersion = "v0.changed"
 	mutated, _, err := NewManifest(changed)
 	if err != nil {
 		t.Fatal(err)
@@ -123,6 +124,20 @@ func TestSemanticSpecificationAndLegacyBlueprintAreDistinctDescriptors(t *testin
 	}
 	if manifest.Specification.SourceKind != "robot.yaml" || manifest.LegacyBlueprint.LegacyBlueprintKey != "0123456789abcdef" {
 		t.Fatal("descriptor-specific compatibility fields were lost")
+	}
+}
+
+func TestManifestRejectsContradictorySpecificationMetadata(t *testing.T) {
+	input := testManifestInput(t)
+	input.Specification.Platform.Arch = "arm64"
+	if _, _, err := NewManifest(input); err == nil {
+		t.Fatal("specification platform contradicting manifest platform was accepted")
+	}
+
+	input = testManifestInput(t)
+	input.Specification.Builder.RCCVersion = "v0.other"
+	if _, _, err := NewManifest(input); err == nil {
+		t.Fatal("specification builder contradicting manifest builder was accepted")
 	}
 }
 

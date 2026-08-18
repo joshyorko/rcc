@@ -148,6 +148,9 @@ func (it Manifest) Validate() error {
 	if it.Specification.MediaType != SpecificationMediaType || it.LegacyBlueprint.MediaType != LegacyBlueprintMediaType || it.ObjectIndex.MediaType != ObjectIndexMediaType {
 		return fmt.Errorf("unsupported manifest descriptor media type")
 	}
+	if it.Specification.Platform != it.Platform || it.Specification.Builder != it.Builder {
+		return fmt.Errorf("specification metadata contradicts manifest platform or builder")
+	}
 	if !legacyKeyPattern.MatchString(it.LegacyBlueprint.LegacyBlueprintKey) {
 		return fmt.Errorf("invalid legacy blueprint key")
 	}
