@@ -7,6 +7,11 @@
   `rcc env` commands and serve immutable artifact content over loopback HTTP
   with `rcc cache serve`
 
+### Compatibility and Release Hardening
+
+- document the Environment Artifact provider alongside the continuing legacy
+  `rccremote` protocol and tighten release-platform guidance
+
 ### Security
 
 - harden robot bundles against filesystem boundary escapes

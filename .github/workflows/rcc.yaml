@@ -161,7 +161,8 @@ jobs:
               "changelog": f"https://github.com/{repo}/blob/main/docs/changelog.md#{changelog_anchor}",
               "windows": f"{base_url}/rcc-windows64.exe",
               "linux": f"{base_url}/rcc-linux64",
-              "macos": f"{base_url}/rcc-darwin64"
+              "macos": f"{base_url}/rcc-macos64",
+              "macosarm64": f"{base_url}/rcc-macosarm64"
           }
 
           # Remove duplicate if exists
@@ -180,6 +181,8 @@ jobs:
           PYEOF
 
           cat rcc-builds/index.json
+      - name: Validate release topology
+        run: python3 scripts/validate_release_topology.py . --workflow .github/workflows/rcc.yaml --index rcc-builds/index.json
       - name: Validate release tag
         id: validate_tag
         env:

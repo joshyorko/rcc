@@ -113,7 +113,7 @@ Security findings appear in the repository's Security tab under "Code scanning a
 
 ---
 
-## dagger.yaml
+## dagger.yml
 
 **Dagger CI Pipeline**
 
@@ -130,8 +130,8 @@ Container-based testing using [Dagger](https://dagger.io/), a portable CI/CD eng
 - **Runner:** `ubuntu-latest`
 - **Steps:**
   - Checkout code
-  - Run Dagger pipeline: `dagger call test --source .`
-  - Uses latest Dagger version
+  - Run Dagger pipeline: `dagger call run-robot-tests --source .`
+  - Uses Dagger engine v0.21.3 from `dagger.json` and Go 1.26.5
 
 ### Enabling Automatic Runs
 To enable automatic testing, uncomment the push/PR triggers in the workflow file:
@@ -236,10 +236,10 @@ The recommended release process uses these workflows:
 
 | Requirement | Version | Used By |
 |-------------|---------|---------|
-| Go | 1.25.7 | rcc.yaml |
+| Go | 1.26.5 | rcc.yaml and Dagger |
 | Python | 3.10 | rcc.yaml |
 | Invoke | 2.2.0 | rcc.yaml |
-| Dagger | v0.20.8 | dagger.yaml |
+| Dagger | v0.21.3 | `dagger.json` |
 
 
 

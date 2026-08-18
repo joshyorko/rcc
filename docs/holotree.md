@@ -224,6 +224,12 @@ Just bytes from the zip to the library.
 
 ### Delta Transfers: The rccremote Protocol
 
+Environment Artifacts use `rcc cache serve` as their provider. This is a
+separate protocol from the legacy `rccremote` server documented below:
+`rccremote` continues to serve `/parts` and `/delta`, honors
+`RCC_REMOTE_ORIGIN`, supports shared-Holotree operation, and continues
+shipping. `rcc cache serve` is not an alias for `rccremote`.
+
 When pulling from a remote server, Holotree minimizes bandwidth:
 
 ```go
@@ -520,9 +526,9 @@ Container users hit these walls unexpectedly.
 | `rcc remote serve` | Wrapper around `rccremote` for discoverability |
 
 **Implementation:**
-- New `cmd/remote.go` command group
-- `rccremote` remains the actual server binary
-- Improve error messages when `RCC_REMOTE_ORIGIN` is not set
+- Keep the legacy `rccremote` binary and its `/parts` and `/delta` protocol
+- Keep `RCC_REMOTE_ORIGIN` and shared-Holotree behavior unchanged
+- Document `rcc cache serve` separately as the Environment Artifact provider
 
 ### Medium-Term: Git-Like Commands
 

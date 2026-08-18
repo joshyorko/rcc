@@ -25,7 +25,7 @@ import (
 
 const (
 	defaultGoVersion  = "1.26.5"
-	defaultRccVersion = "v18.17.4"
+	defaultRccVersion = "v18.18.1"
 )
 
 type RccCi struct{}
@@ -86,7 +86,7 @@ func (m *RccCi) Rcc(
 	// +defaultPath="."
 	source *dagger.Directory,
 	// RCC release version to install in the container.
-	// +default="v18.17.4"
+	// +default="v18.18.1"
 	rccVersion string,
 ) (string, error) {
 	args, err := splitCommand(c)
@@ -109,7 +109,7 @@ func (m *RccCi) RccWithOutput(
 	// +default="./output"
 	outputPath string,
 	// RCC release version to install in the container.
-	// +default="v18.17.4"
+	// +default="v18.18.1"
 	rccVersion string,
 ) (*dagger.Directory, error) {
 	args, err := splitCommand(c)

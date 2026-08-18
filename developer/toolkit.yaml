@@ -29,6 +29,26 @@ devTasks:
     shell: python call_invoke.py assets
   unpackTest:
     shell: python call_invoke.py unpackTest
+  artifactFocused:
+    shell: python call_invoke.py artifactFocused
+  artifactRace:
+    shell: python call_invoke.py artifactRace
+  goVet:
+    shell: python call_invoke.py goVet
+  artifactVertical:
+    shell: python call_invoke.py artifactVertical
+  artifactRobot:
+    shell: python call_invoke.py artifactRobot
+  binaryInventory:
+    shell: python call_invoke.py binaryInventory
+  selfHost:
+    shell: python call_invoke.py selfHost
+  selfHostBuild:
+    shell: python call_invoke.py selfHostBuild
+  selfHostProbe:
+    shell: python call_invoke.py selfHostProbe
+  releaseCandidate:
+    shell: python call_invoke.py releaseCandidate
 
 environmentConfigs:
   - setup.yaml

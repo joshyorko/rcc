@@ -101,6 +101,9 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
 *** Keywords ***
 Prepare Environment Artifact Acceptance
+    Set Suite Variable    ${FIXTURE_ROOT}    ${None}
+    ${is_linux}=    Evaluate    sys.platform.startswith("linux")    modules=sys
+    Run Keyword If    not ${is_linux}    Skip    Environment Artifact acceptance is Linux-only
     ${fixture}=    New Environment Artifact Fixture
     Set Suite Variable    ${FIXTURE_ROOT}      ${fixture}[root]
     Set Suite Variable    ${A_HOME}            ${fixture}[aHome]
@@ -116,4 +119,4 @@ Prepare Environment Artifact Acceptance
 
 Clean Environment Artifact Acceptance
     Run Keyword And Ignore Error    Terminate All Processes    kill=${True}
-    Remove Environment Artifact Fixture    ${FIXTURE_ROOT}
+    Run Keyword If    $FIXTURE_ROOT is not None    Remove Environment Artifact Fixture    ${FIXTURE_ROOT}

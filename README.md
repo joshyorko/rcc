@@ -58,7 +58,8 @@ For detailed instructions, visit the [RCC documentation](https://robocorp.com/do
 ### macOS
 
 1. Open the terminal
-1. Download: `curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-darwin64`
+1. Intel: `curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-macos64`
+1. Apple Silicon: `curl -o rcc https://github.com/joshyorko/rcc/releases/latest/download/rcc-macosarm64`
 1. Make the downloaded file executable: `chmod a+x rcc`
 1. Add to path: `sudo mv rcc /usr/local/bin/`
 1. Test: `rcc`
@@ -85,8 +86,8 @@ brew install --cask rcc
 | Platform | Status | Binary |
 |----------|--------|--------|
 | Linux x64 | ✅ Native | rcc-linux64 |
-| macOS Intel | ✅ Native | rcc-darwin64 |
-| macOS Apple Silicon | ✅ Rosetta 2 | rcc-darwin64 |
+| macOS Intel | ✅ Native | rcc-macos64 |
+| macOS Apple Silicon | ✅ Native | rcc-macosarm64 |
 
 
 
@@ -167,7 +168,7 @@ export RCC_AUTOUPDATES_RCC_INDEX="https://github.com/joshyorko/rcc/releases/late
 build/rcc configuration diagnostics --quick --json | jq .
 ```
 
-Local settings file: write a `settings.yaml` to `$RCC_HOME/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
+Local settings file: write a `settings.yaml` to `$ROBOCORP_HOME/settings.yaml` with an `endpoints:` section. See `assets/robocorp_settings.yaml` for the full shape; any key you set there will override the built-in defaults.
 
 ### Notes
 

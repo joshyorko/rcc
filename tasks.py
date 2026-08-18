@@ -1,9 +1,134 @@
 import os
+import json
+import hashlib
 import shutil
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 from invoke import task
+
+
+def _binary_inventory_targets():
+    return [
+        ("linux", "amd64", "linux64", ""),
+        ("darwin", "amd64", "macos64", ""),
+        ("darwin", "arm64", "macosarm64", ""),
+        ("windows", "amd64", "windows64", ".exe"),
+    ]
+
+
+def _require_linux(task_name):
+    if sys.platform != "linux":
+        raise RuntimeError(f"Linux-only task unsupported on {sys.platform}: {task_name}")
+
+
+def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a, home_b, commands,
+                             binary_metadata=None, evidence_paths=None):
+    if not binary_metadata or not evidence_paths:
+        raise ValueError("self-host receipt requires binary metadata and evidence paths")
+    required_generations = {"released", "generationA", "candidate", "generationB"}
+    missing_generations = sorted(required_generations - binary_metadata.keys())
+    if missing_generations:
+        raise ValueError(f"self-host receipt missing binary metadata: {missing_generations}")
+    missing = [str(path) for path in evidence_paths if not Path(path).exists()]
+    if missing:
+        raise ValueError(f"self-host evidence paths do not exist: {missing}")
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    receipt = root / "self-host-v1.json"
+    receipt.write_text(json.dumps({
+        "schemaVersion": 1,
+        "releasedBinary": str(released_binary),
+        "candidateBinary": str(candidate_binary),
+        "homes": {"a": str(home_a), "b": str(home_b)},
+        "commands": commands,
+        "binaries": binary_metadata,
+        "evidencePaths": [str(path) for path in evidence_paths],
+    }, indent=2, sort_keys=True) + "\n")
+    return receipt
+
+
+def _self_host_command_plan(released, candidate, fixture):
+    conda = Path(fixture).with_name("conda.yaml")
+    return [
+        {"step": "released-build", "argv": [released, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostBuild"]},
+        {"step": "candidate-probe", "argv": [candidate, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostProbe"]},
+        {"step": "candidate-build", "argv": [candidate, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostBuild"]},
+        {"step": "released-probe", "argv": [released, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostProbe"]},
+        {"step": "released-v12", "argv": [released, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]},
+        {"step": "candidate-v12", "argv": [candidate, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]},
+    ]
+
+
+def _binary_metadata(path):
+    path = Path(path).resolve()
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    output = subprocess.check_output([str(path), "--version"], text=True, stderr=subprocess.STDOUT).strip()
+    return {"path": str(path), "sha256": digest, "version": output}
+
+
+def _promote_self_host_generation(source, candidate):
+    source, candidate = Path(source).resolve(), Path(candidate).resolve()
+    if not source.is_file():
+        raise RuntimeError(f"generation-A RCC output is missing: {source}")
+    candidate.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, candidate)
+    source_digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    candidate_digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
+    if source_digest != candidate_digest:
+        raise RuntimeError("candidate RCC differs from released generation-A output")
+    return {"source": str(source), "candidate": str(candidate),
+            "sourceSha256": source_digest, "candidateSha256": candidate_digest}
+
+
+def _run_checked(argv, env=None):
+    subprocess.run([str(part) for part in argv], check=True, env=env)
+
+
+def _contained_go_env():
+    return {"CGO_ENABLED": "0", "GOARCH": "amd64"}
+
+
+def _contained_race_env():
+    if shutil.which("gcc") is None:
+        raise RuntimeError("artifactRace requires gcc available on PATH")
+    return {"CGO_ENABLED": "1", "GOARCH": "amd64", "CC": "gcc"}
+
+
+def _new_self_host_homes():
+    root = Path(os.environ.get("RCC_SELF_HOST_ROOT", Path.cwd().resolve().parent)).resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    parent = Path(tempfile.mkdtemp(dir=str(root), prefix=".rcc-self-host-homes-"))
+    home_a, home_b = parent / "home-a", parent / "home-b"
+    home_a.mkdir()
+    home_b.mkdir()
+    return home_a, home_b
+
+
+def _artifact_race_packages():
+    return ["./environmentartifact", "./artifactprovider", "./environmentlifecycle", "./htfs", "./cmd"]
+
+
+def _known_go_vet_findings():
+    return [
+        "htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)",
+        "htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used",
+        "operations/tlscheck.go:247:11: the cancel function returned by context.WithTimeout should be called, not discarded, to avoid a context leak",
+        "operations/pull.go:67:2: unreachable code",
+    ]
+
+
+def _validate_go_vet_result(returncode, output):
+    findings = [line.strip() for line in output.splitlines() if line.strip()]
+    if returncode == 0 and not findings:
+        return
+    if findings != _known_go_vet_findings():
+        raise RuntimeError(f"unexpected go vet findings: {findings}")
 
 # Determine OS-specific commands
 if sys.platform == "win32":
@@ -270,6 +395,160 @@ def test(c, cover=False):
         c.run("go tool cover -func=tmp/cover.out")
     else:
         c.run("go test ./...")
+
+
+@task
+def artifactFocused(c):
+    """Run the focused Environment Artifacts v1 package tests."""
+    c.run("go test -count=1 ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
+    c.run(f"{PYTHON} -m unittest scripts/test_environment_artifact_tasks.py scripts/test_validate_release_topology.py")
+
+
+@task
+def artifactRace(c):
+    """Run focused package tests with the race detector on Linux."""
+    _require_linux("artifactRace")
+    c.run(f"go test -race -count=1 {' '.join(_artifact_race_packages())}", env=_contained_race_env())
+
+
+@task
+def goVet(c):
+    """Run go vet and reject any finding outside the documented legacy baseline."""
+    env = os.environ.copy()
+    env.update(_contained_go_env())
+    result = subprocess.run(["go", "vet", "./..."], env=env, text=True, capture_output=True)
+    output = result.stdout + result.stderr
+    if output:
+        print(output, end="", file=sys.stderr)
+    _validate_go_vet_result(result.returncode, output)
+    if result.returncode:
+        print("go vet reported only the documented unchanged baseline")
+
+
+@task
+def artifactVertical(c):
+    """Run the real RCC A/B vertical lifecycle test."""
+    c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=_contained_go_env())
+
+
+@task
+def artifactRobot(c):
+    """Build and run only the Environment Artifacts robot acceptance suite."""
+    _require_linux("artifactRobot")
+    local(c, do_test=False)
+    os.makedirs("tmp/environment-artifacts-robot", exist_ok=True)
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/environment-artifacts-robot robot_tests/environment_artifacts.robot")
+
+
+@task
+def binaryInventory(c):
+    """Build the release matrix and validate its exact binary topology."""
+    build(c)
+    expected = []
+    for _, _, directory, extension in _binary_inventory_targets():
+        expected.append(Path("build") / directory / f"rcc{extension}")
+        expected.append(Path("build") / directory / f"rccremote{extension}")
+    actual = sorted(path for path in Path("build").glob("*/rcc*") if path.is_file())
+    if sorted(expected) != actual:
+        raise RuntimeError(f"binary inventory mismatch: expected {sorted(expected)}, found {actual}")
+    c.run(f"{PYTHON} scripts/validate_release_topology.py --build-root build --workflow .github/workflows/rcc.yaml")
+
+
+@task
+def selfHostBuild(c):
+    """Build RCC and RCC remote in an isolated self-host generation."""
+    generation = os.environ.get("RCC_SELF_HOST_GENERATION", "current")
+    output = Path("build") / "self-host" / generation
+    output.mkdir(parents=True, exist_ok=True)
+    c.run("go test ./...", env=_contained_go_env())
+    c.run(f"go build -o {output / 'rcc'} ./cmd/rcc", env=_contained_go_env())
+    c.run(f"go build -o {output / 'rccremote'} ./cmd/rccremote", env=_contained_go_env())
+
+
+@task
+def selfHostProbe(c):
+    """Prove the candidate toolkit can resolve and compile without host mutation."""
+    c.run("go test ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
+
+
+@task
+def selfHost(c):
+    """Exercise released-to-candidate and candidate-to-released self-hosting."""
+    _require_linux("selfHost")
+    released = os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
+    if not released:
+        raise RuntimeError("RCC_SELF_HOST_RELEASED_BINARY or PATH rcc is required")
+    released = str(Path(released).resolve())
+    released_info = _binary_metadata(released)
+    expected_version = os.environ.get("RCC_SELF_HOST_EXPECTED_VERSION", "v18.18.1")
+    if expected_version not in released_info["version"]:
+        raise RuntimeError(f"released RCC must be {expected_version}: {released_info['version']}")
+    root = (Path("tmp") / f"rcc-self-host-{os.getpid()}").resolve()
+    root.mkdir(parents=True, exist_ok=False)
+    home_a, home_b = _new_self_host_homes()
+    candidate = Path("build/self-host/candidate/rcc").resolve()
+    commands = []
+    fixture = root / "robot.yaml"
+    fixture.write_text("tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\n")
+    conda = root / "conda.yaml"
+    conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
+
+    def invoke(binary, home, step, generation=None):
+        env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
+        if generation: env["RCC_SELF_HOST_GENERATION"] = generation
+        argv = [binary, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", step]
+        _run_checked(argv, env)
+        commands.append({"step": step, "argv": argv, "env": {"ROBOCORP_HOME": str(home)}})
+
+    invoke(released, home_a, "selfHostBuild", "released")
+    generation_a = Path("build/self-host/released/rcc")
+    promotion = _promote_self_host_generation(generation_a, Path("build/rcc"))
+    candidate = Path(promotion["candidate"])
+    candidate_info = _binary_metadata(candidate)
+    invoke(str(candidate), home_a, "selfHostProbe")
+    invoke(str(candidate), home_b, "selfHostBuild", "candidate")
+    generation_b = Path("build/self-host/candidate/rcc").resolve()
+    generation_b_remote = Path("build/self-host/candidate/rccremote").resolve()
+    generation_b_info = _binary_metadata(generation_b)
+    invoke(str(generation_b), home_b, "selfHostProbe")
+    (home_b / "artifacts" / "v1").mkdir(parents=True, exist_ok=True)
+    (home_b / "artifacts" / "v1" / "metadata.json").write_text('{"schemaVersion":1}\n')
+    invoke(released, home_b, "selfHostProbe")
+    def v12(binary, home, label):
+        env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
+        argv = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
+        _run_checked(argv, env)
+        commands.append({"step": label, "argv": argv, "env": {"ROBOCORP_HOME": str(home)}})
+    v12(released, home_a, "released-v12")
+    v12(str(generation_b), home_a, "candidate-v12")
+    v12(released, home_b, "released-v12-compatibility")
+    evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
+                home_a / "holotree", home_b / "holotree",
+                home_b / "artifacts" / "v1" / "metadata.json"]
+    receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
+                                       home_a=home_a, home_b=home_b, commands=commands,
+                                       binary_metadata={"released": released_info, "candidate": candidate_info,
+                                                         "generationA": promotion,
+                                                         "generationB": generation_b_info},
+                                       evidence_paths=evidence)
+    print(f"Self-host receipt: {receipt}")
+
+
+@task
+def releaseCandidate(c):
+    """Run the complete Environment Artifacts v1 release-candidate gate."""
+    _require_linux("releaseCandidate")
+    for task_name in (
+        "artifactFocused",
+        "artifactRace",
+        "artifactVertical",
+        "artifactRobot",
+        "binaryInventory",
+    ):
+        c.run(f"invoke {task_name}")
+    c.run("invoke robot")
+    c.run("invoke selfHost")
+    c.run("invoke goVet")
 
 
 def version() -> str:

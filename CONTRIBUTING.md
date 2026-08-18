@@ -53,6 +53,23 @@ HTML logs land in `tmp/output/log.html`. Top-notch reporting right there.
 | Agent guidance structural validation | `rcc run -r developer/toolkit.yaml --dev -t agentDocs` |
 | Tooling info | `rcc run -r developer/toolkit.yaml --dev -t tools` |
 
+### Environment artifact gates
+
+The contained toolkit exposes the focused artifact tasks `artifactFocused`,
+`artifactRace`, `artifactVertical`, and `artifactRobot`, plus `goVet`,
+`binaryInventory`, `selfHost`, and `releaseCandidate`. `goVet` accepts the exact
+documented legacy finding set but rejects any new diagnostic. The artifact acceptance gate is Linux-only;
+`artifactRace`, `artifactRobot`, `selfHost`, and `releaseCandidate` therefore
+require a Linux host; `artifactFocused` and `artifactVertical` are package
+checks without that task-level platform guard. Standard, Python, and
+extended templates need no special artifact-authoring model.
+
+The default development and promotion path is installed/released RCC →
+`developer/toolkit.yaml` → build/test the candidate, followed by
+`build/rcc` → a fresh `ROBOCORP_HOME` → `developer/toolkit.yaml` → build/test
+the candidate itself. Direct `go` or `inv` commands are tight diagnostic/TDD
+fallbacks, not primary promotion gates when a toolkit task exists.
+
 ### How the toolkit works (so you can debug it)
 
 When things go sideways (and they will—this is software), here's what's actually happening:
