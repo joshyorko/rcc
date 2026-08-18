@@ -59,6 +59,8 @@ class ReleaseTopologyTests(unittest.TestCase):
         assets.mkdir()
         for name in ASSETS:
             (assets / name).write_bytes(b"downloaded release asset")
+        published_index = assets / "index.json"
+        shutil.move(index, published_index)
         shutil.rmtree(root / "build")
 
         result = subprocess.run([
@@ -66,7 +68,7 @@ class ReleaseTopologyTests(unittest.TestCase):
             str(REPOSITORY_ROOT / "scripts" / "validate_release_topology.py"),
             "--asset-root", str(assets),
             "--workflow", str(workflow),
-            "--index", str(index),
+            "--index", str(published_index),
         ], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -82,6 +84,19 @@ class ReleaseTopologyTests(unittest.TestCase):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [{"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64"}]}))
         self.assertTrue(any("macosarm64" in error for error in validate(root, workflow, index)))
+
+    def test_rejects_index_urls_for_the_wrong_product_or_platform(self):
+        root, workflow, index = self.fixture()
+        index.write_text(json.dumps({"tested": [{
+            "windows": "https://x/rccremote-windows64.exe",
+            "linux": "https://x/rccremote-linux64",
+            "macos": "https://x/rccremote-macosarm64",
+            "macosarm64": "https://x/rccremote-macos64",
+        }]}))
+        errors = validate(root, workflow, index)
+        self.assertEqual(len(errors), 4, errors)
+        for key in ("windows", "linux", "macos", "macosarm64"):
+            self.assertTrue(any(f"index {key} URL" in error for error in errors), errors)
 
     def test_rejects_extra_workflow_asset(self):
         root, workflow, index = self.fixture()

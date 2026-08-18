@@ -7,6 +7,13 @@ ASSETS = {
     "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
     "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64",
 }
+PUBLISHED_ASSETS = ASSETS | {"index.json"}
+INDEX_ASSETS = {
+    "windows": "rcc-windows64.exe",
+    "linux": "rcc-linux64",
+    "macos": "rcc-macos64",
+    "macosarm64": "rcc-macosarm64",
+}
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 
 
@@ -14,7 +21,7 @@ def validate(root, workflow, index, asset_root=None):
     errors = []
     if asset_root:
         staged = {path.name for path in Path(asset_root).iterdir() if path.is_file()} if Path(asset_root).is_dir() else set()
-        if staged != ASSETS:
+        if staged != PUBLISHED_ASSETS:
             errors.append(f"downloaded assets mismatch: {sorted(staged)}")
     else:
         for directory, binaries in TARGETS.items():
@@ -28,20 +35,19 @@ def validate(root, workflow, index, asset_root=None):
             errors.append(f"workflow staged assets mismatch: {sorted(staged)}")
     if index:
         data = json.loads(Path(index).read_text())
-        url_keys = {"windows", "linux", "macos", "macosarm64"}
         tested = data.get("tested", [])
         if not tested:
             errors.append("index has no tested release entry")
         else:
             entry = tested[0]
-            for key in url_keys:
+            for key, expected in INDEX_ASSETS.items():
                 if key not in entry:
                     errors.append(f"index entry missing required {key} URL")
                     continue
                 value = entry[key]
                 basename = value.rsplit("/", 1)[-1]
-                if basename not in ASSETS:
-                    errors.append(f"index {key} URL basename is not a staged RCC asset: {basename}")
+                if basename != expected:
+                    errors.append(f"index {key} URL basename must be {expected}: {basename}")
     return errors
 
 
