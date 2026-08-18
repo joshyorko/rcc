@@ -10,6 +10,7 @@ Implemented cold provider capability negotiation and strong warm-path independen
 - Added a cold regression proving an incompatible provider is rejected before `ResolveManifest`.
 - Added a real fixture warm regression proving a deferred provider for a missing profile is never resolved.
 - Added a command-layer regression proving a malformed-or-missing provider reference remains deferred when passed to lifecycle acquisition.
+- Expanded the real local-ready warm fixture matrix for missing-profile resolution, absent authorization, unreachable HTTP endpoint, resolver panic, and provider-method panic; each case asserts unchanged identity and `local-materialization` without resolution.
 
 ## Verification
 
@@ -18,7 +19,8 @@ Implemented cold provider capability negotiation and strong warm-path independen
 - `go test -count=1 ./environmentlifecycle ./cmd/...` passed.
 - `go test -race -count=1 ./environmentlifecycle ./cmd/...` failed only in pre-existing `cmd/rccremote` tests due to the existing `common.DefineVerbosity` versus logger-loop race; environmentlifecycle and cmd packages passed under race before cmd/rccremote failures.
 - `git diff --check` passed.
+- Focused warm lifecycle tests, all `cmd/...` tests, and focused race tests for lifecycle/cmd passed.
 
 ## Concerns
 
-The requested race command remains red because of unrelated existing global verbosity/logger synchronization in `cmd/rccremote`; no changes were made outside Task 4 scope.
+The aggregate race command remains red because of unrelated existing global verbosity/logger synchronization in `cmd/rccremote`; focused lifecycle/cmd race tests pass and no changes were made outside Task 4 scope.

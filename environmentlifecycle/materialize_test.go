@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
@@ -130,6 +131,83 @@ func TestWarmAcquireDoesNotResolveDeferredProvider(t *testing.T) {
 	}
 	if result.CacheHit != CacheLocalMaterialization {
 		t.Fatalf("warm cache provenance = %q", result.CacheHit)
+	}
+}
+
+func TestWarmAcquireIgnoresProviderResolutionAndNetworkBoundaries(t *testing.T) {
+	cases := []struct {
+		name     string
+		provider func(*testing.T, *int) artifactprovider.Provider
+	}{
+		{
+			name: "missing profile resolver error",
+			provider: func(t *testing.T, calls *int) artifactprovider.Provider {
+				return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+					(*calls)++
+					return nil, errors.New("provider profile missing")
+				})
+			},
+		},
+		{
+			name: "absent authorization environment",
+			provider: func(t *testing.T, calls *int) artifactprovider.Provider {
+				const env = "RCC_TASK4_DEFINITELY_MISSING_AUTH"
+				os.Unsetenv(env)
+				return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+					(*calls)++
+					return artifactprovider.NewHTTPWithOptions("http://127.0.0.1:1", artifactprovider.HTTPOptions{
+						Client: http.DefaultClient, AuthorizationEnv: env,
+					})
+				})
+			},
+		},
+		{
+			name: "unreachable provider endpoint",
+			provider: func(t *testing.T, calls *int) artifactprovider.Provider {
+				return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+					(*calls)++
+					return artifactprovider.NewHTTPWithOptions("http://127.0.0.1:1", artifactprovider.HTTPOptions{Client: http.DefaultClient})
+				})
+			},
+		},
+		{
+			name: "resolver panic",
+			provider: func(t *testing.T, calls *int) artifactprovider.Provider {
+				return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+					panic("warm acquisition resolved provider")
+				})
+			},
+		},
+		{
+			name:     "provider panic",
+			provider: func(t *testing.T, calls *int) artifactprovider.Provider { return failOnTouchProvider{t: t} },
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, remote, artifactDigest := publishedFixture(t)
+			common.Product.ForceHome(t.TempDir())
+			common.SharedHolotree = false
+			acquirer := NewAcquirer()
+			first, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
+			if err != nil {
+				t.Fatal(err)
+			}
+			resolverCalls := 0
+			second, err := acquirer.Acquire(context.Background(), AcquireRequest{
+				ArtifactDigest: artifactDigest, Provider: tc.provider(t, &resolverCalls),
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if resolverCalls != 0 {
+				t.Fatalf("resolver calls = %d", resolverCalls)
+			}
+			if second.CacheHit != CacheLocalMaterialization || second.ArtifactDigest != first.ArtifactDigest {
+				t.Fatalf("warm result = %+v, first = %+v", second, first)
+			}
+		})
 	}
 }
 
