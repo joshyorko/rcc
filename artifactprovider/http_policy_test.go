@@ -14,18 +14,25 @@ import (
 
 func TestHTTPErrorDoesNotExposeResponseBody(t *testing.T) {
 	const secret = "authorization-secret-sentinel"
+	const authorizationEnv = "RCC_PROVIDER_HTTP_POLICY_AUTHORIZATION"
+	t.Setenv(authorizationEnv, secret)
+	var received string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		received = r.Header.Get("Authorization")
 		w.WriteHeader(http.StatusUnauthorized)
 		_, _ = w.Write([]byte(secret))
 	}))
 	defer server.Close()
-	provider, err := NewHTTP(server.URL, server.Client())
+	provider, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: authorizationEnv})
 	if err != nil {
 		t.Fatal(err)
 	}
 	_, err = provider.Capabilities(context.Background())
 	if err == nil || strings.Contains(err.Error(), secret) {
 		t.Fatalf("error = %v", err)
+	}
+	if received != secret {
+		t.Fatalf("Authorization = %q, want complete runtime header", received)
 	}
 }
 

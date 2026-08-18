@@ -55,3 +55,21 @@ Verification:
 - `go run ./cmd/rcc provider --help` — pass.
 - `git diff --check` — pass.
 - Race checks remain limited by the confirmed pre-existing global verbosity/logger race in Cobra command execution.
+
+## Integration fix round 4
+
+Replaced the remaining partial assertions with instrumented resolver counters,
+exact JSON/value comparisons, exact captured provider/cache roots, explicit
+capability failure text, and a cross-command authorization sentinel check.
+The HTTP error regression now proves that the complete runtime Authorization
+header reaches the server while an echoed response body never reaches the
+returned error. Provider command tests invoke their `RunE` translation directly,
+avoiding RCC's unrelated process-global Cobra initializer; the focused command
+race gate is therefore clean.
+
+Verification:
+
+- `go test -count=1 ./cmd ./artifactprovider ./settings` — pass.
+- `go test -race -count=1 ./cmd -run 'TestProvider'` — pass.
+- `go test -race -count=1 ./artifactprovider ./settings` — pass.
+- `git diff --check` — pass.

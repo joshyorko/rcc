@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -18,6 +17,22 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
+
+func runProviderCommand(command *cobra.Command, arguments ...string) error {
+	if command.Context() == nil {
+		command.SetContext(context.Background())
+	}
+	if err := command.ParseFlags(arguments); err != nil {
+		return err
+	}
+	positional := command.Flags().Args()
+	if command.Args != nil {
+		if err := command.Args(command, positional); err != nil {
+			return err
+		}
+	}
+	return command.RunE(command, positional)
+}
 
 func TestProviderReferenceResolutionIsDeferred(t *testing.T) {
 	provider, err := newProviderReference("missing-profile")
@@ -54,8 +69,7 @@ func TestProviderInspectAuthorizationReportsNameAndPresenceWithoutValue(t *testi
 	}})
 	var out bytes.Buffer
 	command.SetOut(&out)
-	command.SetArgs([]string{"office", "--json"})
-	if err := command.Execute(); err != nil {
+	if err := runProviderCommand(command, "office", "--json"); err != nil {
 		t.Fatal(err)
 	}
 	if strings.Contains(out.String(), secret) || !strings.Contains(out.String(), env) || !strings.Contains(out.String(), "\"present\":true") {
@@ -64,13 +78,35 @@ func TestProviderInspectAuthorizationReportsNameAndPresenceWithoutValue(t *testi
 }
 
 func TestProviderReferenceDoesNotLoadAtConstruction(t *testing.T) {
-	p, err := newProviderReference("not-present")
+	loads := 0
+	p, err := newProviderReferenceWithDependencies("office", providerResolverDependencies{
+		load: func() (*settings.Settings, error) {
+			loads++
+			return &settings.Settings{Providers: settings.ProviderProfiles{"office": {Type: "http", URL: "https://cache.example"}}}, nil
+		},
+		http: func(string, artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+			return validProvider{}, nil
+		},
+	})
 	if err != nil || p == nil {
 		t.Fatalf("resolver = %v, %v", p, err)
 	}
+	if loads != 0 {
+		t.Fatalf("settings loaded during construction: %d", loads)
+	}
+	if _, err := p.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if loads != 1 {
+		t.Fatalf("settings loads after first operation = %d, want 1", loads)
+	}
 }
 func TestProviderReferenceLocalUsesExactProviderRoot(t *testing.T) {
-	p, err := newProviderReference("local")
+	var captured string
+	p, err := newProviderReferenceWithDependencies("local", providerResolverDependencies{filesystem: func(root string) (artifactprovider.Provider, error) {
+		captured = root
+		return validProvider{}, nil
+	}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,8 +114,8 @@ func TestProviderReferenceLocalUsesExactProviderRoot(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := filepath.Join(common.Product.Home(), "artifacts", "v1", "provider")
-	if _, err := os.Stat(want); err != nil {
-		t.Fatalf("provider root %q: %v", want, err)
+	if captured != want {
+		t.Fatalf("provider root = %q, want %q", captured, want)
 	}
 }
 
@@ -87,8 +123,7 @@ func TestProviderTestCapabilitiesSuccess(t *testing.T) {
 	command := newProviderTestCommand(providerCommandDependencies{new: func(string) (artifactprovider.Provider, error) { return validProvider{}, nil }})
 	var out bytes.Buffer
 	command.SetOut(&out)
-	command.SetArgs([]string{"office", "--json"})
-	if err := command.Execute(); err != nil {
+	if err := runProviderCommand(command, "office", "--json"); err != nil {
 		t.Fatal(err)
 	}
 	if !strings.Contains(out.String(), "\"compatible\":true") || !strings.Contains(out.String(), "schemaVersions") {
@@ -99,9 +134,8 @@ func TestProviderTestIncompatibleEmitsNoSuccessJSON(t *testing.T) {
 	command := newProviderTestCommand(providerCommandDependencies{new: func(string) (artifactprovider.Provider, error) { return contextProvider{}, nil }})
 	var out bytes.Buffer
 	command.SetOut(&out)
-	command.SetArgs([]string{"office", "--json"})
-	if err := command.Execute(); err == nil {
-		t.Fatal("expected incompatibility")
+	if err := runProviderCommand(command, "office", "--json"); err == nil || !strings.Contains(err.Error(), "does not support") {
+		t.Fatalf("expected explicit incompatibility, got %v", err)
 	}
 	if strings.Contains(out.String(), "\"reachable\"") || strings.Contains(out.String(), "\"compatible\"") {
 		t.Fatalf("success JSON = %s", out.String())
@@ -116,11 +150,18 @@ func TestProviderJSONContracts(t *testing.T) {
 		removed = p == nil
 		return nil
 	}, new: func(string) (artifactprovider.Provider, error) { return validProvider{}, nil }}
+	root, state := providerLocalCache()
 	commands := []struct {
 		name string
 		args []string
-		keys []string
-	}{{"add", []string{"office", "--type", "http", "--url", "https://cache.example", "--json"}, []string{"name", "type", "url"}}, {"list", []string{"--json"}, []string{"providers"}}, {"inspect", []string{"office", "--json"}, []string{"reference", "source", "type", "url", "localCache"}}, {"test", []string{"office", "--json"}, []string{"reference", "reachable", "compatible", "capabilities"}}, {"remove", []string{"office", "--json"}, []string{"name", "removed"}}}
+		want string
+	}{
+		{"add", []string{"office", "--type", "http", "--url", "https://cache.example", "--json"}, "{\"name\":\"office\",\"type\":\"http\",\"url\":\"https://cache.example\"}\n"},
+		{"list", []string{"--json"}, "{\"providers\":[{\"name\":\"local\",\"type\":\"filesystem\",\"source\":\"builtin\"},{\"name\":\"office\",\"type\":\"http\",\"source\":\"settings\",\"url\":\"https://cache.example\"}]}\n"},
+		{"inspect", []string{"office", "--json"}, fmt.Sprintf("{\"reference\":\"office\",\"source\":\"settings\",\"type\":\"http\",\"url\":\"https://cache.example\",\"authorization\":{\"source\":\"environment\",\"present\":false},\"localCache\":{\"root\":%q,\"state\":%q}}\n", root, state)},
+		{"test", []string{"office", "--json"}, "{\"reference\":\"office\",\"reachable\":true,\"compatible\":true,\"capabilities\":{\"schemaVersions\":[1],\"digestAlgorithms\":[\"sha256\"],\"encodings\":[\"gzip\"]}}\n"},
+		{"remove", []string{"office", "--json"}, "{\"name\":\"office\",\"removed\":true}\n"},
+	}
 	for _, tc := range commands {
 		var out bytes.Buffer
 		var c *cobra.Command
@@ -137,18 +178,11 @@ func TestProviderJSONContracts(t *testing.T) {
 			c = newProviderRemoveCommand(d)
 		}
 		c.SetOut(&out)
-		c.SetArgs(tc.args)
-		if err := c.Execute(); err != nil {
+		if err := runProviderCommand(c, tc.args...); err != nil {
 			t.Fatalf("%s: %v", tc.name, err)
 		}
-		var object map[string]json.RawMessage
-		if err := json.Unmarshal(out.Bytes(), &object); err != nil {
-			t.Fatalf("%s JSON: %v", tc.name, err)
-		}
-		for _, key := range tc.keys {
-			if _, ok := object[key]; !ok {
-				t.Fatalf("%s missing %s", tc.name, key)
-			}
+		if out.String() != tc.want {
+			t.Fatalf("%s JSON = %q, want %q", tc.name, out.String(), tc.want)
 		}
 	}
 	if !updated || !removed {
@@ -159,20 +193,52 @@ func TestProviderSecretSentinelAbsentFromAllOutputsAndErrors(t *testing.T) {
 	const secret = "provider-secret-sentinel"
 	t.Setenv("RCC_AUTH", secret)
 	var captured settings.ProviderProfile
-	d := providerCommandDependencies{update: func(_ string, p *settings.ProviderProfile, _ bool) error { captured = *p; return nil }}
+	d := providerCommandDependencies{
+		load: func() (*settings.Settings, error) {
+			return &settings.Settings{Providers: settings.ProviderProfiles{"office": {Type: "http", URL: "https://cache.example", AuthorizationEnv: "RCC_AUTH"}}}, nil
+		},
+		update: func(_ string, p *settings.ProviderProfile, _ bool) error {
+			if p != nil {
+				captured = *p
+			}
+			return nil
+		},
+		new: func(string) (artifactprovider.Provider, error) { return validProvider{}, nil },
+	}
 	var out bytes.Buffer
+	var stderr bytes.Buffer
 	c := newProviderAddCommand(d)
 	c.SetOut(&out)
-	c.SetArgs([]string{"office", "--type", "http", "--url", "https://cache.example", "--authorization-env", "RCC_AUTH", "--json"})
-	if err := c.Execute(); err != nil {
+	c.SetErr(&stderr)
+	if err := runProviderCommand(c, "office", "--type", "http", "--url", "https://cache.example", "--authorization-env", "RCC_AUTH", "--json"); err != nil {
 		t.Fatal(err)
 	}
-	if strings.Contains(out.String(), secret) {
-		t.Fatal("secret leaked to output")
-	}
 	encoded, _ := yaml.Marshal(captured)
-	if strings.Contains(string(encoded), secret) {
-		t.Fatal("secret persisted")
+	observed := []string{out.String(), stderr.String(), string(encoded)}
+	for _, command := range []*cobra.Command{newProviderListCommand(d), newProviderInspectCommand(d), newProviderTestCommand(d), newProviderRemoveCommand(d)} {
+		out.Reset()
+		stderr.Reset()
+		command.SetOut(&out)
+		command.SetErr(&stderr)
+		args := []string{"--json"}
+		if command.Name() != "list" {
+			args = append([]string{"office"}, args...)
+		}
+		err := runProviderCommand(command, args...)
+		observed = append(observed, out.String(), stderr.String())
+		if err != nil {
+			observed = append(observed, err.Error())
+		}
+	}
+	unsafe := newProviderInspectCommand(d)
+	err := runProviderCommand(unsafe, "https://user:"+secret+"@example.test", "--json")
+	if err != nil {
+		observed = append(observed, err.Error())
+	}
+	for _, value := range observed {
+		if strings.Contains(value, secret) {
+			t.Fatalf("secret leaked through provider command: %q", value)
+		}
 	}
 }
 func TestProviderReferenceRawAndNamedUseExpectedHTTPAndAuthorization(t *testing.T) {
@@ -222,8 +288,7 @@ func TestProviderListKeepsLocalFirstAndUnique(t *testing.T) {
 	}})
 	var output bytes.Buffer
 	command.SetOut(&output)
-	command.SetArgs([]string{"--json"})
-	if err := command.Execute(); err != nil {
+	if err := runProviderCommand(command, "--json"); err != nil {
 		t.Fatal(err)
 	}
 	var got providerListResult
@@ -240,8 +305,7 @@ func TestProviderInspectRejectsUnsafeURLWithoutEchoingCredentials(t *testing.T) 
 	for _, reference := range []string{"https://user:secret@example.com/path", "https://example.com/?secret=sentinel", "https://example.com/#sentinel", "https://example.com/path", "https://example.com"}[:4] {
 		var output bytes.Buffer
 		command.SetOut(&output)
-		command.SetArgs([]string{reference, "--json"})
-		if err := command.Execute(); err == nil {
+		if err := runProviderCommand(command, reference, "--json"); err == nil {
 			t.Fatalf("inspect %q unexpectedly succeeded", reference)
 		}
 		if strings.Contains(output.String(), "secret") || strings.Contains(output.String(), "sentinel") {
@@ -254,8 +318,7 @@ func TestProviderInspectLocalReportsProviderRoot(t *testing.T) {
 	command := newProviderInspectCommand(defaultProviderCommandDependencies())
 	var output bytes.Buffer
 	command.SetOut(&output)
-	command.SetArgs([]string{"local", "--json"})
-	if err := command.Execute(); err != nil {
+	if err := runProviderCommand(command, "local", "--json"); err != nil {
 		t.Fatal(err)
 	}
 	var got map[string]any
@@ -274,8 +337,7 @@ func TestProviderAddReturnsNormalizedURL(t *testing.T) {
 	command := newProviderAddCommand(providerCommandDependencies{update: func(_ string, profile *settings.ProviderProfile, _ bool) error { captured = *profile; return nil }})
 	var output bytes.Buffer
 	command.SetOut(&output)
-	command.SetArgs([]string{"office", "--type", "http", "--url", "https://cache.example/", "--json"})
-	if err := command.Execute(); err != nil {
+	if err := runProviderCommand(command, "office", "--type", "http", "--url", "https://cache.example/", "--json"); err != nil {
 		t.Fatal(err)
 	}
 	if captured.URL != "https://cache.example" {
@@ -295,8 +357,7 @@ func TestProviderTestUsesCommandContext(t *testing.T) {
 	cancel()
 	command := newProviderTestCommand(providerCommandDependencies{new: func(string) (artifactprovider.Provider, error) { return contextProvider{}, nil }})
 	command.SetContext(ctx)
-	command.SetArgs([]string{"local", "--json"})
-	if err := command.Execute(); err == nil {
+	if err := runProviderCommand(command, "local", "--json"); err == nil {
 		t.Fatal("cancelled context unexpectedly succeeded")
 	}
 }
