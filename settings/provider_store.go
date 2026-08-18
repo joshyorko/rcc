@@ -1,13 +1,10 @@
 package settings
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/joshyorko/rcc/common"
-	"github.com/joshyorko/rcc/pathlib"
 	"gopkg.in/yaml.v2"
 )
 
@@ -16,17 +13,10 @@ import (
 // consulted by this function.
 func LoadCustomSettingsForMutation() (*Settings, error) {
 	filename := common.SettingsFile()
-	info, err := os.Lstat(filename)
-	if errors.Is(err, os.ErrNotExist) {
+	content, err := readCustomSettingsFile(filename)
+	if os.IsNotExist(err) {
 		return &Settings{Providers: make(ProviderProfiles)}, nil
 	}
-	if err != nil {
-		return nil, fmt.Errorf("inspect custom settings %q: %w", filename, err)
-	}
-	if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
-		return nil, fmt.Errorf("custom settings destination %q is not a regular file", filename)
-	}
-	content, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, fmt.Errorf("read custom settings %q: %w", filename, err)
 	}
@@ -58,9 +48,7 @@ func UpdateCustomProvider(name string, profile *ProviderProfile, replace bool) e
 
 	filename := common.SettingsFile()
 	lockfile := filename + ".lck"
-	completed := pathlib.LockWaitMessage(lockfile, "Serialized provider settings access [settings lock]")
-	locker, err := pathlib.Locker(lockfile, 125, false)
-	completed()
+	locker, err := acquireSettingsMutationLock(lockfile)
 	if err != nil {
 		return fmt.Errorf("lock custom settings: %w", err)
 	}
@@ -96,54 +84,6 @@ func UpdateCustomProvider(name string, profile *ProviderProfile, replace bool) e
 	}
 	if err := writeCustomSettingsAtomically(filename, content); err != nil {
 		return err
-	}
-	return nil
-}
-
-func writeCustomSettingsAtomically(filename string, content []byte) error {
-	info, err := os.Lstat(filename)
-	if err == nil {
-		if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
-			return fmt.Errorf("custom settings destination %q is not a regular file", filename)
-		}
-	} else if !errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf("inspect custom settings destination %q: %w", filename, err)
-	}
-
-	parent := filepath.Dir(filename)
-	if err := os.MkdirAll(parent, 0o700); err != nil {
-		return fmt.Errorf("create custom settings directory %q: %w", parent, err)
-	}
-	temporary, err := os.CreateTemp(parent, "."+filepath.Base(filename)+".tmp-*")
-	if err != nil {
-		return fmt.Errorf("create custom settings temporary file: %w", err)
-	}
-	temporaryName := temporary.Name()
-	removeTemporary := true
-	defer func() {
-		_ = temporary.Close()
-		if removeTemporary {
-			_ = os.Remove(temporaryName)
-		}
-	}()
-	if err := temporary.Chmod(0o600); err != nil {
-		return fmt.Errorf("set custom settings temporary mode: %w", err)
-	}
-	if _, err := temporary.Write(content); err != nil {
-		return fmt.Errorf("write custom settings temporary file: %w", err)
-	}
-	if err := temporary.Sync(); err != nil {
-		return fmt.Errorf("fsync custom settings temporary file: %w", err)
-	}
-	if err := temporary.Close(); err != nil {
-		return fmt.Errorf("close custom settings temporary file: %w", err)
-	}
-	if err := os.Rename(temporaryName, filename); err != nil {
-		return fmt.Errorf("atomically replace custom settings: %w", err)
-	}
-	removeTemporary = false
-	if err := syncSettingsParent(parent); err != nil {
-		return fmt.Errorf("fsync custom settings parent directory: %w", err)
 	}
 	return nil
 }

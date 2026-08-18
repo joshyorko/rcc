@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
+
+	"github.com/joshyorko/rcc/artifactpolicy"
 )
 
 func TestNormalizeHTTPURL(t *testing.T) {
@@ -20,6 +22,33 @@ func TestNormalizeHTTPURL(t *testing.T) {
 	for _, raw := range []string{"https://user@example.test", "https://user:secret@example.test", "https://example.test?x=1", "https://example.test#fragment", "https://example.test/v1", "http://example.test", "http://localhost.example.test"} {
 		if _, err := NormalizeHTTPURL(raw); err == nil {
 			t.Fatalf("NormalizeHTTPURL(%q) unexpectedly succeeded", raw)
+		} else if strings.Contains(err.Error(), "secret") {
+			t.Fatalf("NormalizeHTTPURL(%q) leaked embedded credential: %v", raw, err)
+		}
+	}
+}
+
+func TestNormalizeHTTPURLMatchesNeutralPolicy(t *testing.T) {
+	cases := []string{
+		"https://example.test",
+		"https://example.test/",
+		"http://localhost:8080",
+		"http://127.42.0.1/",
+		"http://[::1]",
+		"https://user:secret@example.test",
+		"https://example.test?x=1",
+		"https://example.test#fragment",
+		"https://example.test/v1",
+		"http://example.test",
+	}
+	for _, raw := range cases {
+		got, gotErr := NormalizeHTTPURL(raw)
+		want, wantErr := artifactpolicy.NormalizeHTTPURL(raw)
+		if (gotErr == nil) != (wantErr == nil) || got != want {
+			t.Fatalf("policy mismatch for %q: artifactprovider=(%q, %v), neutral=(%q, %v)", raw, got, gotErr, want, wantErr)
+		}
+		if gotErr != nil && gotErr.Error() != wantErr.Error() {
+			t.Fatalf("policy error mismatch for %q: artifactprovider=%q, neutral=%q", raw, gotErr, wantErr)
 		}
 	}
 }

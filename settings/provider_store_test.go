@@ -7,9 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/joshyorko/rcc/anywork"
 	"github.com/joshyorko/rcc/common"
-	"github.com/joshyorko/rcc/pathlib"
 	"gopkg.in/yaml.v2"
 )
 
@@ -147,6 +145,25 @@ func TestCustomProviderMutationRejectsSymlinkAndNonRegularDestination(t *testing
 	}
 }
 
+func TestCustomProviderMutationRejectsSymlinkedSettingsParent(t *testing.T) {
+	withProviderTestHome(t)
+	home := common.Product.Home()
+	if err := os.Remove(home); err != nil {
+		t.Fatal(err)
+	}
+	target := t.TempDir()
+	if err := os.Symlink(target, home); err != nil {
+		t.Fatal(err)
+	}
+	profile := ProviderProfile{Type: "http", URL: "https://cache.example"}
+	if err := UpdateCustomProvider("cache", &profile, false); err == nil {
+		t.Fatal("symlinked settings parent unexpectedly accepted")
+	}
+	if _, err := os.Stat(filepath.Join(target, "settings.yaml")); !os.IsNotExist(err) {
+		t.Fatalf("symlink target was touched: %v", err)
+	}
+}
+
 func TestCustomProviderMutationUsesOwnerOnlyModeAndKeepsOriginalOnFailure(t *testing.T) {
 	withProviderTestHome(t)
 	seed := customProviderSettings()
@@ -180,14 +197,8 @@ func TestCustomProviderMutationUsesOwnerOnlyModeAndKeepsOriginalOnFailure(t *tes
 func withProviderTestHome(t *testing.T) {
 	t.Helper()
 	oldHome := common.Product.Home()
-	oldLockless := pathlib.Lockless
 	common.Product.ForceHome(t.TempDir())
-	pathlib.Lockless = true
-	t.Cleanup(func() {
-		_ = anywork.Sync()
-		pathlib.Lockless = oldLockless
-		common.Product.ForceHome(oldHome)
-	})
+	t.Cleanup(func() { common.Product.ForceHome(oldHome) })
 }
 
 func customProviderSettings() *Settings {
