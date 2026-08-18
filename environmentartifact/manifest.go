@@ -151,6 +151,9 @@ func (it Manifest) Validate() error {
 	if it.Specification.Platform != it.Platform || it.Specification.Builder != it.Builder {
 		return fmt.Errorf("specification metadata contradicts manifest platform or builder")
 	}
+	if it.Specification.Digest == it.LegacyBlueprint.Digest {
+		return fmt.Errorf("semantic specification and legacy blueprint identities are conflated")
+	}
 	if !legacyKeyPattern.MatchString(it.LegacyBlueprint.LegacyBlueprintKey) {
 		return fmt.Errorf("invalid legacy blueprint key")
 	}

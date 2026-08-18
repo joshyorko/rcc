@@ -141,6 +141,33 @@ func TestManifestRejectsContradictorySpecificationMetadata(t *testing.T) {
 	}
 }
 
+func TestManifestRejectsConflatedSpecificationAndLegacyBlueprintIdentity(t *testing.T) {
+	input := testManifestInput(t)
+	input.Specification.Descriptor = input.LegacyBlueprint.Descriptor
+	input.Specification.MediaType = SpecificationMediaType
+	if _, _, err := NewManifest(input); err == nil {
+		t.Fatal("one digest was accepted as both semantic specification and legacy blueprint")
+	}
+}
+
+func TestValidateSpecificationBytesRequiresCanonicalJSONObject(t *testing.T) {
+	for name, content := range map[string][]byte{
+		"legacy yaml": []byte("dependencies:\n  - python=3.11\n"),
+		"whitespace":  []byte(" {\"dependencies\":[\"python=3.11\"]}"),
+		"duplicate":   []byte(`{"dependencies":[],"dependencies":["python"]}`),
+		"array":       []byte(`[]`),
+	} {
+		t.Run(name, func(t *testing.T) {
+			if err := ValidateSpecificationBytes(content); err == nil {
+				t.Fatal("invalid semantic specification accepted")
+			}
+		})
+	}
+	if err := ValidateSpecificationBytes([]byte(`{"dependencies":["python=3.11"],"source":"robot.yaml"}`)); err != nil {
+		t.Fatalf("canonical semantic specification rejected: %v", err)
+	}
+}
+
 func TestManifestRejectsCatalogNameNotBoundToLegacyBlueprintKey(t *testing.T) {
 	input := testManifestInput(t)
 	input.Catalogs[0].LegacyName = "ffffffffffffffffv12.linux_amd64"

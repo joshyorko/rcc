@@ -198,6 +198,72 @@ func TestAcquireRejectsCompressNoBeforeProviderCalls(t *testing.T) {
 	assertFileBytes(t, common.HololibCompressMarker(), wantMarker)
 }
 
+func TestAcquireRejectsCommittedMalformedSemanticSpecification(t *testing.T) {
+	fixture := newPublishFixture(t)
+	inventory, err := environmentartifact.InventoryV12(environmentartifact.InventoryInput{
+		CatalogPath: fixture.build.CatalogPath, LegacyBlueprint: fixture.build.LegacyBlueprint,
+		ExpectedPlatform: fixture.build.Platform.RCCPlatform,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	malformedSpecification := []byte("dependencies:\n  - python=3.11\n")
+	indexDescriptor := descriptor(environmentartifact.ObjectIndexMediaType, inventory.IndexBytes)
+	manifest, manifestBytes, err := environmentartifact.NewManifest(environmentartifact.ManifestInput{
+		Specification: environmentartifact.Specification{
+			Descriptor: descriptor(environmentartifact.SpecificationMediaType, malformedSpecification),
+			SourceKind: fixture.build.SourceKind, Platform: fixture.build.Platform, Builder: fixture.build.Builder,
+		},
+		LegacyBlueprint: environmentartifact.LegacyBlueprint{
+			Descriptor: inventory.LegacyBlueprint, LegacyBlueprintKey: inventory.LegacyBlueprintKey,
+		},
+		Platform: fixture.build.Platform, Builder: fixture.build.Builder,
+		Catalogs: []environmentartifact.CatalogDescriptor{inventory.Catalog}, ObjectIndex: indexDescriptor,
+		Requirements: environmentartifact.Requirements{
+			CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	remote, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	putBytes := func(descriptor environmentartifact.Descriptor, content []byte) {
+		t.Helper()
+		if err := remote.PutObject(context.Background(), artifactprovider.Blob{Descriptor: descriptor, Reader: bytes.NewReader(content)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	putBytes(manifest.Specification.Descriptor, malformedSpecification)
+	putBytes(manifest.LegacyBlueprint.Descriptor, fixture.build.LegacyBlueprint)
+	putBytes(manifest.Catalogs[0].Descriptor, fixture.catalogBytes)
+	putBytes(manifest.ObjectIndex, inventory.IndexBytes)
+	for _, entry := range inventory.Index.Entries {
+		content, err := os.ReadFile(inventory.Objects[entry.StoredDigest])
+		if err != nil {
+			t.Fatal(err)
+		}
+		putBytes(environmentartifact.Descriptor{
+			MediaType: "application/vnd.rcc.hololib.object.v12+gzip", Digest: entry.StoredDigest, Size: entry.StoredSize,
+		}, content)
+	}
+	if err := remote.CommitManifest(context.Background(), manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+
+	if _, err := acquireVerifiedContent(context.Background(), manifest.ArtifactDigest, remote); err == nil {
+		t.Fatal("committed non-JSON semantic specification was acquired")
+	}
+	catalogPath := filepath.Join(common.HololibCatalogLocation(), manifest.Catalogs[0].LegacyName)
+	if _, statErr := os.Lstat(catalogPath); !os.IsNotExist(statErr) {
+		t.Fatalf("legacy catalog installed after specification rejection: %v", statErr)
+	}
+}
+
 func publishedFixture(t *testing.T) (publishFixture, *artifactprovider.Filesystem, environmentartifact.Digest) {
 	t.Helper()
 	fixture := newPublishFixture(t)

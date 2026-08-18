@@ -87,6 +87,9 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	if len(specificationBytes) == 0 {
 		return verifiedContent{}, fmt.Errorf("semantic specification is empty")
 	}
+	if err := environmentartifact.ValidateSpecificationBytes(specificationBytes); err != nil {
+		return verifiedContent{}, err
+	}
 	legacyBlueprint, err := readProviderObject(ctx, local, manifest.LegacyBlueprint.Descriptor)
 	if err != nil {
 		return verifiedContent{}, fmt.Errorf("read cached legacy blueprint: %w", err)

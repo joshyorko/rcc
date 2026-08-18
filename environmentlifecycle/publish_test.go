@@ -195,6 +195,31 @@ func TestPublishRejectsRawModeBeforeProviderCallsWithoutMutatingMarker(t *testin
 	}
 }
 
+func TestPublishRejectsNonCanonicalOrConflatedSemanticSpecification(t *testing.T) {
+	for name, specification := range map[string]func(publishFixture) []byte{
+		"legacy blueprint bytes": func(fixture publishFixture) []byte { return fixture.build.LegacyBlueprint },
+		"non-canonical JSON":     func(publishFixture) []byte { return []byte(" {\"dependencies\":[]}") },
+	} {
+		t.Run(name, func(t *testing.T) {
+			fixture := newPublishFixture(t)
+			fixture.build.SpecificationBytes = specification(fixture)
+			filesystem, err := artifactprovider.NewFilesystem(t.TempDir())
+			if err != nil {
+				t.Fatal(err)
+			}
+			provider := &recordingProvider{delegate: filesystem}
+			if _, err := Publish(context.Background(), PublishRequest{
+				RobotFile: "robot.yaml", Provider: provider, Builder: &recordingBuilder{result: fixture.build},
+			}); err == nil {
+				t.Fatal("invalid semantic specification was published")
+			}
+			if len(provider.events) != 0 {
+				t.Fatalf("provider touched before specification validation: %#v", provider.events)
+			}
+		})
+	}
+}
+
 func newPublishFixture(t *testing.T) publishFixture {
 	t.Helper()
 	previousHome := common.Product.Home()

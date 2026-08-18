@@ -53,6 +53,12 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 	if err != nil {
 		return PublishResult{}, fmt.Errorf("build environment: %w", err)
 	}
+	if err := environmentartifact.ValidateSpecificationBytes(build.SpecificationBytes); err != nil {
+		return PublishResult{}, err
+	}
+	if environmentartifact.DigestBytes(build.SpecificationBytes) == environmentartifact.DigestBytes(build.LegacyBlueprint) {
+		return PublishResult{}, fmt.Errorf("semantic specification and legacy blueprint bytes are conflated")
+	}
 	inventory, err := environmentartifact.InventoryV12(environmentartifact.InventoryInput{
 		CatalogPath:      build.CatalogPath,
 		LegacyBlueprint:  build.LegacyBlueprint,

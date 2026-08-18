@@ -37,6 +37,17 @@ func strictDecodeCanonical(content []byte, target any) error {
 	return nil
 }
 
+func ValidateSpecificationBytes(content []byte) error {
+	var specification map[string]json.RawMessage
+	if err := strictDecodeCanonical(content, &specification); err != nil {
+		return fmt.Errorf("invalid canonical semantic specification: %w", err)
+	}
+	if specification == nil {
+		return fmt.Errorf("semantic specification must be a JSON object")
+	}
+	return nil
+}
+
 func requireJSONEOF(decoder *json.Decoder) error {
 	var extra any
 	err := decoder.Decode(&extra)
