@@ -23,9 +23,9 @@ Use the existing contained tasks `artifactFocused`, `artifactRace`,
 `artifactVertical`, `artifactRobot`, `goVet`, `binaryInventory`, `selfHost`, and
 `releaseCandidate` for artifact and release-hardening checks. `goVet` accepts
 only the exact known legacy finding set and fails on new diagnostics. The Robot
-acceptance gate and the race/self-host/release-candidate gates are Linux-only;
-run them on Linux. `artifactFocused` and `artifactVertical` have no task-level
-platform guard. Standard, Python, and extended templates require no special
+acceptance gate and the race/real-vertical/self-host/release-candidate gates
+are Linux-only; run them on Linux. `artifactFocused` has no task-level platform
+guard. Standard, Python, and extended templates require no special
 artifact authoring model.
 
 Use the installed/released RCC → `developer/toolkit.yaml` → candidate

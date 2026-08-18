@@ -428,7 +428,14 @@ def goVet(c):
 @task
 def artifactVertical(c):
     """Run the real RCC A/B vertical lifecycle test."""
-    c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=_contained_go_env())
+    _require_linux("artifactVertical")
+    local(c, do_test=False)
+    env = _contained_go_env()
+    env.update({
+        "RCC_REAL_ARTIFACT_TEST": "1",
+        "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
+    })
+    c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=env)
 
 
 @task

@@ -64,6 +64,39 @@ jobs:
           name: RCC-Binaries
           path: rcc-builds/
 
+  release-candidate:
+    name: Release Candidate Verification
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    env:
+      ROBOCORP_HOME: ${{ runner.temp }}/rcc-release-candidate-home
+      RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - name: Install pinned released RCC
+        run: |
+          set -euo pipefail
+          rcc_dir="${RUNNER_TEMP}/released-rcc"
+          rcc_path="${rcc_dir}/rcc"
+          mkdir -p "$rcc_dir"
+          curl --fail --show-error --location --retry 3 \
+            https://github.com/joshyorko/rcc/releases/download/v18.18.1/rcc-linux64 \
+            --output "$rcc_path"
+          echo "ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf02f2c9bb4b4ef0bfcf  ${rcc_path}" | sha256sum --check -
+          chmod +x "$rcc_path"
+          echo "$rcc_dir" >> "$GITHUB_PATH"
+      - name: Run contained release candidate gate
+        run: rcc run -r developer/toolkit.yaml --dev -t releaseCandidate
+      - name: Upload release candidate evidence
+        if: success() || failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-candidate-evidence
+          path: |
+            tmp/self-host-v1.json
+            tmp/environment-artifacts-robot/
+            tmp/output/
+
   robot:
     name: Robot Tests
     runs-on: ${{ matrix.os }}
@@ -102,6 +135,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs:
       - build
+      - release-candidate
     # Only run this job on tag pushes (e.g., refs/tags/v18.5.0)
     # Robot tests run on push to main, so code is already validated before release
     # Grant only the permissions needed to publish a release
@@ -194,6 +228,14 @@ jobs:
             exit 1
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - name: Validate Homebrew Update Token
+        env:
+          HOMEBREW_TOOLS_PAT: ${{ secrets.HOMEBREW_TOOLS_PAT }}
+        run: |
+          if [[ -z "$HOMEBREW_TOOLS_PAT" ]]; then
+            echo "HOMEBREW_TOOLS_PAT is required to dispatch the Homebrew tap update."
+            exit 1
+          fi
       - name: Create Draft Release with Assets
         uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
         with:
@@ -211,15 +253,6 @@ jobs:
           echo "Publishing draft release $TAG..."
           gh release edit "$TAG" --draft=false
           echo "Release $TAG is now public"
-
-      - name: Validate Homebrew Update Token
-        env:
-          HOMEBREW_TOOLS_PAT: ${{ secrets.HOMEBREW_TOOLS_PAT }}
-        run: |
-          if [[ -z "$HOMEBREW_TOOLS_PAT" ]]; then
-            echo "HOMEBREW_TOOLS_PAT is required to dispatch the Homebrew tap update."
-            exit 1
-          fi
 
       - name: Trigger Homebrew Cask Update
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd

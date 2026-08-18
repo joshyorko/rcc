@@ -11,6 +11,9 @@
 
 - document the Environment Artifact provider alongside the continuing legacy
   `rccremote` protocol and tighten release-platform guidance
+- gate tag publication on the pinned N-1 contained release-candidate and
+  two-generation self-host proof, require the real A/B vertical to execute,
+  and validate the Homebrew handoff before making a release public
 
 ### Security
 

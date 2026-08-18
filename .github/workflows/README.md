@@ -40,7 +40,17 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Build RCC using `inv build`
   - Upload the eight `rcc` and `rccremote` binaries for Linux, Windows, and macOS
 
-#### 2. Robot Tests (`robot`)
+#### 2. Release Candidate Verification (`release-candidate`)
+- **Runner:** `ubuntu-latest`
+- **Condition:** Only runs on trusted version tag pushes
+- **Steps:**
+  - Download and checksum the pinned N-1 RCC v18.18.1 binary
+  - Run `releaseCandidate` through `developer/toolkit.yaml`
+  - Prove the real A/B artifact vertical, full Robot suite, binary inventory,
+    race tests, and two-generation self-host
+  - Upload the self-host and acceptance receipts
+
+#### 3. Robot Tests (`robot`)
 - **Matrix:** Ubuntu, macOS, and Windows runners
 - **Steps:**
   - Set up development environment
@@ -48,15 +58,16 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Run Robot Framework acceptance tests
   - Upload test reports as artifacts
 
-#### 3. Release (`release`)
-- **Condition:** Runs after successful tag-push build
+#### 4. Release (`release`)
+- **Condition:** Runs after successful tag-push build and release-candidate verification
 - **Steps:**
   - Download built RCC binaries
   - Generate `index.json` with version metadata
   - Publish GitHub Release with all platform binaries
 
 ### Required Secrets
-None explicitly required (uses GitHub token for releases).
+- `HOMEBREW_TOOLS_PAT` - required before publication so the release can dispatch
+  the `rcc-daily` Homebrew handoff without leaving a published partial release
 
 ---
 
@@ -228,6 +239,8 @@ The recommended release process uses these workflows:
 │  Tag push triggers      │
 │  rcc.yaml release path  │
 │  - Build all platforms  │
+│  - Run release candidate│
+│    and self-host gates  │
 │  - Validate 8 binaries  │
 │    plus index.json      │
 │  - Create draft release │

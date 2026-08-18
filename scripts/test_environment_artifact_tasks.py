@@ -156,6 +156,41 @@ class ArtifactTaskTests(unittest.TestCase):
         for command in commands
     ))
 
+  def test_artifact_vertical_builds_candidate_and_enables_real_a_b_proof(self):
+    calls = []
+
+    class Context:
+      def run(self, command, **kwargs):
+        calls.append((command, kwargs))
+
+    context = Context()
+    with mock.patch.object(tasks, "local") as local_build:
+      tasks.artifactVertical.body(context)
+
+    local_build.assert_called_once_with(context, do_test=False)
+    self.assertEqual(len(calls), 1)
+    command, kwargs = calls[0]
+    self.assertIn("TestRealCurrentRCCAtoBVertical", command)
+    self.assertEqual(kwargs["env"]["RCC_REAL_ARTIFACT_TEST"], "1")
+    self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
+
+  def test_release_workflow_gates_publication_on_contained_release_candidate(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertIn("  release-candidate:", workflow)
+    self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
+    self.assertIn("      - release-candidate", workflow)
+
+  def test_release_workflow_documentation_declares_homebrew_token(self):
+    guide = (ROOT / ".github" / "workflows" / "README.md").read_text()
+    self.assertIn("HOMEBREW_TOOLS_PAT", guide)
+
+  def test_release_validates_homebrew_handoff_before_publication(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertLess(
+        workflow.index("- name: Validate Homebrew Update Token"),
+        workflow.index("- name: Publish Release"),
+    )
+
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):
     commands = []
 

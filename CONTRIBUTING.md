@@ -59,9 +59,9 @@ The contained toolkit exposes the focused artifact tasks `artifactFocused`,
 `artifactRace`, `artifactVertical`, and `artifactRobot`, plus `goVet`,
 `binaryInventory`, `selfHost`, and `releaseCandidate`. `goVet` accepts the exact
 documented legacy finding set but rejects any new diagnostic. The artifact acceptance gate is Linux-only;
-`artifactRace`, `artifactRobot`, `selfHost`, and `releaseCandidate` therefore
-require a Linux host; `artifactFocused` and `artifactVertical` are package
-checks without that task-level platform guard. Standard, Python, and
+`artifactRace`, `artifactVertical`, `artifactRobot`, `selfHost`, and
+`releaseCandidate` therefore require a Linux host; `artifactFocused` is the
+portable package check. Standard, Python, and
 extended templates need no special artifact-authoring model.
 
 The default development and promotion path is installed/released RCC →
