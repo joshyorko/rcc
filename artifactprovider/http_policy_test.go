@@ -12,6 +12,23 @@ import (
 	"github.com/joshyorko/rcc/artifactpolicy"
 )
 
+func TestHTTPErrorDoesNotExposeResponseBody(t *testing.T) {
+	const secret = "authorization-secret-sentinel"
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte(secret))
+	}))
+	defer server.Close()
+	provider, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = provider.Capabilities(context.Background())
+	if err == nil || strings.Contains(err.Error(), secret) {
+		t.Fatalf("error = %v", err)
+	}
+}
+
 func TestNormalizeHTTPURL(t *testing.T) {
 	for _, raw := range []string{"https://example.test", "http://localhost", "http://127.42.0.1", "http://[::1]"} {
 		got, err := NormalizeHTTPURL(raw)

@@ -43,3 +43,15 @@ Verification:
 - `go run ./cmd/rcc provider --help` — pass; exact five subcommands reachable.
 - `git diff --check` — pass.
 - Race testing remains affected by the existing global verbosity/logger race when Cobra commands execute.
+
+## Review round 3
+
+Replaced the prior no-op tests with injected resolver and command-contract assertions. Resolver tests now verify deferred zero-call construction, exact local root, raw URL/no-auth, named normalized URL/auth-variable handoff, and the default environment seam. Command tests exercise the registered root command, all five JSON commands, exact required fields, mutation capture, exact local/cache roots, capability success/incompatibility, and secret-free output/persistence. The artifactprovider regression test is now committed and proves a remote error body containing an authorization sentinel is not returned.
+
+Verification:
+
+- `go test -count=1 ./cmd/... ./settings ./artifactprovider` — pass.
+- `go test -count=1 ./artifactprovider -run TestHTTPErrorDoesNotExposeResponseBody` — pass.
+- `go run ./cmd/rcc provider --help` — pass.
+- `git diff --check` — pass.
+- Race checks remain limited by the confirmed pre-existing global verbosity/logger race in Cobra command execution.

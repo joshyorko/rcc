@@ -15,6 +15,8 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/settings"
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 func TestProviderReferenceResolutionIsDeferred(t *testing.T) {
@@ -28,7 +30,10 @@ func TestProviderReferenceResolutionIsDeferred(t *testing.T) {
 }
 
 func TestProviderCommandHasExactSubcommands(t *testing.T) {
-	command := newProviderCommand(providerCommandDependencies{})
+	command, _, err := rootCmd.Find([]string{"provider"})
+	if err != nil || command == nil {
+		t.Fatalf("provider command not registered: %v", err)
+	}
 	got := command.Commands()
 	names := make([]string, 0, len(got))
 	for _, child := range got {
@@ -103,20 +108,98 @@ func TestProviderTestIncompatibleEmitsNoSuccessJSON(t *testing.T) {
 	}
 }
 func TestProviderJSONContracts(t *testing.T) {
-	for _, name := range []string{"name", "providers", "reference", "reachable", "compatible", "removed"} {
-		_ = name
+	var updated, removed bool
+	d := providerCommandDependencies{load: func() (*settings.Settings, error) {
+		return &settings.Settings{Providers: settings.ProviderProfiles{"office": {Type: "http", URL: "https://cache.example"}}}, nil
+	}, update: func(_ string, p *settings.ProviderProfile, _ bool) error {
+		updated = true
+		removed = p == nil
+		return nil
+	}, new: func(string) (artifactprovider.Provider, error) { return validProvider{}, nil }}
+	commands := []struct {
+		name string
+		args []string
+		keys []string
+	}{{"add", []string{"office", "--type", "http", "--url", "https://cache.example", "--json"}, []string{"name", "type", "url"}}, {"list", []string{"--json"}, []string{"providers"}}, {"inspect", []string{"office", "--json"}, []string{"reference", "source", "type", "url", "localCache"}}, {"test", []string{"office", "--json"}, []string{"reference", "reachable", "compatible", "capabilities"}}, {"remove", []string{"office", "--json"}, []string{"name", "removed"}}}
+	for _, tc := range commands {
+		var out bytes.Buffer
+		var c *cobra.Command
+		switch tc.name {
+		case "add":
+			c = newProviderAddCommand(d)
+		case "list":
+			c = newProviderListCommand(d)
+		case "inspect":
+			c = newProviderInspectCommand(d)
+		case "test":
+			c = newProviderTestCommand(d)
+		case "remove":
+			c = newProviderRemoveCommand(d)
+		}
+		c.SetOut(&out)
+		c.SetArgs(tc.args)
+		if err := c.Execute(); err != nil {
+			t.Fatalf("%s: %v", tc.name, err)
+		}
+		var object map[string]json.RawMessage
+		if err := json.Unmarshal(out.Bytes(), &object); err != nil {
+			t.Fatalf("%s JSON: %v", tc.name, err)
+		}
+		for _, key := range tc.keys {
+			if _, ok := object[key]; !ok {
+				t.Fatalf("%s missing %s", tc.name, key)
+			}
+		}
+	}
+	if !updated || !removed {
+		t.Fatal("mutation commands not exercised")
 	}
 }
 func TestProviderSecretSentinelAbsentFromAllOutputsAndErrors(t *testing.T) {
 	const secret = "provider-secret-sentinel"
-	if strings.Contains((providerAddResult{AuthorizationEnv: "RCC_AUTH"}).AuthorizationEnv, secret) {
-		t.Fatal("secret leaked")
+	t.Setenv("RCC_AUTH", secret)
+	var captured settings.ProviderProfile
+	d := providerCommandDependencies{update: func(_ string, p *settings.ProviderProfile, _ bool) error { captured = *p; return nil }}
+	var out bytes.Buffer
+	c := newProviderAddCommand(d)
+	c.SetOut(&out)
+	c.SetArgs([]string{"office", "--type", "http", "--url", "https://cache.example", "--authorization-env", "RCC_AUTH", "--json"})
+	if err := c.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(out.String(), secret) {
+		t.Fatal("secret leaked to output")
+	}
+	encoded, _ := yaml.Marshal(captured)
+	if strings.Contains(string(encoded), secret) {
+		t.Fatal("secret persisted")
 	}
 }
 func TestProviderReferenceRawAndNamedUseExpectedHTTPAndAuthorization(t *testing.T) {
-	p, err := newProviderReference("https://localhost")
-	if err != nil || p == nil {
-		t.Fatalf("raw provider = %v, %v", p, err)
+	var raw string
+	var auth string
+	d := providerResolverDependencies{http: func(value string, options artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+		raw = value
+		auth = options.AuthorizationEnv
+		return validProvider{}, nil
+	}, load: func() (*settings.Settings, error) {
+		return &settings.Settings{Providers: settings.ProviderProfiles{"office": {Type: "http", URL: "https://cache.example/", AuthorizationEnv: "RCC_AUTH"}}}, nil
+	}}
+	p, err := newProviderReferenceWithDependencies("https://localhost/", d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _ = p.Capabilities(context.Background())
+	if raw != "https://localhost/" || auth != "" {
+		t.Fatalf("raw = %q auth = %q", raw, auth)
+	}
+	p, err = newProviderReferenceWithDependencies("office", d)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _ = p.Capabilities(context.Background())
+	if raw != "https://cache.example" || auth != "RCC_AUTH" {
+		t.Fatalf("named = %q auth = %q", raw, auth)
 	}
 }
 func TestDefaultEnvironmentProviderRemainsDeferred(t *testing.T) {
@@ -179,8 +262,10 @@ func TestProviderInspectLocalReportsProviderRoot(t *testing.T) {
 	if err := json.Unmarshal(output.Bytes(), &got); err != nil {
 		t.Fatal(err)
 	}
-	if got["providerRoot"] == got["localCache"].(map[string]any)["root"] {
-		t.Fatalf("local provider root must differ from cache root: %v", got)
+	providerRoot, _ := got["providerRoot"].(string)
+	cacheRoot, _ := got["localCache"].(map[string]any)["root"].(string)
+	if providerRoot != filepath.Join(common.Product.Home(), "artifacts", "v1", "provider") || cacheRoot != filepath.Join(common.Product.Home(), "artifacts", "v1", "content") {
+		t.Fatalf("roots = %q, %q", providerRoot, cacheRoot)
 	}
 }
 

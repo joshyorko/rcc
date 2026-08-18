@@ -17,20 +17,41 @@ import (
 )
 
 func newProviderReference(reference string) (artifactprovider.Provider, error) {
+	return newProviderReferenceWithDependencies(reference, providerResolverDependencies{})
+}
+
+type providerResolverDependencies struct {
+	load       func() (*settings.Settings, error)
+	filesystem func(string) (artifactprovider.Provider, error)
+	http       func(string, artifactprovider.HTTPOptions) (artifactprovider.Provider, error)
+}
+
+func newProviderReferenceWithDependencies(reference string, deps providerResolverDependencies) (artifactprovider.Provider, error) {
 	if strings.TrimSpace(reference) == "" {
 		return nil, fmt.Errorf("provider reference is required")
 	}
 	return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+		if deps.load == nil {
+			deps.load = settings.SummonSettings
+		}
+		if deps.filesystem == nil {
+			deps.filesystem = func(root string) (artifactprovider.Provider, error) { return artifactprovider.NewFilesystem(root) }
+		}
+		if deps.http == nil {
+			deps.http = func(raw string, opts artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+				return artifactprovider.NewHTTPWithOptions(raw, opts)
+			}
+		}
 		if reference == "local" {
-			return artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "provider"))
+			return deps.filesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "provider"))
 		}
 		if strings.HasPrefix(reference, "http://") || strings.HasPrefix(reference, "https://") {
-			return artifactprovider.NewHTTPWithOptions(reference, artifactprovider.HTTPOptions{Client: providerHTTPClient()})
+			return deps.http(reference, artifactprovider.HTTPOptions{Client: providerHTTPClient()})
 		}
 		if err := settings.ValidateProviderName(reference); err != nil {
 			return nil, err
 		}
-		config, err := settings.SummonSettings()
+		config, err := deps.load()
 		if err != nil {
 			return nil, fmt.Errorf("load provider settings: %w", err)
 		}
@@ -42,7 +63,7 @@ func newProviderReference(reference string) (artifactprovider.Provider, error) {
 		if err != nil {
 			return nil, fmt.Errorf("provider %q: %w", reference, err)
 		}
-		return artifactprovider.NewHTTPWithOptions(validated.URL, artifactprovider.HTTPOptions{Client: providerHTTPClient(), AuthorizationEnv: validated.AuthorizationEnv})
+		return deps.http(validated.URL, artifactprovider.HTTPOptions{Client: providerHTTPClient(), AuthorizationEnv: validated.AuthorizationEnv})
 	}), nil
 }
 
