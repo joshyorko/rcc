@@ -2,8 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/settings"
 	"github.com/spf13/cobra"
 	"os"
+	"path/filepath"
 )
 
 type providerAuthorization struct {
@@ -22,6 +26,7 @@ type providerInspectResult struct {
 	URL           string                   `json:"url,omitempty"`
 	Authorization *providerAuthorization   `json:"authorization,omitempty"`
 	LocalCache    providerLocalCacheResult `json:"localCache"`
+	ProviderRoot  string                   `json:"providerRoot,omitempty"`
 }
 
 func newProviderInspectCommand(d providerCommandDependencies) *cobra.Command {
@@ -35,11 +40,19 @@ func newProviderInspectCommand(d providerCommandDependencies) *cobra.Command {
 			r.Source = "builtin"
 			r.Type = "filesystem"
 			r.URL = ""
+			r.ProviderRoot = filepath.Join(common.Product.Home(), "artifacts", "v1", "provider")
 		} else if providerReferenceURL(ref) {
+			validated, err := artifactprovider.NormalizeHTTPURL(ref)
+			if err != nil {
+				return err
+			}
 			r.Source = "url"
 			r.Type = "http"
-			r.URL = ref
+			r.URL = validated
 		} else {
+			if err := settings.ValidateProviderName(ref); err != nil {
+				return err
+			}
 			s, e := d.load()
 			if e != nil {
 				return e
@@ -48,6 +61,11 @@ func newProviderInspectCommand(d providerCommandDependencies) *cobra.Command {
 			if !ok {
 				return fmt.Errorf("provider profile %q does not exist", ref)
 			}
+			validated, err := p.Validate()
+			if err != nil {
+				return fmt.Errorf("provider %q: %w", ref, err)
+			}
+			p = validated
 			r.Source = "settings"
 			r.Type = p.Type
 			r.URL = p.URL

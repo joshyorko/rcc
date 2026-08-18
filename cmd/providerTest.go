@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/spf13/cobra"
@@ -21,7 +20,7 @@ func newProviderTestCommand(d providerCommandDependencies) *cobra.Command {
 		if e != nil {
 			return e
 		}
-		caps, e := providerCapabilities(context.Background(), p)
+		caps, e := providerCapabilities(c.Context(), p)
 		if e != nil {
 			return fmt.Errorf("provider test: %w", e)
 		}

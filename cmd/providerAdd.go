@@ -18,10 +18,14 @@ func newProviderAddCommand(d providerCommandDependencies) *cobra.Command {
 	var replace, jsonOut bool
 	c := &cobra.Command{Use: "add <name>", Args: cobra.ExactArgs(1), SilenceUsage: true, RunE: func(c *cobra.Command, args []string) error {
 		p := &settings.ProviderProfile{Type: typ, URL: raw, AuthorizationEnv: auth}
-		if err := d.update(args[0], p, replace); err != nil {
+		validated, err := p.Validate()
+		if err != nil {
 			return err
 		}
-		result := providerAddResult{Name: args[0], Type: typ, URL: raw, AuthorizationEnv: auth}
+		if err := d.update(args[0], &validated, replace); err != nil {
+			return err
+		}
+		result := providerAddResult{Name: args[0], Type: validated.Type, URL: validated.URL, AuthorizationEnv: validated.AuthorizationEnv}
 		if jsonOut {
 			return writeProviderJSON(c.OutOrStdout(), result)
 		}

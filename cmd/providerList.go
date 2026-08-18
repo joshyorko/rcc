@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"sort"
 )
 
 type providerListEntry struct {
@@ -25,10 +24,12 @@ func newProviderListCommand(d providerCommandDependencies) *cobra.Command {
 		}
 		r := providerListResult{Providers: []providerListEntry{{Name: "local", Type: "filesystem", Source: "builtin"}}}
 		for _, n := range s.Providers.SortedNames() {
+			if n == "local" {
+				continue
+			}
 			p := s.Providers[n]
 			r.Providers = append(r.Providers, providerListEntry{Name: n, Type: p.Type, Source: "settings", URL: p.URL})
 		}
-		sort.Slice(r.Providers, func(i, j int) bool { return r.Providers[i].Name < r.Providers[j].Name })
 		if jsonOut {
 			return writeProviderJSON(c.OutOrStdout(), r)
 		}

@@ -19,3 +19,14 @@ Documentation receipt
 - Evidence: focused and race test commands above.
 - Stale guidance removed: none.
 - Remaining uncertainty: full race suite remains blocked by the pre-existing `cmd/rccremote` race.
+
+## Review round 1
+
+Added focused contract tests. RED failures against `c48e6ff` covered duplicate/local ordering, unsafe direct URL inspection, missing add URL normalization, and ignored command context. Fixed those boundaries minimally: local remains first and unique, inspect validates URL/profile data offline and reports `providerRoot`, add returns the normalized URL, and provider test uses `c.Context()`.
+
+Verification:
+
+- `go test -count=1 ./cmd/... ./settings ./artifactprovider` — pass.
+- `go run ./cmd/rcc provider --help` — pass; all five subcommands reachable.
+- `git diff --check` — pass.
+- `go test -race -count=1 ./cmd ./settings ./artifactprovider` — package tests encounter the repository's existing global verbosity/logger race when Cobra command tests execute; non-Cobra package race checks pass.
