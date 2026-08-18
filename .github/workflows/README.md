@@ -35,10 +35,10 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 - **Condition:** Only runs on trusted version tag pushes
 - **Steps:**
   - Checkout code
-  - Set up Go 1.25.7 and Python 3.10
+  - Set up Go 1.26.5 and Python 3.10
   - Install Invoke build tool
   - Build RCC using `inv build`
-  - Upload artifacts for Linux, Windows, and macOS
+  - Upload the eight `rcc` and `rccremote` binaries for Linux, Windows, and macOS
 
 #### 2. Robot Tests (`robot`)
 - **Matrix:** Ubuntu, macOS, and Windows runners
@@ -113,7 +113,7 @@ Security findings appear in the repository's Security tab under "Code scanning a
 
 ---
 
-## dagger.yml
+## dagger.yaml
 
 **Dagger CI Pipeline**
 
@@ -163,9 +163,9 @@ Validates that RCC can be installed and run in a clean CI environment. Useful fo
 - **Runner:** `ubuntu-latest`
 - **Steps:**
   1. Checkout repository
-  2. Download and install latest RCC Linux64 binary
+  2. Download and checksum the pinned RCC v18.17.7 Linux64 binary
   3. Verify installation with `rcc version`
-  4. Display environment info using `rcc run -r developer/toolkit.yaml holotree vars`
+  4. Display environment info using `rcc ht vars developer/setup.yaml`
 
 ### Permissions
 - `contents: read`
@@ -228,7 +228,9 @@ The recommended release process uses these workflows:
 │  Tag push triggers      │
 │  rcc.yaml release path  │
 │  - Build all platforms  │
-│  - Create GitHub release│
+│  - Validate 8 binaries  │
+│    plus index.json      │
+│  - Create draft release │
 └─────────────────────────┘
 ```
 
