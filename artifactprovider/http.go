@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -25,6 +24,26 @@ type HTTP struct {
 	client  *http.Client
 }
 
+type HTTPOptions struct {
+	Client           *http.Client
+	AuthorizationEnv string
+}
+
+type authorizationTransport struct {
+	base http.RoundTripper
+	env  string
+}
+
+func (t authorizationTransport) RoundTrip(request *http.Request) (*http.Response, error) {
+	value, ok := os.LookupEnv(t.env)
+	if !ok {
+		return nil, fmt.Errorf("authorization environment variable %q is not set", t.env)
+	}
+	clone := request.Clone(request.Context())
+	clone.Header.Set("Authorization", value)
+	return t.base.RoundTrip(clone)
+}
+
 type missingRequest struct {
 	Descriptors []environmentartifact.Descriptor `json:"descriptors"`
 }
@@ -34,17 +53,30 @@ type missingResponse struct {
 }
 
 func NewHTTP(baseURL string, client *http.Client) (*HTTP, error) {
-	parsed, err := url.Parse(baseURL)
-	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" || parsed.RawQuery != "" || parsed.Fragment != "" {
-		return nil, fmt.Errorf("invalid artifact provider URL %q", baseURL)
+	return NewHTTPWithOptions(baseURL, HTTPOptions{Client: client})
+}
+
+func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
+	baseURL, err := NormalizeHTTPURL(raw)
+	if err != nil {
+		return nil, err
 	}
-	if parsed.Path != "" && parsed.Path != "/" {
-		return nil, fmt.Errorf("artifact provider URL must not contain a path")
+	base := options.Client
+	if base == nil {
+		base = http.DefaultClient
 	}
-	if client == nil {
-		client = http.DefaultClient
+	clone := *base
+	clone.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	transport := clone.Transport
+	if transport == nil {
+		transport = http.DefaultTransport
 	}
-	return &HTTP{baseURL: strings.TrimRight(baseURL, "/"), client: client}, nil
+	if options.AuthorizationEnv != "" {
+		clone.Transport = authorizationTransport{base: transport, env: options.AuthorizationEnv}
+	} else {
+		clone.Transport = transport
+	}
+	return &HTTP{baseURL: baseURL, client: &clone}, nil
 }
 
 func NewHandler(provider *Filesystem) http.Handler {

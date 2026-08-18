@@ -72,9 +72,8 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 	if err != nil {
 		return PublishResult{}, fmt.Errorf("discover provider capabilities: %w", err)
 	}
-	if !supports(capabilities.SchemaVersions, environmentartifact.SchemaVersionV1) ||
-		!supports(capabilities.DigestAlgorithms, "sha256") || !supports(capabilities.Encodings, "gzip") {
-		return PublishResult{}, fmt.Errorf("provider does not support environment artifact v1 gzip/sha256")
+	if err := artifactprovider.ValidateV1Capabilities(capabilities); err != nil {
+		return PublishResult{}, err
 	}
 
 	specificationDescriptor := descriptorFor(environmentartifact.SpecificationMediaType, build.SpecificationBytes)
