@@ -10,12 +10,17 @@ ASSETS = {
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 
 
-def validate(root, workflow, index):
+def validate(root, workflow, index, asset_root=None):
     errors = []
-    for directory, binaries in TARGETS.items():
-        for binary in binaries:
-            if not (root / "build" / directory / binary).is_file():
-                errors.append(f"missing build binary: build/{directory}/{binary}")
+    if asset_root:
+        staged = {path.name for path in Path(asset_root).iterdir() if path.is_file()} if Path(asset_root).is_dir() else set()
+        if staged != ASSETS:
+            errors.append(f"downloaded assets mismatch: {sorted(staged)}")
+    else:
+        for directory, binaries in TARGETS.items():
+            for binary in binaries:
+                if not (root / "build" / directory / binary).is_file():
+                    errors.append(f"missing build binary: build/{directory}/{binary}")
     if workflow:
         text = Path(workflow).read_text()
         staged = set(re.findall(r"\bcp\s+\S+\s+rcc-builds/([^\s]+)", text))
@@ -44,13 +49,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("root", type=Path, nargs="?")
     parser.add_argument("--build-root", type=Path)
+    parser.add_argument("--asset-root", type=Path)
     parser.add_argument("--workflow", type=Path)
     parser.add_argument("--index", type=Path)
     args = parser.parse_args()
     root = args.root or (args.build_root.parent if args.build_root else None)
-    if root is None:
-        parser.error("a repository root positional argument or --build-root is required")
-    errors = validate(root, args.workflow, args.index)
+    if root is None and args.asset_root is None:
+        parser.error("a repository root, --build-root, or --asset-root is required")
+    errors = validate(root, args.workflow, args.index, args.asset_root)
     for error in errors:
         print(error)
     return 1 if errors else 0

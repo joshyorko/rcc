@@ -182,7 +182,7 @@ jobs:
 
           cat rcc-builds/index.json
       - name: Validate release topology
-        run: python3 scripts/validate_release_topology.py . --workflow .github/workflows/rcc.yaml --index rcc-builds/index.json
+        run: python3 scripts/validate_release_topology.py --asset-root rcc-builds --workflow .github/workflows/rcc.yaml --index rcc-builds/index.json
       - name: Validate release tag
         id: validate_tag
         env:

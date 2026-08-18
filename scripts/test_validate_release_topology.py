@@ -1,4 +1,6 @@
 import json
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -50,6 +52,23 @@ class ReleaseTopologyTests(unittest.TestCase):
     def test_repository_workflow_stages_exact_current_assets(self):
         root, _, index = self.fixture()
         self.assertEqual(validate(root, REPOSITORY_ROOT / ".github/workflows/rcc.yaml", index), [])
+
+    def test_release_job_validates_downloaded_assets_without_build_tree(self):
+        root, workflow, index = self.fixture()
+        assets = root / "rcc-builds"
+        assets.mkdir()
+        for name in ASSETS:
+            (assets / name).write_bytes(b"downloaded release asset")
+        shutil.rmtree(root / "build")
+
+        result = subprocess.run([
+            sys.executable,
+            str(REPOSITORY_ROOT / "scripts" / "validate_release_topology.py"),
+            "--asset-root", str(assets),
+            "--workflow", str(workflow),
+            "--index", str(index),
+        ], text=True, capture_output=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_rejects_darwin_index_and_extra_asset(self):
         root, workflow, index = self.fixture()
