@@ -23,3 +23,7 @@ func readRegularNoFollow(string, []string, int64) ([]byte, error) {
 func removeRegularNoFollow(string, []string) error {
 	return fmt.Errorf("environment artifact v1 records require Linux no-follow primitives")
 }
+
+func executableNoFollow(string, []string) (string, error) {
+	return "", fmt.Errorf("environment artifact v1 execution requires Linux no-follow primitives")
+}

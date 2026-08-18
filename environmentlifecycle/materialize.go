@@ -16,6 +16,9 @@ import (
 
 type CacheProvenance string
 
+var errExecutableMissing = errors.New("materialized executable is missing")
+var errUnsafeExecutablePath = errors.New("materialized executable path is unsafe")
+
 const (
 	CacheProvider             CacheProvenance = "provider"
 	CacheLocalMaterialization CacheProvenance = "local-materialization"
@@ -127,6 +130,8 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		}
 		if result, err := warmMaterialization(manifest); err == nil {
 			return result, nil
+		} else if errors.Is(err, errUnsafeExecutablePath) {
+			return AcquireResult{}, err
 		}
 		content, err := acquireVerifiedContent(ctx, request.ArtifactDigest, local)
 		if err != nil {
@@ -196,10 +201,13 @@ func warmMaterialization(manifest environmentartifact.Manifest) (AcquireResult, 
 }
 
 func materializedPython(root string) (string, error) {
-	for _, candidate := range []string{filepath.Join(root, "bin", "python"), filepath.Join(root, "bin", "python3"), filepath.Join(root, "python.exe"), filepath.Join(root, "python")} {
-		info, err := os.Lstat(candidate)
-		if err == nil && info.Mode().IsRegular() && info.Mode().Perm()&0o111 != 0 {
+	for _, components := range [][]string{{"bin", "python"}, {"bin", "python3"}, {"python.exe"}, {"python"}} {
+		candidate, err := executableNoFollow(root, components)
+		if err == nil {
 			return candidate, nil
+		}
+		if !errors.Is(err, errExecutableMissing) {
+			return "", err
 		}
 	}
 	return "", fmt.Errorf("materialization has no regular Python executable")

@@ -153,3 +153,41 @@ func TestWarmAcquireRepairsNonExecutablePythonWithoutProvider(t *testing.T) {
 		t.Fatalf("warm acquire retained non-executable Python: %v, %v", info, err)
 	}
 }
+
+func TestWarmAcquireAndExecutionRejectSymlinkedPythonParent(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	acquirer := NewAcquirer()
+	first, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
+	if err != nil {
+		t.Fatal(err)
+	}
+	outside := t.TempDir()
+	if err := os.WriteFile(filepath.Join(outside, "python"), []byte("#!/bin/sh\nexit 0\n"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(first.Path, "bin")); err != nil {
+		t.Fatal(err)
+	}
+	if candidate, err := materializedPython(first.Path); err == nil {
+		t.Fatalf("component-wise executable validation trusted %q", candidate)
+	}
+	if _, err := acquirer.Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: failOnTouchProvider{t: t},
+	}); err == nil {
+		t.Fatal("warm acquire trusted Python through a symlinked parent")
+	}
+	materializer := NewLocalMaterializer()
+	materialization := Materialization{
+		ArtifactDigest: first.ArtifactDigest, ID: first.MaterializationID, Path: first.Path, CacheHit: first.CacheHit,
+	}
+	lease, err := materializer.Lease(context.Background(), materialization)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer materializer.Release(context.Background(), lease)
+	if _, err := materializer.ExecutionHandle(context.Background(), lease, []string{"python", "-V"}); err == nil {
+		t.Fatal("execution handle trusted Python through a symlinked parent")
+	}
+}

@@ -322,3 +322,50 @@ func removeRegularNoFollow(rootPath string, components []string) error {
 	}
 	return unix.Fsync(parent)
 }
+
+func executableNoFollow(rootPath string, components []string) (string, error) {
+	if len(components) == 0 {
+		return "", fmt.Errorf("empty executable path")
+	}
+	root, err := openAbsoluteDirectory(rootPath, false)
+	if err != nil {
+		return "", err
+	}
+	defer unix.Close(root)
+	parent := root
+	owned := false
+	for _, component := range components[:len(components)-1] {
+		if !safeComponent(component) {
+			return "", fmt.Errorf("unsafe executable path component %q", component)
+		}
+		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+		if owned {
+			unix.Close(parent)
+		}
+		if err != nil {
+			if errors.Is(err, unix.ENOENT) {
+				return "", errExecutableMissing
+			}
+			return "", fmt.Errorf("%w: open executable parent %q without following links: %v", errUnsafeExecutablePath, component, err)
+		}
+		parent, owned = next, true
+	}
+	if owned {
+		defer unix.Close(parent)
+	}
+	name := components[len(components)-1]
+	fd, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+	if err != nil {
+		if errors.Is(err, unix.ENOENT) {
+			return "", errExecutableMissing
+		}
+		return "", fmt.Errorf("%w: open executable without following links: %v", errUnsafeExecutablePath, err)
+	}
+	file := os.NewFile(uintptr(fd), name)
+	defer file.Close()
+	info, err := file.Stat()
+	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o111 == 0 {
+		return "", fmt.Errorf("Python executable is not an executable regular file")
+	}
+	return filepath.Join(append([]string{rootPath}, components...)...), nil
+}
