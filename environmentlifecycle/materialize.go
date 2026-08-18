@@ -145,6 +145,13 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	if request.Provider == nil {
 		return AcquireResult{}, fmt.Errorf("artifact is not local and no provider was supplied")
 	}
+	capabilities, err := request.Provider.Capabilities(ctx)
+	if err != nil {
+		return AcquireResult{}, fmt.Errorf("negotiate provider capabilities: %w", err)
+	}
+	if err := artifactprovider.ValidateV1Capabilities(capabilities); err != nil {
+		return AcquireResult{}, fmt.Errorf("negotiate provider capabilities: %w", err)
+	}
 	content, err := acquireVerifiedContent(ctx, request.ArtifactDigest, request.Provider)
 	if err != nil {
 		return AcquireResult{}, err

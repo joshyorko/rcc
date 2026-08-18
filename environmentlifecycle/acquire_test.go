@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
@@ -59,6 +60,47 @@ func TestAcquireVerifiedContentInstallsExactLegacyClosure(t *testing.T) {
 		t.Fatalf("canonical local manifest cache is incomplete: %v", err)
 	}
 }
+
+func TestAcquireRejectsIncompatibleProviderBeforeResolve(t *testing.T) {
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	digest, err := environmentartifact.ParseDigest("sha256:" + strings.Repeat("a", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	provider := &capabilityRecordingProvider{}
+	_, err = NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: provider})
+	if err == nil || !strings.Contains(err.Error(), "provider does not support environment artifact v1") {
+		t.Fatalf("Acquire error = %v", err)
+	}
+	if provider.resolveCalls != 0 {
+		t.Fatalf("ResolveManifest calls = %d", provider.resolveCalls)
+	}
+}
+
+type capabilityRecordingProvider struct {
+	resolveCalls int
+}
+
+func (p *capabilityRecordingProvider) Capabilities(context.Context) (artifactprovider.Capabilities, error) {
+	return artifactprovider.Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}}, nil
+}
+
+func (p *capabilityRecordingProvider) ResolveManifest(context.Context, environmentartifact.Digest) ([]byte, error) {
+	p.resolveCalls++
+	return nil, os.ErrNotExist
+}
+
+func (p *capabilityRecordingProvider) MissingObjects(context.Context, []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	return nil, nil
+}
+func (p *capabilityRecordingProvider) PutObject(context.Context, artifactprovider.Blob) error {
+	return nil
+}
+func (p *capabilityRecordingProvider) GetObject(context.Context, environmentartifact.Descriptor) (io.ReadCloser, error) {
+	return nil, os.ErrNotExist
+}
+func (p *capabilityRecordingProvider) CommitManifest(context.Context, []byte) error { return nil }
 
 func TestAcquireRejectsCorruptProviderBytesBeforeLegacyInstallation(t *testing.T) {
 	fixture, remote, artifactDigest := publishedFixture(t)

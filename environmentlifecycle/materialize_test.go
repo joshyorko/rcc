@@ -3,6 +3,7 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -104,6 +105,31 @@ func TestWarmAcquireDoesNotTouchProviderOrBuilder(t *testing.T) {
 	}
 	if got, err := os.ReadFile(filepath.Join(second.Path, "python")); err != nil || !bytes.Equal(got, []byte("immutable python bytes")) {
 		t.Fatalf("warm materialization is invalid: %q, %v", got, err)
+	}
+}
+
+func TestWarmAcquireDoesNotResolveDeferredProvider(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	acquirer := NewAcquirer()
+	if _, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote}); err != nil {
+		t.Fatal(err)
+	}
+	resolved := false
+	deferred := artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+		resolved = true
+		return nil, errors.New("provider profile missing")
+	})
+	result, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: deferred})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resolved {
+		t.Fatal("warm acquisition resolved deferred provider")
+	}
+	if result.CacheHit != CacheLocalMaterialization {
+		t.Fatalf("warm cache provenance = %q", result.CacheHit)
 	}
 }
 

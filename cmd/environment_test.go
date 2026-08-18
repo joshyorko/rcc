@@ -141,6 +141,37 @@ func TestEnvironmentAcquireWithoutProviderExposesMaterializationNotLease(t *test
 	}
 }
 
+func TestEnvironmentAcquirePassesDeferredProviderToLifecycle(t *testing.T) {
+	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+	resolved := false
+	dependencies := environmentCommandDependencies{
+		newProvider: func(reference string) (artifactprovider.Provider, error) {
+			if reference != "malformed-or-missing" {
+				t.Fatalf("provider reference = %q", reference)
+			}
+			return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
+				resolved = true
+				return nil, os.ErrNotExist
+			}), nil
+		},
+		acquire: func(_ context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
+			if request.Provider == nil {
+				t.Fatal("lifecycle received no provider")
+			}
+			return environmentlifecycle.AcquireResult{ArtifactDigest: digest, CacheHit: environmentlifecycle.CacheLocalMaterialization}, nil
+		},
+	}
+	command := newEnvironmentCommand(dependencies)
+	var stdout bytes.Buffer
+	command.SetOut(&stdout)
+	if err := runCobraCommand(command, []string{"acquire", "--artifact", cliTestDigest, "--provider", "malformed-or-missing", "--json"}); err != nil {
+		t.Fatal(err)
+	}
+	if resolved {
+		t.Fatal("command resolved provider before lifecycle")
+	}
+}
+
 func TestEnvironmentExecPreservesArgumentsAndPropagatesExitAfterRelease(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("test child uses the Linux shell; Windows remains compile-only for artifact v1")
