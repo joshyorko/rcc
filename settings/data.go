@@ -35,6 +35,7 @@ func (it SettingsLayers) Effective() *Settings {
 		Network:      &Network{},
 		Endpoints:    make(StringMap),
 		Options:      make(BoolMap),
+		Providers:    make(ProviderProfiles),
 		Hosts:        make([]string, 0, 100),
 		Meta: &Meta{
 			Name:        "generated",
@@ -52,18 +53,20 @@ func (it SettingsLayers) Effective() *Settings {
 }
 
 type Settings struct {
-	Autoupdates  StringMap     `yaml:"autoupdates,omitempty" json:"autoupdates,omitempty"`
-	Branding     StringMap     `yaml:"branding,omitempty" json:"branding,omitempty"`
-	Certificates *Certificates `yaml:"certificates,omitempty" json:"certificates,omitempty"`
-	Network      *Network      `yaml:"network,omitempty" json:"network,omitempty"`
-	Endpoints    StringMap     `yaml:"endpoints,omitempty" json:"endpoints,omitempty"`
-	Hosts        []string      `yaml:"diagnostics-hosts,omitempty" json:"diagnostics-hosts,omitempty"`
-	Options      BoolMap       `yaml:"options,omitempty" json:"options,omitempty"`
-	Meta         *Meta         `yaml:"meta,omitempty" json:"meta,omitempty"`
+	Autoupdates  StringMap        `yaml:"autoupdates,omitempty" json:"autoupdates,omitempty"`
+	Branding     StringMap        `yaml:"branding,omitempty" json:"branding,omitempty"`
+	Certificates *Certificates    `yaml:"certificates,omitempty" json:"certificates,omitempty"`
+	Network      *Network         `yaml:"network,omitempty" json:"network,omitempty"`
+	Endpoints    StringMap        `yaml:"endpoints,omitempty" json:"endpoints,omitempty"`
+	Hosts        []string         `yaml:"diagnostics-hosts,omitempty" json:"diagnostics-hosts,omitempty"`
+	Options      BoolMap          `yaml:"options,omitempty" json:"options,omitempty"`
+	Providers    ProviderProfiles `yaml:"providers,omitempty" json:"providers,omitempty"`
+	Meta         *Meta            `yaml:"meta,omitempty" json:"meta,omitempty"`
 }
 
 func Empty() *Settings {
 	return &Settings{
+		Providers: make(ProviderProfiles),
 		Meta: &Meta{
 			Name:        "generated",
 			Description: "generated",
@@ -79,10 +82,18 @@ func FromBytes(raw []byte) (*Settings, error) {
 	if err != nil {
 		return nil, err
 	}
+	normalized, err := settings.Providers.normalized()
+	if err != nil {
+		return nil, err
+	}
+	settings.Providers = normalized
 	return &settings, nil
 }
 
 func (it *Settings) onTopOf(target *Settings) {
+	if target.Providers == nil {
+		target.Providers = make(ProviderProfiles)
+	}
 	for key, value := range it.Autoupdates {
 		if len(value) > 0 {
 			target.Autoupdates[key] = value
@@ -112,6 +123,9 @@ func (it *Settings) onTopOf(target *Settings) {
 	}
 	if it.Meta != nil {
 		it.Meta.onTopOf(target)
+	}
+	for name, profile := range it.Providers {
+		target.Providers[name] = profile
 	}
 }
 
