@@ -63,7 +63,9 @@ rcc env acquire --artifact sha256:<digest> --provider office --json
 `authorization-env` stores only the environment-variable name. When present,
 its value must be a complete HTTP `Authorization` header (for example,
 `Bearer token`); the secret is never persisted or printed. Provider URLs must
-be absolute HTTP(S) URLs with no query or fragment, and redirects are rejected.
+be root-only with no userinfo, query, or fragment. HTTP is restricted to
+explicit loopback hosts (`localhost`, `127.0.0.0/8`, or `::1`); remote endpoints
+must use HTTPS. Redirects are rejected.
 The built-in `local` provider uses the local provider root; it is distinct from
 the RCC cache and local materializations. A warm acquire reuses a complete local
 materialization without contacting the provider or rebuilding, even when the

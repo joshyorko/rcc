@@ -47,6 +47,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${a_profile}[type]    http
     Should Be Equal    ${a_profile}[url]    ${provider_url}
     Should Be Equal    ${a_profile}[authorizationEnv]    RCC_TEST_PROVIDER_AUTHORIZATION
+    Should Not Contain    ${a_profile_result.stdout}    Bearer robot-test
+    Should Not Contain    ${a_profile_result.stderr}    Bearer robot-test
 
     Set To Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
     ${b_profile_result}=    Run Process
@@ -62,6 +64,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${b_profile}[type]    http
     Should Be Equal    ${b_profile}[url]    ${provider_url}
     Should Be Equal    ${b_profile}[authorizationEnv]    RCC_TEST_PROVIDER_AUTHORIZATION
+    Should Not Contain    ${b_profile_result.stdout}    Bearer robot-test
+    Should Not Contain    ${b_profile_result.stderr}    Bearer robot-test
 
     ${published_result}=    Run Process
     ...    ${RCC}    env    publish
@@ -70,6 +74,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --json
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${published_result.rc}    0
+    Should Not Contain    ${published_result.stdout}    Bearer robot-test
+    Should Not Contain    ${published_result.stderr}    Bearer robot-test
     Should Not Be Empty    ${published_result.stderr}
     ${published}=    Parse JSON    ${published_result.stdout}
     ${artifact}=    Set Variable    ${published}[artifactDigest]
@@ -84,6 +90,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --json
     ...    env=${B_ENV}
     Should Be Equal As Integers    ${cold_result.rc}    0
+    Should Not Contain    ${cold_result.stdout}    Bearer robot-test
+    Should Not Contain    ${cold_result.stderr}    Bearer robot-test
     ${cold}=    Parse JSON    ${cold_result.stdout}
     Should Be Equal    ${cold}[artifactDigest]    ${artifact}
     Should Be Equal    ${cold}[cacheHit]    provider
@@ -116,6 +124,16 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
     Remove From Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION
 
+    ${provider_test_result}=    Run Process
+    ...    ${RCC}    provider    test    office    --json
+    ...    env=${B_ENV}
+    Should Not Be Equal As Integers    ${provider_test_result.rc}    0
+    Should Not Contain    ${provider_test_result.stdout}    reachable
+    Should Not Contain    ${provider_test_result.stdout}    compatible
+    Should Not Contain    ${provider_test_result.stdout}    Bearer robot-test
+    Should Contain    ${provider_test_result.stderr}    RCC_TEST_PROVIDER_AUTHORIZATION
+    Should Not Contain    ${provider_test_result.stderr}    Bearer robot-test
+
     ${warm_result}=    Run Process
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
@@ -123,6 +141,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --json
     ...    env=${B_ENV}
     Should Be Equal As Integers    ${warm_result.rc}    0
+    Should Not Contain    ${warm_result.stdout}    Bearer robot-test
+    Should Not Contain    ${warm_result.stderr}    Bearer robot-test
     ${warm}=    Parse JSON    ${warm_result.stdout}
     Should Be Equal    ${warm}[artifactDigest]    ${artifact}
     Should Be Equal    ${warm}[materializationId]    ${cold}[materializationId]

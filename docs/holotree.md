@@ -17,8 +17,9 @@ Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
 via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
 only the authorization environment variable name. Its runtime value must be a
 complete `Authorization` header such as `Bearer token`; the value is not stored
-or emitted. URLs are strict absolute HTTP(S) URLs without query/fragment, and
-redirects are not followed.
+or emitted. URLs are strict root-only URLs without userinfo, query, or fragment.
+HTTP is limited to explicit loopback hosts (`localhost`, `127.0.0.0/8`, or
+`::1`); remote endpoints require HTTPS. Redirects are not followed.
 
 The built-in `local` provider root is separate from the RCC cache and from each
 local materialization. Once an artifact is warm locally, acquire is independent
