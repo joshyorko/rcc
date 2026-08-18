@@ -160,3 +160,165 @@ func verifyLegacyAt(parent int, name string, descriptor environmentartifact.Desc
 func safeComponent(component string) bool {
 	return component != "" && component != "." && component != ".." && !strings.ContainsAny(component, `/\\`)
 }
+
+func writeAtomicMutable(rootPath string, components []string, content []byte) error {
+	if len(components) == 0 {
+		return fmt.Errorf("empty mutable destination")
+	}
+	root, err := openAbsoluteDirectory(rootPath, true)
+	if err != nil {
+		return err
+	}
+	defer unix.Close(root)
+	parent := root
+	owned := false
+	for _, component := range components[:len(components)-1] {
+		if !safeComponent(component) {
+			return fmt.Errorf("unsafe mutable path component %q", component)
+		}
+		next, err := ensureLegacyDirectoryAt(parent, component)
+		if owned {
+			unix.Close(parent)
+		}
+		if err != nil {
+			return err
+		}
+		parent, owned = next, true
+	}
+	if owned {
+		defer unix.Close(parent)
+	}
+	name := components[len(components)-1]
+	if !safeComponent(name) {
+		return fmt.Errorf("unsafe mutable filename %q", name)
+	}
+	var existing unix.Stat_t
+	if err := unix.Fstatat(parent, name, &existing, unix.AT_SYMLINK_NOFOLLOW); err == nil {
+		if existing.Mode&unix.S_IFMT != unix.S_IFREG {
+			return fmt.Errorf("existing mutable destination is not a regular file")
+		}
+	} else if !errors.Is(err, unix.ENOENT) {
+		return fmt.Errorf("inspect mutable destination: %w", err)
+	}
+	temporary := fmt.Sprintf(".state-%d-%d", os.Getpid(), legacyTemporarySequence.Add(1))
+	fd, err := unix.Openat(parent, temporary, unix.O_WRONLY|unix.O_CREAT|unix.O_EXCL|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0o600)
+	if err != nil {
+		return fmt.Errorf("create private mutable temporary file: %w", err)
+	}
+	file := os.NewFile(uintptr(fd), temporary)
+	removeTemporary := true
+	defer func() {
+		_ = file.Close()
+		if removeTemporary {
+			_ = unix.Unlinkat(parent, temporary, 0)
+		}
+	}()
+	if _, err := io.Copy(file, bytes.NewReader(content)); err != nil {
+		return fmt.Errorf("write mutable content: %w", err)
+	}
+	if err := file.Sync(); err != nil {
+		return fmt.Errorf("fsync mutable content: %w", err)
+	}
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("close mutable content: %w", err)
+	}
+	if err := unix.Renameat(parent, temporary, parent, name); err != nil {
+		return fmt.Errorf("publish mutable content: %w", err)
+	}
+	removeTemporary = false
+	if err := unix.Fsync(parent); err != nil {
+		return fmt.Errorf("fsync mutable directory: %w", err)
+	}
+	return nil
+}
+
+func readRegularNoFollow(rootPath string, components []string, limit int64) ([]byte, error) {
+	if len(components) == 0 || limit < 0 {
+		return nil, fmt.Errorf("invalid regular-file read")
+	}
+	root, err := openAbsoluteDirectory(rootPath, false)
+	if err != nil {
+		return nil, err
+	}
+	defer unix.Close(root)
+	parent := root
+	owned := false
+	for _, component := range components[:len(components)-1] {
+		if !safeComponent(component) {
+			return nil, fmt.Errorf("unsafe read path component %q", component)
+		}
+		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+		if owned {
+			unix.Close(parent)
+		}
+		if err != nil {
+			return nil, err
+		}
+		parent, owned = next, true
+	}
+	if owned {
+		defer unix.Close(parent)
+	}
+	name := components[len(components)-1]
+	fd, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+	if err != nil {
+		return nil, err
+	}
+	file := os.NewFile(uintptr(fd), name)
+	defer file.Close()
+	info, err := file.Stat()
+	if err != nil || !info.Mode().IsRegular() || info.Size() > limit {
+		return nil, fmt.Errorf("state is not a bounded regular file")
+	}
+	content, err := io.ReadAll(io.LimitReader(file, limit+1))
+	if err != nil || int64(len(content)) > limit {
+		return nil, fmt.Errorf("read bounded regular file: %w", err)
+	}
+	return content, nil
+}
+
+func removeRegularNoFollow(rootPath string, components []string) error {
+	if len(components) == 0 {
+		return fmt.Errorf("empty remove destination")
+	}
+	root, err := openAbsoluteDirectory(rootPath, false)
+	if err != nil {
+		if errors.Is(err, unix.ENOENT) {
+			return nil
+		}
+		return err
+	}
+	defer unix.Close(root)
+	parent := root
+	owned := false
+	for _, component := range components[:len(components)-1] {
+		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+		if owned {
+			unix.Close(parent)
+		}
+		if errors.Is(err, unix.ENOENT) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		parent, owned = next, true
+	}
+	if owned {
+		defer unix.Close(parent)
+	}
+	name := components[len(components)-1]
+	var info unix.Stat_t
+	if err := unix.Fstatat(parent, name, &info, unix.AT_SYMLINK_NOFOLLOW); errors.Is(err, unix.ENOENT) {
+		return nil
+	} else if err != nil {
+		return err
+	}
+	if info.Mode&unix.S_IFMT != unix.S_IFREG {
+		return fmt.Errorf("refuse to remove non-regular state")
+	}
+	if err := unix.Unlinkat(parent, name, 0); err != nil && !errors.Is(err, unix.ENOENT) {
+		return err
+	}
+	return unix.Fsync(parent)
+}
