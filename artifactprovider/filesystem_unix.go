@@ -19,8 +19,6 @@ import (
 
 var temporarySequence atomic.Uint64
 
-const maxManifestBytes = 16 << 20
-
 func (it *Filesystem) initialize() error {
 	root, err := openProviderRoot(it.root)
 	if err != nil {
@@ -151,6 +149,30 @@ func (it *Filesystem) getObjectBytes(ctx context.Context, descriptor environment
 	}
 	defer unix.Close(directory)
 	return readVerifiedAt(ctx, directory, descriptor.Digest.Hex(), descriptor.Digest, descriptor.Size)
+}
+
+func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmentartifact.Digest) ([]byte, error) {
+	if len(digest.Hex()) != 64 {
+		return nil, fmt.Errorf("invalid object digest")
+	}
+	root, err := openProviderRoot(it.root)
+	if err != nil {
+		return nil, err
+	}
+	defer unix.Close(root)
+	directory, err := openObjectDirectory(root, digest, false)
+	if err != nil {
+		return nil, err
+	}
+	defer unix.Close(directory)
+	content, err := readRegularAt(ctx, directory, digest.Hex(), maxProviderObjectBytes)
+	if err != nil {
+		return nil, err
+	}
+	if environmentartifact.DigestBytes(content) != digest {
+		return nil, fmt.Errorf("stored object digest mismatch")
+	}
+	return content, nil
 }
 
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {

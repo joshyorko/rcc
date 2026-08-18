@@ -11,6 +11,8 @@ import (
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
+const maxManifestBytes = 16 << 20
+
 type Filesystem struct {
 	root     string
 	commitMu sync.Mutex

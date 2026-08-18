@@ -28,3 +28,6 @@ func (it *Filesystem) CommitManifest(context.Context, []byte) error {
 func (it *Filesystem) ResolveManifest(context.Context, environmentartifact.Digest) ([]byte, error) {
 	return nil, fmt.Errorf("filesystem artifact provider v1 is unsupported")
 }
+func (it *Filesystem) getObjectByDigest(context.Context, environmentartifact.Digest) ([]byte, error) {
+	return nil, fmt.Errorf("filesystem artifact provider v1 is unsupported")
+}
