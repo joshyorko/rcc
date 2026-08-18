@@ -26,8 +26,13 @@ func (d *deferredProvider) get() (Provider, error) {
 			d.err = fmt.Errorf("nil provider resolver")
 			return
 		}
-		d.provider, d.err = d.resolve()
-		if d.err == nil && d.provider == nil {
+		resolved, err := d.resolve()
+		if err != nil {
+			d.err = fmt.Errorf("deferred provider resolution failed")
+			return
+		}
+		d.provider = resolved
+		if d.provider == nil {
 			d.err = fmt.Errorf("provider resolver returned nil provider")
 		}
 	})

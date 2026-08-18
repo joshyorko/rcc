@@ -3,6 +3,7 @@ package artifactprovider
 import (
 	"context"
 	"errors"
+	"strings"
 	"sync/atomic"
 	"testing"
 )
@@ -30,7 +31,24 @@ func TestDeferredProviderResolvesOnce(t *testing.T) {
 func TestDeferredProviderStableError(t *testing.T) {
 	want := errors.New("resolver failed")
 	deferred := NewDeferred(func() (Provider, error) { return nil, want })
-	if _, err := deferred.Capabilities(context.Background()); !errors.Is(err, want) {
-		t.Fatal(err)
+	_, first := deferred.Capabilities(context.Background())
+	_, second := deferred.Capabilities(context.Background())
+	if first == nil || second == nil || first.Error() != second.Error() {
+		t.Fatalf("unstable resolver error: %v / %v", first, second)
+	}
+	if strings.Contains(first.Error(), want.Error()) {
+		t.Fatalf("resolver error leaked: %v", first)
+	}
+}
+
+func TestDeferredProviderDoesNotExposeResolverError(t *testing.T) {
+	const secret = "deferred-provider-secret-sentinel-7f4c"
+	deferred := NewDeferred(func() (Provider, error) { return nil, errors.New("credential=" + secret) })
+	_, err := deferred.Capabilities(context.Background())
+	if err == nil {
+		t.Fatal("expected resolver error")
+	}
+	if strings.Contains(err.Error(), secret) {
+		t.Fatalf("deferred resolver error exposed secret: %v", err)
 	}
 }
