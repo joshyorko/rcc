@@ -1,6 +1,12 @@
 # rcc change log
 ## Unreleased
 
+### New Features
+
+- publish, acquire, and execute portable environment artifacts through the
+  `rcc env` commands and serve immutable artifact content over loopback HTTP
+  with `rcc cache serve`
+
 ### Security
 
 - harden robot bundles against filesystem boundary escapes
