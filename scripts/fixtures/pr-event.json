@@ -1,0 +1,14 @@
+{
+  "action": "opened",
+  "pull_request": {
+    "number": 42,
+    "draft": false,
+    "changed_files": 3,
+    "additions": 12,
+    "deletions": 4,
+    "requested_reviewers": [
+      {"login": "reviewer-one"},
+      {"login": "reviewer-two"}
+    ]
+  }
+}
