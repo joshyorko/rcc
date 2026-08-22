@@ -29,6 +29,8 @@ devTasks:
     shell: python call_invoke.py assets
   unpackTest:
     shell: python call_invoke.py unpackTest
+  holotreeBenchmark:
+    shell: python benchmarks/holotree.py
 
 environmentConfigs:
   - setup.yaml
