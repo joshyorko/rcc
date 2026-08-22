@@ -26,14 +26,14 @@ func (it *Filesystem) initialize() error {
 	if err != nil {
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	for _, path := range [][]string{{"objects", "sha256"}, {"manifests", "sha256"}, {"tmp"}} {
 		fd := root
 		owned := false
 		for _, component := range path {
 			next, err := ensureDirectoryAt(fd, component)
 			if owned {
-				unix.Close(fd)
+				_ = unix.Close(fd)
 			}
 			if err != nil {
 				return err
@@ -41,7 +41,7 @@ func (it *Filesystem) initialize() error {
 			fd, owned = next, true
 		}
 		if owned {
-			unix.Close(fd)
+			_ = unix.Close(fd)
 		}
 	}
 	return nil
@@ -55,12 +55,12 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 	if err != nil {
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	destinationDir, err := openObjectDirectory(root, blob.Descriptor.Digest, true)
 	if err != nil {
 		return err
 	}
-	defer unix.Close(destinationDir)
+	defer func() { _ = unix.Close(destinationDir) }()
 
 	temporary := fmt.Sprintf(".upload-%d-%d", os.Getpid(), temporarySequence.Add(1))
 	fd, err := unix.Openat(destinationDir, temporary, unix.O_WRONLY|unix.O_CREAT|unix.O_EXCL|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0o600)
@@ -112,7 +112,7 @@ func (it *Filesystem) hasObject(descriptor environmentartifact.Descriptor) (bool
 	if err != nil {
 		return false, err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	directory, err := openObjectDirectory(root, descriptor.Digest, false)
 	if errors.Is(err, unix.ENOENT) {
 		return false, nil
@@ -120,7 +120,7 @@ func (it *Filesystem) hasObject(descriptor environmentartifact.Descriptor) (bool
 	if err != nil {
 		return false, err
 	}
-	defer unix.Close(directory)
+	defer func() { _ = unix.Close(directory) }()
 	err = verifyObjectAt(directory, descriptor.Digest.Hex(), descriptor)
 	if errors.Is(err, unix.ENOENT) {
 		return false, nil
@@ -144,12 +144,12 @@ func (it *Filesystem) getObjectBytes(ctx context.Context, descriptor environment
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	directory, err := openObjectDirectory(root, descriptor.Digest, false)
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(directory)
+	defer func() { _ = unix.Close(directory) }()
 	return readVerifiedAt(ctx, directory, descriptor.Digest.Hex(), descriptor.Digest, descriptor.Size)
 }
 
@@ -161,12 +161,12 @@ func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmenta
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	directory, err := openObjectDirectory(root, digest, false)
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(directory)
+	defer func() { _ = unix.Close(directory) }()
 	content, err := readRegularAt(ctx, directory, digest.Hex(), maxProviderObjectBytes)
 	if err != nil {
 		return nil, err
@@ -191,12 +191,12 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 	if err != nil {
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	directory, err := openManifestDirectory(root, manifest.ArtifactDigest, true)
 	if err != nil {
 		return err
 	}
-	defer unix.Close(directory)
+	defer func() { _ = unix.Close(directory) }()
 	return publishManifestBytesAt(ctx, directory, manifest.ArtifactDigest.Hex(), content)
 }
 
@@ -229,12 +229,12 @@ func (it *Filesystem) ResolveManifest(ctx context.Context, digest environmentart
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	directory, err := openManifestDirectory(root, digest, false)
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(directory)
+	defer func() { _ = unix.Close(directory) }()
 	content, err := readRegularAt(ctx, directory, digest.Hex(), maxManifestBytes)
 	if err != nil {
 		return nil, err
@@ -268,7 +268,7 @@ func openProviderRootPath(path string, create bool) (int, error) {
 	components := strings.Split(strings.TrimPrefix(clean, string(filepath.Separator)), string(filepath.Separator))
 	for _, component := range components {
 		if component == "" || component == "." || component == ".." {
-			unix.Close(current)
+			_ = unix.Close(current)
 			return -1, fmt.Errorf("invalid provider root component %q", component)
 		}
 		var next int
@@ -277,7 +277,7 @@ func openProviderRootPath(path string, create bool) (int, error) {
 		} else {
 			next, err = unix.Openat(current, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		}
-		unix.Close(current)
+		_ = unix.Close(current)
 		if err != nil {
 			return -1, fmt.Errorf("open provider root component %q without following symlinks: %w", component, err)
 		}
@@ -314,7 +314,7 @@ func openObjectDirectory(root int, digest environmentartifact.Digest, create boo
 			next, err = unix.Openat(fd, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		}
 		if owned {
-			unix.Close(fd)
+			_ = unix.Close(fd)
 		}
 		if err != nil {
 			return -1, err
@@ -340,7 +340,7 @@ func openManifestDirectory(root int, digest environmentartifact.Digest, create b
 			next, err = unix.Openat(fd, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		}
 		if owned {
-			unix.Close(fd)
+			_ = unix.Close(fd)
 		}
 		if err != nil {
 			return -1, err
@@ -356,7 +356,7 @@ func verifyObjectAt(directory int, name string, descriptor environmentartifact.D
 		return err
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
 		return err
@@ -383,7 +383,7 @@ func readVerifiedAt(ctx context.Context, directory int, name string, digest envi
 		return nil, err
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
 		return nil, err
@@ -407,7 +407,7 @@ func readRegularAt(ctx context.Context, directory int, name string, maximum int6
 		return nil, err
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
 		return nil, err

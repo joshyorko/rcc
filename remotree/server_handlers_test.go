@@ -35,14 +35,6 @@ func handlerFixture(t *testing.T) string {
 	return home
 }
 
-func queryFixture() (Partqueries, chan string) {
-	queries := make(Partqueries, 1)
-	triggers := make(chan string, 1)
-	queries <- &Partquery{Catalog: "catalog", Reply: triggers}
-	go func() { q := <-queries; q.Reply <- "abcdef0123456789\n"; close(q.Reply) }()
-	return queries, triggers
-}
-
 func TestQueryHandlerLegacyProtocol(t *testing.T) {
 	handlerFixture(t)
 	queries := make(Partqueries, 1)

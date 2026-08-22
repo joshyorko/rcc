@@ -374,7 +374,7 @@ func (it *HTTP) GetObject(ctx context.Context, descriptor environmentartifact.De
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	if err := providerResponseError(response); err != nil {
 		return nil, err
 	}
@@ -415,7 +415,7 @@ func (it *HTTP) ResolveManifest(ctx context.Context, digest environmentartifact.
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	if err := providerResponseError(response); err != nil {
 		return nil, err
 	}
@@ -453,7 +453,7 @@ func (it *HTTP) doJSON(ctx context.Context, method, path string, input, output a
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	if err := providerResponseError(response); err != nil {
 		return err
 	}
@@ -482,7 +482,7 @@ func closeProviderResponse(response *http.Response, err error) error {
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	return providerResponseError(response)
 }
 

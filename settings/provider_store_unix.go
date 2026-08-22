@@ -30,7 +30,7 @@ func acquireSettingsMutationLock(filename string) (*settingsMutationLock, error)
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(parent)
+	defer func() { _ = unix.Close(parent) }()
 	fd, err := unix.Openat(parent, name, unix.O_WRONLY|unix.O_CREAT|unix.O_TRUNC|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0o666)
 	if err != nil {
 		return nil, fmt.Errorf("open settings lock without following links: %w", err)
@@ -59,7 +59,7 @@ func readCustomSettingsFile(filename string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(parent)
+	defer func() { _ = unix.Close(parent) }()
 	fd, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 	if errors.Is(err, unix.ENOENT) {
 		return nil, os.ErrNotExist
@@ -68,7 +68,7 @@ func readCustomSettingsFile(filename string) ([]byte, error) {
 		return nil, fmt.Errorf("open custom settings without following links: %w", err)
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
 		return nil, fmt.Errorf("stat custom settings: %w", err)
@@ -88,7 +88,7 @@ func writeCustomSettingsAtomically(filename string, content []byte) error {
 	if err != nil {
 		return err
 	}
-	defer unix.Close(parent)
+	defer func() { _ = unix.Close(parent) }()
 	var existing unix.Stat_t
 	if err := unix.Fstatat(parent, name, &existing, unix.AT_SYMLINK_NOFOLLOW); err == nil {
 		if existing.Mode&unix.S_IFMT != unix.S_IFREG {
@@ -150,18 +150,18 @@ func openSettingsParent(filename string, create bool) (int, string, error) {
 	current := root
 	for _, component := range parts[:len(parts)-1] {
 		if !safeSettingsComponent(component) {
-			unix.Close(current)
+			_ = unix.Close(current)
 			return -1, "", fmt.Errorf("unsafe custom settings path component %q", component)
 		}
 		next, openErr := unix.Openat(current, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		if errors.Is(openErr, unix.ENOENT) && create {
 			if mkdirErr := unix.Mkdirat(current, component, 0o700); mkdirErr != nil && !errors.Is(mkdirErr, unix.EEXIST) {
-				unix.Close(current)
+				_ = unix.Close(current)
 				return -1, "", fmt.Errorf("create custom settings directory %q: %w", component, mkdirErr)
 			}
 			next, openErr = unix.Openat(current, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		}
-		unix.Close(current)
+		_ = unix.Close(current)
 		if openErr != nil {
 			return -1, "", fmt.Errorf("open custom settings directory %q without following links: %w", component, openErr)
 		}

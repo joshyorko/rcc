@@ -29,8 +29,8 @@ func newProviderAddCommand(d providerCommandDependencies) *cobra.Command {
 		if jsonOut {
 			return writeProviderJSON(c.OutOrStdout(), result)
 		}
-		fmt.Fprintf(c.OutOrStdout(), "Provider %s added.\n", args[0])
-		return nil
+		_, err = fmt.Fprintf(c.OutOrStdout(), "Provider %s added.\n", args[0])
+		return err
 	}}
 	c.Flags().StringVar(&typ, "type", "", "Provider type.")
 	c.Flags().StringVar(&raw, "url", "", "Provider URL.")

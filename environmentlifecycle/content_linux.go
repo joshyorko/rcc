@@ -29,7 +29,7 @@ func installLegacyImmutable(rootPath string, components []string, descriptor env
 	if err != nil {
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	parent := root
 	owned := false
 	for _, component := range components[:len(components)-1] {
@@ -38,7 +38,7 @@ func installLegacyImmutable(rootPath string, components []string, descriptor env
 		}
 		next, err := ensureLegacyDirectoryAt(parent, component)
 		if owned {
-			unix.Close(parent)
+			_ = unix.Close(parent)
 		}
 		if err != nil {
 			return err
@@ -46,7 +46,7 @@ func installLegacyImmutable(rootPath string, components []string, descriptor env
 		parent, owned = next, true
 	}
 	if owned {
-		defer unix.Close(parent)
+		defer func() { _ = unix.Close(parent) }()
 	}
 	name := components[len(components)-1]
 	if !safeComponent(name) {
@@ -102,18 +102,18 @@ func openAbsoluteDirectory(path string, create bool) (int, error) {
 			continue
 		}
 		if !safeComponent(component) {
-			unix.Close(fd)
+			_ = unix.Close(fd)
 			return -1, fmt.Errorf("unsafe legacy root component %q", component)
 		}
 		next, openErr := unix.Openat(fd, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		if errors.Is(openErr, unix.ENOENT) && create {
 			if mkdirErr := unix.Mkdirat(fd, component, 0o750); mkdirErr != nil && !errors.Is(mkdirErr, unix.EEXIST) {
-				unix.Close(fd)
+				_ = unix.Close(fd)
 				return -1, fmt.Errorf("create legacy root component %q: %w", component, mkdirErr)
 			}
 			next, openErr = unix.Openat(fd, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		}
-		unix.Close(fd)
+		_ = unix.Close(fd)
 		if openErr != nil {
 			return -1, fmt.Errorf("open legacy root component %q without following links: %w", component, openErr)
 		}
@@ -142,7 +142,7 @@ func verifyLegacyAt(parent int, name string, descriptor environmentartifact.Desc
 		return fmt.Errorf("open existing legacy content without following links: %w", err)
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil || !info.Mode().IsRegular() || info.Size() != descriptor.Size {
 		return fmt.Errorf("existing legacy content is not the expected regular file")
@@ -169,7 +169,7 @@ func writeAtomicMutable(rootPath string, components []string, content []byte) er
 	if err != nil {
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	parent := root
 	owned := false
 	for _, component := range components[:len(components)-1] {
@@ -178,7 +178,7 @@ func writeAtomicMutable(rootPath string, components []string, content []byte) er
 		}
 		next, err := ensureLegacyDirectoryAt(parent, component)
 		if owned {
-			unix.Close(parent)
+			_ = unix.Close(parent)
 		}
 		if err != nil {
 			return err
@@ -186,7 +186,7 @@ func writeAtomicMutable(rootPath string, components []string, content []byte) er
 		parent, owned = next, true
 	}
 	if owned {
-		defer unix.Close(parent)
+		defer func() { _ = unix.Close(parent) }()
 	}
 	name := components[len(components)-1]
 	if !safeComponent(name) {
@@ -240,7 +240,7 @@ func readRegularNoFollow(rootPath string, components []string, limit int64) ([]b
 	if err != nil {
 		return nil, err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	parent := root
 	owned := false
 	for _, component := range components[:len(components)-1] {
@@ -249,7 +249,7 @@ func readRegularNoFollow(rootPath string, components []string, limit int64) ([]b
 		}
 		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		if owned {
-			unix.Close(parent)
+			_ = unix.Close(parent)
 		}
 		if err != nil {
 			return nil, err
@@ -257,7 +257,7 @@ func readRegularNoFollow(rootPath string, components []string, limit int64) ([]b
 		parent, owned = next, true
 	}
 	if owned {
-		defer unix.Close(parent)
+		defer func() { _ = unix.Close(parent) }()
 	}
 	name := components[len(components)-1]
 	fd, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
@@ -265,7 +265,7 @@ func readRegularNoFollow(rootPath string, components []string, limit int64) ([]b
 		return nil, err
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil || !info.Mode().IsRegular() || info.Size() > limit {
 		return nil, fmt.Errorf("state is not a bounded regular file")
@@ -288,13 +288,13 @@ func removeRegularNoFollow(rootPath string, components []string) error {
 		}
 		return err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	parent := root
 	owned := false
 	for _, component := range components[:len(components)-1] {
 		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		if owned {
-			unix.Close(parent)
+			_ = unix.Close(parent)
 		}
 		if errors.Is(err, unix.ENOENT) {
 			return nil
@@ -305,7 +305,7 @@ func removeRegularNoFollow(rootPath string, components []string) error {
 		parent, owned = next, true
 	}
 	if owned {
-		defer unix.Close(parent)
+		defer func() { _ = unix.Close(parent) }()
 	}
 	name := components[len(components)-1]
 	var info unix.Stat_t
@@ -331,7 +331,7 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer unix.Close(root)
+	defer func() { _ = unix.Close(root) }()
 	parent := root
 	owned := false
 	for _, component := range components[:len(components)-1] {
@@ -340,7 +340,7 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 		}
 		next, err := unix.Openat(parent, component, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 		if owned {
-			unix.Close(parent)
+			_ = unix.Close(parent)
 		}
 		if err != nil {
 			if errors.Is(err, unix.ENOENT) {
@@ -351,7 +351,7 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 		parent, owned = next, true
 	}
 	if owned {
-		defer unix.Close(parent)
+		defer func() { _ = unix.Close(parent) }()
 	}
 	name := components[len(components)-1]
 	var leaf unix.Stat_t
@@ -381,10 +381,10 @@ func executableNoFollow(rootPath string, components []string) (string, error) {
 		return "", fmt.Errorf("%w: open executable without following links: %v", errUnsafeExecutablePath, err)
 	}
 	file := os.NewFile(uintptr(fd), name)
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0o111 == 0 {
-		return "", fmt.Errorf("Python executable is not an executable regular file")
+		return "", fmt.Errorf("python executable is not an executable regular file")
 	}
 	resolved := append([]string(nil), components...)
 	resolved[len(resolved)-1] = name

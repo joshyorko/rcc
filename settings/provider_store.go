@@ -69,7 +69,7 @@ func UpdateCustomProvider(name string, profile *ProviderProfile, replace bool) e
 	if err != nil {
 		return fmt.Errorf("lock custom settings: %w", err)
 	}
-	defer locker.Release()
+	defer func() { _ = locker.Release() }()
 
 	current, err := LoadCustomSettingsForMutation()
 	if err != nil {

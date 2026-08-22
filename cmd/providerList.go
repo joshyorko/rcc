@@ -34,7 +34,9 @@ func newProviderListCommand(d providerCommandDependencies) *cobra.Command {
 			return writeProviderJSON(c.OutOrStdout(), r)
 		}
 		for _, p := range r.Providers {
-			fmt.Fprintln(c.OutOrStdout(), p.Name)
+			if _, err := fmt.Fprintln(c.OutOrStdout(), p.Name); err != nil {
+				return err
+			}
 		}
 		return nil
 	}}

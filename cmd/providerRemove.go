@@ -24,8 +24,8 @@ func newProviderRemoveCommand(d providerCommandDependencies) *cobra.Command {
 		if jsonOut {
 			return writeProviderJSON(c.OutOrStdout(), r)
 		}
-		fmt.Fprintf(c.OutOrStdout(), "Provider %s removed.\n", a[0])
-		return nil
+		_, err := fmt.Fprintf(c.OutOrStdout(), "Provider %s removed.\n", a[0])
+		return err
 	}}
 	c.Flags().BoolVar(&jsonOut, "json", false, "Write JSON.")
 	return c
