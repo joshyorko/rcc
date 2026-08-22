@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"runtime"
 
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -35,7 +34,8 @@ func (CurrentRCCBuilder) Build(ctx context.Context, robotFile string) (BuildResu
 	if err != nil {
 		return BuildResult{}, fmt.Errorf("open current RCC Hololib: %w", err)
 	}
-	platform := environmentartifact.Platform{OS: runtime.GOOS, Arch: runtime.GOARCH, RCCPlatform: common.Platform()}
+	platform := environmentartifact.CurrentPlatform()
+	platform.RCCPlatform = common.Platform()
 	builder := environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: common.Version, CompatibilityKey: "v12-gzip-sha256"}
 	specification, err := semanticSpecificationBytes("robot.yaml", blueprint, platform, builder)
 	if err != nil {

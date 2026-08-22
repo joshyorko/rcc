@@ -89,6 +89,29 @@ func TestManifestDigestExcludesOnlySelfReference(t *testing.T) {
 	}
 }
 
+func TestManifestAcceptsReleasedPlatforms(t *testing.T) {
+	for platform := range SupportedPlatforms {
+		t.Run(platform.OS+"-"+platform.Arch, func(t *testing.T) {
+			input := testManifestInput(t)
+			input.Platform = platform
+			input.Specification.Platform = platform
+			input.Catalogs[0].LegacyName = "0123456789abcdefv12." + platform.RCCPlatform
+			if _, _, err := NewManifest(input); err != nil {
+				t.Fatalf("released platform rejected: %v", err)
+			}
+		})
+	}
+}
+
+func TestManifestRejectsUnsupportedPlatform(t *testing.T) {
+	input := testManifestInput(t)
+	input.Platform = Platform{OS: "freebsd", Arch: "amd64", RCCPlatform: "freebsd_amd64"}
+	input.Specification.Platform = input.Platform
+	if _, _, err := NewManifest(input); err == nil {
+		t.Fatal("unsupported platform accepted")
+	}
+}
+
 func TestDecodeManifestRejectsUnknownDuplicateAndTrailingJSON(t *testing.T) {
 	_, canonical, err := NewManifest(testManifestInput(t))
 	if err != nil {

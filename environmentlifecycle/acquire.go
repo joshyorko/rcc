@@ -43,6 +43,9 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	if manifest.ArtifactDigest != artifactDigest {
 		return verifiedContent{}, fmt.Errorf("resolved manifest identity does not match requested artifact")
 	}
+	if err := manifest.Platform.CompatibleWithCurrent(); err != nil {
+		return verifiedContent{}, fmt.Errorf("reject incompatible environment artifact: %w", err)
+	}
 
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {
