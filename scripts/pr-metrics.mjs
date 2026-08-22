@@ -7,7 +7,7 @@ const event = eventPath && fs.existsSync(eventPath)
   ? JSON.parse(fs.readFileSync(eventPath, "utf8"))
   : {};
 const pullRequest = event.pull_request ?? {};
-const reviews = event.reviewers ?? [];
+const requestedReviewers = event.pull_request?.requested_reviewers ?? [];
 
 const metrics = {
   schema: 1,
@@ -19,7 +19,7 @@ const metrics = {
   changed_files: pullRequest.changed_files ?? null,
   additions: pullRequest.additions ?? null,
   deletions: pullRequest.deletions ?? null,
-  review_count: Array.isArray(reviews) ? reviews.length : null,
+  requested_reviewer_count: Array.isArray(requestedReviewers) ? requestedReviewers.length : null,
 };
 
 process.stdout.write(`${JSON.stringify(metrics, null, 2)}\n`);

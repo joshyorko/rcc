@@ -30,4 +30,9 @@ jobs:
             echo '```text'
             go test ./... -count=1
             echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          } | tee quality-report.txt >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-report
+          path: quality-report.txt
