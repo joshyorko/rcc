@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -22,6 +21,22 @@ type Lease struct {
 	OwnerPID          int                        `json:"ownerPid"`
 	OwnerStart        string                     `json:"ownerStart"`
 	CreatedAt         time.Time                  `json:"createdAt"`
+}
+
+type ProcessIdentityLookup func(int) (string, error)
+
+var processIdentityLookup = func(pid int) (string, error) {
+	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+	if err != nil {
+		return "", err
+	}
+	if closing := strings.LastIndexByte(string(content), ')'); closing >= 0 {
+		fields := strings.Fields(string(content[closing+1:]))
+		if len(fields) > 19 && fields[19] != "" {
+			return fields[19], nil
+		}
+	}
+	return "", fmt.Errorf("process start identity is unavailable")
 }
 
 func leaseComponents(digest environmentartifact.Digest, id string) []string {
@@ -45,8 +60,14 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	}
 	lease := Lease{
 		ID: hex.EncodeToString(idBytes), MaterializationID: materialization.ID,
-		ArtifactDigest: materialization.ArtifactDigest, OwnerPID: os.Getpid(),
-		OwnerStart: processStartIdentity(os.Getpid()), CreatedAt: time.Now().UTC(),
+		ArtifactDigest: materialization.ArtifactDigest, OwnerPID: os.Getpid(), CreatedAt: time.Now().UTC(),
+	}
+	lease.OwnerStart, err = processIdentityLookup(lease.OwnerPID)
+	if err != nil || lease.OwnerStart == "" {
+		if err == nil {
+			err = fmt.Errorf("ambiguous process identity")
+		}
+		return Lease{}, fmt.Errorf("strong owner identity unavailable: %w", err)
 	}
 	content, err := json.Marshal(lease)
 	if err != nil {
@@ -85,14 +106,9 @@ func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
 }
 
 func processStartIdentity(pid int) string {
-	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
-	if err == nil {
-		if closing := strings.LastIndexByte(string(content), ')'); closing >= 0 {
-			fields := strings.Fields(string(content[closing+1:]))
-			if len(fields) > 19 {
-				return fields[19]
-			}
-		}
+	identity, err := processIdentityLookup(pid)
+	if err != nil || identity == "" {
+		return ""
 	}
-	return strconv.Itoa(pid)
+	return identity
 }

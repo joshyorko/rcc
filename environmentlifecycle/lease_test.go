@@ -42,6 +42,30 @@ func TestLeaseAndExecutionHandleHaveExplicitTypedLifecycle(t *testing.T) {
 	}
 }
 
+func TestLeaseFailsClosedWhenStrongOwnerIdentityIsUnavailable(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	previous := processIdentityLookup
+	processIdentityLookup = func(int) (string, error) { return "", fmt.Errorf("identity unavailable") }
+	t.Cleanup(func() { processIdentityLookup = previous })
+
+	_, err := NewLocalMaterializer().Lease(context.Background(), materialization)
+	if err == nil {
+		t.Fatal("lease unexpectedly accepted missing strong owner identity")
+	}
+}
+
+func TestLeaseFailsClosedWhenStrongOwnerIdentityIsAmbiguous(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	previous := processIdentityLookup
+	processIdentityLookup = func(int) (string, error) { return "", nil }
+	t.Cleanup(func() { processIdentityLookup = previous })
+
+	_, err := NewLocalMaterializer().Lease(context.Background(), materialization)
+	if err == nil {
+		t.Fatal("lease unexpectedly accepted ambiguous strong owner identity")
+	}
+}
+
 func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
 	hostPython, err := exec.LookPath("python3")
