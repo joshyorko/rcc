@@ -2,7 +2,6 @@ package environmentlifecycle
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,6 +21,14 @@ type ReconcileReport struct {
 	ArtifactDigest           environmentartifact.Digest
 	Active, Stale, Ambiguous int
 	Repaired                 []string
+	Items                    []ReconcileItem
+}
+
+type ReconcileItem struct {
+	ID       string      `json:"id"`
+	Status   LeaseStatus `json:"status"`
+	Reason   string      `json:"reason"`
+	Repaired bool        `json:"repaired"`
 }
 
 func classifyLease(lease Lease) LeaseStatus {
@@ -45,6 +52,12 @@ func classifyLease(lease Lease) LeaseStatus {
 }
 
 func Reconcile(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
+	return reconcileLocked(ctx, digest)
+}
+
+func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
 	if err := ctx.Err(); err != nil {
 		return ReconcileReport{}, err
 	}
@@ -68,22 +81,24 @@ func Reconcile(ctx context.Context, digest environmentartifact.Digest) (Reconcil
 		lease, err := readLease(digest, id)
 		if err != nil {
 			report.Ambiguous++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "malformed-or-noncanonical-lease"})
 			continue
 		}
 		switch classifyLease(lease) {
 		case LeaseActive:
 			report.Active++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseActive, Reason: "owner-identity-matches"})
 		case LeaseStale:
 			report.Stale++
 			if err := removeRegularNoFollow(recordRoot(), leaseComponents(digest, id)); err != nil && !os.IsNotExist(err) {
 				return report, err
 			}
 			report.Repaired = append(report.Repaired, id)
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseStale, Reason: "owner-missing-or-pid-reused", Repaired: true})
 		case LeaseAmbiguous:
 			report.Ambiguous++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "owner-identity-unavailable-or-ambiguous"})
 		}
 	}
 	return report, nil
 }
-
-var errAmbiguousLease = fmt.Errorf("ambiguous lease owner")

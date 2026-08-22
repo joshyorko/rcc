@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -24,6 +25,8 @@ type Lease struct {
 }
 
 type ProcessIdentityLookup func(int) (string, error)
+
+var lifecycleMu sync.Mutex
 
 var processIdentityLookup = func(pid int) (string, error) {
 	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
@@ -44,6 +47,8 @@ func leaseComponents(digest environmentartifact.Digest, id string) []string {
 }
 
 func (it *LocalMaterializer) Lease(ctx context.Context, materialization Materialization) (Lease, error) {
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
 	if err := ctx.Err(); err != nil {
 		return Lease{}, err
 	}
@@ -99,6 +104,8 @@ func readLease(digest environmentartifact.Digest, id string) (Lease, error) {
 }
 
 func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
+	lifecycleMu.Lock()
+	defer lifecycleMu.Unlock()
 	if lease.ID == "" || len(lease.ArtifactDigest.Hex()) != 64 {
 		return fmt.Errorf("invalid lease")
 	}
