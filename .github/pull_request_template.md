@@ -4,6 +4,10 @@
 - Observable behavior:
 - Safety impact:
 - Changelog / release-note classification:
+- Change class: Maintenance / Behavioral / Sensitive
+
+See [change classification](../docs/change-classification.md) and the
+[review rubric](../docs/review-rubric.md).
 
 ## Verification
 
