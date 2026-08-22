@@ -117,12 +117,12 @@ func inventoryObject(legacyID string, logicalSize int64) (ObjectEntry, string, e
 	if err != nil {
 		return ObjectEntry{}, "", err
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	reader, err := gzip.NewReader(source)
 	if err != nil {
 		return ObjectEntry{}, "", fmt.Errorf("legacy object %s is not gzip: %w", legacyID, err)
 	}
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 	hasher := sha256.New()
 	written, err := io.Copy(hasher, io.LimitReader(reader, logicalSize+1))
 	if err != nil {
@@ -146,7 +146,7 @@ func descriptorFromFile(mediaType, path string) (Descriptor, error) {
 	if err != nil {
 		return Descriptor{}, fmt.Errorf("open immutable content %q: %w", path, err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	info, err := source.Stat()
 	if err != nil {
 		return Descriptor{}, fmt.Errorf("stat immutable content %q: %w", path, err)

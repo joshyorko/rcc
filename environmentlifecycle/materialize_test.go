@@ -152,7 +152,9 @@ func TestWarmAcquireIgnoresProviderResolutionAndNetworkBoundaries(t *testing.T) 
 			name: "absent authorization environment",
 			provider: func(t *testing.T, calls *int) artifactprovider.Provider {
 				const env = "RCC_TASK4_DEFINITELY_MISSING_AUTH"
-				os.Unsetenv(env)
+				if err := os.Unsetenv(env); err != nil {
+					t.Fatal(err)
+				}
 				return artifactprovider.NewDeferred(func() (artifactprovider.Provider, error) {
 					(*calls)++
 					return artifactprovider.NewHTTPWithOptions("http://127.0.0.1:1", artifactprovider.HTTPOptions{
@@ -290,7 +292,11 @@ func TestWarmAcquireAndExecutionRejectSymlinkedPythonParent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer materializer.Release(context.Background(), lease)
+	defer func() {
+		if err := materializer.Release(context.Background(), lease); err != nil {
+			t.Errorf("release materialization: %v", err)
+		}
+	}()
 	if _, err := materializer.ExecutionHandle(context.Background(), lease, []string{"python", "-V"}); err == nil {
 		t.Fatal("execution handle trusted Python through a symlinked parent")
 	}

@@ -66,7 +66,7 @@ func serveArtifactCache(ctx context.Context, root, listen string, output io.Writ
 	if err != nil {
 		return fmt.Errorf("listen for cache provider: %w", err)
 	}
-	defer listener.Close()
+	defer func() { _ = listener.Close() }()
 	server := &http.Server{
 		Handler:           artifactprovider.NewHandler(provider),
 		ReadHeaderTimeout: 5 * time.Second,
