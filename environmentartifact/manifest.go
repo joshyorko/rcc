@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/joshyorko/rcc/htfs"
 )
 
 const (
@@ -161,7 +159,8 @@ func (it Manifest) Validate() error {
 	if len(it.Catalogs) != 1 || it.Catalogs[0].MediaType != CatalogV12MediaType {
 		return fmt.Errorf("manifest v1 requires exactly one v12 gzip catalog")
 	}
-	if it.Catalogs[0].LegacyName != htfs.CatalogName(it.LegacyBlueprint.LegacyBlueprintKey) {
+	wantCatalogName := it.LegacyBlueprint.LegacyBlueprintKey + "v12." + it.Platform.RCCPlatform
+	if it.Catalogs[0].LegacyName != wantCatalogName {
 		return fmt.Errorf("catalog legacy name does not match legacy blueprint key")
 	}
 	if !strings.HasSuffix(it.Catalogs[0].LegacyName, "v12."+it.Platform.RCCPlatform) {
