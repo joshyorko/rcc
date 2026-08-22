@@ -180,12 +180,3 @@ func bytesBlob(descriptor environmentartifact.Descriptor, content []byte) publis
 func fileBlob(descriptor environmentartifact.Descriptor, path string) publishBlob {
 	return publishBlob{descriptor: descriptor, open: func() (io.ReadCloser, error) { return os.Open(path) }}
 }
-
-func supports[T comparable](values []T, wanted T) bool {
-	for _, value := range values {
-		if value == wanted {
-			return true
-		}
-	}
-	return false
-}

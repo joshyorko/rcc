@@ -182,7 +182,7 @@ func validateAcquiredCatalog(content []byte, manifest environmentartifact.Manife
 	if err != nil {
 		return fmt.Errorf("create catalog validation directory: %w", err)
 	}
-	defer os.RemoveAll(directory)
+	defer func() { _ = os.RemoveAll(directory) }()
 	path := filepath.Join(directory, "catalog.gz")
 	if err := os.WriteFile(path, content, 0o600); err != nil {
 		return fmt.Errorf("stage catalog for validation: %w", err)

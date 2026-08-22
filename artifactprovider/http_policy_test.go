@@ -105,7 +105,9 @@ func TestHTTPAuthorizationUsesCompleteValueAndNamesMissingVariable(t *testing.T)
 	}))
 	defer server.Close()
 	const env = "RCC_TEST_AUTH_MISSING"
-	os.Unsetenv(env)
+	if err := os.Unsetenv(env); err != nil {
+		t.Fatal(err)
+	}
 	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: env})
 	if err != nil {
 		t.Fatal(err)

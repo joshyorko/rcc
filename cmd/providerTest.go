@@ -31,8 +31,8 @@ func newProviderTestCommand(d providerCommandDependencies) *cobra.Command {
 		if jsonOut {
 			return writeProviderJSON(c.OutOrStdout(), r)
 		}
-		fmt.Fprintln(c.OutOrStdout(), "compatible")
-		return nil
+		_, err := fmt.Fprintln(c.OutOrStdout(), "compatible")
+		return err
 	}}
 	c.Flags().BoolVar(&jsonOut, "json", false, "Write JSON.")
 	return c
