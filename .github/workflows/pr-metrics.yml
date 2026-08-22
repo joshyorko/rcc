@@ -1,0 +1,21 @@
+name: PR metrics
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Emit PR metrics
+        run: node scripts/pr-metrics.mjs > pr-metrics.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr-metrics
+          path: pr-metrics.json
