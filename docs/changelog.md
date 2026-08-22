@@ -1,6 +1,8 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.0 (date: 22.08.2026)
+
 ### New Features
 
 - publish, acquire, and execute portable environment artifacts through the
