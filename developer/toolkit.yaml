@@ -49,6 +49,8 @@ devTasks:
     shell: python call_invoke.py selfHostProbe
   releaseCandidate:
     shell: python call_invoke.py releaseCandidate
+  holotreeBenchmark:
+    shell: python benchmarks/holotree.py
 
 environmentConfigs:
   - setup.yaml
