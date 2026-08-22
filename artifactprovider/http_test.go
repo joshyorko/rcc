@@ -176,9 +176,14 @@ func TestHTTPClientRejectsCorruptObjectAndManifestResponses(t *testing.T) {
 		t.Fatal(err)
 	}
 	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: digest, Size: 8}
-	if _, err := client.GetObject(context.Background(), descriptor); err == nil {
+	reader, err := client.GetObject(context.Background(), descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := io.ReadAll(reader); err == nil {
 		t.Fatal("HTTP client accepted corrupt object response")
 	}
+	_ = reader.Close()
 	if _, err := client.ResolveManifest(context.Background(), digest); err == nil {
 		t.Fatal("HTTP client accepted corrupt manifest response")
 	}

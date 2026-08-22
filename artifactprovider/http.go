@@ -3,8 +3,11 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"hash"
 	"io"
 	"net/http"
 	"os"
@@ -374,22 +377,76 @@ func (it *HTTP) GetObject(ctx context.Context, descriptor environmentartifact.De
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 	if err := providerResponseError(response); err != nil {
+		_ = response.Body.Close()
 		return nil, err
 	}
 	if response.Header.Get("Content-Type") != "application/octet-stream" {
+		_ = response.Body.Close()
 		return nil, fmt.Errorf("unexpected object response Content-Type %q", response.Header.Get("Content-Type"))
 	}
-	content, err := io.ReadAll(io.LimitReader(response.Body, descriptor.Size+1))
-	if err != nil {
-		return nil, err
+	if response.ContentLength >= 0 && response.ContentLength != descriptor.Size {
+		_ = response.Body.Close()
+		return nil, fmt.Errorf("verify HTTP object response: content length %d does not match descriptor size %d", response.ContentLength, descriptor.Size)
 	}
-	if err := environmentartifact.VerifyDescriptor(descriptor, content); err != nil {
-		return nil, fmt.Errorf("verify HTTP object response: %w", err)
-	}
-	return io.NopCloser(bytes.NewReader(content)), nil
+	return &verifiedObjectReader{
+		body:   response.Body,
+		hash:   sha256.New(),
+		digest: descriptor.Digest.Hex(),
+		size:   descriptor.Size,
+	}, nil
 }
+
+type verifiedObjectReader struct {
+	body     io.ReadCloser
+	hash     hash.Hash
+	digest   string
+	size     int64
+	read     int64
+	verified bool
+}
+
+func (it *verifiedObjectReader) Read(target []byte) (int, error) {
+	if it.verified {
+		return 0, io.EOF
+	}
+	if it.read == it.size {
+		return it.verify()
+	}
+	limit := it.size - it.read
+	if int64(len(target)) > limit {
+		target = target[:limit]
+	}
+	count, err := it.body.Read(target)
+	if count > 0 {
+		it.read += int64(count)
+		_, _ = it.hash.Write(target[:count])
+	}
+	if it.read > it.size {
+		return count, fmt.Errorf("verify HTTP object response: content exceeds descriptor size")
+	}
+	if err == io.EOF && it.read != it.size {
+		return count, fmt.Errorf("verify HTTP object response: content ended at %d bytes, expected %d", it.read, it.size)
+	}
+	if err == io.EOF {
+		_, verifyErr := it.verify()
+		return count, verifyErr
+	}
+	return count, err
+}
+
+func (it *verifiedObjectReader) verify() (int, error) {
+	if it.verified {
+		return 0, io.EOF
+	}
+	it.verified = true
+	if hex.EncodeToString(it.hash.Sum(nil)) != it.digest {
+		return 0, fmt.Errorf("verify HTTP object response: digest mismatch")
+	}
+	return 0, io.EOF
+}
+
+func (it *verifiedObjectReader) Close() error { return it.body.Close() }
 
 func (it *HTTP) CommitManifest(ctx context.Context, content []byte) error {
 	manifest, err := environmentartifact.DecodeManifest(content)
