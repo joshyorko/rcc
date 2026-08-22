@@ -3,6 +3,7 @@ package environmentartifact
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/joshyorko/rcc/htfs"
 )
@@ -142,8 +143,8 @@ func (it Manifest) Validate() error {
 	if it.MediaType != ManifestMediaType || it.SchemaVersion != SchemaVersionV1 {
 		return fmt.Errorf("unsupported manifest media type or schema version")
 	}
-	if it.Platform != (Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}) {
-		return fmt.Errorf("unsupported artifact platform: %+v", it.Platform)
+	if err := it.Platform.Validate(); err != nil {
+		return err
 	}
 	if it.Specification.MediaType != SpecificationMediaType || it.LegacyBlueprint.MediaType != LegacyBlueprintMediaType || it.ObjectIndex.MediaType != ObjectIndexMediaType {
 		return fmt.Errorf("unsupported manifest descriptor media type")
@@ -162,6 +163,9 @@ func (it Manifest) Validate() error {
 	}
 	if it.Catalogs[0].LegacyName != htfs.CatalogName(it.LegacyBlueprint.LegacyBlueprintKey) {
 		return fmt.Errorf("catalog legacy name does not match legacy blueprint key")
+	}
+	if !strings.HasSuffix(it.Catalogs[0].LegacyName, "v12."+it.Platform.RCCPlatform) {
+		return fmt.Errorf("catalog platform does not match manifest platform")
 	}
 	if it.Requirements.CatalogReader != "v12" || it.Requirements.Encoding != "gzip" || it.Requirements.LegacyLogicalDigestAlgorithm != "sha256" || len(it.Requirements.RequiredFeatures) != 0 {
 		return fmt.Errorf("unsupported manifest requirements")
