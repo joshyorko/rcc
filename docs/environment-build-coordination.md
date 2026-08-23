@@ -1,5 +1,10 @@
 # Environment build coordination and prewarming
 
+> **v18.19.0 status:** `buildcoord` is an internal experimental seam. RCC does
+> not expose a stable coordinator or prewarm CLI/JSON contract in v18.19.0.
+> Fleet execution, disk reservation, deployment readiness, and Actions
+> integration remain future additive work.
+
 RCC may coordinate cold builds, but coordination is an optimization and capacity
 control seam. The verified Environment Artifact remains the only authoritative
 result. Local RCC operation must continue to work without a coordinator or
@@ -101,4 +106,3 @@ owner-crash boundary, partial publication, stale publication after commit,
 provider/coordinator loss, nondeterministic output, and rolling-update prewarming
 under disk pressure. Tests use temporary worker/provider roots and fake
 clocks/providers; they do not require a shared writable Holotree or live network.
-

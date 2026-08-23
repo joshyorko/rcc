@@ -1,5 +1,10 @@
 # Environment Artifact trust
 
+> **v18.19.0 status:** `artifacttrust` is an offline internal seam. RCC does not
+> enforce signatures, provenance, SBOM, or revocation during `env acquire` or
+> `env exec` in v18.19.0, and it does not emit a stable verification-receipt
+> CLI contract. Those policies remain future additive work.
+
 `artifacttrust` is an offline verification boundary for Environment Artifact
 v1. Artifact identity remains the manifest digest; provenance, SBOMs, and
 signatures are detached attestations and cannot change it.
