@@ -143,6 +143,31 @@ func canonicalStrings(values map[string]struct{}) []string {
 	return result
 }
 
+func bundledEntryName(root, path string, entry os.DirEntry) (string, bool) {
+	if entry == nil {
+		return "", false
+	}
+	if entry.Type().IsRegular() {
+		return entry.Name(), true
+	}
+	if entry.Type()&os.ModeSymlink == 0 {
+		return "", false
+	}
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return "", false
+	}
+	relative, err := filepath.Rel(root, resolved)
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) || filepath.IsAbs(relative) {
+		return "", false
+	}
+	info, err := os.Stat(path)
+	if err != nil || !info.Mode().IsRegular() {
+		return "", false
+	}
+	return entry.Name(), true
+}
+
 func compatibilityCommand(name string, arguments ...string) (string, error) {
 	command := exec.Command(name, arguments...)
 	output, err := command.Output()

@@ -24,8 +24,8 @@ jobs:
   build:
     name: Build RCC
     runs-on: ubuntu-latest
-    # Build only for trusted version tag pushes.
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # Build the exact commit bytes consumed by native runtime jobs and releases.
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -63,6 +63,21 @@ jobs:
         with:
           name: RCC-Binaries
           path: rcc-builds/
+      - name: Prepare native runtime binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p native-runtime-binaries
+          cp rcc-builds/rcc-linux64 native-runtime-binaries/
+          cp rcc-builds/rcc-macos64 native-runtime-binaries/
+          cp rcc-builds/rcc-macosarm64 native-runtime-binaries/
+          cp rcc-builds/rcc-windows64.exe native-runtime-binaries/
+          (cd native-runtime-binaries && sha256sum * > SHA256SUMS)
+      - name: Upload native runtime binaries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-runtime-binaries
+          path: native-runtime-binaries/
 
   release-candidate:
     name: Release Candidate Verification
@@ -100,6 +115,7 @@ jobs:
   robot:
     name: Native Runtime (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
+    needs: build
     # Only run tests on push to main or PRs, not on release workflows
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     strategy:
@@ -108,15 +124,34 @@ jobs:
         include:
           - os: "ubuntu-latest"
             platform: linux-amd64
+            asset: rcc-linux64
+            binary: build/rcc
+            goos: linux
+            goarch: amd64
           - os: "macos-13"
             platform: macos-amd64
+            asset: rcc-macos64
+            binary: build/rcc
+            goos: darwin
+            goarch: amd64
           - os: "macos-latest"
             platform: macos-arm64
+            asset: rcc-macosarm64
+            binary: build/rcc
+            goos: darwin
+            goarch: arm64
           - os: "windows-latest"
             platform: windows-amd64
+            asset: rcc-windows64.exe
+            binary: build/rcc.exe
+            goos: windows
+            goarch: amd64
     env:
       RCC_NATIVE_PLATFORM: ${{ matrix.platform }}
-      RCC_NATIVE_STATUS: ${{ job.status }}
+      RCC_NATIVE_ASSET: ${{ matrix.asset }}
+      RCC_NATIVE_BINARY: ${{ matrix.binary }}
+      RCC_NATIVE_GOOS: ${{ matrix.goos }}
+      RCC_NATIVE_GOARCH: ${{ matrix.goarch }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -126,33 +161,68 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
+      - name: Download exact release-built RCC binary
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: native-runtime-binaries
+          path: native-runtime-binaries
+      - name: Stage and assert native RCC binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build tmp/output
+          python - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+
+          source = Path("native-runtime-binaries") / os.environ["RCC_NATIVE_ASSET"]
+          target = Path(os.environ["RCC_NATIVE_BINARY"])
+          expected = next(
+              line.split()[0]
+              for line in (Path("native-runtime-binaries") / "SHA256SUMS").read_text().splitlines()
+              if line.split(maxsplit=1)[1] == os.environ["RCC_NATIVE_ASSET"]
+          )
+          actual = hashlib.sha256(source.read_bytes()).hexdigest()
+          if actual != expected:
+              raise SystemExit(f"native RCC bytes differ: {actual} != {expected}")
+          import platform, subprocess
+          goos = {"Linux": "linux", "Darwin": "darwin", "Windows": "windows"}[platform.system()]
+          goarch = {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}[platform.machine()]
+          if (goos, goarch) != (os.environ["RCC_NATIVE_GOOS"], os.environ["RCC_NATIVE_GOARCH"]):
+              raise SystemExit(f"runner platform differs: {goos}/{goarch}")
+          if subprocess.check_output(["go", "env", "GOOS"], text=True).strip() != goos:
+              raise SystemExit("go env GOOS does not match runner")
+          if subprocess.check_output(["go", "env", "GOARCH"], text=True).strip() != goarch:
+              raise SystemExit("go env GOARCH does not match runner")
+          target.write_bytes(source.read_bytes())
+          if os.name != "nt":
+              target.chmod(0o755)
+          version = __import__("subprocess").check_output([str(target), "version"], text=True).strip()
+          expected_version = next(
+              line.split("`")[1]
+              for line in Path("common/version.go").read_text().splitlines()
+              if "Version = `" in line
+          )
+          if version != expected_version:
+              raise SystemExit(f"native RCC version differs: {version} != {expected_version}")
+          print(f"verified {target} {expected} {version}")
+          PY
+          echo "RCC_REAL_BINARY=$(python -c 'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())')" >> "$GITHUB_ENV"
+          echo "RCC_REAL_BINARY_SHA256=$(python -c 'import hashlib,os; print(hashlib.sha256(open(os.environ["RCC_NATIVE_BINARY"],"rb").read()).hexdigest())')" >> "$GITHUB_ENV"
+          echo "RCC_REAL_RECEIPT_FILE=$(python -c 'from pathlib import Path; print(Path("tmp/output/native-runtime-receipt.json").resolve())')" >> "$GITHUB_ENV"
       - name: Install invoke
         run: python -m pip install invoke==2.2.0
       - name: Setup Robot Environment
         run: inv robotsetup
       - name: Show commit info
         run: inv what
-      - name: Run Robot Framework Tests
-        run: inv robot
-      - name: Write native runtime receipt
-        if: success() || failure()
+      - name: Run real native A-to-B acceptance
         shell: bash
         run: |
-          python - <<'PY'
-          import json, os, platform, sys
-          from pathlib import Path
-          Path("tmp/output").mkdir(parents=True, exist_ok=True)
-          Path("tmp/output/native-runtime-receipt.json").write_text(json.dumps({
-              "platform": os.environ["RCC_NATIVE_PLATFORM"],
-              "runnerOs": platform.platform(),
-              "machine": platform.machine(),
-              "python": sys.version,
-              "status": os.environ["RCC_NATIVE_STATUS"],
-              "suite": "robot_tests/environment_artifacts.robot",
-              "evidenceDir": "tmp/output",
-              "lifecycle": ["build", "publish", "acquire", "verify", "materialize", "lease", "execute", "warm-reuse", "mismatch-rejection"],
-          }, indent=2) + "\n")
-          PY
+          set -euo pipefail
+          RCC_REAL_ARTIFACT_TEST=1 go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
+      - name: Run Robot Framework Tests against exact binary
+        run: python -m robot -L DEBUG -d tmp/output robot_tests
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:

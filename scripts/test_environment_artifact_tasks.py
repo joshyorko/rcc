@@ -60,6 +60,29 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("name: Native Runtime", workflow)
     self.assertIn("- robot", workflow)
 
+  def test_native_matrix_uses_exact_binary_and_test_produced_receipt(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
+    self.assertIn("needs: build", native_job)
+    self.assertIn("actions/download-artifact", native_job)
+    self.assertIn("RCC_REAL_BINARY", native_job)
+    self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
+    self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
+    self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
+    self.assertNotIn('"lifecycle": [', workflow)
+
+  def test_native_acceptance_fixture_exercises_sqlite_extension(self):
+    task = (ROOT / "robot_tests" / "environment_artifacts" / "task.py").read_text()
+    self.assertIn("import sqlite3", task)
+    self.assertIn("nativeImport", task)
+    self.assertIn("nativeExtension", task)
+    self.assertIn("sqliteVersion", task)
+
+  def test_real_vertical_receipt_is_evidence_backed(self):
+    source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
+    for marker in ("LeaseID", "ProviderObjectGets", "runRealMismatchCheck", "RCC_REAL_BINARY_SHA256", "sqlite3"):
+      self.assertIn(marker, source)
+
 
   def test_linux_only_tasks_fail_explicitly(self):
     previous = tasks.sys.platform
@@ -184,6 +207,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("TestRealCurrentRCCAtoBVertical", command)
     self.assertEqual(kwargs["env"]["RCC_REAL_ARTIFACT_TEST"], "1")
     self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
+    self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-amd64")
+    self.assertEqual(kwargs["env"]["RCC_REAL_RECEIPT_FILE"], str((ROOT / "tmp" / "native-runtime-receipt.json").resolve()))
 
   def test_release_workflow_gates_publication_on_contained_release_candidate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()

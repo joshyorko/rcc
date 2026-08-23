@@ -440,6 +440,8 @@ def artifactVertical(c):
     env.update({
         "RCC_REAL_ARTIFACT_TEST": "1",
         "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
+        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "native-runtime-receipt.json").resolve()),
     })
     c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=env)
 

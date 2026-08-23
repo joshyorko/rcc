@@ -118,6 +118,9 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${proof}[mambaOffline]    true
     Should Be Equal    ${proof}[pipNoIndex]    1
     Should Be Equal    ${proof}[uvNoIndex]    1
+    Should Be Equal    ${proof}[nativeImport]    sqlite3
+    Should Not Be Empty    ${proof}[nativeExtension]
+    Should Not Be Empty    ${proof}[sqliteVersion]
     Package Manager Caches Should Be Empty    ${B_HOME}
 
     ${stopped}=    Terminate Process    environment-provider
