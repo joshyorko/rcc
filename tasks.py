@@ -2,6 +2,7 @@ import os
 import json
 import hashlib
 import shutil
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -85,6 +86,11 @@ def _promote_self_host_generation(source, candidate):
 
 def _run_checked(argv, env=None):
     subprocess.run([str(part) for part in argv], check=True, env=env)
+
+
+def _invoke_command(task_name):
+    executable = subprocess.list2cmdline([sys.executable]) if sys.platform == "win32" else shlex.quote(sys.executable)
+    return f"{executable} -m invoke {task_name}"
 
 
 def _contained_go_env():
@@ -561,10 +567,10 @@ def releaseCandidate(c):
         "artifactRobot",
         "binaryInventory",
     ):
-        c.run(f"{PYTHON} -m invoke {task_name}")
-    c.run(f"{PYTHON} -m invoke robot")
-    c.run(f"{PYTHON} -m invoke selfHost")
-    c.run(f"{PYTHON} -m invoke goVet")
+        c.run(_invoke_command(task_name))
+    c.run(_invoke_command("robot"))
+    c.run(_invoke_command("selfHost"))
+    c.run(_invoke_command("goVet"))
 
 
 def version() -> str:
