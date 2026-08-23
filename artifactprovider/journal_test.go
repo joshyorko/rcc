@@ -3,6 +3,7 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"errors"
 	"io"
 	"os"
@@ -54,6 +55,18 @@ func TestJournalRecoversTornFinalRecord(t *testing.T) {
 	path := t.TempDir() + "/provider.log"
 	if err := os.WriteFile(path, []byte("{\"Kind\":\"object\"}\n{\"Kind\":\"object\""), 0600); err != nil { t.Fatal(err) }
 	if _, err := NewJournal(path); err != nil { t.Fatalf("torn final record should be discarded: %v", err) }
+}
+
+func TestJournalStreamsObjectsToSidecar(t *testing.T) {
+	path := t.TempDir() + "/provider.log"
+	content := bytes.Repeat([]byte("x"), 64*1024)
+	j, err := NewJournal(path)
+	if err != nil { t.Fatal(err) }
+	if err := j.PutObject(context.Background(), testBlob(content)); err != nil { t.Fatal(err) }
+	logBytes, err := os.ReadFile(path)
+	if err != nil { t.Fatal(err) }
+	if bytes.Contains(logBytes, []byte(base64.StdEncoding.EncodeToString(content))) { t.Fatal("journal embedded object payload") }
+	if _, err := os.Stat(path + ".objects/" + testBlob(content).Descriptor.Digest.Hex()); err != nil { t.Fatal(err) }
 }
 
 func TestPolicyTypedQuotaAndRateErrors(t *testing.T) {
