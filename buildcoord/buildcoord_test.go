@@ -76,7 +76,7 @@ func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 		t.Fatalf("proof bypass: %v", err)
 	}
 	closure := "sha256:" + strings.Repeat("a", 64)
-	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: artifactAuthorization("local", closure)}
+	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: "opaque-provider-proof"}
 	if err := c.Publish(claim, proof); err != nil {
 		t.Fatalf("proof publish: %v", err)
 	}

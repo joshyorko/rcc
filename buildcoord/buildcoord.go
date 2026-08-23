@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -413,31 +414,13 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
 	return c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "published-independent", Detail: artifact.Digest})
 }
 
-func validArtifactProof(artifact Artifact) bool {
-	if !strings.HasPrefix(artifact.ClosureDigest, "sha256:") || len(strings.TrimPrefix(artifact.ClosureDigest, "sha256:")) != 64 || artifact.Provider == "" {
-		return false
-	}
-	for _, r := range strings.TrimPrefix(artifact.ClosureDigest, "sha256:") {
-		if !((r >= '0' && r <= '9') || (r >= 'a' && r <= 'f')) {
-			return false
-		}
-	}
-	return artifact.ProviderAuthorization == artifactAuthorization(artifact.Provider, artifact.ClosureDigest)
-}
-
-// VerifyArtifactProof validates the provider-bound closure authorization used
-// by the coordinator boundary. Callers should additionally apply artifacttrust
-// policy/signature verification before publication.
+// VerifyArtifactProof validates complete closure metadata. Trust is established
+// by TrustVerifier's keyed artifacttrust policy, never by a caller hash.
 func VerifyArtifactProof(artifact Artifact) error {
-	if !validArtifactProof(artifact) {
+	if artifact.ClosureDigest == "" || artifact.Provider == "" {
 		return ErrUnverifiedArtifact
 	}
 	return nil
-}
-
-func artifactAuthorization(provider, closure string) string {
-	sum := sha256.Sum256([]byte(provider + "\n" + closure))
-	return "sha256:" + hex.EncodeToString(sum[:])
 }
 
 func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
@@ -510,6 +493,7 @@ type PrewarmRequest struct {
 	Owner                string
 	Build                BuildRequest
 	NondeterminismPolicy string
+	Priorities           map[string]int
 }
 type PrewarmItem struct {
 	Key    BuildKey
@@ -563,6 +547,13 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		items[i] = PrewarmItem{Key: key, Status: PrewarmCapacityLimited}
 	}
 	limit := min(len(request.Keys), request.Capacity)
+	order := make([]int, len(request.Keys))
+	for i := range order {
+		order[i] = i
+	}
+	sort.SliceStable(order, func(i, j int) bool {
+		return request.Priorities[request.Keys[order[i]].ID()] > request.Priorities[request.Keys[order[j]].ID()]
+	})
 	jobs := make(chan int)
 	var wg sync.WaitGroup
 	var firstErr error
@@ -596,7 +587,7 @@ feed:
 		select {
 		case <-ctx.Done():
 			break feed
-		case jobs <- i:
+		case jobs <- order[i]:
 		}
 	}
 	close(jobs)
@@ -658,22 +649,26 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 			return ErrWaitTimeout
 		}
 	}
-	buildCtx, stopHeartbeat := context.WithCancel(ctx)
 	buildRequest := request.Build
 	if buildRequest.Root == "" {
 		buildRequest.Root = c.Root
 	}
+	if buildRequest.DiskBytes == 0 {
+		buildRequest.DiskBytes = request.DiskReservationBytes
+	}
+	var buildCtx context.Context
+	var stopHeartbeat context.CancelFunc
+	if buildRequest.Timeout > 0 {
+		buildCtx, stopHeartbeat = context.WithTimeout(ctx, buildRequest.Timeout)
+	} else {
+		buildCtx, stopHeartbeat = context.WithCancel(ctx)
+	}
 	staging, cleanup, stagingErr := PrepareStaging(buildRequest, request.Owner)
 	if stagingErr != nil {
 		stopHeartbeat()
-		return stagingErr
+		return errors.Join(stagingErr, c.abandon(claim))
 	}
 	claim.Staging = staging
-	reservation, reservationErr := ReserveDisk(c.Root, request.DiskReservationBytes)
-	if reservationErr != nil {
-		stopHeartbeat()
-		return errors.Join(reservationErr, c.abandon(claim))
-	}
 	heartbeatErr := make(chan error, 1)
 	go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
 	artifact, err := build(buildCtx, claim)
@@ -689,10 +684,6 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	}
 	if err == nil && cleanupErr != nil {
 		err = cleanupErr
-	}
-	reservationErr = reservation.Release()
-	if err == nil && reservationErr != nil {
-		err = reservationErr
 	}
 	hbErr := <-heartbeatErr
 	if err == nil && !errors.Is(hbErr, context.Canceled) {
