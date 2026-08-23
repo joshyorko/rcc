@@ -247,6 +247,84 @@ func TestRawSignatureAndRevocationInputsRequireStrictCanonicalJSON(t *testing.T)
 	}
 }
 
+func TestEnvironmentPublishTrustInputsUseStrictCanonicalJSON(t *testing.T) {
+	provenance := artifacttrust.Provenance{
+		MediaType: artifacttrust.ProvenanceMediaType, ArtifactDigest: "sha256:a", SpecificationDigest: "sha256:s",
+		Platform: "linux/amd64", Builder: "builder", RCCVersion: "v1", CreatedAt: "1970-01-01T00:00:00Z",
+	}
+	provenanceBytes, err := artifacttrust.CanonicalProvenance(provenance)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sbom := artifacttrust.SBOM{MediaType: artifacttrust.SBOMMediaType, ArtifactDigest: "sha256:a", Components: []artifacttrust.Component{}}
+	sbomBytes, err := artifacttrust.CanonicalSBOM(sbom)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, test := range []struct {
+		name string
+		data []byte
+		read func(string) error
+	}{
+		{name: "provenance unknown", data: addTrustUnknownField(provenanceBytes), read: func(path string) error { _, err := readTrustJSON[artifacttrust.Provenance](path); return err }},
+		{name: "provenance trailing", data: append(append([]byte(nil), provenanceBytes...), []byte("\nnull")...), read: func(path string) error { _, err := readTrustJSON[artifacttrust.Provenance](path); return err }},
+		{name: "SBOM unknown", data: addTrustUnknownField(sbomBytes), read: func(path string) error { _, err := readTrustJSON[artifacttrust.SBOM](path); return err }},
+		{name: "SBOM noncanonical", data: prettyTrustJSON(sbomBytes), read: func(path string) error { _, err := readTrustJSON[artifacttrust.SBOM](path); return err }},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "trust.json")
+			if err := os.WriteFile(path, test.data, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if err := test.read(path); err == nil {
+				t.Fatal("malformed trust input accepted")
+			}
+		})
+	}
+}
+
+func TestEnvironmentTrustVerifyUsesStrictCanonicalProvenanceAndSBOMDecoding(t *testing.T) {
+	provenance := []byte(`{"mediaType":"application/vnd.rcc.environment.provenance.v1+json","artifactDigest":"sha256:a","unexpected":"value"}`)
+	sbom := []byte(`{"mediaType":"application/vnd.rcc.environment.sbom.spdx+json","artifactDigest":"sha256:a","components":[],"unexpected":"value"}`)
+	for _, test := range []struct {
+		name, flag string
+		data       []byte
+	}{
+		{name: "provenance unknown", flag: "--provenance", data: provenance},
+		{name: "provenance trailing", flag: "--provenance", data: append(append([]byte(nil), provenance[:len(provenance)-1]...), []byte("}\nnull")...)},
+		{name: "SBOM unknown", flag: "--sbom", data: sbom},
+		{name: "SBOM noncanonical", flag: "--sbom", data: []byte("{\n  \"artifactDigest\": \"sha256:a\",\n  \"mediaType\": \"application/vnd.rcc.environment.sbom.spdx+json\",\n  \"components\": []\n}")},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "trust.json")
+			if err := os.WriteFile(path, test.data, 0600); err != nil {
+				t.Fatal(err)
+			}
+			command := newEnvironmentTrustCommand()
+			if err := runCobraCommand(command, []string{"verify", "--artifact", "sha256:a", test.flag, path, "--permissive-local", "--json"}); err == nil {
+				t.Fatal("malformed trust input accepted")
+			}
+		})
+	}
+}
+
+func addTrustUnknownField(data []byte) []byte {
+	trimmed := strings.TrimSuffix(string(data), "}")
+	return []byte(trimmed + `,"unexpected":"value"}`)
+}
+
+func prettyTrustJSON(data []byte) []byte {
+	var value any
+	if err := json.Unmarshal(data, &value); err != nil {
+		return data
+	}
+	pretty, err := json.MarshalIndent(value, "", "  ")
+	if err != nil {
+		return data
+	}
+	return pretty
+}
+
 func TestEnvironmentRejectsNoncanonicalDigestBeforeLifecycleOrProvider(t *testing.T) {
 	called := false
 	dependencies := environmentCommandDependencies{

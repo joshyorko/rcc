@@ -40,7 +40,7 @@ func newEnvironmentTrustCommand() *cobra.Command {
 			if e != nil {
 				return e
 			}
-			return json.Unmarshal(b, v)
+			return decodeStrictTrustJSON(b, v)
 		}
 		var prov artifacttrust.Provenance
 		if err := read(provenanceFile, &prov); err != nil {
