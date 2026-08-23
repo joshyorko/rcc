@@ -136,8 +136,9 @@ jobs:
     needs:
       - build
       - release-candidate
+      - robot
     # Only run this job on tag pushes (e.g., refs/tags/v18.5.0)
-    # Robot tests run on push to main, so code is already validated before release
+    # Publication waits for the tag's native Robot matrix as well as the contained candidate gate.
     # Grant only the permissions needed to publish a release
     permissions:
       contents: write

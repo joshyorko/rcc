@@ -62,6 +62,11 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
 
+    def test_repository_release_waits_for_native_robot_matrix(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        release_job = workflow.split("\n  release:\n", 1)[1]
+        self.assertRegex(release_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
+
     def test_release_job_validates_downloaded_assets_without_build_tree(self):
         root, workflow, index = self.fixture()
         assets = root / "rcc-builds"
