@@ -5,7 +5,6 @@ import (
 
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/joshyorko/rcc/environmentlifecycle"
-	"github.com/joshyorko/rcc/buildcoord"
 	"github.com/spf13/cobra"
 )
 

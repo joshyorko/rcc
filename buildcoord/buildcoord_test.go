@@ -39,7 +39,7 @@ func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
 
 func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
 	if _,_,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Credentials:true},"owner");err==nil{t.Fatal("credentials accepted")}
-	d,cleanup,err:=PrepareStaging(BuildRequest{Root:t.TempDir()},"owner");if err!=nil{t.Fatal(err)};if err:=cleanup();err!=nil{t.Fatal(err)};_ = d
+	d,cleanup,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Network:true},"owner");if err!=nil{t.Fatal(err)};if err:=cleanup();err!=nil{t.Fatal(err)}; _ = d
 }
 
 func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {

@@ -52,13 +52,16 @@ func (k BuildKey) validate() error {
 type Artifact struct {
 	Digest   string `json:"digest"`
 	Verified bool   `json:"verified"`
+	Source string `json:"source,omitempty"`
+	Nondeterministic bool `json:"nondeterministic,omitempty"`
 }
+type Event struct { Time time.Time `json:"time"`; Key string `json:"key"`; Owner string `json:"owner,omitempty"`; Epoch uint64 `json:"epoch,omitempty"`; Event string `json:"event"`; Detail string `json:"detail,omitempty"` }
 
 type BuildRequest struct { Root string; DiskBytes int64; Network bool; Credentials bool }
 // PrepareStaging creates an owner-private staging directory and refuses
 // credential-bearing builds unless explicitly enabled by the caller.
 func PrepareStaging(req BuildRequest, owner string) (string, func() error, error) {
-	if req.Root==""||owner==""{return "",nil,fmt.Errorf("staging root and owner are required")}; if req.DiskBytes<0{return "",nil,fmt.Errorf("disk reservation cannot be negative")}; if req.Credentials{return "",nil,fmt.Errorf("production credentials are not permitted in build staging")}; d,err:=os.MkdirTemp(req.Root,"rcc-build-"+owner+"-");if err!=nil{return "",nil,err};return d,func()error{return os.RemoveAll(d)},nil
+	if req.Root==""||owner==""{return "",nil,fmt.Errorf("staging root and owner are required")}; if req.DiskBytes<0{return "",nil,fmt.Errorf("disk reservation cannot be negative")}; if req.Credentials{return "",nil,fmt.Errorf("production credentials are not permitted in build staging")}; if !req.Network{return "",nil,fmt.Errorf("network access is disabled by build policy")}; d,err:=os.MkdirTemp(req.Root,"rcc-build-"+owner+"-");if err!=nil{return "",nil,err};if req.DiskBytes>0{f,e:=os.OpenFile(filepath.Join(d,".disk-reservation"),os.O_CREATE|os.O_WRONLY,0600);if e!=nil{os.RemoveAll(d);return "",nil,e};e=f.Truncate(req.DiskBytes);f.Close();if e!=nil{os.RemoveAll(d);return "",nil,fmt.Errorf("reserve staging disk: %w",e)}};return d,func()error{return os.RemoveAll(d)},nil
 }
 type Claim struct {
 	Key       BuildKey  `json:"key"`
@@ -127,6 +130,7 @@ func (c *Filesystem) ClaimContext(ctx context.Context, key BuildKey, owner strin
 	if err := c.writeJSON(c.claimPath(key), claim); err != nil {
 		return Claim{}, "", err
 	}
+	_ = c.event(Event{Time:c.Clock.Now(),Key:key.ID(),Owner:owner,Epoch:epoch,Event:"claimed"})
 	return claim, Claimed, nil
 }
 
@@ -151,6 +155,7 @@ func (c *Filesystem) Heartbeat(claim Claim, ttl time.Duration) (err error) {
 		return ErrStaleClaim
 	}
 	current.ExpiresAt = c.Clock.Now().Add(ttl)
+	_ = c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"heartbeat"})
 	return c.writeJSON(c.claimPath(claim.Key), current)
 }
 
@@ -185,10 +190,13 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	if err := c.writeJSON(c.artifactPath(claim.Key), artifact); err != nil {
 		return err
 	}
+	_ = c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"published",Detail:artifact.Digest})
 	return os.Remove(c.claimPath(claim.Key))
 }
 
 func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
+func (c *Filesystem) Events(key BuildKey) ([]Event,error) { b,err:=os.ReadFile(filepath.Join(c.dir(key),"events.jsonl"));if os.IsNotExist(err){return nil,nil};if err!=nil{return nil,err};var out []Event;for _,line:=range strings.Split(strings.TrimSpace(string(b)),"\n"){if line==""{continue};var e Event;if err:=json.Unmarshal([]byte(line),&e);err!=nil{return nil,err};out=append(out,e)};return out,nil }
+func (c *Filesystem) event(e Event) error { b,_:=json.Marshal(e);f,err:=os.OpenFile(filepath.Join(c.Root,e.Key,"events.jsonl"),os.O_CREATE|os.O_APPEND|os.O_WRONLY,0600);if err!=nil{return err};defer f.Close();_,err=f.Write(append(b,'\n'));return err }
 
 type PrewarmRequest struct {
 	Keys     []BuildKey
