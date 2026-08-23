@@ -528,6 +528,7 @@ def selfHost(c):
     (home_b / "artifacts" / "v1" / "metadata.json").write_text('{"schemaVersion":1}\n')
     invoke(released, home_b, "selfHostProbe")
     v12_evidence = []
+    artifact_evidence = []
     def v12(binary, home, label):
         env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
         argv = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
@@ -545,8 +546,25 @@ def selfHost(c):
     v12(released, home_a, "released-v12")
     v12(str(generation_b), home_a, "candidate-v12")
     v12(released, home_b, "released-v12-compatibility")
+    n1_archive = os.environ.get("RCC_N1_ARCHIVE")
+    if n1_archive:
+        archive = Path(n1_archive).resolve()
+        if not archive.is_file():
+            raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        for binary, home, label in (
+            (released, home_a, "released-archive-upgrade"),
+            (str(generation_b), home_b, "candidate-archive-upgrade"),
+            (released, home_b, "released-archive-rollback"),
+        ):
+            env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
+            command = [binary, "env", "acquire", "--archive", str(archive), "--json"]
+            completed = subprocess.run(command, check=True, env=env, capture_output=True, text=True)
+            receipt_path = root / f"{label}.json"
+            receipt_path.write_text(completed.stdout)
+            artifact_evidence.append(receipt_path)
+            commands.append({"step": label, "argv": command, "env": {"ROBOCORP_HOME": str(home)}, "evidencePath": str(receipt_path)})
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
-                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence]
+                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence, *artifact_evidence]
     receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
                                        home_a=home_a, home_b=home_b, commands=commands,
                                        binary_metadata={"released": released_info, "candidate": candidate_info,

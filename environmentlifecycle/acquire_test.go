@@ -423,3 +423,52 @@ func TestImportArchiveRollsBackStagedObjectsAfterInjectedFailure(t *testing.T) {
 	}
 	_ = fixture
 }
+
+func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
+	fixture := newPublishFixture(t)
+	inventory, err := environmentartifact.InventoryV12(environmentartifact.InventoryInput{CatalogPath: fixture.build.CatalogPath, LegacyBlueprint: fixture.build.LegacyBlueprint, ExpectedPlatform: fixture.build.Platform.RCCPlatform})
+	if err != nil {
+		t.Fatal(err)
+	}
+	specificationBytes, err := semanticSpecificationBytes(fixture.build.SourceKind, fixture.build.LegacyBlueprint, fixture.build.Platform, fixture.build.Builder)
+	if err != nil {
+		t.Fatal(err)
+	}
+	specification := environmentartifact.Specification{Descriptor: descriptor(environmentartifact.SpecificationMediaType, specificationBytes), SourceKind: fixture.build.SourceKind, Platform: fixture.build.Platform, Builder: fixture.build.Builder}
+	legacyBlueprint := environmentartifact.LegacyBlueprint{Descriptor: inventory.LegacyBlueprint, LegacyBlueprintKey: inventory.LegacyBlueprintKey}
+	input := environmentartifact.LegacyV12Input{Specification: specification, SpecificationBytes: specificationBytes, LegacyBlueprint: legacyBlueprint, LegacyBlueprintBytes: fixture.build.LegacyBlueprint, Catalog: inventory.Catalog, CatalogBytes: fixture.catalogBytes, Index: inventory.Index, IndexBytes: inventory.IndexBytes, Platform: fixture.build.Platform, Builder: fixture.build.Builder}
+	input.Objects = make(map[environmentartifact.Digest][]byte, len(inventory.Objects))
+	for digest, path := range inventory.Objects {
+		content, readErr := os.ReadFile(path)
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		input.Objects[digest] = content
+	}
+	manifest, _, entries, err := environmentartifact.WrapLegacyV12(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	if err := environmentartifact.WriteArchive(&archive, entries); err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(t.TempDir(), "legacy.rcca")
+	if err := os.WriteFile(archivePath, archive.Bytes(), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	common.Product.ForceHome(t.TempDir())
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath})
+	if err != nil || imported.ArtifactDigest != manifest.ArtifactDigest {
+		t.Fatalf("legacy import = %s, %v", imported.ArtifactDigest, err)
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: imported.ArtifactDigest})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ArtifactDigest != manifest.ArtifactDigest || result.Path == "" {
+		t.Fatalf("legacy execution materialization = %+v", result)
+	}
+}
