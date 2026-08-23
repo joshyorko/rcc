@@ -180,7 +180,7 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	p.bytes += b.Descriptor.Size
 	if err := p.persistLocked(); err != nil {
 		p.reconcileLocked()
-		return &MutationError{Operation: "put-object", Committed: true, Err: err}
+		return &MutationError{Operation: "put-object", Committed: true, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: err}
 	}
 	return nil
 }
@@ -201,7 +201,7 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 	p.manifests++
 	if err := p.persistLocked(); err != nil {
 		p.reconcileLocked()
-		return &MutationError{Operation: "commit-manifest", Committed: true, Err: err}
+		return &MutationError{Operation: "commit-manifest", Committed: true, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: err}
 	}
 	return nil
 }
@@ -219,7 +219,7 @@ func (p *Policy) Health(ctx context.Context) (Health, error) {
 		}
 		return h, nil
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Quota: "managed", GC: "idle"}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Quota: "managed", GC: "idle", Process: "local", Audit: "append-only"}, nil
 }
 func (p *Policy) allow() error {
 	p.mu.Lock()

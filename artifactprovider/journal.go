@@ -40,6 +40,9 @@ type journalRecord struct {
 	Size                             int64
 	At                               int64
 	Txn                              string `json:"txn,omitempty"`
+	Actor                            string `json:"actor,omitempty"`
+	Provider                         string `json:"provider,omitempty"`
+	Reference                        string `json:"reference,omitempty"`
 }
 
 var journalAppendHook func(journalRecord) error
@@ -197,8 +200,9 @@ func (j *Journal) Capabilities(context.Context) (Capabilities, error) {
 	return Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, MaxObjectBytes: maxProviderObjectBytes, MaxManifestBytes: maxManifestBytes, MaxRequestBytes: maxProviderJSONBytes, SafeRestart: true}, nil
 }
 func (j *Journal) Health(ctx context.Context) (Health, error) {
+	started := time.Now()
 	if e := ctx.Err(); e != nil {
-		return Health{}, e
+		return Health{Ready: false, Error: e.Error(), LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, e
 	}
 	j.mu.RLock()
 	defer j.mu.RUnlock()
@@ -206,7 +210,7 @@ func (j *Journal) Health(ctx context.Context) (Health, error) {
 	for _, r := range j.objects {
 		n += r.size
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle", Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle", Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
 }
 func (j *Journal) MissingObjects(ctx context.Context, ds []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
 	j.mu.RLock()
@@ -372,6 +376,15 @@ func (j *Journal) ResolveManifest(ctx context.Context, d environmentartifact.Dig
 	return append([]byte(nil), b...), nil
 }
 func (j *Journal) append(r journalRecord) error {
+	if r.Actor == "" {
+		r.Actor = "rcc"
+	}
+	if r.Provider == "" {
+		r.Provider = "artifactprovider/journal"
+	}
+	if r.Reference == "" {
+		r.Reference = j.path
+	}
 	if journalAppendHook != nil {
 		if err := journalAppendHook(r); err != nil {
 			return err
@@ -402,6 +415,15 @@ func (j *Journal) appendBatch(records []journalRecord) error {
 	}
 	defer f.Close()
 	for _, record := range records {
+		if record.Actor == "" {
+			record.Actor = "rcc"
+		}
+		if record.Provider == "" {
+			record.Provider = "artifactprovider/journal"
+		}
+		if record.Reference == "" {
+			record.Reference = j.path
+		}
 		if journalAppendHook != nil {
 			if err := journalAppendHook(record); err != nil {
 				return err

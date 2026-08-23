@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -145,13 +146,14 @@ func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
 }
 
 func (it *Filesystem) Health(ctx context.Context) (Health, error) {
+	started := time.Now()
 	if err := ctx.Err(); err != nil {
-		return Health{}, err
+		return Health{Ready: false, Error: err.Error(), LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, err
 	}
 	if _, err := os.Stat(it.root); err != nil {
-		return Health{Storage: "unavailable", Ready: false}, fmt.Errorf("%w: storage: %v", ErrNotReady, err)
+		return Health{Storage: "unavailable", Ready: false, Error: "storage unavailable", LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, fmt.Errorf("%w: storage: %v", ErrNotReady, err)
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle"}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle", LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
 }
 
 func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmentartifact.Digest) (io.ReadCloser, int64, error) {

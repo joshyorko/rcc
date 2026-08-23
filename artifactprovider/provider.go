@@ -35,6 +35,9 @@ type ProtocolCapabilities struct {
 	Extensions      []string     `json:"extensions,omitempty"`
 	AuthRequired    bool         `json:"authRequired,omitempty"`
 	RestartOutcome  string       `json:"restartOutcome,omitempty"`
+	TransferOutcome string       `json:"transferOutcome,omitempty"`
+	AuthScheme      string       `json:"authScheme,omitempty"`
+	AuthChallenge   string       `json:"authChallenge,omitempty"`
 	RetentionPolicy string       `json:"retentionPolicy,omitempty"`
 	Immutability    string       `json:"immutability,omitempty"`
 	Capabilities    Capabilities `json:"capabilities"`
@@ -43,6 +46,9 @@ type ProtocolCapabilities struct {
 type MutationError struct {
 	Operation string
 	Committed bool
+	Objects   int64
+	Manifests int64
+	Bytes     int64
 	Err       error
 }
 
@@ -69,6 +75,10 @@ type Health struct {
 	Objects    int64  `json:"objects"`
 	Manifests  int64  `json:"manifests"`
 	Bytes      int64  `json:"bytes"`
+	LatencyMS  int64  `json:"latencyMs,omitempty"`
+	Process    string `json:"process,omitempty"`
+	Audit      string `json:"audit,omitempty"`
+	Error      string `json:"error,omitempty"`
 }
 
 type HealthProvider interface {

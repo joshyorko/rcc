@@ -199,8 +199,19 @@ func cloneTLS(config *tls.Config) *tls.Config {
 	return config.Clone()
 }
 
+type HandlerOptions struct{ RequestTimeout time.Duration }
+
 func NewHandler(provider Provider) http.Handler {
+	return NewHandlerWithOptions(provider, HandlerOptions{})
+}
+
+func NewHandlerWithOptions(provider Provider, options HandlerOptions) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if options.RequestTimeout > 0 {
+			ctx, cancel := context.WithTimeout(request.Context(), options.RequestTimeout)
+			defer cancel()
+			request = request.Clone(ctx)
+		}
 		if provider == nil || request.URL.RawPath != "" || request.URL.RawQuery != "" {
 			http.Error(writer, "invalid provider request", http.StatusBadRequest)
 			return
@@ -253,7 +264,11 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 				restart = "safe"
 			}
 		}
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}, AuthRequired: false, RestartOutcome: restart, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
+		transfer := "full-restart-only"
+		if err == nil && (caps.RangeSupport || caps.ResumeSupport) {
+			transfer = "resumable"
+		}
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -620,7 +635,7 @@ func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || result.AuthRequired || result.RestartOutcome != "safe" || result.Immutability != "content-addressed") {
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || (result.AuthRequired && result.AuthChallenge == "") || result.RestartOutcome != "safe" || result.Immutability != "content-addressed" || result.TransferOutcome != "full-restart-only") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}
 	if err == nil {
