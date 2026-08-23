@@ -35,6 +35,8 @@ type ProtocolCapabilities struct {
 	Extensions      []string     `json:"extensions,omitempty"`
 	AuthRequired    bool         `json:"authRequired,omitempty"`
 	RestartOutcome  string       `json:"restartOutcome,omitempty"`
+	RetentionPolicy string       `json:"retentionPolicy,omitempty"`
+	Immutability    string       `json:"immutability,omitempty"`
 	Capabilities    Capabilities `json:"capabilities"`
 }
 

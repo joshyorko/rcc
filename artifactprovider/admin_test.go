@@ -198,6 +198,65 @@ func TestProviderBackupRestoreRestartGCParity(t *testing.T) {
 	}
 }
 
+func TestHTTPJournalProviderFullParity(t *testing.T) {
+	first, err := NewJournal(t.TempDir() + "/first.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(first))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixture := newProviderFixture(t)
+	for _, blob := range fixture.blobs {
+		raw, _ := io.ReadAll(blob.Reader)
+		if err := client.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader(raw)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := client.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	backup, err := server.Client().Get(server.URL + "/v1/admin/backup")
+	if err != nil {
+		t.Fatal(err)
+	}
+	payload, err := io.ReadAll(backup.Body)
+	backup.Body.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := NewJournal(t.TempDir() + "/second.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	restoreServer := httptest.NewServer(NewHandler(second))
+	defer restoreServer.Close()
+	req, _ := http.NewRequest(http.MethodPost, restoreServer.URL+"/v1/admin/restore", bytes.NewReader(payload))
+	req.Header.Set("Content-Type", "application/x-tar")
+	req.ContentLength = int64(len(payload))
+	resp, err := restoreServer.Client().Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		t.Fatalf("restore status=%d", resp.StatusCode)
+	}
+	client2, err := NewHTTP(restoreServer.URL, restoreServer.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client2.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := second.Health(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestInterruptedUploadsLeaveNoProvisionalFilesAndCanRestart(t *testing.T) {
 	for _, tc := range []struct {
 		name string

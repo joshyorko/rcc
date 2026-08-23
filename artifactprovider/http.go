@@ -253,7 +253,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 				restart = "safe"
 			}
 		}
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"admin", "backup", "restore"}, AuthRequired: false, RestartOutcome: restart, Capabilities: caps}, err)
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}, AuthRequired: false, RestartOutcome: restart, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -265,7 +265,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		}
 		var input missingRequest
 		if err := decodeBoundedJSON(request.Body, request.ContentLength, maxProviderJSONBytes, &input); err != nil {
-			http.Error(writer, err.Error(), http.StatusBadRequest)
+			writeProviderFailure(writer, http.StatusBadRequest)
 			return
 		}
 		if len(input.Descriptors) > 4096 {
@@ -318,7 +318,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			KeepManifests int   `json:"keepManifests"`
 		}
 		if err := decodeBoundedJSON(request.Body, request.ContentLength, maxProviderJSONBytes, &input); err != nil {
-			http.Error(writer, err.Error(), http.StatusBadRequest)
+			writeProviderFailure(writer, http.StatusBadRequest)
 			return
 		}
 		report, err := admin.GarbageCollect(ctx, Retention{MaxAge: time.Duration(input.MaxAgeSeconds) * time.Second, KeepManifests: input.KeepManifests})
@@ -448,7 +448,7 @@ func handleManifestRequest(provider Provider, writer http.ResponseWriter, reques
 		}
 		content, err := readExactBody(request.Body, request.ContentLength, maxManifestBytes)
 		if err != nil {
-			http.Error(writer, err.Error(), http.StatusBadRequest)
+			writeProviderFailure(writer, http.StatusBadRequest)
 			return
 		}
 		manifest, err := environmentartifact.DecodeManifest(content)
@@ -620,7 +620,7 @@ func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || result.AuthRequired || result.RestartOutcome != "safe") {
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || result.AuthRequired || result.RestartOutcome != "safe" || result.Immutability != "content-addressed") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}
 	if err == nil {
