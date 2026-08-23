@@ -4,7 +4,20 @@ import (
 	"crypto/ed25519"
 	"testing"
 	"time"
+	"os"
+	"path/filepath"
 )
+
+func TestFilesystemAndOfflineCarriersBindSameArtifact(t *testing.T) {
+	root:=t.TempDir(); c:=NewFilesystemCarrier(root); data:=[]byte(`{"mediaType":"application/vnd.rcc.environment.provenance.v1+json","artifactDigest":"sha256:a"}`)
+	if err:=PutAttachment(c,"sha256:a","provenance",data); err!=nil {t.Fatal(err)}
+	archive:=filepath.Join(root,"carrier.zip"); if err:=ExportArchive(c,archive,"sha256:a",[]string{"provenance"}); err!=nil {t.Fatal(err)}
+	off,err:=OpenArchiveCarrier(archive); if err!=nil {t.Fatal(err)}; got,err:=GetAttachment(off,"sha256:a","provenance"); if err!=nil || string(got)!=string(data){t.Fatalf("offline=%s err=%v",got,err)}
+}
+
+func TestReceiptStoreDoesNotPersistSecrets(t *testing.T) {
+	root:=t.TempDir(); store:=NewReceiptStore(root); r:=VerificationReceipt{Valid:true,Code:CodeValid,ArtifactDigest:"sha256:a",Diagnostic:"safe"}; if err:=store.Put(r);err!=nil{t.Fatal(err)}; b,err:=os.ReadFile(filepath.Join(root,"sha256_a.json"));if err!=nil{t.Fatal(err)};if string(b)==""||string(b)=="secret"{t.Fatal("unsafe receipt")}
+}
 
 func TestProvenanceAndSBOMBindToArtifact(t *testing.T) {
 	p := Provenance{ArtifactDigest: "sha256:a", SpecificationDigest: "sha256:s", Platform: "linux/amd64", Builder: "b", RCCVersion: "v1", CreatedAt: FreshTimestamp(time.Unix(1, 0))}

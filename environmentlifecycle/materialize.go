@@ -126,7 +126,9 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if request.TrustPolicy == nil { return artifacttrust.VerificationReceipt{Valid:true, Code:artifacttrust.CodeValid, ArtifactDigest:request.ArtifactDigest.String()}, nil }
 		q := artifacttrust.VerifyRequest{ArtifactDigest:request.ArtifactDigest.String(), Platform:platform}
 		if request.TrustRequest != nil { q=*request.TrustRequest; q.ArtifactDigest=request.ArtifactDigest.String(); if q.Platform=="" { q.Platform=platform } }
-		r := request.TrustPolicy.Verify(q); if !r.Valid { return r, fmt.Errorf("artifact trust verification failed: %s: %s",r.Code,r.Diagnostic) }; return r,nil
+		r := request.TrustPolicy.Verify(q)
+		if r.Valid { store:=artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(),"artifacts","v1","verification")); if err:=store.Put(r);err!=nil{return r,fmt.Errorf("persist artifact trust receipt: %w",err)} }
+		if !r.Valid { return r, fmt.Errorf("artifact trust verification failed: %s: %s",r.Code,r.Diagnostic) }; return r,nil
 	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {

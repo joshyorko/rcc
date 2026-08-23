@@ -86,7 +86,7 @@ type Policy struct {
 	FailClosedRevocations bool `json:"failClosedRevocations,omitempty"`
 }
 
-type VerifyRequest struct { ArtifactDigest, Platform, Builder string; Provenance *Provenance; Signatures []Signature; Revocations []Revocation; Keys map[string]ed25519.PublicKey; At time.Time }
+type VerifyRequest struct { ArtifactDigest, Platform, Builder string; Provenance *Provenance; SBOM *SBOM; Signatures []Signature; Revocations []Revocation; Keys map[string]ed25519.PublicKey; At time.Time }
 type VerificationReceipt struct { Valid bool `json:"valid"`; Code string `json:"code"`; ArtifactDigest string `json:"artifactDigest"`; KeyID string `json:"keyID,omitempty"`; PolicyMode PolicyMode `json:"policyMode"`; VerifiedAt string `json:"verifiedAt"`; Diagnostic string `json:"diagnostic,omitempty"` }
 func (r VerificationReceipt) JSON() ([]byte,error) { return canonical(r) }
 
@@ -199,6 +199,7 @@ func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
 	r := VerificationReceipt{ArtifactDigest:q.ArtifactDigest, PolicyMode:p.Mode, VerifiedAt:FreshTimestamp(time.Now().UTC())}
 	if p.Mode == StrictRemote { p.RequireSignature=true }
 	if q.Provenance != nil && q.Provenance.ArtifactDigest != q.ArtifactDigest { r.Code=CodeBinding; r.Diagnostic="provenance artifact digest mismatch"; return r }
+	if q.SBOM != nil && (q.SBOM.MediaType != SBOMMediaType || q.SBOM.ArtifactDigest != q.ArtifactDigest) { r.Code=CodeBinding; r.Diagnostic="SBOM artifact digest mismatch"; return r }
 	if q.Provenance != nil {
 		if !containsOrEmpty(p.AcceptedRCCVersions,q.Provenance.RCCVersion) || !containsOrEmpty(p.AcceptedSources,q.Provenance.SourceRepository) { r.Code=CodePolicy; r.Diagnostic="provenance disallowed by policy"; return r }
 		if p.MaxArtifactAge > 0 { if t,e:=time.Parse(time.RFC3339,q.Provenance.CreatedAt); e==nil && q.At.Sub(t)>p.MaxArtifactAge { r.Code=CodePolicy; r.Diagnostic="artifact exceeds maximum age"; return r } }

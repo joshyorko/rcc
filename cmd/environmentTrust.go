@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"crypto/ed25519"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/spf13/cobra"
 )
@@ -10,17 +13,28 @@ import (
 // env trust verify is provider/carrier independent: it evaluates detached
 // attestations supplied by the caller and emits a stable receipt.
 func newEnvironmentTrustCommand() *cobra.Command {
-	var artifact, platform, builder string
+	var artifact, platform, builder, provenanceFile, sbomFile, signaturesFile, keysFile, revocationsFile string
 	var strict, local, jsonOutput bool
 	verify := &cobra.Command{Use:"verify", Args:cobra.NoArgs, SilenceUsage:true, RunE:func(cmd *cobra.Command,_ []string) error {
 		if !jsonOutput { return fmt.Errorf("--json is required") }
 		p:=artifacttrust.Policy{Mode:artifacttrust.PermissiveLocal}; if strict { p.Mode=artifacttrust.StrictRemote }; if !local && !strict { p.Mode=artifacttrust.StrictRemote }
-		r:=p.Verify(artifacttrust.VerifyRequest{ArtifactDigest:artifact, Platform:platform, Builder:builder})
+		q:=artifacttrust.VerifyRequest{ArtifactDigest:artifact, Platform:platform, Builder:builder}
+		read:=func(path string,v any)error{if path==""{return nil};b,e:=os.ReadFile(path);if e!=nil{return e};return json.Unmarshal(b,v)}
+		var prov artifacttrust.Provenance; if err:=read(provenanceFile,&prov);err!=nil{return err};if provenanceFile!=""{q.Provenance=&prov}
+		var sbom artifacttrust.SBOM; if err:=read(sbomFile,&sbom);err!=nil{return err};if sbomFile!=""{q.SBOM=&sbom}
+		if err:=read(signaturesFile,&q.Signatures);err!=nil{return err};if err:=read(revocationsFile,&q.Revocations);err!=nil{return err}
+		var encoded map[string]string; if err:=read(keysFile,&encoded);err!=nil{return err};if keysFile!=""{q.Keys=map[string]ed25519.PublicKey{};for id,v:=range encoded{b,e:=base64.RawStdEncoding.DecodeString(v);if e!=nil||len(b)!=ed25519.PublicKeySize{return fmt.Errorf("invalid trust root %q",id)};q.Keys[id]=ed25519.PublicKey(b)}}
+		r:=p.Verify(q)
 		if err:=json.NewEncoder(cmd.OutOrStdout()).Encode(r); err!=nil{return err}; if !r.Valid{return fmt.Errorf("artifact trust verification failed: %s",r.Code)}; return nil
 	}}
 	verify.Flags().StringVar(&artifact,"artifact","","Canonical sha256 environment artifact digest")
 	verify.Flags().StringVar(&platform,"platform","","RCC compatibility platform")
 	verify.Flags().StringVar(&builder,"builder","","Builder identity")
+	verify.Flags().StringVar(&provenanceFile,"provenance","","Detached provenance JSON")
+	verify.Flags().StringVar(&sbomFile,"sbom","","Detached SBOM JSON")
+	verify.Flags().StringVar(&signaturesFile,"signatures","","Detached signature bundle JSON")
+	verify.Flags().StringVar(&keysFile,"trust-roots","","JSON map of key IDs to base64 public keys")
+	verify.Flags().StringVar(&revocationsFile,"revocations","","Revocation list JSON")
 	verify.Flags().BoolVar(&strict,"strict-remote",false,"Require detached signature")
 	verify.Flags().BoolVar(&local,"permissive-local",false,"Explicitly allow unsigned local artifacts")
 	verify.Flags().BoolVar(&jsonOutput,"json",false,"Write one JSON receipt")
