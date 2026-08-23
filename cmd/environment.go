@@ -37,6 +37,7 @@ func newEnvironmentCommand(dependencies environmentCommandDependencies) *cobra.C
 	command.AddCommand(
 		newEnvironmentPublishCommand(dependencies),
 		newEnvironmentAcquireCommand(dependencies),
+		newEnvironmentExportCommand(dependencies),
 		newEnvironmentExecCommand(dependencies),
 	)
 	return command
