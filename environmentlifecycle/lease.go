@@ -115,11 +115,3 @@ func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
 	}
 	return removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
 }
-
-func processStartIdentity(pid int) string {
-	identity, err := processIdentityLookup(pid)
-	if err != nil || identity == "" {
-		return ""
-	}
-	return identity
-}
