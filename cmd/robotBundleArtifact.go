@@ -11,30 +11,47 @@ import (
 	"github.com/joshyorko/rcc/environmentlifecycle"
 )
 
-func importBundleArtifact(zr *zip.Reader) error {
+func importBundleArtifact(zr *zip.Reader) (environmentartifact.Manifest, error) {
+	var imported environmentartifact.Manifest
 	for _, file := range zr.File {
-		if file.Name != "environment/artifact.rcca" { continue }
-		reader, err := file.Open(); if err != nil { return err }
-		temporary, err := os.CreateTemp("", "rcc-bundle-artifact-*.rcca"); if err != nil { _ = reader.Close(); return err }
+		if file.Name != "environment/artifact.rcca" {
+			continue
+		}
+		reader, err := file.Open()
+		if err != nil {
+			return imported, err
+		}
+		temporary, err := os.CreateTemp("", "rcc-bundle-artifact-*.rcca")
+		if err != nil {
+			_ = reader.Close()
+			return imported, err
+		}
 		name := temporary.Name()
 		_, copyErr := io.Copy(temporary, io.LimitReader(reader, environmentartifact.MaxArchiveSize+1))
 		closeErr := reader.Close(); fileCloseErr := temporary.Close()
 		defer os.Remove(name)
 		if copyErr != nil {
-			return copyErr
+			return imported, copyErr
 		}
 		if closeErr != nil {
-			return closeErr
+			return imported, closeErr
 		}
 		if fileCloseErr != nil {
-			return fileCloseErr
+			return imported, fileCloseErr
 		}
 		if info, err := os.Stat(name); err != nil {
-			return err
+			return imported, err
 		} else if info.Size() > environmentartifact.MaxArchiveSize {
-			return fmt.Errorf("bundled environment artifact exceeds %d bytes", environmentartifact.MaxArchiveSize)
+			return imported, fmt.Errorf("bundled environment artifact exceeds %d bytes", environmentartifact.MaxArchiveSize)
 		}
-		if _, err := environmentlifecycle.ImportArchive(context.Background(), environmentlifecycle.ImportArchiveRequest{Path: name}); err != nil { return fmt.Errorf("import bundled artifact: %w", err) }
+		manifest, err := environmentlifecycle.ImportArchive(context.Background(), environmentlifecycle.ImportArchiveRequest{Path: name})
+		if err != nil {
+			return imported, fmt.Errorf("import bundled artifact: %w", err)
+		}
+		if imported.ArtifactDigest.Hex() != "" && imported.ArtifactDigest != manifest.ArtifactDigest {
+			return imported, fmt.Errorf("bundle contains multiple environment artifacts")
+		}
+		imported = manifest
 	}
-	return nil
+	return imported, nil
 }

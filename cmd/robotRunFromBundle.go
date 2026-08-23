@@ -8,6 +8,7 @@ import (
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/environmentlifecycle"
 	"github.com/joshyorko/rcc/journal"
 	"github.com/joshyorko/rcc/operations"
 	"github.com/joshyorko/rcc/pathlib"
@@ -53,13 +54,20 @@ compatible with the exported environment; it does not include RCC itself.`,
 		// Import hololib if present
 		err = importHololib(zr)
 		pretty.Guard(err == nil, 3, "Failed to import hololib from bundle: %v", err)
-		err = importBundleArtifact(zr)
+		artifactManifest, artifactErr := importBundleArtifact(zr)
+		err = artifactErr
 		pretty.Guard(err == nil, 3, "Failed to import environment artifact from bundle: %v", err)
+		if artifactManifest.ArtifactDigest.Hex() != "" {
+			_, err = environmentlifecycle.NewAcquirer().Acquire(cmd.Context(), environmentlifecycle.AcquireRequest{ArtifactDigest: artifactManifest.ArtifactDigest})
+			pretty.Guard(err == nil, 3, "Failed to materialize bundled environment artifact: %v", err)
+		}
 
 		// Process environments if present
 		// We don't force rebuild if they exist, and we don't restore to space yet (LoadTaskWithEnvironment does that)
-		_, err = processBundleEnvs(zr, bundleFile, false, false)
-		pretty.Guard(err == nil, 4, "Failed to process environments: %v", err)
+		if artifactManifest.ArtifactDigest.Hex() == "" {
+			_, err = processBundleEnvs(zr, bundleFile, false, false)
+			pretty.Guard(err == nil, 4, "Failed to process environments: %v", err)
+		}
 
 		// Extract robot/ tree to temp workarea
 		workarea := filepath.Join(pathlib.TempDir(), fmt.Sprintf("workarea%x", common.When))
