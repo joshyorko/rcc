@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"os"
 	"testing"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -38,6 +39,21 @@ func TestJournalDurableRestartContract(t *testing.T) {
 	if err != nil || len(missing) != 0 {
 		t.Fatalf("missing=%v err=%v", missing, err)
 	}
+}
+
+func TestJournalRejectsManifestWithMissingObjects(t *testing.T) {
+	j, err := NewJournal(t.TempDir() + "/provider.log")
+	if err != nil { t.Fatal(err) }
+	fixture := newProviderFixture(t)
+	if err := j.CommitManifest(context.Background(), fixture.manifestBytes); err == nil {
+		t.Fatal("journal committed manifest without its referenced objects")
+	}
+}
+
+func TestJournalRecoversTornFinalRecord(t *testing.T) {
+	path := t.TempDir() + "/provider.log"
+	if err := os.WriteFile(path, []byte("{\"Kind\":\"object\"}\n{\"Kind\":\"object\""), 0600); err != nil { t.Fatal(err) }
+	if _, err := NewJournal(path); err != nil { t.Fatalf("torn final record should be discarded: %v", err) }
 }
 
 func TestPolicyTypedQuotaAndRateErrors(t *testing.T) {

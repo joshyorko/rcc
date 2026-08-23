@@ -1,7 +1,6 @@
 package artifactprovider
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -87,9 +86,14 @@ func (it *Filesystem) Health(ctx context.Context) (Health, error) {
 }
 
 func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmentartifact.Digest) (io.ReadCloser, int64, error) {
-	content, err := it.getObjectByDigest(ctx, digest)
+	if err := ctx.Err(); err != nil { return nil, 0, err }
+	if len(digest.Hex()) != 64 { return nil, 0, fmt.Errorf("invalid object digest") }
+	file, err := os.Open(it.objectPath(digest))
 	if err != nil { return nil, 0, err }
-	return io.NopCloser(bytes.NewReader(content)), int64(len(content)), nil
+	info, err := file.Stat()
+	if err != nil { _ = file.Close(); return nil, 0, err }
+	if info.Size() < 0 || info.Size() > maxProviderObjectBytes { _ = file.Close(); return nil, 0, fmt.Errorf("invalid provider object size") }
+	return file, info.Size(), nil
 }
 
 func (it *Filesystem) MissingObjects(ctx context.Context, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
