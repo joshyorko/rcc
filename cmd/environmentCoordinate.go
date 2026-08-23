@@ -29,7 +29,12 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	key := func() buildcoord.BuildKey {
 		return buildcoord.BuildKey{SpecificationDigest: spec, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema}
 	}
-	coord := func() *buildcoord.Filesystem { return buildcoord.NewFilesystem(root, nil) }
+	coord := func() *buildcoord.Filesystem {
+		c := buildcoord.NewFilesystem(root, nil)
+		c.RequireArtifactProof = true
+		c.Verifier = buildcoord.ArtifactVerifierFunc(buildcoord.VerifyArtifactProof)
+		return c
+	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
 		if err != nil {
 			result.Error = err.Error()

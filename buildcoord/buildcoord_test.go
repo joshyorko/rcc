@@ -62,6 +62,12 @@ func TestReleaseAndWaitAreStableLeaseOperations(t *testing.T) {
 func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	c.RequireArtifactProof = true
+	c.Verifier = artifactVerifierFunc(func(a Artifact) error {
+		if a.ProviderAuthorization == "" {
+			return errors.New("missing authorization")
+		}
+		return nil
+	})
 	claim, _, err := c.Claim(testKey(), "owner", time.Minute)
 	if err != nil {
 		t.Fatal(err)
@@ -70,11 +76,15 @@ func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 		t.Fatalf("proof bypass: %v", err)
 	}
 	closure := "sha256:" + strings.Repeat("a", 64)
-	proof := Artifact{Digest: "sha256:one", ClosureDigest: closure, Provider: "local", ProviderAuthorization: artifactAuthorization("local", closure)}
+	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: artifactAuthorization("local", closure)}
 	if err := c.Publish(claim, proof); err != nil {
 		t.Fatalf("proof publish: %v", err)
 	}
 }
+
+type artifactVerifierFunc func(Artifact) error
+
+func (f artifactVerifierFunc) VerifyArtifact(a Artifact) error { return f(a) }
 
 func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
 	if _, _, err := PrepareStaging(BuildRequest{Root: t.TempDir(), Credentials: true}, "owner"); err == nil {
@@ -198,6 +208,10 @@ func TestCommittedArtifactWinsAndDivergenceIsVisible(t *testing.T) {
 	claim2 := Claim{Key: key, Owner: "other", Epoch: claim.Epoch + 1}
 	if err := c.Publish(claim2, Artifact{Digest: "sha256:two", Verified: true}); !errors.Is(err, ErrDivergentArtifact) {
 		t.Fatalf("divergence: %v", err)
+	}
+	events, err := c.Events(key)
+	if err != nil || events[len(events)-1].Event != "nondeterministic" || !strings.Contains(events[len(events)-1].Detail, "sha256:one") || !strings.Contains(events[len(events)-1].Detail, "sha256:two") {
+		t.Fatalf("nondeterminism receipt: %#v %v", events, err)
 	}
 }
 

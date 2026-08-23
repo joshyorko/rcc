@@ -26,6 +26,10 @@ var (
 
 type Clock interface{ Now() time.Time }
 type RealClock struct{}
+type ArtifactVerifier interface{ VerifyArtifact(Artifact) error }
+type ArtifactVerifierFunc func(Artifact) error
+
+func (f ArtifactVerifierFunc) VerifyArtifact(a Artifact) error { return f(a) }
 
 func (RealClock) Now() time.Time { return time.Now().UTC() }
 
@@ -133,6 +137,7 @@ type Filesystem struct {
 	Clock                Clock
 	lockWait             time.Duration
 	RequireArtifactProof bool
+	Verifier             ArtifactVerifier
 }
 
 func NewFilesystem(root string, clock Clock) *Filesystem {
@@ -223,7 +228,11 @@ func (c *Filesystem) HeartbeatContext(ctx context.Context, claim Claim, ttl time
 	if ttl <= 0 {
 		return fmt.Errorf("heartbeat TTL must be positive")
 	}
-	t := time.NewTicker(ttl / 2)
+	interval := ttl / 2
+	if interval < time.Millisecond {
+		interval = time.Millisecond
+	}
+	t := time.NewTicker(interval)
 	defer t.Stop()
 	for {
 		select {
@@ -268,7 +277,7 @@ func (c *Filesystem) Wait(ctx context.Context, key BuildKey, interval time.Durat
 }
 
 func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
-	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && !validArtifactProof(artifact)) {
+	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (c.Verifier == nil || c.Verifier.VerifyArtifact(artifact) != nil)) {
 		return ErrUnverifiedArtifact
 	}
 	release, err := c.lock(context.Background(), claim.Key)
@@ -315,6 +324,16 @@ func validArtifactProof(artifact Artifact) bool {
 		}
 	}
 	return artifact.ProviderAuthorization == artifactAuthorization(artifact.Provider, artifact.ClosureDigest)
+}
+
+// VerifyArtifactProof validates the provider-bound closure authorization used
+// by the coordinator boundary. Callers should additionally apply artifacttrust
+// policy/signature verification before publication.
+func VerifyArtifactProof(artifact Artifact) error {
+	if !validArtifactProof(artifact) {
+		return ErrUnverifiedArtifact
+	}
+	return nil
 }
 
 func artifactAuthorization(provider, closure string) string {
@@ -404,6 +423,9 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 	if request.Capacity < 0 {
 		return nil, fmt.Errorf("capacity cannot be negative")
 	}
+	if request.DiskReservationBytes < 0 {
+		return nil, fmt.Errorf("disk reservation cannot be negative")
+	}
 	if build == nil {
 		return nil, fmt.Errorf("prewarm builder is required")
 	}
@@ -436,6 +458,11 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 			continue
 		}
 		if outcome == Waiting {
+			if !request.Wait {
+				items = append(items, PrewarmItem{Key: key, Status: PrewarmNeeded})
+				<-sem
+				continue
+			}
 			for {
 				artifact, ok, readErr := c.readArtifact(key)
 				if readErr != nil {
@@ -470,7 +497,18 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 				continue
 			}
 		}
-		artifact, err := build(ctx, claim)
+		buildCtx, stopHeartbeat := context.WithCancel(ctx)
+		heartbeatErr := make(chan error, 1)
+		go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, time.Minute) }()
+		artifact, err := build(buildCtx, claim)
+		stopHeartbeat()
+		select {
+		case hbErr := <-heartbeatErr:
+			if err == nil && !errors.Is(hbErr, context.Canceled) {
+				err = hbErr
+			}
+		default:
+		}
 		if err == nil {
 			err = c.Publish(claim, artifact)
 		}
