@@ -3,9 +3,12 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
@@ -123,6 +126,30 @@ func TestHTTPClientNetworkBodyDeadlineStopsSlowloris(t *testing.T) {
 	}
 	if _, err := client.Capabilities(context.Background()); err == nil {
 		t.Fatal("slow network response exceeded timeout")
+	}
+}
+
+func TestHTTPServerBodyDeadlineCleansSlowloris(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandlerWithOptions(p, HandlerOptions{RequestTimeout: 20 * time.Millisecond}))
+	defer server.Close()
+	u, _ := url.Parse(server.URL)
+	conn, err := net.Dial("tcp", u.Host)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	_, _ = fmt.Fprintf(conn, "POST /v1/admin/restore HTTP/1.1\r\nHost: %s\r\nContent-Length: 100\r\nConnection: close\r\n\r\nx", u.Host)
+	_ = conn.SetReadDeadline(time.Now().Add(time.Second))
+	response, err := io.ReadAll(conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(response) == 0 || !bytes.Contains(response, []byte("400")) && !bytes.Contains(response, []byte("422")) {
+		t.Fatalf("slowloris response=%q", response)
 	}
 }
 

@@ -68,7 +68,9 @@ func (p *Policy) GarbageCollect(ctx context.Context, retention Retention) (GCRep
 	report, err := a.GarbageCollect(ctx, retention)
 	if err == nil {
 		p.reconcileLocked()
-		_ = p.persistLocked()
+		if persistErr := p.persistLocked(); persistErr != nil {
+			return report, &MutationError{Operation: "garbage-collect", Committed: true, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: persistErr}
+		}
 	}
 	return report, err
 }
@@ -105,7 +107,10 @@ func (p *Policy) Restore(ctx context.Context, r io.Reader) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.reconcileLocked()
-	return p.persistLocked()
+	if err := p.persistLocked(); err != nil {
+		return &MutationError{Operation: "restore", Committed: true, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: err}
+	}
+	return nil
 }
 
 type policyState struct {

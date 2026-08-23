@@ -199,7 +199,32 @@ func cloneTLS(config *tls.Config) *tls.Config {
 	return config.Clone()
 }
 
-type HandlerOptions struct{ RequestTimeout time.Duration }
+type HandlerOptions struct {
+	RequestTimeout time.Duration
+	Authorization  string
+}
+
+type contextBody struct {
+	ctx  context.Context
+	body io.ReadCloser
+}
+
+func (b *contextBody) Read(p []byte) (int, error) {
+	type result struct {
+		n   int
+		err error
+	}
+	done := make(chan result, 1)
+	go func() { n, err := b.body.Read(p); done <- result{n, err} }()
+	select {
+	case r := <-done:
+		return r.n, r.err
+	case <-b.ctx.Done():
+		_ = b.body.Close()
+		return 0, b.ctx.Err()
+	}
+}
+func (b *contextBody) Close() error { return b.body.Close() }
 
 func NewHandler(provider Provider) http.Handler {
 	return NewHandlerWithOptions(provider, HandlerOptions{})
@@ -207,10 +232,18 @@ func NewHandler(provider Provider) http.Handler {
 
 func NewHandlerWithOptions(provider Provider, options HandlerOptions) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if options.Authorization != "" && request.Header.Get("Authorization") != options.Authorization {
+			writer.Header().Set("WWW-Authenticate", "Bearer")
+			writeProviderFailure(writer, http.StatusUnauthorized)
+			return
+		}
 		if options.RequestTimeout > 0 {
+			_ = http.NewResponseController(writer).SetReadDeadline(time.Now().Add(options.RequestTimeout))
+			defer http.NewResponseController(writer).SetReadDeadline(time.Time{})
 			ctx, cancel := context.WithTimeout(request.Context(), options.RequestTimeout)
 			defer cancel()
 			request = request.Clone(ctx)
+			request.Body = &contextBody{ctx: ctx, body: request.Body}
 		}
 		if provider == nil || request.URL.RawPath != "" || request.URL.RawQuery != "" {
 			http.Error(writer, "invalid provider request", http.StatusBadRequest)
