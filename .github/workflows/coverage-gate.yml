@@ -31,8 +31,25 @@ jobs:
         run: python -m pip install invoke==2.2.0
       - name: Generate embedded assets
         run: inv assets
+      - name: Run mandatory Linux confinement tests
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          go_bin="$(command -v go)"
+          sudo env \
+            PATH="$PATH" \
+            HOME="$RUNNER_TEMP/rcc-root-home" \
+            GOPATH="$RUNNER_TEMP/rcc-root-gopath" \
+            GOCACHE="$RUNNER_TEMP/rcc-root-gocache" \
+            "$go_bin" test ./buildcoord \
+              -run '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \
+              -count=1
       - name: Run tests with coverage
-        run: go test ./... -coverprofile=coverage.out -covermode=atomic
+        run: |
+          go test ./... \
+            -skip '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \
+            -coverprofile=coverage.out \
+            -covermode=atomic
       - name: Enforce configured line coverage
         env:
           COVERAGE_FILE: coverage.out

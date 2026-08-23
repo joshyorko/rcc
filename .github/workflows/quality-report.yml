@@ -30,6 +30,19 @@ jobs:
         run: python -m pip install invoke==2.2.0
       - name: Generate embedded assets
         run: inv assets
+      - name: Run mandatory Linux confinement tests
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          go_bin="$(command -v go)"
+          sudo env \
+            PATH="$PATH" \
+            HOME="$RUNNER_TEMP/rcc-root-home" \
+            GOPATH="$RUNNER_TEMP/rcc-root-gopath" \
+            GOCACHE="$RUNNER_TEMP/rcc-root-gocache" \
+            "$go_bin" test ./buildcoord \
+              -run '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \
+              -count=1
       - name: Run quality checks
         shell: bash
         run: |
@@ -39,7 +52,9 @@ jobs:
             echo
             echo '```text'
             test_status=0
-            go test ./... -count=1 || test_status=$?
+            go test ./... \
+              -skip '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \
+              -count=1 || test_status=$?
             echo '```'
             exit "$test_status"
           } | tee quality-report.txt >> "$GITHUB_STEP_SUMMARY"
