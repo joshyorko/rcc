@@ -35,6 +35,29 @@ func TestCurrentRCCSemanticSpecificationIsCanonicalAndDistinctFromLegacyBytes(t 
 	}
 }
 
+func TestCurrentRCCSemanticSpecificationIncludesSourceKindButNotPathOrProvider(t *testing.T) {
+	legacy := []byte("channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n")
+	platform := environmentartifact.Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}
+	builder := environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: "v0.test", CompatibilityKey: "v12-gzip-sha256"}
+	compatibility := testBuildCompatibility(platform)
+	packageSpec, err := semanticSpecificationBytes("package.yaml", legacy, platform, builder, compatibility)
+	if err != nil {
+		t.Fatal(err)
+	}
+	robotSpec, err := semanticSpecificationBytes("robot.yaml", legacy, platform, builder, compatibility)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Equal(packageSpec, robotSpec) || environmentartifact.DigestBytes(packageSpec) == environmentartifact.DigestBytes(robotSpec) {
+		t.Fatal("package and robot source kinds share semantic identity")
+	}
+	for _, data := range [][]byte{packageSpec, robotSpec} {
+		if bytes.Contains(data, []byte("provider")) || bytes.Contains(data, []byte("/tmp/")) {
+			t.Fatalf("semantic identity leaked path/provider: %s", data)
+		}
+	}
+}
+
 func TestCurrentRCCBuilderUsesExistingV12BuildPathWithoutRebuilding(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree

@@ -1,6 +1,7 @@
 package environmentlifecycle
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -314,6 +315,26 @@ func TestExecuteForwardsTerminationSignalAndReleasesLease(t *testing.T) {
 	}
 	if _, err := readLease(result.handle.ArtifactDigest, result.handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived forwarded termination: %v", err)
+	}
+}
+
+func TestExecuteWithStreamsPreservesRequestResponseAndReleasesAfterReap(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	python := filepath.Join(materialization.Path, "python")
+	if err := os.WriteFile(python, []byte("#!/bin/sh\nIFS= read line\nprintf 'reply:%s\\n' \"$line\"\n"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	stdin := strings.NewReader("request\n")
+	var stdout, stderr bytes.Buffer
+	handle, child, err := ExecuteWithStreams(context.Background(), NewLocalMaterializer(), materialization, []string{"python"}, stdin, &stdout, &stderr)
+	if err != nil || child.ExitCode != 0 {
+		t.Fatalf("stream execution = handle %+v child %+v err %v", handle, child, err)
+	}
+	if stdout.String() != "reply:request\n" || stderr.Len() != 0 {
+		t.Fatalf("stream output stdout=%q stderr=%q", stdout.String(), stderr.String())
+	}
+	if _, err := readLease(handle.ArtifactDigest, handle.LeaseID); !os.IsNotExist(err) {
+		t.Fatalf("lease survived stream child reap: %v", err)
 	}
 }
 

@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/operations"
+	"github.com/joshyorko/rcc/robot"
 )
 
 type CurrentRCCBuilder struct{}
@@ -27,14 +29,29 @@ func (CurrentRCCBuilder) Build(ctx context.Context, robotFile string) (BuildResu
 	if err := ctx.Err(); err != nil {
 		return BuildResult{}, err
 	}
-	config, blueprint, err := htfs.ComposeFinalBlueprint(nil, robotFile, false)
+	sourceKind := filepath.Base(robotFile)
+	if sourceKind != "package.yaml" && sourceKind != "robot.yaml" {
+		sourceKind = "robot.yaml"
+	}
+	var config robot.Robot
+	var blueprint []byte
+	var err error
+	if sourceKind == "package.yaml" {
+		config, blueprint, err = htfs.ComposeFinalBlueprint([]string{robotFile}, "", false)
+	} else {
+		config, blueprint, err = htfs.ComposeFinalBlueprint(nil, robotFile, false)
+	}
 	if err != nil {
 		return BuildResult{}, fmt.Errorf("compose current RCC blueprint: %w", err)
 	}
-	if config == nil {
+	if config == nil && sourceKind != "package.yaml" {
 		return BuildResult{}, fmt.Errorf("load robot environment source %q", robotFile)
 	}
-	if _, _, err := htfs.NewEnvironment(config.CondaConfigFile(), "", false, false, operations.PullCatalog); err != nil {
+	condaFile := robotFile
+	if config != nil {
+		condaFile = config.CondaConfigFile()
+	}
+	if _, _, err := htfs.NewEnvironment(condaFile, "", false, false, operations.PullCatalog); err != nil {
 		return BuildResult{}, fmt.Errorf("build current RCC environment: %w", err)
 	}
 	if err := ctx.Err(); err != nil {
@@ -51,13 +68,13 @@ func (CurrentRCCBuilder) Build(ctx context.Context, robotFile string) (BuildResu
 		return BuildResult{}, fmt.Errorf("inventory environment compatibility: %w", err)
 	}
 	builder := environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: common.Version, CompatibilityKey: "v12-gzip-sha256"}
-	specification, err := semanticSpecificationBytes("robot.yaml", blueprint, platform, builder, compatibility)
+	specification, err := semanticSpecificationBytes(sourceKind, blueprint, platform, builder, compatibility)
 	if err != nil {
 		return BuildResult{}, err
 	}
 	return BuildResult{
 		LegacyBlueprint: blueprint, CatalogPath: library.CatalogPath(common.BlueprintHash(blueprint)),
-		SpecificationBytes: specification, SourceKind: "robot.yaml", Platform: platform, Builder: builder,
+		SpecificationBytes: specification, SourceKind: sourceKind, Platform: platform, Builder: builder,
 		Compatibility: compatibility,
 	}, nil
 }

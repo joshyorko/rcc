@@ -3,6 +3,8 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
@@ -25,7 +27,8 @@ type environmentExecResult struct {
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
 	var artifact, providerURL, trustCarrierPath, trustCarrierType string
 	var strictRemote, permissiveLocal bool
-	var jsonOutput bool
+	var jsonOutput, inheritStreams bool
+	var receiptFile string
 	command := &cobra.Command{
 		Use:          "exec -- <command> [args...]",
 		Short:        "Execute a command with a process-scoped environment lease.",
@@ -35,18 +38,22 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if command.ArgsLenAtDash() != 0 {
 				return fmt.Errorf("env exec requires command arguments after --")
 			}
-			if !jsonOutput {
+			if !jsonOutput && !inheritStreams {
 				return fmt.Errorf("--json is required")
 			}
+			if inheritStreams && receiptFile == "" {
+				return fmt.Errorf("--receipt-file is required with --inherit-streams")
+			}
 			digest, err := environmentartifact.ParseDigest(artifact)
-			if err != nil {
-				return err
+			executionErr := err
+			if executionErr != nil && !inheritStreams {
+				return executionErr
 			}
 			provider, err := optionalEnvironmentProvider(providerURL, dependencies.newProvider)
 			if err != nil {
 				return err
 			}
-			if dependencies.acquire == nil || dependencies.execute == nil || dependencies.materializer == nil {
+			if dependencies.acquire == nil || dependencies.materializer == nil || (!inheritStreams && dependencies.execute == nil) {
 				return fmt.Errorf("environment execution dependencies are unavailable")
 			}
 			policy, err := trustPolicyForCommand(strictRemote, permissiveLocal)
@@ -68,7 +75,16 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 				Path: acquired.Path, CacheHit: acquired.CacheHit, Verification: acquired.Verification,
 				TrustPolicy: acquired.TrustPolicy, TrustRequest: acquired.TrustRequest, TrustCarrier: acquired.TrustCarrier,
 			}
-			handle, child, err := dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
+			var handle environmentlifecycle.ExecutionHandle
+			var child environmentlifecycle.ChildResult
+			if inheritStreams {
+				if dependencies.materializer == nil {
+					return fmt.Errorf("environment execution dependencies are unavailable")
+				}
+				handle, child, err = environmentlifecycle.ExecuteWithStreams(command.Context(), dependencies.materializer(), materialization, arguments, command.InOrStdin(), command.OutOrStdout(), command.ErrOrStderr())
+			} else {
+				handle, child, err = dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
+			}
 			if err != nil {
 				return err
 			}
@@ -87,11 +103,18 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if verification.Code != "" {
 				output.Verification = &verification
 			}
-			if err := json.NewEncoder(command.OutOrStdout()).Encode(output); err != nil {
+			if inheritStreams {
+				if err := writeEnvironmentExecReceipt(receiptFile, output); err != nil {
+					return err
+				}
+			} else if err := json.NewEncoder(command.OutOrStdout()).Encode(output); err != nil {
 				return err
 			}
 			if child.ExitCode != 0 {
 				panic(common.ExitCode{Code: child.ExitCode})
+			}
+			if executionErr != nil {
+				return executionErr
 			}
 			return nil
 		},
@@ -101,7 +124,40 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Detached trust carrier path or URL; defaults to provider HTTP or local filesystem.")
 	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
+	command.Flags().BoolVar(&inheritStreams, "inherit-streams", false, "Connect child stdin/stdout/stderr for the full process lifetime.")
+	command.Flags().StringVar(&receiptFile, "receipt-file", "", "Required atomic JSON receipt path for --inherit-streams.")
 	command.Flags().BoolVar(&strictRemote, "strict-remote", false, "Require detached signatures before execution.")
 	command.Flags().BoolVar(&permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts.")
 	return command
+}
+
+func writeEnvironmentExecReceipt(path string, value environmentExecResult) error {
+	if path == "" || filepath.Base(path) == "." {
+		return fmt.Errorf("invalid --receipt-file")
+	}
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0750); err != nil {
+		return fmt.Errorf("create receipt directory: %w", err)
+	}
+	tmp, err := os.CreateTemp(dir, ".rcc-receipt-*")
+	if err != nil {
+		return fmt.Errorf("create receipt temporary file: %w", err)
+	}
+	tmpPath := tmp.Name()
+	defer func() { _ = os.Remove(tmpPath) }()
+	encodeErr := json.NewEncoder(tmp).Encode(value)
+	if encodeErr == nil {
+		encodeErr = tmp.Sync()
+	}
+	closeErr := tmp.Close()
+	if encodeErr != nil {
+		return fmt.Errorf("write execution receipt: %w", encodeErr)
+	}
+	if closeErr != nil {
+		return fmt.Errorf("close execution receipt: %w", closeErr)
+	}
+	if err := os.Rename(tmpPath, path); err != nil {
+		return fmt.Errorf("install execution receipt: %w", err)
+	}
+	return nil
 }

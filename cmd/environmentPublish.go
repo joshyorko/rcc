@@ -28,7 +28,7 @@ type environmentPublishResult struct {
 }
 
 func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var robotFile, providerURL, trustCarrierPath, trustCarrierType string
+	var robotFile, environmentFile, providerURL, trustCarrierPath, trustCarrierType string
 	var provenancePath, sbomPath, signaturesPath, revocationsPath string
 	var signingKeyPath, signingKeyID string
 	var jsonOutput bool
@@ -41,8 +41,11 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 			if !jsonOutput {
 				return fmt.Errorf("--json is required")
 			}
-			if robotFile == "" || providerURL == "" {
-				return fmt.Errorf("--robot and --provider are required")
+			if (robotFile == "" && environmentFile == "") || (robotFile != "" && environmentFile != "") || providerURL == "" {
+				return fmt.Errorf("exactly one of --robot or --environment and --provider are required")
+			}
+			if environmentFile != "" {
+				robotFile = environmentFile
 			}
 			if dependencies.newProvider == nil || dependencies.publish == nil {
 				return fmt.Errorf("environment publish dependencies are unavailable")
@@ -122,6 +125,7 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 		},
 	}
 	command.Flags().StringVar(&robotFile, "robot", "", "Path to robot.yaml.")
+	command.Flags().StringVar(&environmentFile, "environment", "", "Path to package.yaml or robot.yaml environment source.")
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL.")
 	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Trust carrier path or URL; defaults to the local RCC trust store.")
 	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: filesystem, archive, or http.")

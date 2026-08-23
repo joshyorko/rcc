@@ -16,6 +16,19 @@ local or remote contracts.
 Environment Artifact identity does not include provider references, provider
 locations, credentials, materialization paths, or RCC process IDs.
 
+### Consumer lifecycle contract
+
+`rcc env publish` accepts exactly one source through `--environment` (a
+`package.yaml` or `robot.yaml`) or the compatibility alias `--robot`. The
+source kind is part of the semantic Specification identity; provider URLs and
+source paths are not. `rcc env exec --json -- <command>` keeps child output
+away from its single JSON receipt. Long-lived protocol consumers must opt into
+`--inherit-streams --receipt-file <path>`: RCC connects stdin/stdout/stderr for
+the child lifetime, keeps the artifact lease until the child is reaped, and
+atomically installs the receipt at the caller-selected path after exit. Child
+protocol bytes therefore never contaminate the machine receipt, including on
+non-zero exit or cancellation.
+
 ## Program completion boundary
 
 The supported v18.19.0 integration boundary remains the RCC executable and its

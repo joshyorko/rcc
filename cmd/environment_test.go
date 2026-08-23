@@ -455,6 +455,38 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 	}
 }
 
+func TestEnvironmentPublishAcceptsPackageEnvironmentAndPreservesSourceIdentity(t *testing.T) {
+	var received string
+	dependencies := environmentCommandDependencies{
+		builder:     func() environmentlifecycle.Builder { return testEnvironmentBuilder{} },
+		newProvider: func(string) (artifactprovider.Provider, error) { return inertProvider{}, nil },
+		publish: func(_ context.Context, request environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error) {
+			received = request.RobotFile
+			digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+			return environmentlifecycle.PublishResult{ArtifactDigest: digest, SpecificationDigest: digest}, nil
+		},
+	}
+	command := newEnvironmentCommand(dependencies)
+	var stdout bytes.Buffer
+	command.SetOut(&stdout)
+	if err := runCobraCommand(command, []string{"publish", "--environment", "project/package.yaml", "--provider", "local", "--json"}); err != nil {
+		t.Fatal(err)
+	}
+	if received != "project/package.yaml" {
+		t.Fatalf("environment source = %q", received)
+	}
+	if err := runCobraCommand(command, []string{"publish", "--robot", "project/robot.yaml", "--environment", "project/package.yaml", "--provider", "local", "--json"}); err == nil {
+		t.Fatal("--robot and --environment were accepted together")
+	}
+}
+
+func TestEnvironmentExecInheritStreamsRequiresReceiptFile(t *testing.T) {
+	command := newEnvironmentCommand(environmentCommandDependencies{})
+	if err := runCobraCommand(command, []string{"exec", "--artifact", cliTestDigest, "--inherit-streams", "--json", "--", "echo", "ok"}); err == nil {
+		t.Fatal("inherit-streams accepted without receipt file")
+	}
+}
+
 func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree
