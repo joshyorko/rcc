@@ -111,37 +111,12 @@ compatible with the exported environment; it does not include RCC itself.`,
 
 			if pathlib.IsDir(sourceDir) {
 				common.Debug("Copying artifacts from %q to %q", sourceDir, targetDir)
-				err := copyDir(sourceDir, targetDir)
-				if err != nil {
-					common.Log("Warning: Failed to copy artifacts: %v", err)
-				} else {
-					common.Log("Artifacts copied to %q", targetDir)
-				}
+				err := copyBundleArtifacts(artifactDir, workarea, ".")
+				pretty.Guard(err == nil, 7, "Failed to copy artifacts: %v", err)
+				common.Log("Artifacts copied to %q", targetDir)
 			}
 		}
 	},
-}
-
-// copyDir recursively copies all files and directories from the source directory to the target directory,
-// preserving the directory structure and file modes. It returns an error if any operation fails.
-// Parameters:
-//   - source: the path to the source directory to copy from
-//   - target: the path to the target directory to copy to
-func copyDir(source, target string) error {
-	return filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		relPath, err := filepath.Rel(source, path)
-		if err != nil {
-			return err
-		}
-		targetPath := filepath.Join(target, relPath)
-		if info.IsDir() {
-			return os.MkdirAll(targetPath, info.Mode())
-		}
-		return pathlib.CopyFile(path, targetPath, true)
-	})
 }
 
 func init() {

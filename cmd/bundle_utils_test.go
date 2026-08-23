@@ -150,3 +150,92 @@ func TestUnpackRobotTreeFailurePreservesDestination(t *testing.T) {
 		t.Fatalf("unsafe archive wrote outside the destination: %v", statErr)
 	}
 }
+
+func TestCopyBundleArtifactsRejectsTraversalAndAbsolutePaths(t *testing.T) {
+	workarea := t.TempDir()
+	project := t.TempDir()
+	for _, artifactDir := range []string{"../../outside", "/tmp/outside", `..\\outside`} {
+		err := copyBundleArtifacts(artifactDir, workarea, project)
+		if err == nil {
+			t.Fatalf("expected unsafe artifact directory %q to be rejected", artifactDir)
+		}
+	}
+}
+
+func TestCopyBundleArtifactsAllowsNestedNormalizationWithinWorkarea(t *testing.T) {
+	workarea := t.TempDir()
+	project := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(workarea, "reports"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(workarea, "reports", "result.txt"), []byte("ok"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := copyBundleArtifacts("reports/../reports", workarea, project); err != nil {
+		t.Fatal(err)
+	}
+	contents, err := os.ReadFile(filepath.Join(project, "reports", "result.txt"))
+	if err != nil || string(contents) != "ok" {
+		t.Fatalf("copied artifact missing: contents=%q err=%v", contents, err)
+	}
+}
+
+func TestCopyBundleArtifactsRejectsSymlinkedSourceAndDestinationParents(t *testing.T) {
+	workarea := t.TempDir()
+	project := t.TempDir()
+	outside := t.TempDir()
+	if err := os.Symlink(outside, filepath.Join(workarea, "linked")); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+	if err := os.MkdirAll(filepath.Join(workarea, "reports"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(workarea, "reports", "result.txt"), []byte("ok"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(outside, filepath.Join(project, "reports")); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+	if err := copyBundleArtifacts("linked", workarea, t.TempDir()); err == nil {
+		t.Fatal("expected symlinked source parent to be rejected")
+	}
+	if err := copyBundleArtifacts("reports", workarea, project); err == nil {
+		t.Fatal("expected symlinked destination parent to be rejected")
+	}
+}
+
+func TestCopyBundleArtifactsRejectsExistingTargetWithoutOverwriting(t *testing.T) {
+	workarea := t.TempDir()
+	project := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(workarea, "reports"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(workarea, "reports", "result.txt"), []byte("new"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(filepath.Join(project, "reports"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(project, "reports", "result.txt"), []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := copyBundleArtifacts("reports", workarea, project); err == nil {
+		t.Fatal("expected existing target to be rejected")
+	}
+	contents, err := os.ReadFile(filepath.Join(project, "reports", "result.txt"))
+	if err != nil || string(contents) != "old" {
+		t.Fatalf("existing target was modified: contents=%q err=%v", contents, err)
+	}
+}
+
+func TestCopyBundleFileFailureRemovesPartialTarget(t *testing.T) {
+	source := t.TempDir()
+	target := filepath.Join(t.TempDir(), "artifact.txt")
+
+	if err := copyBundleFileNoOverwrite(source, target, 0o644); err == nil {
+		t.Fatal("expected copying a directory as a file to fail")
+	}
+	if _, err := os.Lstat(target); !os.IsNotExist(err) {
+		t.Fatalf("failed copy left a partial target: %v", err)
+	}
+}

@@ -111,6 +111,138 @@ func writeBundleFile(f *zip.File, dest string) error {
 	return rc.Close()
 }
 
+func copyBundleArtifacts(artifactDir, workarea, projectRoot string) error {
+	source, err := safeBundleTarget(workarea, artifactDir)
+	if err != nil {
+		return err
+	}
+	projectRoot, err = filepath.Abs(projectRoot)
+	if err != nil {
+		return err
+	}
+	if err := ensureExistingSafeBundleParents(workarea, source); err != nil {
+		return err
+	}
+	info, err := os.Lstat(source)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("artifact source %q is not a directory", artifactDir)
+	}
+	relPath, err := filepath.Rel(filepath.Clean(workarea), source)
+	if err != nil {
+		return err
+	}
+	targetRoot, err := safeBundleTarget(projectRoot, filepath.ToSlash(relPath))
+	if err != nil {
+		return err
+	}
+	if err := ensureExistingSafeBundleParents(projectRoot, targetRoot); err != nil {
+		return err
+	}
+	return filepath.Walk(source, func(current string, info os.FileInfo, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		rel, err := filepath.Rel(source, current)
+		if err != nil {
+			return err
+		}
+		destination := targetRoot
+		if rel != "." {
+			destination = filepath.Join(targetRoot, rel)
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("refusing to copy symbolic link %q", current)
+		}
+		if info.IsDir() {
+			return ensureBundleDirectory(destination, info.Mode().Perm())
+		}
+		if !info.Mode().IsRegular() {
+			return fmt.Errorf("refusing to copy non-regular artifact %q", current)
+		}
+		return copyBundleFileNoOverwrite(current, destination, info.Mode().Perm())
+	})
+}
+
+func ensureExistingSafeBundleParents(root, target string) error {
+	root, err := filepath.Abs(root)
+	if err != nil {
+		return err
+	}
+	info, err := os.Lstat(root)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("bundle root %q is not a directory", root)
+	}
+	rel, err := filepath.Rel(root, filepath.Dir(target))
+	if err != nil {
+		return err
+	}
+	current := root
+	if rel == "." {
+		return nil
+	}
+	for _, component := range strings.Split(rel, string(os.PathSeparator)) {
+		current = filepath.Join(current, component)
+		info, err := os.Lstat(current)
+		if err != nil {
+			return err
+		}
+		if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+			return fmt.Errorf("refusing to copy through unsafe bundle parent %q", current)
+		}
+	}
+	return nil
+}
+
+func ensureBundleDirectory(target string, mode os.FileMode) error {
+	if info, err := os.Lstat(target); err == nil {
+		if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+			return fmt.Errorf("refusing to replace existing artifact target %q", target)
+		}
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+	return os.Mkdir(target, mode)
+}
+
+func copyBundleFileNoOverwrite(source, target string, mode os.FileMode) error {
+	if err := ensureExistingSafeBundleParents(filepath.Dir(target), target); err != nil {
+		return err
+	}
+	in, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	out, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
+	if err != nil {
+		_ = in.Close()
+		return fmt.Errorf("refusing to replace existing artifact target %q: %w", target, err)
+	}
+	_, copyErr := io.Copy(out, in)
+	inCloseErr := in.Close()
+	if copyErr != nil {
+		_ = out.Close()
+		_ = os.Remove(target)
+		return copyErr
+	}
+	if inCloseErr != nil {
+		_ = out.Close()
+		_ = os.Remove(target)
+		return inCloseErr
+	}
+	if err := out.Close(); err != nil {
+		_ = os.Remove(target)
+		return err
+	}
+	return nil
+}
+
 // extractRobotTree extracts all files under the 'robot/' directory from the zip archive
 // represented by zr to the destination path dest. It returns an error if no 'robot/' directory
 // is found in the archive.

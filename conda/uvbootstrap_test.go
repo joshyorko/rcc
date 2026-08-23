@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/hamlet"
@@ -70,6 +71,29 @@ func writeZip(path string, entries map[string]string) error {
 		}
 	}
 	return nil
+}
+
+func writeZipSymlink(path, name, target string, mode os.FileMode) (err error) {
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := f.Close(); err == nil {
+			err = closeErr
+		}
+	}()
+	zw := zip.NewWriter(f)
+	header := &zip.FileHeader{Name: name, Method: zip.Store}
+	header.SetMode(mode)
+	w, err := zw.CreateHeader(header)
+	if err != nil {
+		return err
+	}
+	if _, err := w.Write([]byte(target)); err != nil {
+		return err
+	}
+	return zw.Close()
 }
 
 func TestExtractTarGzBlocksPathTraversal(t *testing.T) {
@@ -226,4 +250,86 @@ func TestExtractZipAllowsNormalFile(t *testing.T) {
 	content, err := os.ReadFile(filepath.Join(destDir, "subdir", "hello.txt"))
 	must_be.Nil(err)
 	must_be.Equal("world", string(content))
+}
+
+func TestExtractZipRejectsSymlinkEntryBeforeLaterFile(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	archive := filepath.Join(tmp, "symlink.zip")
+	destDir := filepath.Join(tmp, "dest")
+	f, err := os.Create(archive)
+	must_be.Nil(err)
+	zw := zip.NewWriter(f)
+	header := &zip.FileHeader{Name: "linked", Method: zip.Store}
+	header.SetMode(os.ModeSymlink | 0o777)
+	w, err := zw.CreateHeader(header)
+	must_be.Nil(err)
+	_, err = w.Write([]byte("outside.txt"))
+	must_be.Nil(err)
+	w, err = zw.Create("linked/payload.txt")
+	must_be.Nil(err)
+	_, err = w.Write([]byte("must not escape"))
+	must_be.Nil(err)
+	must_be.Nil(zw.Close())
+	must_be.Nil(f.Close())
+
+	wont_be.Nil(extractZip(archive, destDir))
+	_, statErr := os.Stat(filepath.Join(tmp, "outside.txt"))
+	must_be.True(os.IsNotExist(statErr))
+}
+
+func TestExtractZipRejectsNonRegularEntry(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	archive := filepath.Join(tmp, "fifo.zip")
+	must_be.Nil(writeZipSymlink(archive, "fifo", "", os.ModeNamedPipe|0o644))
+	wont_be.Nil(extractZip(archive, filepath.Join(tmp, "dest")))
+}
+
+func TestExtractZipRejectsExistingSymlinkedDestinationParent(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	archive := filepath.Join(tmp, "parent.zip")
+	destDir := filepath.Join(tmp, "dest")
+	outside := filepath.Join(tmp, "outside")
+	must_be.Nil(os.MkdirAll(outside, 0o755))
+	must_be.Nil(os.MkdirAll(destDir, 0o755))
+	if err := os.Symlink(outside, filepath.Join(destDir, "linked")); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+	must_be.Nil(writeZip(archive, map[string]string{"linked/payload.txt": "must not escape"}))
+	wont_be.Nil(extractZip(archive, destDir))
+	_, statErr := os.Stat(filepath.Join(outside, "payload.txt"))
+	must_be.True(os.IsNotExist(statErr))
+}
+
+func TestExtractZipDoesNotOverwriteExistingRegularTarget(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	archive := filepath.Join(tmp, "existing.zip")
+	destDir := filepath.Join(tmp, "dest")
+	target := filepath.Join(destDir, "payload.txt")
+	must_be.Nil(os.MkdirAll(destDir, 0o755))
+	must_be.Nil(os.WriteFile(target, []byte("original"), 0o644))
+	must_be.Nil(writeZip(archive, map[string]string{"payload.txt": "replacement"}))
+	wont_be.Nil(extractZip(archive, destDir))
+	content, err := os.ReadFile(target)
+	must_be.Nil(err)
+	must_be.Equal("original", string(content))
+}
+
+func TestExtractZipRejectsBoundedExpansion(t *testing.T) {
+	must_be, wont_be := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	archive := filepath.Join(tmp, "large.zip")
+	destDir := filepath.Join(tmp, "dest")
+	must_be.Nil(writeZip(archive, map[string]string{"large.bin": strings.Repeat("x", 64<<20+1)}))
+	wont_be.Nil(extractZip(archive, destDir))
+	_, statErr := os.Stat(filepath.Join(destDir, "large.bin"))
+	must_be.True(os.IsNotExist(statErr))
 }
