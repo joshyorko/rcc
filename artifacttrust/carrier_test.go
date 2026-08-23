@@ -70,6 +70,33 @@ func TestFilesystemCarrierRejectsTraversalOnReadAndWrite(t *testing.T) {
 	}
 }
 
+func TestFilesystemCarrierUsesPortableDigestPathAndReadsLegacyLayout(t *testing.T) {
+	root := t.TempDir()
+	carrier := NewFilesystemCarrier(root)
+	data := []byte(`{"mediaType":"application/vnd.rcc.environment.provenance.v1+json","artifactDigest":"sha256:a"}`)
+	if err := PutAttachment(carrier, "sha256:a", "provenance", data); err != nil {
+		t.Fatal(err)
+	}
+	portable := filepath.Join(root, "sha256", "a", "provenance.json")
+	if content, err := os.ReadFile(portable); err != nil || !bytes.Equal(content, data) {
+		t.Fatalf("portable attachment = %q, %v", content, err)
+	}
+
+	if err := os.Remove(portable); err != nil {
+		t.Fatal(err)
+	}
+	legacy := filepath.Join(root, "sha256:a", "provenance.json")
+	if err := os.MkdirAll(filepath.Dir(legacy), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(legacy, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if content, err := GetAttachment(carrier, "sha256:a", "provenance"); err != nil || !bytes.Equal(content, data) {
+		t.Fatalf("legacy attachment = %q, %v", content, err)
+	}
+}
+
 func TestArchiveCarrierRejectsUnsafeMembersAndRoundTripsAttachments(t *testing.T) {
 	archive := filepath.Join(t.TempDir(), "carrier.zip")
 	file, err := os.Create(archive)

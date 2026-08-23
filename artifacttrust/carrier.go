@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -24,19 +25,35 @@ type FilesystemCarrier struct{ Root string }
 
 func NewFilesystemCarrier(root string) *FilesystemCarrier { return &FilesystemCarrier{Root: root} }
 
-func (c *FilesystemCarrier) path(name string) (string, error) {
+func portableFilesystemCarrierName(name string) string {
+	first, remainder, found := strings.Cut(name, "/")
+	if !found || !strings.HasPrefix(first, "sha256:") || len(first) == len("sha256:") {
+		return name
+	}
+	return path.Join("sha256", strings.TrimPrefix(first, "sha256:"), remainder)
+}
+
+func (c *FilesystemCarrier) pathFor(name string, portable bool) (string, error) {
 	if err := validateCarrierName(name); err != nil {
 		return "", err
+	}
+	physicalName := name
+	if portable {
+		physicalName = portableFilesystemCarrierName(name)
 	}
 	root, err := filepath.Abs(c.Root)
 	if err != nil {
 		return "", fmt.Errorf("resolve carrier root: %w", err)
 	}
-	target := filepath.Join(root, filepath.FromSlash(name))
+	target := filepath.Join(root, filepath.FromSlash(physicalName))
 	if err := rejectSymlinkComponents(root, filepath.Dir(target)); err != nil {
 		return "", err
 	}
 	return target, nil
+}
+
+func (c *FilesystemCarrier) path(name string) (string, error) {
+	return c.pathFor(name, true)
 }
 
 func (c *FilesystemCarrier) Read(name string) ([]byte, error) {
@@ -49,7 +66,20 @@ func (c *FilesystemCarrier) Read(name string) ([]byte, error) {
 			return nil, fmt.Errorf("carrier target is not a regular file")
 		}
 	}
-	return readBoundedFile(p)
+	content, err := readBoundedFile(p)
+	if err == nil || !errors.Is(err, os.ErrNotExist) || runtime.GOOS == "windows" {
+		return content, err
+	}
+	legacy, legacyErr := c.pathFor(name, false)
+	if legacyErr != nil || legacy == p {
+		return content, err
+	}
+	if info, statErr := os.Lstat(legacy); statErr == nil {
+		if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+			return nil, fmt.Errorf("carrier target is not a regular file")
+		}
+	}
+	return readBoundedFile(legacy)
 }
 
 func (c *FilesystemCarrier) Write(name string, data []byte) error {
@@ -59,6 +89,17 @@ func (c *FilesystemCarrier) Write(name string, data []byte) error {
 	}
 	if len(data) > maxCarrierAttachmentBytes {
 		return fmt.Errorf("carrier attachment exceeds %d bytes", maxCarrierAttachmentBytes)
+	}
+	if runtime.GOOS != "windows" {
+		legacy, legacyErr := c.pathFor(name, false)
+		if legacyErr != nil {
+			return legacyErr
+		}
+		if legacy != p {
+			if info, statErr := os.Lstat(legacy); statErr == nil && (info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular()) {
+				return fmt.Errorf("legacy carrier target is not a regular file")
+			}
+		}
 	}
 	if err := os.MkdirAll(filepath.Dir(p), 0700); err != nil {
 		return err
