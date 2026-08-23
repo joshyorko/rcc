@@ -3,16 +3,16 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
-	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"hash"
 	"io"
-	"net/http"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -29,8 +29,8 @@ const (
 )
 
 type HTTP struct {
-	baseURL string
-	client  *http.Client
+	baseURL   string
+	client    *http.Client
 	userAgent string
 }
 
@@ -93,28 +93,51 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 	}
 	if options.ProxyURL != "" || options.NoProxy != "" || options.CAFile != "" || len(options.CAPEM) != 0 || options.TLSMinVersion != 0 {
 		baseTransport, ok := transport.(*http.Transport)
-		if !ok { return nil, fmt.Errorf("provider transport does not support TLS/proxy configuration") }
+		if !ok {
+			return nil, fmt.Errorf("provider transport does not support TLS/proxy configuration")
+		}
 		configured := baseTransport.Clone()
 		if options.ProxyURL != "" {
-			proxy, err := url.Parse(options.ProxyURL); if err != nil || proxy.Scheme == "" || proxy.Host == "" { return nil, fmt.Errorf("invalid provider proxy URL") }
+			proxy, err := url.Parse(options.ProxyURL)
+			if err != nil || proxy.Scheme == "" || proxy.Host == "" {
+				return nil, fmt.Errorf("invalid provider proxy URL")
+			}
 			configured.Proxy = http.ProxyURL(proxy)
 		}
 		if options.NoProxy != "" {
 			configured.Proxy = func(request *http.Request) (*url.URL, error) {
-				if providerNoProxyMatch(request.URL, options.NoProxy) { return nil, nil }
-				if options.ProxyURL == "" { return http.ProxyFromEnvironment(request) }
-				proxy, err := url.Parse(options.ProxyURL); return proxy, err
+				if providerNoProxyMatch(request.URL, options.NoProxy) {
+					return nil, nil
+				}
+				if options.ProxyURL == "" {
+					return http.ProxyFromEnvironment(request)
+				}
+				proxy, err := url.Parse(options.ProxyURL)
+				return proxy, err
 			}
 		}
 		if options.CAFile != "" {
-			pem, err := os.ReadFile(filepath.Clean(options.CAFile)); if err != nil { return nil, fmt.Errorf("read provider CA file: %w", err) }; options.CAPEM = append(options.CAPEM, pem...)
+			pem, err := os.ReadFile(filepath.Clean(options.CAFile))
+			if err != nil {
+				return nil, fmt.Errorf("read provider CA file: %w", err)
+			}
+			options.CAPEM = append(options.CAPEM, pem...)
 		}
 		if len(options.CAPEM) != 0 {
-			pool, err := x509.SystemCertPool(); if err != nil { pool = x509.NewCertPool() }
-			if !pool.AppendCertsFromPEM(options.CAPEM) { return nil, fmt.Errorf("provider CA PEM could not be parsed") }
-			configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig); configured.TLSClientConfig.RootCAs = pool
+			pool, err := x509.SystemCertPool()
+			if err != nil {
+				pool = x509.NewCertPool()
+			}
+			if !pool.AppendCertsFromPEM(options.CAPEM) {
+				return nil, fmt.Errorf("provider CA PEM could not be parsed")
+			}
+			configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig)
+			configured.TLSClientConfig.RootCAs = pool
 		}
-		if options.TLSMinVersion != 0 { configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig); configured.TLSClientConfig.MinVersion = options.TLSMinVersion }
+		if options.TLSMinVersion != 0 {
+			configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig)
+			configured.TLSClientConfig.MinVersion = options.TLSMinVersion
+		}
 		transport = configured
 	}
 	if options.AuthorizationEnv != "" {
@@ -126,16 +149,54 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 }
 
 func providerNoProxyMatch(target *url.URL, raw string) bool {
-	host := strings.ToLower(target.Hostname()); ip := net.ParseIP(host)
-	for _, token := range strings.Split(raw, ",") { token=strings.TrimSpace(strings.ToLower(token)); if token=="" {continue}; if token=="*" {return true}
-		if h,p,err:=net.SplitHostPort(token);err==nil { if p!=target.Port(){continue}; token=h } else if strings.Count(token, ":")==1 { parts:=strings.SplitN(token,":",2); if parts[1]!=""&&parts[1]!=target.Port(){continue}; token=parts[0] }
-		token=strings.Trim(token,"[]"); if _,cidr,err:=net.ParseCIDR(token);err==nil {if ip!=nil&&cidr.Contains(ip){return true};continue}
-		if token==host||strings.TrimPrefix(token,".")==host||(strings.HasPrefix(token,".")&&strings.HasSuffix(host,token)){return true}
+	host := strings.ToLower(target.Hostname())
+	ip := net.ParseIP(host)
+	for _, rawToken := range strings.Split(raw, ",") {
+		token := strings.TrimSpace(strings.ToLower(rawToken))
+		if token == "" {
+			continue
+		}
+		if token == "*" {
+			return true
+		}
+		port := ""
+		if h, p, err := net.SplitHostPort(token); err == nil {
+			token, port = h, p
+		} else if strings.HasPrefix(token, "[") && strings.Contains(token, "]:") {
+			end := strings.IndexByte(token, ']')
+			token, port = token[1:end], token[end+2:]
+		} else if strings.Count(token, ":") == 1 {
+			parts := strings.SplitN(token, ":", 2)
+			token, port = parts[0], parts[1]
+		}
+		if port != "" && port != target.Port() {
+			continue
+		}
+		token = strings.Trim(token, "[]")
+		if _, cidr, err := net.ParseCIDR(token); err == nil {
+			if ip != nil && cidr.Contains(ip) {
+				return true
+			}
+			continue
+		}
+		if strings.HasPrefix(token, ".") {
+			domain := strings.TrimPrefix(token, ".")
+			if host == domain || strings.HasSuffix(host, "."+domain) {
+				return true
+			}
+		} else if token == host {
+			return true
+		}
 	}
 	return false
 }
 
-func cloneTLS(config *tls.Config) *tls.Config { if config == nil { return &tls.Config{} }; return config.Clone() }
+func cloneTLS(config *tls.Config) *tls.Config {
+	if config == nil {
+		return &tls.Config{}
+	}
+	return config.Clone()
+}
 
 func NewHandler(provider Provider) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -155,8 +216,15 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 	ctx := request.Context()
 	switch {
 	case request.URL.Path == "/v1/health":
-		if request.Method != http.MethodGet { methodNotAllowed(writer); return }
-		hp, ok := provider.(HealthProvider); if !ok { http.Error(writer, "health unavailable", http.StatusNotImplemented); return }
+		if request.Method != http.MethodGet {
+			methodNotAllowed(writer)
+			return
+		}
+		hp, ok := provider.(HealthProvider)
+		if !ok {
+			http.Error(writer, "health unavailable", http.StatusNotImplemented)
+			return
+		}
 		health, err := hp.Health(ctx)
 		writeProviderJSON(writer, health, err)
 	case request.URL.Path == "/v1/capabilities":
@@ -167,7 +235,10 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		capabilities, err := provider.Capabilities(ctx)
 		writeProviderJSON(writer, capabilities, err)
 	case request.URL.Path == "/v1/protocol":
-		if request.Method != http.MethodGet { methodNotAllowed(writer); return }
+		if request.Method != http.MethodGet {
+			methodNotAllowed(writer)
+			return
+		}
 		caps, err := provider.Capabilities(ctx)
 		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
@@ -184,19 +255,89 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			http.Error(writer, err.Error(), http.StatusBadRequest)
 			return
 		}
-		if len(input.Descriptors)>4096 { http.Error(writer,"descriptor fanout exceeds limit",http.StatusRequestEntityTooLarge); return }
+		if len(input.Descriptors) > 4096 {
+			http.Error(writer, "descriptor fanout exceeds limit", http.StatusRequestEntityTooLarge)
+			return
+		}
 		missing, err := provider.MissingObjects(ctx, input.Descriptors)
 		writeProviderJSON(writer, missingResponse{Missing: missing}, err)
 	case request.URL.Path == "/v1/admin/cleanup":
-		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};n,err:=admin.Cleanup(ctx);writeProviderJSON(writer,map[string]int{"removed":n},err)
+		admin, ok := provider.(ProviderV1Admin)
+		if !ok {
+			http.Error(writer, "admin unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodPost {
+			methodNotAllowed(writer)
+			return
+		}
+		n, err := admin.Cleanup(ctx)
+		writeProviderJSON(writer, map[string]int{"removed": n}, err)
 	case request.URL.Path == "/v1/admin/gc":
-		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};var input struct{MaxAgeSeconds int64 `json:"maxAgeSeconds"`;KeepManifests int `json:"keepManifests"`};if err:=decodeBoundedJSON(request.Body,request.ContentLength,maxProviderJSONBytes,&input);err!=nil{http.Error(writer,err.Error(),http.StatusBadRequest);return};report,err:=admin.GarbageCollect(ctx,Retention{MaxAge:time.Duration(input.MaxAgeSeconds)*time.Second,KeepManifests:input.KeepManifests});writeProviderJSON(writer,report,err)
+		admin, ok := provider.(ProviderV1Admin)
+		if !ok {
+			http.Error(writer, "admin unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodPost {
+			methodNotAllowed(writer)
+			return
+		}
+		var input struct {
+			MaxAgeSeconds int64 `json:"maxAgeSeconds"`
+			KeepManifests int   `json:"keepManifests"`
+		}
+		if err := decodeBoundedJSON(request.Body, request.ContentLength, maxProviderJSONBytes, &input); err != nil {
+			http.Error(writer, err.Error(), http.StatusBadRequest)
+			return
+		}
+		report, err := admin.GarbageCollect(ctx, Retention{MaxAge: time.Duration(input.MaxAgeSeconds) * time.Second, KeepManifests: input.KeepManifests})
+		writeProviderJSON(writer, report, err)
 	case request.URL.Path == "/v1/admin/repair":
-		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};health,err:=admin.Repair(ctx);writeProviderJSON(writer,health,err)
+		admin, ok := provider.(ProviderV1Admin)
+		if !ok {
+			http.Error(writer, "admin unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodPost {
+			methodNotAllowed(writer)
+			return
+		}
+		health, err := admin.Repair(ctx)
+		writeProviderJSON(writer, health, err)
 	case request.URL.Path == "/v1/admin/backup":
-		backup,ok:=provider.(ProviderV1Backup);if !ok{http.Error(writer,"backup unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodGet{methodNotAllowed(writer);return};writer.Header().Set("Content-Type","application/x-tar");if err:=backup.Backup(ctx,writer);err!=nil{return}
+		backup, ok := provider.(ProviderV1Backup)
+		if !ok {
+			http.Error(writer, "backup unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodGet {
+			methodNotAllowed(writer)
+			return
+		}
+		writer.Header().Set("Content-Type", "application/x-tar")
+		if err := backup.Backup(ctx, writer); err != nil {
+			return
+		}
 	case request.URL.Path == "/v1/admin/restore":
-		backup,ok:=provider.(ProviderV1Backup);if !ok{http.Error(writer,"restore unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};if request.ContentLength<0||request.ContentLength>maxProviderObjectBytes{http.Error(writer,"invalid restore size",http.StatusBadRequest);return};if err:=backup.Restore(ctx,io.LimitReader(request.Body,request.ContentLength+1));err!=nil{http.Error(writer,err.Error(),http.StatusUnprocessableEntity);return};writer.WriteHeader(http.StatusNoContent)
+		backup, ok := provider.(ProviderV1Backup)
+		if !ok {
+			http.Error(writer, "restore unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodPost {
+			methodNotAllowed(writer)
+			return
+		}
+		if request.ContentLength < 0 || request.ContentLength > maxProviderObjectBytes {
+			http.Error(writer, "invalid restore size", http.StatusBadRequest)
+			return
+		}
+		if err := backup.Restore(ctx, io.LimitReader(request.Body, request.ContentLength+1)); err != nil {
+			http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+		writer.WriteHeader(http.StatusNoContent)
 	case strings.HasPrefix(request.URL.Path, "/v1/objects/sha256/"):
 		digest, ok := digestFromExactPath(request.URL.Path, "/v1/objects/sha256/")
 		if !ok {
@@ -218,8 +359,16 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			}
 			writer.WriteHeader(http.StatusCreated)
 		case http.MethodGet:
-			if request.Header.Get("Range")!="" { writer.Header().Set("Accept-Ranges","none");http.Error(writer,"range requests unsupported; restart the full object",http.StatusRequestedRangeNotSatisfiable);return }
-			readerProvider, ok := provider.(ObjectReaderProvider); if !ok { http.Error(writer, "object reads unavailable", http.StatusNotImplemented); return }
+			if request.Header.Get("Range") != "" {
+				writer.Header().Set("Accept-Ranges", "none")
+				http.Error(writer, "range requests unsupported; restart the full object", http.StatusRequestedRangeNotSatisfiable)
+				return
+			}
+			readerProvider, ok := provider.(ObjectReaderProvider)
+			if !ok {
+				http.Error(writer, "object reads unavailable", http.StatusNotImplemented)
+				return
+			}
 			reader, size, err := readerProvider.GetObjectByDigest(ctx, digest)
 			if err != nil {
 				writeProviderReadError(writer, request, err)
@@ -420,15 +569,21 @@ func readExactBody(body io.Reader, declared, maximum int64) ([]byte, error) {
 func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 	var result Capabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/capabilities", nil, &result)
-	if err == nil { err = ValidateCapabilities(result) }
+	if err == nil {
+		err = ValidateCapabilities(result)
+	}
 	return result, err
 }
 
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1)) { err = fmt.Errorf("unsupported artifact provider protocol") }
-	if err == nil { err = ValidateCapabilities(result.Capabilities) }
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1)) {
+		err = fmt.Errorf("unsupported artifact provider protocol")
+	}
+	if err == nil {
+		err = ValidateCapabilities(result.Capabilities)
+	}
 	return result, err
 }
 
@@ -634,7 +789,9 @@ func (it *HTTP) doJSON(ctx context.Context, method, path string, input, output a
 }
 
 func (it *HTTP) setHeaders(request *http.Request) {
-	if it.userAgent != "" { request.Header.Set("User-Agent", it.userAgent) }
+	if it.userAgent != "" {
+		request.Header.Set("User-Agent", it.userAgent)
+	}
 }
 
 func closeProviderResponse(response *http.Response, err error) error {
