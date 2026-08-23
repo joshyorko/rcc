@@ -13,14 +13,14 @@ import (
 )
 
 type GCPolicy struct {
-	Retention time.Duration
-	DryRun    bool
-	Clock     func() time.Time
-	MaxBytes  int64
-	Pressure  bool
-	LocalOnly map[string]bool
-	Pinned    map[string]bool
-	Legal     map[string]bool
+	Retention   time.Duration
+	DryRun      bool
+	Clock       func() time.Time
+	MaxBytes    int64
+	Pressure    bool
+	LocalOnly   map[string]bool
+	Pinned      map[string]bool
+	Legal       map[string]bool
 	RemoteKnown map[string]bool
 }
 
@@ -28,10 +28,11 @@ type GCReport struct {
 	Scanned, Reclaimed, SkippedActive, SkippedAmbiguous int
 	ReclaimedDigests                                    []environmentartifact.Digest
 	Items                                               []GCItem
-	ProtectedBytes  int64 `json:"protectedBytes"`
-	ReclaimableBytes int64 `json:"reclaimableBytes"`
-	ReclaimedBytes int64 `json:"reclaimedBytes"`
+	ProtectedBytes                                      int64     `json:"protectedBytes"`
+	ReclaimableBytes                                    int64     `json:"reclaimableBytes"`
+	ReclaimedBytes                                      int64     `json:"reclaimedBytes"`
 	LastVerified                                        time.Time `json:"lastVerified,omitempty"`
+	ReferenceRoots                                      int       `json:"referenceRoots"`
 }
 type GCItem struct {
 	Digest string `json:"digest"`
@@ -44,11 +45,15 @@ func (it *LocalMaterializer) Collect(ctx context.Context, policy GCPolicy) (GCRe
 }
 
 func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
-	if err := crash(CrashBeforeGC); err != nil { return GCReport{}, err }
+	if err := crash(CrashBeforeGC); err != nil {
+		return GCReport{}, err
+	}
 	if policy.Retention < 0 {
 		policy.Retention = 0
 	}
-	if policy.Clock == nil { policy.Clock = time.Now }
+	if policy.Clock == nil {
+		policy.Clock = time.Now
+	}
 	var report GCReport
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
@@ -83,7 +88,10 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		}
 		mergeGCReport(&report, one)
 	}
-	if err := crash(CrashAfterGC); err != nil { return report, err }; return report, nil
+	if err := crash(CrashAfterGC); err != nil {
+		return report, err
+	}
+	return report, nil
 }
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {
@@ -111,6 +119,13 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	if err != nil {
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "missing-or-invalid-ready-record"})
 		return report, nil
+	}
+	if referenceRootExists(digest) {
+		if _, err := readReferenceRoot(digest); err != nil {
+			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "invalid-reference-root"})
+			return report, nil
+		}
+		report.ReferenceRoots = 1
 	}
 	want, _ := filepath.Abs(filepath.Join(common.HolotreeLocation(), record.MaterializationID))
 	actual, _ := filepath.Abs(record.Path)
@@ -148,7 +163,12 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 
 func materializationSize(root string) int64 {
 	var total int64
-	_ = filepath.Walk(root, func(_ string, info os.FileInfo, err error) error { if err == nil && info.Mode().IsRegular() { total += info.Size() }; return nil })
+	_ = filepath.Walk(root, func(_ string, info os.FileInfo, err error) error {
+		if err == nil && info.Mode().IsRegular() {
+			total += info.Size()
+		}
+		return nil
+	})
 	return total
 }
 
@@ -158,11 +178,14 @@ func mergeGCReport(dst *GCReport, src GCReport) {
 	dst.ProtectedBytes += src.ProtectedBytes
 	dst.ReclaimableBytes += src.ReclaimableBytes
 	dst.ReclaimedBytes += src.ReclaimedBytes
+	dst.ReferenceRoots += src.ReferenceRoots
 	dst.SkippedActive += src.SkippedActive
 	dst.SkippedAmbiguous += src.SkippedAmbiguous
 	dst.ReclaimedDigests = append(dst.ReclaimedDigests, src.ReclaimedDigests...)
 	dst.Items = append(dst.Items, src.Items...)
-	if dst.LastVerified.Before(src.LastVerified) { dst.LastVerified = src.LastVerified }
+	if dst.LastVerified.Before(src.LastVerified) {
+		dst.LastVerified = src.LastVerified
+	}
 }
 
 func removeMaterialization(path string) error {

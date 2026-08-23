@@ -81,6 +81,16 @@ func BuildReferenceGraph(manifest environmentartifact.Manifest, index environmen
 }
 
 func Inspect(ctx context.Context, digest environmentartifact.Digest) (Inspection, error) {
+	var out Inspection
+	err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+		var err error
+		out, err = inspectLocked(ctx, digest)
+		return err
+	})
+	return out, err
+}
+
+func inspectLocked(ctx context.Context, digest environmentartifact.Digest) (Inspection, error) {
 	if err := ctx.Err(); err != nil {
 		return Inspection{}, err
 	}
@@ -112,10 +122,20 @@ func Inspect(ctx context.Context, digest environmentartifact.Digest) (Inspection
 	return out, nil
 }
 func Verify(ctx context.Context, digest environmentartifact.Digest) (Verification, error) {
-	in, err := Inspect(ctx, digest)
-	if err != nil {
-		return Verification{}, err
-	}
+	var out Verification
+	err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+		var err error
+		in, err := inspectLocked(ctx, digest)
+		if err != nil {
+			return err
+		}
+		out, err = verifyInspection(ctx, digest, in)
+		return err
+	})
+	return out, err
+}
+
+func verifyInspection(_ context.Context, digest environmentartifact.Digest, in Inspection) (Verification, error) {
 	out := Verification{Digest: digest, State: in.State}
 	if in.Corrupt || !in.Ready {
 		return out, fmt.Errorf("%w: %s", ErrMaterializationCorrupt, in.State)
@@ -131,25 +151,31 @@ func Verify(ctx context.Context, digest environmentartifact.Digest) (Verificatio
 	return out, nil
 }
 func Repair(ctx context.Context, digest environmentartifact.Digest) (RepairReport, error) {
-	in, err := Inspect(ctx, digest)
-	if err != nil {
-		return RepairReport{}, err
-	}
-	repaired := false
-	if in.Corrupt {
-		if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), string(stateReady)+".json")); err != nil && !os.IsNotExist(err) {
-			return RepairReport{}, err
+	var report RepairReport
+	err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+		in, err := inspectLocked(ctx, digest)
+		if err != nil {
+			return err
 		}
-		repaired = true
-	}
-	verification, verr := Verify(ctx, digest)
-	if verr != nil {
-		return RepairReport{Inspection: in, Reconciled: in.Lease, Repaired: repaired, Verification: verification}, fmt.Errorf("%w: %v", ErrProviderUnavailable, verr)
-	}
-	if err := writeRepairRecord(digest, false, "local"); err != nil {
-		return RepairReport{}, err
-	}
-	return RepairReport{Inspection: in, Reconciled: in.Lease, Repaired: repaired, Verification: verification}, nil
+		repaired := false
+		if in.Corrupt {
+			if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), string(stateReady)+".json")); err != nil && !os.IsNotExist(err) {
+				return err
+			}
+			repaired = true
+		}
+		verification, verr := verifyInspection(ctx, digest, in)
+		if verr != nil {
+			report = RepairReport{Inspection: in, Reconciled: in.Lease, Repaired: repaired, Verification: verification}
+			return fmt.Errorf("%w: %v", ErrProviderUnavailable, verr)
+		}
+		if err := writeRepairRecord(digest, false, "local"); err != nil {
+			return err
+		}
+		report = RepairReport{Inspection: in, Reconciled: in.Lease, Repaired: repaired, Verification: verification}
+		return nil
+	})
+	return report, err
 }
 func RepairFromProvider(ctx context.Context, digest environmentartifact.Digest, provider artifactprovider.Provider) (RepairReport, error) {
 	if provider == nil {

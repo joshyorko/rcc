@@ -71,6 +71,9 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	if err != nil {
 		return verifiedContent{}, fmt.Errorf("validate object index: %w", err)
 	}
+	if err := writeReferenceRoot(manifest, index); err != nil {
+		return verifiedContent{}, fmt.Errorf("persist manifest reference root: %w", err)
+	}
 	objectDescriptors := make([]environmentartifact.Descriptor, 0, len(index.Entries))
 	for _, entry := range index.Entries {
 		descriptor := environmentartifact.Descriptor{
