@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"context"
+	"crypto/ed25519"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/buildcoord"
 	"github.com/spf13/cobra"
 )
@@ -24,6 +27,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	var ttl, interval time.Duration
 	var epoch uint64
 	var artifactDigest, closureDigest, provider, authorization string
+	var trustKeyID, trustPublicKey, trustSignature string
 	var jsonOut bool
 	var keys []string
 	key := func() buildcoord.BuildKey {
@@ -32,7 +36,21 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	coord := func() *buildcoord.Filesystem {
 		c := buildcoord.NewFilesystem(root, nil)
 		c.RequireArtifactProof = true
-		c.Verifier = buildcoord.ArtifactVerifierFunc(buildcoord.VerifyArtifactProof)
+		c.Verifier = buildcoord.ArtifactVerifierFunc(func(a buildcoord.Artifact) error {
+			if err := buildcoord.VerifyArtifactProof(a); err != nil {
+				return err
+			}
+			keyBytes, err := base64.RawStdEncoding.DecodeString(trustPublicKey)
+			if err != nil || len(keyBytes) != ed25519.PublicKeySize {
+				return fmt.Errorf("trusted public key is required")
+			}
+			if trustKeyID == "" || trustSignature == "" {
+				return fmt.Errorf("trusted signature is required")
+			}
+			sig := artifacttrust.Signature{MediaType: artifacttrust.SignatureMediaType, ArtifactDigest: a.Digest, KeyID: trustKeyID, Algorithm: "Ed25519", Signature: trustSignature}
+			k := key()
+			return artifacttrust.Policy{RequireSignature: true, AcceptedKeys: []string{trustKeyID}}.Evaluate(false, a.Digest, k.Platform, k.BuilderCompatibility, []artifacttrust.Signature{sig}, nil, map[string]ed25519.PublicKey{trustKeyID: keyBytes})
+		})
 		return c
 	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
@@ -94,6 +112,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		c.Flags().StringVar(&closureDigest, "closure-digest", "", "Complete artifact closure digest")
 		c.Flags().StringVar(&provider, "provider", "", "Artifact provider identity")
 		c.Flags().StringVar(&authorization, "provider-authorization", "", "Provider authorization proof")
+		c.Flags().StringVar(&trustKeyID, "trust-key-id", "", "Trusted artifact signing key ID")
+		c.Flags().StringVar(&trustPublicKey, "trust-public-key", "", "Trusted Ed25519 public key (base64)")
+		c.Flags().StringVar(&trustSignature, "trust-signature", "", "Artifact signature (base64)")
 		c.Flags().BoolVar(&jsonOut, "json", false, "Write JSON result")
 	}
 	prewarm.Flags().StringSliceVar(&keys, "key", nil, "Specification digest to prewarm (repeatable)")

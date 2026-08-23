@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
@@ -530,116 +531,129 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 	if request.Owner == "" {
 		request.Owner = "prewarm"
 	}
-	items := make([]PrewarmItem, 0, min(len(request.Keys), request.Capacity))
-	sem := make(chan struct{}, request.Capacity)
-	for _, key := range request.Keys {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	items := make([]PrewarmItem, len(request.Keys))
+	for i, key := range request.Keys {
+		items[i] = PrewarmItem{Key: key, Status: PrewarmCapacityLimited}
+	}
+	limit := min(len(request.Keys), request.Capacity)
+	jobs := make(chan int)
+	var wg sync.WaitGroup
+	var firstErr error
+	var errMu sync.Mutex
+	worker := func() {
+		defer wg.Done()
+		for i := range jobs {
+			itemErr := c.prewarmOne(ctx, request, request.Keys[i], build)
+			if itemErr == nil {
+				items[i].Status = PrewarmReady
+			} else if errors.Is(itemErr, ErrWaitTimeout) || errors.Is(itemErr, context.Canceled) {
+				items[i].Status = PrewarmNeeded
+			}
+			if itemErr != nil {
+				errMu.Lock()
+				firstErr = errors.Join(firstErr, itemErr)
+				errMu.Unlock()
+			}
+		}
+	}
+	for i := 0; i < limit; i++ {
+		wg.Add(1)
+		go worker()
+	}
+	for i := 0; i < limit; i++ {
 		select {
 		case <-ctx.Done():
-			return nil, ctx.Err()
-		case sem <- struct{}{}:
-		}
-		if len(items) >= request.Capacity {
-			<-sem
 			break
+		case jobs <- i:
 		}
-		claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
-		if err != nil && !errors.Is(err, ErrClaimBusy) {
-			<-sem
-			return nil, err
+	}
+	close(jobs)
+	wg.Wait()
+	return items, firstErr
+}
+
+func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key BuildKey, build func(context.Context, Claim) (Artifact, error)) error {
+	claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
+	if err != nil && !errors.Is(err, ErrClaimBusy) {
+		return err
+	}
+	if outcome == ExistingArtifact {
+		return nil
+	}
+	if outcome == Waiting {
+		if request.IndependentBuild {
+			independent, buildErr := build(ctx, Claim{Key: key, Owner: "independent"})
+			if buildErr == nil {
+				buildErr = c.PublishIndependent(key, independent)
+			}
+			if buildErr != nil {
+				return buildErr
+			}
+			return nil
 		}
-		if outcome == ExistingArtifact {
-			items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
-			<-sem
-			continue
+		if !request.Wait {
+			return ErrWaitTimeout
 		}
-		if outcome == Waiting {
-			if request.IndependentBuild {
-				independent, buildErr := build(ctx, Claim{Key: key, Owner: "independent"})
-				if buildErr == nil {
-					buildErr = c.PublishIndependent(key, independent)
-				}
-				<-sem
-				if buildErr != nil {
-					return nil, buildErr
-				}
-				items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
-				continue
+		for {
+			artifact, ok, readErr := c.readArtifact(key)
+			if readErr != nil {
+				return readErr
 			}
-			if !request.Wait {
-				items = append(items, PrewarmItem{Key: key, Status: PrewarmNeeded})
-				<-sem
-				continue
+			if ok && artifact.Verified {
+				return nil
 			}
-			for {
-				artifact, ok, readErr := c.readArtifact(key)
-				if readErr != nil {
-					<-sem
-					return nil, readErr
-				}
-				if ok && artifact.Verified {
-					items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
-					break
-				}
-				retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
-				if claimErr != nil && !errors.Is(claimErr, ErrClaimBusy) {
-					<-sem
-					return nil, claimErr
-				}
-				if retryOutcome == Claimed {
-					claim = retry
-					outcome = Claimed
-					break
-				}
-				timer := time.NewTimer(request.Backoff)
-				select {
-				case <-ctx.Done():
-					timer.Stop()
-					<-sem
-					return nil, ctx.Err()
-				case <-timer.C:
-				}
+			retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
+			if claimErr != nil && !errors.Is(claimErr, ErrClaimBusy) {
+				return claimErr
 			}
-			if outcome != Claimed {
-				<-sem
-				continue
+			if retryOutcome == Claimed {
+				claim = retry
+				outcome = Claimed
+				break
+			}
+			timer := time.NewTimer(request.Backoff)
+			select {
+			case <-ctx.Done():
+				timer.Stop()
+				return ctx.Err()
+			case <-timer.C:
 			}
 		}
-		buildCtx, stopHeartbeat := context.WithCancel(ctx)
-		reservation, reservationErr := ReserveDisk(c.Root, request.DiskReservationBytes)
-		if reservationErr != nil {
-			stopHeartbeat()
-			<-sem
-			return nil, errors.Join(reservationErr, c.abandon(claim))
+		if outcome != Claimed {
+			return ErrWaitTimeout
 		}
-		heartbeatErr := make(chan error, 1)
-		go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
-		artifact, err := build(buildCtx, claim)
+	}
+	buildCtx, stopHeartbeat := context.WithCancel(ctx)
+	reservation, reservationErr := ReserveDisk(c.Root, request.DiskReservationBytes)
+	if reservationErr != nil {
 		stopHeartbeat()
-		reservationErr = reservation.Release()
-		if err == nil && reservationErr != nil {
-			err = reservationErr
-		}
-		select {
-		case hbErr := <-heartbeatErr:
-			if err == nil && !errors.Is(hbErr, context.Canceled) {
-				err = hbErr
-			}
-		default:
-		}
-		if err == nil {
-			err = c.Publish(claim, artifact)
-		}
-		<-sem
-		if err != nil {
-			err = errors.Join(err, c.abandon(claim))
-			return nil, err
-		}
-		items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
+		return errors.Join(reservationErr, c.abandon(claim))
 	}
-	if len(items) < len(request.Keys) {
-		items = append(items, PrewarmItem{Status: PrewarmCapacityLimited})
+	heartbeatErr := make(chan error, 1)
+	go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
+	artifact, err := build(buildCtx, claim)
+	stopHeartbeat()
+	reservationErr = reservation.Release()
+	if err == nil && reservationErr != nil {
+		err = reservationErr
 	}
-	return items, nil
+	select {
+	case hbErr := <-heartbeatErr:
+		if err == nil && !errors.Is(hbErr, context.Canceled) {
+			err = hbErr
+		}
+	default:
+	}
+	if err == nil {
+		err = c.Publish(claim, artifact)
+	}
+	if err != nil {
+		return errors.Join(err, c.abandon(claim))
+	}
+	return nil
 }
 
 func (c *Filesystem) abandon(claim Claim) (err error) {
