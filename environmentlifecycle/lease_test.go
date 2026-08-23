@@ -96,6 +96,14 @@ func TestLeaseFailsClosedWhenStrongOwnerIdentityIsAmbiguous(t *testing.T) {
 	}
 }
 
+func TestReconcileTreatsPIDReuseAsStale(t *testing.T) {
+	previous := processIdentityLookup
+	processIdentityLookup = func(int) (string, error) { return "new-start-token", nil }
+	t.Cleanup(func() { processIdentityLookup = previous })
+	lease := Lease{OwnerPID: 42, OwnerStart: "old-start-token"}
+	if got := classifyLease(lease); got != LeaseStale { t.Fatalf("PID reuse status = %q", got) }
+}
+
 func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
 	hostPython, err := hostPythonPath()

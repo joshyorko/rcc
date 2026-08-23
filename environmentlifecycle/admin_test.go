@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 	"time"
+	"strings"
+	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 func TestCrashMatrixExecutesEveryLifecyclePoint(t *testing.T) {
@@ -12,6 +14,12 @@ func TestCrashMatrixExecutesEveryLifecyclePoint(t *testing.T) {
 	SetCrashHook(func(point CrashPoint) error { seen[point] = true; return errors.New("injected crash") })
 	for _, point := range CrashPoints() { _ = crash(point) }
 	for _, point := range CrashPoints() { if !seen[point] { t.Fatalf("crash point %q was not executed", point) } }
+}
+
+func TestReferenceGraphProtectsSharedClosure(t *testing.T) {
+	d := func(ch byte) environmentartifact.Digest { v,_:=environmentartifact.ParseDigest("sha256:"+strings.Repeat(string(ch),64));return v }
+	manifest:=environmentartifact.Manifest{ArtifactDigest:d('a'),Specification:environmentartifact.Specification{Descriptor:environmentartifact.Descriptor{Digest:d('b')}},LegacyBlueprint:environmentartifact.LegacyBlueprint{Descriptor:environmentartifact.Descriptor{Digest:d('c')}},Catalogs:[]environmentartifact.CatalogDescriptor{{Descriptor:environmentartifact.Descriptor{Digest:d('d')}}},ObjectIndex:environmentartifact.Descriptor{Digest:d('e')}}
+	graph:=BuildReferenceGraph(manifest,environmentartifact.ObjectIndex{Entries:[]environmentartifact.ObjectEntry{{StoredDigest:d('f')}}});if len(graph.Protected)!=5{t.Fatalf("protected=%d",len(graph.Protected))}
 }
 
 func TestRetentionEligibilityUsesInjectedClock(t *testing.T) {
