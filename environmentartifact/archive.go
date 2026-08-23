@@ -26,6 +26,7 @@ const maxArchiveMemberSize int64 = 16 << 20
 const maxArchiveSize int64 = 256 << 20
 const maxArchiveMembers = 4096
 const maxArchiveCompressionRatio uint64 = 1000
+const maxArchiveUncompressedSize uint64 = 256 << 20
 
 // MaxArchiveSize is the largest encoded archive accepted by ReadArchive.
 const MaxArchiveSize = maxArchiveSize
@@ -39,6 +40,13 @@ func WriteArchive(w io.Writer, entries map[string][]byte) error {
 	}
 	names, err := OrderedArchiveNames(entries)
 	if err != nil {
+		return err
+	}
+	var total uint64
+	for _, name := range names {
+		total += uint64(len(entries[name]))
+	}
+	if err := validateArchiveUncompressedBudget(len(names), total); err != nil {
 		return err
 	}
 	zw := zip.NewWriter(w)
@@ -136,8 +144,9 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		return nil, fmt.Errorf("nil environment archive")
 	}
 	entries := make(map[string][]byte, len(r.File))
-	if len(r.File) > maxArchiveMembers {
-		return nil, fmt.Errorf("environment archive contains too many members (maximum %d)", maxArchiveMembers)
+	var uncompressedSize uint64
+	if err := validateArchiveUncompressedBudget(len(r.File), 0); err != nil {
+		return nil, err
 	}
 	for _, file := range r.File {
 		if err := validateArchivePath(file.Name); err != nil {
@@ -149,6 +158,10 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		if file.UncompressedSize64 > uint64(maxArchiveMemberSize) {
 			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
 		}
+		if file.UncompressedSize64 > maxArchiveUncompressedSize-uncompressedSize {
+			return nil, fmt.Errorf("environment archive cumulative uncompressed size exceeds %d bytes", maxArchiveUncompressedSize)
+		}
+		uncompressedSize += file.UncompressedSize64
 		if file.CompressedSize64 > 0 && file.UncompressedSize64/file.CompressedSize64 > maxArchiveCompressionRatio {
 			return nil, fmt.Errorf("environment archive member %q has an unsafe compression ratio", file.Name)
 		}
@@ -176,6 +189,16 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		return nil, fmt.Errorf("environment archive is missing %s", ArchiveObjectIndex)
 	}
 	return entries, nil
+}
+
+func validateArchiveUncompressedBudget(memberCount int, total uint64) error {
+	if memberCount > maxArchiveMembers {
+		return fmt.Errorf("environment archive contains too many members (maximum %d)", maxArchiveMembers)
+	}
+	if total > maxArchiveUncompressedSize {
+		return fmt.Errorf("environment archive cumulative uncompressed size exceeds %d bytes", maxArchiveUncompressedSize)
+	}
+	return nil
 }
 
 func validateArchivePath(name string) error {

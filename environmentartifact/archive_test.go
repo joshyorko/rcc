@@ -131,6 +131,12 @@ func TestArchiveEntriesRejectsCompressionBomb(t *testing.T) {
 	}
 }
 
+func TestArchiveUncompressedBudgetRejectsCumulativePayload(t *testing.T) {
+	if err := validateArchiveUncompressedBudget(2, maxArchiveUncompressedSize+1); err == nil || !strings.Contains(err.Error(), "cumulative uncompressed") {
+		t.Fatalf("expected cumulative uncompressed-size rejection, got %v", err)
+	}
+}
+
 func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
 	spec := []byte(`{"dependencies":["python=3.10"]}`)
 	blueprint := []byte("legacy blueprint")
