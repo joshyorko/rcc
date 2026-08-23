@@ -296,6 +296,9 @@ jobs:
               source = require(data, "sourceAPI", "receipt")
               if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):
                   raise SystemExit("receipt and exact CLI artifact identities differ")
+              platform_checks = require(exact, "platformChecks", "exactBinaryCLI")
+              if not isinstance(platform_checks, dict) or not platform_checks:
+                  raise SystemExit("exact CLI platform probe receipt is incomplete")
               lifecycle("exactBinaryCLI", exact)
               lifecycle("sourceAPI", source)
               if require(robot_evidence, "binarySha256", "robotExactBinary") != require(binary, "sha256", "receipt"):

@@ -69,6 +69,7 @@ type realCLIEvidence struct {
 	Cold           realConsumerReceipt        `json:"cold"`
 	Warm           realConsumerReceipt        `json:"warm"`
 	Mismatch       realMismatchReceipt        `json:"mismatch"`
+	PlatformChecks map[string]string          `json:"platformChecks"`
 }
 
 type realVerticalReceipt struct {
@@ -312,6 +313,25 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if proof["nativeImport"] != "sqlite3" || proof["nativeExtension"] == "" || proof["sqliteVersion"] == "" {
 		t.Fatalf("exact binary native proof = %#v", proof)
 	}
+	platformChecks := runExactPlatformProbe(t, binary, consumerHome, providerURL, published.ArtifactDigest, proof["nativeExtension"])
+	if runtime.GOOS == "linux" {
+		platformChecks["glibcMuslMismatch"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+			compatibility.OS.LibC = "musl"
+			compatibility.OS.LibCMinimum = "1"
+		}, true, &objectGets)
+	}
+	if runtime.GOOS == "darwin" {
+		platformChecks["translationAllowed"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+			compatibility.OS.TranslationPolicy = "translation-allowed"
+		}, false, &objectGets)
+		if acquired.Compatibility != nil && acquired.Compatibility.Worker.OS.Translation == "rosetta2" {
+			platformChecks["nativeOnlyOnRosetta"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+				compatibility.OS.TranslationPolicy = "native-only"
+			}, true, &objectGets)
+		} else {
+			platformChecks["nativeOnlyOnRosetta"] = "skipped:native-runner"
+		}
+	}
 	cold := realConsumerReceipt{
 		ArtifactDigest: executed.ArtifactDigest, MaterializationID: executed.MaterializationID, Path: executed.Path,
 		CacheHit: acquired.CacheHit, ExitCode: executed.ExitCode, LeaseID: executed.LeaseID,
@@ -369,7 +389,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 
 	return realCLIEvidence{
 		ArtifactDigest: published.ArtifactDigest, ObjectCount: published.ObjectCount,
-		ProducerHome: producerHome, ConsumerHome: consumerHome, Cold: cold, Warm: warm, Mismatch: mismatch,
+		ProducerHome: producerHome, ConsumerHome: consumerHome, Cold: cold, Warm: warm, Mismatch: mismatch, PlatformChecks: platformChecks,
 	}
 }
 
@@ -456,6 +476,110 @@ func readExactNativeProof(t *testing.T, path string) map[string]string {
 	return proof
 }
 
+func runExactPlatformProbe(t *testing.T, binary, home, providerURL string, digest environmentartifact.Digest, nativeExtension string) map[string]string {
+	t.Helper()
+	probeFile := filepath.Join(t.TempDir(), "platform-probe.json")
+	output := runExactBinaryCLI(t, binary, []string{
+		"env", "exec", "--artifact", digest.String(), "--provider", providerURL, "--json", "--", "python", "-c", exactPlatformProbeProgram(), nativeExtension, probeFile,
+	}, home, true)
+	var executed exactBinaryExecResult
+	decodeExactBinaryJSON(t, output, &executed)
+	if executed.ExitCode != 0 || executed.ArtifactDigest != digest {
+		t.Fatalf("exact binary platform probe execution = %+v", executed)
+	}
+	return readExactNativeProof(t, probeFile)
+}
+
+func exactPlatformProbeProgram() string {
+	return `import json,os,pathlib,platform,subprocess,sys,tempfile
+result={'runnerOS':sys.platform,'machine':platform.machine()}
+root=pathlib.Path(tempfile.mkdtemp(prefix='rcc-platform-probe-'))
+case_file=root/'CaseProbe'
+case_file.write_text('case')
+case_collision=(root/'caseprobe').exists()
+result['caseCollision']='pass' if case_collision else 'case-sensitive-filesystem'
+link=root/'python-link'
+try:
+    link.symlink_to(pathlib.Path(sys.executable))
+    result['executableSymlink']='pass' if link.exists() and link.resolve()==pathlib.Path(sys.executable).resolve() else 'failed'
+except (OSError,NotImplementedError) as error:
+    result['executableSymlink']='skipped:'+type(error).__name__
+if sys.platform.startswith('linux'):
+    try:
+        result['filesystemType']=subprocess.check_output(['stat','-f','-c','%T',str(root)],text=True).strip()
+    except (OSError,subprocess.SubprocessError) as error:
+        result['filesystemType']='unavailable:'+type(error).__name__
+    result['libc']=platform.libc_ver()[0] or 'unknown'
+    result['glibcMuslMismatch']='tested-by-manifest-mutation'
+elif sys.platform=='darwin':
+    translated=subprocess.run(['sysctl','-in','sysctl.proc_translated'],capture_output=True,text=True)
+    result['rosetta']='rosetta2' if translated.returncode==0 and translated.stdout.strip()=='1' else 'native'
+    try:
+        result['machoRPath']='pass' if 'LC_RPATH' in subprocess.check_output(['otool','-l',sys.argv[1]],text=True,stderr=subprocess.STDOUT) else 'no-rpath'
+        result['machoDependencies']='pass' if subprocess.check_output(['otool','-L',sys.argv[1]],text=True,stderr=subprocess.STDOUT).strip() else 'failed'
+    except (OSError,subprocess.SubprocessError) as error:
+        result['machoRPath']='unavailable:'+type(error).__name__
+        result['machoDependencies']='unavailable:'+type(error).__name__
+    try:
+        result['quarantineXattr']=subprocess.check_output(['xattr','-p','com.apple.quarantine',sys.argv[1]],text=True,stderr=subprocess.STDOUT).strip() or 'absent'
+    except (OSError,subprocess.SubprocessError):
+        result['quarantineXattr']='absent'
+    try:
+        result['codeSigning']='verified' if subprocess.run(['codesign','--verify',sys.argv[1]],capture_output=True).returncode==0 else 'unsigned-or-unverified'
+    except OSError:
+        result['codeSigning']='unavailable'
+elif os.name=='nt':
+    long_root=pathlib.Path(tempfile.mkdtemp(prefix='rcc-long-path-'))
+    while len(str(long_root))<280:
+        long_root=long_root/'long-directory-name-0123456789'
+    try:
+        long_root.mkdir(parents=True,exist_ok=True)
+        (long_root/'probe.txt').write_text('long')
+        result['longPath']='pass'
+    except OSError as error:
+        result['longPath']='skipped:'+type(error).__name__
+junction=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-link-'))
+junction.rmdir()
+target=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-target-'))
+    try:
+        linked=subprocess.run(['cmd','/c','mklink','/J',str(junction),str(target)],capture_output=True,text=True)
+        result['junction']='pass' if linked.returncode==0 and junction.is_dir() else 'skipped:'+str(linked.returncode)
+    except OSError as error:
+        result['junction']='skipped:'+type(error).__name__
+    try:
+        import msvcrt
+        lock_file=open(target/'lock.txt','w+')
+        lock_file.write('lock'); lock_file.flush(); lock_file.seek(0); msvcrt.locking(lock_file.fileno(),msvcrt.LK_NBLCK,1); msvcrt.locking(lock_file.fileno(),msvcrt.LK_UNLCK,1); lock_file.close()
+        result['fileLock']='pass'
+    except (OSError,ImportError) as error:
+        result['fileLock']='skipped:'+type(error).__name__
+    result['pathNormalization']='pass' if os.path.normcase(r'C:\Rcc\Case')==os.path.normcase(r'c:\rcc\case') else 'failed'
+print(json.dumps(result,sort_keys=True))
+pathlib.Path(sys.argv[2]).write_text(json.dumps(result,sort_keys=True))`
+}
+
+func runExactCompatibilityCase(t *testing.T, binary, providerURL string, provider *artifactprovider.Filesystem, original environmentartifact.Digest, mutate func(*environmentartifact.CompatibilityRequirements), reject bool, objectGets *atomic.Int64) string {
+	t.Helper()
+	mutated, mutatedBytes := mutateManifest(t, provider, original, mutate)
+	if err := provider.CommitManifest(context.Background(), mutatedBytes); err != nil {
+		t.Fatal(err)
+	}
+	objectGets.Store(0)
+	output := runExactBinaryCLIAllowFailure(t, binary, []string{
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--json",
+	}, filepath.Join(t.TempDir(), "platform-mismatch-home"), true)
+	if reject {
+		if output.err == nil || !strings.Contains(strings.ToLower(output.stderr), "incompatible") || objectGets.Load() != 0 {
+			t.Fatalf("platform mismatch output=%q stderr=%q err=%v objectGets=%d", output.stdout, output.stderr, output.err, objectGets.Load())
+		}
+		return "pass"
+	}
+	if output.err != nil || objectGets.Load() == 0 {
+		t.Fatalf("translation-allowed output=%q stderr=%q err=%v objectGets=%d", output.stdout, output.stderr, output.err, objectGets.Load())
+	}
+	return "pass"
+}
+
 func exactLeaseReleased(home string, digest environmentartifact.Digest, leaseID string) bool {
 	if leaseID == "" {
 		return false
@@ -466,6 +590,12 @@ func exactLeaseReleased(home string, digest environmentartifact.Digest, leaseID 
 }
 
 func mutateManifestForMismatch(t *testing.T, provider *artifactprovider.Filesystem, original environmentartifact.Digest) (environmentartifact.Manifest, []byte) {
+	return mutateManifest(t, provider, original, func(compatibility *environmentartifact.CompatibilityRequirements) {
+		compatibility.CPU.RequiredFeatures = []string{"rcc-real-acceptance-impossible-feature"}
+	})
+}
+
+func mutateManifest(t *testing.T, provider *artifactprovider.Filesystem, original environmentartifact.Digest, mutate func(*environmentartifact.CompatibilityRequirements)) (environmentartifact.Manifest, []byte) {
 	t.Helper()
 	manifestBytes, err := provider.ResolveManifest(context.Background(), original)
 	if err != nil {
@@ -476,7 +606,7 @@ func mutateManifestForMismatch(t *testing.T, provider *artifactprovider.Filesyst
 		t.Fatal(err)
 	}
 	compatibility := manifest.Requirements.Compatibility
-	compatibility.CPU.RequiredFeatures = []string{"rcc-real-acceptance-impossible-feature"}
+	mutate(&compatibility)
 	mutated, mutatedBytes, err := environmentartifact.NewManifest(environmentartifact.ManifestInput{
 		Specification: manifest.Specification, LegacyBlueprint: manifest.LegacyBlueprint, Platform: manifest.Platform,
 		Builder: manifest.Builder, Catalogs: manifest.Catalogs, ObjectIndex: manifest.ObjectIndex,

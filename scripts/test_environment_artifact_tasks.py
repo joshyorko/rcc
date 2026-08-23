@@ -101,6 +101,11 @@ class ArtifactTaskTests(unittest.TestCase):
     for marker in ("materializationId", "nativeImport", "leaseReleased", "providerDeadWarmReuse", "providerObjectGets", "worker capability receipt"):
       self.assertIn(marker, workflow)
 
+  def test_native_receipt_records_platform_specific_runtime_probes(self):
+    source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
+    for marker in ("platformChecks", "exactPlatformProbeProgram", "musl", "rosetta2", "junction", "longPath", "machoRPath"):
+      self.assertIn(marker, source)
+
 
   def test_linux_only_tasks_fail_explicitly(self):
     previous = tasks.sys.platform
