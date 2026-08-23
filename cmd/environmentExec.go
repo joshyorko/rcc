@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
 	"github.com/spf13/cobra"
@@ -19,7 +20,7 @@ type environmentExecResult struct {
 }
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var artifact, providerURL string
+	var artifact, providerURL string; var strictRemote, permissiveLocal bool
 	var jsonOutput bool
 	command := &cobra.Command{
 		Use:          "exec -- <command> [args...]",
@@ -44,8 +45,9 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if dependencies.acquire == nil || dependencies.execute == nil || dependencies.materializer == nil {
 				return fmt.Errorf("environment execution dependencies are unavailable")
 			}
+			policy:=artifacttrust.Policy{}; if strictRemote {policy.Mode=artifacttrust.StrictRemote}; if permissiveLocal {policy.Mode=artifacttrust.PermissiveLocal}
 			acquired, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
-				ArtifactDigest: digest, Provider: provider,
+				ArtifactDigest: digest, Provider: provider, TrustPolicy:&policy,
 			})
 			if err != nil {
 				return err
@@ -73,5 +75,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 	command.Flags().StringVar(&artifact, "artifact", "", "Canonical sha256 environment artifact digest.")
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL; optional for local-ready artifacts.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
+	command.Flags().BoolVar(&strictRemote,"strict-remote",false,"Require detached signatures before execution.")
+	command.Flags().BoolVar(&permissiveLocal,"permissive-local",false,"Explicitly allow unsigned local artifacts.")
 	return command
 }
