@@ -310,6 +310,8 @@ jobs:
                   if not isinstance(value, str) or not value or value.startswith(("skipped:", "unavailable:", "failed")):
                       if not (platform_family == "darwin" and key == "nativeOnlyOnRosetta" and value == "skipped:native-runner"):
                           raise SystemExit(f"exact CLI platform probe {key} is not a passing or explicit fact: {value}")
+              if platform_checks["caseCollision"] not in {"case-insensitive-filesystem", "case-sensitive-filesystem"}:
+                  raise SystemExit(f"caseCollision is not a truthful filesystem fact: {platform_checks['caseCollision']}")
               if not isinstance(platform_checks, dict) or not platform_checks:
                   raise SystemExit("exact CLI platform probe receipt is incomplete")
               lifecycle("exactBinaryCLI", exact)

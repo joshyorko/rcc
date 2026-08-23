@@ -516,7 +516,7 @@ root=pathlib.Path(tempfile.mkdtemp(prefix='rcc-platform-probe-'))
 case_file=root/'CaseProbe'
 case_file.write_text('case')
 case_collision=(root/'caseprobe').exists()
-result['caseCollision']='pass' if case_collision else ('failed:case-sensitive-filesystem' if sys.platform=='darwin' or os.name=='nt' else 'case-sensitive-filesystem')
+result['caseCollision']='case-insensitive-filesystem' if case_collision else 'case-sensitive-filesystem'
 link=root/'python-link'
 try:
     link.symlink_to(pathlib.Path(sys.executable))

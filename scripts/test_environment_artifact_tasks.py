@@ -109,6 +109,9 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("TestExactPlatformProbeProgramParsesForEverySupportedOSBranch", source)
     self.assertIn("expected_checks", workflow)
     self.assertIn("caseCollision", workflow)
+    self.assertIn("case-insensitive-filesystem", source)
+    self.assertNotIn("failed:case-sensitive-filesystem", source)
+    self.assertIn("case-sensitive-filesystem", workflow)
 
 
   def test_linux_only_tasks_fail_explicitly(self):
