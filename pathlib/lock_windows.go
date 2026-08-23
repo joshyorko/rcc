@@ -84,6 +84,7 @@ func Locker(filename string, trycount int, sharedLocation bool) (Releaser, error
 }
 
 func (it Locked) Release() error {
+	defer it.Close()
 	success, err := trylock(unlockFile, it)
 	common.Trace("LOCKER: release %v success: %v with err: %v", it.Name(), success, err)
 	close(it.Latch)

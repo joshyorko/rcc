@@ -3,31 +3,21 @@
 package environmentlifecycle
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
+	"strings"
 
 	"golang.org/x/sys/unix"
 )
 
-func canonicalLifecycleRootPath(path string, create bool) (string, error) {
+func canonicalLifecycleRootPath(path string, _ bool) (string, error) {
 	absolute, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
 	}
-	if create {
-		if err := os.MkdirAll(absolute, 0o750); err != nil {
-			return "", err
-		}
+	if absolute == "/var" || strings.HasPrefix(absolute, "/var/") {
+		absolute = "/private" + absolute
 	}
-	info, err := os.Lstat(absolute)
-	if err != nil {
-		return "", err
-	}
-	if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
-		return "", fmt.Errorf("environment artifact root must be a real directory")
-	}
-	return filepath.EvalSymlinks(absolute)
+	return absolute, nil
 }
 
 func publishLifecycleNoReplaceAt(directory int, temporary, destination string) error {

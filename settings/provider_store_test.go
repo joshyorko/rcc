@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -195,11 +196,11 @@ func TestCustomProviderMutationUsesOwnerOnlyModeAndKeepsOriginalOnFailure(t *tes
 	if err := UpdateCustomProvider("cache", &profile, false); err != nil {
 		t.Fatalf("valid mutation error = %v", err)
 	}
-	if info, err := os.Stat(common.SettingsFile()); err != nil || info.Mode().Perm() != 0o600 {
+	if info, err := os.Stat(common.SettingsFile()); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
 		t.Fatalf("final settings mode = %v, %v", info, err)
 	}
 	before := readCustomBytes(t)
-	if info, err := os.Stat(common.SettingsFile()); err != nil || info.Mode().Perm() != 0o600 {
+	if info, err := os.Stat(common.SettingsFile()); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
 		t.Fatalf("mutated settings mode = %v, %v", info, err)
 	}
 	invalid := ProviderProfile{Type: "http", URL: "http://not-loopback.example"}
@@ -209,7 +210,7 @@ func TestCustomProviderMutationUsesOwnerOnlyModeAndKeepsOriginalOnFailure(t *tes
 	if after := readCustomBytes(t); string(after) != string(before) {
 		t.Fatal("failed mutation changed original settings")
 	}
-	if info, err := os.Stat(common.SettingsFile()); err != nil || info.Mode().Perm() != 0o600 {
+	if info, err := os.Stat(common.SettingsFile()); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0o600) {
 		t.Fatalf("final settings mode = %v, %v", info, err)
 	}
 }

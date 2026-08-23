@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 
@@ -137,6 +138,9 @@ func openSettingsParent(filename string, create bool) (int, string, error) {
 	absolute, err := filepath.Abs(filename)
 	if err != nil {
 		return -1, "", fmt.Errorf("resolve custom settings path: %w", err)
+	}
+	if runtime.GOOS == "darwin" && (absolute == "/var" || strings.HasPrefix(absolute, "/var/")) {
+		absolute = "/private" + absolute
 	}
 	clean := filepath.Clean(absolute)
 	parts := strings.Split(strings.TrimPrefix(clean, string(filepath.Separator)), string(filepath.Separator))

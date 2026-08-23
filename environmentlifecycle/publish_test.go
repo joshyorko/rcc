@@ -281,7 +281,7 @@ func newPublishFixture(t *testing.T) publishFixture {
 			CatalogPath:        catalogPath,
 			SpecificationBytes: []byte(`{"dependencies":["python=3.11"],"source":"robot.yaml"}`),
 			SourceKind:         "robot.yaml",
-			Platform:           environmentartifact.Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"},
+			Platform:           environmentartifact.CurrentPlatform(),
 			Builder:            environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: "v0.test", CompatibilityKey: "v12-gzip-sha256"},
 		},
 		catalogBytes: catalogBytes,

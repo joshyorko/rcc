@@ -106,7 +106,7 @@ func TestCreateBundleAtomicallyReplacesExistingOutput(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if info.Mode().Perm()&0o111 == 0 {
+	if runtime.GOOS != "windows" && info.Mode().Perm()&0o111 == 0 {
 		t.Fatalf("replacement bundle is not executable: %v", info.Mode())
 	}
 }

@@ -102,7 +102,7 @@ func validateCatalogName(name string) error {
 }
 
 func validateCatalogSymlink(path []string, target string) error {
-	if target == "" || filepath.IsAbs(target) || filepath.VolumeName(target) != "" || windowsVolumePattern.MatchString(target) || strings.Contains(target, `\`) {
+	if target == "" || strings.HasPrefix(target, "/") || filepath.IsAbs(target) || filepath.VolumeName(target) != "" || windowsVolumePattern.MatchString(target) || strings.Contains(target, `\`) {
 		return fmt.Errorf("unsafe catalog symlink target %q", target)
 	}
 	parent := path[:len(path)-1]

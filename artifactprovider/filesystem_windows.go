@@ -21,7 +21,7 @@ import (
 var windowsTemporarySequence atomic.Uint64
 
 func (it *Filesystem) initialize() error {
-	if err := ensureWindowsDirectory(it.root, true); err != nil {
+	if err := ensureWindowsProviderAbsolute(it.root, true); err != nil {
 		return err
 	}
 	for _, path := range []string{filepath.Join(it.root, "objects", "sha256"), filepath.Join(it.root, "manifests", "sha256"), filepath.Join(it.root, "tmp")} {
@@ -154,7 +154,7 @@ func (it *Filesystem) ResolveManifest(ctx context.Context, digest environmentart
 	if len(digest.Hex()) != 64 {
 		return nil, fmt.Errorf("invalid manifest digest")
 	}
-	content, err := readWindowsRegular(ctx, it.root, it.manifestPath(digest), maxManifestBytes, digest)
+	content, err := readWindowsRegular(ctx, it.root, it.manifestPath(digest), maxManifestBytes, environmentartifact.Digest{})
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +173,7 @@ func ensureWindowsProviderPath(root, directory string, create bool) error {
 	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) || filepath.IsAbs(relative) {
 		return fmt.Errorf("provider path escapes root")
 	}
-	if err := ensureWindowsDirectory(root, false); err != nil {
+	if err := ensureWindowsProviderAbsolute(root, false); err != nil {
 		return err
 	}
 	current := filepath.Clean(root)
@@ -183,6 +183,26 @@ func ensureWindowsProviderPath(root, directory string, create bool) error {
 	for _, component := range strings.Split(relative, string(os.PathSeparator)) {
 		if component == "" || component == "." || component == ".." {
 			return fmt.Errorf("unsafe provider path component %q", component)
+		}
+		current = filepath.Join(current, component)
+		if err := ensureWindowsDirectory(current, create); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func ensureWindowsProviderAbsolute(path string, create bool) error {
+	clean := filepath.Clean(path)
+	volumeRoot := filepath.VolumeName(clean) + string(os.PathSeparator)
+	relative, err := filepath.Rel(volumeRoot, clean)
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("invalid provider root")
+	}
+	current := volumeRoot
+	for _, component := range strings.Split(relative, string(os.PathSeparator)) {
+		if component == "" || component == "." {
+			continue
 		}
 		current = filepath.Join(current, component)
 		if err := ensureWindowsDirectory(current, create); err != nil {
@@ -231,7 +251,7 @@ func readWindowsRegular(ctx context.Context, root, path string, limit int64, dig
 	}
 	defer func() { _ = file.Close() }()
 	content, err := io.ReadAll(io.LimitReader(&contextReader{ctx: ctx, reader: file}, limit+1))
-	if err != nil || int64(len(content)) != info.Size() || environmentartifact.DigestBytes(content) != digest {
+	if err != nil || int64(len(content)) != info.Size() || (digest != (environmentartifact.Digest{}) && environmentartifact.DigestBytes(content) != digest) {
 		return nil, fmt.Errorf("immutable content digest or size mismatch")
 	}
 	return content, nil
