@@ -94,10 +94,31 @@ type Event struct {
 }
 
 type BuildRequest struct {
-	Root        string
-	DiskBytes   int64
-	Network     bool
-	Credentials bool
+	Root           string
+	DiskBytes      int64
+	Network        bool
+	Credentials    bool
+	QuarantineRoot string
+	CPULimit       int
+	MemoryBytes    int64
+	Timeout        time.Duration
+}
+
+// QuarantineStaging makes failed staging non-authoritative while preserving
+// evidence for bounded diagnostics. The resulting path is never a claim or
+// artifact location.
+func QuarantineStaging(path, root, reason string) (string, error) {
+	if path == "" || root == "" {
+		return "", fmt.Errorf("staging path and quarantine root are required")
+	}
+	if err := os.MkdirAll(root, 0o700); err != nil {
+		return "", err
+	}
+	name := filepath.Join(root, fmt.Sprintf("quarantine-%d-%s", time.Now().UnixNano(), strings.ReplaceAll(reason, string(filepath.Separator), "_")))
+	if err := os.Rename(path, name); err != nil {
+		return "", err
+	}
+	return name, nil
 }
 
 // PrepareStaging creates an owner-private staging directory. Network access is
@@ -121,7 +142,12 @@ func PrepareStaging(req BuildRequest, owner string) (string, func() error, error
 		os.RemoveAll(d)
 		return "", nil, err
 	}
-	policy := map[string]any{"network": req.Network, "credentials": false, "diskBytes": req.DiskBytes}
+	if req.CPULimit < 0 || req.MemoryBytes < 0 || req.Timeout < 0 {
+		_ = reservation.Release()
+		os.RemoveAll(d)
+		return "", nil, fmt.Errorf("resource limits cannot be negative")
+	}
+	policy := map[string]any{"network": req.Network, "credentials": false, "diskBytes": req.DiskBytes, "cpuLimit": req.CPULimit, "memoryBytes": req.MemoryBytes, "timeout": req.Timeout.String()}
 	pb, _ := json.Marshal(policy)
 	if e := os.WriteFile(filepath.Join(d, "policy.json"), pb, 0600); e != nil {
 		_ = reservation.Release()
