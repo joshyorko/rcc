@@ -130,7 +130,9 @@ func (c *Filesystem) ClaimContext(ctx context.Context, key BuildKey, owner strin
 	if err := c.writeJSON(c.claimPath(key), claim); err != nil {
 		return Claim{}, "", err
 	}
-	_ = c.event(Event{Time:c.Clock.Now(),Key:key.ID(),Owner:owner,Epoch:epoch,Event:"claimed"})
+	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:key.ID(),Owner:owner,Epoch:epoch,Event:"claimed"}); eventErr != nil {
+		return Claim{}, "", fmt.Errorf("record claim event: %w", eventErr)
+	}
 	return claim, Claimed, nil
 }
 
@@ -155,8 +157,13 @@ func (c *Filesystem) Heartbeat(claim Claim, ttl time.Duration) (err error) {
 		return ErrStaleClaim
 	}
 	current.ExpiresAt = c.Clock.Now().Add(ttl)
-	_ = c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"heartbeat"})
-	return c.writeJSON(c.claimPath(claim.Key), current)
+	if err := c.writeJSON(c.claimPath(claim.Key), current); err != nil {
+		return err
+	}
+	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"heartbeat"}); eventErr != nil {
+		return fmt.Errorf("record heartbeat event: %w", eventErr)
+	}
+	return nil
 }
 
 func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
@@ -190,13 +197,31 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	if err := c.writeJSON(c.artifactPath(claim.Key), artifact); err != nil {
 		return err
 	}
-	_ = c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"published",Detail:artifact.Digest})
+	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"published",Detail:artifact.Digest}); eventErr != nil {
+		return fmt.Errorf("record publication event: %w", eventErr)
+	}
 	return os.Remove(c.claimPath(claim.Key))
 }
 
 func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
 func (c *Filesystem) Events(key BuildKey) ([]Event,error) { b,err:=os.ReadFile(filepath.Join(c.dir(key),"events.jsonl"));if os.IsNotExist(err){return nil,nil};if err!=nil{return nil,err};var out []Event;for _,line:=range strings.Split(strings.TrimSpace(string(b)),"\n"){if line==""{continue};var e Event;if err:=json.Unmarshal([]byte(line),&e);err!=nil{return nil,err};out=append(out,e)};return out,nil }
-func (c *Filesystem) event(e Event) error { b,_:=json.Marshal(e);f,err:=os.OpenFile(filepath.Join(c.Root,e.Key,"events.jsonl"),os.O_CREATE|os.O_APPEND|os.O_WRONLY,0600);if err!=nil{return err};defer f.Close();_,err=f.Write(append(b,'\n'));return err }
+func (c *Filesystem) event(e Event) error {
+	b, err := json.Marshal(e)
+	if err != nil { return err }
+	dir := filepath.Join(c.Root, e.Key)
+	if err := os.MkdirAll(dir, 0o700); err != nil { return err }
+	f, err := os.OpenFile(filepath.Join(dir, "events.jsonl"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil { return err }
+	if _, err = f.Write(append(b, '\n')); err == nil { err = f.Sync() }
+	if closeErr := f.Close(); err == nil { err = closeErr }
+	if err != nil { return err }
+	// Persist the directory entry as well, so an acknowledged event survives a
+	// crash even when the filesystem reorders metadata updates.
+	d, err := os.Open(dir)
+	if err != nil { return err }
+	if err = d.Sync(); err == nil { err = d.Close() } else { _ = d.Close() }
+	return err
+}
 
 type PrewarmRequest struct {
 	Keys     []BuildKey
