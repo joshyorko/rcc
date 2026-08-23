@@ -246,6 +246,18 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
 
+  def test_job_level_environment_uses_only_planning_contexts(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    job_env = False
+    for line in workflow.splitlines():
+      if line.startswith("    env:"):
+        job_env = True
+        continue
+      if job_env and line.startswith("    ") and not line.startswith("      "):
+        job_env = False
+      if job_env:
+        self.assertNotIn("${{ runner.", line)
+
   def test_release_workflow_documentation_declares_homebrew_token(self):
     guide = (ROOT / ".github" / "workflows" / "README.md").read_text()
     self.assertIn("HOMEBREW_TOOLS_PAT", guide)

@@ -86,14 +86,14 @@ jobs:
     env:
       ROBOCORP_HOME: ${{ github.workspace }}/tmp/rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
-      RCC_N1_BINARY: ${{ runner.temp }}/released-rcc/rcc
+      RCC_N1_BINARY: ${{ github.workspace }}/tmp/released-rcc/rcc
       RCC_N1_ARCHIVE: ${{ github.workspace }}/tmp/rcc-n1-environment.rcca
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
       - name: Install pinned released RCC
         run: |
           set -euo pipefail
-          rcc_dir="${RUNNER_TEMP}/released-rcc"
+          rcc_dir="${GITHUB_WORKSPACE}/tmp/released-rcc"
           rcc_path="${rcc_dir}/rcc"
           mkdir -p "$rcc_dir"
           curl --fail --show-error --location --retry 3 \
