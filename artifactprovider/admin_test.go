@@ -301,3 +301,30 @@ func TestHTTPAbuseBoundaries(t *testing.T) {
 		})
 	}
 }
+
+func TestHTTPRejectsChunkAmbiguityAndMediaTypeInjection(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := NewHandler(p)
+	digest := environmentartifact.DigestBytes([]byte("body"))
+	for _, tc := range []struct {
+		name, contentType string
+		length            int64
+		body              string
+	}{
+		{"chunked upload", "application/octet-stream", -1, "body"}, {"media type parameters", "application/octet-stream; x=y", 4, "body"}, {"header injection", "application/octet-stream\r\nX-Injected: yes", 4, "body"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodPut, "/v1/objects/sha256/"+digest.Hex(), strings.NewReader(tc.body))
+			req.ContentLength = tc.length
+			req.Header.Set("Content-Type", tc.contentType)
+			rec := httptest.NewRecorder()
+			handler.ServeHTTP(rec, req)
+			if rec.Code >= 200 && rec.Code < 300 {
+				t.Fatalf("abuse request succeeded: %d", rec.Code)
+			}
+		})
+	}
+}

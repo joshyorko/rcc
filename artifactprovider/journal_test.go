@@ -210,6 +210,20 @@ func TestPolicyDoesNotChargeDuplicateUploads(t *testing.T) {
 	}
 }
 
+func TestPolicyRateLimitIsCallerVisibleAndTyped(t *testing.T) {
+	j, err := NewJournal(t.TempDir() + "/rate.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := NewPolicy(j, Limits{RequestsPerSecond: 1})
+	if _, err := p.MissingObjects(context.Background(), nil); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.MissingObjects(context.Background(), nil); !errors.Is(err, ErrRateLimited) {
+		t.Fatalf("rate-limit outcome=%v", err)
+	}
+}
+
 func TestPolicyQuotaSurvivesRestart(t *testing.T) {
 	path := t.TempDir() + "/policy.log"
 	j, err := NewJournal(path)
