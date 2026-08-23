@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"archive/zip"
 	"bytes"
 	"context"
 	"io"
@@ -53,12 +54,19 @@ func TestEnvironmentCommandContracts(t *testing.T) {
 		if child.Flags().Lookup("provider") == nil || child.Flags().Lookup("json") == nil {
 			t.Fatalf("env %s lacks provider/json flags", name)
 		}
+		if name != "publish" && (child.Flags().Lookup("trust-carrier") == nil || child.Flags().Lookup("trust-carrier-type") == nil) {
+			t.Fatalf("env %s lacks trust carrier selection flags", name)
+		}
+	}
+	publish, _, err := command.Find([]string{"publish"})
+	if err != nil || publish.Flags().Lookup("trust-carrier") == nil || publish.Flags().Lookup("signing-key") == nil || publish.Flags().Lookup("revocations") == nil {
+		t.Fatal("env publish lacks trust attachment flags")
 	}
 }
 
 func TestEnvironmentTrustPolicyDefaultsStrictAndRejectsConflictingModes(t *testing.T) {
 	policy, err := trustPolicyForCommand(false, false)
-	if err != nil || policy.Mode != artifacttrust.StrictRemote {
+	if err != nil || policy.Mode != artifacttrust.StrictRemote || !policy.FailClosedRevocations {
 		t.Fatalf("default policy=%+v err=%v", policy, err)
 	}
 	policy, err = trustPolicyForCommand(false, true)
@@ -67,6 +75,55 @@ func TestEnvironmentTrustPolicyDefaultsStrictAndRejectsConflictingModes(t *testi
 	}
 	if _, err := trustPolicyForCommand(true, true); err == nil {
 		t.Fatal("conflicting trust modes accepted")
+	}
+}
+
+func TestEnvironmentAcquireSelectsFilesystemAndArchiveTrustCarriers(t *testing.T) {
+	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+	for _, test := range []struct {
+		name, carrierType string
+		carrierPath       func(*testing.T) string
+		want              any
+	}{
+		{name: "filesystem", carrierType: "filesystem", carrierPath: func(t *testing.T) string { return t.TempDir() }, want: &artifacttrust.FilesystemCarrier{}},
+		{name: "archive", carrierType: "archive", carrierPath: func(t *testing.T) string {
+			path := filepath.Join(t.TempDir(), "trust.zip")
+			file, err := os.Create(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := zip.NewWriter(file).Close(); err != nil {
+				t.Fatal(err)
+			}
+			if err := file.Close(); err != nil {
+				t.Fatal(err)
+			}
+			return path
+		}, want: &artifacttrust.ArchiveCarrier{}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			path := test.carrierPath(t)
+			var received artifacttrust.Carrier
+			command := newEnvironmentCommand(environmentCommandDependencies{acquire: func(_ context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
+				received = request.TrustCarrier
+				return environmentlifecycle.AcquireResult{ArtifactDigest: digest}, nil
+			}})
+			var stdout bytes.Buffer
+			command.SetOut(&stdout)
+			if err := runCobraCommand(command, []string{"acquire", "--artifact", cliTestDigest, "--trust-carrier", path, "--trust-carrier-type", test.carrierType, "--permissive-local", "--json"}); err != nil {
+				t.Fatal(err)
+			}
+			switch test.want.(type) {
+			case *artifacttrust.FilesystemCarrier:
+				if _, ok := received.(*artifacttrust.FilesystemCarrier); !ok {
+					t.Fatalf("carrier=%T", received)
+				}
+			case *artifacttrust.ArchiveCarrier:
+				if _, ok := received.(*artifacttrust.ArchiveCarrier); !ok {
+					t.Fatalf("carrier=%T", received)
+				}
+			}
+		})
 	}
 }
 
@@ -101,6 +158,7 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
 	specification := environmentartifact.DigestBytes([]byte("specification"))
 	var providerURL, robotFile string
+	var trustCarrier artifacttrust.Carrier
 	dependencies := environmentCommandDependencies{
 		newProvider: func(value string) (artifactprovider.Provider, error) {
 			providerURL = value
@@ -108,6 +166,7 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 		},
 		publish: func(_ context.Context, request environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error) {
 			robotFile = request.RobotFile
+			trustCarrier = request.TrustCarrier
 			if request.Provider == nil {
 				t.Fatal("publish received no provider")
 			}
@@ -125,8 +184,8 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := `{"artifactDigest":"` + cliTestDigest + `","specificationDigest":"` + specification.String() + `","legacyBlueprintKey":"legacy-key","objectCount":7,"uploadedBytes":101,"reusedBytes":202}` + "\n"
-	if stdout.String() != want || providerURL != "http://127.0.0.1:8080" || robotFile != "project/robot.yaml" {
-		t.Fatalf("publish output=%q provider=%q robot=%q", stdout.String(), providerURL, robotFile)
+	if stdout.String() != want || providerURL != "http://127.0.0.1:8080" || robotFile != "project/robot.yaml" || trustCarrier == nil {
+		t.Fatalf("publish output=%q provider=%q robot=%q carrier=%T", stdout.String(), providerURL, robotFile, trustCarrier)
 	}
 }
 

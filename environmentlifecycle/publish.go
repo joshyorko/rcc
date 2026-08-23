@@ -3,6 +3,7 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"crypto/ed25519"
 	"fmt"
 	"io"
 	"os"
@@ -28,14 +29,16 @@ type BuildResult struct {
 }
 
 type PublishRequest struct {
-	RobotFile        string
-	Provider         artifactprovider.Provider
-	Builder          Builder
-	TrustCarrier     artifacttrust.Carrier
-	TrustProvenance  *artifacttrust.Provenance
-	TrustSBOM        *artifacttrust.SBOM
-	TrustSignatures  []artifacttrust.Signature
-	TrustRevocations []artifacttrust.Revocation
+	RobotFile         string
+	Provider          artifactprovider.Provider
+	Builder           Builder
+	TrustCarrier      artifacttrust.Carrier
+	TrustProvenance   *artifacttrust.Provenance
+	TrustSBOM         *artifacttrust.SBOM
+	TrustSignatures   []artifacttrust.Signature
+	TrustRevocations  []artifacttrust.Revocation
+	TrustSigningKey   ed25519.PrivateKey
+	TrustSigningKeyID string
 }
 
 type PublishResult struct {
@@ -176,7 +179,7 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 	}, nil
 }
 
-func publishTrustAttachments(request PublishRequest, manifest environmentartifact.Manifest, _ BuildResult, _ environmentartifact.Inventory) error {
+func publishTrustAttachments(request PublishRequest, manifest environmentartifact.Manifest, _ BuildResult, inventory environmentartifact.Inventory) error {
 	if request.TrustCarrier == nil {
 		return nil
 	}
@@ -206,8 +209,16 @@ func publishTrustAttachments(request PublishRequest, manifest environmentartifac
 			return fmt.Errorf("publish provenance attachment: %w", err)
 		}
 	}
-	if request.TrustSBOM != nil {
-		data, err := artifacttrust.CanonicalSBOM(*request.TrustSBOM)
+	sbom := request.TrustSBOM
+	if sbom == nil {
+		generated, err := generatedSBOM(manifest, inventory)
+		if err != nil {
+			return fmt.Errorf("construct generated SBOM: %w", err)
+		}
+		sbom = &generated
+	}
+	if sbom != nil {
+		data, err := artifacttrust.CanonicalSBOM(*sbom)
 		if err != nil {
 			return fmt.Errorf("construct SBOM attachment: %w", err)
 		}
@@ -215,8 +226,19 @@ func publishTrustAttachments(request PublishRequest, manifest environmentartifac
 			return fmt.Errorf("publish SBOM attachment: %w", err)
 		}
 	}
-	if len(request.TrustSignatures) > 0 {
-		_, data, err := artifacttrust.NewSignatureBundle(artifact, request.TrustSignatures)
+	signatures := append([]artifacttrust.Signature(nil), request.TrustSignatures...)
+	if len(request.TrustSigningKey) > 0 {
+		if request.TrustSigningKeyID == "" {
+			return fmt.Errorf("trust signing key ID is required")
+		}
+		signature, err := artifacttrust.Sign(artifact, request.TrustSigningKeyID, request.TrustSigningKey)
+		if err != nil {
+			return fmt.Errorf("sign artifact trust: %w", err)
+		}
+		signatures = append(signatures, signature)
+	}
+	if len(signatures) > 0 {
+		_, data, err := artifacttrust.NewSignatureBundle(artifact, signatures)
 		if err != nil {
 			return fmt.Errorf("construct signature attachment: %w", err)
 		}
@@ -224,16 +246,28 @@ func publishTrustAttachments(request PublishRequest, manifest environmentartifac
 			return fmt.Errorf("publish signature attachment: %w", err)
 		}
 	}
-	if len(request.TrustRevocations) > 0 {
-		_, data, err := artifacttrust.NewRevocationBundle(artifact, request.TrustRevocations)
-		if err != nil {
-			return fmt.Errorf("construct revocation attachment: %w", err)
-		}
-		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "revocations", data); err != nil {
-			return fmt.Errorf("publish revocation attachment: %w", err)
-		}
+	_, data, err := artifacttrust.NewRevocationBundleAt(artifact, request.TrustRevocations, time.Now().UTC(), "rcc-publish")
+	if err != nil {
+		return fmt.Errorf("construct revocation attachment: %w", err)
+	}
+	if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "revocations", data); err != nil {
+		return fmt.Errorf("publish revocation attachment: %w", err)
 	}
 	return nil
+}
+
+func generatedSBOM(manifest environmentartifact.Manifest, inventory environmentartifact.Inventory) (artifacttrust.SBOM, error) {
+	components := []artifacttrust.Component{{
+		Name: "rcc", Version: manifest.Builder.RCCVersion, PackageType: "rcc-builder", Source: manifest.Builder.Kind,
+	}}
+	for _, entry := range inventory.Index.Entries {
+		components = append(components, artifacttrust.Component{
+			Name: entry.LegacyObjectID, Version: entry.StoredDigest.String(), PackageType: "rcc-hololib-object-v12",
+			Hash: entry.StoredDigest.String(),
+		})
+	}
+	sbom, _, err := artifacttrust.NewSBOM(manifest.ArtifactDigest.String(), components)
+	return sbom, err
 }
 
 func descriptorFor(mediaType string, content []byte) environmentartifact.Descriptor {

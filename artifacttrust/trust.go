@@ -720,6 +720,30 @@ func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
 	return r.withDecisionID()
 }
 
+// FailureReceipt records a trust-input failure that occurred before the
+// attestation payload could be passed to Verify. The diagnostic is deliberately
+// bounded to avoid persisting carrier/provider secrets.
+func (p Policy) FailureReceipt(artifact, platform, builder, code, diagnostic string, at time.Time) VerificationReceipt {
+	if at.IsZero() {
+		at = time.Now().UTC()
+	}
+	p.Mode = p.effectiveMode()
+	if p.Mode == StrictRemote {
+		p.RequireSignature = true
+	}
+	if code == "" {
+		code = CodeInvalid
+	}
+	if diagnostic == "" || containsCredential(diagnostic) {
+		diagnostic = "trust attachment could not be decoded"
+	}
+	return VerificationReceipt{
+		ArtifactDigest: artifact, PolicyMode: p.Mode, VerifiedAt: FreshTimestamp(at),
+		PolicyRevision: p.policyRevision(), PolicyDigest: p.digest(), Platform: platform,
+		Builder: builder, Code: code, Diagnostic: diagnostic,
+	}.withDecisionID()
+}
+
 func (p Policy) effectiveMode() PolicyMode {
 	if p.Mode == PermissiveLocal {
 		return PermissiveLocal

@@ -20,7 +20,7 @@ type environmentAcquireResult struct {
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var artifact, providerURL string
+	var artifact, providerURL, trustCarrierPath, trustCarrierType string
 	var strictRemote, permissiveLocal bool
 	var jsonOutput bool
 	command := &cobra.Command{
@@ -47,9 +47,9 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if err != nil {
 				return err
 			}
-			var trustCarrier artifacttrust.Carrier
-			if providerURL != "" {
-				trustCarrier = &artifacttrust.HTTPCarrier{BaseURL: providerURL}
+			trustCarrier, err := optionalEnvironmentTrustCarrier(trustCarrierPath, trustCarrierType, providerURL)
+			if err != nil {
+				return err
 			}
 			result, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
 				ArtifactDigest: digest, Provider: provider, TrustPolicy: &policy, TrustCarrier: trustCarrier,
@@ -69,6 +69,8 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 	}
 	command.Flags().StringVar(&artifact, "artifact", "", "Canonical sha256 environment artifact digest.")
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL; optional for local-ready artifacts.")
+	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Detached trust carrier path or URL; defaults to provider HTTP or local filesystem.")
+	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
 	command.Flags().BoolVar(&strictRemote, "strict-remote", false, "Require detached signatures before acquisition.")
 	command.Flags().BoolVar(&permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts.")

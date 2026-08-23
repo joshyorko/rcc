@@ -78,6 +78,64 @@ func TestNewLeaseRejectsInvalidTrustDecision(t *testing.T) {
 	}
 }
 
+func TestNewLeaseRefreshesRevocationsWithoutChangingRunningLease(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+	})
+
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	now := time.Now().UTC()
+	_, emptyRevocations, err := artifacttrust.NewRevocationBundleAt(artifactDigest.String(), nil, now, "offline-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "revocations", emptyRevocations); err != nil {
+		t.Fatal(err)
+	}
+	policy := &artifacttrust.Policy{
+		Mode: artifacttrust.PermissiveLocal, AllowUnsignedLocal: true,
+		FailClosedRevocations: true, RevocationMaxAge: 24 * time.Hour,
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: remote, TrustPolicy: policy, TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	materialization := Materialization{
+		ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path,
+		CacheHit: result.CacheHit, Verification: result.Verification,
+		TrustPolicy: result.TrustPolicy, TrustCarrier: result.TrustCarrier,
+	}
+	materializer := NewLocalMaterializer()
+	running, err := materializer.Lease(context.Background(), materialization)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = materializer.Release(context.Background(), running) }()
+
+	updated := now.Add(time.Second)
+	_, revokedBytes, err := artifacttrust.NewRevocationBundleAt(artifactDigest.String(), []artifacttrust.Revocation{{ArtifactDigests: []string{artifactDigest.String()}, UpdatedAt: artifacttrust.FreshTimestamp(updated)}}, updated, "offline-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "revocations", revokedBytes); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := materializer.Lease(context.Background(), materialization); err == nil {
+		t.Fatal("new lease ignored refreshed revocation")
+	}
+	if _, err := materializer.ExecutionHandle(context.Background(), running, []string{"python", "-V"}); err != nil {
+		t.Fatalf("already-running lease was re-evaluated: %v", err)
+	}
+}
+
 func TestArtifactLifecycleLocksDoNotSerializeUnrelatedArtifacts(t *testing.T) {
 	first, err := environmentartifact.ParseDigest("sha256:" + strings.Repeat("1", 64))
 	if err != nil {

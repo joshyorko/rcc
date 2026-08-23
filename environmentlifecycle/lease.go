@@ -61,6 +61,11 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if record.MaterializationID != materialization.ID || record.Path != materialization.Path {
 		return Lease{}, fmt.Errorf("materialization does not match ready record")
 	}
+	verification, err := refreshMaterializationTrust(ctx, materialization)
+	if err != nil {
+		return Lease{}, err
+	}
+	materialization.Verification = verification
 	if materialization.Verification.Code != "" {
 		if !materialization.Verification.Valid {
 			return Lease{}, fmt.Errorf("materialization trust decision is not valid")

@@ -10,6 +10,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
@@ -80,6 +81,20 @@ func TestHTTPProviderMatchesFilesystemProviderSemantics(t *testing.T) {
 	}
 	if !bytes.Equal(resolved, fixture.manifestBytes) {
 		t.Fatal("HTTP-resolved manifest differs from committed bytes")
+	}
+}
+
+func TestHTTPProviderStoresAndServesDetachedTrustAttachments(t *testing.T) {
+	_, _, server := newHTTPProviderTestServer(t)
+	artifact := "sha256:carrier"
+	data := []byte(`{"mediaType":"application/vnd.rcc.environment.provenance.v1+json","artifactDigest":"sha256:carrier"}`)
+	carrier := &artifacttrust.HTTPCarrier{BaseURL: server.URL, Client: server.Client()}
+	if err := artifacttrust.PutAttachment(carrier, artifact, "provenance", data); err != nil {
+		t.Fatal(err)
+	}
+	got, err := artifacttrust.GetAttachment(carrier, artifact, "provenance")
+	if err != nil || !bytes.Equal(got, data) {
+		t.Fatalf("trust attachment=%q err=%v", got, err)
 	}
 }
 

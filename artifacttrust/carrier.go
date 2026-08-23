@@ -138,6 +138,7 @@ func (c *HTTPCarrier) Write(name string, data []byte) error {
 	if err != nil {
 		return err
 	}
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := c.client().Do(req)
 	if err != nil {
 		return err
@@ -270,6 +271,8 @@ type Attachments struct {
 	SBOM                *SBOM
 	Signatures          []Signature
 	Revocations         []Revocation
+	SignaturesPresent   bool
+	RevocationsPresent  bool
 	RevocationFetchedAt string
 	RevocationSource    string
 }
@@ -306,6 +309,7 @@ func LoadAttachments(carrier Carrier, artifact string) (Attachments, error) {
 			return Attachments{}, err
 		}
 		result.Signatures = bundle.Signatures
+		result.SignaturesPresent = true
 	} else if !errors.Is(err, os.ErrNotExist) {
 		return Attachments{}, err
 	}
@@ -319,6 +323,7 @@ func LoadAttachments(carrier Carrier, artifact string) (Attachments, error) {
 			return Attachments{}, err
 		}
 		result.Revocations = bundle.Revocations
+		result.RevocationsPresent = true
 		result.RevocationFetchedAt = bundle.FetchedAt
 		result.RevocationSource = bundle.Source
 	} else if !errors.Is(err, os.ErrNotExist) {

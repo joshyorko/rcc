@@ -39,6 +39,9 @@ type AcquireResult struct {
 	Path              string
 	CacheHit          CacheProvenance
 	Verification      artifacttrust.VerificationReceipt `json:"verification"`
+	TrustPolicy       *artifacttrust.Policy             `json:"-"`
+	TrustRequest      *artifacttrust.VerifyRequest      `json:"-"`
+	TrustCarrier      artifacttrust.Carrier             `json:"-"`
 }
 
 type Materialization struct {
@@ -47,6 +50,9 @@ type Materialization struct {
 	Path           string
 	CacheHit       CacheProvenance
 	Verification   artifacttrust.VerificationReceipt
+	TrustPolicy    *artifacttrust.Policy
+	TrustRequest   *artifacttrust.VerifyRequest
+	TrustCarrier   artifacttrust.Carrier
 }
 
 type Materializer interface {
@@ -128,46 +134,13 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if request.TrustPolicy == nil {
 			return artifacttrust.VerificationReceipt{Valid: true, Code: artifacttrust.CodeValid, ArtifactDigest: request.ArtifactDigest.String()}, nil
 		}
-		q := artifacttrust.VerifyRequest{ArtifactDigest: request.ArtifactDigest.String(), Platform: platform, Builder: builder}
-		if request.TrustRequest != nil {
-			q = *request.TrustRequest
-			q.ArtifactDigest = request.ArtifactDigest.String()
-			if q.Platform == "" {
-				q.Platform = platform
-			}
-			if q.Builder == "" {
-				q.Builder = builder
-			}
-		}
-		if request.TrustCarrier != nil {
-			attachments, err := artifacttrust.LoadAttachments(request.TrustCarrier, request.ArtifactDigest.String())
-			if err != nil {
-				return artifacttrust.VerificationReceipt{}, fmt.Errorf("load artifact trust attachments: %w", err)
-			}
-			if attachments.Provenance != nil {
-				q.Provenance = attachments.Provenance
-			}
-			if attachments.SBOM != nil {
-				q.SBOM = attachments.SBOM
-			}
-			if len(attachments.Signatures) > 0 {
-				q.Signatures = attachments.Signatures
-			}
-			if len(attachments.Revocations) > 0 {
-				q.Revocations = attachments.Revocations
-			}
-			if attachments.RevocationFetchedAt != "" {
-				fetchedAt, err := time.Parse(time.RFC3339, attachments.RevocationFetchedAt)
-				if err != nil {
-					return artifacttrust.VerificationReceipt{}, fmt.Errorf("invalid revocation fetch timestamp")
-				}
-				q.RevocationFetchedAt = fetchedAt
-			}
-			q.RevocationSource = attachments.RevocationSource
+		at := time.Now().UTC()
+		q, err := trustRequestFor(request.ArtifactDigest.String(), platform, builder, request.TrustRequest, request.TrustCarrier, at)
+		if err != nil {
+			return persistTrustFailure(*request.TrustPolicy, request.ArtifactDigest.String(), platform, builder, err, at)
 		}
 		r := request.TrustPolicy.Verify(q)
-		store := artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(), "artifacts", "v1", "verification"))
-		if err := store.Put(r); err != nil {
+		if err := persistVerificationReceipt(r); err != nil {
 			return r, fmt.Errorf("persist artifact trust receipt: %w", err)
 		}
 		if !r.Valid {
@@ -191,7 +164,7 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		}
 		if result, err := warmMaterialization(manifest); err == nil {
 			result.Verification = receipt
-			return result, nil
+			return bindTrustContext(result, request), nil
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
 		}
@@ -204,7 +177,7 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 			return AcquireResult{}, err
 		}
 		result.Verification = receipt
-		return result, nil
+		return bindTrustContext(result, request), nil
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
@@ -232,7 +205,14 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		return AcquireResult{}, err
 	}
 	result.Verification = receipt
-	return result, nil
+	return bindTrustContext(result, request), nil
+}
+
+func bindTrustContext(result AcquireResult, request AcquireRequest) AcquireResult {
+	result.TrustPolicy = request.TrustPolicy
+	result.TrustRequest = request.TrustRequest
+	result.TrustCarrier = request.TrustCarrier
+	return result
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {

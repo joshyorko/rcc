@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestHTTPAttachmentVerificationBindsArtifact(t *testing.T) {
@@ -28,6 +29,14 @@ func TestHTTPAttachmentVerificationBindsArtifact(t *testing.T) {
 	}
 	if _, err := GetAttachment(&HTTPCarrier{BaseURL: s.URL}, "sha256:other", "provenance"); err == nil {
 		t.Fatal("mismatched HTTP attachment accepted")
+	}
+}
+
+func TestHTTPCarrierRejectsCredentialBearingBaseURL(t *testing.T) {
+	for _, baseURL := range []string{"https://user:secret@example.invalid", "https://example.invalid/?token=secret", "https://example.invalid/#secret"} {
+		if _, err := (&HTTPCarrier{BaseURL: baseURL}).Read("sha256:a/provenance.json"); err == nil || bytes.Contains([]byte(err.Error()), []byte("secret")) {
+			t.Fatalf("base URL %q err=%v", baseURL, err)
+		}
 	}
 }
 
@@ -133,5 +142,60 @@ func TestPutAttachmentNormalizesLegacySignatureArrayToBoundBundle(t *testing.T) 
 	attachments, err := LoadAttachments(carrier, "sha256:a")
 	if err != nil || len(attachments.Signatures) != 1 || VerifySignature(attachments.Signatures[0], public, "sha256:a") != nil {
 		t.Fatalf("attachments=%+v err=%v", attachments, err)
+	}
+}
+
+func TestHTTPAndOfflineArchiveCarriersLoadSameSignatureAndRevocationBundles(t *testing.T) {
+	_, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	signature, err := Sign("sha256:a", "key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, signatureBytes, err := NewSignatureBundle("sha256:a", []Signature{signature})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, revocationBytes, err := NewRevocationBundleAt("sha256:a", nil, time.Unix(10, 0), "offline")
+	if err != nil {
+		t.Fatal(err)
+	}
+	root := t.TempDir()
+	filesystem := NewFilesystemCarrier(root)
+	if err := PutAttachment(filesystem, "sha256:a", "signature", signatureBytes); err != nil {
+		t.Fatal(err)
+	}
+	if err := PutAttachment(filesystem, "sha256:a", "revocations", revocationBytes); err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(root, "trust.zip")
+	if err := ExportArchive(filesystem, archivePath, "sha256:a", []string{"signature", "revocations"}); err != nil {
+		t.Fatal(err)
+	}
+	offline, err := OpenArchiveCarrier(archivePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	attachments, err := LoadAttachments(offline, "sha256:a")
+	if err != nil || len(attachments.Signatures) != 1 || len(attachments.Revocations) != 0 || attachments.RevocationFetchedAt == "" {
+		t.Fatalf("offline attachments=%+v err=%v", attachments, err)
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		switch request.URL.Path {
+		case "/" + AttachmentName("sha256:a", "signature"):
+			_, _ = writer.Write(signatureBytes)
+		case "/" + AttachmentName("sha256:a", "revocations"):
+			_, _ = writer.Write(revocationBytes)
+		default:
+			http.NotFound(writer, request)
+		}
+	}))
+	defer server.Close()
+	remote, err := LoadAttachments(&HTTPCarrier{BaseURL: server.URL, Client: server.Client()}, "sha256:a")
+	if err != nil || len(remote.Signatures) != 1 || remote.RevocationFetchedAt == "" {
+		t.Fatalf("HTTP attachments=%+v err=%v", remote, err)
 	}
 }
