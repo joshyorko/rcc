@@ -33,24 +33,87 @@ func TestBuildKeyIsDeterministicAndIncludesCompatibility(t *testing.T) {
 }
 
 func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
-	a:=testKey(); b:=a; b.ResolutionPolicy="offline-v2"; b.TrustPolicy="strict"; b.ArtifactSchema="v1"
-	if a.ID()==b.ID(){t.Fatal("policy/schema changes must claim independently")}
+	a := testKey()
+	b := a
+	b.ResolutionPolicy = "offline-v2"
+	b.TrustPolicy = "strict"
+	b.ArtifactSchema = "v1"
+	if a.ID() == b.ID() {
+		t.Fatal("policy/schema changes must claim independently")
+	}
+}
+
+func TestReleaseAndWaitAreStableLeaseOperations(t *testing.T) {
+	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	key := testKey()
+	claim, outcome, err := c.Claim(key, "owner", time.Minute)
+	if err != nil || outcome != Claimed {
+		t.Fatalf("claim: %v %v", outcome, err)
+	}
+	if err := c.Release(claim); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := c.Wait(context.Background(), key, 5*time.Millisecond); err == nil {
+		t.Fatal("wait unexpectedly succeeded without artifact")
+	}
+}
+
+func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
+	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c.RequireArtifactProof = true
+	claim, _, err := c.Claim(testKey(), "owner", time.Minute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Publish(claim, Artifact{Digest: "sha256:one", Verified: true}); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("proof bypass: %v", err)
+	}
+	proof := Artifact{Digest: "sha256:one", ClosureDigest: "sha256:closure", Provider: "local", ProviderAuthorization: "local"}
+	if err := c.Publish(claim, proof); err != nil {
+		t.Fatalf("proof publish: %v", err)
+	}
 }
 
 func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
-	if _,_,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Credentials:true},"owner");err==nil{t.Fatal("credentials accepted")}
-	d,cleanup,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Network:true},"owner");if err!=nil{t.Fatal(err)};if err:=cleanup();err!=nil{t.Fatal(err)}; _ = d
+	if _, _, err := PrepareStaging(BuildRequest{Root: t.TempDir(), Credentials: true}, "owner"); err == nil {
+		t.Fatal("credentials accepted")
+	}
+	d, cleanup, err := PrepareStaging(BuildRequest{Root: t.TempDir(), Network: true}, "owner")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := cleanup(); err != nil {
+		t.Fatal(err)
+	}
+	_ = d
 }
 
 func TestClaimFailureMatrixCoreBoundaries(t *testing.T) {
-	c:=NewFilesystem(t.TempDir(),RealClock{}); k:=testKey()
-	if _,_,err:=c.Claim(BuildKey{},"x",time.Minute);err==nil{t.Fatal("empty key accepted")}
-	cl,_,err:=c.Claim(k,"x",time.Minute);if err!=nil{t.Fatal(err)}
-	if err:=c.Publish(cl,Artifact{Digest:"",Verified:true});!errors.Is(err,ErrUnverifiedArtifact){t.Fatalf("unverified=%v",err)}
-	if _,_,err:=c.Claim(k,"y",time.Minute);!errors.Is(err,ErrClaimBusy){t.Fatalf("busy=%v",err)}
-	if err:=c.Publish(cl,Artifact{Digest:"sha256:one",Verified:true});err!=nil{t.Fatal(err)}
-	if err:=c.Publish(cl,Artifact{Digest:"sha256:two",Verified:true});!errors.Is(err,ErrDivergentArtifact){t.Fatalf("divergent=%v",err)}
-	events,err:=c.Events(k);if err!=nil||len(events)<2{t.Fatalf("events=%v err=%v",events,err)}
+	c := NewFilesystem(t.TempDir(), RealClock{})
+	k := testKey()
+	if _, _, err := c.Claim(BuildKey{}, "x", time.Minute); err == nil {
+		t.Fatal("empty key accepted")
+	}
+	cl, _, err := c.Claim(k, "x", time.Minute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Publish(cl, Artifact{Digest: "", Verified: true}); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("unverified=%v", err)
+	}
+	if _, _, err := c.Claim(k, "y", time.Minute); !errors.Is(err, ErrClaimBusy) {
+		t.Fatalf("busy=%v", err)
+	}
+	if err := c.Publish(cl, Artifact{Digest: "sha256:one", Verified: true}); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Publish(cl, Artifact{Digest: "sha256:two", Verified: true}); !errors.Is(err, ErrDivergentArtifact) {
+		t.Fatalf("divergent=%v", err)
+	}
+	events, err := c.Events(k)
+	if err != nil || len(events) < 2 {
+		t.Fatalf("events=%v err=%v", events, err)
+	}
 }
 
 func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {

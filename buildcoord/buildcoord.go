@@ -21,6 +21,7 @@ var (
 	ErrUnverifiedArtifact = errors.New("artifact is not verified")
 	ErrClaimBusy          = errors.New("build claim is owned by another live builder")
 	ErrUnsafeState        = errors.New("unsafe coordinator state")
+	ErrWaitTimeout        = errors.New("timed out waiting for build artifact")
 )
 
 type Clock interface{ Now() time.Time }
@@ -50,19 +51,68 @@ func (k BuildKey) validate() error {
 }
 
 type Artifact struct {
-	Digest   string `json:"digest"`
-	Verified bool   `json:"verified"`
-	Source string `json:"source,omitempty"`
-	Nondeterministic bool `json:"nondeterministic,omitempty"`
+	Digest                string `json:"digest"`
+	Verified              bool   `json:"verified"`
+	Source                string `json:"source,omitempty"`
+	Nondeterministic      bool   `json:"nondeterministic,omitempty"`
+	ClosureDigest         string `json:"closureDigest,omitempty"`
+	Provider              string `json:"provider,omitempty"`
+	ProviderAuthorization string `json:"providerAuthorization,omitempty"`
 }
-type Event struct { Time time.Time `json:"time"`; Key string `json:"key"`; Owner string `json:"owner,omitempty"`; Epoch uint64 `json:"epoch,omitempty"`; Event string `json:"event"`; Detail string `json:"detail,omitempty"` }
+type Event struct {
+	Time   time.Time `json:"time"`
+	Key    string    `json:"key"`
+	Owner  string    `json:"owner,omitempty"`
+	Epoch  uint64    `json:"epoch,omitempty"`
+	Event  string    `json:"event"`
+	Detail string    `json:"detail,omitempty"`
+}
 
-type BuildRequest struct { Root string; DiskBytes int64; Network bool; Credentials bool }
-// PrepareStaging creates an owner-private staging directory and refuses
-// credential-bearing builds unless explicitly enabled by the caller.
-func PrepareStaging(req BuildRequest, owner string) (string, func() error, error) {
-	if req.Root==""||owner==""{return "",nil,fmt.Errorf("staging root and owner are required")}; if req.DiskBytes<0{return "",nil,fmt.Errorf("disk reservation cannot be negative")}; if req.Credentials{return "",nil,fmt.Errorf("production credentials are not permitted in build staging")}; if !req.Network{return "",nil,fmt.Errorf("network access is disabled by build policy")}; d,err:=os.MkdirTemp(req.Root,"rcc-build-"+owner+"-");if err!=nil{return "",nil,err};if req.DiskBytes>0{f,e:=os.OpenFile(filepath.Join(d,".disk-reservation"),os.O_CREATE|os.O_WRONLY,0600);if e!=nil{os.RemoveAll(d);return "",nil,e};e=f.Truncate(req.DiskBytes);f.Close();if e!=nil{os.RemoveAll(d);return "",nil,fmt.Errorf("reserve staging disk: %w",e)}};return d,func()error{return os.RemoveAll(d)},nil
+type BuildRequest struct {
+	Root        string
+	DiskBytes   int64
+	Network     bool
+	Credentials bool
 }
+
+// PrepareStaging creates an owner-private staging directory. Network access is
+// deliberately optional: a caller can use an offline/local cache fallback.
+func PrepareStaging(req BuildRequest, owner string) (string, func() error, error) {
+	if req.Root == "" || owner == "" {
+		return "", nil, fmt.Errorf("staging root and owner are required")
+	}
+	if req.DiskBytes < 0 {
+		return "", nil, fmt.Errorf("disk reservation cannot be negative")
+	}
+	if req.Credentials {
+		return "", nil, fmt.Errorf("production credentials are not permitted in build staging")
+	}
+	d, err := os.MkdirTemp(req.Root, "rcc-build-"+owner+"-")
+	if err != nil {
+		return "", nil, err
+	}
+	if req.DiskBytes > 0 {
+		f, e := os.OpenFile(filepath.Join(d, ".disk-reservation"), os.O_CREATE|os.O_WRONLY, 0600)
+		if e != nil {
+			os.RemoveAll(d)
+			return "", nil, e
+		}
+		e = f.Truncate(req.DiskBytes)
+		f.Close()
+		if e != nil {
+			os.RemoveAll(d)
+			return "", nil, fmt.Errorf("reserve staging disk: %w", e)
+		}
+	}
+	policy := map[string]any{"network": req.Network, "credentials": false, "diskBytes": req.DiskBytes}
+	pb, _ := json.Marshal(policy)
+	if e := os.WriteFile(filepath.Join(d, "policy.json"), pb, 0600); e != nil {
+		os.RemoveAll(d)
+		return "", nil, e
+	}
+	return d, func() error { return os.RemoveAll(d) }, nil
+}
+
 type Claim struct {
 	Key       BuildKey  `json:"key"`
 	Owner     string    `json:"owner"`
@@ -79,9 +129,10 @@ const (
 )
 
 type Filesystem struct {
-	Root     string
-	Clock    Clock
-	lockWait time.Duration
+	Root                 string
+	Clock                Clock
+	lockWait             time.Duration
+	RequireArtifactProof bool
 }
 
 func NewFilesystem(root string, clock Clock) *Filesystem {
@@ -130,7 +181,7 @@ func (c *Filesystem) ClaimContext(ctx context.Context, key BuildKey, owner strin
 	if err := c.writeJSON(c.claimPath(key), claim); err != nil {
 		return Claim{}, "", err
 	}
-	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:key.ID(),Owner:owner,Epoch:epoch,Event:"claimed"}); eventErr != nil {
+	if eventErr := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Owner: owner, Epoch: epoch, Event: "claimed"}); eventErr != nil {
 		return Claim{}, "", fmt.Errorf("record claim event: %w", eventErr)
 	}
 	return claim, Claimed, nil
@@ -160,14 +211,64 @@ func (c *Filesystem) Heartbeat(claim Claim, ttl time.Duration) (err error) {
 	if err := c.writeJSON(c.claimPath(claim.Key), current); err != nil {
 		return err
 	}
-	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"heartbeat"}); eventErr != nil {
+	if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "heartbeat"}); eventErr != nil {
 		return fmt.Errorf("record heartbeat event: %w", eventErr)
 	}
 	return nil
 }
 
+// HeartbeatContext renews a lease until the context is cancelled. The
+// interval is half the requested TTL, leaving time for one retry/takeover.
+func (c *Filesystem) HeartbeatContext(ctx context.Context, claim Claim, ttl time.Duration) error {
+	if ttl <= 0 {
+		return fmt.Errorf("heartbeat TTL must be positive")
+	}
+	t := time.NewTicker(ttl / 2)
+	defer t.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-t.C:
+			if err := c.Heartbeat(claim, ttl); err != nil {
+				return err
+			}
+		}
+	}
+}
+
+// Release relinquishes a live claim. It is idempotent after takeover.
+func (c *Filesystem) Release(claim Claim) error { return c.abandon(claim) }
+
+// Wait observes a committed artifact with bounded polling. It never treats a
+// claim or notification as sufficient evidence of readiness.
+func (c *Filesystem) Wait(ctx context.Context, key BuildKey, interval time.Duration) (Artifact, Outcome, error) {
+	if err := key.validate(); err != nil {
+		return Artifact{}, "", err
+	}
+	if interval <= 0 {
+		interval = 25 * time.Millisecond
+	}
+	for {
+		artifact, ok, err := c.readArtifact(key)
+		if err != nil {
+			return Artifact{}, "", err
+		}
+		if ok {
+			return artifact, ExistingArtifact, nil
+		}
+		t := time.NewTimer(interval)
+		select {
+		case <-ctx.Done():
+			t.Stop()
+			return Artifact{}, Waiting, errors.Join(ErrWaitTimeout, ctx.Err())
+		case <-t.C:
+		}
+	}
+}
+
 func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
-	if !artifact.Verified || artifact.Digest == "" {
+	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (artifact.ClosureDigest == "" || artifact.Provider == "" || artifact.ProviderAuthorization != artifact.Provider)) {
 		return ErrUnverifiedArtifact
 	}
 	release, err := c.lock(context.Background(), claim.Key)
@@ -185,7 +286,8 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 		if current.Digest == artifact.Digest {
 			return nil
 		}
-		return ErrDivergentArtifact
+		eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest})
+		return errors.Join(ErrDivergentArtifact, eventErr)
 	}
 	current, ok, err := c.readClaim(claim.Key)
 	if err != nil {
@@ -197,38 +299,76 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	if err := c.writeJSON(c.artifactPath(claim.Key), artifact); err != nil {
 		return err
 	}
-	if eventErr := c.event(Event{Time:c.Clock.Now(),Key:claim.Key.ID(),Owner:claim.Owner,Epoch:claim.Epoch,Event:"published",Detail:artifact.Digest}); eventErr != nil {
+	if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "published", Detail: artifact.Digest}); eventErr != nil {
 		return fmt.Errorf("record publication event: %w", eventErr)
 	}
 	return os.Remove(c.claimPath(claim.Key))
 }
 
 func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
-func (c *Filesystem) Events(key BuildKey) ([]Event,error) { b,err:=os.ReadFile(filepath.Join(c.dir(key),"events.jsonl"));if os.IsNotExist(err){return nil,nil};if err!=nil{return nil,err};var out []Event;for _,line:=range strings.Split(strings.TrimSpace(string(b)),"\n"){if line==""{continue};var e Event;if err:=json.Unmarshal([]byte(line),&e);err!=nil{return nil,err};out=append(out,e)};return out,nil }
+func (c *Filesystem) Events(key BuildKey) ([]Event, error) {
+	b, err := os.ReadFile(filepath.Join(c.dir(key), "events.jsonl"))
+	if os.IsNotExist(err) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var out []Event
+	for _, line := range strings.Split(strings.TrimSpace(string(b)), "\n") {
+		if line == "" {
+			continue
+		}
+		var e Event
+		if err := json.Unmarshal([]byte(line), &e); err != nil {
+			return nil, err
+		}
+		out = append(out, e)
+	}
+	return out, nil
+}
 func (c *Filesystem) event(e Event) error {
 	b, err := json.Marshal(e)
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
 	dir := filepath.Join(c.Root, e.Key)
-	if err := os.MkdirAll(dir, 0o700); err != nil { return err }
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return err
+	}
 	f, err := os.OpenFile(filepath.Join(dir, "events.jsonl"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil { return err }
-	if _, err = f.Write(append(b, '\n')); err == nil { err = f.Sync() }
-	if closeErr := f.Close(); err == nil { err = closeErr }
-	if err != nil { return err }
+	if err != nil {
+		return err
+	}
+	if _, err = f.Write(append(b, '\n')); err == nil {
+		err = f.Sync()
+	}
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		return err
+	}
 	// Persist the directory entry as well, so an acknowledged event survives a
 	// crash even when the filesystem reorders metadata updates.
 	d, err := os.Open(dir)
-	if err != nil { return err }
-	if err = d.Sync(); err == nil { err = d.Close() } else { _ = d.Close() }
+	if err != nil {
+		return err
+	}
+	if err = d.Sync(); err == nil {
+		err = d.Close()
+	} else {
+		_ = d.Close()
+	}
 	return err
 }
 
 type PrewarmRequest struct {
-	Keys     []BuildKey
-	Capacity int
-	Priority int
-	Wait     bool
-	IndependentBuild bool
+	Keys                 []BuildKey
+	Capacity             int
+	Priority             int
+	Wait                 bool
+	IndependentBuild     bool
 	DiskReservationBytes int64
 }
 type PrewarmItem struct {
