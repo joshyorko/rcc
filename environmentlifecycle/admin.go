@@ -182,21 +182,23 @@ func RepairFromProvider(ctx context.Context, digest environmentartifact.Digest, 
 		return RepairReport{}, ErrProviderUnavailable
 	}
 	var report RepairReport
-	err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
-		content, err := acquireVerifiedContent(ctx, digest, provider)
-		if err != nil {
-			return fmt.Errorf("%w: %v", ErrProviderUnavailable, err)
-		}
-		materializer := NewLocalMaterializer()
-		materialization, err := materializer.materializeLocked(ctx, content.manifest)
-		if err != nil {
-			return err
-		}
-		if err := writeRepairRecord(digest, true, "provider"); err != nil {
-			return err
-		}
-		report = RepairReport{Repaired: true, Verification: Verification{Digest: digest, Verified: true, State: string(stateReady)}, Inspection: Inspection{Digest: digest, Ready: true, State: string(stateReady), Path: materialization.Path}}
-		return nil
+	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
+		return withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+			content, err := acquireVerifiedContentLocked(ctx, digest, provider)
+			if err != nil {
+				return fmt.Errorf("%w: %v", ErrProviderUnavailable, err)
+			}
+			materializer := NewLocalMaterializer()
+			materialization, err := materializer.materializeLocked(ctx, content.manifest)
+			if err != nil {
+				return err
+			}
+			if err := writeRepairRecord(digest, true, "provider"); err != nil {
+				return err
+			}
+			report = RepairReport{Repaired: true, Verification: Verification{Digest: digest, Verified: true, State: string(stateReady)}, Inspection: Inspection{Digest: digest, Ready: true, State: string(stateReady), Path: materialization.Path}}
+			return nil
+		})
 	})
 	return report, err
 }

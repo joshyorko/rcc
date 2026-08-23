@@ -97,6 +97,54 @@ func TestIndependentProcessLifecycleRacesUseBarriers(t *testing.T) {
 	}
 }
 
+func TestAcquireAndContentGCRaceSharesGlobalContentTransaction(t *testing.T) {
+	fixture := newPublishFixture(t)
+	remoteRoot := t.TempDir()
+	remote, err := artifactprovider.NewFilesystem(remoteRoot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Publish(context.Background(), PublishRequest{RobotFile: "robot.yaml", Provider: remote, Builder: &recordingBuilder{result: fixture.build}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	home := t.TempDir()
+	barrier := filepath.Join(home, "barrier")
+	held := filepath.Join(home, "content-held")
+	release := filepath.Join(home, "content-release")
+	acquire := exec.Command(os.Args[0], "-test.run=TestLifecycleRaceChild", "--")
+	acquire.Env = append(os.Environ(), "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=acquire", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "acquire-ready"), "RCC_LIFECYCLE_CONTENT_HELD="+held, "RCC_LIFECYCLE_CONTENT_RELEASE="+release)
+	if err := acquire.Start(); err != nil {
+		t.Fatal(err)
+	}
+	waitForFile(t, filepath.Join(home, "acquire-ready"))
+	if err := os.WriteFile(barrier, []byte("go"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	waitForFile(t, held)
+	done := filepath.Join(home, "gc-done")
+	gc := exec.Command(os.Args[0], "-test.run=TestLifecycleRaceChild", "--")
+	gc.Env = append(os.Environ(), "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=gc", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "gc-ready"), "RCC_LIFECYCLE_DONE="+done, "RCC_LIFECYCLE_PRESSURE=1")
+	if err := gc.Start(); err != nil {
+		t.Fatal(err)
+	}
+	waitForFile(t, filepath.Join(home, "gc-ready"))
+	time.Sleep(100 * time.Millisecond)
+	if _, err := os.Stat(done); !os.IsNotExist(err) {
+		t.Fatalf("content GC completed while acquire held lock: %v", err)
+	}
+	if err := os.WriteFile(release, []byte("go"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := acquire.Wait(); err != nil {
+		t.Fatal(err)
+	}
+	if err := gc.Wait(); err != nil {
+		t.Fatal(err)
+	}
+	waitForFile(t, done)
+}
+
 func TestLifecycleCrashChild(t *testing.T) {
 	if os.Getenv("RCC_LIFECYCLE_CHILD") != "crash" {
 		return
@@ -159,6 +207,18 @@ func TestLifecycleRaceChild(t *testing.T) {
 	if err := os.WriteFile(os.Getenv("RCC_LIFECYCLE_READY"), []byte("ready"), 0o600); err != nil {
 		t.Fatal(err)
 	}
+	if held := os.Getenv("RCC_LIFECYCLE_CONTENT_HELD"); held != "" {
+		contentTransactionProbe = func() {
+			_ = os.WriteFile(held, []byte("held"), 0o600)
+			for {
+				if _, err := os.Stat(os.Getenv("RCC_LIFECYCLE_CONTENT_RELEASE")); err == nil {
+					return
+				}
+				time.Sleep(time.Millisecond)
+			}
+		}
+		defer func() { contentTransactionProbe = nil }()
+	}
 	for {
 		if _, err := os.Stat(os.Getenv("RCC_LIFECYCLE_BARRIER")); err == nil {
 			break
@@ -175,12 +235,15 @@ func TestLifecycleRaceChild(t *testing.T) {
 	case "repair":
 		_, err = RepairFromProvider(context.Background(), digest, remote)
 	case "gc":
-		_, err = Collect(context.Background(), GCPolicy{})
+		_, err = Collect(context.Background(), GCPolicy{Pressure: os.Getenv("RCC_LIFECYCLE_PRESSURE") == "1"})
 	default:
 		t.Fatal("unknown lifecycle race operation")
 	}
 	if err != nil {
 		t.Fatal(err)
+	}
+	if done := os.Getenv("RCC_LIFECYCLE_DONE"); done != "" {
+		_ = os.WriteFile(done, []byte("done"), 0o600)
 	}
 }
 

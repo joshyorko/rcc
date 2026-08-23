@@ -22,7 +22,21 @@ type verifiedContent struct {
 	index    environmentartifact.ObjectIndex
 }
 
+func localContentRoot() string {
+	return filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
+}
+
 func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartifact.Digest, remote artifactprovider.Provider) (verifiedContent, error) {
+	var content verifiedContent
+	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
+		var err error
+		content, err = acquireVerifiedContentLocked(ctx, artifactDigest, remote)
+		return err
+	})
+	return content, err
+}
+
+func acquireVerifiedContentLocked(ctx context.Context, artifactDigest environmentartifact.Digest, remote artifactprovider.Provider) (verifiedContent, error) {
 	if remote == nil || len(artifactDigest.Hex()) != 64 {
 		return verifiedContent{}, fmt.Errorf("acquire requires a provider and canonical artifact digest")
 	}
@@ -47,7 +61,7 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 		return verifiedContent{}, fmt.Errorf("reject incompatible environment artifact: %w", err)
 	}
 
-	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
+	local, err := artifactprovider.NewFilesystem(localContentRoot())
 	if err != nil {
 		return verifiedContent{}, fmt.Errorf("initialize local artifact content cache: %w", err)
 	}
@@ -70,9 +84,6 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	index, err := environmentartifact.DecodeObjectIndex(indexBytes)
 	if err != nil {
 		return verifiedContent{}, fmt.Errorf("validate object index: %w", err)
-	}
-	if err := writeReferenceRoot(manifest, index); err != nil {
-		return verifiedContent{}, fmt.Errorf("persist manifest reference root: %w", err)
 	}
 	objectDescriptors := make([]environmentartifact.Descriptor, 0, len(index.Entries))
 	for _, entry := range index.Entries {
@@ -137,6 +148,9 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	catalogDescriptor := manifest.Catalogs[0].Descriptor
 	if err := installLegacyImmutable(common.HololibLocation(), []string{"catalog", manifest.Catalogs[0].LegacyName}, catalogDescriptor, catalogBytes); err != nil {
 		return verifiedContent{}, fmt.Errorf("install legacy catalog: %w", err)
+	}
+	if err := writeReferenceRoot(manifest, index); err != nil {
+		return verifiedContent{}, fmt.Errorf("persist manifest reference root: %w", err)
 	}
 	return verifiedContent{manifest: manifest, index: index}, nil
 }

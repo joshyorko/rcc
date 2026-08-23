@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/joshyorko/rcc/common"
@@ -40,7 +41,24 @@ func TestGCProtectsManifestObjectIndexClosureAndReclaimsUnreferencedContent(t *t
 	if err := writeReferenceRoot(manifest, index); err != nil {
 		t.Fatal(err)
 	}
-	report, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot})
+	defaultReport, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if defaultReport.ReclaimedBytes != 0 {
+		t.Fatalf("default GC reclaimed sole local content: %+v", defaultReport)
+	}
+	if _, err := os.Stat(filepath.Join(contentRoot, "objects", "sha256", dead.Hex()[:2], dead.Hex()[2:4], dead.Hex())); err != nil {
+		t.Fatalf("default GC removed unreferenced content: %v", err)
+	}
+	retained, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true, Retention: time.Hour})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if retained.ReclaimedBytes != 0 {
+		t.Fatalf("retention policy reclaimed fresh content: %+v", retained)
+	}
+	report, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,5 +77,34 @@ func TestGCProtectsManifestObjectIndexClosureAndReclaimsUnreferencedContent(t *t
 	}
 	if _, err := os.Stat(objectPath(dead)); !os.IsNotExist(err) {
 		t.Fatalf("unreferenced payload still exists: %v", err)
+	}
+}
+
+func TestGCUsesActiveLeaseProtectedContentWhilePressureReclaimsDeadObjects(t *testing.T) {
+	m := acquiredMaterialization(t)
+	lease, err := NewLocalMaterializer().Lease(context.Background(), m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = NewLocalMaterializer().Release(context.Background(), lease) }()
+	provider, err := artifactprovider.NewFilesystem(localContentRoot())
+	if err != nil {
+		t.Fatal(err)
+	}
+	dead := []byte("active-lease-dead-object")
+	digest := environmentartifact.DigestBytes(dead)
+	if err := provider.PutObject(context.Background(), artifactprovider.Blob{Descriptor: environmentartifact.Descriptor{Digest: digest, Size: int64(len(dead))}, Reader: bytes.NewReader(dead)}); err != nil {
+		t.Fatal(err)
+	}
+	report, err := Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.ProtectedBytes == 0 || report.SkippedActive == 0 {
+		t.Fatalf("active lease protection missing: %+v", report)
+	}
+	h := digest.Hex()
+	if _, err := os.Stat(filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)); !os.IsNotExist(err) {
+		t.Fatalf("dead object retained: %v", err)
 	}
 }

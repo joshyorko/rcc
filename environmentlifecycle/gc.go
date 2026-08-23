@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/joshyorko/rcc/common"
@@ -46,6 +48,16 @@ func (it *LocalMaterializer) Collect(ctx context.Context, policy GCPolicy) (GCRe
 }
 
 func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
+	var report GCReport
+	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
+		var err error
+		report, err = collectLocked(ctx, policy)
+		return err
+	})
+	return report, err
+}
+
+func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 	if err := crash(CrashBeforeGC); err != nil {
 		return GCReport{}, err
 	}
@@ -89,7 +101,7 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		}
 		mergeGCReport(&report, one)
 	}
-	protected, roots, err := durableProtectedDigests()
+	protected, roots, err := durableProtectedDigests(policy)
 	if err != nil {
 		return report, err
 	}
@@ -107,7 +119,7 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 	return report, nil
 }
 
-func durableProtectedDigests() (map[environmentartifact.Digest]bool, int, error) {
+func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bool, int, error) {
 	protected := map[environmentartifact.Digest]bool{}
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
@@ -133,8 +145,26 @@ func durableProtectedDigests() (map[environmentartifact.Digest]bool, int, error)
 			return nil, 0, err
 		}
 		roots++
-		for _, d := range root.Protected {
-			protected[d] = true
+		// A durable root is always protected. Pin/legal/local-only policy can
+		// only add protection; it must never make a live root collectible.
+		protectRoot := true
+		leaseDir := filepath.Join(recordRoot(), digest.Hex(), "leases")
+		if leaseEntries, readErr := os.ReadDir(leaseDir); readErr == nil {
+			for _, leaseEntry := range leaseEntries {
+				if leaseEntry.IsDir() || filepath.Ext(leaseEntry.Name()) != ".json" {
+					continue
+				}
+				lease, leaseErr := readLease(digest, strings.TrimSuffix(leaseEntry.Name(), ".json"))
+				if leaseErr == nil && classifyLease(lease) != LeaseStale {
+					protectRoot = true
+					break
+				}
+			}
+		}
+		if protectRoot {
+			for _, d := range root.Protected {
+				protected[d] = true
+			}
 		}
 	}
 	return protected, roots, nil
@@ -146,7 +176,14 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 		root = filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
 	}
 	objects := filepath.Join(root, "objects", "sha256")
-	var protectedBytes, reclaimableBytes, reclaimedBytes int64
+	type candidate struct {
+		path     string
+		digest   environmentartifact.Digest
+		size     int64
+		modified time.Time
+	}
+	candidates := make([]candidate, 0)
+	var total, protectedBytes int64
 	err := filepath.WalkDir(objects, func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			if os.IsNotExist(walkErr) {
@@ -176,18 +213,44 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 		}
 		if protected[digest] {
 			protectedBytes += info.Size()
+			total += info.Size()
 			return nil
 		}
-		reclaimableBytes += info.Size()
-		if !policy.DryRun {
-			if err := os.Remove(path); err != nil {
-				return err
-			}
-			reclaimedBytes += info.Size()
-		}
+		total += info.Size()
+		candidates = append(candidates, candidate{path: path, digest: digest, size: info.Size(), modified: info.ModTime()})
 		return nil
 	})
-	return protectedBytes, reclaimableBytes, reclaimedBytes, err
+	if err != nil {
+		return protectedBytes, 0, 0, err
+	}
+	allow := policy.Pressure || (policy.MaxBytes > 0 && total > policy.MaxBytes)
+	if !allow {
+		return protectedBytes, 0, 0, nil
+	}
+	sort.Slice(candidates, func(i, j int) bool { return candidates[i].modified.Before(candidates[j].modified) })
+	if policy.Clock == nil {
+		policy.Clock = time.Now
+	}
+	var reclaimableBytes, reclaimedBytes int64
+	for _, item := range candidates {
+		if policy.Retention > 0 && policy.Clock().Sub(item.modified) < policy.Retention {
+			continue
+		}
+		if policy.MaxBytes > 0 && total <= policy.MaxBytes {
+			break
+		}
+		reclaimableBytes += item.size
+		if policy.DryRun {
+			total -= item.size
+			continue
+		}
+		if err := os.Remove(item.path); err != nil {
+			return protectedBytes, reclaimableBytes, reclaimedBytes, err
+		}
+		total -= item.size
+		reclaimedBytes += item.size
+	}
+	return protectedBytes, reclaimableBytes, reclaimedBytes, nil
 }
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {

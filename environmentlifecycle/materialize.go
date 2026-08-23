@@ -147,10 +147,12 @@ func NewAcquirer() *Acquirer {
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
 	var result AcquireResult
-	err := withArtifactTransaction(ctx, request.ArtifactDigest, func(ctx context.Context) error {
-		var err error
-		result, err = it.acquireLocked(ctx, request)
-		return err
+	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
+		return withArtifactTransaction(ctx, request.ArtifactDigest, func(ctx context.Context) error {
+			var err error
+			result, err = it.acquireLocked(ctx, request)
+			return err
+		})
 	})
 	return result, err
 }
@@ -159,7 +161,7 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	if _, err := reconcileLocked(ctx, request.ArtifactDigest); err != nil {
 		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
 	}
-	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
+	local, err := artifactprovider.NewFilesystem(localContentRoot())
 	if err != nil {
 		return AcquireResult{}, fmt.Errorf("initialize local artifact cache: %w", err)
 	}
@@ -174,7 +176,7 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
 		}
-		content, err := acquireVerifiedContent(ctx, request.ArtifactDigest, local)
+		content, err := acquireVerifiedContentLocked(ctx, request.ArtifactDigest, local)
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
@@ -193,7 +195,7 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	if err := artifactprovider.ValidateV1Capabilities(capabilities); err != nil {
 		return AcquireResult{}, fmt.Errorf("negotiate provider capabilities: %w", err)
 	}
-	content, err := acquireVerifiedContent(ctx, request.ArtifactDigest, request.Provider)
+	content, err := acquireVerifiedContentLocked(ctx, request.ArtifactDigest, request.Provider)
 	if err != nil {
 		return AcquireResult{}, err
 	}
