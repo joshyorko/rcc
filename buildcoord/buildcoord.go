@@ -95,26 +95,23 @@ func PrepareStaging(req BuildRequest, owner string) (string, func() error, error
 	if err != nil {
 		return "", nil, err
 	}
-	if req.DiskBytes > 0 {
-		f, e := os.OpenFile(filepath.Join(d, ".disk-reservation"), os.O_CREATE|os.O_WRONLY, 0600)
-		if e != nil {
-			os.RemoveAll(d)
-			return "", nil, e
-		}
-		e = f.Truncate(req.DiskBytes)
-		f.Close()
-		if e != nil {
-			os.RemoveAll(d)
-			return "", nil, fmt.Errorf("reserve staging disk: %w", e)
-		}
+	reservation, err := ReserveDisk(d, req.DiskBytes)
+	if err != nil {
+		os.RemoveAll(d)
+		return "", nil, err
 	}
 	policy := map[string]any{"network": req.Network, "credentials": false, "diskBytes": req.DiskBytes}
 	pb, _ := json.Marshal(policy)
 	if e := os.WriteFile(filepath.Join(d, "policy.json"), pb, 0600); e != nil {
+		_ = reservation.Release()
 		os.RemoveAll(d)
 		return "", nil, e
 	}
-	return d, func() error { return os.RemoveAll(d) }, nil
+	return d, func() error {
+		releaseErr := reservation.Release()
+		removeErr := os.RemoveAll(d)
+		return errors.Join(releaseErr, removeErr)
+	}, nil
 }
 
 type Claim struct {
@@ -314,6 +311,37 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	return os.Remove(c.claimPath(claim.Key))
 }
 
+// PublishIndependent records a valid builder result without taking a lease.
+// It is used only when policy explicitly permits an independent fallback.
+func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
+	if err := key.validate(); err != nil {
+		return err
+	}
+	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (c.Verifier == nil || c.Verifier.VerifyArtifact(artifact) != nil)) {
+		return ErrUnverifiedArtifact
+	}
+	release, err := c.lock(context.Background(), key)
+	if err != nil {
+		return err
+	}
+	defer release()
+	current, ok, err := c.readArtifact(key)
+	if err != nil {
+		return err
+	}
+	if ok {
+		if current.Digest == artifact.Digest {
+			return nil
+		}
+		_ = c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest})
+		return ErrDivergentArtifact
+	}
+	if err := c.writeJSON(c.artifactPath(key), artifact); err != nil {
+		return err
+	}
+	return c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "published-independent", Detail: artifact.Digest})
+}
+
 func validArtifactProof(artifact Artifact) bool {
 	if !strings.HasPrefix(artifact.ClosureDigest, "sha256:") || len(strings.TrimPrefix(artifact.ClosureDigest, "sha256:")) != 64 || artifact.Provider == "" {
 		return false
@@ -406,6 +434,9 @@ type PrewarmRequest struct {
 	Wait                 bool
 	IndependentBuild     bool
 	DiskReservationBytes int64
+	Backoff              time.Duration
+	LeaseTTL             time.Duration
+	Owner                string
 }
 type PrewarmItem struct {
 	Key    BuildKey
@@ -435,6 +466,15 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		}
 		return []PrewarmItem{{Status: PrewarmCapacityLimited}}, nil
 	}
+	if request.Backoff <= 0 {
+		request.Backoff = 25 * time.Millisecond
+	}
+	if request.LeaseTTL <= 0 {
+		request.LeaseTTL = time.Minute
+	}
+	if request.Owner == "" {
+		request.Owner = "prewarm"
+	}
 	items := make([]PrewarmItem, 0, min(len(request.Keys), request.Capacity))
 	sem := make(chan struct{}, request.Capacity)
 	for _, key := range request.Keys {
@@ -447,7 +487,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 			<-sem
 			break
 		}
-		claim, outcome, err := c.ClaimContext(ctx, key, "prewarm", time.Minute)
+		claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
 		if err != nil && !errors.Is(err, ErrClaimBusy) {
 			<-sem
 			return nil, err
@@ -458,6 +498,18 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 			continue
 		}
 		if outcome == Waiting {
+			if request.IndependentBuild {
+				independent, buildErr := build(ctx, Claim{Key: key, Owner: "independent"})
+				if buildErr == nil {
+					buildErr = c.PublishIndependent(key, independent)
+				}
+				<-sem
+				if buildErr != nil {
+					return nil, buildErr
+				}
+				items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
+				continue
+			}
 			if !request.Wait {
 				items = append(items, PrewarmItem{Key: key, Status: PrewarmNeeded})
 				<-sem
@@ -473,7 +525,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 					items = append(items, PrewarmItem{Key: key, Status: PrewarmReady})
 					break
 				}
-				retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, "prewarm", time.Minute)
+				retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
 				if claimErr != nil && !errors.Is(claimErr, ErrClaimBusy) {
 					<-sem
 					return nil, claimErr
@@ -483,7 +535,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 					outcome = Claimed
 					break
 				}
-				timer := time.NewTimer(5 * time.Millisecond)
+				timer := time.NewTimer(request.Backoff)
 				select {
 				case <-ctx.Done():
 					timer.Stop()
@@ -498,10 +550,20 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 			}
 		}
 		buildCtx, stopHeartbeat := context.WithCancel(ctx)
+		reservation, reservationErr := ReserveDisk(c.Root, request.DiskReservationBytes)
+		if reservationErr != nil {
+			stopHeartbeat()
+			<-sem
+			return nil, errors.Join(reservationErr, c.abandon(claim))
+		}
 		heartbeatErr := make(chan error, 1)
-		go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, time.Minute) }()
+		go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
 		artifact, err := build(buildCtx, claim)
 		stopHeartbeat()
+		reservationErr = reservation.Release()
+		if err == nil && reservationErr != nil {
+			err = reservationErr
+		}
 		select {
 		case hbErr := <-heartbeatErr:
 			if err == nil && !errors.Is(hbErr, context.Canceled) {

@@ -100,6 +100,20 @@ func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
 	_ = d
 }
 
+func TestReserveDiskChecksAndReleasesCapacity(t *testing.T) {
+	r := t.TempDir()
+	reservation, err := ReserveDisk(r, 4096)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := reservation.Release(); err != nil {
+		t.Fatal(err)
+	}
+	if err := reservation.Release(); err != nil {
+		t.Fatal("release must be idempotent: ", err)
+	}
+}
+
 func TestClaimFailureMatrixCoreBoundaries(t *testing.T) {
 	c := NewFilesystem(t.TempDir(), RealClock{})
 	k := testKey()
