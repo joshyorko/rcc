@@ -24,8 +24,9 @@ type Capabilities struct {
 }
 
 const (
-	maxProviderArchiveMembers = 4096
-	maxProviderArchiveBytes   = int64(128 << 30)
+	maxProviderArchiveMembers   = 4096
+	maxProviderArchiveBytes     = int64(128 << 30)
+	maxProviderDescriptorFanout = 4096
 )
 
 type ProtocolCapabilities struct {
@@ -79,6 +80,8 @@ type Health struct {
 	Process    string `json:"process,omitempty"`
 	Audit      string `json:"audit,omitempty"`
 	Error      string `json:"error,omitempty"`
+	Operations int64  `json:"operations,omitempty"`
+	Errors     int64  `json:"errors,omitempty"`
 }
 
 type HealthProvider interface {

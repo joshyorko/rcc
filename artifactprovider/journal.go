@@ -17,6 +17,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -29,6 +30,8 @@ type Journal struct {
 	objects         map[string]objectRef
 	manifests       map[string][]byte
 	manifestTimes   map[string]time.Time
+	gcActive        atomic.Bool
+	repairActive    atomic.Bool
 }
 type objectRef struct {
 	path      string
@@ -210,9 +213,19 @@ func (j *Journal) Health(ctx context.Context) (Health, error) {
 	for _, r := range j.objects {
 		n += r.size
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle", Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
+	gc := "idle"
+	if j.gcActive.Load() {
+		gc = "running"
+	}
+	if j.repairActive.Load() {
+		gc = "repairing"
+	}
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
 }
 func (j *Journal) MissingObjects(ctx context.Context, ds []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	if len(ds) > maxProviderDescriptorFanout {
+		return nil, fmt.Errorf("descriptor fanout exceeds limit")
+	}
 	j.mu.RLock()
 	defer j.mu.RUnlock()
 	out := []environmentartifact.Digest{}
@@ -542,6 +555,8 @@ func (j *Journal) Cleanup(ctx context.Context) (int, error) {
 	return n, nil
 }
 func (j *Journal) GarbageCollect(ctx context.Context, r Retention) (GCReport, error) {
+	j.gcActive.Store(true)
+	defer j.gcActive.Store(false)
 	j.adminMu.Lock()
 	defer j.adminMu.Unlock()
 	if err := ctx.Err(); err != nil {
@@ -614,6 +629,8 @@ func (j *Journal) GarbageCollect(ctx context.Context, r Retention) (GCReport, er
 	return report, nil
 }
 func (j *Journal) Repair(ctx context.Context) (Health, error) {
+	j.repairActive.Store(true)
+	defer j.repairActive.Store(false)
 	if _, e := j.ListObjects(ctx); e != nil {
 		return Health{Ready: false, Corrupt: true, Storage: "corrupt"}, e
 	}

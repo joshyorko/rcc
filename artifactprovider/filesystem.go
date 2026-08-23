@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -41,8 +42,10 @@ type filesystemRestoreState struct {
 var filesystemRestorePublishHook func(string) error
 
 type Filesystem struct {
-	root     string
-	commitMu sync.Mutex
+	root         string
+	commitMu     sync.Mutex
+	gcActive     atomic.Bool
+	repairActive atomic.Bool
 }
 
 // Cleanup removes only private interrupted-upload files. Immutable objects and
@@ -193,7 +196,14 @@ func (it *Filesystem) Health(ctx context.Context) (Health, error) {
 	if _, err := os.Stat(it.root); err != nil {
 		return Health{Storage: "unavailable", Ready: false, Error: "storage unavailable", LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, fmt.Errorf("%w: storage: %v", ErrNotReady, err)
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle", LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
+	gc := "idle"
+	if it.gcActive.Load() {
+		gc = "running"
+	}
+	if it.repairActive.Load() {
+		gc = "repairing"
+	}
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
 }
 
 func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmentartifact.Digest) (io.ReadCloser, int64, error) {
@@ -245,6 +255,9 @@ func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmenta
 }
 
 func (it *Filesystem) MissingObjects(ctx context.Context, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	if len(descriptors) > maxProviderDescriptorFanout {
+		return nil, fmt.Errorf("descriptor fanout exceeds limit")
+	}
 	missing := make([]environmentartifact.Digest, 0)
 	for _, descriptor := range descriptors {
 		if err := ctx.Err(); err != nil {

@@ -209,8 +209,13 @@ func TestFilesystemRestoreRollbackMarkerRecoversAfterPublicationFailure(t *testi
 	if err := provider.Restore(context.Background(), bytes.NewReader(archive.Bytes())); err == nil {
 		t.Fatal("injected restore failure was accepted")
 	}
-	if _, err := NewFilesystem(root); err != nil {
+	recovered, err := NewFilesystem(root)
+	if err != nil {
 		t.Fatal(err)
+	}
+	health, err := recovered.Health(context.Background())
+	if err != nil || !health.Ready || health.Corrupt {
+		t.Fatalf("recovery health=%+v err=%v", health, err)
 	}
 	if _, err := os.Stat(provider.objectPath(blob.Descriptor.Digest)); !os.IsNotExist(err) {
 		t.Fatalf("rolled back object remains: %v", err)

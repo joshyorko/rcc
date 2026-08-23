@@ -52,6 +52,8 @@ func listProviderFiles(ctx context.Context, root string) ([]ObjectInfo, error) {
 	return out, err
 }
 func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport, error) {
+	it.gcActive.Store(true)
+	defer it.gcActive.Store(false)
 	it.commitMu.Lock()
 	defer it.commitMu.Unlock()
 	ms, e := it.ListManifests(ctx)
@@ -65,9 +67,14 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 	for _, m := range ms {
 		expired := r.MaxAge > 0 && now.Sub(m.ModifiedAt) > r.MaxAge
 		if expired && (r.KeepManifests <= 0 || kept >= r.KeepManifests) {
+			if e = it.appendAudit("gc-manifest-intent", m.Digest); e != nil {
+				return report, e
+			}
 			if e = os.Remove(it.manifestPath(m.Digest)); e == nil {
 				report.ManifestsRemoved++
-				_ = it.appendAudit("gc-manifest", m.Digest)
+				if e = it.appendAudit("gc-manifest", m.Digest); e != nil {
+					return report, e
+				}
 			}
 			continue
 		}
@@ -121,15 +128,22 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 		if r.MaxAge > 0 && now.Sub(o.ModifiedAt) <= r.MaxAge {
 			continue
 		}
+		if e = it.appendAudit("gc-object-intent", o.Digest); e != nil {
+			return report, e
+		}
 		if e = os.Remove(it.objectPath(o.Digest)); e == nil {
 			report.ObjectsRemoved++
 			report.BytesReclaimed += o.Size
-			_ = it.appendAudit("gc-object", o.Digest)
+			if e = it.appendAudit("gc-object", o.Digest); e != nil {
+				return report, e
+			}
 		}
 	}
 	return report, nil
 }
 func (it *Filesystem) Repair(ctx context.Context) (Health, error) {
+	it.repairActive.Store(true)
+	defer it.repairActive.Store(false)
 	if _, e := it.ListObjects(ctx); e != nil {
 		return Health{Ready: false, Corrupt: true, Storage: "corrupt"}, e
 	}

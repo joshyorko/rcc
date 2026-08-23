@@ -216,7 +216,7 @@ func NewHandlerWithOptions(provider Provider, options HandlerOptions) http.Handl
 			http.Error(writer, "invalid provider request", http.StatusBadRequest)
 			return
 		}
-		if request.ContentLength >= 0 && len(request.Header.Values("Content-Length")) > 1 || (request.ContentLength >= 0 && len(request.TransferEncoding) > 0) {
+		if len(request.Header.Values("Content-Length")) > 1 || (request.ContentLength >= 0 && (len(request.TransferEncoding) > 0 || request.Header.Get("Transfer-Encoding") != "")) {
 			writeProviderFailure(writer, http.StatusBadRequest)
 			return
 		}
@@ -674,6 +674,9 @@ func (it *HTTP) Health(ctx context.Context) (Health, error) {
 }
 
 func (it *HTTP) MissingObjects(ctx context.Context, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	if len(descriptors) > maxProviderDescriptorFanout {
+		return nil, fmt.Errorf("descriptor fanout exceeds limit")
+	}
 	var result missingResponse
 	err := it.doJSON(ctx, http.MethodPost, "/v1/objects/missing", missingRequest{Descriptors: descriptors}, &result)
 	return result.Missing, err
