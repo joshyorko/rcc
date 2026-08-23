@@ -32,6 +32,9 @@ type BuildKey struct {
 	SpecificationDigest  string `json:"specificationDigest"`
 	Platform             string `json:"platform"`
 	BuilderCompatibility string `json:"builderCompatibility"`
+	ResolutionPolicy     string `json:"resolutionPolicy,omitempty"`
+	TrustPolicy          string `json:"trustPolicy,omitempty"`
+	ArtifactSchema       string `json:"artifactSchema,omitempty"`
 }
 
 func (k BuildKey) ID() string {
@@ -49,6 +52,13 @@ func (k BuildKey) validate() error {
 type Artifact struct {
 	Digest   string `json:"digest"`
 	Verified bool   `json:"verified"`
+}
+
+type BuildRequest struct { Root string; DiskBytes int64; Network bool; Credentials bool }
+// PrepareStaging creates an owner-private staging directory and refuses
+// credential-bearing builds unless explicitly enabled by the caller.
+func PrepareStaging(req BuildRequest, owner string) (string, func() error, error) {
+	if req.Root==""||owner==""{return "",nil,fmt.Errorf("staging root and owner are required")}; if req.DiskBytes<0{return "",nil,fmt.Errorf("disk reservation cannot be negative")}; if req.Credentials{return "",nil,fmt.Errorf("production credentials are not permitted in build staging")}; d,err:=os.MkdirTemp(req.Root,"rcc-build-"+owner+"-");if err!=nil{return "",nil,err};return d,func()error{return os.RemoveAll(d)},nil
 }
 type Claim struct {
 	Key       BuildKey  `json:"key"`
@@ -183,6 +193,10 @@ func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.
 type PrewarmRequest struct {
 	Keys     []BuildKey
 	Capacity int
+	Priority int
+	Wait     bool
+	IndependentBuild bool
+	DiskReservationBytes int64
 }
 type PrewarmItem struct {
 	Key    BuildKey

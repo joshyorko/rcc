@@ -32,6 +32,16 @@ func TestBuildKeyIsDeterministicAndIncludesCompatibility(t *testing.T) {
 	}
 }
 
+func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
+	a:=testKey(); b:=a; b.ResolutionPolicy="offline-v2"; b.TrustPolicy="strict"; b.ArtifactSchema="v1"
+	if a.ID()==b.ID(){t.Fatal("policy/schema changes must claim independently")}
+}
+
+func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
+	if _,_,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Credentials:true},"owner");err==nil{t.Fatal("credentials accepted")}
+	d,cleanup,err:=PrepareStaging(BuildRequest{Root:t.TempDir()},"owner");if err!=nil{t.Fatal(err)};if err:=cleanup();err!=nil{t.Fatal(err)};_ = d
+}
+
 func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
 	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	if _, _, err := c.Claim(BuildKey{}, "owner", time.Minute); err == nil {
