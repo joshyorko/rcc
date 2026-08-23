@@ -20,6 +20,12 @@ const (
 	SignatureMediaType  = "application/vnd.rcc.environment.signature.v1+json"
 )
 
+type PolicyMode string
+const ( PermissiveLocal PolicyMode = "permissive-local"; StrictRemote PolicyMode = "strict-remote" )
+const (
+	CodeValid = "valid"; CodeUnsigned = "unsigned"; CodeInvalid = "invalid"; CodeUnknownSigner = "unknown-signer"; CodeExpired = "expired"; CodeRevoked = "revoked"; CodePolicy = "policy"; CodeBinding = "binding"
+)
+
 type Provenance struct {
 	MediaType           string `json:"mediaType"`
 	ArtifactDigest      string `json:"artifactDigest"`
@@ -31,6 +37,14 @@ type Provenance struct {
 	RCCVersion          string `json:"rccVersion"`
 	ResolutionMode      string `json:"resolutionMode,omitempty"`
 	CreatedAt           string `json:"createdAt"`
+	LegacyBlueprintDigest string `json:"legacyBlueprintDigest,omitempty"`
+	LegacyBlueprintKey string `json:"legacyBlueprintKey,omitempty"`
+	DependencySources []string `json:"dependencySources,omitempty"`
+	OfflineResolution bool `json:"offlineResolution,omitempty"`
+	SystemRequirementsOverridden bool `json:"systemRequirementsOverridden,omitempty"`
+	CatalogDigest string `json:"catalogDigest,omitempty"`
+	ManifestDigest string `json:"manifestDigest,omitempty"`
+	BuildIdentity string `json:"buildIdentity,omitempty"`
 }
 
 type Component struct {
@@ -54,15 +68,27 @@ type Signature struct {
 	KeyID          string `json:"keyID"`
 	Algorithm      string `json:"algorithm"`
 	Signature      string `json:"signature"`
+	NotBefore string `json:"notBefore,omitempty"`
+	NotAfter string `json:"notAfter,omitempty"`
 }
 
 type Policy struct {
+	Mode PolicyMode `json:"mode,omitempty"`
 	RequireSignature   bool     `json:"requireSignature"`
 	AllowUnsignedLocal bool     `json:"allowUnsignedLocal"`
 	AcceptedKeys       []string `json:"acceptedKeys,omitempty"`
 	AcceptedBuilders   []string `json:"acceptedBuilders,omitempty"`
 	AcceptedPlatforms  []string `json:"acceptedPlatforms,omitempty"`
+	AcceptedRCCVersions []string `json:"acceptedRCCVersions,omitempty"`
+	AcceptedSources []string `json:"acceptedSources,omitempty"`
+	AcceptedDependencySources []string `json:"acceptedDependencySources,omitempty"`
+	MaxArtifactAge time.Duration `json:"maxArtifactAge,omitempty"`
+	FailClosedRevocations bool `json:"failClosedRevocations,omitempty"`
 }
+
+type VerifyRequest struct { ArtifactDigest, Platform, Builder string; Provenance *Provenance; Signatures []Signature; Revocations []Revocation; Keys map[string]ed25519.PublicKey; At time.Time }
+type VerificationReceipt struct { Valid bool `json:"valid"`; Code string `json:"code"`; ArtifactDigest string `json:"artifactDigest"`; KeyID string `json:"keyID,omitempty"`; PolicyMode PolicyMode `json:"policyMode"`; VerifiedAt string `json:"verifiedAt"`; Diagnostic string `json:"diagnostic,omitempty"` }
+func (r VerificationReceipt) JSON() ([]byte,error) { return canonical(r) }
 
 type Revocation struct {
 	ArtifactDigests []string `json:"artifactDigests,omitempty"`
@@ -86,6 +112,13 @@ func NewSBOM(artifact string, components []Component) (SBOM, []byte, error) {
 	return s, b, err
 }
 
+func CanonicalProvenance(p Provenance) ([]byte,error) { if p.MediaType == "" { p.MediaType = ProvenanceMediaType }; return canonical(p) }
+func VerifyAttestationBinding(data []byte, mediaType, artifact string) error {
+	var v struct { MediaType string `json:"mediaType"`; ArtifactDigest string `json:"artifactDigest"` }
+	if err:=json.Unmarshal(data,&v); err!=nil { return fmt.Errorf("invalid attestation: %w",err) }
+	if v.MediaType != mediaType || v.ArtifactDigest != artifact { return fmt.Errorf("attestation artifact digest mismatch") }; return nil
+}
+
 func Sign(artifact string, keyID string, privateKey ed25519.PrivateKey) (Signature, error) {
 	if len(privateKey) != ed25519.PrivateKeySize {
 		return Signature{}, fmt.Errorf("invalid Ed25519 private key")
@@ -93,6 +126,7 @@ func Sign(artifact string, keyID string, privateKey ed25519.PrivateKey) (Signatu
 	b := []byte(artifact)
 	return Signature{MediaType: SignatureMediaType, ArtifactDigest: artifact, KeyID: keyID, Algorithm: "Ed25519", Signature: base64.RawStdEncoding.EncodeToString(ed25519.Sign(privateKey, b))}, nil
 }
+func SignAt(artifact, keyID string, privateKey ed25519.PrivateKey, notBefore, notAfter time.Time) (Signature,error) { s,err:=Sign(artifact,keyID,privateKey); if err==nil { s.NotBefore=FreshTimestamp(notBefore); s.NotAfter=FreshTimestamp(notAfter) }; return s,err }
 
 func VerifySignature(s Signature, publicKey ed25519.PublicKey, artifact string) error {
 	if s.MediaType != SignatureMediaType || s.Algorithm != "Ed25519" {
@@ -123,6 +157,7 @@ func (r Revocation) Revoked(artifact, keyID string) bool {
 }
 
 func (p Policy) Evaluate(local bool, artifact, platform, builder string, signatures []Signature, revocations []Revocation, keys map[string]ed25519.PublicKey) error {
+	if p.Mode == StrictRemote { local = false; p.RequireSignature = true }
 	if !containsOrEmpty(p.AcceptedPlatforms, platform) {
 		return fmt.Errorf("trust policy disallows platform %q", platform)
 	}
@@ -149,6 +184,19 @@ func (p Policy) Evaluate(local bool, artifact, platform, builder string, signatu
 		return fmt.Errorf("artifact trust rejected: no valid signature")
 	}
 	return nil
+}
+
+func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
+	if q.At.IsZero() { q.At=time.Now().UTC() }
+	r := VerificationReceipt{ArtifactDigest:q.ArtifactDigest, PolicyMode:p.Mode, VerifiedAt:FreshTimestamp(time.Now().UTC())}
+	if p.Mode == StrictRemote { p.RequireSignature=true }
+	if q.Provenance != nil && q.Provenance.ArtifactDigest != q.ArtifactDigest { r.Code=CodeBinding; r.Diagnostic="provenance artifact digest mismatch"; return r }
+	if q.Provenance != nil {
+		if !containsOrEmpty(p.AcceptedRCCVersions,q.Provenance.RCCVersion) || !containsOrEmpty(p.AcceptedSources,q.Provenance.SourceRepository) { r.Code=CodePolicy; r.Diagnostic="provenance disallowed by policy"; return r }
+		if p.MaxArtifactAge > 0 { if t,e:=time.Parse(time.RFC3339,q.Provenance.CreatedAt); e==nil && q.At.Sub(t)>p.MaxArtifactAge { r.Code=CodePolicy; r.Diagnostic="artifact exceeds maximum age"; return r } }
+	}
+	if err:=p.Evaluate(p.Mode==PermissiveLocal,q.ArtifactDigest,q.Platform,q.Builder,q.Signatures,q.Revocations,q.Keys); err==nil { r.Valid=true; r.Code=CodeValid; return r } else { r.Diagnostic=err.Error() }
+	if len(q.Signatures)==0 { r.Code=CodeUnsigned } else { r.Code=CodeInvalid; for _,s:=range q.Signatures { if q.Keys[s.KeyID]==nil { r.Code=CodeUnknownSigner }; if rev:=findRevocation(q.Revocations,q.ArtifactDigest,s.KeyID); rev!=nil { r.Code=CodeRevoked }; if s.NotAfter!="" { if t,e:=time.Parse(time.RFC3339,s.NotAfter); e==nil && !q.At.Before(t) { r.Code=CodeExpired } } } }; return r
 }
 
 func findRevocation(rs []Revocation, artifact, key string) *Revocation {
