@@ -1,12 +1,21 @@
 package environmentlifecycle
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
 	"strings"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func TestGCReportUsesDistinctByteFields(t *testing.T) {
+	b, err := json.Marshal(GCReport{ProtectedBytes: 1, ReclaimableBytes: 2, ReclaimedBytes: 3})
+	if err != nil { t.Fatal(err) }
+	var got map[string]int64
+	if err := json.Unmarshal(b, &got); err != nil { t.Fatal(err) }
+	if got["protectedBytes"] != 1 || got["reclaimableBytes"] != 2 || got["reclaimedBytes"] != 3 { t.Fatalf("byte fields = %v", got) }
+}
 
 func TestCrashMatrixExecutesEveryLifecyclePoint(t *testing.T) {
 	defer SetCrashHook(nil)

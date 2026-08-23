@@ -28,7 +28,9 @@ type GCReport struct {
 	Scanned, Reclaimed, SkippedActive, SkippedAmbiguous int
 	ReclaimedDigests                                    []environmentartifact.Digest
 	Items                                               []GCItem
-	ProtectedBytes, ReclaimableBytes, ReclaimedBytes    int64 `json:"protectedBytes"`
+	ProtectedBytes  int64 `json:"protectedBytes"`
+	ReclaimableBytes int64 `json:"reclaimableBytes"`
+	ReclaimedBytes int64 `json:"reclaimedBytes"`
 	LastVerified                                        time.Time `json:"lastVerified,omitempty"`
 }
 type GCItem struct {
@@ -153,10 +155,14 @@ func materializationSize(root string) int64 {
 func mergeGCReport(dst *GCReport, src GCReport) {
 	dst.Scanned++
 	dst.Reclaimed += src.Reclaimed
+	dst.ProtectedBytes += src.ProtectedBytes
+	dst.ReclaimableBytes += src.ReclaimableBytes
+	dst.ReclaimedBytes += src.ReclaimedBytes
 	dst.SkippedActive += src.SkippedActive
 	dst.SkippedAmbiguous += src.SkippedAmbiguous
 	dst.ReclaimedDigests = append(dst.ReclaimedDigests, src.ReclaimedDigests...)
 	dst.Items = append(dst.Items, src.Items...)
+	if dst.LastVerified.Before(src.LastVerified) { dst.LastVerified = src.LastVerified }
 }
 
 func removeMaterialization(path string) error {

@@ -57,6 +57,12 @@ func NewLocalMaterializer() *LocalMaterializer {
 }
 
 func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environmentartifact.Manifest) (Materialization, error) {
+	lock := artifactLock(manifest.ArtifactDigest)
+	lock.Lock()
+	defer lock.Unlock()
+	crossRelease, err := acquireCrossArtifactLock(manifest.ArtifactDigest)
+	if err != nil { return Materialization{}, err }
+	defer func() { _ = crossRelease() }()
 	if err := ctx.Err(); err != nil {
 		return Materialization{}, err
 	}
