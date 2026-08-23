@@ -244,7 +244,7 @@ jobs:
           tag_name: ${{ steps.validate_tag.outputs.tag }}
           target_commitish: ${{ github.sha }}
           draft: true
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, '-rc.') }}
 
       - name: Publish Release
         env:

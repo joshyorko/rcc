@@ -58,6 +58,10 @@ class ReleaseTopologyTests(unittest.TestCase):
         for runner in ("ubuntu-latest", "windows-latest", "macos-latest", "macos-13"):
             self.assertIn(f'"{runner}"', workflow)
 
+    def test_repository_workflow_marks_rc_tags_as_prereleases(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
+
     def test_release_job_validates_downloaded_assets_without_build_tree(self):
         root, workflow, index = self.fixture()
         assets = root / "rcc-builds"
