@@ -311,7 +311,11 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		} else if request.Header.Get("X-RCC-Artifact-Versions") != "" {
 			extensions = []string{}
 		}
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1, 2}, SelectedVersion: selected, Extensions: extensions, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
+		semantics := "v1"
+		if selected == 2 {
+			semantics = "v2-compatible-v1"
+		}
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1, 2}, SelectedVersion: selected, Extensions: extensions, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Semantics: semantics, Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -730,7 +734,7 @@ func (it *HTTP) ProtocolWithOptions(ctx context.Context, versions []int, extensi
 	if err := requireHTTPJSONEOF(decoder); err != nil {
 		return result, err
 	}
-	selectedOK := result.SelectedVersion == 1 || (result.SelectedVersion == 2 && contains(result.Extensions, "rcc.artifact.v2/compat"))
+	selectedOK := (result.SelectedVersion == 1 && result.Semantics == "v1") || (result.SelectedVersion == 2 && result.Semantics == "v2-compatible-v1" && contains(result.Extensions, "rcc.artifact.v2/compat"))
 	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || !selectedOK || (result.AuthRequired && result.AuthChallenge == "") || result.RestartOutcome != "safe" || result.Immutability != "content-addressed" || result.TransferOutcome != "full-restart-only") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}

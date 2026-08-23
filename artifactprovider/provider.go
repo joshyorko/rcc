@@ -48,6 +48,7 @@ type ProtocolCapabilities struct {
 	AuthChallenge   string       `json:"authChallenge,omitempty"`
 	RetentionPolicy string       `json:"retentionPolicy,omitempty"`
 	Immutability    string       `json:"immutability,omitempty"`
+	Semantics       string       `json:"semantics,omitempty"`
 	Capabilities    Capabilities `json:"capabilities"`
 }
 

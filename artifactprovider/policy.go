@@ -3,6 +3,7 @@ package artifactprovider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -200,7 +201,9 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	if err := p.Provider.PutObject(ctx, b); err != nil {
 		p.uploads--
 		p.reconcileLocked()
-		_ = p.persistLocked()
+		if persistErr := p.persistLocked(); persistErr != nil {
+			return &MutationError{Operation: "put-object", Committed: false, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: errors.Join(err, persistErr)}
+		}
 		return err
 	}
 	p.objects++
@@ -224,7 +227,9 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 	}
 	if err := p.Provider.CommitManifest(ctx, content); err != nil {
 		p.reconcileLocked()
-		_ = p.persistLocked()
+		if persistErr := p.persistLocked(); persistErr != nil {
+			return &MutationError{Operation: "commit-manifest", Committed: false, Objects: p.objects, Manifests: p.manifests, Bytes: p.bytes, Err: errors.Join(err, persistErr)}
+		}
 		return err
 	}
 	p.manifests++
