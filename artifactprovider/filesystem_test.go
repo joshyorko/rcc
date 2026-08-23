@@ -1,8 +1,10 @@
 package artifactprovider
 
 import (
+	"archive/tar"
 	"bytes"
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"sync"
@@ -163,5 +165,37 @@ func TestCASPublicationSurvivesFilesystemProviderRestart(t *testing.T) {
 	}
 	if len(missing) != 0 {
 		t.Fatalf("durable object reported missing: %v", missing)
+	}
+}
+
+func TestFilesystemRestoreRollbackMarkerRecoversAfterPublicationFailure(t *testing.T) {
+	root := t.TempDir()
+	provider, err := NewFilesystem(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob := testBlob([]byte("restore rollback marker"))
+	var archive bytes.Buffer
+	tw := tar.NewWriter(&archive)
+	name := "objects/sha256/" + blob.Descriptor.Digest.Hex()
+	if err := tw.WriteHeader(&tar.Header{Name: name, Typeflag: tar.TypeReg, Size: blob.Descriptor.Size}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tw.Write([]byte("restore rollback marker")); err != nil {
+		t.Fatal(err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	filesystemRestorePublishHook = func(string) error { return errors.New("injected restore publication failure") }
+	defer func() { filesystemRestorePublishHook = nil }()
+	if err := provider.Restore(context.Background(), bytes.NewReader(archive.Bytes())); err == nil {
+		t.Fatal("injected restore failure was accepted")
+	}
+	if _, err := NewFilesystem(root); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(provider.objectPath(blob.Descriptor.Digest)); !os.IsNotExist(err) {
+		t.Fatalf("rolled back object remains: %v", err)
 	}
 }

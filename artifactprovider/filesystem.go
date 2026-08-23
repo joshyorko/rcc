@@ -2,6 +2,7 @@ package artifactprovider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -26,6 +27,13 @@ func (it *contextReader) Read(target []byte) (int, error) {
 }
 
 const maxManifestBytes = 16 << 20
+const filesystemRestoreMarker = ".restore-state"
+
+type filesystemRestoreState struct {
+	Created []string `json:"created"`
+}
+
+var filesystemRestorePublishHook func(string) error
 
 type Filesystem struct {
 	root     string
@@ -35,11 +43,28 @@ type Filesystem struct {
 // Cleanup removes only private interrupted-upload files. Immutable objects and
 // manifests are never selected, so restart cleanup cannot delete published data.
 func (it *Filesystem) Cleanup(ctx context.Context) (int, error) {
-	if err := ctx.Err(); err != nil { return 0, err }
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
 	removed := 0
 	err := filepath.Walk(it.root, func(path string, info os.FileInfo, err error) error {
-		if err != nil { return err }; if e:=ctx.Err(); e!=nil{return e}; if info.IsDir() || info.Mode()&os.ModeSymlink != 0{return nil}
-		name:=info.Name(); if len(name)>0 && (strings.HasPrefix(name, ".upload-") || strings.HasPrefix(name, ".manifest-")) { if err:=os.Remove(path);err!=nil{return err}; removed++ }; return nil
+		if err != nil {
+			return err
+		}
+		if e := ctx.Err(); e != nil {
+			return e
+		}
+		if info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+			return nil
+		}
+		name := info.Name()
+		if len(name) > 0 && (strings.HasPrefix(name, ".upload-") || strings.HasPrefix(name, ".manifest-")) {
+			if err := os.Remove(path); err != nil {
+				return err
+			}
+			removed++
+		}
+		return nil
 	})
 	return removed, err
 }
@@ -56,7 +81,36 @@ func NewFilesystem(root string) (*Filesystem, error) {
 	if err := provider.initialize(); err != nil {
 		return nil, err
 	}
+	if err := provider.recoverRestore(); err != nil {
+		return nil, err
+	}
 	return provider, nil
+}
+
+func (it *Filesystem) recoverRestore() error {
+	b, err := os.ReadFile(filepath.Join(it.root, filesystemRestoreMarker))
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	var state filesystemRestoreState
+	if err := json.Unmarshal(b, &state); err != nil {
+		return fmt.Errorf("invalid restore marker: %w", err)
+	}
+	for _, rel := range state.Created {
+		if rel == "" || filepath.IsAbs(rel) || rel == ".." || filepath.Clean(rel) != rel || strings.Contains(rel, ".."+string(filepath.Separator)) {
+			return fmt.Errorf("invalid restore marker path")
+		}
+		if err := os.Remove(filepath.Join(it.root, rel)); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+	if err := os.Remove(filepath.Join(it.root, filesystemRestoreMarker)); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return nil
 }
 
 func (it *Filesystem) objectPath(digest environmentartifact.Digest) string {
@@ -80,19 +134,35 @@ func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
 }
 
 func (it *Filesystem) Health(ctx context.Context) (Health, error) {
-	if err := ctx.Err(); err != nil { return Health{}, err }
-	if _, err := os.Stat(it.root); err != nil { return Health{Storage: "unavailable", Ready: false}, fmt.Errorf("%w: storage: %v", ErrNotReady, err) }
+	if err := ctx.Err(); err != nil {
+		return Health{}, err
+	}
+	if _, err := os.Stat(it.root); err != nil {
+		return Health{Storage: "unavailable", Ready: false}, fmt.Errorf("%w: storage: %v", ErrNotReady, err)
+	}
 	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle"}, nil
 }
 
 func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmentartifact.Digest) (io.ReadCloser, int64, error) {
-	if err := ctx.Err(); err != nil { return nil, 0, err }
-	if len(digest.Hex()) != 64 { return nil, 0, fmt.Errorf("invalid object digest") }
+	if err := ctx.Err(); err != nil {
+		return nil, 0, err
+	}
+	if len(digest.Hex()) != 64 {
+		return nil, 0, fmt.Errorf("invalid object digest")
+	}
 	file, err := os.Open(it.objectPath(digest))
-	if err != nil { return nil, 0, err }
+	if err != nil {
+		return nil, 0, err
+	}
 	info, err := file.Stat()
-	if err != nil { _ = file.Close(); return nil, 0, err }
-	if info.Size() < 0 || info.Size() > maxProviderObjectBytes { _ = file.Close(); return nil, 0, fmt.Errorf("invalid provider object size") }
+	if err != nil {
+		_ = file.Close()
+		return nil, 0, err
+	}
+	if info.Size() < 0 || info.Size() > maxProviderObjectBytes {
+		_ = file.Close()
+		return nil, 0, fmt.Errorf("invalid provider object size")
+	}
 	return file, info.Size(), nil
 }
 

@@ -604,6 +604,17 @@ func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	return result, err
 }
 
+func (it *HTTP) NegotiateCapabilities(ctx context.Context, required Capabilities) (Capabilities, error) {
+	protocol, err := it.Protocol(ctx)
+	if err != nil {
+		return Capabilities{}, err
+	}
+	if err := ValidateCapabilityIntersection(protocol.Capabilities, required); err != nil {
+		return Capabilities{}, err
+	}
+	return protocol.Capabilities, nil
+}
+
 func (it *HTTP) Health(ctx context.Context) (Health, error) {
 	var result Health
 	err := it.doJSON(ctx, http.MethodGet, "/v1/health", nil, &result)

@@ -19,6 +19,19 @@ func TestValidateV1Capabilities(t *testing.T) {
 	}
 }
 
+func TestValidateCapabilityIntersectionFailsClosed(t *testing.T) {
+	server := Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, SafeRestart: true}
+	if err := ValidateCapabilityIntersection(server, Capabilities{SchemaVersions: []int{1}, SafeRestart: true}); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateCapabilityIntersection(server, Capabilities{RangeSupport: true}); err == nil {
+		t.Fatal("accepted unavailable range support")
+	}
+	if err := ValidateCapabilityIntersection(Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, RangeSupport: true}, Capabilities{}); err == nil {
+		t.Fatal("accepted range without safe restart")
+	}
+}
+
 func TestDeferredProviderResolvesOnce(t *testing.T) {
 	var calls atomic.Int32
 	deferred := NewDeferred(func() (Provider, error) { calls.Add(1); return &Filesystem{}, nil })

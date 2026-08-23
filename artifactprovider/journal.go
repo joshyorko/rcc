@@ -42,6 +42,8 @@ type journalRecord struct {
 	Txn                              string `json:"txn,omitempty"`
 }
 
+var journalAppendHook func(journalRecord) error
+
 func (j *Journal) applyJournalRecord(r journalRecord) error {
 	switch r.Kind {
 	case "manifest":
@@ -367,6 +369,11 @@ func (j *Journal) ResolveManifest(ctx context.Context, d environmentartifact.Dig
 	return append([]byte(nil), b...), nil
 }
 func (j *Journal) append(r journalRecord) error {
+	if journalAppendHook != nil {
+		if err := journalAppendHook(r); err != nil {
+			return err
+		}
+	}
 	f, e := os.OpenFile(j.path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 	if e != nil {
 		return e
@@ -392,6 +399,11 @@ func (j *Journal) appendBatch(records []journalRecord) error {
 	}
 	defer f.Close()
 	for _, record := range records {
+		if journalAppendHook != nil {
+			if err := journalAppendHook(record); err != nil {
+				return err
+			}
+		}
 		b, err := json.Marshal(record)
 		if err != nil {
 			return err
@@ -771,7 +783,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 				if n, staged := newObjects[x.Digest.Hex()]; !staged || n.size != x.Size {
 					return fmt.Errorf("manifest dependency %s is not complete", x.Digest)
 				}
-			} else if ref.size != x.Size {
+			} else if ref.size != x.Size || verifyJournalFile(ref.path, x.Digest.Hex(), x.Size) != nil {
 				return fmt.Errorf("manifest dependency %s is not complete", x.Digest)
 			}
 		}
@@ -794,7 +806,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 				if n, staged := newObjects[x.StoredDigest.Hex()]; !staged || n.size != x.StoredSize {
 					return fmt.Errorf("manifest dependency %s is not complete", x.StoredDigest)
 				}
-			} else if ref.size != x.StoredSize {
+			} else if ref.size != x.StoredSize || verifyJournalFile(ref.path, x.StoredDigest.Hex(), x.StoredSize) != nil {
 				return fmt.Errorf("manifest dependency %s is not complete", x.StoredDigest)
 			}
 		}

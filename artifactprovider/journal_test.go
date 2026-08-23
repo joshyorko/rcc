@@ -135,6 +135,53 @@ func TestJournalRestoreIsRestartDurableWithoutDuplicateHistory(t *testing.T) {
 	}
 }
 
+func TestJournalRestoreFailureLeavesRecoverableUncommittedTransaction(t *testing.T) {
+	source, err := NewJournal(t.TempDir() + "/source.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixture := newProviderFixture(t)
+	for _, blob := range fixture.blobs {
+		raw, _ := io.ReadAll(blob.Reader)
+		if err := source.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader(raw)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := source.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	if err := source.Backup(context.Background(), &archive); err != nil {
+		t.Fatal(err)
+	}
+	path := t.TempDir() + "/target.log"
+	target, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	journalAppendHook = func(record journalRecord) error {
+		if record.Kind == "manifest" {
+			return errors.New("injected journal publication failure")
+		}
+		return nil
+	}
+	defer func() { journalAppendHook = nil }()
+	if err := target.Restore(context.Background(), bytes.NewReader(archive.Bytes())); err == nil {
+		t.Fatal("injected restore failure was accepted")
+	}
+	restarted, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	objects, err := restarted.ListObjects(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(objects) != 0 {
+		t.Fatalf("uncommitted restore objects became live: %d", len(objects))
+	}
+}
+
 func TestPolicyTypedQuotaAndRateErrors(t *testing.T) {
 	j, _ := NewJournal(t.TempDir() + "/q.log")
 	p := NewPolicy(j, Limits{MaxBytes: 2, RequestsPerSecond: 1})

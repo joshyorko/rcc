@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"io"
@@ -145,7 +146,7 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 		if e = ctx.Err(); e != nil {
 			return e
 		}
-		if info.IsDir() || strings.HasPrefix(info.Name(), ".upload-") || strings.HasPrefix(info.Name(), ".manifest-") {
+		if info.IsDir() || info.Name() == filesystemRestoreMarker || info.Name() == filesystemRestoreMarker+".tmp" || strings.HasPrefix(info.Name(), ".upload-") || strings.HasPrefix(info.Name(), ".manifest-") {
 			return nil
 		}
 		if info.Size() < 0 || info.Size() > maxProviderObjectBytes {
@@ -265,19 +266,52 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 	}
 	created := []string{}
 	for rel := range seen {
+		if _, e := os.Stat(filepath.Join(it.root, rel)); os.IsNotExist(e) {
+			created = append(created, rel)
+		}
+	}
+	marker, e := json.Marshal(filesystemRestoreState{Created: created})
+	if e != nil {
+		return e
+	}
+	tmpMarker := filepath.Join(it.root, filesystemRestoreMarker+".tmp")
+	if e = os.WriteFile(tmpMarker, marker, 0600); e != nil {
+		return e
+	}
+	fm, e := os.OpenFile(tmpMarker, os.O_WRONLY, 0600)
+	if e == nil {
+		e = fm.Sync()
+		fm.Close()
+	}
+	if e != nil {
+		_ = os.Remove(tmpMarker)
+		return e
+	}
+	if e = os.Rename(tmpMarker, filepath.Join(it.root, filesystemRestoreMarker)); e != nil {
+		_ = os.Remove(tmpMarker)
+		return e
+	}
+	for rel := range seen {
 		src := filepath.Join(stage, rel)
 		dst := filepath.Join(it.root, rel)
 		if _, e := os.Stat(dst); e == nil {
 			continue
 		}
+		if filesystemRestorePublishHook != nil {
+			if e := filesystemRestorePublishHook(rel); e != nil {
+				return e
+			}
+		}
 		if e := os.Rename(src, dst); e != nil {
 			for _, p := range created {
-				_ = os.Remove(p)
+				_ = os.Remove(filepath.Join(it.root, p))
 			}
+			_ = os.Remove(filepath.Join(it.root, filesystemRestoreMarker))
 			return e
 		}
 		created = append(created, dst)
 	}
+	_ = os.Remove(filepath.Join(it.root, filesystemRestoreMarker))
 	return nil
 }
 func validateRestoreMember(rel, path string) error {

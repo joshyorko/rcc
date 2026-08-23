@@ -111,6 +111,45 @@ func ValidateV1Capabilities(c Capabilities) error {
 	return nil
 }
 
+// ValidateCapabilityIntersection fails closed when a provider cannot satisfy
+// the caller's required protocol, formats, limits, or safety guarantees.
+func ValidateCapabilityIntersection(server, required Capabilities) error {
+	if err := ValidateCapabilities(server); err != nil {
+		return err
+	}
+	for _, v := range required.SchemaVersions {
+		if !contains(server.SchemaVersions, v) {
+			return fmt.Errorf("required schema version %d is unavailable", v)
+		}
+	}
+	for _, v := range required.DigestAlgorithms {
+		if !contains(server.DigestAlgorithms, v) {
+			return fmt.Errorf("required digest algorithm %q is unavailable", v)
+		}
+	}
+	for _, v := range required.Encodings {
+		if !contains(server.Encodings, v) {
+			return fmt.Errorf("required encoding %q is unavailable", v)
+		}
+	}
+	if required.MaxObjectBytes > 0 && server.MaxObjectBytes < required.MaxObjectBytes {
+		return fmt.Errorf("provider object limit is below required limit")
+	}
+	if required.MaxManifestBytes > 0 && server.MaxManifestBytes < required.MaxManifestBytes {
+		return fmt.Errorf("provider manifest limit is below required limit")
+	}
+	if required.RangeSupport && !server.RangeSupport {
+		return fmt.Errorf("required range support is unavailable")
+	}
+	if required.ResumeSupport && !server.ResumeSupport {
+		return fmt.Errorf("required resume support is unavailable")
+	}
+	if required.SafeRestart && !server.SafeRestart {
+		return fmt.Errorf("required safe restart is unavailable")
+	}
+	return nil
+}
+
 func contains[T comparable](values []T, wanted T) bool {
 	for _, value := range values {
 		if value == wanted {
