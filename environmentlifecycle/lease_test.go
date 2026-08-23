@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"syscall"
 	"testing"
@@ -97,14 +98,18 @@ func TestLeaseFailsClosedWhenStrongOwnerIdentityIsAmbiguous(t *testing.T) {
 
 func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
-	hostPython, err := exec.LookPath("python3")
+	hostPython, err := hostPythonPath()
 	if err != nil {
-		t.Skip("host python3 is unavailable")
+		t.Skip("host Python is unavailable")
 	}
-	python := filepath.Join(materialization.Path, "python")
-	wrapper := []byte(fmt.Sprintf("#!/bin/sh\nexec %q \"$@\"\n", hostPython))
-	if err := os.WriteFile(python, wrapper, 0o750); err != nil {
-		t.Fatal(err)
+	if runtime.GOOS == "windows" {
+		installWindowsTestPython(t, materialization.Path, hostPython)
+	} else {
+		python := filepath.Join(materialization.Path, "python")
+		wrapper := []byte(fmt.Sprintf("#!/bin/sh\nexec %q \"$@\"\n", hostPython))
+		if err := os.WriteFile(python, wrapper, 0o750); err != nil {
+			t.Fatal(err)
+		}
 	}
 	proof := filepath.Join(t.TempDir(), "python-ran")
 
@@ -128,12 +133,22 @@ func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {
 
 func TestExecuteReturnsChildExitCodeAndStillReleasesLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
-	python := filepath.Join(materialization.Path, "python")
-	if err := os.WriteFile(python, []byte("#!/bin/sh\nexit 17\n"), 0o750); err != nil {
-		t.Fatal(err)
+	command := []string{"python"}
+	if runtime.GOOS == "windows" {
+		hostPython, err := hostPythonPath()
+		if err != nil {
+			t.Skip("host Python is unavailable")
+		}
+		installWindowsTestPython(t, materialization.Path, hostPython)
+		command = append(command, "-c", "import os; os._exit(17)")
+	} else {
+		python := filepath.Join(materialization.Path, "python")
+		if err := os.WriteFile(python, []byte("#!/bin/sh\nexit 17\n"), 0o750); err != nil {
+			t.Fatal(err)
+		}
 	}
 
-	handle, child, err := Execute(context.Background(), NewLocalMaterializer(), materialization, []string{"python"})
+	handle, child, err := Execute(context.Background(), NewLocalMaterializer(), materialization, command)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -147,7 +162,8 @@ func TestExecuteReturnsChildExitCodeAndStillReleasesLease(t *testing.T) {
 
 func TestExecuteSpawnFailureStillReleasesLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
-	handle, _, err := Execute(context.Background(), NewLocalMaterializer(), materialization, []string{"/definitely/not/an/executable"})
+	missing := filepath.Join(filepath.VolumeName(materialization.Path)+string(os.PathSeparator), "definitely", "not", "an", "executable")
+	handle, _, err := Execute(context.Background(), NewLocalMaterializer(), materialization, []string{missing})
 	if err == nil {
 		t.Fatal("missing executable unexpectedly started")
 	}
@@ -160,6 +176,9 @@ func TestExecuteSpawnFailureStillReleasesLease(t *testing.T) {
 }
 
 func TestExecuteForwardsTerminationSignalAndReleasesLease(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("POSIX signal forwarding is not a Windows contract")
+	}
 	materialization := acquiredMaterialization(t)
 	python := filepath.Join(materialization.Path, "python")
 	if err := os.WriteFile(python, []byte("#!/bin/sh\ntrap 'exit 23' TERM\n: > \"$1\"\nwhile :; do sleep 1; done\n"), 0o750); err != nil {
@@ -194,6 +213,26 @@ func TestExecuteForwardsTerminationSignalAndReleasesLease(t *testing.T) {
 	}
 	if _, err := readLease(result.handle.ArtifactDigest, result.handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived forwarded termination: %v", err)
+	}
+}
+
+func hostPythonPath() (string, error) {
+	for _, name := range []string{"python3", "python"} {
+		if path, err := exec.LookPath(name); err == nil {
+			return path, nil
+		}
+	}
+	return "", exec.ErrNotFound
+}
+
+func installWindowsTestPython(t *testing.T, root, source string) {
+	t.Helper()
+	content, err := os.ReadFile(source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(root, "python.exe"), content, 0o750); err != nil {
+		t.Fatal(err)
 	}
 }
 

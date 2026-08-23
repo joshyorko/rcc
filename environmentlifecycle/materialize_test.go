@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
@@ -235,6 +236,9 @@ func TestMaterializationFailureNeverPublishesReadyRecord(t *testing.T) {
 }
 
 func TestWarmAcquireRepairsNonExecutablePythonWithoutProvider(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Windows executable eligibility is not represented by POSIX mode bits")
+	}
 	_, remote, artifactDigest := publishedFixture(t)
 	common.Product.ForceHome(t.TempDir())
 	common.SharedHolotree = false

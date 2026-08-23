@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
@@ -266,7 +267,11 @@ func newPublishFixture(t *testing.T) publishFixture {
 	}
 	root.Blueprint = common.BlueprintHash(legacyBlueprint)
 	root.Tree.Mode = 0o750 | os.ModeDir
-	root.Tree.Files["python"] = &htfs.File{Name: "python", Size: int64(len(logical)), Mode: 0o750, Digest: legacyObjectID, Rewrite: []int64{}}
+	pythonName := "python"
+	if runtime.GOOS == "windows" {
+		pythonName = "python.exe"
+	}
+	root.Tree.Files[pythonName] = &htfs.File{Name: pythonName, Size: int64(len(logical)), Mode: 0o750, Digest: legacyObjectID, Rewrite: []int64{}}
 	catalogPath := filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(root.Blueprint))
 	if err := root.SaveAs(catalogPath); err != nil {
 		t.Fatal(err)
