@@ -118,6 +118,22 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if content, err := os.ReadFile(proofFile); err != nil || string(content) != "real-a-b-ok\n" {
 		t.Fatalf("Python proof = %q, %v", content, err)
 	}
+	// Export the provider closure, then prove a fresh home can import and
+	// materialize the identical Artifact without the HTTP carrier.
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: published.ArtifactDigest, Provider: httpProvider, OutputPath: archivePath}); err != nil {
+		t.Fatalf("export canonical archive: %v", err)
+	}
+	offlineHome := filepath.Join(t.TempDir(), "offline-home")
+	common.Product.ForceHome(offlineHome)
+	if imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath}); err != nil || imported.ArtifactDigest != published.ArtifactDigest {
+		t.Fatalf("offline import identity = %s, %v", imported.ArtifactDigest, err)
+	}
+	offlineResult, offlineErr := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: published.ArtifactDigest})
+	offline := realConsumerReceipt{ArtifactDigest: offlineResult.ArtifactDigest, MaterializationID: offlineResult.MaterializationID, Path: offlineResult.Path, CacheHit: offlineResult.CacheHit}
+	if offlineErr != nil || offline.ArtifactDigest != published.ArtifactDigest || offline.CacheHit != CacheProvider {
+		t.Fatalf("offline archive changed artifact identity or provenance: %+v, %v", offline, offlineErr)
+	}
 
 	server.Close()
 	warm := runRealConsumerProcess(t, "warm", consumerHome, published.ArtifactDigest, "", "")

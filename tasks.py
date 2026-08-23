@@ -488,7 +488,7 @@ def selfHostProbe(c):
 def selfHost(c):
     """Exercise released-to-candidate and candidate-to-released self-hosting."""
     _require_linux("selfHost")
-    released = os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
+    released = os.environ.get("RCC_N1_BINARY") or os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
     if not released:
         raise RuntimeError("RCC_SELF_HOST_RELEASED_BINARY or PATH rcc is required")
     released = str(Path(released).resolve())
