@@ -143,6 +143,10 @@ func NewHandler(provider *Filesystem) http.Handler {
 func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	switch {
+	case request.URL.Path == "/v1/health":
+		if request.Method != http.MethodGet { methodNotAllowed(writer); return }
+		health, err := provider.Health(ctx)
+		writeProviderJSON(writer, health, err)
 	case request.URL.Path == "/v1/capabilities":
 		if request.Method != http.MethodGet {
 			methodNotAllowed(writer)
@@ -150,6 +154,10 @@ func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, req
 		}
 		capabilities, err := provider.Capabilities(ctx)
 		writeProviderJSON(writer, capabilities, err)
+	case request.URL.Path == "/v1/protocol":
+		if request.Method != http.MethodGet { methodNotAllowed(writer); return }
+		caps, err := provider.Capabilities(ctx)
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -386,6 +394,21 @@ func readExactBody(body io.Reader, declared, maximum int64) ([]byte, error) {
 func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 	var result Capabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/capabilities", nil, &result)
+	if err == nil { err = ValidateCapabilities(result) }
+	return result, err
+}
+
+func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
+	var result ProtocolCapabilities
+	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8) { err = fmt.Errorf("unsupported artifact provider protocol") }
+	if err == nil { err = ValidateCapabilities(result.Capabilities) }
+	return result, err
+}
+
+func (it *HTTP) Health(ctx context.Context) (Health, error) {
+	var result Health
+	err := it.doJSON(ctx, http.MethodGet, "/v1/health", nil, &result)
 	return result, err
 }
 

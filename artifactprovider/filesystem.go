@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"sort"
 	"sync"
@@ -63,6 +64,12 @@ func (it *Filesystem) manifestPath(digest environmentartifact.Digest) string {
 
 func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
 	return Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}}, nil
+}
+
+func (it *Filesystem) Health(ctx context.Context) (Health, error) {
+	if err := ctx.Err(); err != nil { return Health{}, err }
+	if _, err := os.Stat(it.root); err != nil { return Health{Storage: "unavailable", Ready: false}, fmt.Errorf("%w: storage: %v", ErrNotReady, err) }
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: "idle"}, nil
 }
 
 func (it *Filesystem) MissingObjects(ctx context.Context, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {

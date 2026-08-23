@@ -38,6 +38,19 @@ func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "CA") { t.Fatalf("expected CA error, got %v", err) }
 }
 
+func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
+	filesystem, err := NewFilesystem(t.TempDir())
+	if err != nil { t.Fatal(err) }
+	server := httptest.NewServer(NewHandler(filesystem))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil { t.Fatal(err) }
+	caps, err := client.Protocol(context.Background())
+	if err != nil || caps.Protocol != "rcc.artifact.v1" { t.Fatalf("caps=%+v err=%v", caps, err) }
+	health, err := client.Health(context.Background())
+	if err != nil || !health.Ready || health.Storage != "ok" { t.Fatalf("health=%+v err=%v", health, err) }
+}
+
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {
 	t.Helper()
 	filesystem, err := NewFilesystem(t.TempDir())
