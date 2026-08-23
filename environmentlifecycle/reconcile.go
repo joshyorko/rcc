@@ -52,8 +52,14 @@ func classifyLease(lease Lease) LeaseStatus {
 }
 
 func Reconcile(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
-	lifecycleMu.Lock()
-	defer lifecycleMu.Unlock()
+	lock := artifactLock(digest)
+	lock.Lock()
+	defer lock.Unlock()
+	crossRelease, err := acquireCrossArtifactLock(digest)
+	if err != nil {
+		return ReconcileReport{}, err
+	}
+	defer func() { _ = crossRelease() }()
 	return reconcileLocked(ctx, digest)
 }
 

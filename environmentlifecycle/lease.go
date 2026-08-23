@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -26,20 +25,13 @@ type Lease struct {
 
 type ProcessIdentityLookup func(int) (string, error)
 
-var lifecycleMu sync.Mutex
+var processIdentityLookup = lookupProcessIdentity
 
-var processIdentityLookup = func(pid int) (string, error) {
-	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
-	if err != nil {
-		return "", err
-	}
-	if closing := strings.LastIndexByte(string(content), ')'); closing >= 0 {
-		fields := strings.Fields(string(content[closing+1:]))
-		if len(fields) > 19 && fields[19] != "" {
-			return fields[19], nil
-		}
-	}
-	return "", fmt.Errorf("process start identity is unavailable")
+var lifecycleLocks sync.Map
+
+func artifactLock(digest environmentartifact.Digest) *sync.Mutex {
+	lock, _ := lifecycleLocks.LoadOrStore(digest.Hex(), &sync.Mutex{})
+	return lock.(*sync.Mutex)
 }
 
 func leaseComponents(digest environmentartifact.Digest, id string) []string {
@@ -47,8 +39,14 @@ func leaseComponents(digest environmentartifact.Digest, id string) []string {
 }
 
 func (it *LocalMaterializer) Lease(ctx context.Context, materialization Materialization) (Lease, error) {
-	lifecycleMu.Lock()
-	defer lifecycleMu.Unlock()
+	lock := artifactLock(materialization.ArtifactDigest)
+	lock.Lock()
+	defer lock.Unlock()
+	crossRelease, err := acquireCrossArtifactLock(materialization.ArtifactDigest)
+	if err != nil {
+		return Lease{}, err
+	}
+	defer func() { _ = crossRelease() }()
 	if err := ctx.Err(); err != nil {
 		return Lease{}, err
 	}
@@ -104,8 +102,14 @@ func readLease(digest environmentartifact.Digest, id string) (Lease, error) {
 }
 
 func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
-	lifecycleMu.Lock()
-	defer lifecycleMu.Unlock()
+	lock := artifactLock(lease.ArtifactDigest)
+	lock.Lock()
+	defer lock.Unlock()
+	crossRelease, err := acquireCrossArtifactLock(lease.ArtifactDigest)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = crossRelease() }()
 	if lease.ID == "" || len(lease.ArtifactDigest.Hex()) != 64 {
 		return fmt.Errorf("invalid lease")
 	}

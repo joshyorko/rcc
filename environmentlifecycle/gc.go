@@ -33,16 +33,10 @@ func (it *LocalMaterializer) Collect(ctx context.Context, policy GCPolicy) (GCRe
 }
 
 func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
-	lifecycleMu.Lock()
-	defer lifecycleMu.Unlock()
-	return collectLocked(ctx, policy)
-}
-
-func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
-	var report GCReport
 	if policy.Retention < 0 {
 		policy.Retention = 0
 	}
+	var report GCReport
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
 		return report, nil
@@ -61,52 +55,79 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		if err != nil {
 			continue
 		}
-		report.Scanned++
-		reconcile, err := reconcileLocked(ctx, digest)
+		lock := artifactLock(digest)
+		lock.Lock()
+		crossRelease, err := acquireCrossArtifactLock(digest)
+		if err != nil {
+			lock.Unlock()
+			return report, err
+		}
+		one, err := collectDigestLocked(ctx, policy, digest)
+		_ = crossRelease()
+		lock.Unlock()
 		if err != nil {
 			return report, err
 		}
-		if reconcile.Ambiguous > 0 {
-			report.SkippedAmbiguous++
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "ambiguous-lease"})
-			continue
-		}
-		if reconcile.Active > 0 {
-			report.SkippedActive++
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "active-lease"})
-			continue
-		}
-		record, err := readReadyRecord(digest)
-		if err != nil {
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "missing-or-invalid-ready-record"})
-			continue
-		}
-		want, _ := filepath.Abs(filepath.Join(common.HolotreeLocation(), record.MaterializationID))
-		actual, _ := filepath.Abs(record.Path)
-		if actual != want || filepath.Base(record.Path) != record.MaterializationID {
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "ready-record-path-out-of-root"})
-			continue
-		}
-		if policy.Retention > 0 && time.Since(record.VerifiedAt) < policy.Retention {
-			continue
-		}
-		if policy.DryRun {
-			report.Reclaimed++
-			report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "dry-run", Reason: "eligible"})
-			continue
-		}
-		if err := removeMaterialization(record.Path); err != nil {
-			return report, err
-		}
-		if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), "ready.json")); err != nil && !os.IsNotExist(err) {
-			return report, err
-		}
-		report.Reclaimed++
-		report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
-		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "reclaimed", Reason: "eligible"})
+		mergeGCReport(&report, one)
 	}
 	return report, nil
+}
+
+func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {
+	var report GCReport
+	reconcile, err := reconcileLocked(ctx, digest)
+	if err != nil {
+		return report, err
+	}
+	if reconcile.Ambiguous > 0 {
+		report.SkippedAmbiguous++
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "ambiguous-lease"})
+		return report, nil
+	}
+	if reconcile.Active > 0 {
+		report.SkippedActive++
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "active-lease"})
+		return report, nil
+	}
+	record, err := readReadyRecord(digest)
+	if err != nil {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "missing-or-invalid-ready-record"})
+		return report, nil
+	}
+	want, _ := filepath.Abs(filepath.Join(common.HolotreeLocation(), record.MaterializationID))
+	actual, _ := filepath.Abs(record.Path)
+	if actual != want || filepath.Base(record.Path) != record.MaterializationID {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "ready-record-path-out-of-root"})
+		return report, nil
+	}
+	if policy.Retention > 0 && time.Since(record.VerifiedAt) < policy.Retention {
+		return report, nil
+	}
+	if policy.DryRun {
+		report.Reclaimed++
+		report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "dry-run", Reason: "eligible"})
+		return report, nil
+	}
+	if err := removeMaterialization(record.Path); err != nil {
+		return report, err
+	}
+	if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), "ready.json")); err != nil && !os.IsNotExist(err) {
+		return report, err
+	}
+	report.Reclaimed++
+	report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
+	report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "reclaimed", Reason: "eligible"})
+	return report, nil
+}
+
+func mergeGCReport(dst *GCReport, src GCReport) {
+	dst.Scanned++
+	dst.Reclaimed += src.Reclaimed
+	dst.SkippedActive += src.SkippedActive
+	dst.SkippedAmbiguous += src.SkippedAmbiguous
+	dst.ReclaimedDigests = append(dst.ReclaimedDigests, src.ReclaimedDigests...)
+	dst.Items = append(dst.Items, src.Items...)
 }
 
 func removeMaterialization(path string) error {

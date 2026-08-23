@@ -6,11 +6,13 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"testing"
 	"time"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 func TestLeaseAndExecutionHandleHaveExplicitTypedLifecycle(t *testing.T) {
@@ -39,6 +41,33 @@ func TestLeaseAndExecutionHandleHaveExplicitTypedLifecycle(t *testing.T) {
 	}
 	if err := materializer.Release(context.Background(), lease); err != nil {
 		t.Fatalf("idempotent release failed: %v", err)
+	}
+}
+
+func TestArtifactLifecycleLocksDoNotSerializeUnrelatedArtifacts(t *testing.T) {
+	first, err := environmentartifact.ParseDigest("sha256:" + strings.Repeat("1", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := environmentartifact.ParseDigest("sha256:" + strings.Repeat("2", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstLock := artifactLock(first)
+	firstLock.Lock()
+	defer firstLock.Unlock()
+
+	acquired := make(chan struct{})
+	go func() {
+		lock := artifactLock(second)
+		lock.Lock()
+		close(acquired)
+		lock.Unlock()
+	}()
+	select {
+	case <-acquired:
+	case <-time.After(time.Second):
+		t.Fatal("unrelated artifact lifecycle remained serialized")
 	}
 }
 
