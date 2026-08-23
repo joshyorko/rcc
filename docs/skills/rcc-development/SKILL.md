@@ -59,6 +59,7 @@ rcc run -r developer/toolkit.yaml -t robot
 ```
 
 - Use Go tests for isolated logic and package behavior.
+- In a fresh checkout, run `inv assets` before direct `go test` commands that compile `blobs/`; `inv build` prepares those generated inputs transitively, but direct tests do not.
 - Use Robot Framework tests for executable CLI, environment, caching, or cross-process workflows.
 - Build `build/rcc` when the user needs a local binary to test.
 - Exercise the built binary, not an installed `rcc`, when validating a source change.
