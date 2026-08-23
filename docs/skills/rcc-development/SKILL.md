@@ -65,6 +65,13 @@ rcc run -r developer/toolkit.yaml -t robot
 - Run asset generation after changing embedded inputs.
 - Report exactly what was tested and distinguish source changes, builds, runtime validation, commits, pushes, and releases.
 
+## Review and classify
+
+- Classify the PR using [`docs/change-classification.md`](../../change-classification.md); the highest-risk behavior wins.
+- Review the exact submitted head with [`docs/review-rubric.md`](../../review-rubric.md).
+- Treat unavailable platform or runtime gates as missing evidence, not implicit success.
+- Keep implementation, build, runtime, push, merge, and release status distinct.
+
 ## Close
 
 Provide the documentation receipt required by `AGENTS.md`. Load [`meta-skill-improvement`](../meta-skill-improvement/SKILL.md) only when evidence reveals stale or missing guidance, the task changes agent guidance, or closure produces durable learning. A no-change receipt is valid.
