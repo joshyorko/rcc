@@ -335,19 +335,23 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if consumerHome == producerHome {
 		t.Fatal("exact binary CLI producer and consumer homes are not isolated")
 	}
+	localTrustRoot := filepath.Join(consumerHome, "artifacts", "v1", "trust")
 	acquireOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", localTrustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json",
 	}, consumerHome, true)
 	var acquired exactBinaryAcquireResult
 	decodeExactBinaryJSON(t, acquireOutput, &acquired)
 	if acquired.ArtifactDigest != published.ArtifactDigest || acquired.CacheHit != CacheProvider {
 		t.Fatalf("exact binary cold acquire = %+v", acquired)
 	}
+	if objectGets.Load() == 0 {
+		t.Fatal("exact binary cold lifecycle made no provider object requests")
+	}
 	assertIndependentWorkerCapabilities(t, acquired.Compatibility)
 
 	proofFile := filepath.Join(t.TempDir(), "cli-python-proof.json")
 	execOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", exactNativeProofProgram(), proofFile,
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", localTrustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json", "--", "python", "-c", exactNativeProofProgram(), proofFile,
 	}, consumerHome, true)
 	var executed exactBinaryExecResult
 	decodeExactBinaryJSON(t, execOutput, &executed)
@@ -358,19 +362,19 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if proof["nativeImport"] != "sqlite3" || proof["nativeExtension"] == "" || proof["sqliteVersion"] == "" {
 		t.Fatalf("exact binary native proof = %#v", proof)
 	}
-	platformChecks := runExactPlatformProbe(t, binary, consumerHome, providerURL, published.ArtifactDigest, proof["nativeExtension"])
+	platformChecks := runExactPlatformProbe(t, binary, consumerHome, providerURL, localTrustRoot, published.ArtifactDigest, proof["nativeExtension"])
 	if runtime.GOOS == "linux" {
-		platformChecks["glibcMuslMismatch"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+		platformChecks["glibcMuslMismatch"] = runExactCompatibilityCase(t, binary, providerURL, localTrustRoot, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
 			compatibility.OS.LibC = "musl"
 			compatibility.OS.LibCMinimum = "1"
 		}, true, &objectGets)
 	}
 	if runtime.GOOS == "darwin" {
-		platformChecks["translationAllowed"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+		platformChecks["translationAllowed"] = runExactCompatibilityCase(t, binary, providerURL, localTrustRoot, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
 			compatibility.OS.TranslationPolicy = "translation-allowed"
 		}, false, &objectGets)
 		if acquired.Compatibility != nil && acquired.Compatibility.Worker.OS.Translation == "rosetta2" {
-			platformChecks["nativeOnlyOnRosetta"] = runExactCompatibilityCase(t, binary, providerURL, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+			platformChecks["nativeOnlyOnRosetta"] = runExactCompatibilityCase(t, binary, providerURL, localTrustRoot, filesystem, published.ArtifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
 				compatibility.OS.TranslationPolicy = "native-only"
 			}, true, &objectGets)
 		} else {
@@ -387,17 +391,13 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if !cold.LeaseReleased {
 		t.Fatalf("exact binary CLI lease survived execution: %+v", cold)
 	}
-	if objectGets.Load() == 0 {
-		t.Fatal("exact binary cold lifecycle made no provider object requests")
-	}
-
 	objectGets.Store(0)
 	mutated, mutatedBytes := mutateManifestForMismatch(t, filesystem, published.ArtifactDigest)
 	if err := filesystem.CommitManifest(context.Background(), mutatedBytes); err != nil {
 		t.Fatal(err)
 	}
 	mismatchOutput := runExactBinaryCLIAllowFailure(t, binary, []string{
-		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", localTrustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json",
 	}, filepath.Join(t.TempDir(), "mismatch-home"), true)
 	if mismatchOutput.err == nil || !strings.Contains(strings.ToLower(mismatchOutput.stderr), "incompatible") {
 		t.Fatalf("exact binary mismatch result = stdout %q stderr %q err %v", mismatchOutput.stdout, mismatchOutput.stderr, mismatchOutput.err)
@@ -409,7 +409,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 
 	server.Close()
 	warmAcquireOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", localTrustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json",
 	}, consumerHome, true)
 	var warmAcquired exactBinaryAcquireResult
 	decodeExactBinaryJSON(t, warmAcquireOutput, &warmAcquired)
@@ -418,7 +418,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	}
 	assertIndependentWorkerCapabilities(t, warmAcquired.Compatibility)
 	warmExecOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", "print('warm')",
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", localTrustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json", "--", "python", "-c", "print('warm')",
 	}, consumerHome, true)
 	var warmExecuted exactBinaryExecResult
 	decodeExactBinaryJSON(t, warmExecOutput, &warmExecuted)
@@ -521,11 +521,11 @@ func readExactNativeProof(t *testing.T, path string) map[string]string {
 	return proof
 }
 
-func runExactPlatformProbe(t *testing.T, binary, home, providerURL string, digest environmentartifact.Digest, nativeExtension string) map[string]string {
+func runExactPlatformProbe(t *testing.T, binary, home, providerURL, trustRoot string, digest environmentartifact.Digest, nativeExtension string) map[string]string {
 	t.Helper()
 	probeFile := filepath.Join(t.TempDir(), "platform-probe.json")
 	output := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", digest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", exactPlatformProbeProgram(), nativeExtension, probeFile,
+		"env", "exec", "--artifact", digest.String(), "--provider", providerURL, "--trust-carrier", trustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json", "--", "python", "-c", exactPlatformProbeProgram(), nativeExtension, probeFile,
 	}, home, true)
 	var executed exactBinaryExecResult
 	decodeExactBinaryJSON(t, output, &executed)
@@ -603,7 +603,7 @@ print(json.dumps(result,sort_keys=True))
 pathlib.Path(sys.argv[2]).write_text(json.dumps(result,sort_keys=True))`
 }
 
-func runExactCompatibilityCase(t *testing.T, binary, providerURL string, provider *artifactprovider.Filesystem, original environmentartifact.Digest, mutate func(*environmentartifact.CompatibilityRequirements), reject bool, objectGets *atomic.Int64) string {
+func runExactCompatibilityCase(t *testing.T, binary, providerURL, trustRoot string, provider *artifactprovider.Filesystem, original environmentartifact.Digest, mutate func(*environmentartifact.CompatibilityRequirements), reject bool, objectGets *atomic.Int64) string {
 	t.Helper()
 	mutated, mutatedBytes := mutateManifest(t, provider, original, mutate)
 	if err := provider.CommitManifest(context.Background(), mutatedBytes); err != nil {
@@ -611,7 +611,7 @@ func runExactCompatibilityCase(t *testing.T, binary, providerURL string, provide
 	}
 	objectGets.Store(0)
 	output := runExactBinaryCLIAllowFailure(t, binary, []string{
-		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--trust-carrier", trustRoot, "--trust-carrier-type", "filesystem", "--permissive-local", "--json",
 	}, filepath.Join(t.TempDir(), "platform-mismatch-home"), true)
 	if reject {
 		if output.err == nil || !strings.Contains(strings.ToLower(output.stderr), "incompatible") || objectGets.Load() != 0 {
