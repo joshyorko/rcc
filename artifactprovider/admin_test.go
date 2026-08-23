@@ -261,6 +261,49 @@ func TestHTTPJournalProviderFullParity(t *testing.T) {
 	}
 }
 
+func TestHTTPPartialTransferRestartHealthAndAudit(t *testing.T) {
+	root := t.TempDir()
+	provider, err := NewJournal(filepath.Join(root, "provider.log"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(provider))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob := testBlob([]byte("partial HTTP upload"))
+	if err := client.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: &failingReader{data: []byte("partial HTTP upload"), cut: 4}}); err == nil {
+		t.Fatal("partial upload accepted")
+	}
+	archiveReq, _ := http.NewRequest(http.MethodPost, server.URL+"/v1/admin/restore", bytes.NewReader([]byte("partial archive")))
+	archiveReq.ContentLength = int64(len("partial archive"))
+	resp, err := server.Client().Do(archiveReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		t.Fatal("partial restore accepted")
+	}
+	restarted, err := NewJournal(filepath.Join(root, "provider.log"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	health, err := restarted.Health(context.Background())
+	if err != nil || !health.Ready {
+		t.Fatalf("restart health=%+v err=%v", health, err)
+	}
+	audit, err := restarted.Audit(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(audit) != 0 {
+		t.Fatalf("failed transfers audited as committed: %+v", audit)
+	}
+}
+
 func TestInterruptedUploadsLeaveNoProvisionalFilesAndCanRestart(t *testing.T) {
 	for _, tc := range []struct {
 		name string

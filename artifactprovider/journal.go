@@ -152,7 +152,9 @@ func NewJournal(path string) (*Journal, error) {
 	s.Buffer(make([]byte, 4096), int(maxManifestBytes+4096))
 	var malformed error
 	pending := map[string][]journalRecord{}
+	recordCount := int64(0)
 	for s.Scan() {
+		recordCount++
 		var r journalRecord
 		if e := json.Unmarshal(s.Bytes(), &r); e != nil {
 			malformed = e
@@ -200,6 +202,7 @@ func NewJournal(path string) (*Journal, error) {
 			}
 		}
 	}
+	j.requests.Store(recordCount)
 	return j, nil
 }
 func (j *Journal) Capabilities(context.Context) (Capabilities, error) {

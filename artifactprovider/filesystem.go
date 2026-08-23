@@ -95,6 +95,9 @@ func NewFilesystem(root string) (*Filesystem, error) {
 	if err := provider.recoverRestore(); err != nil {
 		return nil, err
 	}
+	if records, err := provider.Audit(context.Background()); err == nil {
+		provider.requests.Store(int64(len(records)))
+	}
 	return provider, nil
 }
 
