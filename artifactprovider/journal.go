@@ -32,6 +32,9 @@ type Journal struct {
 	manifestTimes   map[string]time.Time
 	gcActive        atomic.Bool
 	repairActive    atomic.Bool
+	requests        atomic.Int64
+	errors          atomic.Int64
+	corruptions     atomic.Int64
 }
 type objectRef struct {
 	path      string
@@ -203,6 +206,7 @@ func (j *Journal) Capabilities(context.Context) (Capabilities, error) {
 	return Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, MaxObjectBytes: maxProviderObjectBytes, MaxManifestBytes: maxManifestBytes, MaxRequestBytes: maxProviderJSONBytes, SafeRestart: true}, nil
 }
 func (j *Journal) Health(ctx context.Context) (Health, error) {
+	j.requests.Add(1)
 	started := time.Now()
 	if e := ctx.Err(); e != nil {
 		return Health{Ready: false, Error: e.Error(), LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, e
@@ -220,9 +224,10 @@ func (j *Journal) Health(ctx context.Context) (Health, error) {
 	if j.repairActive.Load() {
 		gc = "repairing"
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, Objects: int64(len(j.objects)), Manifests: int64(len(j.manifests)), Bytes: n, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only", Requests: j.requests.Load(), Errors: j.errors.Load(), Corruptions: j.corruptions.Load()}, nil
 }
 func (j *Journal) MissingObjects(ctx context.Context, ds []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	j.requests.Add(1)
 	if len(ds) > maxProviderDescriptorFanout {
 		return nil, fmt.Errorf("descriptor fanout exceeds limit")
 	}
@@ -241,6 +246,7 @@ func (j *Journal) MissingObjects(ctx context.Context, ds []environmentartifact.D
 	return out, nil
 }
 func (j *Journal) PutObject(ctx context.Context, b Blob) error {
+	j.requests.Add(1)
 	if b.Reader == nil || b.Descriptor.Size < 0 || b.Descriptor.Size > maxProviderObjectBytes {
 		return fmt.Errorf("invalid object upload")
 	}
@@ -285,6 +291,7 @@ func (j *Journal) PutObject(ctx context.Context, b Blob) error {
 	return nil
 }
 func (j *Journal) GetObject(ctx context.Context, d environmentartifact.Descriptor) (io.ReadCloser, error) {
+	j.requests.Add(1)
 	if e := ctx.Err(); e != nil {
 		return nil, e
 	}
@@ -300,6 +307,7 @@ func (j *Journal) GetObject(ctx context.Context, d environmentartifact.Descripto
 	return os.Open(r.path)
 }
 func (j *Journal) GetObjectByDigest(ctx context.Context, d environmentartifact.Digest) (io.ReadCloser, int64, error) {
+	j.requests.Add(1)
 	if e := ctx.Err(); e != nil {
 		return nil, 0, e
 	}
@@ -316,6 +324,7 @@ func (j *Journal) GetObjectByDigest(ctx context.Context, d environmentartifact.D
 	return f, r.size, e
 }
 func (j *Journal) CommitManifest(ctx context.Context, c []byte) error {
+	j.requests.Add(1)
 	if e := ctx.Err(); e != nil {
 		return e
 	}
@@ -377,6 +386,7 @@ func (j *Journal) verifyManifestClosure(m environmentartifact.Manifest) error {
 	return nil
 }
 func (j *Journal) ResolveManifest(ctx context.Context, d environmentartifact.Digest) ([]byte, error) {
+	j.requests.Add(1)
 	if e := ctx.Err(); e != nil {
 		return nil, e
 	}

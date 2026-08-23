@@ -3,6 +3,7 @@ package artifactprovider
 import (
 	"context"
 	"errors"
+	"github.com/joshyorko/rcc/environmentartifact"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -29,6 +30,13 @@ func TestValidateCapabilityIntersectionFailsClosed(t *testing.T) {
 	}
 	if err := ValidateCapabilityIntersection(Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, RangeSupport: true}, Capabilities{}); err == nil {
 		t.Fatal("accepted range without safe restart")
+	}
+}
+
+func TestObjectIndexExpansionBudgetFailsClosed(t *testing.T) {
+	index := environmentartifact.ObjectIndex{Count: 1, TotalStoredBytes: 1, TotalLogicalBytes: maxProviderArchiveBytes, Entries: []environmentartifact.ObjectEntry{{StoredSize: 1, LogicalSize: maxProviderArchiveBytes}}}
+	if err := validateObjectIndexBudget(index); err == nil {
+		t.Fatal("accepted decompression expansion bomb")
 	}
 }
 

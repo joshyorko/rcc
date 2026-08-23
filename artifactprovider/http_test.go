@@ -110,6 +110,22 @@ func TestHTTPHandlerDeadlineStopsSlowProvider(t *testing.T) {
 	}
 }
 
+func TestHTTPClientNetworkBodyDeadlineStopsSlowloris(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(100 * time.Millisecond)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))
+	}))
+	defer server.Close()
+	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), Timeout: 10 * time.Millisecond})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Capabilities(context.Background()); err == nil {
+		t.Fatal("slow network response exceeded timeout")
+	}
+}
+
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {
 	t.Helper()
 	filesystem, err := NewFilesystem(t.TempDir())

@@ -48,6 +48,7 @@ func (it *Filesystem) initialize() error {
 }
 
 func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
+	it.requests.Add(1)
 	if blob.Reader == nil || len(blob.Descriptor.Digest.Hex()) != 64 || blob.Descriptor.Size < 0 {
 		return fmt.Errorf("invalid object descriptor or reader")
 	}
@@ -182,6 +183,7 @@ func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmenta
 }
 
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {
+	it.requests.Add(1)
 	manifest, err := environmentartifact.DecodeManifest(content)
 	if err != nil {
 		return fmt.Errorf("validate manifest before commit: %w", err)

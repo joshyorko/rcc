@@ -46,6 +46,9 @@ type Filesystem struct {
 	commitMu     sync.Mutex
 	gcActive     atomic.Bool
 	repairActive atomic.Bool
+	requests     atomic.Int64
+	errors       atomic.Int64
+	corruptions  atomic.Int64
 }
 
 // Cleanup removes only private interrupted-upload files. Immutable objects and
@@ -189,6 +192,7 @@ func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
 }
 
 func (it *Filesystem) Health(ctx context.Context) (Health, error) {
+	it.requests.Add(1)
 	started := time.Now()
 	if err := ctx.Err(); err != nil {
 		return Health{Ready: false, Error: err.Error(), LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, err
@@ -203,10 +207,11 @@ func (it *Filesystem) Health(ctx context.Context) (Health, error) {
 	if it.repairActive.Load() {
 		gc = "repairing"
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only"}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Auth: "not-applicable", Quota: "ok", GC: gc, LatencyMS: time.Since(started).Milliseconds(), Process: "local", Audit: "append-only", Requests: it.requests.Load(), Errors: it.errors.Load(), Corruptions: it.corruptions.Load()}, nil
 }
 
 func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmentartifact.Digest) (io.ReadCloser, int64, error) {
+	it.requests.Add(1)
 	if err := ctx.Err(); err != nil {
 		return nil, 0, err
 	}
@@ -255,6 +260,7 @@ func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmenta
 }
 
 func (it *Filesystem) MissingObjects(ctx context.Context, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	it.requests.Add(1)
 	if len(descriptors) > maxProviderDescriptorFanout {
 		return nil, fmt.Errorf("descriptor fanout exceeds limit")
 	}

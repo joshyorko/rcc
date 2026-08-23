@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -17,6 +19,42 @@ type policyFlipProvider struct {
 	*Journal
 	policy      *Policy
 	failurePath string
+}
+
+func TestJournalRestoreChildProcessBoundary(t *testing.T) {
+	if os.Getenv("RCC_JOURNAL_RESTORE_CHILD") == "1" {
+		path := os.Getenv("RCC_JOURNAL_RESTORE_PATH")
+		j, err := NewJournal(path)
+		if err != nil {
+			os.Exit(2)
+		}
+		objects, _ := j.ListObjects(context.Background())
+		if len(objects) != 0 {
+			os.Exit(3)
+		}
+		os.Exit(0)
+	}
+	path := t.TempDir() + "/child.log"
+	object := []byte("pending child object")
+	digest := environmentartifact.DigestBytes(object).Hex()
+	if err := os.MkdirAll(path+".objects", 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path+".objects/"+digest, object, 0600); err != nil {
+		t.Fatal(err)
+	}
+	record := journalRecord{Kind: "restore-begin", Txn: "child"}
+	b1, _ := json.Marshal(record)
+	record = journalRecord{Kind: "object", Digest: digest, Size: int64(len(object)), Txn: "child"}
+	b2, _ := json.Marshal(record)
+	if err := os.WriteFile(path, append(append(b1, '\n'), append(b2, '\n')...), 0600); err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=TestJournalRestoreChildProcessBoundary")
+	cmd.Env = append(os.Environ(), "RCC_JOURNAL_RESTORE_CHILD=1", "RCC_JOURNAL_RESTORE_PATH="+path)
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("child recovery=%v", err)
+	}
 }
 
 func (p *policyFlipProvider) PutObject(ctx context.Context, b Blob) error {
