@@ -124,6 +124,15 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: published.ArtifactDigest, Provider: httpProvider, OutputPath: archivePath}); err != nil {
 		t.Fatalf("export canonical archive: %v", err)
 	}
+	if archiveOutput := os.Getenv("RCC_N1_ARCHIVE_OUTPUT"); archiveOutput != "" {
+		archiveBytes, err := os.ReadFile(archivePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(archiveOutput, archiveBytes, 0o640); err != nil {
+			t.Fatal(err)
+		}
+	}
 	offlineHome := filepath.Join(t.TempDir(), "offline-home")
 	common.Product.ForceHome(offlineHome)
 	if imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath}); err != nil || imported.ArtifactDigest != published.ArtifactDigest {

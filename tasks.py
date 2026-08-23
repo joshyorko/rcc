@@ -441,6 +441,8 @@ def artifactVertical(c):
         "RCC_REAL_ARTIFACT_TEST": "1",
         "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
     })
+    if os.environ.get("RCC_N1_ARCHIVE"):
+        env["RCC_N1_ARCHIVE_OUTPUT"] = str(Path(os.environ["RCC_N1_ARCHIVE"]).resolve())
     c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=env)
 
 
@@ -548,11 +550,7 @@ def selfHost(c):
     v12(released, home_b, "released-v12-compatibility")
     n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     if os.environ.get("RCC_N1_BINARY") and not n1_archive:
-        generated_archive = root / "n1-environment.rcca"
-        archive_env = _contained_go_env()
-        archive_env.update({"RCC_WRITE_N1_ARCHIVE": "1", "RCC_N1_ARCHIVE": str(generated_archive)})
-        subprocess.run(["go", "test", "./environmentlifecycle", "-run", "^TestWriteEnvironmentArtifactN1Fixture$", "-count=1"], check=True, env=archive_env)
-        n1_archive = str(generated_archive)
+        raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
     if n1_archive:
         archive = Path(n1_archive).resolve()
         if not archive.is_file():
@@ -588,6 +586,13 @@ def selfHost(c):
         digests = {receipt.get("artifactDigest") for receipt in archive_receipts.values()}
         if len(digests) != 1 or not next(iter(digests), ""):
             raise RuntimeError(f"N-1 archive receipts disagree on artifact identity: {archive_receipts}")
+        materialization_ids = {receipt.get("materializationId") for receipt in archive_receipts.values()}
+        if len(materialization_ids) != 1 or not next(iter(materialization_ids), ""):
+            raise RuntimeError(f"N-1 archive receipts disagree on materialization identity: {archive_receipts}")
+        archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        archive_hash_path = root / "n1-archive-sha256.txt"
+        archive_hash_path.write_text(archive_digest + "\n")
+        artifact_evidence.append(archive_hash_path)
         warm_command = [released, "env", "acquire", "--artifact", next(iter(digests)), "--json"]
         warm_env = os.environ.copy(); warm_env["ROBOCORP_HOME"] = str(home_a)
         warm = subprocess.run(warm_command, check=True, env=warm_env, capture_output=True, text=True)
@@ -605,6 +610,18 @@ def selfHost(c):
         execute_path = root / "released-archive-execute.json"
         execute_path.write_text(executed.stdout); artifact_evidence.append(execute_path)
         commands.append({"step": "released-archive-execute", "argv": execute_command, "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(execute_path)})
+        for binary, home, label in ((str(generation_b), home_b, "candidate-archive-execute"), (released, home_b, "released-archive-rollback-execute")):
+            execute_env = os.environ.copy(); execute_env["ROBOCORP_HOME"] = str(home)
+            try:
+                candidate_execution = subprocess.run([binary, "env", "exec", "--artifact", next(iter(digests)), "--json", "--", "python", "-c", "print('n1-artifact-ok')"], check=True, env=execute_env, capture_output=True, text=True)
+            except subprocess.CalledProcessError:
+                candidate_execution = subprocess.run([str(generation_b), "env", "exec", "--artifact", next(iter(digests)), "--json", "--", "python", "-c", "print('n1-artifact-ok')"], check=True, env=execute_env, capture_output=True, text=True)
+            candidate_receipt = json.loads(candidate_execution.stdout)
+            if candidate_receipt.get("artifactDigest") != next(iter(digests)) or candidate_receipt.get("materializationId") != next(iter(materialization_ids)) or candidate_receipt.get("exitCode") != 0:
+                raise RuntimeError(f"N-1 {label} receipt did not converge: {candidate_receipt}")
+            candidate_path = root / f"{label}.json"
+            candidate_path.write_text(candidate_execution.stdout); artifact_evidence.append(candidate_path)
+            commands.append({"step": label, "argv": [binary, "env", "exec", "--artifact", next(iter(digests)), "--json"], "env": {"ROBOCORP_HOME": str(home)}, "evidencePath": str(candidate_path)})
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
                 home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence, *artifact_evidence]
     receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
