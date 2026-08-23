@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -41,6 +42,16 @@ type Health struct {
 }
 
 type HealthProvider interface { Health(context.Context) (Health, error) }
+
+type ObjectInfo struct { Digest environmentartifact.Digest `json:"digest"`; Size int64 `json:"size"`; ModifiedAt time.Time `json:"modifiedAt"` }
+type ManifestInfo struct { Digest environmentartifact.Digest `json:"digest"`; Size int64 `json:"size"`; ModifiedAt time.Time `json:"modifiedAt"` }
+type Retention struct { MaxAge time.Duration; KeepManifests int }
+type GCReport struct { ObjectsScanned int; ManifestsScanned int; ObjectsRemoved int; ManifestsRemoved int; BytesReclaimed int64; ProvisionalRemoved int }
+type ProviderV1Enumerable interface { ListObjects(context.Context) ([]ObjectInfo, error); ListManifests(context.Context) ([]ManifestInfo, error) }
+type ProviderV1Admin interface { ProviderV1Enumerable; GarbageCollect(context.Context, Retention) (GCReport, error); Cleanup(context.Context) (int, error); Repair(context.Context) (Health, error) }
+type ProviderV1Backup interface { Backup(context.Context, io.Writer) error; Restore(context.Context, io.Reader) error }
+type ProviderV1ReadOnly interface { ReadOnly() bool }
+type ObjectReaderProvider interface { GetObjectByDigest(context.Context, environmentartifact.Digest) (io.ReadCloser, int64, error) }
 
 func ValidateCapabilities(c Capabilities) error {
 	if len(c.SchemaVersions) > 8 || len(c.DigestAlgorithms) > 8 || len(c.Encodings) > 8 { return errors.New("artifact provider capabilities exceed bounds") }

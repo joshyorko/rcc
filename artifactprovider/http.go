@@ -195,14 +195,15 @@ func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, req
 			}
 			writer.WriteHeader(http.StatusCreated)
 		case http.MethodGet:
-			content, err := provider.getObjectByDigest(ctx, digest)
+			reader, size, err := provider.GetObjectByDigest(ctx, digest)
 			if err != nil {
 				writeProviderReadError(writer, request, err)
 				return
 			}
+			defer reader.Close()
 			writer.Header().Set("Content-Type", "application/octet-stream")
-			writer.Header().Set("Content-Length", fmt.Sprintf("%d", len(content)))
-			_, _ = writer.Write(content)
+			writer.Header().Set("Content-Length", fmt.Sprintf("%d", size))
+			_, _ = io.CopyN(writer, reader, size)
 		default:
 			methodNotAllowed(writer)
 		}
