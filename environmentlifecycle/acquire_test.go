@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -75,6 +76,41 @@ func TestAcquireRejectsIncompatibleProviderBeforeResolve(t *testing.T) {
 	}
 	if provider.resolveCalls != 0 {
 		t.Fatalf("ResolveManifest calls = %d", provider.resolveCalls)
+	}
+}
+
+func TestAcquireRejectsCompatibilityMismatchBeforeObjectFetch(t *testing.T) {
+	fixture, remote, artifactDigest := publishedFixture(t)
+	recorder := &recordingProvider{delegate: remote}
+	previous := collectWorkerCapabilities
+	collectWorkerCapabilities = func(context.Context, environmentartifact.CompatibilityRequirements) (environmentartifact.WorkerCapabilities, error) {
+		required := fixture.build.Compatibility
+		return environmentartifact.WorkerCapabilities{
+			SchemaVersion:      environmentartifact.CompatibilitySchemaV1,
+			RelocationVersions: []string{required.RelocationVersion},
+			Python: environmentartifact.PythonCapabilities{
+				Implementations: []string{required.Python.Implementation}, Versions: []string{required.Python.Version}, ABIs: []string{required.Python.ABI},
+			},
+			OS: environmentartifact.OSCapabilities{
+				Family: required.OS.Family, Version: required.OS.MinimumVersion, KernelVersion: required.OS.KernelMinimum,
+				LibC: required.OS.LibC, LibCVersion: "1.0", NativeArchitecture: required.OS.NativeArchitecture,
+				Translation: "native", Runtime: required.OS.Runtime, Libraries: append([]string{}, required.OS.RequiredLibraries...),
+			},
+			CPU: environmentartifact.CPUCapabilities{Architecture: required.CPU.Architecture, Features: append([]string{}, required.CPU.RequiredFeatures...)},
+			Filesystem: environmentartifact.FilesystemCapabilities{
+				CaseSensitive: true, Symlinks: true, Junctions: true, LongPaths: true, MaxPath: 4096,
+			},
+		}, nil
+	}
+	t.Cleanup(func() { collectWorkerCapabilities = previous })
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+
+	if _, err := acquireVerifiedContent(context.Background(), artifactDigest, recorder); err == nil || !strings.Contains(err.Error(), "libc-version") {
+		t.Fatalf("compatibility mismatch = %v", err)
+	}
+	if !reflect.DeepEqual(recorder.events, []string{"resolve"}) {
+		t.Fatalf("provider object fetch occurred before compatibility rejection: %v", recorder.events)
 	}
 }
 
@@ -263,6 +299,7 @@ func TestAcquireRejectsCommittedMalformedSemanticSpecification(t *testing.T) {
 		Catalogs: []environmentartifact.CatalogDescriptor{inventory.Catalog}, ObjectIndex: indexDescriptor,
 		Requirements: environmentartifact.Requirements{
 			CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{},
+			Compatibility: fixture.build.Compatibility,
 		},
 	})
 	if err != nil {

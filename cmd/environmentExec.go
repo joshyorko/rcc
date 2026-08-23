@@ -11,11 +11,12 @@ import (
 )
 
 type environmentExecResult struct {
-	ArtifactDigest    environmentartifact.Digest           `json:"artifactDigest"`
-	MaterializationID string                               `json:"materializationId"`
-	Path              string                               `json:"path"`
-	CacheHit          environmentlifecycle.CacheProvenance `json:"cacheHit"`
-	ExitCode          int                                  `json:"exitCode"`
+	ArtifactDigest    environmentartifact.Digest                 `json:"artifactDigest"`
+	MaterializationID string                                     `json:"materializationId"`
+	Path              string                                     `json:"path"`
+	CacheHit          environmentlifecycle.CacheProvenance       `json:"cacheHit"`
+	ExitCode          int                                        `json:"exitCode"`
+	Compatibility     *environmentlifecycle.CompatibilityReceipt `json:"compatibility,omitempty"`
 }
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
@@ -58,9 +59,13 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if err != nil {
 				return err
 			}
+			var compatibility *environmentlifecycle.CompatibilityReceipt
+			if acquired.Compatibility.SchemaVersion != 0 {
+				compatibility = &acquired.Compatibility
+			}
 			if err := json.NewEncoder(command.OutOrStdout()).Encode(environmentExecResult{
 				ArtifactDigest: acquired.ArtifactDigest, MaterializationID: acquired.MaterializationID,
-				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode,
+				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode, Compatibility: compatibility,
 			}); err != nil {
 				return err
 			}

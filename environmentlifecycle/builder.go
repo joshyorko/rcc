@@ -13,6 +13,16 @@ import (
 
 type CurrentRCCBuilder struct{}
 
+var collectBuildCompatibility = compatibilityForBuiltEnvironment
+
+func compatibilityForBuiltEnvironment(ctx context.Context, library htfs.Library, blueprint []byte, platform environmentartifact.Platform) (environmentartifact.CompatibilityRequirements, error) {
+	materialization, err := library.Restore(blueprint, []byte(common.ControllerIdentity()), []byte(common.HolotreeSpace))
+	if err != nil {
+		return environmentartifact.CompatibilityRequirements{}, err
+	}
+	return compatibilityForMaterialization(ctx, materialization, platform)
+}
+
 func (CurrentRCCBuilder) Build(ctx context.Context, robotFile string) (BuildResult, error) {
 	if err := ctx.Err(); err != nil {
 		return BuildResult{}, err
@@ -36,21 +46,26 @@ func (CurrentRCCBuilder) Build(ctx context.Context, robotFile string) (BuildResu
 	}
 	platform := environmentartifact.CurrentPlatform()
 	platform.RCCPlatform = common.Platform()
+	compatibility, err := collectBuildCompatibility(ctx, library, blueprint, platform)
+	if err != nil {
+		return BuildResult{}, fmt.Errorf("inventory environment compatibility: %w", err)
+	}
 	builder := environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: common.Version, CompatibilityKey: "v12-gzip-sha256"}
-	specification, err := semanticSpecificationBytes("robot.yaml", blueprint, platform, builder)
+	specification, err := semanticSpecificationBytes("robot.yaml", blueprint, platform, builder, compatibility)
 	if err != nil {
 		return BuildResult{}, err
 	}
 	return BuildResult{
 		LegacyBlueprint: blueprint, CatalogPath: library.CatalogPath(common.BlueprintHash(blueprint)),
 		SpecificationBytes: specification, SourceKind: "robot.yaml", Platform: platform, Builder: builder,
+		Compatibility: compatibility,
 	}, nil
 }
 
-func semanticSpecificationBytes(sourceKind string, legacyBlueprint []byte, platform environmentartifact.Platform, builder environmentartifact.Builder) ([]byte, error) {
+func semanticSpecificationBytes(sourceKind string, legacyBlueprint []byte, platform environmentartifact.Platform, builder environmentartifact.Builder, compatibility environmentartifact.CompatibilityRequirements) ([]byte, error) {
 	content, err := json.Marshal(map[string]any{
 		"mediaType": environmentartifact.SpecificationMediaType, "schemaVersion": environmentartifact.SchemaVersionV1,
-		"sourceKind": sourceKind, "platform": platform, "builder": builder, "normalizedBlueprint": string(legacyBlueprint),
+		"sourceKind": sourceKind, "platform": platform, "builder": builder, "compatibility": compatibility, "normalizedBlueprint": string(legacyBlueprint),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("encode semantic specification: %w", err)

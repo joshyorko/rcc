@@ -23,6 +23,7 @@ type BuildResult struct {
 	SourceKind         string
 	Platform           environmentartifact.Platform
 	Builder            environmentartifact.Builder
+	Compatibility      environmentartifact.CompatibilityRequirements
 }
 
 type PublishRequest struct {
@@ -52,6 +53,9 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 	build, err := request.Builder.Build(ctx, request.RobotFile)
 	if err != nil {
 		return PublishResult{}, fmt.Errorf("build environment: %w", err)
+	}
+	if err := build.Compatibility.Validate(); err != nil {
+		return PublishResult{}, fmt.Errorf("validate build compatibility: %w", err)
 	}
 	if err := environmentartifact.ValidateSpecificationBytes(build.SpecificationBytes); err != nil {
 		return PublishResult{}, err
@@ -95,6 +99,7 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 		ObjectIndex: indexDescriptor,
 		Requirements: environmentartifact.Requirements{
 			CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{},
+			Compatibility: build.Compatibility,
 		},
 	})
 	if err != nil {

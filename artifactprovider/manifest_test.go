@@ -18,6 +18,19 @@ type providerFixture struct {
 	blobs         []Blob
 }
 
+func providerTestCompatibility() environmentartifact.CompatibilityRequirements {
+	return environmentartifact.CompatibilityRequirements{
+		SchemaVersion: 1, RelocationVersion: "holotree-v12-path-rewrite-v1",
+		Python: environmentartifact.PythonRequirements{Implementation: "cpython", Version: "3.11.9", ABI: "cp311"},
+		OS: environmentartifact.OSRequirements{
+			Family: "linux", MinimumVersion: "6.6", KernelMinimum: "6.6", LibC: "glibc", LibCMinimum: "2.34",
+			NativeArchitecture: "amd64", TranslationPolicy: "native-only", RequiredLibraries: []string{"libc.so.6"},
+		},
+		CPU:        environmentartifact.CPURequirements{Architecture: "amd64", RequiredFeatures: []string{}},
+		Filesystem: environmentartifact.FilesystemRequirements{Symlinks: true, LongPaths: true, MinimumMaxPath: 260},
+	}
+}
+
 func newProviderFixture(t *testing.T) providerFixture {
 	t.Helper()
 	platform := environmentartifact.Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}
@@ -47,7 +60,7 @@ func newProviderFixture(t *testing.T) providerFixture {
 		Platform:        platform, Builder: builder,
 		Catalogs:     []environmentartifact.CatalogDescriptor{{Descriptor: descriptor(environmentartifact.CatalogV12MediaType, contents.catalog), LegacyName: "0123456789abcdefv12.linux_amd64"}},
 		ObjectIndex:  indexDescriptor,
-		Requirements: environmentartifact.Requirements{CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{}},
+		Requirements: environmentartifact.Requirements{CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{}, Compatibility: providerTestCompatibility()},
 	})
 	if err != nil {
 		t.Fatal(err)

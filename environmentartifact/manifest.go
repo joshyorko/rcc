@@ -47,10 +47,11 @@ type CatalogDescriptor struct {
 }
 
 type Requirements struct {
-	CatalogReader                string   `json:"catalogReader"`
-	Encoding                     string   `json:"encoding"`
-	LegacyLogicalDigestAlgorithm string   `json:"legacyLogicalDigestAlgorithm"`
-	RequiredFeatures             []string `json:"requiredFeatures"`
+	CatalogReader                string                    `json:"catalogReader"`
+	Encoding                     string                    `json:"encoding"`
+	LegacyLogicalDigestAlgorithm string                    `json:"legacyLogicalDigestAlgorithm"`
+	RequiredFeatures             []string                  `json:"requiredFeatures"`
+	Compatibility                CompatibilityRequirements `json:"compatibility"`
 }
 
 type Manifest struct {
@@ -168,6 +169,15 @@ func (it Manifest) Validate() error {
 	}
 	if it.Requirements.CatalogReader != "v12" || it.Requirements.Encoding != "gzip" || it.Requirements.LegacyLogicalDigestAlgorithm != "sha256" || len(it.Requirements.RequiredFeatures) != 0 {
 		return fmt.Errorf("unsupported manifest requirements")
+	}
+	if err := it.Requirements.Compatibility.Validate(); err != nil {
+		return fmt.Errorf("invalid compatibility requirements: %w", err)
+	}
+	compatibility := it.Requirements.Compatibility
+	if compatibility.OS.Family != it.Platform.OS ||
+		compatibility.OS.NativeArchitecture != it.Platform.Arch ||
+		compatibility.CPU.Architecture != it.Platform.Arch {
+		return fmt.Errorf("compatibility requirements contradict manifest platform")
 	}
 	if it.Requirements.RequiredFeatures == nil {
 		return fmt.Errorf("requiredFeatures must be a canonical empty array")

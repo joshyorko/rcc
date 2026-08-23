@@ -18,9 +18,12 @@ import (
 )
 
 type verifiedContent struct {
-	manifest environmentartifact.Manifest
-	index    environmentartifact.ObjectIndex
+	manifest      environmentartifact.Manifest
+	index         environmentartifact.ObjectIndex
+	compatibility CompatibilityReceipt
 }
+
+var collectWorkerCapabilities = currentWorkerCapabilities
 
 func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartifact.Digest, remote artifactprovider.Provider) (verifiedContent, error) {
 	if remote == nil || len(artifactDigest.Hex()) != 64 {
@@ -43,8 +46,9 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	if manifest.ArtifactDigest != artifactDigest {
 		return verifiedContent{}, fmt.Errorf("resolved manifest identity does not match requested artifact")
 	}
-	if err := manifest.Platform.CompatibleWithCurrent(); err != nil {
-		return verifiedContent{}, fmt.Errorf("reject incompatible environment artifact: %w", err)
+	compatibility, err := preflightCompatibility(ctx, manifest)
+	if err != nil {
+		return verifiedContent{}, err
 	}
 
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
@@ -135,7 +139,23 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 	if err := installLegacyImmutable(common.HololibLocation(), []string{"catalog", manifest.Catalogs[0].LegacyName}, catalogDescriptor, catalogBytes); err != nil {
 		return verifiedContent{}, fmt.Errorf("install legacy catalog: %w", err)
 	}
-	return verifiedContent{manifest: manifest, index: index}, nil
+	return verifiedContent{manifest: manifest, index: index, compatibility: compatibility}, nil
+}
+
+func preflightCompatibility(ctx context.Context, manifest environmentartifact.Manifest) (CompatibilityReceipt, error) {
+	if err := manifest.Platform.CompatibleWithCurrent(); err != nil {
+		return CompatibilityReceipt{}, fmt.Errorf("reject incompatible environment artifact: %w", err)
+	}
+	worker, err := collectWorkerCapabilities(ctx, manifest.Requirements.Compatibility)
+	if err != nil {
+		return CompatibilityReceipt{}, fmt.Errorf("inspect worker compatibility: %w", err)
+	}
+	if err := environmentartifact.EvaluateCompatibility(manifest.Requirements.Compatibility, worker); err != nil {
+		return CompatibilityReceipt{}, fmt.Errorf("reject incompatible environment artifact: %w", err)
+	}
+	return CompatibilityReceipt{
+		SchemaVersion: 1, Status: "compatible", Requirements: manifest.Requirements.Compatibility, Worker: worker,
+	}, nil
 }
 
 func cacheProviderObject(ctx context.Context, remote artifactprovider.Provider, local *artifactprovider.Filesystem, descriptor environmentartifact.Descriptor) error {

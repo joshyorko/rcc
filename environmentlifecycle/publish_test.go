@@ -78,6 +78,24 @@ type publishFixture struct {
 	objectPath   string
 }
 
+func testBuildCompatibility(platform environmentartifact.Platform) environmentartifact.CompatibilityRequirements {
+	requirements := environmentartifact.CompatibilityRequirements{
+		SchemaVersion: 1, RelocationVersion: "holotree-v12-path-rewrite-v1",
+		Python: environmentartifact.PythonRequirements{Implementation: "cpython", Version: "3.11.9", ABI: "cp311"},
+		OS: environmentartifact.OSRequirements{
+			Family: platform.OS, MinimumVersion: "1", KernelMinimum: "1", NativeArchitecture: platform.Arch,
+			TranslationPolicy: "native-only", RequiredLibraries: []string{},
+		},
+		CPU:        environmentartifact.CPURequirements{Architecture: platform.Arch, RequiredFeatures: []string{}},
+		Filesystem: environmentartifact.FilesystemRequirements{LongPaths: true, MinimumMaxPath: 260},
+	}
+	if platform.OS == "linux" {
+		requirements.OS.LibC = "glibc"
+		requirements.OS.LibCMinimum = "2.17"
+	}
+	return requirements
+}
+
 func TestPublishUploadsOnlyMissingContentThenCommitsManifest(t *testing.T) {
 	fixture := newPublishFixture(t)
 	filesystem, err := artifactprovider.NewFilesystem(t.TempDir())
@@ -223,6 +241,8 @@ func TestPublishRejectsNonCanonicalOrConflatedSemanticSpecification(t *testing.T
 
 func newPublishFixture(t *testing.T) publishFixture {
 	t.Helper()
+	previousCompatibilityVerifier := verifyMaterializedCompatibility
+	verifyMaterializedCompatibility = func(context.Context, string, environmentartifact.CompatibilityRequirements) error { return nil }
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree
 	common.Product.ForceHome(t.TempDir())
@@ -230,6 +250,7 @@ func newPublishFixture(t *testing.T) publishFixture {
 	t.Cleanup(func() {
 		common.Product.ForceHome(previousHome)
 		common.SharedHolotree = previousShared
+		verifyMaterializedCompatibility = previousCompatibilityVerifier
 	})
 	if err := os.MkdirAll(common.HololibCatalogLocation(), 0o750); err != nil {
 		t.Fatal(err)
@@ -280,14 +301,16 @@ func newPublishFixture(t *testing.T) publishFixture {
 	if err != nil {
 		t.Fatal(err)
 	}
+	platform := environmentartifact.CurrentPlatform()
 	return publishFixture{
 		build: BuildResult{
 			LegacyBlueprint:    legacyBlueprint,
 			CatalogPath:        catalogPath,
 			SpecificationBytes: []byte(`{"dependencies":["python=3.11"],"source":"robot.yaml"}`),
 			SourceKind:         "robot.yaml",
-			Platform:           environmentartifact.CurrentPlatform(),
+			Platform:           platform,
 			Builder:            environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: "v0.test", CompatibilityKey: "v12-gzip-sha256"},
+			Compatibility:      testBuildCompatibility(platform),
 		},
 		catalogBytes: catalogBytes,
 		objectBytes:  append([]byte(nil), stored.Bytes()...),

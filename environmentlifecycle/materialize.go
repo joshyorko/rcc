@@ -34,6 +34,14 @@ type AcquireResult struct {
 	MaterializationID string
 	Path              string
 	CacheHit          CacheProvenance
+	Compatibility     CompatibilityReceipt
+}
+
+type CompatibilityReceipt struct {
+	SchemaVersion int                                           `json:"schemaVersion"`
+	Status        string                                        `json:"status"`
+	Requirements  environmentartifact.CompatibilityRequirements `json:"requirements"`
+	Worker        environmentartifact.WorkerCapabilities        `json:"worker"`
 }
 
 type Materialization struct {
@@ -51,6 +59,8 @@ type Materializer interface {
 }
 
 type LocalMaterializer struct{}
+
+var verifyMaterializedCompatibility = validateMaterializedCompatibility
 
 func NewLocalMaterializer() *LocalMaterializer {
 	return &LocalMaterializer{}
@@ -100,6 +110,9 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	if _, err := materializedPython(target); err != nil {
 		return Materialization{}, err
 	}
+	if err := verifyMaterializedCompatibility(ctx, target, manifest.Requirements.Compatibility); err != nil {
+		return Materialization{}, fmt.Errorf("verify materialized compatibility: %w", err)
+	}
 	ready := base
 	ready.State = stateReady
 	ready.VerifiedAt = time.Now().UTC()
@@ -128,16 +141,26 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, err
 		}
-		if result, err := warmMaterialization(manifest); err == nil {
+		compatibility, err := preflightCompatibility(ctx, manifest)
+		if err != nil {
+			return AcquireResult{}, err
+		}
+		if result, err := warmMaterialization(ctx, manifest); err == nil {
+			result.Compatibility = compatibility
 			return result, nil
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
+		} else {
+			var mismatch *environmentartifact.CompatibilityError
+			if errors.As(err, &mismatch) {
+				return AcquireResult{}, err
+			}
 		}
 		content, err := acquireVerifiedContent(ctx, request.ArtifactDigest, local)
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
-		return it.materialize(ctx, content.manifest)
+		return it.materialize(ctx, content.manifest, content.compatibility)
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
@@ -156,17 +179,17 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	if err != nil {
 		return AcquireResult{}, err
 	}
-	return it.materialize(ctx, content.manifest)
+	return it.materialize(ctx, content.manifest, content.compatibility)
 }
 
-func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
+func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest, compatibility CompatibilityReceipt) (AcquireResult, error) {
 	materialization, err := it.materializer.Materialize(ctx, manifest)
 	if err != nil {
 		return AcquireResult{}, err
 	}
 	return AcquireResult{
 		ArtifactDigest: materialization.ArtifactDigest, MaterializationID: materialization.ID,
-		Path: materialization.Path, CacheHit: CacheProvider,
+		Path: materialization.Path, CacheHit: CacheProvider, Compatibility: compatibility,
 	}, nil
 }
 
@@ -174,7 +197,7 @@ func materializationID(digest environmentartifact.Digest) string {
 	return htfs.ControllerSpaceName([]byte(common.ControllerIdentity()), []byte(digest.String()))
 }
 
-func warmMaterialization(manifest environmentartifact.Manifest) (AcquireResult, error) {
+func warmMaterialization(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
 	record, err := readReadyRecord(manifest.ArtifactDigest)
 	if err != nil {
 		return AcquireResult{}, err
@@ -189,6 +212,9 @@ func warmMaterialization(manifest environmentartifact.Manifest) (AcquireResult, 
 		return AcquireResult{}, fmt.Errorf("ready materialization root is invalid")
 	}
 	if _, err := materializedPython(wantPath); err != nil {
+		return AcquireResult{}, err
+	}
+	if err := verifyMaterializedCompatibility(ctx, wantPath, manifest.Requirements.Compatibility); err != nil {
 		return AcquireResult{}, err
 	}
 	metadata, err := htfs.NewRoot(".")

@@ -11,10 +11,11 @@ import (
 )
 
 type environmentAcquireResult struct {
-	ArtifactDigest    environmentartifact.Digest           `json:"artifactDigest"`
-	MaterializationID string                               `json:"materializationId"`
-	Path              string                               `json:"path"`
-	CacheHit          environmentlifecycle.CacheProvenance `json:"cacheHit"`
+	ArtifactDigest    environmentartifact.Digest                 `json:"artifactDigest"`
+	MaterializationID string                                     `json:"materializationId"`
+	Path              string                                     `json:"path"`
+	CacheHit          environmentlifecycle.CacheProvenance       `json:"cacheHit"`
+	Compatibility     *environmentlifecycle.CompatibilityReceipt `json:"compatibility,omitempty"`
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
@@ -46,9 +47,13 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if err != nil {
 				return err
 			}
+			var compatibility *environmentlifecycle.CompatibilityReceipt
+			if result.Compatibility.SchemaVersion != 0 {
+				compatibility = &result.Compatibility
+			}
 			return json.NewEncoder(command.OutOrStdout()).Encode(environmentAcquireResult{
 				ArtifactDigest: result.ArtifactDigest, MaterializationID: result.MaterializationID,
-				Path: result.Path, CacheHit: result.CacheHit,
+				Path: result.Path, CacheHit: result.CacheHit, Compatibility: compatibility,
 			})
 		},
 	}

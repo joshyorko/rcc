@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -261,6 +262,37 @@ func TestWarmAcquireRepairsNonExecutablePythonWithoutProvider(t *testing.T) {
 	info, err := os.Lstat(filepath.Join(second.Path, "python"))
 	if err != nil || info.Mode().Perm()&0o111 == 0 {
 		t.Fatalf("warm acquire retained non-executable Python: %v, %v", info, err)
+	}
+}
+
+func TestWarmAcquireRejectsMaterializedPythonABIMismatch(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("test uses a POSIX Python wrapper")
+	}
+	hostPython, err := exec.LookPath("python3")
+	if err != nil {
+		t.Skip("host Python is unavailable")
+	}
+	_, remote, artifactDigest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	acquirer := NewAcquirer()
+	first, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
+	if err != nil {
+		t.Fatal(err)
+	}
+	python := filepath.Join(first.Path, "python")
+	if err := os.WriteFile(python, []byte("#!/bin/sh\nexec \""+hostPython+"\" \"$@\"\n"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	verifyMaterializedCompatibility = validateMaterializedCompatibility
+
+	_, err = acquirer.Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: failOnTouchProvider{t: t},
+	})
+	var mismatch *environmentartifact.CompatibilityError
+	if !errors.As(err, &mismatch) || mismatch.Code != "materialized-python-abi" {
+		t.Fatalf("warm ABI mismatch = %T %v", err, err)
 	}
 }
 
