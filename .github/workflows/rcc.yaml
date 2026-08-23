@@ -24,8 +24,8 @@ jobs:
   build:
     name: Build RCC
     runs-on: ubuntu-latest
-    # Build only for trusted version tag pushes.
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    # Build the exact commit bytes consumed by native runtime jobs and releases.
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -63,6 +63,21 @@ jobs:
         with:
           name: RCC-Binaries
           path: rcc-builds/
+      - name: Prepare native runtime binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p native-runtime-binaries
+          cp rcc-builds/rcc-linux64 native-runtime-binaries/
+          cp rcc-builds/rcc-macos64 native-runtime-binaries/
+          cp rcc-builds/rcc-macosarm64 native-runtime-binaries/
+          cp rcc-builds/rcc-windows64.exe native-runtime-binaries/
+          (cd native-runtime-binaries && sha256sum * > SHA256SUMS)
+      - name: Upload native runtime binaries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-runtime-binaries
+          path: native-runtime-binaries/
 
   release-candidate:
     name: Release Candidate Verification
@@ -98,14 +113,45 @@ jobs:
             tmp/output/
 
   robot:
-    name: Robot Tests
+    name: Native Runtime (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
+    needs: build
     # Only run tests on push to main or PRs, not on release workflows
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "macos-13", "windows-latest"]
+        include:
+          - os: "ubuntu-latest"
+            platform: linux-amd64
+            asset: rcc-linux64
+            binary: build/rcc
+            goos: linux
+            goarch: amd64
+          - os: "macos-13"
+            platform: macos-amd64
+            asset: rcc-macos64
+            binary: build/rcc
+            goos: darwin
+            goarch: amd64
+          - os: "macos-latest"
+            platform: macos-arm64
+            asset: rcc-macosarm64
+            binary: build/rcc
+            goos: darwin
+            goarch: arm64
+          - os: "windows-latest"
+            platform: windows-amd64
+            asset: rcc-windows64.exe
+            binary: build/rcc.exe
+            goos: windows
+            goarch: amd64
+    env:
+      RCC_NATIVE_PLATFORM: ${{ matrix.platform }}
+      RCC_NATIVE_ASSET: ${{ matrix.asset }}
+      RCC_NATIVE_BINARY: ${{ matrix.binary }}
+      RCC_NATIVE_GOOS: ${{ matrix.goos }}
+      RCC_NATIVE_GOARCH: ${{ matrix.goarch }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -115,18 +161,173 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
+      - name: Download exact release-built RCC binary
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: native-runtime-binaries
+          path: native-runtime-binaries
+      - name: Stage and assert native RCC binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build tmp/output
+          python - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+
+          source = Path("native-runtime-binaries") / os.environ["RCC_NATIVE_ASSET"]
+          target = Path(os.environ["RCC_NATIVE_BINARY"])
+          expected = next(
+              line.split()[0]
+              for line in (Path("native-runtime-binaries") / "SHA256SUMS").read_text().splitlines()
+              if line.split(maxsplit=1)[1] == os.environ["RCC_NATIVE_ASSET"]
+          )
+          actual = hashlib.sha256(source.read_bytes()).hexdigest()
+          if actual != expected:
+              raise SystemExit(f"native RCC bytes differ: {actual} != {expected}")
+          import platform, subprocess
+          goos = {"Linux": "linux", "Darwin": "darwin", "Windows": "windows"}[platform.system()]
+          goarch = {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}[platform.machine()]
+          if (goos, goarch) != (os.environ["RCC_NATIVE_GOOS"], os.environ["RCC_NATIVE_GOARCH"]):
+              raise SystemExit(f"runner platform differs: {goos}/{goarch}")
+          if subprocess.check_output(["go", "env", "GOOS"], text=True).strip() != goos:
+              raise SystemExit("go env GOOS does not match runner")
+          if subprocess.check_output(["go", "env", "GOARCH"], text=True).strip() != goarch:
+              raise SystemExit("go env GOARCH does not match runner")
+          target.write_bytes(source.read_bytes())
+          if os.name != "nt":
+              target.chmod(0o755)
+          version = __import__("subprocess").check_output([str(target), "version"], text=True).strip()
+          expected_version = next(
+              line.split("`")[1]
+              for line in Path("common/version.go").read_text().splitlines()
+              if "Version = `" in line
+          )
+          if version != expected_version:
+              raise SystemExit(f"native RCC version differs: {version} != {expected_version}")
+          print(f"verified {target} {expected} {version}")
+          PY
+          echo "RCC_REAL_BINARY=$(python -c 'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())')" >> "$GITHUB_ENV"
+          echo "RCC_REAL_BINARY_SHA256=$(python -c 'import hashlib,os; print(hashlib.sha256(open(os.environ["RCC_NATIVE_BINARY"],"rb").read()).hexdigest())')" >> "$GITHUB_ENV"
+          echo "RCC_REAL_RECEIPT_FILE=$(python -c 'from pathlib import Path; print(Path("tmp/output/native-runtime-receipt.json").resolve())')" >> "$GITHUB_ENV"
       - name: Install invoke
         run: python -m pip install invoke==2.2.0
       - name: Setup Robot Environment
         run: inv robotsetup
       - name: Show commit info
         run: inv what
-      - name: Run Robot Framework Tests
-        run: inv robot
+      - name: Run real native A-to-B acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          RCC_REAL_ARTIFACT_TEST=1 go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
+      - name: Run Robot Framework Tests against exact binary
+        run: python -m robot -L DEBUG -d tmp/output robot_tests
+      - name: Bind Robot evidence into native runtime receipt
+        if: success() || failure()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          receipt = Path(os.environ["RCC_REAL_RECEIPT_FILE"])
+          robot = Path("tmp/output/native-runtime-robot-evidence.json")
+          if not receipt.is_file() or not robot.is_file():
+              raise SystemExit("missing exact CLI receipt or Robot evidence")
+
+          def require(value, key, label):
+              if not isinstance(value, dict) or key not in value:
+                  raise SystemExit(f"malformed {label}: missing {key}")
+              return value[key]
+
+          def lifecycle(label, evidence):
+              digest = require(evidence, "artifactDigest", label)
+              cold = require(evidence, "cold", label)
+              warm = require(evidence, "warm", label)
+              mismatch = require(evidence, "mismatch", label)
+              if require(cold, "artifactDigest", f"{label}.cold") != digest or require(warm, "artifactDigest", f"{label}.warm") != digest:
+                  raise SystemExit(f"{label} digest identity mismatch")
+              if require(cold, "cacheHit", f"{label}.cold") != "provider" or require(warm, "cacheHit", f"{label}.warm") != "local-materialization":
+                  raise SystemExit(f"{label} cold/warm cache provenance mismatch")
+              if require(cold, "materializationId", f"{label}.cold") != require(warm, "materializationId", f"{label}.warm") or require(cold, "path", f"{label}.cold") != require(warm, "path", f"{label}.warm"):
+                  raise SystemExit(f"{label} materialization identity mismatch")
+              if require(cold, "leaseId", f"{label}.cold") == "" or require(cold, "leaseReleased", f"{label}.cold") is not True:
+                  raise SystemExit(f"{label} lease evidence is incomplete")
+              compatibility = require(cold, "compatibility", f"{label}.cold")
+              worker = require(compatibility, "worker", f"{label}.cold.compatibility")
+              worker_os = require(worker, "os", f"{label}.cold.compatibility.worker")
+              worker_cpu = require(worker, "cpu", f"{label}.cold.compatibility.worker")
+              worker_python = require(worker, "python", f"{label}.cold.compatibility.worker")
+              worker_filesystem = require(worker, "filesystem", f"{label}.cold.compatibility.worker")
+              if not require(worker, "relocationVersions", f"{label}.cold.compatibility.worker") or not require(worker_os, "family", f"{label}.cold.compatibility.worker.os") or not require(worker_os, "nativeArchitecture", f"{label}.cold.compatibility.worker.os") or not require(worker_cpu, "architecture", f"{label}.cold.compatibility.worker.cpu") or require(worker_filesystem, "maxPath", f"{label}.cold.compatibility.worker.filesystem") <= 0 or require(worker_python, "artifactProvided", f"{label}.cold.compatibility.worker.python") is not True:
+                  raise SystemExit(f"{label} worker capability receipt is incomplete")
+              if require(warm, "providerDeadWarmReuse", f"{label}.warm") is not True:
+                  raise SystemExit(f"{label} provider-dead warm evidence is incomplete")
+              if require(mismatch, "rejected", f"{label}.mismatch") is not True or require(mismatch, "providerObjectGets", f"{label}.mismatch") != 0:
+                  raise SystemExit(f"{label} mismatch was not rejected before object fetch")
+              if require(cold, "nativeImport", f"{label}.cold") != "sqlite3" or not require(cold, "nativeExtension", f"{label}.cold") or not require(cold, "sqliteVersion", f"{label}.cold"):
+                  raise SystemExit(f"{label} native import evidence is incomplete")
+
+          def robot_lifecycle(evidence):
+              digest = require(evidence, "artifactDigest", "robotExactBinary")
+              cold = require(evidence, "cold", "robotExactBinary")
+              execute = require(evidence, "execute", "robotExactBinary")
+              warm = require(evidence, "warm", "robotExactBinary")
+              if any(require(item, "artifactDigest", "robotExactBinary") != digest for item in (cold, execute, warm)):
+                  raise SystemExit("Robot artifact identity mismatch")
+              if require(cold, "cacheHit", "robotExactBinary.cold") != "provider" or require(execute, "cacheHit", "robotExactBinary.execute") != "local-materialization" or require(warm, "cacheHit", "robotExactBinary.warm") != "local-materialization":
+                  raise SystemExit("Robot cache provenance mismatch")
+              if len({require(item, "materializationId", "robotExactBinary") for item in (cold, execute, warm)}) != 1 or len({require(item, "path", "robotExactBinary") for item in (cold, execute, warm)}) != 1:
+                  raise SystemExit("Robot materialization identity mismatch")
+              if require(execute, "leaseId", "robotExactBinary.execute") == "" or require(execute, "leaseReleased", "robotExactBinary.execute") is not True or require(execute, "exitCode", "robotExactBinary.execute") != 0:
+                  raise SystemExit("Robot lease/execute evidence is incomplete")
+              if require(warm, "providerDeadWarmReuse", "robotExactBinary.warm") is not True:
+                  raise SystemExit("Robot provider-dead warm evidence is incomplete")
+              native = require(evidence, "native", "robotExactBinary")
+              if require(native, "import", "robotExactBinary.native") != "sqlite3" or not require(native, "extension", "robotExactBinary.native") or not require(native, "sqliteVersion", "robotExactBinary.native"):
+                  raise SystemExit("Robot native import evidence is incomplete")
+
+          try:
+              data = json.loads(receipt.read_text())
+              robot_evidence = json.loads(robot.read_text())
+              binary = require(data, "binary", "receipt")
+              exact = require(data, "exactBinaryCLI", "receipt")
+              source = require(data, "sourceAPI", "receipt")
+              if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):
+                  raise SystemExit("receipt and exact CLI artifact identities differ")
+              platform_checks = require(exact, "platformChecks", "exactBinaryCLI")
+              platform = require(data, "platform", "receipt")
+              expected_checks = {
+                  "linux": {"runnerOS", "machine", "caseCollision", "executableSymlink", "filesystemType", "libc", "glibcMuslMismatch"},
+                  "darwin": {"runnerOS", "machine", "caseCollision", "executableSymlink", "rosetta", "machoRPath", "machoDependencies", "quarantineXattr", "codeSigning", "translationAllowed", "nativeOnlyOnRosetta"},
+                  "windows": {"runnerOS", "machine", "caseCollision", "executableSymlink", "longPath", "junction", "fileLock", "pathNormalization"},
+              }
+              platform_family = platform.split("_", 1)[0]
+              if not isinstance(platform_checks, dict) or set(platform_checks) != expected_checks.get(platform_family, set()):
+                  raise SystemExit(f"exact CLI platform probe key set is invalid for {platform}: {sorted(platform_checks)}")
+              for key, value in platform_checks.items():
+                  if not isinstance(value, str) or not value or value.startswith(("skipped:", "unavailable:", "failed")):
+                      if not (platform_family == "darwin" and key == "nativeOnlyOnRosetta" and value == "skipped:native-runner"):
+                          raise SystemExit(f"exact CLI platform probe {key} is not a passing or explicit fact: {value}")
+              if platform_checks["caseCollision"] not in {"case-insensitive-filesystem", "case-sensitive-filesystem"}:
+                  raise SystemExit(f"caseCollision is not a truthful filesystem fact: {platform_checks['caseCollision']}")
+              if not isinstance(platform_checks, dict) or not platform_checks:
+                  raise SystemExit("exact CLI platform probe receipt is incomplete")
+              lifecycle("exactBinaryCLI", exact)
+              lifecycle("sourceAPI", source)
+              if require(robot_evidence, "binarySha256", "robotExactBinary") != require(binary, "sha256", "receipt"):
+                  raise SystemExit("Robot evidence binary does not match staged RCC binary")
+              robot_lifecycle(robot_evidence)
+              data["robotExactBinary"] = robot_evidence
+              receipt.write_text(json.dumps(data, indent=2) + "\n")
+          except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:
+              raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:
-          name: ${{ matrix.os }}-test-reports
+          name: ${{ matrix.platform }}-native-runtime-receipt
           path: ./tmp/output/
 
   release:

@@ -44,8 +44,8 @@ func darwinNativeRequirements(root string) ([]string, error) {
 		if err != nil {
 			return err
 		}
-		if entry.Type().IsRegular() {
-			available[strings.ToLower(entry.Name())] = struct{}{}
+		if name, bundled := bundledEntryName(root, path, entry); bundled {
+			available[strings.ToLower(name)] = struct{}{}
 			candidates = append(candidates, path)
 		}
 		return nil

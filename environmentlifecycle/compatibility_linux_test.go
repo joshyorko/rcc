@@ -4,6 +4,8 @@ package environmentlifecycle
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"runtime"
 	"slices"
 	"testing"
@@ -11,6 +13,32 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func TestBundledLibrarySymlinkIsNotReportedAsSystemRequirement(t *testing.T) {
+	root := t.TempDir()
+	target := filepath.Join(root, "libfixture.so.1.0.8")
+	if err := os.WriteFile(target, []byte("fixture"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	link := filepath.Join(root, "libfixture.so.1.0")
+	if err := os.Symlink(filepath.Base(target), link); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var entry os.DirEntry
+	for _, candidate := range entries {
+		if candidate.Name() == filepath.Base(link) {
+			entry = candidate
+		}
+	}
+	name, bundled := bundledEntryName(root, link, entry)
+	if !bundled || name != filepath.Base(link) {
+		t.Fatalf("internal library symlink = %q/%v", name, bundled)
+	}
+}
 
 func TestLinuxWorkerCapabilitiesDoNotCopyArtifactRequirements(t *testing.T) {
 	required := testBuildCompatibility(environmentartifact.CurrentPlatform())

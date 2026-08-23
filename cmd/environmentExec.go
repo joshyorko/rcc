@@ -16,6 +16,7 @@ type environmentExecResult struct {
 	Path              string                                     `json:"path"`
 	CacheHit          environmentlifecycle.CacheProvenance       `json:"cacheHit"`
 	ExitCode          int                                        `json:"exitCode"`
+	LeaseID           string                                     `json:"leaseId"`
 	Compatibility     *environmentlifecycle.CompatibilityReceipt `json:"compatibility,omitempty"`
 }
 
@@ -55,7 +56,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 				ArtifactDigest: acquired.ArtifactDigest, ID: acquired.MaterializationID,
 				Path: acquired.Path, CacheHit: acquired.CacheHit,
 			}
-			_, child, err := dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
+			handle, child, err := dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
 			if err != nil {
 				return err
 			}
@@ -65,7 +66,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			}
 			if err := json.NewEncoder(command.OutOrStdout()).Encode(environmentExecResult{
 				ArtifactDigest: acquired.ArtifactDigest, MaterializationID: acquired.MaterializationID,
-				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode, Compatibility: compatibility,
+				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode, LeaseID: handle.LeaseID, Compatibility: compatibility,
 			}); err != nil {
 				return err
 			}
