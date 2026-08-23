@@ -69,14 +69,18 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	}
 	verified := base
 	verified.State = stateVerifiedContent
+	if err := crash(CrashBeforeVerified); err != nil { return Materialization{}, err }
 	if err := writeMaterializationRecord(verified); err != nil {
 		return Materialization{}, fmt.Errorf("record verified content: %w", err)
 	}
+	if err := crash(CrashAfterVerified); err != nil { return Materialization{}, err }
 	materializing := base
 	materializing.State = stateMaterializing
+	if err := crash(CrashBeforeMaterializing); err != nil { return Materialization{}, err }
 	if err := writeMaterializationRecord(materializing); err != nil {
 		return Materialization{}, fmt.Errorf("record materializing state: %w", err)
 	}
+	if err := crash(CrashAfterMaterializing); err != nil { return Materialization{}, err }
 
 	catalogPath := filepath.Join(common.HololibCatalogLocation(), manifest.Catalogs[0].LegacyName)
 	portable, err := htfs.LoadPortableCatalog(catalogPath)
@@ -103,9 +107,11 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	ready := base
 	ready.State = stateReady
 	ready.VerifiedAt = time.Now().UTC()
+	if err := crash(CrashBeforeReady); err != nil { return Materialization{}, err }
 	if err := writeMaterializationRecord(ready); err != nil {
 		return Materialization{}, fmt.Errorf("record ready materialization: %w", err)
 	}
+	if err := crash(CrashAfterReady); err != nil { return Materialization{}, err }
 	return Materialization{ArtifactDigest: manifest.ArtifactDigest, ID: id, Path: target, CacheHit: CacheProvider}, nil
 }
 
@@ -118,6 +124,9 @@ func NewAcquirer() *Acquirer {
 }
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
+	if _, err := Reconcile(ctx, request.ArtifactDigest); err != nil {
+		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
+	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {
 		return AcquireResult{}, fmt.Errorf("initialize local artifact cache: %w", err)

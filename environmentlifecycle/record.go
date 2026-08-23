@@ -13,6 +13,25 @@ import (
 
 const maxMaterializationRecordBytes = 64 << 10
 
+type CrashPoint string
+const (
+	CrashBeforeVerified CrashPoint = "before-verified"
+	CrashAfterVerified CrashPoint = "after-verified"
+	CrashBeforeMaterializing CrashPoint = "before-materializing"
+	CrashAfterMaterializing CrashPoint = "after-materializing"
+	CrashBeforeReady CrashPoint = "before-ready"
+	CrashAfterReady CrashPoint = "after-ready"
+	CrashBeforeLease CrashPoint = "before-lease"
+	CrashAfterLease CrashPoint = "after-lease"
+	CrashBeforeRelease CrashPoint = "before-release"
+	CrashAfterRelease CrashPoint = "after-release"
+	CrashBeforeGC CrashPoint = "before-gc"
+	CrashAfterGC CrashPoint = "after-gc"
+)
+var lifecycleCrashHook func(CrashPoint) error
+func SetCrashHook(hook func(CrashPoint) error) { lifecycleCrashHook = hook }
+func crash(point CrashPoint) error { if lifecycleCrashHook != nil { return lifecycleCrashHook(point) }; return nil }
+
 type materializationState string
 
 const (
