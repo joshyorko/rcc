@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"reflect"
 	"sync"
 	"time"
 
@@ -15,12 +16,17 @@ import (
 )
 
 type Lease struct {
-	ID                string                     `json:"id"`
-	MaterializationID string                     `json:"materializationId"`
-	ArtifactDigest    environmentartifact.Digest `json:"artifactDigest"`
-	OwnerPID          int                        `json:"ownerPid"`
-	OwnerStart        string                     `json:"ownerStart"`
-	CreatedAt         time.Time                  `json:"createdAt"`
+	ID                string                       `json:"id"`
+	MaterializationID string                       `json:"materializationId"`
+	ArtifactDigest    environmentartifact.Digest   `json:"artifactDigest"`
+	OwnerPID          int                          `json:"ownerPid"`
+	OwnerStart        string                       `json:"ownerStart"`
+	CreatedAt         time.Time                    `json:"createdAt"`
+	Protected         []environmentartifact.Digest `json:"protected,omitempty"`
+}
+
+func leasesEqual(left, right Lease) bool {
+	return left.ID == right.ID && left.MaterializationID == right.MaterializationID && left.ArtifactDigest == right.ArtifactDigest && left.OwnerPID == right.OwnerPID && left.OwnerStart == right.OwnerStart && left.CreatedAt.Equal(right.CreatedAt) && reflect.DeepEqual(left.Protected, right.Protected)
 }
 
 type ProcessIdentityLookup func(int) (string, error)
@@ -50,6 +56,9 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if err := ctx.Err(); err != nil {
 		return Lease{}, err
 	}
+	if err := crash(CrashBeforeLease); err != nil {
+		return Lease{}, err
+	}
 	record, err := readReadyRecord(materialization.ArtifactDigest)
 	if err != nil {
 		return Lease{}, fmt.Errorf("lease requires a ready materialization: %w", err)
@@ -65,6 +74,11 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 		ID: hex.EncodeToString(idBytes), MaterializationID: materialization.ID,
 		ArtifactDigest: materialization.ArtifactDigest, OwnerPID: os.Getpid(), CreatedAt: time.Now().UTC(),
 	}
+	if root, rootErr := readReferenceRoot(materialization.ArtifactDigest); rootErr == nil {
+		lease.Protected = append([]environmentartifact.Digest(nil), root.Protected...)
+	} else {
+		return Lease{}, fmt.Errorf("lease requires a valid durable reference root: %w", rootErr)
+	}
 	lease.OwnerStart, err = processIdentityLookup(lease.OwnerPID)
 	if err != nil || lease.OwnerStart == "" {
 		if err == nil {
@@ -79,6 +93,9 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	descriptor := environmentartifact.Descriptor{MediaType: "application/vnd.rcc.environment.lease.v1+json", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
 	if err := installLegacyImmutable(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID), descriptor, content); err != nil {
 		return Lease{}, fmt.Errorf("publish lease: %w", err)
+	}
+	if err := crash(CrashAfterLease); err != nil {
+		return Lease{}, err
 	}
 	return lease, nil
 }
@@ -102,6 +119,9 @@ func readLease(digest environmentartifact.Digest, id string) (Lease, error) {
 }
 
 func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
+	if err := crash(CrashBeforeRelease); err != nil {
+		return err
+	}
 	lock := artifactLock(lease.ArtifactDigest)
 	lock.Lock()
 	defer lock.Unlock()
@@ -113,5 +133,9 @@ func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
 	if lease.ID == "" || len(lease.ArtifactDigest.Hex()) != 64 {
 		return fmt.Errorf("invalid lease")
 	}
-	return removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
+	err = removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
+	if err == nil {
+		err = crash(CrashAfterRelease)
+	}
+	return err
 }
