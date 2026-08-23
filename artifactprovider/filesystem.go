@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -29,6 +30,18 @@ const maxManifestBytes = 16 << 20
 type Filesystem struct {
 	root     string
 	commitMu sync.Mutex
+}
+
+// Cleanup removes only private interrupted-upload files. Immutable objects and
+// manifests are never selected, so restart cleanup cannot delete published data.
+func (it *Filesystem) Cleanup(ctx context.Context) (int, error) {
+	if err := ctx.Err(); err != nil { return 0, err }
+	removed := 0
+	err := filepath.Walk(it.root, func(path string, info os.FileInfo, err error) error {
+		if err != nil { return err }; if e:=ctx.Err(); e!=nil{return e}; if info.IsDir() || info.Mode()&os.ModeSymlink != 0{return nil}
+		name:=info.Name(); if len(name)>0 && (strings.HasPrefix(name, ".upload-") || strings.HasPrefix(name, ".manifest-")) { if err:=os.Remove(path);err!=nil{return err}; removed++ }; return nil
+	})
+	return removed, err
 }
 
 func NewFilesystem(root string) (*Filesystem, error) {
