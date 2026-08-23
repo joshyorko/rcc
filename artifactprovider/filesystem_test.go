@@ -168,6 +168,23 @@ func TestCASPublicationSurvivesFilesystemProviderRestart(t *testing.T) {
 	}
 }
 
+func TestFilesystemObjectReaderRejectsTamperedProviderBytes(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob := testBlob([]byte("trusted bytes"))
+	if err := p.PutObject(context.Background(), blob); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(p.objectPath(blob.Descriptor.Digest), []byte("tampered bytes"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := p.GetObjectByDigest(context.Background(), blob.Descriptor.Digest); err == nil {
+		t.Fatal("tampered object was served")
+	}
+}
+
 func TestFilesystemRestoreRollbackMarkerRecoversAfterPublicationFailure(t *testing.T) {
 	root := t.TempDir()
 	provider, err := NewFilesystem(root)

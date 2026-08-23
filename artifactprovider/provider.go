@@ -38,6 +38,17 @@ type ProtocolCapabilities struct {
 	Capabilities    Capabilities `json:"capabilities"`
 }
 
+type MutationError struct {
+	Operation string
+	Committed bool
+	Err       error
+}
+
+func (e *MutationError) Error() string {
+	return e.Operation + " mutation committed but policy state was not durable: " + e.Err.Error()
+}
+func (e *MutationError) Unwrap() error { return e.Err }
+
 var (
 	ErrQuotaExceeded = errors.New("artifact provider quota exceeded")
 	ErrRateLimited   = errors.New("artifact provider rate limited")

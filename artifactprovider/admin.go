@@ -142,6 +142,8 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 	}
 	tw := tar.NewWriter(w)
 	defer tw.Close()
+	members := 0
+	var total int64
 	return filepath.Walk(it.root, func(path string, info os.FileInfo, e error) error {
 		if e != nil {
 			return e
@@ -155,6 +157,11 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 		if info.Size() < 0 || info.Size() > maxProviderObjectBytes {
 			return fmt.Errorf("backup member too large")
 		}
+		members++
+		if members > maxProviderArchiveMembers || info.Size() > maxProviderArchiveBytes-total {
+			return fmt.Errorf("backup archive exceeds bounds")
+		}
+		total += info.Size()
 		rel, e := filepath.Rel(it.root, path)
 		if e != nil {
 			return e

@@ -2,6 +2,8 @@ package artifactprovider
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -159,7 +161,15 @@ func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmenta
 	if len(digest.Hex()) != 64 {
 		return nil, 0, fmt.Errorf("invalid object digest")
 	}
-	file, err := os.Open(it.objectPath(digest))
+	path := it.objectPath(digest)
+	linkInfo, err := os.Lstat(path)
+	if err != nil {
+		return nil, 0, err
+	}
+	if linkInfo.Mode()&os.ModeSymlink != 0 || !linkInfo.Mode().IsRegular() {
+		return nil, 0, fmt.Errorf("invalid provider object type")
+	}
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -171,6 +181,23 @@ func (it *Filesystem) GetObjectByDigest(ctx context.Context, digest environmenta
 	if info.Size() < 0 || info.Size() > maxProviderObjectBytes {
 		_ = file.Close()
 		return nil, 0, fmt.Errorf("invalid provider object size")
+	}
+	if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+		_ = file.Close()
+		return nil, 0, fmt.Errorf("invalid provider object type")
+	}
+	h := sha256.New()
+	if _, err := io.Copy(h, file); err != nil {
+		_ = file.Close()
+		return nil, 0, err
+	}
+	if hex.EncodeToString(h.Sum(nil)) != digest.Hex() {
+		_ = file.Close()
+		return nil, 0, fmt.Errorf("stored object digest mismatch")
+	}
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		_ = file.Close()
+		return nil, 0, err
 	}
 	return file, info.Size(), nil
 }

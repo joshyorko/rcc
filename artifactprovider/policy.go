@@ -180,7 +180,7 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	p.bytes += b.Descriptor.Size
 	if err := p.persistLocked(); err != nil {
 		p.reconcileLocked()
-		return fmt.Errorf("persist quota state: %w", err)
+		return &MutationError{Operation: "put-object", Committed: true, Err: err}
 	}
 	return nil
 }
@@ -201,7 +201,7 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 	p.manifests++
 	if err := p.persistLocked(); err != nil {
 		p.reconcileLocked()
-		return fmt.Errorf("persist quota state: %w", err)
+		return &MutationError{Operation: "commit-manifest", Committed: true, Err: err}
 	}
 	return nil
 }

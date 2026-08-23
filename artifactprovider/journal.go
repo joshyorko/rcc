@@ -566,6 +566,16 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 	}
 	tw := tar.NewWriter(w)
 	defer tw.Close()
+	members := 0
+	var total int64
+	addMember := func(size int64) error {
+		members++
+		if members > maxProviderArchiveMembers || size < 0 || size > maxProviderArchiveBytes-total {
+			return fmt.Errorf("backup archive exceeds bounds")
+		}
+		total += size
+		return nil
+	}
 	j.mu.RLock()
 	defer j.mu.RUnlock()
 	for _, entry := range []struct {
@@ -574,6 +584,10 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 	}{{"journal", j.path, maxProviderJSONBytes}, {"policy", j.path + ".policy", maxProviderJSONBytes}} {
 		if f, e := os.Open(entry.path); e == nil {
 			st, _ := f.Stat()
+			if e := addMember(st.Size()); e != nil {
+				f.Close()
+				return e
+			}
 			if st.Size() > entry.max {
 				f.Close()
 				return fmt.Errorf("backup member too large")
@@ -596,6 +610,9 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 		if e := tw.WriteHeader(&tar.Header{Name: filepath.Join("manifests", k), Mode: 0600, Size: int64(len(b))}); e != nil {
 			return e
 		}
+		if e := addMember(int64(len(b))); e != nil {
+			return e
+		}
 		if _, e := tw.Write(b); e != nil {
 			return e
 		}
@@ -609,6 +626,10 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 			return e
 		}
 		if e = tw.WriteHeader(&tar.Header{Name: filepath.Join("objects", k), Mode: 0600, Size: r.size}); e != nil {
+			f.Close()
+			return e
+		}
+		if e := addMember(r.size); e != nil {
 			f.Close()
 			return e
 		}

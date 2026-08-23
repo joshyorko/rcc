@@ -205,6 +205,10 @@ func NewHandler(provider Provider) http.Handler {
 			http.Error(writer, "invalid provider request", http.StatusBadRequest)
 			return
 		}
+		if request.ContentLength >= 0 && len(request.Header.Values("Content-Length")) > 1 || (request.ContentLength >= 0 && len(request.TransferEncoding) > 0) {
+			writeProviderFailure(writer, http.StatusBadRequest)
+			return
+		}
 		if request.Method == http.MethodGet && request.ContentLength != 0 {
 			http.Error(writer, "GET requests must not contain a body", http.StatusBadRequest)
 			return

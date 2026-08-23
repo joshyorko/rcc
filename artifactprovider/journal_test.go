@@ -7,10 +7,23 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+type policyFlipProvider struct {
+	*Journal
+	policy      *Policy
+	failurePath string
+}
+
+func (p *policyFlipProvider) PutObject(ctx context.Context, b Blob) error {
+	err := p.Journal.PutObject(ctx, b)
+	p.policy.statePath = p.failurePath
+	return err
+}
 
 func TestJournalDurableRestartContract(t *testing.T) {
 	path := t.TempDir() + "/provider.log"
@@ -221,6 +234,28 @@ func TestPolicyRateLimitIsCallerVisibleAndTyped(t *testing.T) {
 	}
 	if _, err := p.MissingObjects(context.Background(), nil); !errors.Is(err, ErrRateLimited) {
 		t.Fatalf("rate-limit outcome=%v", err)
+	}
+}
+
+func TestPolicyPersistenceFailureReportsCommittedMutation(t *testing.T) {
+	j, err := NewJournal(t.TempDir() + "/outcome.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := NewPolicy(j, Limits{})
+	stateDir := t.TempDir()
+	statePath := filepath.Join(stateDir, "state.json")
+	p.statePath = statePath
+	p.Provider = &policyFlipProvider{Journal: j, policy: p, failurePath: stateDir}
+	blob := testBlob([]byte("mutation outcome"))
+	err = p.PutObject(context.Background(), blob)
+	var mutation *MutationError
+	if !errors.As(err, &mutation) || !mutation.Committed {
+		t.Fatalf("outcome=%v", err)
+	}
+	p.statePath = statePath
+	if err := p.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader([]byte("mutation outcome"))}); err != nil {
+		t.Fatalf("committed retry failed: %v", err)
 	}
 }
 
