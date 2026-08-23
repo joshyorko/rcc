@@ -1,6 +1,7 @@
 package environmentlifecycle
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/json"
@@ -52,6 +53,23 @@ type realBinaryReceipt struct {
 	ExpectedGOARCH string `json:"expectedGOARCH"`
 }
 
+type realAPIEvidence struct {
+	ArtifactDigest environmentartifact.Digest `json:"artifactDigest"`
+	Cold           realConsumerReceipt        `json:"cold"`
+	Warm           realConsumerReceipt        `json:"warm"`
+	Mismatch       realMismatchReceipt        `json:"mismatch"`
+}
+
+type realCLIEvidence struct {
+	ArtifactDigest environmentartifact.Digest `json:"artifactDigest"`
+	ObjectCount    int                        `json:"objectCount"`
+	ProducerHome   string                     `json:"producerHome"`
+	ConsumerHome   string                     `json:"consumerHome"`
+	Cold           realConsumerReceipt        `json:"cold"`
+	Warm           realConsumerReceipt        `json:"warm"`
+	Mismatch       realMismatchReceipt        `json:"mismatch"`
+}
+
 type realVerticalReceipt struct {
 	SchemaVersion  int                        `json:"schemaVersion"`
 	Platform       string                     `json:"platform"`
@@ -59,9 +77,8 @@ type realVerticalReceipt struct {
 	ConsumerHome   string                     `json:"consumerHome"`
 	ArtifactDigest environmentartifact.Digest `json:"artifactDigest"`
 	Binary         realBinaryReceipt          `json:"binary"`
-	Cold           realConsumerReceipt        `json:"cold"`
-	Warm           realConsumerReceipt        `json:"warm"`
-	Mismatch       realMismatchReceipt        `json:"mismatch"`
+	ExactBinaryCLI realCLIEvidence            `json:"exactBinaryCLI"`
+	SourceAPI      realAPIEvidence            `json:"sourceAPI"`
 }
 
 type mismatchProvider struct {
@@ -134,6 +151,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	exactCLI := runExactBinaryCLIVertical(t, binary, robotFile, producerHome)
 
 	providerRoot := filepath.Join(t.TempDir(), "provider")
 	filesystem, err := artifactprovider.NewFilesystem(providerRoot)
@@ -204,10 +222,249 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if !warm.ProviderDeadReuse || !mismatch.Rejected || mismatch.ProviderObjectGets != 0 {
 		t.Fatalf("runtime acceptance evidence is incomplete: warm=%+v mismatch=%+v", warm, mismatch)
 	}
+	sourceAPI := realAPIEvidence{
+		ArtifactDigest: published.ArtifactDigest, Cold: cold, Warm: warm, Mismatch: mismatch,
+	}
+	if exactCLI.ArtifactDigest != published.ArtifactDigest {
+		t.Fatalf("exact binary CLI and source API identities differ: cli=%s api=%s", exactCLI.ArtifactDigest, published.ArtifactDigest)
+	}
 	writeRealVerticalReceipt(t, realVerticalReceipt{
 		SchemaVersion: 1, Platform: common.Platform(), ProducerHome: producerHome, ConsumerHome: consumerHome,
-		ArtifactDigest: published.ArtifactDigest, Binary: binaryReceipt, Cold: cold, Warm: warm, Mismatch: mismatch,
+		ArtifactDigest: exactCLI.ArtifactDigest, Binary: binaryReceipt, ExactBinaryCLI: exactCLI, SourceAPI: sourceAPI,
 	})
+}
+
+type exactBinaryPublishResult struct {
+	ArtifactDigest environmentartifact.Digest `json:"artifactDigest"`
+	ObjectCount    int                        `json:"objectCount"`
+}
+
+type exactBinaryAcquireResult struct {
+	ArtifactDigest    environmentartifact.Digest `json:"artifactDigest"`
+	MaterializationID string                     `json:"materializationId"`
+	Path              string                     `json:"path"`
+	CacheHit          CacheProvenance            `json:"cacheHit"`
+}
+
+type exactBinaryExecResult struct {
+	ArtifactDigest    environmentartifact.Digest `json:"artifactDigest"`
+	MaterializationID string                     `json:"materializationId"`
+	Path              string                     `json:"path"`
+	CacheHit          CacheProvenance            `json:"cacheHit"`
+	ExitCode          int                        `json:"exitCode"`
+	LeaseID           string                     `json:"leaseId"`
+}
+
+func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome string) realCLIEvidence {
+	t.Helper()
+	providerRoot := filepath.Join(t.TempDir(), "provider")
+	filesystem, err := artifactprovider.NewFilesystem(providerRoot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var objectGets atomic.Int64
+	handler := artifactprovider.NewHandler(filesystem)
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if request.Method == http.MethodGet && strings.HasPrefix(request.URL.Path, "/v1/objects/sha256/") {
+			objectGets.Add(1)
+		}
+		handler.ServeHTTP(writer, request)
+	}))
+	providerURL := server.URL
+	defer server.Close()
+
+	publishOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "publish", "--robot", robotFile, "--provider", providerURL, "--json",
+	}, producerHome, false)
+	var published exactBinaryPublishResult
+	decodeExactBinaryJSON(t, publishOutput, &published)
+	if published.ObjectCount == 0 {
+		t.Fatal("exact RCC binary published an empty artifact")
+	}
+
+	consumerHome := filepath.Join(t.TempDir(), "consumer-home")
+	if consumerHome == producerHome {
+		t.Fatal("exact binary CLI producer and consumer homes are not isolated")
+	}
+	acquireOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json",
+	}, consumerHome, true)
+	var acquired exactBinaryAcquireResult
+	decodeExactBinaryJSON(t, acquireOutput, &acquired)
+	if acquired.ArtifactDigest != published.ArtifactDigest || acquired.CacheHit != CacheProvider {
+		t.Fatalf("exact binary cold acquire = %+v", acquired)
+	}
+
+	proofFile := filepath.Join(t.TempDir(), "cli-python-proof.json")
+	execOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json", "--", "python", "-c", exactNativeProofProgram(), proofFile,
+	}, consumerHome, true)
+	var executed exactBinaryExecResult
+	decodeExactBinaryJSON(t, execOutput, &executed)
+	if executed.ArtifactDigest != published.ArtifactDigest || executed.MaterializationID != acquired.MaterializationID || executed.CacheHit != CacheLocalMaterialization || executed.ExitCode != 0 || executed.LeaseID == "" {
+		t.Fatalf("exact binary cold execute = %+v", executed)
+	}
+	proof := readExactNativeProof(t, proofFile)
+	if proof["nativeImport"] != "sqlite3" || proof["nativeExtension"] == "" || proof["sqliteVersion"] == "" {
+		t.Fatalf("exact binary native proof = %#v", proof)
+	}
+	cold := realConsumerReceipt{
+		ArtifactDigest: executed.ArtifactDigest, MaterializationID: executed.MaterializationID, Path: executed.Path,
+		CacheHit: acquired.CacheHit, ExitCode: executed.ExitCode, LeaseID: executed.LeaseID,
+		LeaseReleased: exactLeaseReleased(consumerHome, executed.ArtifactDigest, executed.LeaseID),
+		NativeImport:  proof["nativeImport"], NativeExtension: proof["nativeExtension"], SQLiteVersion: proof["sqliteVersion"],
+	}
+	if !cold.LeaseReleased {
+		t.Fatalf("exact binary CLI lease survived execution: %+v", cold)
+	}
+	if objectGets.Load() == 0 {
+		t.Fatal("exact binary cold lifecycle made no provider object requests")
+	}
+
+	objectGets.Store(0)
+	mutated, mutatedBytes := mutateManifestForMismatch(t, filesystem, published.ArtifactDigest)
+	if err := filesystem.CommitManifest(context.Background(), mutatedBytes); err != nil {
+		t.Fatal(err)
+	}
+	mismatchOutput := runExactBinaryCLIAllowFailure(t, binary, []string{
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--json",
+	}, filepath.Join(t.TempDir(), "mismatch-home"), true)
+	if mismatchOutput.err == nil || !strings.Contains(strings.ToLower(mismatchOutput.stderr), "incompatible") {
+		t.Fatalf("exact binary mismatch result = stdout %q stderr %q err %v", mismatchOutput.stdout, mismatchOutput.stderr, mismatchOutput.err)
+	}
+	if objectGets.Load() != 0 {
+		t.Fatalf("exact binary mismatch fetched %d provider objects", objectGets.Load())
+	}
+	mismatch := realMismatchReceipt{Rejected: true, ArtifactDigest: mutated.ArtifactDigest, ProviderObjectGets: objectGets.Load(), Error: strings.TrimSpace(mismatchOutput.stderr)}
+
+	server.Close()
+	warmAcquireOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json",
+	}, consumerHome, true)
+	var warmAcquired exactBinaryAcquireResult
+	decodeExactBinaryJSON(t, warmAcquireOutput, &warmAcquired)
+	if warmAcquired.ArtifactDigest != cold.ArtifactDigest || warmAcquired.MaterializationID != cold.MaterializationID || warmAcquired.Path != cold.Path || warmAcquired.CacheHit != CacheLocalMaterialization {
+		t.Fatalf("exact binary provider-dead warm acquire = %+v", warmAcquired)
+	}
+	warmExecOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json", "--", "python", "-c", "print('warm')",
+	}, consumerHome, true)
+	var warmExecuted exactBinaryExecResult
+	decodeExactBinaryJSON(t, warmExecOutput, &warmExecuted)
+	warm := realConsumerReceipt{
+		ArtifactDigest: warmExecuted.ArtifactDigest, MaterializationID: warmExecuted.MaterializationID, Path: warmExecuted.Path,
+		CacheHit: warmExecuted.CacheHit, ExitCode: warmExecuted.ExitCode, LeaseID: warmExecuted.LeaseID,
+		LeaseReleased: exactLeaseReleased(consumerHome, warmExecuted.ArtifactDigest, warmExecuted.LeaseID), ProviderDeadReuse: true,
+	}
+	if warm.CacheHit != CacheLocalMaterialization || warm.ExitCode != 0 || !warm.ProviderDeadReuse || !warm.LeaseReleased {
+		t.Fatalf("exact binary provider-dead warm execution = %+v", warm)
+	}
+
+	return realCLIEvidence{
+		ArtifactDigest: published.ArtifactDigest, ObjectCount: published.ObjectCount,
+		ProducerHome: producerHome, ConsumerHome: consumerHome, Cold: cold, Warm: warm, Mismatch: mismatch,
+	}
+}
+
+func runExactBinaryCLI(t *testing.T, binary string, arguments []string, home string, offline bool) string {
+	t.Helper()
+	result := runExactBinaryCLIAllowFailure(t, binary, arguments, home, offline)
+	if result.err != nil {
+		t.Fatalf("exact RCC binary %v: %v\nstdout=%s\nstderr=%s", arguments, result.err, result.stdout, result.stderr)
+	}
+	return result.stdout
+}
+
+type exactBinaryCLIOutput struct {
+	stdout string
+	stderr string
+	err    error
+}
+
+func runExactBinaryCLIAllowFailure(t *testing.T, binary string, arguments []string, home string, offline bool) exactBinaryCLIOutput {
+	t.Helper()
+	command := exec.Command(binary, arguments...)
+	overrides := map[string]string{
+		"ROBOCORP_HOME": home, "RCC_HOLOTREE_MODE": "private",
+		"CONDA_OFFLINE": "", "MAMBA_OFFLINE": "", "PIP_NO_INDEX": "", "UV_NO_INDEX": "",
+	}
+	if offline {
+		overrides["CONDA_OFFLINE"] = "true"
+		overrides["MAMBA_OFFLINE"] = "true"
+		overrides["PIP_NO_INDEX"] = "1"
+		overrides["UV_NO_INDEX"] = "1"
+		overrides["RCC_NO_BUILD"] = "1"
+		overrides["HTTP_PROXY"] = "http://127.0.0.1:1"
+		overrides["HTTPS_PROXY"] = "http://127.0.0.1:1"
+		overrides["ALL_PROXY"] = "http://127.0.0.1:1"
+		overrides["NO_PROXY"] = "127.0.0.1,localhost"
+		overrides["no_proxy"] = "127.0.0.1,localhost"
+	}
+	command.Env = environmentWith(os.Environ(), overrides)
+	var stdout, stderr bytes.Buffer
+	command.Stdout, command.Stderr = &stdout, &stderr
+	err := command.Run()
+	return exactBinaryCLIOutput{stdout: stdout.String(), stderr: stderr.String(), err: err}
+}
+
+func decodeExactBinaryJSON(t *testing.T, content string, target any) {
+	t.Helper()
+	if err := json.Unmarshal([]byte(strings.TrimSpace(content)), target); err != nil {
+		t.Fatalf("decode exact binary JSON %q: %v", content, err)
+	}
+}
+
+func exactNativeProofProgram() string {
+	return "import _sqlite3,json,os,pathlib,sqlite3,sys; assert os.environ['CONDA_OFFLINE'] == 'true'; assert os.environ['MAMBA_OFFLINE'] == 'true'; assert os.environ['PIP_NO_INDEX'] == '1'; assert os.environ['UV_NO_INDEX'] == '1'; connection=sqlite3.connect(':memory:'); connection.execute('create table proof (value text)'); connection.execute(\"insert into proof values ('native')\"); pathlib.Path(sys.argv[1]).write_text(json.dumps({'nativeImport':'sqlite3','nativeExtension':_sqlite3.__file__,'sqliteVersion':sqlite3.sqlite_version,'sqliteValue':connection.execute('select value from proof').fetchone()[0]}))"
+}
+
+func readExactNativeProof(t *testing.T, path string) map[string]string {
+	t.Helper()
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var proof map[string]string
+	if err := json.Unmarshal(content, &proof); err != nil {
+		t.Fatal(err)
+	}
+	return proof
+}
+
+func exactLeaseReleased(home string, digest environmentartifact.Digest, leaseID string) bool {
+	if leaseID == "" {
+		return false
+	}
+	path := filepath.Join(home, "artifacts", "v1", "materializations", digest.Hex(), "leases", leaseID+".json")
+	_, err := os.Stat(path)
+	return os.IsNotExist(err)
+}
+
+func mutateManifestForMismatch(t *testing.T, provider *artifactprovider.Filesystem, original environmentartifact.Digest) (environmentartifact.Manifest, []byte) {
+	t.Helper()
+	manifestBytes, err := provider.ResolveManifest(context.Background(), original)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := environmentartifact.DecodeManifest(manifestBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	compatibility := manifest.Requirements.Compatibility
+	compatibility.CPU.RequiredFeatures = []string{"rcc-real-acceptance-impossible-feature"}
+	mutated, mutatedBytes, err := environmentartifact.NewManifest(environmentartifact.ManifestInput{
+		Specification: manifest.Specification, LegacyBlueprint: manifest.LegacyBlueprint, Platform: manifest.Platform,
+		Builder: manifest.Builder, Catalogs: manifest.Catalogs, ObjectIndex: manifest.ObjectIndex,
+		Requirements: environmentartifact.Requirements{
+			CatalogReader: manifest.Requirements.CatalogReader, Encoding: manifest.Requirements.Encoding,
+			LegacyLogicalDigestAlgorithm: manifest.Requirements.LegacyLogicalDigestAlgorithm,
+			RequiredFeatures:             manifest.Requirements.RequiredFeatures, Compatibility: compatibility,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return mutated, mutatedBytes
 }
 
 func TestRealCurrentRCCAtoBConsumer(t *testing.T) {

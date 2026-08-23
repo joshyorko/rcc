@@ -83,6 +83,20 @@ class ArtifactTaskTests(unittest.TestCase):
     for marker in ("LeaseID", "ProviderObjectGets", "runRealMismatchCheck", "RCC_REAL_BINARY_SHA256", "sqlite3"):
       self.assertIn(marker, source)
 
+  def test_real_receipt_separates_exact_binary_cli_from_source_api(self):
+    source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
+    self.assertIn("exactBinaryCLI", source)
+    self.assertIn("sourceAPI", source)
+    self.assertIn("runExactBinaryCLIVertical", source)
+
+  def test_native_receipt_binds_robot_exact_binary_evidence(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    suite = (ROOT / "robot_tests" / "environment_artifacts.robot").read_text()
+    library = (ROOT / "robot_tests" / "environment_artifacts" / "library.py").read_text()
+    self.assertIn("robotExactBinary", workflow)
+    self.assertIn("Write Native Runtime Robot Evidence", suite)
+    self.assertIn("write_native_runtime_robot_evidence", library)
+
 
   def test_linux_only_tasks_fail_explicitly(self):
     previous = tasks.sys.platform

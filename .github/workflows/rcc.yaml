@@ -223,6 +223,25 @@ jobs:
           RCC_REAL_ARTIFACT_TEST=1 go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
       - name: Run Robot Framework Tests against exact binary
         run: python -m robot -L DEBUG -d tmp/output robot_tests
+      - name: Bind Robot evidence into native runtime receipt
+        if: success() || failure()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          receipt = Path(os.environ["RCC_REAL_RECEIPT_FILE"])
+          robot = Path("tmp/output/native-runtime-robot-evidence.json")
+          if not receipt.is_file() or not robot.is_file():
+              print(f"native receipt binding skipped: receipt={receipt.is_file()} robot={robot.is_file()}")
+          else:
+              data = json.loads(receipt.read_text())
+              evidence = json.loads(robot.read_text())
+              if evidence["binarySha256"] != data["binary"]["sha256"]:
+                  raise SystemExit("Robot evidence binary does not match staged RCC binary")
+              data["robotExactBinary"] = evidence
+              receipt.write_text(json.dumps(data, indent=2) + "\n")
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:

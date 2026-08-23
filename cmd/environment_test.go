@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
@@ -211,9 +212,19 @@ func TestEnvironmentExecPreservesArgumentsAndPropagatesExitAfterRelease(t *testi
 	if exit.Code != 7 || materializer.releases != 1 {
 		t.Fatalf("child exit=%d releases=%d", exit.Code, materializer.releases)
 	}
-	want := `{"artifactDigest":"` + cliTestDigest + `","materializationId":"materialized","path":"` + filepath.ToSlash(materializer.cwd) + `","cacheHit":"local-materialization","exitCode":7}` + "\n"
-	if filepath.ToSlash(stdout.String()) != want {
-		t.Fatalf("exec output = %q, want %q", stdout.String(), want)
+	var result struct {
+		ArtifactDigest    string `json:"artifactDigest"`
+		MaterializationID string `json:"materializationId"`
+		Path              string `json:"path"`
+		CacheHit          string `json:"cacheHit"`
+		ExitCode          int    `json:"exitCode"`
+		LeaseID           string `json:"leaseId"`
+	}
+	if err := json.Unmarshal(stdout.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if result.ArtifactDigest != cliTestDigest || result.MaterializationID != "materialized" || filepath.ToSlash(result.Path) != filepath.ToSlash(materializer.cwd) || result.CacheHit != "local-materialization" || result.ExitCode != 7 || result.LeaseID == "" {
+		t.Fatalf("exec output = %q", stdout.String())
 	}
 }
 
@@ -253,7 +264,7 @@ func (*exitMaterializer) Lease(context.Context, environmentlifecycle.Materializa
 	return environmentlifecycle.Lease{ID: "lease"}, nil
 }
 func (it *exitMaterializer) ExecutionHandle(context.Context, environmentlifecycle.Lease, []string) (environmentlifecycle.ExecutionHandle, error) {
-	return environmentlifecycle.ExecutionHandle{Executable: "/bin/sh", CWD: it.cwd, Environment: os.Environ()}, nil
+	return environmentlifecycle.ExecutionHandle{Executable: "/bin/sh", CWD: it.cwd, Environment: os.Environ(), LeaseID: "lease"}, nil
 }
 func (it *exitMaterializer) Release(context.Context, environmentlifecycle.Lease) error {
 	it.releases++

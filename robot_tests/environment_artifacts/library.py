@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import shutil
@@ -126,3 +127,44 @@ def package_manager_caches_should_be_empty(home):
         path = home_path / name
         files = [entry for entry in path.rglob("*") if entry.is_file()] if path.exists() else []
         assert not files, f"package-manager cache {path} contains {files[:5]}"
+
+
+def write_native_runtime_robot_evidence(binary, version, artifact, cold, executed, warm, proof):
+    binary_path = Path(binary).resolve()
+    evidence_path = Path(__file__).resolve().parents[2] / "tmp" / "output" / "native-runtime-robot-evidence.json"
+    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence = {
+        "source": "robot_tests/environment_artifacts.robot",
+        "binary": str(binary_path),
+        "binarySha256": hashlib.sha256(binary_path.read_bytes()).hexdigest(),
+        "binaryVersion": str(version).strip(),
+        "artifactDigest": artifact,
+        "cold": {
+            "artifactDigest": cold["artifactDigest"],
+            "materializationId": cold["materializationId"],
+            "path": cold["path"],
+            "cacheHit": cold["cacheHit"],
+        },
+        "execute": {
+            "artifactDigest": executed["artifactDigest"],
+            "materializationId": executed["materializationId"],
+            "path": executed["path"],
+            "cacheHit": executed["cacheHit"],
+            "exitCode": executed["exitCode"],
+            "leaseId": executed["leaseId"],
+        },
+        "warm": {
+            "artifactDigest": warm["artifactDigest"],
+            "materializationId": warm["materializationId"],
+            "path": warm["path"],
+            "cacheHit": warm["cacheHit"],
+            "providerDeadWarmReuse": True,
+        },
+        "native": {
+            "import": proof["nativeImport"],
+            "extension": proof["nativeExtension"],
+            "sqliteVersion": proof["sqliteVersion"],
+        },
+    }
+    evidence_path.write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return str(evidence_path)

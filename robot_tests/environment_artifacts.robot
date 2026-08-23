@@ -19,6 +19,10 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Not Be Equal    ${A_HOME}    ${B_HOME}
     Environment Artifact Home Should Be Empty    ${B_HOME}
 
+    ${binary_version_result}=    Run Process    ${RCC}    version
+    Should Be Equal As Integers    ${binary_version_result.rc}    0
+    ${binary_version}=    Set Variable    ${binary_version_result.stdout}
+
     ${server}=    Start Process
     ...    ${RCC}    cache    serve
     ...    --root    ${PROVIDER_ROOT}
@@ -112,6 +116,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${executed}[materializationId]    ${cold}[materializationId]
     Should Be Equal    ${executed}[cacheHit]    local-materialization
     Should Be Equal As Integers    ${executed}[exitCode]    0
+    Should Not Be Empty    ${executed}[leaseId]
     ${proof}=    Read JSON File    ${PROOF_FILE}
     Should Not Be Empty    ${proof}[yamlVersion]
     Should Be Equal    ${proof}[condaOffline]    true
@@ -155,6 +160,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${warm}[cacheHit]    local-materialization
     Should Not Contain    ${warm_result.stderr}    micromamba phase
     Package Manager Caches Should Be Empty    ${B_HOME}
+    Write Native Runtime Robot Evidence    ${RCC}    ${binary_version}    ${artifact}    ${cold}    ${executed}    ${warm}    ${proof}
 
 
 *** Keywords ***
