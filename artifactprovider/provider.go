@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -14,6 +15,14 @@ func crashRestoreBoundary(name string) {
 	if os.Getenv("RCC_PROVIDER_RESTORE_CRASH") == name {
 		os.Exit(86)
 	}
+}
+func sanitizeAuditText(value string) string {
+	return strings.Map(func(r rune) rune {
+		if r < 0x20 || r == 0x7f {
+			return '_'
+		}
+		return r
+	}, value)
 }
 
 type Capabilities struct {
@@ -62,7 +71,7 @@ type MutationError struct {
 }
 
 func (e *MutationError) Error() string {
-	return e.Operation + " mutation committed but policy state was not durable: " + e.Err.Error()
+	return sanitizeAuditText(e.Operation + " mutation committed but policy state was not durable: " + e.Err.Error())
 }
 func (e *MutationError) Unwrap() error { return e.Err }
 

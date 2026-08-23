@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -334,6 +335,30 @@ func TestPolicyRateWindowPersistenceFailsClosed(t *testing.T) {
 	p.statePath = t.TempDir()
 	if _, err := p.MissingObjects(context.Background(), nil); err == nil {
 		t.Fatal("accepted request without durable policy state")
+	}
+}
+
+func TestAuditRedactsAttackerControlCharacters(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "audit.log")
+	record := journalRecord{Kind: "object", Digest: "digest\nINJECT", Actor: "tenant\r\nforged", Provider: "provider\tbad", Reference: "/tmp/path\nforged"}
+	raw, _ := json.Marshal(record)
+	if err := os.WriteFile(path, append(raw, '\n'), 0600); err != nil {
+		t.Fatal(err)
+	}
+	j, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	audit, err := j.Audit(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, item := range audit {
+		for _, value := range []string{item.Action, item.Actor, item.Provider, item.Reference, item.Digest} {
+			if strings.ContainsAny(value, "\r\n\t") {
+				t.Fatalf("unsanitized audit=%+v", item)
+			}
+		}
 	}
 }
 

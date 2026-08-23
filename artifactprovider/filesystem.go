@@ -162,7 +162,7 @@ func (it *Filesystem) Audit(ctx context.Context) ([]AuditRecord, error) {
 }
 
 func (it *Filesystem) appendAudit(action string, digest environmentartifact.Digest) error {
-	record, _ := json.Marshal(AuditRecord{At: time.Now(), Action: action, Actor: "rcc", Provider: "artifactprovider/filesystem", Reference: it.root, Digest: digest.Hex()})
+	record, _ := json.Marshal(AuditRecord{At: time.Now(), Action: sanitizeAuditText(action), Actor: "rcc", Provider: "artifactprovider/filesystem", Reference: sanitizeAuditText(it.root), Digest: sanitizeAuditText(digest.Hex())})
 	f, err := os.OpenFile(filepath.Join(it.root, filesystemAuditFile), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 	if err != nil {
 		return err

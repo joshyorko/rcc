@@ -411,6 +411,10 @@ func (j *Journal) append(r journalRecord) error {
 	if r.Reference == "" {
 		r.Reference = j.path
 	}
+	r.Actor = sanitizeAuditText(r.Actor)
+	r.Provider = sanitizeAuditText(r.Provider)
+	r.Reference = sanitizeAuditText(r.Reference)
+	r.Digest = sanitizeAuditText(r.Digest)
 	if journalAppendHook != nil {
 		if err := journalAppendHook(r); err != nil {
 			return err
@@ -450,6 +454,10 @@ func (j *Journal) appendBatch(records []journalRecord) error {
 		if record.Reference == "" {
 			record.Reference = j.path
 		}
+		record.Actor = sanitizeAuditText(record.Actor)
+		record.Provider = sanitizeAuditText(record.Provider)
+		record.Reference = sanitizeAuditText(record.Reference)
+		record.Digest = sanitizeAuditText(record.Digest)
 		if journalAppendHook != nil {
 			if err := journalAppendHook(record); err != nil {
 				return err
@@ -541,7 +549,7 @@ func (j *Journal) Audit(ctx context.Context) ([]AuditRecord, error) {
 		if r.At == 0 {
 			at = time.Time{}
 		}
-		out = append(out, AuditRecord{At: at, Action: action, Actor: r.Actor, Provider: r.Provider, Reference: r.Reference, Digest: r.Digest})
+		out = append(out, AuditRecord{At: at, Action: sanitizeAuditText(action), Actor: sanitizeAuditText(r.Actor), Provider: sanitizeAuditText(r.Provider), Reference: sanitizeAuditText(r.Reference), Digest: sanitizeAuditText(r.Digest)})
 	}
 	if err := s.Err(); err != nil {
 		return nil, err
