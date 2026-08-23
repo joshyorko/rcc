@@ -498,6 +498,10 @@ func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
 	if result.ArtifactDigest != manifest.ArtifactDigest || result.Path == "" {
 		t.Fatalf("legacy execution materialization = %+v", result)
 	}
+	_, child, err := Execute(context.Background(), NewLocalMaterializer(), Materialization{ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path, CacheHit: result.CacheHit}, []string{"sh", "-c", "test -f python"})
+	if err != nil || child.ExitCode != 0 {
+		t.Fatalf("legacy materialization task execution = %+v, %v", child, err)
+	}
 }
 
 func TestWriteEnvironmentArtifactN1Fixture(t *testing.T) {

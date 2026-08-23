@@ -174,6 +174,14 @@ func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
 	if _, err := ValidateArchive(entries); err != nil {
 		t.Fatalf("platform-index archive rejected: %v", err)
 	}
+	_, wrongIndexBytes, err := NewPlatformIndex(manifest.Specification.Descriptor.Digest, []PlatformArtifact{{Platform: manifest.Platform, Artifact: DigestBytes([]byte("wrong-artifact"))}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries[ArchivePlatformIndex] = wrongIndexBytes
+	if _, err := ValidateArchive(entries); err == nil || !strings.Contains(err.Error(), "selected artifact") {
+		t.Fatalf("wrong platform artifact was accepted: %v", err)
+	}
 	_ = platformIndex
 	entries[ArchiveObjectDirectory+entry.StoredDigest.Hex()] = []byte("tampered")
 	if _, err := ValidateArchive(entries); err == nil {
