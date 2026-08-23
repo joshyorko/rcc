@@ -90,6 +90,14 @@ type VerifyRequest struct { ArtifactDigest, Platform, Builder string; Provenance
 type VerificationReceipt struct { Valid bool `json:"valid"`; Code string `json:"code"`; ArtifactDigest string `json:"artifactDigest"`; KeyID string `json:"keyID,omitempty"`; PolicyMode PolicyMode `json:"policyMode"`; VerifiedAt string `json:"verifiedAt"`; Diagnostic string `json:"diagnostic,omitempty"` }
 func (r VerificationReceipt) JSON() ([]byte,error) { return canonical(r) }
 
+// Carrier is deliberately content-addressed and provider-neutral. HTTP,
+// archives, and OCI adapters only need to implement these two operations.
+type Carrier interface { Read(string) ([]byte,error); Write(string,[]byte) error }
+func AttachmentName(artifact, kind string) string { return artifact+"/"+Normalize(kind)+".json" }
+func PutAttachment(c Carrier, artifact, kind string, data []byte) error { if err:=VerifyAttestationBinding(data, mediaTypeFor(kind), artifact); err!=nil{return err}; return c.Write(AttachmentName(artifact,kind),data) }
+func GetAttachment(c Carrier, artifact, kind string) ([]byte,error) { data,err:=c.Read(AttachmentName(artifact,kind)); if err!=nil{return nil,err}; if err:=VerifyAttestationBinding(data,mediaTypeFor(kind),artifact); err!=nil{return nil,err}; return data,nil }
+func mediaTypeFor(kind string) string { switch Normalize(kind) { case "provenance": return ProvenanceMediaType; case "sbom": return SBOMMediaType; case "signature": return SignatureMediaType }; return "" }
+
 type Revocation struct {
 	ArtifactDigests []string `json:"artifactDigests,omitempty"`
 	KeyIDs          []string `json:"keyIDs,omitempty"`
