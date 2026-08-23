@@ -490,18 +490,18 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 	case strings.HasPrefix(request.URL.Path, "/v1/manifests/sha256/"):
 		handleManifestRequest(provider, writer, request)
 	default:
-		if !handleTrustAttachmentRequest(provider, writer, request) {
+		trustProvider, ok := provider.(interface{ trustAttachmentCarrier() artifacttrust.Carrier })
+		if !ok || !handleTrustAttachmentRequest(trustProvider.trustAttachmentCarrier(), writer, request) {
 			http.NotFound(writer, request)
 		}
 	}
 }
 
-func handleTrustAttachmentRequest(provider *Filesystem, writer http.ResponseWriter, request *http.Request) bool {
-	if provider == nil || request.URL.RawQuery != "" || request.URL.RawPath != "" || request.URL.Path == "/" || strings.HasPrefix(request.URL.Path, "/v1/") {
+func handleTrustAttachmentRequest(carrier artifacttrust.Carrier, writer http.ResponseWriter, request *http.Request) bool {
+	if carrier == nil || request.URL.RawQuery != "" || request.URL.RawPath != "" || request.URL.Path == "/" || strings.HasPrefix(request.URL.Path, "/v1/") {
 		return false
 	}
 	name := strings.TrimPrefix(request.URL.Path, "/")
-	carrier := artifacttrust.NewFilesystemCarrier(filepath.Join(provider.root, "trust"))
 	switch request.Method {
 	case http.MethodGet:
 		content, err := carrier.Read(name)

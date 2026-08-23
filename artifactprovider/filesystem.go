@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
@@ -63,6 +64,10 @@ type Filesystem struct {
 	requests     atomic.Int64
 	errors       atomic.Int64
 	corruptions  atomic.Int64
+}
+
+func (it *Filesystem) trustAttachmentCarrier() artifacttrust.Carrier {
+	return artifacttrust.NewFilesystemCarrier(filepath.Join(it.root, "trust"))
 }
 
 // Cleanup removes only private interrupted-upload files. Immutable objects and
