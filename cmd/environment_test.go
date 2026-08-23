@@ -19,12 +19,41 @@ import (
 
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/buildcoord"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/spf13/cobra"
 )
+
+func TestParsePriorityMapResolvesSpecificationAndBuildIDs(t *testing.T) {
+	keys := []buildcoord.BuildKey{
+		{SpecificationDigest: "sha256:one", Platform: "linux_amd64", BuilderCompatibility: "v1"},
+		{SpecificationDigest: "sha256:two", Platform: "linux_amd64", BuilderCompatibility: "v1"},
+	}
+	priorities, err := parsePriorityMap([]string{"sha256:two=9", keys[0].ID() + "=3"}, keys, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if priorities[keys[0].ID()] != 3 || priorities[keys[1].ID()] != 9 {
+		t.Fatalf("priority map: %#v", priorities)
+	}
+	if _, err := parsePriorityMap([]string{"unknown=2"}, keys, 0); err == nil {
+		t.Fatal("unknown priority key accepted")
+	}
+}
+
+func TestCoordinatePrewarmRequiresConcreteBuildCommandFlag(t *testing.T) {
+	command := newEnvironmentCoordinateCommand()
+	prewarm, _, err := command.Find([]string{"prewarm"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if prewarm.Flag("build-command") == nil || prewarm.Flag("read-only-input") == nil {
+		t.Fatal("prewarm command has no concrete staged build command flag")
+	}
+}
 
 var cliTestDigest = "sha256:" + strings.Repeat("a", 64)
 

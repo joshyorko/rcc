@@ -43,6 +43,7 @@ func newEnvironmentCommand(dependencies environmentCommandDependencies) *cobra.C
 		newEnvironmentExecCommand(dependencies),
 		newEnvironmentLifecycleCommand(),
 		newEnvironmentTrustCommand(),
+		newEnvironmentCoordinateCommand(),
 	)
 	return command
 }
