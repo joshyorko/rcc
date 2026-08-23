@@ -53,6 +53,8 @@ compatible with the exported environment; it does not include RCC itself.`,
 		// Import hololib if present
 		err = importHololib(zr)
 		pretty.Guard(err == nil, 3, "Failed to import hololib from bundle: %v", err)
+		err = importBundleArtifact(zr)
+		pretty.Guard(err == nil, 3, "Failed to import environment artifact from bundle: %v", err)
 
 		// Process environments if present
 		// We don't force rebuild if they exist, and we don't restore to space yet (LoadTaskWithEnvironment does that)
