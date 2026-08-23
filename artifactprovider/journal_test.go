@@ -96,3 +96,13 @@ func TestPolicyDoesNotChargeDuplicateUploads(t *testing.T) {
 		t.Fatalf("next distinct upload should be quota-limited: %v", err)
 	}
 }
+
+func TestPolicyQuotaSurvivesRestart(t *testing.T) {
+	path := t.TempDir() + "/policy.log"
+	j, err := NewJournal(path); if err != nil { t.Fatal(err) }
+	p := NewPolicy(j, Limits{MaxObjects: 1})
+	if err := p.PutObject(context.Background(), testBlob([]byte("body"))); err != nil { t.Fatal(err) }
+	j, err = NewJournal(path); if err != nil { t.Fatal(err) }
+	p = NewPolicy(j, Limits{MaxObjects: 1})
+	if err := p.PutObject(context.Background(), testBlob([]byte("more"))); !errors.Is(err, ErrQuotaExceeded) { t.Fatalf("restart quota err=%v", err) }
+}

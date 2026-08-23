@@ -100,7 +100,7 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 		}
 		if options.NoProxy != "" {
 			configured.Proxy = func(request *http.Request) (*url.URL, error) {
-				for _, host := range strings.Split(options.NoProxy, ",") { if strings.EqualFold(strings.TrimSpace(host), request.URL.Hostname()) { return nil, nil } }
+				for _, host := range strings.Split(options.NoProxy, ",") { host = strings.TrimSpace(strings.ToLower(host)); target := strings.ToLower(request.URL.Hostname()); if host == "*" || host == target || strings.TrimPrefix(host, ".") == target || (strings.HasPrefix(host, ".") && strings.HasSuffix(target, host)) { return nil, nil } }
 				if options.ProxyURL == "" { return http.ProxyFromEnvironment(request) }
 				proxy, err := url.Parse(options.ProxyURL); return proxy, err
 			}

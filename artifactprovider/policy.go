@@ -2,8 +2,11 @@ package artifactprovider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -24,10 +27,15 @@ type Policy struct {
 	mu                                         sync.Mutex
 	bytes, objects, manifests, uploads, window int64
 	windowAt                                   time.Time
+	statePath                                  string
 }
 
+type policyState struct { Bytes, Objects, Manifests, Uploads, Window int64; WindowAt time.Time }
+
 func NewPolicy(provider Provider, limits Limits) *Policy {
-	return &Policy{Provider: provider, Limits: limits}
+	p := &Policy{Provider: provider, Limits: limits}
+	if j, ok := provider.(*Journal); ok { p.statePath = j.path + ".policy"; if b, err := os.ReadFile(p.statePath); err == nil { var s policyState; if json.Unmarshal(b, &s) == nil { p.bytes,p.objects,p.manifests,p.uploads,p.window,p.windowAt = s.Bytes,s.Objects,s.Manifests,s.Uploads,s.Window,s.WindowAt } } }
+	return p
 }
 func (p *Policy) Capabilities(ctx context.Context) (Capabilities, error) {
 	return p.Provider.Capabilities(ctx)
@@ -73,13 +81,13 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 		return fmt.Errorf("%w: bytes", ErrQuotaExceeded)
 	}
 	p.uploads++
-	p.mu.Unlock()
 	if err := p.Provider.PutObject(ctx, b); err != nil {
+		p.mu.Unlock()
 		return err
 	}
-	p.mu.Lock()
 	p.objects++
 	p.bytes += b.Descriptor.Size
+	_ = p.persistLocked()
 	p.mu.Unlock()
 	return nil
 }
@@ -96,6 +104,7 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 		return err
 	}
 	p.manifests++
+	_ = p.persistLocked()
 	return nil
 }
 func (p *Policy) Health(ctx context.Context) (Health, error) {
@@ -116,7 +125,21 @@ func (p *Policy) allow() error {
 		return ErrRateLimited
 	}
 	p.window++
+	_ = p.persistLocked()
 	return nil
+}
+
+func (p *Policy) persistLocked() error {
+	if p.statePath == "" { return nil }
+	b, err := json.Marshal(policyState{p.bytes,p.objects,p.manifests,p.uploads,p.window,p.windowAt})
+	if err != nil { return err }
+	tmp, err := os.CreateTemp(filepath.Dir(p.statePath), ".policy-")
+	if err != nil { return err }
+	name := tmp.Name(); defer os.Remove(name)
+	if _, err = tmp.Write(b); err != nil { tmp.Close(); return err }
+	if err = tmp.Sync(); err != nil { tmp.Close(); return err }
+	if err = tmp.Close(); err != nil { return err }
+	return os.Rename(name, p.statePath)
 }
 
 var _ Provider = (*Policy)(nil)
