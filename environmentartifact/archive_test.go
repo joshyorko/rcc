@@ -46,3 +46,39 @@ func TestOrderedArchiveNamesIsIndependentOfMapOrder(t *testing.T) {
 		}
 	}
 }
+
+func TestWriteArchiveIsByteDeterministic(t *testing.T) {
+	entries := map[string][]byte{
+		ArchiveManifest:    []byte("manifest"),
+		ArchiveObjectIndex: []byte("index"),
+		ArchiveRoot + "/objects/a": []byte("a"),
+	}
+	var first, second bytes.Buffer
+	if err := WriteArchive(&first, entries); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteArchive(&second, entries); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(first.Bytes(), second.Bytes()) {
+		t.Fatal("canonical archive bytes changed between writes")
+	}
+	got, err := ReadArchive(first.Bytes())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got[ArchiveRoot+"/objects/a"]) != "a" {
+		t.Fatalf("archive object = %q", got[ArchiveRoot+"/objects/a"])
+	}
+}
+
+func TestWriteArchiveRejectsOversizedMember(t *testing.T) {
+	entries := map[string][]byte{
+		ArchiveManifest:    []byte("manifest"),
+		ArchiveObjectIndex: []byte("index"),
+		ArchiveRoot + "/objects/a": bytes.Repeat([]byte{'x'}, int(maxArchiveMemberSize)+1),
+	}
+	if err := WriteArchive(&bytes.Buffer{}, entries); err == nil {
+		t.Fatal("expected oversized archive member to be rejected")
+	}
+}

@@ -2,11 +2,13 @@ package environmentartifact
 
 import (
 	"archive/zip"
+	"bytes"
 	"fmt"
 	"io"
 	"path"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -19,6 +21,55 @@ const (
 )
 
 const maxArchiveMemberSize int64 = 16 << 20
+const maxArchiveSize int64 = 256 << 20
+
+// WriteArchive writes the canonical offline carrier. ZIP metadata is fixed so
+// the same entries always produce the same bytes, regardless of filename or
+// map iteration order.
+func WriteArchive(w io.Writer, entries map[string][]byte) error {
+	if w == nil {
+		return fmt.Errorf("nil environment archive writer")
+	}
+	names, err := OrderedArchiveNames(entries)
+	if err != nil {
+		return err
+	}
+	zw := zip.NewWriter(w)
+	for _, name := range names {
+		if int64(len(entries[name])) > maxArchiveMemberSize {
+			return fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
+		}
+		header := &zip.FileHeader{Name: name, Method: zip.Store}
+		header.SetModTime(time.Unix(0, 0).UTC())
+		header.SetMode(0o644)
+		part, err := zw.CreateHeader(header)
+		if err != nil {
+			_ = zw.Close()
+			return fmt.Errorf("create environment archive member %q: %w", name, err)
+		}
+		if _, err := part.Write(entries[name]); err != nil {
+			_ = zw.Close()
+			return fmt.Errorf("write environment archive member %q: %w", name, err)
+		}
+	}
+	if err := zw.Close(); err != nil {
+		return fmt.Errorf("close environment archive: %w", err)
+	}
+	return nil
+}
+
+// ReadArchive reads an archive with bounded memory and applies the same path
+// and regular-file checks as ArchiveEntries.
+func ReadArchive(content []byte) (map[string][]byte, error) {
+	if int64(len(content)) > maxArchiveSize {
+		return nil, fmt.Errorf("environment archive exceeds %d bytes", maxArchiveSize)
+	}
+	reader, err := zip.NewReader(bytes.NewReader(content), int64(len(content)))
+	if err != nil {
+		return nil, fmt.Errorf("open environment archive: %w", err)
+	}
+	return ArchiveEntries(reader)
+}
 
 // ArchiveEntries returns the regular-file entries in an offline archive. ZIP
 // metadata is not part of the returned content or of Manifest identity.
