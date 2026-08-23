@@ -151,8 +151,12 @@ func syncFilesystemDir(path string) error {
 	if err != nil {
 		return err
 	}
-	defer d.Close()
-	return d.Sync()
+	syncErr := d.Sync()
+	closeErr := d.Close()
+	if syncErr != nil {
+		return syncErr
+	}
+	return closeErr
 }
 
 func (it *Filesystem) Audit(ctx context.Context) ([]AuditRecord, error) {
@@ -163,7 +167,7 @@ func (it *Filesystem) Audit(ctx context.Context) ([]AuditRecord, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	out := []AuditRecord{}
 	s := bufio.NewScanner(f)
 	s.Buffer(make([]byte, 4096), maxManifestBytes)

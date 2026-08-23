@@ -445,7 +445,7 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	policy, err := request.ExecutionPolicy(staging)
 	if err != nil {
 		t.Fatal(err)
@@ -484,7 +484,7 @@ func TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	policy, err := request.ExecutionPolicy(staging)
 	if err != nil {
 		t.Fatal(err)
@@ -556,7 +556,7 @@ func TestCommandExecutorHonorsTimeout(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	policy, err := request.ExecutionPolicy(staging)
 	if err != nil {
 		t.Fatal(err)
@@ -580,7 +580,7 @@ func TestCommandExecutorRejectsCredentialEnvironment(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	policy, err := (BuildRequest{Root: root}).ExecutionPolicy(staging)
 	if err != nil {
 		t.Fatal(err)

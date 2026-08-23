@@ -44,7 +44,7 @@ func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	if _, err := file.WriteString("not a certificate"); err != nil {
 		t.Fatal(err)
 	}
@@ -145,7 +145,7 @@ func TestHTTPServerBodyDeadlineCleansSlowloris(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	_, _ = fmt.Fprintf(conn, "POST /v1/admin/restore HTTP/1.1\r\nHost: %s\r\nContent-Length: 100\r\nConnection: close\r\n\r\nx", u.Host)
 	_ = conn.SetReadDeadline(time.Now().Add(time.Second))
 	response, err := io.ReadAll(conn)

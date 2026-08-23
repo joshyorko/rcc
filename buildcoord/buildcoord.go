@@ -394,20 +394,15 @@ func PrepareStaging(req BuildRequest, owner string) (string, func() error, error
 	}
 	reservation, err := ReserveDisk(d, req.DiskBytes)
 	if err != nil {
-		os.RemoveAll(d)
-		return "", nil, err
+		return "", nil, errors.Join(err, os.RemoveAll(d))
 	}
 	if req.CPULimit < 0 || req.MemoryBytes < 0 || req.Timeout < 0 {
-		_ = reservation.Release()
-		os.RemoveAll(d)
-		return "", nil, fmt.Errorf("resource limits cannot be negative")
+		return "", nil, errors.Join(fmt.Errorf("resource limits cannot be negative"), reservation.Release(), os.RemoveAll(d))
 	}
 	policy := map[string]any{"root": d, "network": req.Network, "credentials": false, "diskBytes": req.DiskBytes, "cpuLimit": req.CPULimit, "memoryBytes": req.MemoryBytes, "timeout": req.Timeout.String()}
 	pb, _ := json.Marshal(policy)
 	if e := os.WriteFile(filepath.Join(d, "policy.json"), pb, 0600); e != nil {
-		_ = reservation.Release()
-		os.RemoveAll(d)
-		return "", nil, e
+		return "", nil, errors.Join(e, reservation.Release(), os.RemoveAll(d))
 	}
 	return d, func() error {
 		releaseErr := reservation.Release()
@@ -687,7 +682,7 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 
 // PublishIndependent records a valid builder result without taking a lease.
 // It is used only when policy explicitly permits an independent fallback.
-func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
+func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) (err error) {
 	if err := key.validate(); err != nil {
 		return err
 	}
@@ -698,7 +693,7 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
 	if err != nil {
 		return err
 	}
-	defer release()
+	defer func() { err = errors.Join(err, release()) }()
 	current, ok, err := c.readArtifact(key)
 	if err != nil {
 		return err
@@ -750,7 +745,7 @@ func isSHA256Digest(value string) bool {
 		return false
 	}
 	for _, r := range value[len("sha256:"):] {
-		if !((r >= '0' && r <= '9') || (r >= 'a' && r <= 'f')) {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'f') {
 			return false
 		}
 	}
@@ -1131,7 +1126,7 @@ func (r PrewarmRequest) priorityFor(key BuildKey) int {
 	return r.Priority
 }
 
-func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, key BuildKey, build EnforcedBuilder, coordinatorErr error) (Artifact, error) {
+func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, key BuildKey, build EnforcedBuilder, coordinatorErr error) (artifact Artifact, err error) {
 	root := request.Build.Root
 	if root == "" {
 		root = c.Root
@@ -1149,13 +1144,13 @@ func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, ke
 	if err != nil {
 		return Artifact{}, err
 	}
-	defer cleanup()
+	defer func() { err = errors.Join(err, cleanup()) }()
 	policy, err := buildRequest.ExecutionPolicy(staging)
 	if err != nil {
 		return Artifact{}, err
 	}
 	claim := Claim{Key: key, Owner: "local-fallback", Epoch: 1, Staging: staging}
-	artifact, err := build.Build(ctx, claim, policy)
+	artifact, err = build.Build(ctx, claim, policy)
 	if err != nil {
 		return Artifact{}, fmt.Errorf("local fallback after coordinator failure (%v): %w", coordinatorErr, err)
 	}

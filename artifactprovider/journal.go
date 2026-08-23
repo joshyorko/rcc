@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"io"
@@ -26,7 +27,6 @@ type Journal struct {
 	path, objectDir string
 	mu              sync.RWMutex
 	adminMu         sync.Mutex
-	restoring       bool
 	objects         map[string]objectRef
 	manifests       map[string][]byte
 	manifestTimes   map[string]time.Time
@@ -110,7 +110,7 @@ func verifyJournalFile(path, digest string, size int64) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	h := sha256.New()
 	n, err := io.CopyN(h, f, size)
 	if err != nil || n != size || hex.EncodeToString(h.Sum(nil)) != digest {
@@ -124,7 +124,7 @@ func readBoundedJournalIndex(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	b, err := io.ReadAll(io.LimitReader(f, maxManifestBytes+1))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func NewJournal(path string) (*Journal, error) {
 	if e != nil {
 		return nil, e
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	s := bufio.NewScanner(f)
 	s.Buffer(make([]byte, 4096), int(maxManifestBytes+4096))
 	var malformed error
@@ -260,11 +260,11 @@ func (j *Journal) PutObject(ctx context.Context, b Blob) error {
 		return e
 	}
 	name := t.Name()
-	defer os.Remove(name)
+	defer func() { _ = os.Remove(name) }()
 	h := sha256.New()
 	n, e := io.Copy(io.MultiWriter(t, h), io.LimitReader(&contextReader{ctx: ctx, reader: b.Reader}, b.Descriptor.Size+1))
 	if e != nil {
-		t.Close()
+		_ = t.Close()
 		return e
 	}
 	if e = t.Close(); e != nil {
@@ -424,7 +424,7 @@ func (j *Journal) append(r journalRecord) error {
 	if e != nil {
 		return e
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	b, e := json.Marshal(r)
 	if e != nil {
 		return e
@@ -443,7 +443,7 @@ func (j *Journal) appendBatch(records []journalRecord) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	for _, record := range records {
 		if record.Actor == "" {
 			record.Actor = "rcc"
@@ -526,7 +526,7 @@ func (j *Journal) Audit(ctx context.Context) ([]AuditRecord, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	out := []AuditRecord{}
 	s := bufio.NewScanner(f)
 	s.Buffer(make([]byte, 4096), int(maxManifestBytes+4096))
@@ -609,8 +609,8 @@ func (j *Journal) GarbageCollect(ctx context.Context, r Retention) (GCReport, er
 		if err != nil {
 			return report, err
 		}
-		keep[m.Specification.Descriptor.Digest.Hex()] = true
-		keep[m.LegacyBlueprint.Descriptor.Digest.Hex()] = true
+		keep[m.Specification.Digest.Hex()] = true
+		keep[m.LegacyBlueprint.Digest.Hex()] = true
 		keep[m.ObjectIndex.Digest.Hex()] = true
 		for _, c := range m.Catalogs {
 			keep[c.Digest.Hex()] = true
@@ -658,12 +658,12 @@ func (j *Journal) Repair(ctx context.Context) (Health, error) {
 	return j.Health(ctx)
 }
 func (j *Journal) ReadOnly() bool { return false }
-func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
+func (j *Journal) Backup(ctx context.Context, w io.Writer) (err error) {
 	if w == nil {
 		return fmt.Errorf("nil backup writer")
 	}
 	tw := tar.NewWriter(w)
-	defer tw.Close()
+	defer func() { err = errors.Join(err, tw.Close()) }()
 	members := 0
 	var total int64
 	addMember := func(size int64) error {
@@ -683,22 +683,22 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 		if f, e := os.Open(entry.path); e == nil {
 			st, _ := f.Stat()
 			if e := addMember(st.Size()); e != nil {
-				f.Close()
+				_ = f.Close()
 				return e
 			}
 			if st.Size() > entry.max {
-				f.Close()
+				_ = f.Close()
 				return fmt.Errorf("backup member too large")
 			}
 			if e = tw.WriteHeader(&tar.Header{Name: entry.name, Mode: 0600, Size: st.Size()}); e != nil {
-				f.Close()
+				_ = f.Close()
 				return e
 			}
 			if _, e = io.CopyN(tw, f, st.Size()); e != nil {
-				f.Close()
+				_ = f.Close()
 				return e
 			}
-			f.Close()
+			_ = f.Close()
 		}
 	}
 	for k, b := range j.manifests {
@@ -724,15 +724,18 @@ func (j *Journal) Backup(ctx context.Context, w io.Writer) error {
 			return e
 		}
 		if e = tw.WriteHeader(&tar.Header{Name: filepath.Join("objects", k), Mode: 0600, Size: r.size}); e != nil {
-			f.Close()
+			_ = f.Close()
 			return e
 		}
 		if e := addMember(r.size); e != nil {
-			f.Close()
+			_ = f.Close()
 			return e
 		}
 		_, e = io.CopyN(tw, f, r.size)
-		f.Close()
+		closeErr := f.Close()
+		if e == nil {
+			e = closeErr
+		}
 		if e != nil {
 			return e
 		}
@@ -747,7 +750,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 	if e != nil {
 		return e
 	}
-	defer os.RemoveAll(stage)
+	defer func() { _ = os.RemoveAll(stage) }()
 	tr := tar.NewReader(r)
 	seen := map[string]bool{}
 	members := 0
@@ -845,22 +848,26 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 				newFile, ne := os.Open(src)
 				if oe != nil || ne != nil {
 					if oldFile != nil {
-						oldFile.Close()
+						_ = oldFile.Close()
 					}
 					if newFile != nil {
-						newFile.Close()
+						_ = newFile.Close()
 					}
 					return fmt.Errorf("backup conflicts with immutable object %q", d)
 				}
 				oldStat, se := oldFile.Stat()
 				if se != nil || verifyJournalFile(dst, d, oldStat.Size()) != nil {
-					oldFile.Close()
-					newFile.Close()
+					_ = oldFile.Close()
+					_ = newFile.Close()
 					return fmt.Errorf("backup conflicts with immutable object %q", d)
 				}
 				same, ce := sameContent(oldFile, newFile)
-				oldFile.Close()
-				newFile.Close()
+				if closeErr := oldFile.Close(); ce == nil {
+					ce = closeErr
+				}
+				if closeErr := newFile.Close(); ce == nil {
+					ce = closeErr
+				}
 				if ce != nil || !same {
 					return fmt.Errorf("backup conflicts with immutable object %q", d)
 				}

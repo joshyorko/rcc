@@ -130,7 +130,7 @@ func TestHTTPAdminContractFilesystemAndJournal(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				resp.Body.Close()
+				_ = resp.Body.Close()
 				if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 					t.Fatalf("%s status=%d", path, resp.StatusCode)
 				}
@@ -225,7 +225,7 @@ func TestHTTPJournalProviderFullParity(t *testing.T) {
 		t.Fatal(err)
 	}
 	payload, err := io.ReadAll(backup.Body)
-	backup.Body.Close()
+	_ = backup.Body.Close()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func TestHTTPJournalProviderFullParity(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		t.Fatalf("restore status=%d", resp.StatusCode)
 	}
@@ -284,7 +284,7 @@ func TestHTTPPartialTransferRestartHealthAndAudit(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	resp.Body.Close()
+	_ = resp.Body.Close()
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		t.Fatal("partial restore accepted")
 	}

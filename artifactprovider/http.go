@@ -241,7 +241,7 @@ func NewHandlerWithOptions(provider Provider, options HandlerOptions) http.Handl
 		}
 		if options.RequestTimeout > 0 {
 			_ = http.NewResponseController(writer).SetReadDeadline(time.Now().Add(options.RequestTimeout))
-			defer http.NewResponseController(writer).SetReadDeadline(time.Time{})
+			defer func() { _ = http.NewResponseController(writer).SetReadDeadline(time.Time{}) }()
 			ctx, cancel := context.WithTimeout(request.Context(), options.RequestTimeout)
 			defer cancel()
 			request = request.Clone(ctx)
@@ -480,7 +480,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 				writeProviderReadError(writer, request, err)
 				return
 			}
-			defer reader.Close()
+			defer func() { _ = reader.Close() }()
 			writer.Header().Set("Content-Type", "application/octet-stream")
 			writer.Header().Set("Content-Length", fmt.Sprintf("%d", size))
 			_, _ = io.CopyN(writer, reader, size)
@@ -763,7 +763,7 @@ func (it *HTTP) ProtocolWithOptions(ctx context.Context, versions []int, extensi
 	if err != nil {
 		return result, err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 	if err := providerResponseError(response); err != nil {
 		return result, err
 	}
