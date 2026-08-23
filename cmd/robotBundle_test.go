@@ -46,7 +46,11 @@ func TestCreateBundleWithArtifactDeclaresSourcePlusArtifactMode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer zr.Close()
+	defer func() {
+		if err := zr.Close(); err != nil {
+			t.Errorf("close bundle: %v", err)
+		}
+	}()
 	var mode map[string]string
 	for _, entry := range zr.File {
 		if entry.Name != "environment/bundle.json" {

@@ -166,7 +166,7 @@ func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
 	if _, err := ValidateArchive(entries); err != nil {
 		t.Fatalf("valid archive rejected: %v", err)
 	}
-	platformIndex, platformIndexBytes, err := NewPlatformIndex(manifest.Specification.Descriptor.Digest, []PlatformArtifact{{Platform: manifest.Platform, Artifact: manifest.ArtifactDigest}})
+	platformIndex, platformIndexBytes, err := NewPlatformIndex(manifest.Specification.Digest, []PlatformArtifact{{Platform: manifest.Platform, Artifact: manifest.ArtifactDigest}})
 	if err != nil {
 		t.Fatal(err)
 	}

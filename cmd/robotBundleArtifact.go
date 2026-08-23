@@ -54,7 +54,7 @@ func importBundleArtifact(zr *zip.Reader) (environmentartifact.Manifest, error) 
 		_, copyErr := io.Copy(temporary, io.LimitReader(reader, environmentartifact.MaxArchiveSize+1))
 		closeErr := reader.Close()
 		fileCloseErr := temporary.Close()
-		defer os.Remove(name)
+		defer func() { _ = os.Remove(name) }()
 		if copyErr != nil {
 			return imported, copyErr
 		}
@@ -82,7 +82,7 @@ func importBundleArtifact(zr *zip.Reader) (environmentartifact.Manifest, error) 
 		if imported.ArtifactDigest.Hex() == "" {
 			return imported, fmt.Errorf("platform index requires an embedded artifact")
 		}
-		if platformIndex.Specification != imported.Specification.Descriptor.Digest {
+		if platformIndex.Specification != imported.Specification.Digest {
 			return imported, fmt.Errorf("bundled platform index specification does not match artifact")
 		}
 		selected, err := platformIndex.Select(environmentartifact.CurrentPlatform())

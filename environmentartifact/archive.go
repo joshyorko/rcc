@@ -56,7 +56,7 @@ func WriteArchive(w io.Writer, entries map[string][]byte) error {
 			return fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
 		}
 		header := &zip.FileHeader{Name: name, Method: zip.Store}
-		header.SetModTime(time.Unix(0, 0).UTC())
+		header.Modified = time.Unix(0, 0).UTC()
 		header.SetMode(0o644)
 		part, err := zw.CreateHeader(header)
 		if err != nil {
@@ -110,7 +110,7 @@ func ValidateArchive(entries map[string][]byte) (Manifest, error) {
 		if indexErr != nil {
 			return Manifest{}, fmt.Errorf("decode platform index: %w", indexErr)
 		}
-		if platformIndex.Specification != manifest.Specification.Descriptor.Digest {
+		if platformIndex.Specification != manifest.Specification.Digest {
 			return Manifest{}, fmt.Errorf("platform index specification does not match manifest")
 		}
 		selected, selectErr := platformIndex.Select(CurrentPlatform())
