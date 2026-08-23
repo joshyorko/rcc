@@ -69,7 +69,7 @@ func TestCoordinatedBuilderRequiresProcessBoundaryForResourcePolicy(t *testing.T
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	executor := &CoordinatedBuilder{RobotFile: "fixtures/robot.yaml", Builder: &recordingBuilder{result: fixture.build}, Provider: provider}
 	if _, err := executor.Build(context.Background(), buildcoord.Claim{Staging: staging}, buildcoord.ExecutionPolicy{Root: staging, CPULimit: 1}); !errors.Is(err, buildcoord.ErrUnenforcedBuildPolicy) {
 		t.Fatalf("resource policy without boundary: %v", err)
@@ -86,7 +86,7 @@ func TestCoordinatedBuilderDelegatesPolicyToProcessBoundary(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	var received buildcoord.ExecutionPolicy
 	executor := &CoordinatedBuilder{RobotFile: "fixtures/robot.yaml", Builder: &recordingBuilder{result: fixture.build}, Provider: provider, Boundary: buildcoord.ProcessBoundaryFunc(func(ctx context.Context, policy buildcoord.ExecutionPolicy, build func(context.Context) (buildcoord.Artifact, error)) (buildcoord.Artifact, error) {
 		received = policy
@@ -135,7 +135,7 @@ func TestCoordinatedBuilderRequiresSignerForCoordinatorPublication(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer cleanup()
+	defer func() { _ = cleanup() }()
 	executor := &CoordinatedBuilder{RobotFile: "fixtures/robot.yaml", Builder: &recordingBuilder{result: fixture.build}, Provider: provider, ProviderName: "fixture-provider"}
 	_, err = executor.Build(context.Background(), buildcoord.Claim{Owner: "owner", Epoch: 1, Staging: staging}, buildcoord.ExecutionPolicy{Root: staging})
 	if !errors.Is(err, buildcoord.ErrUnverifiedArtifact) {
