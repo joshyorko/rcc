@@ -12,6 +12,7 @@ import (
 	"hash"
 	"io"
 	"net/http"
+	"net"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -100,7 +101,7 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 		}
 		if options.NoProxy != "" {
 			configured.Proxy = func(request *http.Request) (*url.URL, error) {
-				for _, host := range strings.Split(options.NoProxy, ",") { host = strings.TrimSpace(strings.ToLower(host)); target := strings.ToLower(request.URL.Hostname()); if host == "*" || host == target || strings.TrimPrefix(host, ".") == target || (strings.HasPrefix(host, ".") && strings.HasSuffix(target, host)) { return nil, nil } }
+				if providerNoProxyMatch(request.URL, options.NoProxy) { return nil, nil }
 				if options.ProxyURL == "" { return http.ProxyFromEnvironment(request) }
 				proxy, err := url.Parse(options.ProxyURL); return proxy, err
 			}
@@ -122,6 +123,16 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 		clone.Transport = transport
 	}
 	return &HTTP{baseURL: baseURL, client: &clone, userAgent: options.UserAgent}, nil
+}
+
+func providerNoProxyMatch(target *url.URL, raw string) bool {
+	host := strings.ToLower(target.Hostname()); ip := net.ParseIP(host)
+	for _, token := range strings.Split(raw, ",") { token=strings.TrimSpace(strings.ToLower(token)); if token=="" {continue}; if token=="*" {return true}
+		if h,p,err:=net.SplitHostPort(token);err==nil { if p!=target.Port(){continue}; token=h } else if strings.Count(token, ":")==1 { parts:=strings.SplitN(token,":",2); if parts[1]!=""&&parts[1]!=target.Port(){continue}; token=parts[0] }
+		token=strings.Trim(token,"[]"); if _,cidr,err:=net.ParseCIDR(token);err==nil {if ip!=nil&&cidr.Contains(ip){return true};continue}
+		if token==host||strings.TrimPrefix(token,".")==host||(strings.HasPrefix(token,".")&&strings.HasSuffix(host,token)){return true}
+	}
+	return false
 }
 
 func cloneTLS(config *tls.Config) *tls.Config { if config == nil { return &tls.Config{} }; return config.Clone() }
@@ -196,7 +207,8 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			}
 			writer.WriteHeader(http.StatusCreated)
 		case http.MethodGet:
-			reader, size, err := provider.GetObjectByDigest(ctx, digest)
+			readerProvider, ok := provider.(ObjectReaderProvider); if !ok { http.Error(writer, "object reads unavailable", http.StatusNotImplemented); return }
+			reader, size, err := readerProvider.GetObjectByDigest(ctx, digest)
 			if err != nil {
 				writeProviderReadError(writer, request, err)
 				return
@@ -403,7 +415,7 @@ func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8) { err = fmt.Errorf("unsupported artifact provider protocol") }
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1)) { err = fmt.Errorf("unsupported artifact provider protocol") }
 	if err == nil { err = ValidateCapabilities(result.Capabilities) }
 	return result, err
 }

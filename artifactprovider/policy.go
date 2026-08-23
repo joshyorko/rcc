@@ -34,7 +34,9 @@ type policyState struct { Bytes, Objects, Manifests, Uploads, Window int64; Wind
 
 func NewPolicy(provider Provider, limits Limits) *Policy {
 	p := &Policy{Provider: provider, Limits: limits}
-	if j, ok := provider.(*Journal); ok { p.statePath = j.path + ".policy"; if b, err := os.ReadFile(p.statePath); err == nil { var s policyState; if json.Unmarshal(b, &s) == nil { p.bytes,p.objects,p.manifests,p.uploads,p.window,p.windowAt = s.Bytes,s.Objects,s.Manifests,s.Uploads,s.Window,s.WindowAt } } }
+	if j, ok := provider.(*Journal); ok { p.statePath = j.path + ".policy" } else if f,ok:=provider.(*Filesystem);ok { p.statePath=f.root+".policy" }
+	if b, err := os.ReadFile(p.statePath); err == nil { var s policyState; if json.Unmarshal(b, &s) == nil { p.bytes,p.objects,p.manifests,p.uploads,p.window,p.windowAt = s.Bytes,s.Objects,s.Manifests,s.Uploads,s.Window,s.WindowAt } }
+	if enumerable,ok:=provider.(ProviderV1Enumerable);ok { if p.objects==0 { if list,err:=enumerable.ListObjects(context.Background());err==nil {p.objects=int64(len(list));for _,o:=range list{p.bytes+=o.Size}} }; if p.manifests==0 {if list,err:=enumerable.ListManifests(context.Background());err==nil {p.manifests=int64(len(list))}} }
 	return p
 }
 func (p *Policy) Capabilities(ctx context.Context) (Capabilities, error) {
@@ -87,7 +89,7 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	}
 	p.objects++
 	p.bytes += b.Descriptor.Size
-	_ = p.persistLocked()
+	if err:=p.persistLocked();err!=nil{return fmt.Errorf("persist quota state: %w",err)}
 	p.mu.Unlock()
 	return nil
 }
@@ -104,7 +106,7 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 		return err
 	}
 	p.manifests++
-	_ = p.persistLocked()
+	if err:=p.persistLocked();err!=nil{return fmt.Errorf("persist quota state: %w",err)}
 	return nil
 }
 func (p *Policy) Health(ctx context.Context) (Health, error) {
@@ -129,7 +131,7 @@ func (p *Policy) allow() error {
 		return ErrRateLimited
 	}
 	p.window++
-	_ = p.persistLocked()
+	if err:=p.persistLocked();err!=nil{return err}
 	return nil
 }
 
