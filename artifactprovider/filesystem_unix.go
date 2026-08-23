@@ -477,15 +477,3 @@ func publishManifestBytesAt(ctx context.Context, directory int, name string, con
 	}
 	return nil
 }
-
-type contextReader struct {
-	ctx    context.Context
-	reader io.Reader
-}
-
-func (it *contextReader) Read(target []byte) (int, error) {
-	if err := it.ctx.Err(); err != nil {
-		return 0, err
-	}
-	return it.reader.Read(target)
-}

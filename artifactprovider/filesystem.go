@@ -3,12 +3,25 @@ package artifactprovider
 import (
 	"context"
 	"fmt"
+	"io"
 	"path/filepath"
 	"sort"
 	"sync"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+type contextReader struct {
+	ctx    context.Context
+	reader io.Reader
+}
+
+func (it *contextReader) Read(target []byte) (int, error) {
+	if err := it.ctx.Err(); err != nil {
+		return 0, err
+	}
+	return it.reader.Read(target)
+}
 
 const maxManifestBytes = 16 << 20
 
