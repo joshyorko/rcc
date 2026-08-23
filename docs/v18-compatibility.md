@@ -16,27 +16,23 @@ local or remote contracts.
 Environment Artifact identity does not include provider references, provider
 locations, credentials, materialization paths, or RCC process IDs.
 
-## Stable boundary and deferred seams
+## Program completion boundary
 
-The supported v18.19.0 integration boundary is the RCC executable and its
-versioned machine-readable CLI/JSON output. The `artifacttrust` and
-`buildcoord` Go packages are internal implementation seams, not a promise that
-arbitrary host processes can embed RCC or that Actions can invoke a stable
-fleet-coordination API in this release.
+The supported v18.19.0 integration boundary remains the RCC executable and its
+versioned machine-readable CLI/JSON output; this release does not promise an
+arbitrary embeddable-Go-library API. That boundary does not reduce the
+Environment Artifacts program scope.
 
-The following work is explicitly outside the v18.19.0 stable contract and does
-not weaken the local/provider artifact lifecycle above:
+Before v18.19.0 can be released, the RCC-owned acceptance criteria in #121
+through #127 must be implemented and proven: full compatibility rejection,
+lease/crash/repair/GC, production providers and a second provider,
+deterministic offline carrier convergence, executable trust and revocation,
+generic build coordination/prewarming, and the representative benchmark plus
+optimization decision. Internal `artifacttrust` or `buildcoord` seams alone do
+not satisfy those contracts.
 
-- resumable/chunked multi-GB transfers, quotas, retention administration,
-  provider GC, and a second shared/object provider implementation;
-- enforced provenance, SBOM, signing, revocation, and verification receipts at
-  acquisition or execution time;
-- remote build claims, fleet prewarming, disk reservation, and deployment
-  readiness APIs; and
-- storage/materializer changes such as zstd, packfiles, FUSE, reflinks, or
-  hardlinks. The v18.19.0 decision is to ship no such optimization without a
-  representative multi-platform benchmark showing material benefit.
-
-These are future additive contracts. Local zero-configuration use, v12
-Holotree, the v1 artifact identity, and the separate `rccremote` protocol do
-not depend on them.
+Optional experiments remain conditional on evidence and explicit issue
+language: OCI, FUSE, zstd, packfiles, reflinks, and hardlinks are not mandatory
+unless the accepted benchmark decision gates justify one. Kubernetes, a
+broker, a shared writable fleet Holotree, a TUI, and replacement of
+`rccremote` remain non-goals.

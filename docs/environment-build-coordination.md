@@ -1,9 +1,9 @@
 # Environment build coordination and prewarming
 
-> **v18.19.0 status:** `buildcoord` is an internal experimental seam. RCC does
-> not expose a stable coordinator or prewarm CLI/JSON contract in v18.19.0.
-> Fleet execution, disk reservation, deployment readiness, and Actions
-> integration remain future additive work.
+> **v18.19.0 completion gate:** `buildcoord` is currently only an internal
+> seam. The release is not complete until RCC exposes and proves the generic
+> coordinator/prewarm machine contract, staging/capacity policy, and failure
+> matrix required by #127. RCC must not learn downstream business objects.
 
 RCC may coordinate cold builds, but coordination is an optimization and capacity
 control seam. The verified Environment Artifact remains the only authoritative

@@ -22,10 +22,8 @@
 - gate tag publication on the pinned N-1 contained release-candidate and
   two-generation self-host proof, require the real A/B vertical to execute,
   and validate the Homebrew handoff before making a release public
-- keep enterprise resumable/quota providers, runtime trust enforcement,
-  fleet build coordination, and storage/materializer optimizations outside the
-  stable v18.19.0 CLI contract; no storage optimization is selected without a
-  representative benchmark showing material benefit
+- gate tag publication on the four-platform native Robot matrix and mark
+  `-rc.N` tags as GitHub prereleases
 
 ### Security
 
