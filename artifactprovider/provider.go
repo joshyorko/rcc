@@ -13,6 +13,11 @@ type Capabilities struct {
 	SchemaVersions   []int    `json:"schemaVersions"`
 	DigestAlgorithms []string `json:"digestAlgorithms"`
 	Encodings        []string `json:"encodings"`
+	MaxObjectBytes   int64    `json:"maxObjectBytes,omitempty"`
+	MaxManifestBytes int64    `json:"maxManifestBytes,omitempty"`
+	MaxRequestBytes  int64    `json:"maxRequestBytes,omitempty"`
+	RangeSupport     bool     `json:"rangeSupport,omitempty"`
+	ResumeSupport    bool     `json:"resumeSupport,omitempty"`
 }
 
 type ProtocolCapabilities struct {
@@ -55,6 +60,7 @@ type ObjectReaderProvider interface { GetObjectByDigest(context.Context, environ
 
 func ValidateCapabilities(c Capabilities) error {
 	if len(c.SchemaVersions) > 8 || len(c.DigestAlgorithms) > 8 || len(c.Encodings) > 8 { return errors.New("artifact provider capabilities exceed bounds") }
+	if c.MaxObjectBytes < 0 || c.MaxManifestBytes < 0 || c.MaxRequestBytes < 0 { return errors.New("artifact provider capability limits must be non-negative") }
 	return ValidateV1Capabilities(c)
 }
 

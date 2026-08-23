@@ -108,8 +108,12 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 	return nil
 }
 func (p *Policy) Health(ctx context.Context) (Health, error) {
+	p.mu.Lock(); defer p.mu.Unlock()
 	if h, ok := p.Provider.(HealthProvider); ok {
-		return h.Health(ctx)
+		h, err := h.Health(ctx)
+		if err != nil { return h, err }
+		if (p.Limits.MaxBytes > 0 && p.bytes >= p.Limits.MaxBytes) || (p.Limits.MaxObjects > 0 && p.objects >= p.Limits.MaxObjects) || (p.Limits.MaxManifests > 0 && p.manifests >= p.Limits.MaxManifests) { h.Quota = "exhausted"; h.Degraded = true }
+		return h, nil
 	}
 	return Health{Ready: true, Storage: "ok", Capability: "ok", Quota: "managed", GC: "idle"}, nil
 }

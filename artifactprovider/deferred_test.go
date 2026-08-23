@@ -9,10 +9,10 @@ import (
 )
 
 func TestValidateV1Capabilities(t *testing.T) {
-	if err := ValidateV1Capabilities(Capabilities{[]int{1}, []string{"sha256"}, []string{"gzip"}}); err != nil {
+	if err := ValidateV1Capabilities(Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}}); err != nil {
 		t.Fatal(err)
 	}
-	for _, capabilities := range []Capabilities{{}, {[]int{2}, []string{"sha256"}, []string{"gzip"}}, {[]int{1}, []string{"sha512"}, []string{"gzip"}}, {[]int{1}, []string{"sha256"}, []string{"zstd"}}} {
+	for _, capabilities := range []Capabilities{{}, {SchemaVersions: []int{2}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}}, {SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha512"}, Encodings: []string{"gzip"}}, {SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"zstd"}}} {
 		if err := ValidateV1Capabilities(capabilities); err == nil {
 			t.Fatalf("accepted %+v", capabilities)
 		}
