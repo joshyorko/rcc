@@ -112,6 +112,24 @@ func ValidateCapabilities(c Capabilities) error {
 	return ValidateV1Capabilities(c)
 }
 
+func validateObjectIndexBudget(index environmentartifact.ObjectIndex) error {
+	if index.Count < 0 || index.Count > maxProviderArchiveMembers {
+		return errors.New("object index entry count exceeds bound")
+	}
+	if index.TotalStoredBytes < 0 || index.TotalStoredBytes > maxProviderArchiveBytes || index.TotalLogicalBytes < 0 || index.TotalLogicalBytes > maxProviderArchiveBytes {
+		return errors.New("object index totals exceed bound")
+	}
+	for _, entry := range index.Entries {
+		if entry.StoredSize > maxProviderObjectBytes || entry.LogicalSize > maxProviderArchiveBytes {
+			return errors.New("object index entry exceeds bound")
+		}
+		if entry.StoredSize > 0 && (entry.StoredSize > (maxProviderArchiveBytes-maxManifestBytes)/1024 || entry.LogicalSize > entry.StoredSize*1024+maxManifestBytes) {
+			return errors.New("object index expansion exceeds bound")
+		}
+	}
+	return nil
+}
+
 type Blob struct {
 	Descriptor environmentartifact.Descriptor
 	Reader     io.Reader

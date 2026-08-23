@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"path/filepath"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -136,6 +138,66 @@ func TestHTTPAdminContractFilesystemAndJournal(t *testing.T) {
 	}
 }
 
+func TestProviderBackupRestoreRestartGCParity(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		new  func(string) (Provider, error)
+	}{
+		{"filesystem", func(root string) (Provider, error) { return NewFilesystem(root) }},
+		{"journal", func(root string) (Provider, error) { return NewJournal(filepath.Join(root, "provider.log")) }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			root := t.TempDir()
+			source, err := tc.new(root)
+			if err != nil {
+				t.Fatal(err)
+			}
+			fixture := newProviderFixture(t)
+			for _, blob := range fixture.blobs {
+				raw, _ := io.ReadAll(blob.Reader)
+				if err := source.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader(raw)}); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if err := source.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+				t.Fatal(err)
+			}
+			var archive bytes.Buffer
+			if err := source.(ProviderV1Backup).Backup(context.Background(), &archive); err != nil {
+				t.Fatal(err)
+			}
+			targetRoot := t.TempDir()
+			restored, err := tc.new(targetRoot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := restored.(ProviderV1Backup).Restore(context.Background(), bytes.NewReader(archive.Bytes())); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := restored.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest); err != nil {
+				t.Fatal(err)
+			}
+			orphan := testBlob([]byte("orphan parity object"))
+			if err := restored.PutObject(context.Background(), orphan); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := restored.(ProviderV1Admin).GarbageCollect(context.Background(), Retention{MaxAge: -1}); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := restored.GetObject(context.Background(), orphan.Descriptor); err == nil {
+				t.Fatal("GC retained unreferenced object")
+			}
+			restarted, err := tc.new(targetRoot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := restarted.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestInterruptedUploadsLeaveNoProvisionalFilesAndCanRestart(t *testing.T) {
 	for _, tc := range []struct {
 		name string
@@ -191,6 +253,31 @@ func TestHTTPProxyAndNoProxyRealRequests(t *testing.T) {
 	}
 	if proxyHits.Load() != 1 {
 		t.Fatalf("no-proxy request used proxy: hits=%d", proxyHits.Load())
+	}
+}
+
+func TestProviderNoProxyMatrix(t *testing.T) {
+	for _, tc := range []struct {
+		name, host, port, rules string
+		want                    bool
+	}{
+		{"cidr", "10.2.3.4", "443", "10.0.0.0/8", true}, {"cidr miss", "192.0.2.4", "443", "10.0.0.0/8", false},
+		{"ipv6", "2001:db8::4", "443", "2001:db8::/32", true}, {"domain suffix", "api.example.test", "443", ".example.test", true},
+		{"domain miss", "example.test.evil", "443", ".example.test", false}, {"port precedence", "127.0.0.1", "8443", "127.0.0.1:443,127.0.0.1:8443", true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			raw := "https://" + tc.host + ":" + tc.port
+			if strings.Contains(tc.host, ":") {
+				raw = "https://[" + tc.host + "]:" + tc.port
+			}
+			u, err := url.Parse(raw)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := providerNoProxyMatch(u, tc.rules); got != tc.want {
+				t.Fatalf("match=%v want=%v", got, tc.want)
+			}
+		})
 	}
 }
 

@@ -138,6 +138,9 @@ func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest enviro
 	if err != nil {
 		return fmt.Errorf("validate manifest object index: %w", err)
 	}
+	if err := validateObjectIndexBudget(index); err != nil {
+		return fmt.Errorf("validate manifest object index budget: %w", err)
+	}
 	referenced := []environmentartifact.Descriptor{manifest.Specification.Descriptor, manifest.LegacyBlueprint.Descriptor, manifest.Catalogs[0].Descriptor, manifest.ObjectIndex}
 	for _, entry := range index.Entries {
 		referenced = append(referenced, environmentartifact.Descriptor{MediaType: "application/vnd.rcc.hololib.object.v12+gzip", Digest: entry.StoredDigest, Size: entry.StoredSize})

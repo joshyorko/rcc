@@ -110,7 +110,16 @@ func (it *Filesystem) recoverRestore() error {
 	if err := os.Remove(filepath.Join(it.root, filesystemRestoreMarker)); err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	return nil
+	return syncFilesystemDir(it.root)
+}
+
+func syncFilesystemDir(path string) error {
+	d, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	return d.Sync()
 }
 
 func (it *Filesystem) objectPath(digest environmentartifact.Digest) string {

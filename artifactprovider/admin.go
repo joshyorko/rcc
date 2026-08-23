@@ -101,6 +101,9 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 		if e != nil {
 			return report, e
 		}
+		if e := validateObjectIndexBudget(parsed); e != nil {
+			return report, e
+		}
 		for _, x := range parsed.Entries {
 			keep[x.StoredDigest.Hex()] = true
 		}
@@ -291,6 +294,9 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 		_ = os.Remove(tmpMarker)
 		return e
 	}
+	if e = syncFilesystemDir(it.root); e != nil {
+		return e
+	}
 	for rel := range seen {
 		src := filepath.Join(stage, rel)
 		dst := filepath.Join(it.root, rel)
@@ -311,8 +317,10 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 		}
 		created = append(created, dst)
 	}
-	_ = os.Remove(filepath.Join(it.root, filesystemRestoreMarker))
-	return nil
+	if e := os.Remove(filepath.Join(it.root, filesystemRestoreMarker)); e != nil && !os.IsNotExist(e) {
+		return e
+	}
+	return syncFilesystemDir(it.root)
 }
 func validateRestoreMember(rel, path string) error {
 	if strings.HasPrefix(rel, "objects/sha256/") {

@@ -24,31 +24,57 @@ func TestHTTPOptionsConfigureUserAgentAndTimeout(t *testing.T) {
 	}))
 	defer server.Close()
 	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{UserAgent: "rcc/test", Timeout: time.Second})
-	if err != nil { t.Fatal(err) }
-	if _, err := client.Capabilities(context.Background()); err != nil { t.Fatal(err) }
-	if got != "rcc/test" { t.Fatalf("user-agent = %q", got) }
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got != "rcc/test" {
+		t.Fatalf("user-agent = %q", got)
+	}
 }
 
 func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
 	file, err := os.CreateTemp(t.TempDir(), "ca-*.pem")
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer file.Close()
-	if _, err := file.WriteString("not a certificate"); err != nil { t.Fatal(err) }
+	if _, err := file.WriteString("not a certificate"); err != nil {
+		t.Fatal(err)
+	}
 	_, err = NewHTTPWithOptions("https://example.test", HTTPOptions{CAFile: file.Name()})
-	if err == nil || !strings.Contains(err.Error(), "CA") { t.Fatalf("expected CA error, got %v", err) }
+	if err == nil || !strings.Contains(err.Error(), "CA") {
+		t.Fatalf("expected CA error, got %v", err)
+	}
 }
 
 func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
 	filesystem, err := NewFilesystem(t.TempDir())
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	server := httptest.NewServer(NewHandler(filesystem))
 	defer server.Close()
 	client, err := NewHTTP(server.URL, server.Client())
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	caps, err := client.Protocol(context.Background())
-	if err != nil || caps.Protocol != "rcc.artifact.v1" { t.Fatalf("caps=%+v err=%v", caps, err) }
+	if err != nil || caps.Protocol != "rcc.artifact.v1" {
+		t.Fatalf("caps=%+v err=%v", caps, err)
+	}
 	health, err := client.Health(context.Background())
-	if err != nil || !health.Ready || health.Storage != "ok" { t.Fatalf("health=%+v err=%v", health, err) }
+	if err != nil || !health.Ready || health.Storage != "ok" {
+		t.Fatalf("health=%+v err=%v", health, err)
+	}
+	if _, err := client.NegotiateCapabilities(context.Background(), Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, SafeRestart: true}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.NegotiateCapabilities(context.Background(), Capabilities{RangeSupport: true}); err == nil {
+		t.Fatal("accepted unavailable range capability")
+	}
 }
 
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {

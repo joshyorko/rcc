@@ -348,6 +348,9 @@ func (j *Journal) verifyManifestClosure(m environmentartifact.Manifest) error {
 	if e != nil {
 		return e
 	}
+	if e := validateObjectIndexBudget(idx); e != nil {
+		return e
+	}
 	for _, x := range idx.Entries {
 		r, ok := j.objects[x.StoredDigest.Hex()]
 		if !ok || r.size != x.StoredSize || verifyJournalFile(r.path, x.StoredDigest.Hex(), x.StoredSize) != nil {
@@ -523,6 +526,9 @@ func (j *Journal) GarbageCollect(ctx context.Context, r Retention) (GCReport, er
 			}
 			idx, err := environmentartifact.DecodeObjectIndex(ib)
 			if err != nil {
+				return report, err
+			}
+			if err := validateObjectIndexBudget(idx); err != nil {
 				return report, err
 			}
 			for _, entry := range idx.Entries {
@@ -799,6 +805,9 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 		}
 		idx, e := environmentartifact.DecodeObjectIndex(idxBytes)
 		if e != nil {
+			return e
+		}
+		if e := validateObjectIndexBudget(idx); e != nil {
 			return e
 		}
 		for _, x := range idx.Entries {
