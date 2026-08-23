@@ -166,6 +166,15 @@ func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
 	if _, err := ValidateArchive(entries); err != nil {
 		t.Fatalf("valid archive rejected: %v", err)
 	}
+	platformIndex, platformIndexBytes, err := NewPlatformIndex(manifest.Specification.Descriptor.Digest, []PlatformArtifact{{Platform: manifest.Platform, Artifact: manifest.ArtifactDigest}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries[ArchivePlatformIndex] = platformIndexBytes
+	if _, err := ValidateArchive(entries); err != nil {
+		t.Fatalf("platform-index archive rejected: %v", err)
+	}
+	_ = platformIndex
 	entries[ArchiveObjectDirectory+entry.StoredDigest.Hex()] = []byte("tampered")
 	if _, err := ValidateArchive(entries); err == nil {
 		t.Fatal("tampered object accepted")

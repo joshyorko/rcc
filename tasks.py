@@ -547,10 +547,13 @@ def selfHost(c):
     v12(str(generation_b), home_a, "candidate-v12")
     v12(released, home_b, "released-v12-compatibility")
     n1_archive = os.environ.get("RCC_N1_ARCHIVE")
+    if os.environ.get("RCC_N1_BINARY") and not n1_archive:
+        raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
     if n1_archive:
         archive = Path(n1_archive).resolve()
         if not archive.is_file():
             raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        archive_receipts = {}
         for binary, home, label in (
             (released, home_a, "released-archive-upgrade"),
             (str(generation_b), home_b, "candidate-archive-upgrade"),
@@ -561,8 +564,32 @@ def selfHost(c):
             completed = subprocess.run(command, check=True, env=env, capture_output=True, text=True)
             receipt_path = root / f"{label}.json"
             receipt_path.write_text(completed.stdout)
+            try:
+                archive_receipts[label] = json.loads(completed.stdout)
+            except json.JSONDecodeError as error:
+                raise RuntimeError(f"{label} returned invalid archive receipt: {error}") from error
             artifact_evidence.append(receipt_path)
             commands.append({"step": label, "argv": command, "env": {"ROBOCORP_HOME": str(home)}, "evidencePath": str(receipt_path)})
+        digests = {receipt.get("artifactDigest") for receipt in archive_receipts.values()}
+        if len(digests) != 1 or not next(iter(digests), ""):
+            raise RuntimeError(f"N-1 archive receipts disagree on artifact identity: {archive_receipts}")
+        warm_command = [released, "env", "acquire", "--artifact", next(iter(digests)), "--json"]
+        warm_env = os.environ.copy(); warm_env["ROBOCORP_HOME"] = str(home_a)
+        warm = subprocess.run(warm_command, check=True, env=warm_env, capture_output=True, text=True)
+        warm_receipt = json.loads(warm.stdout)
+        if warm_receipt.get("artifactDigest") != next(iter(digests)) or warm_receipt.get("cacheHit") != "local-materialization":
+            raise RuntimeError(f"N-1 warm receipt did not converge: {warm_receipt}")
+        warm_path = root / "released-archive-warm.json"
+        warm_path.write_text(warm.stdout); artifact_evidence.append(warm_path)
+        commands.append({"step": "released-archive-warm", "argv": warm_command, "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(warm_path)})
+        execute_command = [released, "env", "exec", "--artifact", next(iter(digests)), "--json", "--", "python", "-c", "print('n1-artifact-ok')"]
+        executed = subprocess.run(execute_command, check=True, env=warm_env, capture_output=True, text=True)
+        execute_receipt = json.loads(executed.stdout)
+        if execute_receipt.get("artifactDigest") != next(iter(digests)) or execute_receipt.get("materializationId") != warm_receipt.get("materializationId") or execute_receipt.get("exitCode") != 0:
+            raise RuntimeError(f"N-1 execute receipt did not converge: {execute_receipt}")
+        execute_path = root / "released-archive-execute.json"
+        execute_path.write_text(executed.stdout); artifact_evidence.append(execute_path)
+        commands.append({"step": "released-archive-execute", "argv": execute_command, "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(execute_path)})
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
                 home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence, *artifact_evidence]
     receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,

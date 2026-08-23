@@ -15,6 +15,7 @@ const (
 	ArchiveRoot             = "rcc-environment"
 	ArchiveManifest         = ArchiveRoot + "/manifest.json"
 	ArchiveObjectIndex      = ArchiveRoot + "/object-index.json"
+	ArchivePlatformIndex    = ArchiveRoot + "/platform-index.json"
 	ArchiveCatalogDirectory = ArchiveRoot + "/catalogs/"
 	ArchiveObjectDirectory  = ArchiveRoot + "/objects/"
 	ArchiveAttestationDir   = ArchiveRoot + "/attestations/"
@@ -103,6 +104,22 @@ func ValidateArchive(entries map[string][]byte) (Manifest, error) {
 	}
 	if err := VerifyDescriptor(manifest.ObjectIndex, indexBytes); err != nil {
 		return Manifest{}, fmt.Errorf("verify object index: %w", err)
+	}
+	if platformIndexBytes, found := entries[ArchivePlatformIndex]; found {
+		platformIndex, indexErr := DecodePlatformIndex(platformIndexBytes)
+		if indexErr != nil {
+			return Manifest{}, fmt.Errorf("decode platform index: %w", indexErr)
+		}
+		if platformIndex.Specification != manifest.Specification.Descriptor.Digest {
+			return Manifest{}, fmt.Errorf("platform index specification does not match manifest")
+		}
+		selected, selectErr := platformIndex.Select(CurrentPlatform())
+		if selectErr != nil {
+			return Manifest{}, fmt.Errorf("select current platform artifact: %w", selectErr)
+		}
+		if selected != manifest.ArtifactDigest {
+			return Manifest{}, fmt.Errorf("platform index selected artifact %s, archive contains %s", selected, manifest.ArtifactDigest)
+		}
 	}
 	index, err := DecodeObjectIndex(indexBytes)
 	if err != nil {
