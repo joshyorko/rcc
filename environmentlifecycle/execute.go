@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -71,10 +72,23 @@ func Execute(ctx context.Context, materializer Materializer, materialization Mat
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 	defer signal.Stop(signals)
-	return executeWithSignals(ctx, materializer, materialization, command, signals)
+	return executeWithSignalsAndStreams(ctx, materializer, materialization, command, signals, nil, nil, nil)
 }
 
 func executeWithSignals(ctx context.Context, materializer Materializer, materialization Materialization, command []string, signals <-chan os.Signal) (handle ExecutionHandle, child ChildResult, err error) {
+	return executeWithSignalsAndStreams(ctx, materializer, materialization, command, signals, nil, nil, nil)
+}
+
+// ExecuteWithStreams runs one child while preserving the supplied streams for its
+// entire lifetime. The execution lease is released only after the child is reaped.
+func ExecuteWithStreams(ctx context.Context, materializer Materializer, materialization Materialization, command []string, stdin io.Reader, stdout, stderr io.Writer) (handle ExecutionHandle, child ChildResult, err error) {
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+	defer signal.Stop(signals)
+	return executeWithSignalsAndStreams(ctx, materializer, materialization, command, signals, stdin, stdout, stderr)
+}
+
+func executeWithSignalsAndStreams(ctx context.Context, materializer Materializer, materialization Materialization, command []string, signals <-chan os.Signal, stdin io.Reader, stdout, stderr io.Writer) (handle ExecutionHandle, child ChildResult, err error) {
 	child.ExitCode = -1
 	lease, err := materializer.Lease(ctx, materialization)
 	if err != nil {
@@ -92,6 +106,9 @@ func executeWithSignals(ctx context.Context, materializer Materializer, material
 	process := exec.CommandContext(ctx, handle.Executable, command[1:]...)
 	process.Dir = handle.CWD
 	process.Env = handle.Environment
+	process.Stdin = stdin
+	process.Stdout = stdout
+	process.Stderr = stderr
 	if err = process.Start(); err != nil {
 		return handle, child, err
 	}

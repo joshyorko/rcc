@@ -1,8 +1,10 @@
 package environmentlifecycle
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -314,6 +316,64 @@ func TestExecuteForwardsTerminationSignalAndReleasesLease(t *testing.T) {
 	}
 	if _, err := readLease(result.handle.ArtifactDigest, result.handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived forwarded termination: %v", err)
+	}
+}
+
+func TestExecuteWithStreamsPreservesRequestResponseAndReleasesAfterReap(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	python := filepath.Join(materialization.Path, "python")
+	ready := filepath.Join(t.TempDir(), "ready")
+	if err := os.WriteFile(python, []byte("#!/bin/sh\n: > \"$1\"\nIFS= read line\nprintf 'reply:%s\\n' \"$line\"\n"), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	stdin, input := io.Pipe()
+	var stdout, stderr bytes.Buffer
+	type result struct {
+		handle ExecutionHandle
+		child  ChildResult
+		err    error
+	}
+	done := make(chan result, 1)
+	go func() {
+		handle, child, err := ExecuteWithStreams(context.Background(), NewLocalMaterializer(), materialization, []string{"python", ready}, stdin, &stdout, &stderr)
+		done <- result{handle: handle, child: child, err: err}
+	}()
+	deadline := time.Now().Add(3 * time.Second)
+	for {
+		if _, err := os.Stat(ready); err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("stream child never became ready")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	select {
+	case result := <-done:
+		t.Fatal("stream child exited before request", result.err)
+	default:
+	}
+	leases, err := filepath.Glob(filepath.Join(common.Product.Home(), "artifacts", "v1", "materializations", materialization.ArtifactDigest.Hex(), "leases", "*.json"))
+	if err != nil || len(leases) == 0 {
+		t.Fatalf("stream lease was not observable during child lifetime: %v", err)
+	}
+	if _, err := os.Stat(leases[0]); err != nil {
+		t.Fatalf("stream lease disappeared before child reap: %v", err)
+	}
+	_, _ = input.Write([]byte("request\n"))
+	_ = input.Close()
+	outcome := <-done
+	handle := outcome.handle
+	child := outcome.child
+	err = outcome.err
+	if err != nil || child.ExitCode != 0 {
+		t.Fatalf("stream execution = handle %+v child %+v err %v", handle, child, err)
+	}
+	if stdout.String() != "reply:request\n" || stderr.Len() != 0 {
+		t.Fatalf("stream output stdout=%q stderr=%q", stdout.String(), stderr.String())
+	}
+	if _, err := readLease(handle.ArtifactDigest, handle.LeaseID); !os.IsNotExist(err) {
+		t.Fatalf("lease survived stream child reap: %v", err)
 	}
 }
 
