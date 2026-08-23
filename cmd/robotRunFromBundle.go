@@ -13,6 +13,7 @@ import (
 	"github.com/joshyorko/rcc/operations"
 	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/robot"
 	"github.com/spf13/cobra"
 )
 
@@ -57,8 +58,9 @@ compatible with the exported environment; it does not include RCC itself.`,
 		artifactManifest, artifactErr := importBundleArtifact(zr)
 		err = artifactErr
 		pretty.Guard(err == nil, 3, "Failed to import environment artifact from bundle: %v", err)
+		var artifactMaterialization environmentlifecycle.AcquireResult
 		if artifactManifest.ArtifactDigest.Hex() != "" {
-			_, err = environmentlifecycle.NewAcquirer().Acquire(cmd.Context(), environmentlifecycle.AcquireRequest{ArtifactDigest: artifactManifest.ArtifactDigest})
+			artifactMaterialization, err = environmentlifecycle.NewAcquirer().Acquire(cmd.Context(), environmentlifecycle.AcquireRequest{ArtifactDigest: artifactManifest.ArtifactDigest})
 			pretty.Guard(err == nil, 3, "Failed to materialize bundled environment artifact: %v", err)
 		}
 
@@ -94,6 +96,18 @@ compatible with the exported environment; it does not include RCC itself.`,
 
 		if !pathlib.IsFile(robotFile) {
 			pretty.Exit(6, "Could not find robot.yaml in extracted bundle at %q", robotFile)
+		}
+		if artifactManifest.ArtifactDigest.Hex() != "" {
+			config, loadErr := robot.LoadRobotYaml(robotFile, true)
+			pretty.Guard(loadErr == nil, 6, "Failed to load source metadata from bundle: %v", loadErr)
+			todo := config.TaskByName(runTask)
+			if todo == nil {
+				pretty.Exit(6, "Could not resolve task %q from bundled source metadata.", runTask)
+			}
+			materialization := environmentlifecycle.Materialization{ArtifactDigest: artifactMaterialization.ArtifactDigest, ID: artifactMaterialization.MaterializationID, Path: artifactMaterialization.Path, CacheHit: artifactMaterialization.CacheHit}
+			_, child, execErr := environmentlifecycle.Execute(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline())
+			pretty.Guard(execErr == nil && child.ExitCode == 0, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
+			return
 		}
 
 		// Run the task

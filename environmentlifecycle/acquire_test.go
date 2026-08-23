@@ -3,6 +3,7 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -375,4 +376,50 @@ func TestHTTPAndOfflineArchiveConvergeOnExactArtifactIdentity(t *testing.T) {
 	if err != nil || decoded.ArtifactDigest != artifactDigest {
 		t.Fatalf("offline local record identity = %s, %v", decoded.ArtifactDigest, err)
 	}
+}
+
+func TestImportArchiveRollsBackStagedObjectsAfterInjectedFailure(t *testing.T) {
+	fixture, remote, artifactDigest := publishedFixture(t)
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: archivePath}); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	home := t.TempDir()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	local, err := artifactprovider.NewFilesystem(filepath.Join(home, "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var puts int
+	errInjected := errors.New("injected archive import failure")
+	_, err = ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath, PutObject: func(ctx context.Context, blob artifactprovider.Blob) error {
+		puts++
+		if puts == 2 {
+			return errInjected
+		}
+		return local.PutObject(ctx, blob)
+	}})
+	if !errors.Is(err, errInjected) {
+		t.Fatalf("import error = %v, want injected failure", err)
+	}
+	if puts != 2 {
+		t.Fatalf("PutObject calls = %d, want 2", puts)
+	}
+	if _, err := local.ResolveManifest(context.Background(), artifactDigest); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("manifest after rollback = %v", err)
+	}
+	objectsRoot := filepath.Join(home, "artifacts", "v1", "content", "objects")
+	var residual int
+	_ = filepath.Walk(objectsRoot, func(path string, info os.FileInfo, walkErr error) error {
+		if walkErr == nil && info.Mode().IsRegular() {
+			residual++
+		}
+		return nil
+	})
+	if residual != 0 {
+		t.Fatalf("rollback left %d staged object files", residual)
+	}
+	_ = fixture
 }

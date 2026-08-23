@@ -15,7 +15,8 @@ import (
 // ImportArchiveRequest describes an offline carrier import. Import validates
 // the complete closure before writing any content to the local provider.
 type ImportArchiveRequest struct {
-	Path string
+	Path      string
+	PutObject func(context.Context, artifactprovider.Blob) error
 }
 
 // ImportArchive verifies and stores a canonical archive in the local content
@@ -64,6 +65,10 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		}{descriptor, entries[environmentartifact.ArchiveObjectDirectory+entry.StoredDigest.Hex()]})
 	}
 	allDescriptors := make([]environmentartifact.Descriptor, 0, len(descriptors))
+	putObject := local.PutObject
+	if request.PutObject != nil {
+		putObject = request.PutObject
+	}
 	for _, item := range descriptors {
 		allDescriptors = append(allDescriptors, item.descriptor)
 	}
@@ -90,7 +95,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		if err := ctx.Err(); err != nil {
 			return environmentartifact.Manifest{}, err
 		}
-		if err := local.PutObject(ctx, artifactprovider.Blob{Descriptor: item.descriptor, Reader: io.NopCloser(bytesReader(item.content))}); err != nil {
+		if err := putObject(ctx, artifactprovider.Blob{Descriptor: item.descriptor, Reader: io.NopCloser(bytesReader(item.content))}); err != nil {
 			return environmentartifact.Manifest{}, fmt.Errorf("cache archive object %s: %w", item.descriptor.Digest, err)
 		}
 	}
