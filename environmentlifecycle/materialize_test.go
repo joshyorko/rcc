@@ -3,6 +3,7 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"crypto/ed25519"
 	"errors"
 	"io"
 	"net/http"
@@ -10,8 +11,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -80,6 +83,40 @@ func TestMaterializationUsesPortableV12CatalogWithoutChangingArtifactBytes(t *te
 	assertFileBytes(t, filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint))), fixture.catalogBytes)
 	if len(provider.events) == 0 {
 		t.Fatal("cold acquisition made no provider requests")
+	}
+}
+
+func TestAcquireLoadsSignatureFromFilesystemCarrierWithRequestTrustRoots(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	signature, err := artifacttrust.Sign(artifactDigest.String(), "build-key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, bundleBytes, err := artifacttrust.NewSignatureBundle(artifactDigest.String(), []artifacttrust.Signature{signature})
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "signature", bundleBytes); err != nil {
+		t.Fatal(err)
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: remote,
+		TrustPolicy:  &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, AcceptedKeys: []string{"build-key"}},
+		TrustRequest: &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"build-key": public}, At: time.Unix(10, 0)},
+		TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Verification.Valid || result.Verification.KeyID != "build-key" {
+		t.Fatalf("verification=%+v", result.Verification)
 	}
 }
 

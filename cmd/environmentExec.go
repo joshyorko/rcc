@@ -17,6 +17,7 @@ type environmentExecResult struct {
 	Path              string                               `json:"path"`
 	CacheHit          environmentlifecycle.CacheProvenance `json:"cacheHit"`
 	ExitCode          int                                  `json:"exitCode"`
+	Verification      *artifacttrust.VerificationReceipt   `json:"verification,omitempty"`
 }
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
@@ -46,15 +47,12 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if dependencies.acquire == nil || dependencies.execute == nil || dependencies.materializer == nil {
 				return fmt.Errorf("environment execution dependencies are unavailable")
 			}
-			policy := artifacttrust.Policy{}
-			if strictRemote {
-				policy.Mode = artifacttrust.StrictRemote
-			}
-			if permissiveLocal {
-				policy.Mode = artifacttrust.PermissiveLocal
+			policy, err := trustPolicyForCommand(strictRemote, permissiveLocal)
+			if err != nil {
+				return err
 			}
 			var trustCarrier artifacttrust.Carrier
-			if strictRemote && providerURL != "" {
+			if providerURL != "" {
 				trustCarrier = &artifacttrust.HTTPCarrier{BaseURL: providerURL}
 			}
 			acquired, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
@@ -65,16 +63,24 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			}
 			materialization := environmentlifecycle.Materialization{
 				ArtifactDigest: acquired.ArtifactDigest, ID: acquired.MaterializationID,
-				Path: acquired.Path, CacheHit: acquired.CacheHit,
+				Path: acquired.Path, CacheHit: acquired.CacheHit, Verification: acquired.Verification,
 			}
-			_, child, err := dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
+			handle, child, err := dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
 			if err != nil {
 				return err
 			}
-			if err := json.NewEncoder(command.OutOrStdout()).Encode(environmentExecResult{
+			output := environmentExecResult{
 				ArtifactDigest: acquired.ArtifactDigest, MaterializationID: acquired.MaterializationID,
 				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode,
-			}); err != nil {
+			}
+			verification := handle.Verification
+			if verification.Code == "" {
+				verification = acquired.Verification
+			}
+			if verification.Code != "" {
+				output.Verification = &verification
+			}
+			if err := json.NewEncoder(command.OutOrStdout()).Encode(output); err != nil {
 				return err
 			}
 			if child.ExitCode != 0 {

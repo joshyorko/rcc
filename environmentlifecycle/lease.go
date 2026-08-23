@@ -8,19 +8,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
+	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 type Lease struct {
-	ID                string                     `json:"id"`
-	MaterializationID string                     `json:"materializationId"`
-	ArtifactDigest    environmentartifact.Digest `json:"artifactDigest"`
-	OwnerPID          int                        `json:"ownerPid"`
-	OwnerStart        string                     `json:"ownerStart"`
-	CreatedAt         time.Time                  `json:"createdAt"`
+	ID                string                            `json:"id"`
+	MaterializationID string                            `json:"materializationId"`
+	ArtifactDigest    environmentartifact.Digest        `json:"artifactDigest"`
+	OwnerPID          int                               `json:"ownerPid"`
+	OwnerStart        string                            `json:"ownerStart"`
+	CreatedAt         time.Time                         `json:"createdAt"`
+	Verification      artifacttrust.VerificationReceipt `json:"verification"`
 }
 
 type ProcessIdentityLookup func(int) (string, error)
@@ -57,6 +61,14 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if record.MaterializationID != materialization.ID || record.Path != materialization.Path {
 		return Lease{}, fmt.Errorf("materialization does not match ready record")
 	}
+	if materialization.Verification.Code != "" {
+		if !materialization.Verification.Valid {
+			return Lease{}, fmt.Errorf("materialization trust decision is not valid")
+		}
+		if materialization.Verification.ArtifactDigest != "" && materialization.Verification.ArtifactDigest != materialization.ArtifactDigest.String() {
+			return Lease{}, fmt.Errorf("materialization trust decision is bound to another artifact")
+		}
+	}
 	idBytes := make([]byte, 16)
 	if _, err := rand.Read(idBytes); err != nil {
 		return Lease{}, fmt.Errorf("create lease identity: %w", err)
@@ -64,7 +76,12 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	lease := Lease{
 		ID: hex.EncodeToString(idBytes), MaterializationID: materialization.ID,
 		ArtifactDigest: materialization.ArtifactDigest, OwnerPID: os.Getpid(), CreatedAt: time.Now().UTC(),
+		Verification: materialization.Verification,
 	}
+	if lease.Verification.ArtifactDigest == "" {
+		lease.Verification.ArtifactDigest = lease.ArtifactDigest.String()
+	}
+	lease.Verification.LeaseID = lease.ID
 	lease.OwnerStart, err = processIdentityLookup(lease.OwnerPID)
 	if err != nil || lease.OwnerStart == "" {
 		if err == nil {
@@ -79,6 +96,13 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	descriptor := environmentartifact.Descriptor{MediaType: "application/vnd.rcc.environment.lease.v1+json", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
 	if err := installLegacyImmutable(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID), descriptor, content); err != nil {
 		return Lease{}, fmt.Errorf("publish lease: %w", err)
+	}
+	if lease.Verification.DecisionID != "" {
+		store := artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(), "artifacts", "v1", "verification"))
+		if err := store.Put(lease.Verification); err != nil {
+			_ = removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
+			return Lease{}, fmt.Errorf("persist lease trust receipt: %w", err)
+		}
 	}
 	return lease, nil
 }

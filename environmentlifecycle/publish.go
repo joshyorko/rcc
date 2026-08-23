@@ -7,8 +7,10 @@ import (
 	"io"
 	"os"
 	"sort"
+	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
@@ -26,9 +28,14 @@ type BuildResult struct {
 }
 
 type PublishRequest struct {
-	RobotFile string
-	Provider  artifactprovider.Provider
-	Builder   Builder
+	RobotFile        string
+	Provider         artifactprovider.Provider
+	Builder          Builder
+	TrustCarrier     artifacttrust.Carrier
+	TrustProvenance  *artifacttrust.Provenance
+	TrustSBOM        *artifacttrust.SBOM
+	TrustSignatures  []artifacttrust.Signature
+	TrustRevocations []artifacttrust.Revocation
 }
 
 type PublishResult struct {
@@ -159,11 +166,74 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 	if err := request.Provider.CommitManifest(ctx, manifestBytes); err != nil {
 		return PublishResult{}, fmt.Errorf("commit manifest %s: %w", manifest.ArtifactDigest, err)
 	}
+	if err := publishTrustAttachments(request, manifest, build, inventory); err != nil {
+		return PublishResult{}, err
+	}
 	return PublishResult{
 		ArtifactDigest: manifest.ArtifactDigest, SpecificationDigest: specificationDescriptor.Digest,
 		LegacyBlueprintKey: inventory.LegacyBlueprintKey, ObjectCount: inventory.Index.Count,
 		UploadedBytes: uploadedBytes, ReusedBytes: totalBytes - uploadedBytes,
 	}, nil
+}
+
+func publishTrustAttachments(request PublishRequest, manifest environmentartifact.Manifest, _ BuildResult, _ environmentartifact.Inventory) error {
+	if request.TrustCarrier == nil {
+		return nil
+	}
+	artifact := manifest.ArtifactDigest.String()
+	provenance := request.TrustProvenance
+	if provenance == nil {
+		generated := artifacttrust.Provenance{
+			MediaType: artifacttrust.ProvenanceMediaType, ArtifactDigest: artifact,
+			SpecificationDigest: manifest.Specification.Digest.String(), Platform: manifest.Platform.RCCPlatform,
+			Builder: manifest.Builder.Kind, RCCVersion: manifest.Builder.RCCVersion,
+			CreatedAt:             artifacttrust.FreshTimestamp(time.Now().UTC()),
+			LegacyBlueprintDigest: manifest.LegacyBlueprint.Digest.String(), LegacyBlueprintKey: manifest.LegacyBlueprint.LegacyBlueprintKey,
+			CatalogDigest: manifest.Catalogs[0].Digest.String(), ManifestDigest: artifact,
+			BuildIdentity: manifest.Builder.Kind + "@" + manifest.Builder.CompatibilityKey,
+		}
+		provenance = &generated
+	}
+	if provenance != nil {
+		if provenance.ArtifactDigest != artifact || (provenance.Platform != "" && provenance.Platform != manifest.Platform.RCCPlatform) || (provenance.Builder != "" && provenance.Builder != manifest.Builder.Kind) {
+			return fmt.Errorf("provenance does not match manifest identity")
+		}
+		data, err := artifacttrust.CanonicalProvenance(*provenance)
+		if err != nil {
+			return fmt.Errorf("construct provenance attachment: %w", err)
+		}
+		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "provenance", data); err != nil {
+			return fmt.Errorf("publish provenance attachment: %w", err)
+		}
+	}
+	if request.TrustSBOM != nil {
+		data, err := artifacttrust.CanonicalSBOM(*request.TrustSBOM)
+		if err != nil {
+			return fmt.Errorf("construct SBOM attachment: %w", err)
+		}
+		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "sbom", data); err != nil {
+			return fmt.Errorf("publish SBOM attachment: %w", err)
+		}
+	}
+	if len(request.TrustSignatures) > 0 {
+		_, data, err := artifacttrust.NewSignatureBundle(artifact, request.TrustSignatures)
+		if err != nil {
+			return fmt.Errorf("construct signature attachment: %w", err)
+		}
+		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "signature", data); err != nil {
+			return fmt.Errorf("publish signature attachment: %w", err)
+		}
+	}
+	if len(request.TrustRevocations) > 0 {
+		_, data, err := artifacttrust.NewRevocationBundle(artifact, request.TrustRevocations)
+		if err != nil {
+			return fmt.Errorf("construct revocation attachment: %w", err)
+		}
+		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "revocations", data); err != nil {
+			return fmt.Errorf("publish revocation attachment: %w", err)
+		}
+	}
+	return nil
 }
 
 func descriptorFor(mediaType string, content []byte) environmentartifact.Descriptor {

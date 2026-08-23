@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
@@ -52,6 +53,20 @@ func TestEnvironmentCommandContracts(t *testing.T) {
 		if child.Flags().Lookup("provider") == nil || child.Flags().Lookup("json") == nil {
 			t.Fatalf("env %s lacks provider/json flags", name)
 		}
+	}
+}
+
+func TestEnvironmentTrustPolicyDefaultsStrictAndRejectsConflictingModes(t *testing.T) {
+	policy, err := trustPolicyForCommand(false, false)
+	if err != nil || policy.Mode != artifacttrust.StrictRemote {
+		t.Fatalf("default policy=%+v err=%v", policy, err)
+	}
+	policy, err = trustPolicyForCommand(false, true)
+	if err != nil || policy.Mode != artifacttrust.PermissiveLocal {
+		t.Fatalf("local policy=%+v err=%v", policy, err)
+	}
+	if _, err := trustPolicyForCommand(true, true); err == nil {
+		t.Fatal("conflicting trust modes accepted")
 	}
 }
 
@@ -182,7 +197,8 @@ func TestEnvironmentExecPreservesArgumentsAndPropagatesExitAfterRelease(t *testi
 		acquire: func(context.Context, environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
 			return environmentlifecycle.AcquireResult{
 				ArtifactDigest: digest, MaterializationID: "materialized", Path: materializer.cwd,
-				CacheHit: environmentlifecycle.CacheLocalMaterialization,
+				CacheHit:     environmentlifecycle.CacheLocalMaterialization,
+				Verification: artifacttrust.VerificationReceipt{Valid: true, Code: artifacttrust.CodeValid, ArtifactDigest: digest.String(), VerifiedAt: "1970-01-01T00:00:01Z", DecisionID: "decision-1", PolicyRevision: "policy-1"},
 			}, nil
 		},
 		execute:      environmentlifecycle.Execute,
@@ -211,7 +227,7 @@ func TestEnvironmentExecPreservesArgumentsAndPropagatesExitAfterRelease(t *testi
 	if exit.Code != 7 || materializer.releases != 1 {
 		t.Fatalf("child exit=%d releases=%d", exit.Code, materializer.releases)
 	}
-	want := `{"artifactDigest":"` + cliTestDigest + `","materializationId":"materialized","path":"` + filepath.ToSlash(materializer.cwd) + `","cacheHit":"local-materialization","exitCode":7}` + "\n"
+	want := `{"artifactDigest":"` + cliTestDigest + `","materializationId":"materialized","path":"` + filepath.ToSlash(materializer.cwd) + `","cacheHit":"local-materialization","exitCode":7,"verification":{"valid":true,"code":"valid","artifactDigest":"` + cliTestDigest + `","policyMode":"","verifiedAt":"1970-01-01T00:00:01Z","decisionID":"decision-1","policyRevision":"policy-1"}}` + "\n"
 	if filepath.ToSlash(stdout.String()) != want {
 		t.Fatalf("exec output = %q, want %q", stdout.String(), want)
 	}

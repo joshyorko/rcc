@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -135,6 +136,28 @@ func TestPublishUploadsOnlyMissingContentThenCommitsManifest(t *testing.T) {
 	}
 	if manifest.LegacyBlueprint.LegacyBlueprintKey != common.BlueprintHash(fixture.build.LegacyBlueprint) {
 		t.Fatal("manifest did not retain the exact legacy blueprint compatibility key")
+	}
+}
+
+func TestPublishWritesGeneratedProvenanceToCarrierAfterManifestCommit(t *testing.T) {
+	fixture := newPublishFixture(t)
+	provider, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	result, err := Publish(context.Background(), PublishRequest{
+		RobotFile: "fixtures/robot.yaml", Provider: provider, Builder: &recordingBuilder{result: fixture.build}, TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	attachments, err := artifacttrust.LoadAttachments(carrier, result.ArtifactDigest.String())
+	if err != nil || attachments.Provenance == nil {
+		t.Fatalf("attachments=%+v err=%v", attachments, err)
+	}
+	if attachments.Provenance.ArtifactDigest != result.ArtifactDigest.String() || attachments.Provenance.Platform != fixture.build.Platform.RCCPlatform || attachments.Provenance.Builder != fixture.build.Builder.Kind {
+		t.Fatalf("provenance=%+v", attachments.Provenance)
 	}
 }
 

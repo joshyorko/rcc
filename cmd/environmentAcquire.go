@@ -16,6 +16,7 @@ type environmentAcquireResult struct {
 	MaterializationID string                               `json:"materializationId"`
 	Path              string                               `json:"path"`
 	CacheHit          environmentlifecycle.CacheProvenance `json:"cacheHit"`
+	Verification      *artifacttrust.VerificationReceipt   `json:"verification,omitempty"`
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
@@ -42,15 +43,12 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if dependencies.acquire == nil {
 				return fmt.Errorf("environment acquire dependency is unavailable")
 			}
-			policy := artifacttrust.Policy{}
-			if strictRemote {
-				policy.Mode = artifacttrust.StrictRemote
-			}
-			if permissiveLocal {
-				policy.Mode = artifacttrust.PermissiveLocal
+			policy, err := trustPolicyForCommand(strictRemote, permissiveLocal)
+			if err != nil {
+				return err
 			}
 			var trustCarrier artifacttrust.Carrier
-			if strictRemote && providerURL != "" {
+			if providerURL != "" {
 				trustCarrier = &artifacttrust.HTTPCarrier{BaseURL: providerURL}
 			}
 			result, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
@@ -59,10 +57,14 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if err != nil {
 				return err
 			}
-			return json.NewEncoder(command.OutOrStdout()).Encode(environmentAcquireResult{
+			output := environmentAcquireResult{
 				ArtifactDigest: result.ArtifactDigest, MaterializationID: result.MaterializationID,
 				Path: result.Path, CacheHit: result.CacheHit,
-			})
+			}
+			if result.Verification.Code != "" {
+				output.Verification = &result.Verification
+			}
+			return json.NewEncoder(command.OutOrStdout()).Encode(output)
 		},
 	}
 	command.Flags().StringVar(&artifact, "artifact", "", "Canonical sha256 environment artifact digest.")

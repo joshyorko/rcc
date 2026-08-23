@@ -2,7 +2,6 @@ package environmentlifecycle
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -47,6 +46,7 @@ type Materialization struct {
 	ID             string
 	Path           string
 	CacheHit       CacheProvenance
+	Verification   artifacttrust.VerificationReceipt
 }
 
 type Materializer interface {
@@ -124,20 +124,46 @@ func NewAcquirer() *Acquirer {
 }
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
-	verify := func(platform string) (artifacttrust.VerificationReceipt, error) {
+	verify := func(platform, builder string) (artifacttrust.VerificationReceipt, error) {
 		if request.TrustPolicy == nil {
 			return artifacttrust.VerificationReceipt{Valid: true, Code: artifacttrust.CodeValid, ArtifactDigest: request.ArtifactDigest.String()}, nil
 		}
-		q := artifacttrust.VerifyRequest{ArtifactDigest: request.ArtifactDigest.String(), Platform: platform}
+		q := artifacttrust.VerifyRequest{ArtifactDigest: request.ArtifactDigest.String(), Platform: platform, Builder: builder}
 		if request.TrustRequest != nil {
 			q = *request.TrustRequest
 			q.ArtifactDigest = request.ArtifactDigest.String()
 			if q.Platform == "" {
 				q.Platform = platform
 			}
+			if q.Builder == "" {
+				q.Builder = builder
+			}
 		}
-		if request.TrustRequest == nil && request.TrustCarrier != nil {
-			q.Provenance, q.SBOM, q.Signatures = loadTrustAttachments(request.TrustCarrier, request.ArtifactDigest.String())
+		if request.TrustCarrier != nil {
+			attachments, err := artifacttrust.LoadAttachments(request.TrustCarrier, request.ArtifactDigest.String())
+			if err != nil {
+				return artifacttrust.VerificationReceipt{}, fmt.Errorf("load artifact trust attachments: %w", err)
+			}
+			if attachments.Provenance != nil {
+				q.Provenance = attachments.Provenance
+			}
+			if attachments.SBOM != nil {
+				q.SBOM = attachments.SBOM
+			}
+			if len(attachments.Signatures) > 0 {
+				q.Signatures = attachments.Signatures
+			}
+			if len(attachments.Revocations) > 0 {
+				q.Revocations = attachments.Revocations
+			}
+			if attachments.RevocationFetchedAt != "" {
+				fetchedAt, err := time.Parse(time.RFC3339, attachments.RevocationFetchedAt)
+				if err != nil {
+					return artifacttrust.VerificationReceipt{}, fmt.Errorf("invalid revocation fetch timestamp")
+				}
+				q.RevocationFetchedAt = fetchedAt
+			}
+			q.RevocationSource = attachments.RevocationSource
 		}
 		r := request.TrustPolicy.Verify(q)
 		store := artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(), "artifacts", "v1", "verification"))
@@ -159,7 +185,7 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, err
 		}
-		receipt, trustErr := verify(manifest.Platform.RCCPlatform)
+		receipt, trustErr := verify(manifest.Platform.RCCPlatform, manifest.Builder.Kind)
 		if trustErr != nil {
 			return AcquireResult{}, trustErr
 		}
@@ -197,7 +223,7 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	if err != nil {
 		return AcquireResult{}, err
 	}
-	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform)
+	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform, content.manifest.Builder.Kind)
 	if trustErr != nil {
 		return AcquireResult{}, trustErr
 	}
@@ -207,28 +233,6 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	}
 	result.Verification = receipt
 	return result, nil
-}
-
-func loadTrustAttachments(c artifacttrust.Carrier, artifact string) (*artifacttrust.Provenance, *artifacttrust.SBOM, []artifacttrust.Signature) {
-	var p *artifacttrust.Provenance
-	var s *artifacttrust.SBOM
-	var sig []artifacttrust.Signature
-	if b, err := artifacttrust.GetAttachment(c, artifact, "provenance"); err == nil {
-		var v artifacttrust.Provenance
-		if json.Unmarshal(b, &v) == nil {
-			p = &v
-		}
-	}
-	if b, err := artifacttrust.GetAttachment(c, artifact, "sbom"); err == nil {
-		var v artifacttrust.SBOM
-		if json.Unmarshal(b, &v) == nil {
-			s = &v
-		}
-	}
-	if b, err := artifacttrust.GetAttachment(c, artifact, "signature"); err == nil {
-		_ = json.Unmarshal(b, &sig)
-	}
-	return p, s, sig
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
