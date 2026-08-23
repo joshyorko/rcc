@@ -42,6 +42,17 @@ func TestPrepareStagingRejectsCredentialsAndCleansUp(t *testing.T) {
 	d,cleanup,err:=PrepareStaging(BuildRequest{Root:t.TempDir(),Network:true},"owner");if err!=nil{t.Fatal(err)};if err:=cleanup();err!=nil{t.Fatal(err)}; _ = d
 }
 
+func TestClaimFailureMatrixCoreBoundaries(t *testing.T) {
+	c:=NewFilesystem(t.TempDir(),RealClock{}); k:=testKey()
+	if _,_,err:=c.Claim(BuildKey{},"x",time.Minute);err==nil{t.Fatal("empty key accepted")}
+	cl,_,err:=c.Claim(k,"x",time.Minute);if err!=nil{t.Fatal(err)}
+	if err:=c.Publish(cl,Artifact{Digest:"",Verified:true});!errors.Is(err,ErrUnverifiedArtifact){t.Fatalf("unverified=%v",err)}
+	if _,_,err:=c.Claim(k,"y",time.Minute);!errors.Is(err,ErrClaimBusy){t.Fatalf("busy=%v",err)}
+	if err:=c.Publish(cl,Artifact{Digest:"sha256:one",Verified:true});err!=nil{t.Fatal(err)}
+	if err:=c.Publish(cl,Artifact{Digest:"sha256:two",Verified:true});!errors.Is(err,ErrDivergentArtifact){t.Fatalf("divergent=%v",err)}
+	events,err:=c.Events(k);if err!=nil||len(events)<2{t.Fatalf("events=%v err=%v",events,err)}
+}
+
 func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
 	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	if _, _, err := c.Claim(BuildKey{}, "owner", time.Minute); err == nil {
