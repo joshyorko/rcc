@@ -297,6 +297,19 @@ jobs:
               if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):
                   raise SystemExit("receipt and exact CLI artifact identities differ")
               platform_checks = require(exact, "platformChecks", "exactBinaryCLI")
+              platform = require(data, "platform", "receipt")
+              expected_checks = {
+                  "linux": {"runnerOS", "machine", "caseCollision", "executableSymlink", "filesystemType", "libc", "glibcMuslMismatch"},
+                  "darwin": {"runnerOS", "machine", "caseCollision", "executableSymlink", "rosetta", "machoRPath", "machoDependencies", "quarantineXattr", "codeSigning", "translationAllowed", "nativeOnlyOnRosetta"},
+                  "windows": {"runnerOS", "machine", "caseCollision", "executableSymlink", "longPath", "junction", "fileLock", "pathNormalization"},
+              }
+              platform_family = platform.split("_", 1)[0]
+              if not isinstance(platform_checks, dict) or set(platform_checks) != expected_checks.get(platform_family, set()):
+                  raise SystemExit(f"exact CLI platform probe key set is invalid for {platform}: {sorted(platform_checks)}")
+              for key, value in platform_checks.items():
+                  if not isinstance(value, str) or not value or value.startswith(("skipped:", "unavailable:", "failed")):
+                      if not (platform_family == "darwin" and key == "nativeOnlyOnRosetta" and value == "skipped:native-runner"):
+                          raise SystemExit(f"exact CLI platform probe {key} is not a passing or explicit fact: {value}")
               if not isinstance(platform_checks, dict) or not platform_checks:
                   raise SystemExit("exact CLI platform probe receipt is incomplete")
               lifecycle("exactBinaryCLI", exact)

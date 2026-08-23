@@ -236,6 +236,25 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	})
 }
 
+func TestExactPlatformProbeProgramParsesForEverySupportedOSBranch(t *testing.T) {
+	python, err := exec.LookPath("python")
+	if err != nil {
+		python, err = exec.LookPath("python3")
+	}
+	if err != nil {
+		t.Skip("Python is unavailable for platform probe parsing")
+	}
+	program := exactPlatformProbeProgram()
+	for _, branch := range []string{"sys.platform.startswith('linux')", "sys.platform=='darwin'", "os.name=='nt'"} {
+		if !strings.Contains(program, branch) {
+			t.Fatalf("platform probe lost %s branch", branch)
+		}
+		if output, err := exec.Command(python, "-c", "import sys; compile(sys.argv[1], '<platform-probe>', 'exec')", program).CombinedOutput(); err != nil {
+			t.Fatalf("platform probe branch %s does not parse: %v\n%s", branch, err, output)
+		}
+	}
+}
+
 type exactBinaryPublishResult struct {
 	ArtifactDigest environmentartifact.Digest `json:"artifactDigest"`
 	ObjectCount    int                        `json:"objectCount"`
@@ -497,7 +516,7 @@ root=pathlib.Path(tempfile.mkdtemp(prefix='rcc-platform-probe-'))
 case_file=root/'CaseProbe'
 case_file.write_text('case')
 case_collision=(root/'caseprobe').exists()
-result['caseCollision']='pass' if case_collision else 'case-sensitive-filesystem'
+result['caseCollision']='pass' if case_collision else ('failed:case-sensitive-filesystem' if sys.platform=='darwin' or os.name=='nt' else 'case-sensitive-filesystem')
 link=root/'python-link'
 try:
     link.symlink_to(pathlib.Path(sys.executable))
@@ -538,9 +557,9 @@ elif os.name=='nt':
         result['longPath']='pass'
     except OSError as error:
         result['longPath']='skipped:'+type(error).__name__
-junction=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-link-'))
-junction.rmdir()
-target=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-target-'))
+    junction=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-link-'))
+    junction.rmdir()
+    target=pathlib.Path(tempfile.mkdtemp(prefix='rcc-junction-target-'))
     try:
         linked=subprocess.run(['cmd','/c','mklink','/J',str(junction),str(target)],capture_output=True,text=True)
         result['junction']='pass' if linked.returncode==0 and junction.is_dir() else 'skipped:'+str(linked.returncode)

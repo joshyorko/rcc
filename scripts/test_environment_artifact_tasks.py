@@ -103,8 +103,12 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_native_receipt_records_platform_specific_runtime_probes(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     for marker in ("platformChecks", "exactPlatformProbeProgram", "musl", "rosetta2", "junction", "longPath", "machoRPath"):
       self.assertIn(marker, source)
+    self.assertIn("TestExactPlatformProbeProgramParsesForEverySupportedOSBranch", source)
+    self.assertIn("expected_checks", workflow)
+    self.assertIn("caseCollision", workflow)
 
 
   def test_linux_only_tasks_fail_explicitly(self):
