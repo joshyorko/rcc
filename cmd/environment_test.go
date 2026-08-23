@@ -7,6 +7,7 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -741,6 +742,52 @@ func TestEnvironmentExecPreservesArgumentsAndPropagatesExitAfterRelease(t *testi
 	}
 	if result.ArtifactDigest != cliTestDigest || result.MaterializationID != "materialized" || filepath.ToSlash(result.Path) != filepath.ToSlash(materializer.cwd) || result.CacheHit != "local-materialization" || result.ExitCode != 7 || result.LeaseID == "" || result.Verification.DecisionID != "decision-1" {
 		t.Fatalf("exec output = %q", stdout.String())
+	}
+}
+
+func TestEnvironmentConsumersLoadRuntimeTrustRoots(t *testing.T) {
+	public, _, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	trustRoots := filepath.Join(t.TempDir(), "trust-roots.json")
+	content, err := json.Marshal(map[string]string{"actions-provider": base64.RawStdEncoding.EncodeToString(public)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(trustRoots, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, test := range []struct {
+		name      string
+		arguments []string
+	}{
+		{name: "acquire", arguments: []string{"acquire", "--artifact", cliTestDigest, "--trust-roots", trustRoots, "--strict-remote", "--json"}},
+		{name: "exec", arguments: []string{"exec", "--artifact", cliTestDigest, "--trust-roots", trustRoots, "--strict-remote", "--json", "--", "python", "-V"}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			var received environmentlifecycle.AcquireRequest
+			command := newEnvironmentCommand(environmentCommandDependencies{
+				acquire: func(_ context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
+					received = request
+					return environmentlifecycle.AcquireResult{}, fmt.Errorf("stop after trust roots")
+				},
+				materializer: func() environmentlifecycle.Materializer { return nil },
+				execute: func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error) {
+					return environmentlifecycle.ExecutionHandle{}, environmentlifecycle.ChildResult{}, nil
+				},
+			})
+			if err := runCobraCommand(command, test.arguments); err == nil || !strings.Contains(err.Error(), "stop after trust roots") {
+				t.Fatalf("consumer did not reach acquire with trust roots: %v", err)
+			}
+			if received.TrustRequest == nil || !bytes.Equal(received.TrustRequest.Keys["actions-provider"], public) {
+				t.Fatalf("runtime trust roots = %#v", received.TrustRequest)
+			}
+			if received.TrustPolicy == nil || len(received.TrustPolicy.AcceptedKeys) != 1 || received.TrustPolicy.AcceptedKeys[0] != "actions-provider" {
+				t.Fatalf("runtime trust policy = %#v", received.TrustPolicy)
+			}
+		})
 	}
 }
 

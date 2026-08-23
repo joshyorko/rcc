@@ -31,7 +31,7 @@ type environmentExecResult struct {
 var replaceReceipt = replaceReceiptFile
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var artifact, providerURL, trustCarrierPath, trustCarrierType string
+	var artifact, providerURL, trustCarrierPath, trustCarrierType, trustRootsPath string
 	var strictRemote, permissiveLocal bool
 	var jsonOutput, inheritStreams bool
 	var receiptFile string
@@ -65,12 +65,17 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if err != nil {
 				return err
 			}
+			trustRequest, acceptedKeys, err := runtimeTrustRoots(trustRootsPath)
+			if err != nil {
+				return err
+			}
+			policy.AcceptedKeys = acceptedKeys
 			trustCarrier, err := optionalEnvironmentTrustCarrier(trustCarrierPath, trustCarrierType, providerURL)
 			if err != nil {
 				return err
 			}
 			acquired, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
-				ArtifactDigest: digest, Provider: provider, TrustPolicy: &policy, TrustCarrier: trustCarrier,
+				ArtifactDigest: digest, Provider: provider, TrustPolicy: &policy, TrustRequest: trustRequest, TrustCarrier: trustCarrier,
 			})
 			if err != nil {
 				return err
@@ -142,6 +147,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL; optional for local-ready artifacts.")
 	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Detached trust carrier path or URL; defaults to provider HTTP or local filesystem.")
 	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
+	command.Flags().StringVar(&trustRootsPath, "trust-roots", "", "JSON map of trusted key IDs to base64 Ed25519 public keys.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
 	command.Flags().BoolVar(&inheritStreams, "inherit-streams", false, "Connect child stdin/stdout/stderr for the full process lifetime.")
 	command.Flags().StringVar(&receiptFile, "receipt-file", "", "Required atomic JSON receipt path for --inherit-streams.")

@@ -1,12 +1,19 @@
 package cmd
 
 import (
+	"crypto/ed25519"
+	"encoding/base64"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 )
+
+const maxRuntimeTrustRootsBytes = 64 << 10
 
 // trustPolicyForCommand makes the worker decision explicit: strict remote is
 // the non-bypassable default, and permissive local must be selected by name.
@@ -20,6 +27,46 @@ func trustPolicyForCommand(strictRemote, permissiveLocal bool) (artifacttrust.Po
 		policy.FailClosedRevocations = false
 	}
 	return policy, nil
+}
+
+func runtimeTrustRoots(path string) (*artifacttrust.VerifyRequest, []string, error) {
+	if path == "" {
+		return nil, nil, nil
+	}
+	file, err := os.Open(filepath.Clean(path))
+	if err != nil {
+		return nil, nil, fmt.Errorf("open runtime trust roots: %w", err)
+	}
+	defer func() { _ = file.Close() }()
+	content, err := io.ReadAll(io.LimitReader(file, maxRuntimeTrustRootsBytes+1))
+	if err != nil {
+		return nil, nil, fmt.Errorf("read runtime trust roots: %w", err)
+	}
+	if len(content) > maxRuntimeTrustRootsBytes {
+		return nil, nil, fmt.Errorf("runtime trust roots exceed %d bytes", maxRuntimeTrustRootsBytes)
+	}
+	var encoded map[string]string
+	if err := decodeStrictTrustJSON(content, &encoded); err != nil || len(encoded) == 0 || len(encoded) > 64 {
+		return nil, nil, fmt.Errorf("invalid runtime trust roots")
+	}
+	keys := make(map[string]ed25519.PublicKey, len(encoded))
+	accepted := make([]string, 0, len(encoded))
+	for id, value := range encoded {
+		if strings.TrimSpace(id) == "" {
+			return nil, nil, fmt.Errorf("invalid runtime trust root ID")
+		}
+		decoded, decodeErr := base64.RawStdEncoding.DecodeString(value)
+		if decodeErr != nil {
+			decoded, decodeErr = base64.StdEncoding.DecodeString(value)
+		}
+		if decodeErr != nil || len(decoded) != ed25519.PublicKeySize {
+			return nil, nil, fmt.Errorf("invalid runtime trust root")
+		}
+		keys[id] = ed25519.PublicKey(decoded)
+		accepted = append(accepted, id)
+	}
+	sort.Strings(accepted)
+	return &artifacttrust.VerifyRequest{Keys: keys}, accepted, nil
 }
 
 func optionalEnvironmentTrustCarrier(reference, carrierType, providerURL string) (artifacttrust.Carrier, error) {

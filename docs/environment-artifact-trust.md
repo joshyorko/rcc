@@ -19,7 +19,10 @@ revocation snapshot in the local trust carrier; an Ed25519 key can be supplied
 for post-manifest signing. Verification does not execute package code and is
 independent of the provider/carrier; HTTP, filesystem, and validated offline
 ZIP carriers use the same attachment names. `env acquire` and `env exec` expose
-explicit filesystem/archive carrier selection.
+explicit filesystem/archive carrier selection. Strict consumers supply their
+deployment-owned Ed25519 public keys at runtime with `--trust-roots`; RCC binds
+those key IDs into the policy and never treats a provider signature as its own
+trust root.
 
 Publication stages the required trust set before committing the provider
 manifest, so a failed trust write leaves no visible manifest; a later retry can
