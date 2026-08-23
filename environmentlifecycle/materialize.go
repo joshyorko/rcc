@@ -2,6 +2,7 @@ package environmentlifecycle
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -30,6 +31,7 @@ type AcquireRequest struct {
 	Provider       artifactprovider.Provider
 	TrustPolicy    *artifacttrust.Policy
 	TrustRequest   *artifacttrust.VerifyRequest
+	TrustCarrier   artifacttrust.Carrier
 }
 
 type AcquireResult struct {
@@ -123,12 +125,29 @@ func NewAcquirer() *Acquirer {
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
 	verify := func(platform string) (artifacttrust.VerificationReceipt, error) {
-		if request.TrustPolicy == nil { return artifacttrust.VerificationReceipt{Valid:true, Code:artifacttrust.CodeValid, ArtifactDigest:request.ArtifactDigest.String()}, nil }
-		q := artifacttrust.VerifyRequest{ArtifactDigest:request.ArtifactDigest.String(), Platform:platform}
-		if request.TrustRequest != nil { q=*request.TrustRequest; q.ArtifactDigest=request.ArtifactDigest.String(); if q.Platform=="" { q.Platform=platform } }
+		if request.TrustPolicy == nil {
+			return artifacttrust.VerificationReceipt{Valid: true, Code: artifacttrust.CodeValid, ArtifactDigest: request.ArtifactDigest.String()}, nil
+		}
+		q := artifacttrust.VerifyRequest{ArtifactDigest: request.ArtifactDigest.String(), Platform: platform}
+		if request.TrustRequest != nil {
+			q = *request.TrustRequest
+			q.ArtifactDigest = request.ArtifactDigest.String()
+			if q.Platform == "" {
+				q.Platform = platform
+			}
+		}
+		if request.TrustRequest == nil && request.TrustCarrier != nil {
+			q.Provenance, q.SBOM, q.Signatures = loadTrustAttachments(request.TrustCarrier, request.ArtifactDigest.String())
+		}
 		r := request.TrustPolicy.Verify(q)
-		if r.Valid { store:=artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(),"artifacts","v1","verification")); if err:=store.Put(r);err!=nil{return r,fmt.Errorf("persist artifact trust receipt: %w",err)} }
-		if !r.Valid { return r, fmt.Errorf("artifact trust verification failed: %s: %s",r.Code,r.Diagnostic) }; return r,nil
+		store := artifacttrust.NewReceiptStore(filepath.Join(common.Product.Home(), "artifacts", "v1", "verification"))
+		if err := store.Put(r); err != nil {
+			return r, fmt.Errorf("persist artifact trust receipt: %w", err)
+		}
+		if !r.Valid {
+			return r, fmt.Errorf("artifact trust verification failed: %s: %s", r.Code, r.Diagnostic)
+		}
+		return r, nil
 	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {
@@ -140,7 +159,10 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, err
 		}
-		receipt, trustErr := verify(manifest.Platform.RCCPlatform); if trustErr != nil { return AcquireResult{}, trustErr }
+		receipt, trustErr := verify(manifest.Platform.RCCPlatform)
+		if trustErr != nil {
+			return AcquireResult{}, trustErr
+		}
 		if result, err := warmMaterialization(manifest); err == nil {
 			result.Verification = receipt
 			return result, nil
@@ -151,7 +173,12 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
-		result, err := it.materialize(ctx, content.manifest); if err != nil { return AcquireResult{}, err }; result.Verification=receipt; return result,nil
+		result, err := it.materialize(ctx, content.manifest)
+		if err != nil {
+			return AcquireResult{}, err
+		}
+		result.Verification = receipt
+		return result, nil
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
@@ -170,8 +197,38 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	if err != nil {
 		return AcquireResult{}, err
 	}
-	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform); if trustErr != nil { return AcquireResult{}, trustErr }
-	result, err := it.materialize(ctx, content.manifest); if err != nil { return AcquireResult{}, err }; result.Verification=receipt; return result,nil
+	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform)
+	if trustErr != nil {
+		return AcquireResult{}, trustErr
+	}
+	result, err := it.materialize(ctx, content.manifest)
+	if err != nil {
+		return AcquireResult{}, err
+	}
+	result.Verification = receipt
+	return result, nil
+}
+
+func loadTrustAttachments(c artifacttrust.Carrier, artifact string) (*artifacttrust.Provenance, *artifacttrust.SBOM, []artifacttrust.Signature) {
+	var p *artifacttrust.Provenance
+	var s *artifacttrust.SBOM
+	var sig []artifacttrust.Signature
+	if b, err := artifacttrust.GetAttachment(c, artifact, "provenance"); err == nil {
+		var v artifacttrust.Provenance
+		if json.Unmarshal(b, &v) == nil {
+			p = &v
+		}
+	}
+	if b, err := artifacttrust.GetAttachment(c, artifact, "sbom"); err == nil {
+		var v artifacttrust.SBOM
+		if json.Unmarshal(b, &v) == nil {
+			s = &v
+		}
+	}
+	if b, err := artifacttrust.GetAttachment(c, artifact, "signature"); err == nil {
+		_ = json.Unmarshal(b, &sig)
+	}
+	return p, s, sig
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
