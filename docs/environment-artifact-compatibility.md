@@ -19,3 +19,8 @@ features, and builder compatibility key into its immutable identity. An
 unsupported platform or a platform mismatch is rejected before provider
 objects are fetched, with the worker and artifact platform named in the
 diagnostic.
+
+Workers that are already opted into a machine-wide shared Holotree can select
+the private, `ROBOCORP_HOME`-scoped lifecycle explicitly with
+`RCC_HOLOTREE_MODE=private`. The default remains the existing user marker, so
+ordinary v12 shared-Holotree behavior is unchanged when the variable is absent.

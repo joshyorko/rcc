@@ -11,6 +11,9 @@
 - add named HTTP provider profiles with strict URL, complete-header,
   no-redirect, direct-URL, local-root, and warm-reuse contracts; retain
   `rccremote` as the v18 compatibility-level-A protocol
+- allow Environment Artifact workers to select distinct private homes with
+  `RCC_HOLOTREE_MODE=private` without changing the existing shared-Holotree
+  default
 
 ### Compatibility and Release Hardening
 

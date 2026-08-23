@@ -53,6 +53,9 @@ def environment_artifact_process_environment(home, offline=False):
     )
     environment = {key: os.environ[key] for key in allowed if key in os.environ}
     environment["ROBOCORP_HOME"] = str(Path(home).resolve())
+    # Environment Artifact acceptance requires distinct private homes even when
+    # the runner account has opted into a machine-wide shared Holotree.
+    environment["RCC_HOLOTREE_MODE"] = "private"
     for key in ("CONDA_OFFLINE", "MAMBA_OFFLINE", "PIP_NO_INDEX", "UV_NO_INDEX"):
         environment.pop(key, None)
     if offline:

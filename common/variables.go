@@ -97,7 +97,7 @@ func init() {
 	// Also: HolotreeLocation creation is left for actual holotree commands
 	//       to prevent accidental access right problem during usage
 
-	SharedHolotree = isFile(HoloInitUserFile())
+	SharedHolotree = resolveSharedHolotreeMode(isFile(HoloInitUserFile()), os.Getenv("RCC_HOLOTREE_MODE"))
 
 	ensureDirectory(JournalLocation())
 	ensureDirectory(TemplateLocation())
@@ -109,6 +109,17 @@ func init() {
 	ensureDirectory(MambaPackages())
 	ensureDirectory(UvBinaryCache())
 	ensureDirectory(UvPythonCache())
+}
+
+func resolveSharedHolotreeMode(marker bool, mode string) bool {
+	switch strings.ToLower(strings.TrimSpace(mode)) {
+	case "private":
+		return false
+	case "shared":
+		return true
+	default:
+		return marker
+	}
 }
 
 func RandomIdentifier() string {

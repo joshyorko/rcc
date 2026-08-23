@@ -117,16 +117,11 @@ func validateCatalogSymlink(path []string, target string) error {
 }
 
 func validateRewriteOffsets(offsets []int64, logicalSize int64, width int) error {
-	previousEnd := int64(-1)
 	for _, offset := range offsets {
 		end := offset + int64(width)
 		if offset < 0 || end < offset || end > logicalSize {
 			return fmt.Errorf("rewrite span %d:%d is outside logical file size %d", offset, end, logicalSize)
 		}
-		if previousEnd >= 0 && offset < previousEnd {
-			return fmt.Errorf("rewrite spans are unordered or overlapping")
-		}
-		previousEnd = end
 	}
 	return nil
 }

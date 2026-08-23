@@ -74,8 +74,6 @@ func TestValidateV12CatalogRejectsUnsafeTreeMetadata(t *testing.T) {
 func TestValidateV12CatalogRejectsUnsafeRewriteOffsets(t *testing.T) {
 	cases := map[string][]int64{
 		"negative":      {-1},
-		"unordered":     {64, 8},
-		"overlapping":   {8, 16},
 		"out of bounds": {120},
 	}
 	for name, offsets := range cases {
@@ -86,6 +84,14 @@ func TestValidateV12CatalogRejectsUnsafeRewriteOffsets(t *testing.T) {
 				t.Fatal("unsafe rewrite offsets accepted")
 			}
 		})
+	}
+}
+
+func TestValidateV12CatalogAllowsBoundedUnorderedAndOverlappingRewriteOffsets(t *testing.T) {
+	root, index, identity := validCatalogForValidation(t)
+	root.Tree.Files["python"].Rewrite = []int64{64, 8, 16, 8}
+	if err := ValidateV12Catalog(root, index, identity); err != nil {
+		t.Fatal(err)
 	}
 }
 

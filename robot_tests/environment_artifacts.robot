@@ -73,6 +73,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --provider    office
     ...    --json
     ...    env=${A_ENV}
+    Log    ${published_result.stderr}
     Should Be Equal As Integers    ${published_result.rc}    0
     Should Not Contain    ${published_result.stdout}    Bearer robot-test
     Should Not Contain    ${published_result.stderr}    Bearer robot-test
@@ -89,6 +90,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --provider    office
     ...    --json
     ...    env=${B_ENV}
+    Log    ${cold_result.stderr}
     Should Be Equal As Integers    ${cold_result.rc}    0
     Should Not Contain    ${cold_result.stdout}    Bearer robot-test
     Should Not Contain    ${cold_result.stderr}    Bearer robot-test
@@ -155,8 +157,6 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 *** Keywords ***
 Prepare Environment Artifact Acceptance
     Set Suite Variable    ${FIXTURE_ROOT}    ${None}
-    ${is_linux}=    Evaluate    sys.platform.startswith("linux")    modules=sys
-    Run Keyword If    not ${is_linux}    Skip    Environment Artifact acceptance is Linux-only
     ${fixture}=    New Environment Artifact Fixture
     Set Suite Variable    ${FIXTURE_ROOT}      ${fixture}[root]
     Set Suite Variable    ${A_HOME}            ${fixture}[aHome]
