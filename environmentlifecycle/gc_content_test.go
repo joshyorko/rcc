@@ -207,3 +207,74 @@ func TestRetiredRootHonorsPinnedLegalAndLocalOnlyPolicies(t *testing.T) {
 		})
 	}
 }
+
+func TestRetiredClosureReclaimsAfterRetentionUnderPressureAndMaxBytes(t *testing.T) {
+	m := acquiredMaterialization(t)
+	root, err := readReferenceRoot(m.ArtifactDigest)
+	if err != nil || len(root.Protected) == 0 {
+		t.Fatalf("root = %+v, err=%v", root, err)
+	}
+	protected := root.Protected[0]
+	if err := removeMaterialization(m.Path); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Remove(filepath.Join(recordRoot(), m.ArtifactDigest.Hex(), "ready.json")); err != nil {
+		t.Fatal(err)
+	}
+	retiredAt := time.Now()
+	if err := retireReferenceRoot(m.ArtifactDigest, retiredAt); err != nil {
+		t.Fatal(err)
+	}
+	retention := time.Hour
+	if report, err := Collect(context.Background(), GCPolicy{Pressure: true, Retention: retention}); err != nil {
+		t.Fatal(err)
+	} else if report.ProtectedBytes == 0 {
+		t.Fatalf("retired closure was not retained: %+v", report)
+	}
+	h := protected.Hex()
+	objectPath := filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)
+	if _, err := os.Stat(objectPath); err != nil {
+		t.Fatalf("retained closure missing: %v", err)
+	}
+	future := retiredAt.Add(2 * retention)
+	if report, err := Collect(context.Background(), GCPolicy{Retention: retention, MaxBytes: 1, Clock: func() time.Time { return future }}); err != nil {
+		t.Fatal(err)
+	} else if report.ReclaimedBytes == 0 {
+		t.Fatalf("aged retired closure was not reclaimed: %+v", report)
+	}
+	if _, err := os.Stat(objectPath); !os.IsNotExist(err) {
+		t.Fatalf("aged retired closure survived reclamation: %v", err)
+	}
+}
+
+func TestAmbiguousIdentityLeaseProtectsEmbeddedClosureWithDamagedRoot(t *testing.T) {
+	m := acquiredMaterialization(t)
+	lease, err := NewLocalMaterializer().Lease(context.Background(), m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	previous := processIdentityLookup
+	processIdentityLookup = func(int) (string, error) { return "", nil }
+	t.Cleanup(func() {
+		processIdentityLookup = previous
+		_ = NewLocalMaterializer().Release(context.Background(), lease)
+	})
+	if len(lease.Protected) == 0 {
+		t.Fatal("lease did not persist embedded closure")
+	}
+	if err := os.Remove(filepath.Join(recordRoot(), m.ArtifactDigest.Hex(), "references.json")); err != nil {
+		t.Fatal(err)
+	}
+	report, err := Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.SkippedAmbiguous == 0 || report.ProtectedBytes == 0 {
+		t.Fatalf("ambiguous lease protection missing: %+v", report)
+	}
+	digest := lease.Protected[0]
+	h := digest.Hex()
+	if _, err := os.Stat(filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)); err != nil {
+		t.Fatalf("ambiguous lease closure removed: %v", err)
+	}
+}
