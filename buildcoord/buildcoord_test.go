@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -68,7 +69,8 @@ func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 	if err := c.Publish(claim, Artifact{Digest: "sha256:one", Verified: true}); !errors.Is(err, ErrUnverifiedArtifact) {
 		t.Fatalf("proof bypass: %v", err)
 	}
-	proof := Artifact{Digest: "sha256:one", ClosureDigest: "sha256:closure", Provider: "local", ProviderAuthorization: "local"}
+	closure := "sha256:" + strings.Repeat("a", 64)
+	proof := Artifact{Digest: "sha256:one", ClosureDigest: closure, Provider: "local", ProviderAuthorization: artifactAuthorization("local", closure)}
 	if err := c.Publish(claim, proof); err != nil {
 		t.Fatalf("proof publish: %v", err)
 	}

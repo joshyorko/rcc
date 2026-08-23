@@ -268,7 +268,7 @@ func (c *Filesystem) Wait(ctx context.Context, key BuildKey, interval time.Durat
 }
 
 func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
-	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (artifact.ClosureDigest == "" || artifact.Provider == "" || artifact.ProviderAuthorization != artifact.Provider)) {
+	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && !validArtifactProof(artifact)) {
 		return ErrUnverifiedArtifact
 	}
 	release, err := c.lock(context.Background(), claim.Key)
@@ -303,6 +303,23 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 		return fmt.Errorf("record publication event: %w", eventErr)
 	}
 	return os.Remove(c.claimPath(claim.Key))
+}
+
+func validArtifactProof(artifact Artifact) bool {
+	if !strings.HasPrefix(artifact.ClosureDigest, "sha256:") || len(strings.TrimPrefix(artifact.ClosureDigest, "sha256:")) != 64 || artifact.Provider == "" {
+		return false
+	}
+	for _, r := range strings.TrimPrefix(artifact.ClosureDigest, "sha256:") {
+		if !((r >= '0' && r <= '9') || (r >= 'a' && r <= 'f')) {
+			return false
+		}
+	}
+	return artifact.ProviderAuthorization == artifactAuthorization(artifact.Provider, artifact.ClosureDigest)
+}
+
+func artifactAuthorization(provider, closure string) string {
+	sum := sha256.Sum256([]byte(provider + "\n" + closure))
+	return "sha256:" + hex.EncodeToString(sum[:])
 }
 
 func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
