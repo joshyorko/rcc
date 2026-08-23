@@ -18,6 +18,8 @@ const (
 	ArchiveCatalogDirectory = ArchiveRoot + "/catalogs/"
 	ArchiveObjectDirectory  = ArchiveRoot + "/objects/"
 	ArchiveAttestationDir   = ArchiveRoot + "/attestations/"
+	ArchiveSpecificationDir = ArchiveRoot + "/specifications/"
+	ArchiveBlueprintDir     = ArchiveRoot + "/legacy-blueprints/"
 )
 
 const maxArchiveMemberSize int64 = 16 << 20
@@ -69,6 +71,57 @@ func ReadArchive(content []byte) (map[string][]byte, error) {
 		return nil, fmt.Errorf("open environment archive: %w", err)
 	}
 	return ArchiveEntries(reader)
+}
+
+// ValidateArchive verifies the complete content closure of a Manifest. It is
+// deliberately independent of installation and does not execute any content.
+func ValidateArchive(entries map[string][]byte) (Manifest, error) {
+	manifestBytes, ok := entries[ArchiveManifest]
+	if !ok {
+		return Manifest{}, fmt.Errorf("environment archive is missing %s", ArchiveManifest)
+	}
+	manifest, err := DecodeManifest(manifestBytes)
+	if err != nil {
+		return Manifest{}, fmt.Errorf("decode environment manifest: %w", err)
+	}
+	indexBytes, ok := entries[ArchiveObjectIndex]
+	if !ok {
+		return Manifest{}, fmt.Errorf("environment archive is missing %s", ArchiveObjectIndex)
+	}
+	if err := VerifyDescriptor(manifest.ObjectIndex, indexBytes); err != nil {
+		return Manifest{}, fmt.Errorf("verify object index: %w", err)
+	}
+	index, err := DecodeObjectIndex(indexBytes)
+	if err != nil {
+		return Manifest{}, fmt.Errorf("decode object index: %w", err)
+	}
+	for _, content := range []struct {
+		name string
+		desc Descriptor
+	}{
+		{ArchiveSpecificationDir + manifest.Specification.Digest.Hex(), manifest.Specification.Descriptor},
+		{ArchiveBlueprintDir + manifest.LegacyBlueprint.Digest.Hex(), manifest.LegacyBlueprint.Descriptor},
+		{ArchiveCatalogDirectory + manifest.Catalogs[0].Digest.Hex(), manifest.Catalogs[0].Descriptor},
+	} {
+		value, found := entries[content.name]
+		if !found {
+			return Manifest{}, fmt.Errorf("environment archive is missing %s", content.name)
+		}
+		if err := VerifyDescriptor(content.desc, value); err != nil {
+			return Manifest{}, fmt.Errorf("verify %s: %w", content.name, err)
+		}
+	}
+	for _, object := range index.Entries {
+		name := ArchiveObjectDirectory + object.StoredDigest.Hex()
+		value, found := entries[name]
+		if !found {
+			return Manifest{}, fmt.Errorf("environment archive is missing %s", name)
+		}
+		if err := VerifyDescriptor(Descriptor{Digest: object.StoredDigest, Size: object.StoredSize}, value); err != nil {
+			return Manifest{}, fmt.Errorf("verify object %s: %w", object.LegacyObjectID, err)
+		}
+	}
+	return manifest, nil
 }
 
 // ArchiveEntries returns the regular-file entries in an offline archive. ZIP

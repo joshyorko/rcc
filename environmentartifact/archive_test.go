@@ -3,6 +3,7 @@ package environmentartifact
 import (
 	"archive/zip"
 	"bytes"
+	"strings"
 	"testing"
 )
 
@@ -81,4 +82,40 @@ func TestWriteArchiveRejectsOversizedMember(t *testing.T) {
 	if err := WriteArchive(&bytes.Buffer{}, entries); err == nil {
 		t.Fatal("expected oversized archive member to be rejected")
 	}
+}
+
+func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
+	spec := []byte(`{"dependencies":["python=3.10"]}`)
+	blueprint := []byte("legacy blueprint")
+	catalog := []byte("catalog")
+	object := []byte("gzip object")
+	input := testManifestInput(t)
+	input.Specification.Descriptor = Descriptor{MediaType: SpecificationMediaType, Digest: DigestBytes(spec), Size: int64(len(spec))}
+	input.LegacyBlueprint.Descriptor = Descriptor{MediaType: LegacyBlueprintMediaType, Digest: DigestBytes(blueprint), Size: int64(len(blueprint))}
+	input.Catalogs[0].Descriptor = Descriptor{MediaType: CatalogV12MediaType, Digest: DigestBytes(catalog), Size: int64(len(catalog))}
+	entry := ObjectEntry{LegacyObjectID: strings.Repeat("1", 64), StoredDigest: DigestBytes(object), StoredSize: int64(len(object)), LogicalSize: 1, Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256"}
+	index, indexBytes, err := NewObjectIndex([]ObjectEntry{entry})
+	if err != nil {
+		t.Fatal(err)
+	}
+	input.ObjectIndex = Descriptor{MediaType: ObjectIndexMediaType, Digest: DigestBytes(indexBytes), Size: int64(len(indexBytes))}
+	manifest, manifestBytes, err := NewManifest(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries := map[string][]byte{
+		ArchiveManifest: manifestBytes, ArchiveObjectIndex: indexBytes,
+		ArchiveSpecificationDir + manifest.Specification.Digest.Hex(): spec,
+		ArchiveBlueprintDir + manifest.LegacyBlueprint.Digest.Hex(): blueprint,
+		ArchiveCatalogDirectory + manifest.Catalogs[0].Digest.Hex(): catalog,
+		ArchiveObjectDirectory + entry.StoredDigest.Hex(): object,
+	}
+	if _, err := ValidateArchive(entries); err != nil {
+		t.Fatalf("valid archive rejected: %v", err)
+	}
+	entries[ArchiveObjectDirectory+entry.StoredDigest.Hex()] = []byte("tampered")
+	if _, err := ValidateArchive(entries); err == nil {
+		t.Fatal("tampered object accepted")
+	}
+	_ = index
 }
