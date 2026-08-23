@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"hash"
 	"io"
+	"mime"
 	"net"
 	"net/http"
 	"net/url"
@@ -240,7 +241,15 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			return
 		}
 		caps, err := provider.Capabilities(ctx)
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, Capabilities: caps}, err)
+		selected := 0
+		restart := "unsafe"
+		if err == nil {
+			selected = 1
+			if caps.SafeRestart {
+				restart = "safe"
+			}
+		}
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"admin", "backup", "restore"}, AuthRequired: false, RestartOutcome: restart, Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -351,7 +360,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			return
 		}
 		if err := backup.Restore(ctx, io.LimitReader(request.Body, request.ContentLength+1)); err != nil {
-			http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
+			writeProviderFailure(writer, http.StatusUnprocessableEntity)
 			return
 		}
 		writer.WriteHeader(http.StatusNoContent)
@@ -364,14 +373,14 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		switch request.Method {
 		case http.MethodPut:
 			mediaType := request.Header.Get("Content-Type")
-			if mediaType == "" || strings.Contains(mediaType, ";") || request.ContentLength < 0 || request.ContentLength > maxProviderObjectBytes {
+			if !validProviderMediaType(mediaType) || request.ContentLength < 0 || request.ContentLength > maxProviderObjectBytes {
 				http.Error(writer, "invalid object content metadata", http.StatusBadRequest)
 				return
 			}
 			descriptor := environmentartifact.Descriptor{MediaType: mediaType, Digest: digest, Size: request.ContentLength}
 			err := provider.PutObject(ctx, Blob{Descriptor: descriptor, Reader: io.LimitReader(request.Body, request.ContentLength+1)})
 			if err != nil {
-				http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
+				writeProviderFailure(writer, http.StatusUnprocessableEntity)
 				return
 			}
 			writer.WriteHeader(http.StatusCreated)
@@ -405,6 +414,14 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 	}
 }
 
+func validProviderMediaType(value string) bool {
+	if value == "" || len(value) > 256 || strings.ContainsAny(value, "\r\n") {
+		return false
+	}
+	parsed, _, err := mime.ParseMediaType(value)
+	return err == nil && parsed == value
+}
+
 func handleManifestRequest(provider Provider, writer http.ResponseWriter, request *http.Request) {
 	path := strings.TrimPrefix(request.URL.Path, "/v1/manifests/sha256/")
 	commit := strings.HasSuffix(path, "/commit")
@@ -436,7 +453,7 @@ func handleManifestRequest(provider Provider, writer http.ResponseWriter, reques
 			return
 		}
 		if err := provider.CommitManifest(request.Context(), content); err != nil {
-			http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
+			writeProviderFailure(writer, http.StatusUnprocessableEntity)
 			return
 		}
 		writer.WriteHeader(http.StatusCreated)
@@ -479,11 +496,15 @@ func writeProviderReadError(writer http.ResponseWriter, request *http.Request, e
 
 func writeProviderJSON(writer http.ResponseWriter, value any, err error) {
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusUnprocessableEntity)
+		writeProviderFailure(writer, http.StatusUnprocessableEntity)
 		return
 	}
 	writer.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(writer).Encode(value)
+}
+
+func writeProviderFailure(writer http.ResponseWriter, status int) {
+	http.Error(writer, "artifact provider request failed", status)
 }
 
 func decodeBoundedJSON(body io.Reader, declared, maximum int64, target any) error {
@@ -595,7 +616,7 @@ func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
 	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1)) {
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || result.AuthRequired || result.RestartOutcome != "safe") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}
 	if err == nil {
@@ -628,7 +649,7 @@ func (it *HTTP) MissingObjects(ctx context.Context, descriptors []environmentart
 }
 
 func (it *HTTP) PutObject(ctx context.Context, blob Blob) error {
-	if blob.Reader == nil || blob.Descriptor.Size < 0 || blob.Descriptor.Size > maxProviderObjectBytes || blob.Descriptor.MediaType == "" {
+	if blob.Reader == nil || blob.Descriptor.Size < 0 || blob.Descriptor.Size > maxProviderObjectBytes || !validProviderMediaType(blob.Descriptor.MediaType) {
 		return fmt.Errorf("invalid object upload")
 	}
 	request, err := http.NewRequestWithContext(ctx, http.MethodPut, it.baseURL+"/v1/objects/sha256/"+blob.Descriptor.Digest.Hex(), io.LimitReader(blob.Reader, blob.Descriptor.Size+1))

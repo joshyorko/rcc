@@ -29,9 +29,13 @@ const (
 )
 
 type ProtocolCapabilities struct {
-	Protocol     string       `json:"protocol"`
-	Versions     []int        `json:"versions"`
-	Capabilities Capabilities `json:"capabilities"`
+	Protocol        string       `json:"protocol"`
+	Versions        []int        `json:"versions"`
+	SelectedVersion int          `json:"selectedVersion"`
+	Extensions      []string     `json:"extensions,omitempty"`
+	AuthRequired    bool         `json:"authRequired,omitempty"`
+	RestartOutcome  string       `json:"restartOutcome,omitempty"`
+	Capabilities    Capabilities `json:"capabilities"`
 }
 
 var (
