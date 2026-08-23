@@ -2,7 +2,7 @@
 
 [![Build (caching)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml/badge.svg)](https://github.com/joshyorko/rcc/actions/workflows/rcc.yaml)
 [![Lint](https://github.com/joshyorko/rcc/actions/workflows/lint.yml/badge.svg)](https://github.com/joshyorko/rcc/actions/workflows/lint.yml)
-[![codecov](https://codecov.io/gh/joshyorko/rcc/branch/master/graph/badge.svg)](https://codecov.io/gh/joshyorko/rcc)
+[![codecov](https://codecov.io/gh/joshyorko/rcc/branch/main/graph/badge.svg)](https://codecov.io/gh/joshyorko/rcc)
 [![Release](https://img.shields.io/github/v/release/joshyorko/rcc)](https://github.com/joshyorko/rcc/releases)
 
 ![RCC](/docs/rcc-logo.svg)

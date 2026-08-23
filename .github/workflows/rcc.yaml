@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     env:
-      ROBOCORP_HOME: ${{ runner.temp }}/rcc-release-candidate-home
+      ROBOCORP_HOME: ${{ github.workspace }}/tmp/rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -163,7 +163,8 @@ jobs:
           VERSION: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
         run: |
-          export DATE=$(date +"%d.%-m.%Y")
+          DATE=$(date +"%d.%-m.%Y")
+          export DATE
 
           # Try to fetch existing index.json from latest release
           curl -sL "https://github.com/${REPO}/releases/latest/download/index.json" -o existing.json 2>/dev/null || echo '{"tested":[],"edge":[]}' > existing.json
