@@ -39,6 +39,59 @@ type journalRecord struct {
 	Kind, Digest, MediaType, Content string
 	Size                             int64
 	At                               int64
+	Txn                              string `json:"txn,omitempty"`
+}
+
+func (j *Journal) applyJournalRecord(r journalRecord) error {
+	switch r.Kind {
+	case "manifest":
+		b, e := base64.StdEncoding.DecodeString(r.Content)
+		if e != nil {
+			return e
+		}
+		j.manifests[r.Digest] = b
+		if r.At > 0 {
+			j.manifestTimes[r.Digest] = time.Unix(0, r.At)
+		}
+	case "delete-manifest":
+		delete(j.manifests, r.Digest)
+		delete(j.manifestTimes, r.Digest)
+	case "delete-object":
+		delete(j.objects, r.Digest)
+		_ = os.Remove(filepath.Join(j.objectDir, r.Digest))
+	case "object":
+		p := filepath.Join(j.objectDir, r.Digest)
+		if r.Content != "" {
+			b, e := base64.StdEncoding.DecodeString(r.Content)
+			if e != nil {
+				return e
+			}
+			if e = os.WriteFile(p, b, 0600); e != nil {
+				return e
+			}
+			r.Size = int64(len(b))
+		}
+		if r.Size >= 0 && r.Size <= maxProviderObjectBytes {
+			if st, e := os.Stat(p); e == nil && st.Size() == r.Size {
+				if e := verifyJournalFile(p, r.Digest, r.Size); e == nil {
+					j.objects[r.Digest] = objectRef{p, r.Size, r.MediaType}
+				}
+			}
+		}
+	case "policy":
+		b, e := base64.StdEncoding.DecodeString(r.Content)
+		if e != nil {
+			return e
+		}
+		tmp := j.path + ".policy.replay"
+		if e = os.WriteFile(tmp, b, 0600); e != nil {
+			return e
+		}
+		if e = os.Rename(tmp, j.path+".policy"); e != nil {
+			return e
+		}
+	}
+	return nil
 }
 
 func verifyJournalFile(path, digest string, size int64) error {
@@ -87,45 +140,32 @@ func NewJournal(path string) (*Journal, error) {
 	s := bufio.NewScanner(f)
 	s.Buffer(make([]byte, 4096), int(maxManifestBytes+4096))
 	var malformed error
+	pending := map[string][]journalRecord{}
 	for s.Scan() {
 		var r journalRecord
 		if e := json.Unmarshal(s.Bytes(), &r); e != nil {
 			malformed = e
 			break
 		}
-		switch r.Kind {
-		case "manifest":
-			b, e := base64.StdEncoding.DecodeString(r.Content)
-			if e != nil {
-				return nil, e
-			}
-			j.manifests[r.Digest] = b
-			if r.At > 0 {
-				j.manifestTimes[r.Digest] = time.Unix(0, r.At)
-			}
-		case "delete-manifest":
-			delete(j.manifests, r.Digest)
-			delete(j.manifestTimes, r.Digest)
-		case "delete-object":
-			delete(j.objects, r.Digest)
-			_ = os.Remove(filepath.Join(j.objectDir, r.Digest))
-		case "object":
-			p := filepath.Join(j.objectDir, r.Digest)
-			if r.Content != "" {
-				b, e := base64.StdEncoding.DecodeString(r.Content)
-				if e != nil {
+		if r.Kind == "restore-begin" {
+			pending[r.Txn] = nil
+			continue
+		}
+		if r.Kind == "restore-commit" {
+			for _, item := range pending[r.Txn] {
+				if e := j.applyJournalRecord(item); e != nil {
 					return nil, e
 				}
-				if e = os.WriteFile(p, b, 0600); e != nil {
-					return nil, e
-				}
-				r.Size = int64(len(b))
 			}
-			if r.Size >= 0 && r.Size <= maxProviderObjectBytes {
-				if st, e := os.Stat(p); e == nil && st.Size() == r.Size && verifyJournalFile(p, r.Digest, r.Size) == nil {
-					j.objects[r.Digest] = objectRef{p, r.Size, r.MediaType}
-				}
-			}
+			delete(pending, r.Txn)
+			continue
+		}
+		if r.Txn != "" {
+			pending[r.Txn] = append(pending[r.Txn], r)
+			continue
+		}
+		if e := j.applyJournalRecord(r); e != nil {
+			return nil, e
 		}
 	}
 	if e := s.Err(); e != nil {
@@ -362,6 +402,13 @@ func (j *Journal) appendBatch(records []journalRecord) error {
 	}
 	return f.Sync()
 }
+
+func appendJournalRecord(records []journalRecord, extra journalRecord) []journalRecord {
+	if extra.Kind == "" {
+		return records
+	}
+	return append(records, extra)
+}
 func (j *Journal) ListObjects(ctx context.Context) ([]ObjectInfo, error) {
 	j.mu.RLock()
 	defer j.mu.RUnlock()
@@ -566,6 +613,8 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 	defer os.RemoveAll(stage)
 	tr := tar.NewReader(r)
 	seen := map[string]bool{}
+	members := 0
+	var total int64
 	for {
 		if e := ctx.Err(); e != nil {
 			return e
@@ -582,13 +631,18 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 			return fmt.Errorf("unsafe or duplicate backup path %q", h.Name)
 		}
 		seen[name] = true
+		members++
+		if members > maxProviderArchiveMembers {
+			return fmt.Errorf("backup archive has too many members")
+		}
 		max := int64(maxProviderObjectBytes)
 		if name == "journal" || name == "policy" || strings.HasPrefix(name, "manifests/") {
 			max = maxManifestBytes
 		}
-		if h.Size < 0 || h.Size > max {
+		if h.Size < 0 || h.Size > max || h.Size > maxProviderArchiveBytes-total {
 			return fmt.Errorf("backup member too large")
 		}
+		total += h.Size
 		target := filepath.Join(stage, name)
 		if e := os.MkdirAll(filepath.Dir(target), 0700); e != nil {
 			return e
@@ -637,6 +691,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 	defer j.mu.Unlock()
 	objectRecords := make([]journalRecord, 0)
 	manifestRecords := make([]journalRecord, 0)
+	txn := fmt.Sprintf("restore-%d-%d", os.Getpid(), time.Now().UnixNano())
 	newObjects := make(map[string]objectRef)
 	newManifests := make(map[string][]byte)
 	newTimes := make(map[string]time.Time)
@@ -660,6 +715,12 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 					}
 					return fmt.Errorf("backup conflicts with immutable object %q", d)
 				}
+				oldStat, se := oldFile.Stat()
+				if se != nil || verifyJournalFile(dst, d, oldStat.Size()) != nil {
+					oldFile.Close()
+					newFile.Close()
+					return fmt.Errorf("backup conflicts with immutable object %q", d)
+				}
 				same, ce := sameContent(oldFile, newFile)
 				oldFile.Close()
 				newFile.Close()
@@ -673,7 +734,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 				return e
 			}
 			newObjects[d] = objectRef{dst, st.Size(), ""}
-			objectRecords = append(objectRecords, journalRecord{Kind: "object", Digest: d, Size: st.Size()})
+			objectRecords = append(objectRecords, journalRecord{Kind: "object", Digest: d, Size: st.Size(), Txn: txn})
 		} else {
 			d := filepath.Base(name)
 			b, e := os.ReadFile(src)
@@ -688,7 +749,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 			}
 			newManifests[d] = append([]byte(nil), b...)
 			newTimes[d] = time.Now()
-			manifestRecords = append(manifestRecords, journalRecord{Kind: "manifest", Digest: d, Content: base64.StdEncoding.EncodeToString(b), At: newTimes[d].UnixNano()})
+			manifestRecords = append(manifestRecords, journalRecord{Kind: "manifest", Digest: d, Content: base64.StdEncoding.EncodeToString(b), At: newTimes[d].UnixNano(), Txn: txn})
 		}
 	}
 	// Validate the complete staged closure before publishing anything.
@@ -738,6 +799,20 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 			}
 		}
 	}
+	policyRecord := journalRecord{}
+	if src := filepath.Join(stage, "policy"); func() bool { _, e := os.Stat(src); return e == nil }() {
+		b, e := os.ReadFile(src)
+		if e != nil {
+			return e
+		}
+		policyRecord = journalRecord{Kind: "policy", Content: base64.StdEncoding.EncodeToString(b), Txn: txn}
+	}
+	if len(objectRecords) == 0 && len(manifestRecords) == 0 && policyRecord.Kind == "" {
+		return nil
+	}
+	if e := j.append(journalRecord{Kind: "restore-begin", Txn: txn}); e != nil {
+		return e
+	}
 	if e := j.appendBatch(objectRecords); e != nil {
 		return e
 	}
@@ -747,29 +822,28 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 		}
 		j.objects[d] = ref
 	}
-	if e := j.appendBatch(manifestRecords); e != nil {
+	if e := j.appendBatch(appendJournalRecord(manifestRecords, policyRecord)); e != nil {
 		for d, ref := range newObjects {
 			_ = os.Remove(ref.path)
 			delete(j.objects, d)
 		}
 		return e
 	}
+	if e := j.append(journalRecord{Kind: "restore-commit", Txn: txn}); e != nil {
+		for d, ref := range newObjects {
+			_ = os.Remove(ref.path)
+			delete(j.objects, d)
+		}
+		return e
+	}
+	if policyRecord.Kind != "" {
+		if e := j.applyJournalRecord(policyRecord); e != nil {
+			return e
+		}
+	}
 	for d, b := range newManifests {
 		j.manifests[d] = b
 		j.manifestTimes[d] = newTimes[d]
-	}
-	if src := filepath.Join(stage, "policy"); func() bool { _, e := os.Stat(src); return e == nil }() {
-		b, e := os.ReadFile(src)
-		if e != nil {
-			return e
-		}
-		tmp := j.path + ".policy.restore"
-		if e = os.WriteFile(tmp, b, 0600); e != nil {
-			return e
-		}
-		if e = os.Rename(tmp, j.path+".policy"); e != nil {
-			return e
-		}
 	}
 	return nil
 }

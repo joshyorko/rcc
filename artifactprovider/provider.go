@@ -23,6 +23,11 @@ type Capabilities struct {
 	RequiredFeatures []string `json:"requiredFeatures,omitempty"`
 }
 
+const (
+	maxProviderArchiveMembers = 4096
+	maxProviderArchiveBytes   = int64(128 << 30)
+)
+
 type ProtocolCapabilities struct {
 	Protocol     string       `json:"protocol"`
 	Versions     []int        `json:"versions"`

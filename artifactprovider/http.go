@@ -346,7 +346,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			methodNotAllowed(writer)
 			return
 		}
-		if request.ContentLength < 0 || request.ContentLength > maxProviderObjectBytes {
+		if request.ContentLength < 0 || request.ContentLength > maxProviderArchiveBytes {
 			http.Error(writer, "invalid restore size", http.StatusBadRequest)
 			return
 		}

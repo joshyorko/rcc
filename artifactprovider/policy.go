@@ -172,6 +172,8 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	p.uploads++
 	if err := p.Provider.PutObject(ctx, b); err != nil {
 		p.uploads--
+		p.reconcileLocked()
+		_ = p.persistLocked()
 		return err
 	}
 	p.objects++
@@ -192,6 +194,8 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 		return fmt.Errorf("%w: manifests", ErrQuotaExceeded)
 	}
 	if err := p.Provider.CommitManifest(ctx, content); err != nil {
+		p.reconcileLocked()
+		_ = p.persistLocked()
 		return err
 	}
 	p.manifests++

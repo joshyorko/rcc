@@ -44,7 +44,9 @@ func TestJournalDurableRestartContract(t *testing.T) {
 
 func TestJournalRejectsManifestWithMissingObjects(t *testing.T) {
 	j, err := NewJournal(t.TempDir() + "/provider.log")
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	fixture := newProviderFixture(t)
 	if err := j.CommitManifest(context.Background(), fixture.manifestBytes); err == nil {
 		t.Fatal("journal committed manifest without its referenced objects")
@@ -53,20 +55,84 @@ func TestJournalRejectsManifestWithMissingObjects(t *testing.T) {
 
 func TestJournalRecoversTornFinalRecord(t *testing.T) {
 	path := t.TempDir() + "/provider.log"
-	if err := os.WriteFile(path, []byte("{\"Kind\":\"object\"}\n{\"Kind\":\"object\""), 0600); err != nil { t.Fatal(err) }
-	if _, err := NewJournal(path); err != nil { t.Fatalf("torn final record should be discarded: %v", err) }
+	if err := os.WriteFile(path, []byte("{\"Kind\":\"object\"}\n{\"Kind\":\"object\""), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := NewJournal(path); err != nil {
+		t.Fatalf("torn final record should be discarded: %v", err)
+	}
 }
 
 func TestJournalStreamsObjectsToSidecar(t *testing.T) {
 	path := t.TempDir() + "/provider.log"
 	content := bytes.Repeat([]byte("x"), 64*1024)
 	j, err := NewJournal(path)
-	if err != nil { t.Fatal(err) }
-	if err := j.PutObject(context.Background(), testBlob(content)); err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := j.PutObject(context.Background(), testBlob(content)); err != nil {
+		t.Fatal(err)
+	}
 	logBytes, err := os.ReadFile(path)
-	if err != nil { t.Fatal(err) }
-	if bytes.Contains(logBytes, []byte(base64.StdEncoding.EncodeToString(content))) { t.Fatal("journal embedded object payload") }
-	if _, err := os.Stat(path + ".objects/" + testBlob(content).Descriptor.Digest.Hex()); err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(logBytes, []byte(base64.StdEncoding.EncodeToString(content))) {
+		t.Fatal("journal embedded object payload")
+	}
+	if _, err := os.Stat(path + ".objects/" + testBlob(content).Descriptor.Digest.Hex()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestJournalRestoreIsRestartDurableWithoutDuplicateHistory(t *testing.T) {
+	source, err := NewJournal(t.TempDir() + "/source.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixture := newProviderFixture(t)
+	for _, blob := range fixture.blobs {
+		raw, _ := io.ReadAll(blob.Reader)
+		if err := source.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader(raw)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := source.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	if err := source.Backup(context.Background(), &archive); err != nil {
+		t.Fatal(err)
+	}
+	path := t.TempDir() + "/target.log"
+	target, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := target.Restore(context.Background(), bytes.NewReader(archive.Bytes())); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := target.Restore(context.Background(), bytes.NewReader(archive.Bytes())); err != nil {
+		t.Fatal(err)
+	}
+	after, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(before, after) {
+		t.Fatal("idempotent restore appended duplicate history")
+	}
+	restarted, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := restarted.ResolveManifest(context.Background(), fixture.manifest.ArtifactDigest); err != nil {
+		t.Fatalf("restart lost restored manifest: %v", err)
+	}
 }
 
 func TestPolicyTypedQuotaAndRateErrors(t *testing.T) {
@@ -99,10 +165,20 @@ func TestPolicyDoesNotChargeDuplicateUploads(t *testing.T) {
 
 func TestPolicyQuotaSurvivesRestart(t *testing.T) {
 	path := t.TempDir() + "/policy.log"
-	j, err := NewJournal(path); if err != nil { t.Fatal(err) }
+	j, err := NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
 	p := NewPolicy(j, Limits{MaxObjects: 1})
-	if err := p.PutObject(context.Background(), testBlob([]byte("body"))); err != nil { t.Fatal(err) }
-	j, err = NewJournal(path); if err != nil { t.Fatal(err) }
+	if err := p.PutObject(context.Background(), testBlob([]byte("body"))); err != nil {
+		t.Fatal(err)
+	}
+	j, err = NewJournal(path)
+	if err != nil {
+		t.Fatal(err)
+	}
 	p = NewPolicy(j, Limits{MaxObjects: 1})
-	if err := p.PutObject(context.Background(), testBlob([]byte("more"))); !errors.Is(err, ErrQuotaExceeded) { t.Fatalf("restart quota err=%v", err) }
+	if err := p.PutObject(context.Background(), testBlob([]byte("more"))); !errors.Is(err, ErrQuotaExceeded) {
+		t.Fatalf("restart quota err=%v", err)
+	}
 }

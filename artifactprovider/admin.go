@@ -181,6 +181,8 @@ func (it *Filesystem) Restore(ctx context.Context, r io.Reader) error {
 }
 func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage string, seen map[string]bool) error {
 	tr := tar.NewReader(r)
+	var total int64
+	members := 0
 	for {
 		if e := ctx.Err(); e != nil {
 			return e
@@ -199,10 +201,19 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 		if seen[rel] {
 			return fmt.Errorf("duplicate backup member %q", rel)
 		}
+		members++
+		if members > maxProviderArchiveMembers {
+			return fmt.Errorf("backup archive has too many members")
+		}
 		seen[rel] = true
-		if h.Size < 0 || h.Size > maxProviderObjectBytes {
+		maximum := int64(maxProviderObjectBytes)
+		if strings.HasPrefix(rel, "manifests/") || rel == "policy" {
+			maximum = maxManifestBytes
+		}
+		if h.Size < 0 || h.Size > maximum || h.Size > maxProviderArchiveBytes-total {
 			return fmt.Errorf("backup member too large")
 		}
+		total += h.Size
 		target := filepath.Join(stage, rel)
 		if e := os.MkdirAll(filepath.Dir(target), 0750); e != nil {
 			return e
@@ -276,12 +287,26 @@ func validateRestoreMember(rel, path string) error {
 		if e != nil {
 			return e
 		}
+		st, e := os.Stat(path)
+		if e != nil {
+			return e
+		}
+		if e := verifyJournalFile(path, d.Hex(), st.Size()); e != nil {
+			return fmt.Errorf("backup object digest mismatch")
+		}
+	} else if strings.HasPrefix(rel, "manifests/") {
+		name := filepath.Base(rel)
+		d, e := environmentartifact.ParseDigest("sha256:" + name)
+		if e != nil {
+			return e
+		}
 		b, e := os.ReadFile(path)
 		if e != nil {
 			return e
 		}
-		if environmentartifact.DigestBytes(b) != d {
-			return fmt.Errorf("backup object digest mismatch")
+		m, e := environmentartifact.DecodeManifest(b)
+		if e != nil || m.ArtifactDigest != d {
+			return fmt.Errorf("backup manifest digest mismatch")
 		}
 	}
 	return nil
