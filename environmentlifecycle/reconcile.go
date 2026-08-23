@@ -18,10 +18,10 @@ const (
 )
 
 type ReconcileReport struct {
-	ArtifactDigest           environmentartifact.Digest
-	Active, Stale, Ambiguous int
-	Repaired                 []string
-	Items                    []ReconcileItem
+	ArtifactDigest                  environmentartifact.Digest
+	Active, Stale, Ambiguous        int
+	Repaired                        []string
+	Items                           []ReconcileItem
 	Provisional, ProvisionalRemoved int `json:"provisional,omitempty"`
 }
 
@@ -53,15 +53,13 @@ func classifyLease(lease Lease) LeaseStatus {
 }
 
 func Reconcile(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
-	lock := artifactLock(digest)
-	lock.Lock()
-	defer lock.Unlock()
-	crossRelease, err := acquireCrossArtifactLock(digest)
-	if err != nil {
-		return ReconcileReport{}, err
-	}
-	defer func() { _ = crossRelease() }()
-	return reconcileLocked(ctx, digest)
+	var report ReconcileReport
+	err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+		var err error
+		report, err = reconcileLocked(ctx, digest)
+		return err
+	})
+	return report, err
 }
 
 func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
@@ -75,7 +73,9 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 			report.Provisional++
 			// These records are transactional intent, never readiness. Remove the
 			// journal entry after a crash; the ready record remains authoritative.
-			if err := os.Remove(path); err != nil && !os.IsNotExist(err) { return report, err }
+			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+				return report, err
+			}
 			report.ProvisionalRemoved++
 		}
 	}

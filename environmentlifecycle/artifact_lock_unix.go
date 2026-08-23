@@ -3,6 +3,7 @@
 package environmentlifecycle
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,6 +12,21 @@ import (
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func withArtifactTransaction(ctx context.Context, digest environmentartifact.Digest, fn func(context.Context) error) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	lock := artifactLock(digest)
+	lock.Lock()
+	defer lock.Unlock()
+	release, err := acquireCrossArtifactLock(digest)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = release() }()
+	return fn(ctx)
+}
 
 func acquireCrossArtifactLock(digest environmentartifact.Digest) (func() error, error) {
 	root := filepath.Join(recordRoot(), digest.Hex())

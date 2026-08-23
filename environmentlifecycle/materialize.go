@@ -57,12 +57,16 @@ func NewLocalMaterializer() *LocalMaterializer {
 }
 
 func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environmentartifact.Manifest) (Materialization, error) {
-	lock := artifactLock(manifest.ArtifactDigest)
-	lock.Lock()
-	defer lock.Unlock()
-	crossRelease, err := acquireCrossArtifactLock(manifest.ArtifactDigest)
-	if err != nil { return Materialization{}, err }
-	defer func() { _ = crossRelease() }()
+	var result Materialization
+	err := withArtifactTransaction(ctx, manifest.ArtifactDigest, func(ctx context.Context) error {
+		var err error
+		result, err = it.materializeLocked(ctx, manifest)
+		return err
+	})
+	return result, err
+}
+
+func (it *LocalMaterializer) materializeLocked(ctx context.Context, manifest environmentartifact.Manifest) (Materialization, error) {
 	if err := ctx.Err(); err != nil {
 		return Materialization{}, err
 	}
@@ -75,18 +79,26 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	}
 	verified := base
 	verified.State = stateVerifiedContent
-	if err := crash(CrashBeforeVerified); err != nil { return Materialization{}, err }
+	if err := crash(CrashBeforeVerified); err != nil {
+		return Materialization{}, err
+	}
 	if err := writeMaterializationRecord(verified); err != nil {
 		return Materialization{}, fmt.Errorf("record verified content: %w", err)
 	}
-	if err := crash(CrashAfterVerified); err != nil { return Materialization{}, err }
+	if err := crash(CrashAfterVerified); err != nil {
+		return Materialization{}, err
+	}
 	materializing := base
 	materializing.State = stateMaterializing
-	if err := crash(CrashBeforeMaterializing); err != nil { return Materialization{}, err }
+	if err := crash(CrashBeforeMaterializing); err != nil {
+		return Materialization{}, err
+	}
 	if err := writeMaterializationRecord(materializing); err != nil {
 		return Materialization{}, fmt.Errorf("record materializing state: %w", err)
 	}
-	if err := crash(CrashAfterMaterializing); err != nil { return Materialization{}, err }
+	if err := crash(CrashAfterMaterializing); err != nil {
+		return Materialization{}, err
+	}
 
 	catalogPath := filepath.Join(common.HololibCatalogLocation(), manifest.Catalogs[0].LegacyName)
 	portable, err := htfs.LoadPortableCatalog(catalogPath)
@@ -113,11 +125,15 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	ready := base
 	ready.State = stateReady
 	ready.VerifiedAt = time.Now().UTC()
-	if err := crash(CrashBeforeReady); err != nil { return Materialization{}, err }
+	if err := crash(CrashBeforeReady); err != nil {
+		return Materialization{}, err
+	}
 	if err := writeMaterializationRecord(ready); err != nil {
 		return Materialization{}, fmt.Errorf("record ready materialization: %w", err)
 	}
-	if err := crash(CrashAfterReady); err != nil { return Materialization{}, err }
+	if err := crash(CrashAfterReady); err != nil {
+		return Materialization{}, err
+	}
 	return Materialization{ArtifactDigest: manifest.ArtifactDigest, ID: id, Path: target, CacheHit: CacheProvider}, nil
 }
 
@@ -130,7 +146,17 @@ func NewAcquirer() *Acquirer {
 }
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
-	if _, err := Reconcile(ctx, request.ArtifactDigest); err != nil {
+	var result AcquireResult
+	err := withArtifactTransaction(ctx, request.ArtifactDigest, func(ctx context.Context) error {
+		var err error
+		result, err = it.acquireLocked(ctx, request)
+		return err
+	})
+	return result, err
+}
+
+func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
+	if _, err := reconcileLocked(ctx, request.ArtifactDigest); err != nil {
 		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
 	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
@@ -175,7 +201,13 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
-	materialization, err := it.materializer.Materialize(ctx, manifest)
+	var materialization Materialization
+	var err error
+	if local, ok := it.materializer.(*LocalMaterializer); ok {
+		materialization, err = local.materializeLocked(ctx, manifest)
+	} else {
+		materialization, err = it.materializer.Materialize(ctx, manifest)
+	}
 	if err != nil {
 		return AcquireResult{}, err
 	}
