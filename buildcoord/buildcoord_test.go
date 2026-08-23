@@ -33,6 +33,10 @@ func TestBuildKeyIsDeterministicAndIncludesCompatibility(t *testing.T) {
 	}
 }
 
+func TestVerifierConstructorRequiresTrustBoundary(t *testing.T) {
+	if _, err := NewFilesystemWithVerifier(t.TempDir(), nil, nil); err == nil { t.Fatal("nil verifier accepted") }
+}
+
 func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
 	a := testKey()
 	b := a

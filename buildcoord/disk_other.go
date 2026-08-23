@@ -13,6 +13,7 @@ func ReserveDisk(root string, bytes int64) (*DiskReservation, error) {
 	if bytes < 0 {
 		return nil, fmt.Errorf("disk reservation cannot be negative")
 	}
+	if bytes > 0 { return nil, fmt.Errorf("disk capacity reservation is unsupported on this platform") }
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return nil, err
 	}
