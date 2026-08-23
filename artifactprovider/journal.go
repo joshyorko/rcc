@@ -484,6 +484,44 @@ func (j *Journal) ListManifests(ctx context.Context) ([]ManifestInfo, error) {
 	sort.Slice(out, func(a, b int) bool { return out[a].Digest.Hex() < out[b].Digest.Hex() })
 	return out, nil
 }
+func (j *Journal) Audit(ctx context.Context) ([]AuditRecord, error) {
+	f, err := os.Open(j.path)
+	if os.IsNotExist(err) {
+		return []AuditRecord{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	out := []AuditRecord{}
+	s := bufio.NewScanner(f)
+	s.Buffer(make([]byte, 4096), int(maxManifestBytes+4096))
+	for s.Scan() {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		var r journalRecord
+		if err := json.Unmarshal(s.Bytes(), &r); err != nil {
+			return nil, err
+		}
+		if r.Kind == "restore-begin" || r.Kind == "restore-commit" {
+			continue
+		}
+		action := r.Kind
+		if strings.HasPrefix(action, "delete-") {
+			action = "gc-" + strings.TrimPrefix(action, "delete-")
+		}
+		at := time.Unix(0, r.At)
+		if r.At == 0 {
+			at = time.Time{}
+		}
+		out = append(out, AuditRecord{At: at, Action: action, Actor: r.Actor, Provider: r.Provider, Reference: r.Reference, Digest: r.Digest})
+	}
+	if err := s.Err(); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 func (j *Journal) Cleanup(ctx context.Context) (int, error) {
 	n := 0
 	ents, e := os.ReadDir(j.objectDir)
@@ -916,3 +954,4 @@ var _ Provider = (*Journal)(nil)
 var _ ProviderV1Admin = (*Journal)(nil)
 var _ ProviderV1Backup = (*Journal)(nil)
 var _ ProviderV1ReadOnly = (*Journal)(nil)
+var _ ProviderV1Audit = (*Journal)(nil)

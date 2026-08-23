@@ -111,6 +111,17 @@ type ProviderV1Enumerable interface {
 	ListObjects(context.Context) ([]ObjectInfo, error)
 	ListManifests(context.Context) ([]ManifestInfo, error)
 }
+type AuditRecord struct {
+	At        time.Time `json:"at"`
+	Action    string    `json:"action"`
+	Actor     string    `json:"actor"`
+	Provider  string    `json:"provider"`
+	Reference string    `json:"reference"`
+	Digest    string    `json:"digest,omitempty"`
+}
+type ProviderV1Audit interface {
+	Audit(context.Context) ([]AuditRecord, error)
+}
 type ProviderV1Admin interface {
 	ProviderV1Enumerable
 	GarbageCollect(context.Context, Retention) (GCReport, error)
@@ -172,3 +183,4 @@ type Provider interface {
 }
 
 var _ Provider = (*Filesystem)(nil)
+var _ ProviderV1Audit = (*Filesystem)(nil)

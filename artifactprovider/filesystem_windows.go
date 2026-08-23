@@ -76,7 +76,7 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 		return fmt.Errorf("remove CAS publication link: %w", err)
 	}
 	removeTemporary = false
-	return nil
+	return it.appendAudit("publish-object", blob.Descriptor.Digest)
 }
 
 func (it *Filesystem) hasObject(descriptor environmentartifact.Descriptor) (bool, error) {
@@ -126,7 +126,10 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 	if err := ensureWindowsProviderPath(it.root, filepath.Dir(destination), true); err != nil {
 		return err
 	}
-	return publishWindowsManifest(ctx, destination, content)
+	if err := publishWindowsManifest(ctx, destination, content); err != nil {
+		return err
+	}
+	return it.appendAudit("publish-manifest", manifest.ArtifactDigest)
 }
 
 func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest environmentartifact.Manifest) error {

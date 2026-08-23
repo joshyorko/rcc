@@ -318,6 +318,18 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			manifests, err := admin.ListManifests(ctx)
 			writeProviderJSON(writer, manifests, err)
 		}
+	case request.URL.Path == "/v1/admin/audit":
+		audit, ok := provider.(ProviderV1Audit)
+		if !ok {
+			http.Error(writer, "audit unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodGet {
+			methodNotAllowed(writer)
+			return
+		}
+		records, err := audit.Audit(ctx)
+		writeProviderJSON(writer, records, err)
 	case request.URL.Path == "/v1/admin/gc":
 		admin, ok := provider.(ProviderV1Admin)
 		if !ok {

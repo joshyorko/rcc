@@ -67,6 +67,7 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 		if expired && (r.KeepManifests <= 0 || kept >= r.KeepManifests) {
 			if e = os.Remove(it.manifestPath(m.Digest)); e == nil {
 				report.ManifestsRemoved++
+				_ = it.appendAudit("gc-manifest", m.Digest)
 			}
 			continue
 		}
@@ -123,6 +124,7 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 		if e = os.Remove(it.objectPath(o.Digest)); e == nil {
 			report.ObjectsRemoved++
 			report.BytesReclaimed += o.Size
+			_ = it.appendAudit("gc-object", o.Digest)
 		}
 	}
 	return report, nil

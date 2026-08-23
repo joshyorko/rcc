@@ -80,6 +80,30 @@ func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
 	}
 }
 
+type slowCapabilityProvider struct{ *Filesystem }
+
+func (p slowCapabilityProvider) Capabilities(ctx context.Context) (Capabilities, error) {
+	<-ctx.Done()
+	return Capabilities{}, ctx.Err()
+}
+func TestHTTPHandlerDeadlineStopsSlowProvider(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := NewHandlerWithOptions(slowCapabilityProvider{p}, HandlerOptions{RequestTimeout: 10 * time.Millisecond})
+	req := httptest.NewRequest(http.MethodGet, "/v1/capabilities", nil)
+	rec := httptest.NewRecorder()
+	started := time.Now()
+	handler.ServeHTTP(rec, req)
+	if time.Since(started) > time.Second {
+		t.Fatal("handler exceeded deadline")
+	}
+	if rec.Code < 400 {
+		t.Fatalf("slow provider status=%d", rec.Code)
+	}
+}
+
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {
 	t.Helper()
 	filesystem, err := NewFilesystem(t.TempDir())

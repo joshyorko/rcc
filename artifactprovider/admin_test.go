@@ -119,9 +119,9 @@ func TestHTTPAdminContractFilesystemAndJournal(t *testing.T) {
 			}
 			server := httptest.NewServer(NewHandler(provider))
 			defer server.Close()
-			for _, path := range []string{"/v1/health", "/v1/capabilities", "/v1/admin/objects", "/v1/admin/manifests", "/v1/admin/repair"} {
+			for _, path := range []string{"/v1/health", "/v1/capabilities", "/v1/admin/objects", "/v1/admin/manifests", "/v1/admin/audit", "/v1/admin/repair"} {
 				method := http.MethodGet
-				if strings.HasPrefix(path, "/v1/admin/") && path != "/v1/admin/objects" && path != "/v1/admin/manifests" {
+				if strings.HasPrefix(path, "/v1/admin/") && path != "/v1/admin/objects" && path != "/v1/admin/manifests" && path != "/v1/admin/audit" {
 					method = http.MethodPost
 				}
 				req, _ := http.NewRequest(method, server.URL+path, nil)
@@ -254,6 +254,10 @@ func TestHTTPJournalProviderFullParity(t *testing.T) {
 	}
 	if _, err := second.Health(context.Background()); err != nil {
 		t.Fatal(err)
+	}
+	var audit []AuditRecord
+	if err := client2.doJSON(context.Background(), http.MethodGet, "/v1/admin/audit", nil, &audit); err != nil || len(audit) == 0 {
+		t.Fatalf("audit=%v err=%v", audit, err)
 	}
 }
 

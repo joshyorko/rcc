@@ -1,6 +1,7 @@
 package artifactprovider
 
 import (
+	"bufio"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -31,6 +32,7 @@ func (it *contextReader) Read(target []byte) (int, error) {
 
 const maxManifestBytes = 16 << 20
 const filesystemRestoreMarker = ".restore-state"
+const filesystemAuditFile = ".audit"
 
 type filesystemRestoreState struct {
 	Created []string `json:"created"`
@@ -123,6 +125,44 @@ func syncFilesystemDir(path string) error {
 	}
 	defer d.Close()
 	return d.Sync()
+}
+
+func (it *Filesystem) Audit(ctx context.Context) ([]AuditRecord, error) {
+	f, err := os.Open(filepath.Join(it.root, filesystemAuditFile))
+	if os.IsNotExist(err) {
+		return []AuditRecord{}, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	out := []AuditRecord{}
+	s := bufio.NewScanner(f)
+	s.Buffer(make([]byte, 4096), maxManifestBytes)
+	for s.Scan() {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		var record AuditRecord
+		if err := json.Unmarshal(s.Bytes(), &record); err != nil {
+			return nil, err
+		}
+		out = append(out, record)
+	}
+	return out, s.Err()
+}
+
+func (it *Filesystem) appendAudit(action string, digest environmentartifact.Digest) error {
+	record, _ := json.Marshal(AuditRecord{At: time.Now(), Action: action, Actor: "rcc", Provider: "artifactprovider/filesystem", Reference: it.root, Digest: digest.Hex()})
+	f, err := os.OpenFile(filepath.Join(it.root, filesystemAuditFile), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		return err
+	}
+	if _, err = f.Write(append(record, '\n')); err == nil {
+		err = f.Sync()
+	}
+	_ = f.Close()
+	return err
 }
 
 func (it *Filesystem) objectPath(digest environmentartifact.Digest) string {
