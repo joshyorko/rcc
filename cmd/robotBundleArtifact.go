@@ -28,7 +28,8 @@ func importBundleArtifact(zr *zip.Reader) (environmentartifact.Manifest, error) 
 		}
 		name := temporary.Name()
 		_, copyErr := io.Copy(temporary, io.LimitReader(reader, environmentartifact.MaxArchiveSize+1))
-		closeErr := reader.Close(); fileCloseErr := temporary.Close()
+		closeErr := reader.Close()
+		fileCloseErr := temporary.Close()
 		defer os.Remove(name)
 		if copyErr != nil {
 			return imported, copyErr

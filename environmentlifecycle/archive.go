@@ -68,14 +68,22 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		allDescriptors = append(allDescriptors, item.descriptor)
 	}
 	missing, err := local.MissingObjects(ctx, allDescriptors)
-	if err != nil { return environmentartifact.Manifest{}, fmt.Errorf("check archive rollback set: %w", err) }
+	if err != nil {
+		return environmentartifact.Manifest{}, fmt.Errorf("check archive rollback set: %w", err)
+	}
 	missingSet := make(map[string]bool, len(missing))
-	for _, digest := range missing { missingSet[digest.Hex()] = true }
+	for _, digest := range missing {
+		missingSet[digest.Hex()] = true
+	}
 	committed := false
 	defer func() {
-		if committed { return }
+		if committed {
+			return
+		}
 		for _, item := range descriptors {
-			if missingSet[item.descriptor.Digest.Hex()] { _ = local.RemoveObject(item.descriptor.Digest) }
+			if missingSet[item.descriptor.Digest.Hex()] {
+				_ = local.RemoveObject(item.descriptor.Digest)
+			}
 		}
 	}()
 	for _, item := range descriptors {
@@ -95,8 +103,16 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 
 func bytesReader(content []byte) io.Reader { return &sliceReader{content: content} }
 
-type sliceReader struct { content []byte; offset int }
+type sliceReader struct {
+	content []byte
+	offset  int
+}
+
 func (r *sliceReader) Read(p []byte) (int, error) {
-	if r.offset >= len(r.content) { return 0, io.EOF }
-	n := copy(p, r.content[r.offset:]); r.offset += n; return n, nil
+	if r.offset >= len(r.content) {
+		return 0, io.EOF
+	}
+	n := copy(p, r.content[r.offset:])
+	r.offset += n
+	return n, nil
 }

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -330,5 +332,47 @@ func assertFileBytes(t *testing.T, path string, want []byte) {
 	}
 	if !bytes.Equal(got, want) {
 		t.Fatalf("%s = %q, want %q", path, got, want)
+	}
+}
+
+func TestHTTPAndOfflineArchiveConvergeOnExactArtifactIdentity(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	handler := artifactprovider.NewHandler(remote)
+	server := httptest.NewServer(http.HandlerFunc(handler.ServeHTTP))
+	defer server.Close()
+	httpProvider, err := artifactprovider.NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	manifest, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: httpProvider, OutputPath: archivePath})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manifest.ArtifactDigest != artifactDigest {
+		t.Fatalf("HTTP export digest = %s, want %s", manifest.ArtifactDigest, artifactDigest)
+	}
+	previousHome := common.Product.Home()
+	consumerHome := t.TempDir()
+	common.Product.ForceHome(consumerHome)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if imported.ArtifactDigest != artifactDigest {
+		t.Fatalf("offline import digest = %s, want %s", imported.ArtifactDigest, artifactDigest)
+	}
+	local, err := artifactprovider.NewFilesystem(filepath.Join(consumerHome, "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved, err := local.ResolveManifest(context.Background(), artifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := environmentartifact.DecodeManifest(resolved)
+	if err != nil || decoded.ArtifactDigest != artifactDigest {
+		t.Fatalf("offline local record identity = %s, %v", decoded.ArtifactDigest, err)
 	}
 }
