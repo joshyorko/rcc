@@ -32,12 +32,18 @@ func verifyJournalFile(path, digest string, size int64) error {
 	return nil
 }
 
+func readBoundedJournalIndex(path string) ([]byte, error) {
+	f, err := os.Open(path); if err != nil { return nil, err }; defer f.Close()
+	b, err := io.ReadAll(io.LimitReader(f, maxManifestBytes+1)); if err != nil { return nil, err }
+	if int64(len(b)) > maxManifestBytes { return nil, fmt.Errorf("object index exceeds bounded size") }; return b, nil
+}
+
 func NewJournal(path string) (*Journal,error) {
  j:=&Journal{path:path,objectDir:path+".objects",objects:map[string]objectRef{},manifests:map[string][]byte{},manifestTimes:map[string]time.Time{}}
  if err:=os.MkdirAll(j.objectDir,0700);err!=nil{return nil,err}; f,e:=os.Open(path);if os.IsNotExist(e){return j,nil};if e!=nil{return nil,e};defer f.Close()
  s:=bufio.NewScanner(f);s.Buffer(make([]byte,4096),int(maxManifestBytes+4096));var malformed error
  for s.Scan(){var r journalRecord;if e:=json.Unmarshal(s.Bytes(),&r);e!=nil{malformed=e;break};switch r.Kind{case "manifest":b,e:=base64.StdEncoding.DecodeString(r.Content);if e!=nil{return nil,e};j.manifests[r.Digest]=b;if r.At>0{j.manifestTimes[r.Digest]=time.Unix(0,r.At)};case "delete-manifest":delete(j.manifests,r.Digest);delete(j.manifestTimes,r.Digest);case "delete-object":delete(j.objects,r.Digest);_=os.Remove(filepath.Join(j.objectDir,r.Digest));case "object":p:=filepath.Join(j.objectDir,r.Digest);if r.Content!=""{b,e:=base64.StdEncoding.DecodeString(r.Content);if e!=nil{return nil,e};if e=os.WriteFile(p,b,0600);e!=nil{return nil,e};r.Size=int64(len(b))};if r.Size>=0&&r.Size<=maxProviderObjectBytes{if st,e:=os.Stat(p);e==nil&&st.Size()==r.Size&&verifyJournalFile(p,r.Digest,r.Size)==nil{j.objects[r.Digest]=objectRef{p,r.Size,r.MediaType}}}}}
- if e:=s.Err();e!=nil{return nil,e};if malformed!=nil{data,e:=os.ReadFile(path);if e!=nil{return nil,e};if len(data)==0||data[len(data)-1]=='\n'{return nil,fmt.Errorf("corrupt journal record: %w",malformed)}};return j,nil
+ if e:=s.Err();e!=nil{return nil,e};if malformed!=nil{data,e:=os.ReadFile(path);if e!=nil{return nil,e};if len(data)==0||data[len(data)-1]=='\n'{return nil,fmt.Errorf("corrupt journal record: %w",malformed)}};if ents,e:=os.ReadDir(j.objectDir);e==nil{for _,ent:=range ents{if len(ent.Name())==64{if _,ok:=j.objects[ent.Name()];!ok{_ = os.Remove(filepath.Join(j.objectDir,ent.Name()))}}}};return j,nil
 }
 func (j *Journal) Capabilities(context.Context)(Capabilities,error){return Capabilities{SchemaVersions:[]int{1},DigestAlgorithms:[]string{"sha256"},Encodings:[]string{"gzip"},MaxObjectBytes:maxProviderObjectBytes,MaxManifestBytes:maxManifestBytes,MaxRequestBytes:maxProviderJSONBytes,SafeRestart:true},nil}
 func (j *Journal) Health(ctx context.Context)(Health,error){if e:=ctx.Err();e!=nil{return Health{},e};j.mu.RLock();defer j.mu.RUnlock();var n int64;for _,r:=range j.objects{n+=r.size};return Health{Ready:true,Storage:"ok",Capability:"ok",Auth:"not-applicable",Quota:"ok",GC:"idle",Objects:int64(len(j.objects)),Manifests:int64(len(j.manifests)),Bytes:n},nil}

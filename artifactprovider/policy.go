@@ -70,27 +70,23 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 		return nil
 	}
 	p.mu.Lock()
+	defer p.mu.Unlock()
 	if p.Limits.MaxUploads > 0 && p.uploads >= p.Limits.MaxUploads {
-		p.mu.Unlock()
 		return fmt.Errorf("%w: uploads", ErrQuotaExceeded)
 	}
 	if p.Limits.MaxObjects > 0 && p.objects >= p.Limits.MaxObjects {
-		p.mu.Unlock()
 		return fmt.Errorf("%w: objects", ErrQuotaExceeded)
 	}
 	if p.Limits.MaxBytes > 0 && p.bytes+b.Descriptor.Size > p.Limits.MaxBytes {
-		p.mu.Unlock()
 		return fmt.Errorf("%w: bytes", ErrQuotaExceeded)
 	}
 	p.uploads++
 	if err := p.Provider.PutObject(ctx, b); err != nil {
-		p.mu.Unlock()
 		return err
 	}
 	p.objects++
 	p.bytes += b.Descriptor.Size
-	if err:=p.persistLocked();err!=nil{return fmt.Errorf("persist quota state: %w",err)}
-	p.mu.Unlock()
+	if err:=p.persistLocked();err!=nil{p.reconcileLocked();return fmt.Errorf("persist quota state: %w",err)}
 	return nil
 }
 func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
@@ -106,7 +102,7 @@ func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
 		return err
 	}
 	p.manifests++
-	if err:=p.persistLocked();err!=nil{return fmt.Errorf("persist quota state: %w",err)}
+	if err:=p.persistLocked();err!=nil{p.reconcileLocked();return fmt.Errorf("persist quota state: %w",err)}
 	return nil
 }
 func (p *Policy) Health(ctx context.Context) (Health, error) {
@@ -122,6 +118,7 @@ func (p *Policy) Health(ctx context.Context) (Health, error) {
 func (p *Policy) allow() error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	oldWindow,oldAt:=p.window,p.windowAt
 	now := time.Now()
 	if p.windowAt.IsZero() || now.Sub(p.windowAt) >= time.Second {
 		p.windowAt = now
@@ -131,8 +128,12 @@ func (p *Policy) allow() error {
 		return ErrRateLimited
 	}
 	p.window++
-	if err:=p.persistLocked();err!=nil{return err}
+	if err:=p.persistLocked();err!=nil{p.window,p.windowAt=oldWindow,oldAt;return err}
 	return nil
+}
+
+func (p *Policy) reconcileLocked() {
+	e,ok:=p.Provider.(ProviderV1Enumerable);if !ok{return}; objects,oe:=e.ListObjects(context.Background());manifests,me:=e.ListManifests(context.Background());if oe!=nil||me!=nil{return};p.objects=int64(len(objects));p.bytes=0;for _,o:=range objects{p.bytes+=o.Size};p.manifests=int64(len(manifests))
 }
 
 func (p *Policy) persistLocked() error {
