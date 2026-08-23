@@ -108,6 +108,13 @@ func TestArchiveEntriesRejectsMemberCountBomb(t *testing.T) {
 	}
 }
 
+func TestArchiveBudgetAcceptsRepresentativeActionsClosure(t *testing.T) {
+	const actionsArchiveMembers = 5700
+	if err := validateArchiveUncompressedBudget(actionsArchiveMembers, 0); err != nil {
+		t.Fatalf("representative Actions archive rejected: %v", err)
+	}
+}
+
 func TestArchiveEntriesRejectsCompressionBomb(t *testing.T) {
 	archive := new(bytes.Buffer)
 	zw := zip.NewWriter(archive)

@@ -40,7 +40,7 @@ type Capabilities struct {
 }
 
 const (
-	maxProviderArchiveMembers   = 4096
+	maxProviderArchiveMembers   = 32768
 	maxProviderArchiveBytes     = int64(128 << 30)
 	MaxDescriptorFanout         = 4096
 	maxProviderDescriptorFanout = MaxDescriptorFanout

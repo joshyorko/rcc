@@ -40,6 +40,17 @@ func TestObjectIndexExpansionBudgetFailsClosed(t *testing.T) {
 	}
 }
 
+func TestObjectIndexAcceptsRepresentativeActionsClosure(t *testing.T) {
+	const actionsObjectCount = 5694
+	index := environmentartifact.ObjectIndex{
+		Count:   actionsObjectCount,
+		Entries: make([]environmentartifact.ObjectEntry, actionsObjectCount),
+	}
+	if err := validateObjectIndexBudget(index); err != nil {
+		t.Fatalf("representative Actions closure rejected: %v", err)
+	}
+}
+
 func TestDeferredProviderResolvesOnce(t *testing.T) {
 	var calls atomic.Int32
 	deferred := NewDeferred(func() (Provider, error) { calls.Add(1); return &Filesystem{}, nil })

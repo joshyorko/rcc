@@ -25,7 +25,7 @@ const (
 
 const maxArchiveMemberSize int64 = 16 << 20
 const maxArchiveSize int64 = 256 << 20
-const maxArchiveMembers = 4096
+const maxArchiveMembers = 32768
 const maxArchiveCompressionRatio uint64 = 1000
 const maxArchiveUncompressedSize uint64 = 256 << 20
 
