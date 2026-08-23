@@ -53,6 +53,11 @@ class ReleaseTopologyTests(unittest.TestCase):
         root, _, index = self.fixture()
         self.assertEqual(validate(root, REPOSITORY_ROOT / ".github/workflows/rcc.yaml", index), [])
 
+    def test_repository_workflow_runs_all_release_platforms_natively(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        for runner in ("ubuntu-latest", "windows-latest", "macos-latest", "macos-13"):
+            self.assertIn(f'"{runner}"', workflow)
+
     def test_release_job_validates_downloaded_assets_without_build_tree(self):
         root, workflow, index = self.fixture()
         assets = root / "rcc-builds"
