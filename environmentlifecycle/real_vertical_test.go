@@ -34,6 +34,7 @@ type realConsumerReceipt struct {
 	NativeImport      string                     `json:"nativeImport,omitempty"`
 	NativeExtension   string                     `json:"nativeExtension,omitempty"`
 	SQLiteVersion     string                     `json:"sqliteVersion,omitempty"`
+	Compatibility     *CompatibilityReceipt      `json:"compatibility,omitempty"`
 }
 
 type realMismatchReceipt struct {
@@ -244,6 +245,7 @@ type exactBinaryAcquireResult struct {
 	MaterializationID string                     `json:"materializationId"`
 	Path              string                     `json:"path"`
 	CacheHit          CacheProvenance            `json:"cacheHit"`
+	Compatibility     *CompatibilityReceipt      `json:"compatibility,omitempty"`
 }
 
 type exactBinaryExecResult struct {
@@ -253,6 +255,7 @@ type exactBinaryExecResult struct {
 	CacheHit          CacheProvenance            `json:"cacheHit"`
 	ExitCode          int                        `json:"exitCode"`
 	LeaseID           string                     `json:"leaseId"`
+	Compatibility     *CompatibilityReceipt      `json:"compatibility,omitempty"`
 }
 
 func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome string) realCLIEvidence {
@@ -294,6 +297,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if acquired.ArtifactDigest != published.ArtifactDigest || acquired.CacheHit != CacheProvider {
 		t.Fatalf("exact binary cold acquire = %+v", acquired)
 	}
+	assertIndependentWorkerCapabilities(t, acquired.Compatibility)
 
 	proofFile := filepath.Join(t.TempDir(), "cli-python-proof.json")
 	execOutput := runExactBinaryCLI(t, binary, []string{
@@ -313,6 +317,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 		CacheHit: acquired.CacheHit, ExitCode: executed.ExitCode, LeaseID: executed.LeaseID,
 		LeaseReleased: exactLeaseReleased(consumerHome, executed.ArtifactDigest, executed.LeaseID),
 		NativeImport:  proof["nativeImport"], NativeExtension: proof["nativeExtension"], SQLiteVersion: proof["sqliteVersion"],
+		Compatibility: acquired.Compatibility,
 	}
 	if !cold.LeaseReleased {
 		t.Fatalf("exact binary CLI lease survived execution: %+v", cold)
@@ -346,6 +351,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if warmAcquired.ArtifactDigest != cold.ArtifactDigest || warmAcquired.MaterializationID != cold.MaterializationID || warmAcquired.Path != cold.Path || warmAcquired.CacheHit != CacheLocalMaterialization {
 		t.Fatalf("exact binary provider-dead warm acquire = %+v", warmAcquired)
 	}
+	assertIndependentWorkerCapabilities(t, warmAcquired.Compatibility)
 	warmExecOutput := runExactBinaryCLI(t, binary, []string{
 		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json", "--", "python", "-c", "print('warm')",
 	}, consumerHome, true)
@@ -355,6 +361,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 		ArtifactDigest: warmExecuted.ArtifactDigest, MaterializationID: warmExecuted.MaterializationID, Path: warmExecuted.Path,
 		CacheHit: warmExecuted.CacheHit, ExitCode: warmExecuted.ExitCode, LeaseID: warmExecuted.LeaseID,
 		LeaseReleased: exactLeaseReleased(consumerHome, warmExecuted.ArtifactDigest, warmExecuted.LeaseID), ProviderDeadReuse: true,
+		Compatibility: warmAcquired.Compatibility,
 	}
 	if warm.CacheHit != CacheLocalMaterialization || warm.ExitCode != 0 || !warm.ProviderDeadReuse || !warm.LeaseReleased {
 		t.Fatalf("exact binary provider-dead warm execution = %+v", warm)
@@ -411,6 +418,24 @@ func decodeExactBinaryJSON(t *testing.T, content string, target any) {
 	t.Helper()
 	if err := json.Unmarshal([]byte(strings.TrimSpace(content)), target); err != nil {
 		t.Fatalf("decode exact binary JSON %q: %v", content, err)
+	}
+}
+
+func assertIndependentWorkerCapabilities(t *testing.T, receipt *CompatibilityReceipt) {
+	t.Helper()
+	if receipt == nil || receipt.SchemaVersion == 0 {
+		t.Fatal("exact binary CLI did not return a compatibility receipt")
+	}
+	worker := receipt.Worker
+	wantFamily := runtime.GOOS
+	if wantFamily == "windows" {
+		wantFamily = "windows"
+	}
+	if worker.OS.Family != wantFamily || worker.OS.NativeArchitecture != runtime.GOARCH || worker.CPU.Architecture != runtime.GOARCH {
+		t.Fatalf("worker capabilities do not describe this runner: %+v", worker)
+	}
+	if worker.OS.Runtime == "" || worker.OS.Version == "" || worker.OS.KernelVersion == "" || worker.Filesystem.MaxPath <= 0 || len(worker.RelocationVersions) == 0 || !worker.Python.ArtifactProvided {
+		t.Fatalf("worker capabilities are incomplete: %+v", worker)
 	}
 }
 
@@ -498,7 +523,7 @@ func TestRealCurrentRCCAtoBConsumer(t *testing.T) {
 	}
 	receipt := realConsumerReceipt{
 		ArtifactDigest: result.ArtifactDigest, MaterializationID: result.MaterializationID,
-		Path: result.Path, CacheHit: result.CacheHit, ExitCode: -1,
+		Path: result.Path, CacheHit: result.CacheHit, ExitCode: -1, Compatibility: &result.Compatibility,
 	}
 	if mode == "cold" {
 		materialization := Materialization{

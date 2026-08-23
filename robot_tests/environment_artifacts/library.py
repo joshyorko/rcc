@@ -152,6 +152,15 @@ def write_native_runtime_robot_evidence(binary, version, artifact, cold, execute
             "cacheHit": executed["cacheHit"],
             "exitCode": executed["exitCode"],
             "leaseId": executed["leaseId"],
+            "leaseReleased": not (
+                Path(executed["path"]).parents[1]
+                / "artifacts"
+                / "v1"
+                / "materializations"
+                / artifact.split(":", 1)[1]
+                / "leases"
+                / f"{executed['leaseId']}.json"
+            ).exists(),
         },
         "warm": {
             "artifactDigest": warm["artifactDigest"],

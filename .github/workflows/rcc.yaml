@@ -234,14 +234,78 @@ jobs:
           receipt = Path(os.environ["RCC_REAL_RECEIPT_FILE"])
           robot = Path("tmp/output/native-runtime-robot-evidence.json")
           if not receipt.is_file() or not robot.is_file():
-              print(f"native receipt binding skipped: receipt={receipt.is_file()} robot={robot.is_file()}")
-          else:
+              raise SystemExit("missing exact CLI receipt or Robot evidence")
+
+          def require(value, key, label):
+              if not isinstance(value, dict) or key not in value:
+                  raise SystemExit(f"malformed {label}: missing {key}")
+              return value[key]
+
+          def lifecycle(label, evidence):
+              digest = require(evidence, "artifactDigest", label)
+              cold = require(evidence, "cold", label)
+              warm = require(evidence, "warm", label)
+              mismatch = require(evidence, "mismatch", label)
+              if require(cold, "artifactDigest", f"{label}.cold") != digest or require(warm, "artifactDigest", f"{label}.warm") != digest:
+                  raise SystemExit(f"{label} digest identity mismatch")
+              if require(cold, "cacheHit", f"{label}.cold") != "provider" or require(warm, "cacheHit", f"{label}.warm") != "local-materialization":
+                  raise SystemExit(f"{label} cold/warm cache provenance mismatch")
+              if require(cold, "materializationId", f"{label}.cold") != require(warm, "materializationId", f"{label}.warm") or require(cold, "path", f"{label}.cold") != require(warm, "path", f"{label}.warm"):
+                  raise SystemExit(f"{label} materialization identity mismatch")
+              if require(cold, "leaseId", f"{label}.cold") == "" or require(cold, "leaseReleased", f"{label}.cold") is not True:
+                  raise SystemExit(f"{label} lease evidence is incomplete")
+              compatibility = require(cold, "compatibility", f"{label}.cold")
+              worker = require(compatibility, "worker", f"{label}.cold.compatibility")
+              worker_os = require(worker, "os", f"{label}.cold.compatibility.worker")
+              worker_cpu = require(worker, "cpu", f"{label}.cold.compatibility.worker")
+              worker_python = require(worker, "python", f"{label}.cold.compatibility.worker")
+              worker_filesystem = require(worker, "filesystem", f"{label}.cold.compatibility.worker")
+              if not require(worker, "relocationVersions", f"{label}.cold.compatibility.worker") or not require(worker_os, "family", f"{label}.cold.compatibility.worker.os") or not require(worker_os, "nativeArchitecture", f"{label}.cold.compatibility.worker.os") or not require(worker_cpu, "architecture", f"{label}.cold.compatibility.worker.cpu") or require(worker_filesystem, "maxPath", f"{label}.cold.compatibility.worker.filesystem") <= 0 or require(worker_python, "artifactProvided", f"{label}.cold.compatibility.worker.python") is not True:
+                  raise SystemExit(f"{label} worker capability receipt is incomplete")
+              if require(warm, "providerDeadWarmReuse", f"{label}.warm") is not True:
+                  raise SystemExit(f"{label} provider-dead warm evidence is incomplete")
+              if require(mismatch, "rejected", f"{label}.mismatch") is not True or require(mismatch, "providerObjectGets", f"{label}.mismatch") != 0:
+                  raise SystemExit(f"{label} mismatch was not rejected before object fetch")
+              if require(cold, "nativeImport", f"{label}.cold") != "sqlite3" or not require(cold, "nativeExtension", f"{label}.cold") or not require(cold, "sqliteVersion", f"{label}.cold"):
+                  raise SystemExit(f"{label} native import evidence is incomplete")
+
+          def robot_lifecycle(evidence):
+              digest = require(evidence, "artifactDigest", "robotExactBinary")
+              cold = require(evidence, "cold", "robotExactBinary")
+              execute = require(evidence, "execute", "robotExactBinary")
+              warm = require(evidence, "warm", "robotExactBinary")
+              if any(require(item, "artifactDigest", "robotExactBinary") != digest for item in (cold, execute, warm)):
+                  raise SystemExit("Robot artifact identity mismatch")
+              if require(cold, "cacheHit", "robotExactBinary.cold") != "provider" or require(execute, "cacheHit", "robotExactBinary.execute") != "local-materialization" or require(warm, "cacheHit", "robotExactBinary.warm") != "local-materialization":
+                  raise SystemExit("Robot cache provenance mismatch")
+              if len({require(item, "materializationId", "robotExactBinary") for item in (cold, execute, warm)}) != 1 or len({require(item, "path", "robotExactBinary") for item in (cold, execute, warm)}) != 1:
+                  raise SystemExit("Robot materialization identity mismatch")
+              if require(execute, "leaseId", "robotExactBinary.execute") == "" or require(execute, "leaseReleased", "robotExactBinary.execute") is not True or require(execute, "exitCode", "robotExactBinary.execute") != 0:
+                  raise SystemExit("Robot lease/execute evidence is incomplete")
+              if require(warm, "providerDeadWarmReuse", "robotExactBinary.warm") is not True:
+                  raise SystemExit("Robot provider-dead warm evidence is incomplete")
+              native = require(evidence, "native", "robotExactBinary")
+              if require(native, "import", "robotExactBinary.native") != "sqlite3" or not require(native, "extension", "robotExactBinary.native") or not require(native, "sqliteVersion", "robotExactBinary.native"):
+                  raise SystemExit("Robot native import evidence is incomplete")
+
+          try:
               data = json.loads(receipt.read_text())
-              evidence = json.loads(robot.read_text())
-              if evidence["binarySha256"] != data["binary"]["sha256"]:
+              robot_evidence = json.loads(robot.read_text())
+              binary = require(data, "binary", "receipt")
+              exact = require(data, "exactBinaryCLI", "receipt")
+              source = require(data, "sourceAPI", "receipt")
+              if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):
+                  raise SystemExit("receipt and exact CLI artifact identities differ")
+              lifecycle("exactBinaryCLI", exact)
+              lifecycle("sourceAPI", source)
+              if require(robot_evidence, "binarySha256", "robotExactBinary") != require(binary, "sha256", "receipt"):
                   raise SystemExit("Robot evidence binary does not match staged RCC binary")
-              data["robotExactBinary"] = evidence
+              robot_lifecycle(robot_evidence)
+              data["robotExactBinary"] = robot_evidence
               receipt.write_text(json.dumps(data, indent=2) + "\n")
+          except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:
+              raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:

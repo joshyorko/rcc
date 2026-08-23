@@ -96,6 +96,10 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("robotExactBinary", workflow)
     self.assertIn("Write Native Runtime Robot Evidence", suite)
     self.assertIn("write_native_runtime_robot_evidence", library)
+    self.assertNotIn("binding skipped", workflow)
+    self.assertIn("missing exact CLI receipt or Robot evidence", workflow)
+    for marker in ("materializationId", "nativeImport", "leaseReleased", "providerDeadWarmReuse", "providerObjectGets", "worker capability receipt"):
+      self.assertIn(marker, workflow)
 
 
   def test_linux_only_tasks_fail_explicitly(self):
