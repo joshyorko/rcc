@@ -120,3 +120,59 @@ func TestHTTPAuthorizationUsesCompleteValueAndNamesMissingVariable(t *testing.T)
 		t.Fatal(err)
 	}
 }
+
+func TestHTTPAuthorizationIsolationAcrossClients(t *testing.T) {
+	var seen atomic.Int64
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") == "Bearer tenant-a" {
+			seen.Add(1)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))
+	}))
+	defer server.Close()
+	t.Setenv("RCC_TENANT_A", "Bearer tenant-a")
+	t.Setenv("RCC_TENANT_B", "Bearer tenant-b")
+	a, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: "RCC_TENANT_A"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: "RCC_TENANT_B"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := a.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := b.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if seen.Load() != 1 {
+		t.Fatalf("authorization isolation count=%d", seen.Load())
+	}
+}
+
+func TestHTTPAuthorizationIsolatesProviderAccess(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandlerWithOptions(p, HandlerOptions{Authorization: "Bearer tenant-a"}))
+	defer server.Close()
+	t.Setenv("RCC_TENANT_A_ONLY", "Bearer tenant-a")
+	t.Setenv("RCC_TENANT_B_ONLY", "Bearer tenant-b")
+	allowed, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: "RCC_TENANT_A_ONLY"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	denied, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), AuthorizationEnv: "RCC_TENANT_B_ONLY"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := allowed.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := denied.Capabilities(context.Background()); err == nil {
+		t.Fatal("cross-tenant provider access succeeded")
+	}
+}

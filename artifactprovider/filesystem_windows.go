@@ -33,6 +33,7 @@ func (it *Filesystem) initialize() error {
 }
 
 func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
+	it.requests.Add(1)
 	if blob.Reader == nil || len(blob.Descriptor.Digest.Hex()) != 64 || blob.Descriptor.Size < 0 {
 		return fmt.Errorf("invalid object descriptor or reader")
 	}
@@ -76,7 +77,7 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 		return fmt.Errorf("remove CAS publication link: %w", err)
 	}
 	removeTemporary = false
-	return nil
+	return it.appendAudit("publish-object", blob.Descriptor.Digest)
 }
 
 func (it *Filesystem) hasObject(descriptor environmentartifact.Descriptor) (bool, error) {
@@ -113,6 +114,7 @@ func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmenta
 }
 
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {
+	it.requests.Add(1)
 	manifest, err := environmentartifact.DecodeManifest(content)
 	if err != nil {
 		return fmt.Errorf("validate manifest before commit: %w", err)
@@ -126,7 +128,10 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 	if err := ensureWindowsProviderPath(it.root, filepath.Dir(destination), true); err != nil {
 		return err
 	}
-	return publishWindowsManifest(ctx, destination, content)
+	if err := publishWindowsManifest(ctx, destination, content); err != nil {
+		return err
+	}
+	return it.appendAudit("publish-manifest", manifest.ArtifactDigest)
 }
 
 func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest environmentartifact.Manifest) error {
@@ -137,6 +142,9 @@ func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest enviro
 	index, err := environmentartifact.DecodeObjectIndex(indexBytes)
 	if err != nil {
 		return fmt.Errorf("validate manifest object index: %w", err)
+	}
+	if err := validateObjectIndexBudget(index); err != nil {
+		return fmt.Errorf("validate manifest object index budget: %w", err)
 	}
 	referenced := []environmentartifact.Descriptor{manifest.Specification.Descriptor, manifest.LegacyBlueprint.Descriptor, manifest.Catalogs[0].Descriptor, manifest.ObjectIndex}
 	for _, entry := range index.Entries {

@@ -3,16 +3,159 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"os"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func TestHTTPOptionsConfigureUserAgentAndTimeout(t *testing.T) {
+	var got string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Get("User-Agent")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))
+	}))
+	defer server.Close()
+	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{UserAgent: "rcc/test", Timeout: time.Second})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got != "rcc/test" {
+		t.Fatalf("user-agent = %q", got)
+	}
+}
+
+func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
+	file, err := os.CreateTemp(t.TempDir(), "ca-*.pem")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+	if _, err := file.WriteString("not a certificate"); err != nil {
+		t.Fatal(err)
+	}
+	_, err = NewHTTPWithOptions("https://example.test", HTTPOptions{CAFile: file.Name()})
+	if err == nil || !strings.Contains(err.Error(), "CA") {
+		t.Fatalf("expected CA error, got %v", err)
+	}
+}
+
+func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
+	filesystem, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(filesystem))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	caps, err := client.Protocol(context.Background())
+	if err != nil || caps.Protocol != "rcc.artifact.v1" {
+		t.Fatalf("caps=%+v err=%v", caps, err)
+	}
+	if caps.SelectedVersion != 1 || caps.TransferOutcome != "full-restart-only" || caps.Immutability != "content-addressed" || len(caps.Extensions) == 0 {
+		t.Fatalf("negotiated diagnostics=%+v", caps)
+	}
+	if negotiated, err := client.ProtocolWithOptions(context.Background(), []int{1}, []string{"rcc.artifact.v1/backup", "rcc.artifact.v2/unknown"}); err != nil || negotiated.SelectedVersion != 1 || len(negotiated.Extensions) != 1 {
+		t.Fatalf("negotiation=%+v err=%v", negotiated, err)
+	}
+	if negotiated, err := client.ProtocolWithOptions(context.Background(), []int{2}, []string{"rcc.artifact.v2/compat"}); err != nil || negotiated.SelectedVersion != 2 {
+		t.Fatalf("v2 negotiation=%+v err=%v", negotiated, err)
+	}
+	if _, err := client.ProtocolWithOptions(context.Background(), []int{2}, nil); err == nil {
+		t.Fatal("v2 negotiation without compatibility extension was accepted")
+	}
+	health, err := client.Health(context.Background())
+	if err != nil || !health.Ready || health.Storage != "ok" {
+		t.Fatalf("health=%+v err=%v", health, err)
+	}
+	if _, err := client.NegotiateCapabilities(context.Background(), Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, SafeRestart: true}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.NegotiateCapabilities(context.Background(), Capabilities{RangeSupport: true}); err == nil {
+		t.Fatal("accepted unavailable range capability")
+	}
+}
+
+type slowCapabilityProvider struct{ *Filesystem }
+
+func (p slowCapabilityProvider) Capabilities(ctx context.Context) (Capabilities, error) {
+	<-ctx.Done()
+	return Capabilities{}, ctx.Err()
+}
+func TestHTTPHandlerDeadlineStopsSlowProvider(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	handler := NewHandlerWithOptions(slowCapabilityProvider{p}, HandlerOptions{RequestTimeout: 10 * time.Millisecond})
+	req := httptest.NewRequest(http.MethodGet, "/v1/capabilities", nil)
+	rec := httptest.NewRecorder()
+	started := time.Now()
+	handler.ServeHTTP(rec, req)
+	if time.Since(started) > time.Second {
+		t.Fatal("handler exceeded deadline")
+	}
+	if rec.Code < 400 {
+		t.Fatalf("slow provider status=%d", rec.Code)
+	}
+}
+
+func TestHTTPClientNetworkBodyDeadlineStopsSlowloris(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(100 * time.Millisecond)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))
+	}))
+	defer server.Close()
+	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{Client: server.Client(), Timeout: 10 * time.Millisecond})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Capabilities(context.Background()); err == nil {
+		t.Fatal("slow network response exceeded timeout")
+	}
+}
+
+func TestHTTPServerBodyDeadlineCleansSlowloris(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandlerWithOptions(p, HandlerOptions{RequestTimeout: 20 * time.Millisecond}))
+	defer server.Close()
+	u, _ := url.Parse(server.URL)
+	conn, err := net.Dial("tcp", u.Host)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+	_, _ = fmt.Fprintf(conn, "POST /v1/admin/restore HTTP/1.1\r\nHost: %s\r\nContent-Length: 100\r\nConnection: close\r\n\r\nx", u.Host)
+	_ = conn.SetReadDeadline(time.Now().Add(time.Second))
+	response, err := io.ReadAll(conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(response) == 0 || !bytes.Contains(response, []byte("400")) && !bytes.Contains(response, []byte("422")) {
+		t.Fatalf("slowloris response=%q", response)
+	}
+}
 
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {
 	t.Helper()

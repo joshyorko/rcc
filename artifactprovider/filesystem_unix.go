@@ -48,6 +48,7 @@ func (it *Filesystem) initialize() error {
 }
 
 func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
+	it.requests.Add(1)
 	if blob.Reader == nil || len(blob.Descriptor.Digest.Hex()) != 64 || blob.Descriptor.Size < 0 {
 		return fmt.Errorf("invalid object descriptor or reader")
 	}
@@ -95,6 +96,9 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 		if verifyErr := verifyObjectAt(destinationDir, destination, blob.Descriptor); verifyErr != nil {
 			return fmt.Errorf("conflicting immutable CAS object: %w", verifyErr)
 		}
+		if err := it.appendAudit("publish-object-idempotent", blob.Descriptor.Digest); err != nil {
+			return err
+		}
 		return nil
 	}
 	if err != nil {
@@ -103,6 +107,9 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 	removeTemporary = false
 	if err := unix.Fsync(destinationDir); err != nil {
 		return fmt.Errorf("fsync CAS object directory: %w", err)
+	}
+	if err := it.appendAudit("publish-object", blob.Descriptor.Digest); err != nil {
+		return err
 	}
 	return nil
 }
@@ -178,6 +185,7 @@ func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmenta
 }
 
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {
+	it.requests.Add(1)
 	manifest, err := environmentartifact.DecodeManifest(content)
 	if err != nil {
 		return fmt.Errorf("validate manifest before commit: %w", err)
@@ -197,7 +205,10 @@ func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error 
 		return err
 	}
 	defer func() { _ = unix.Close(directory) }()
-	return publishManifestBytesAt(ctx, directory, manifest.ArtifactDigest.Hex(), content)
+	if err := publishManifestBytesAt(ctx, directory, manifest.ArtifactDigest.Hex(), content); err != nil {
+		return err
+	}
+	return it.appendAudit("publish-manifest", manifest.ArtifactDigest)
 }
 
 func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest environmentartifact.Manifest) error {
@@ -208,6 +219,9 @@ func (it *Filesystem) verifyManifestClosure(ctx context.Context, manifest enviro
 	index, err := environmentartifact.DecodeObjectIndex(indexBytes)
 	if err != nil {
 		return fmt.Errorf("validate manifest object index: %w", err)
+	}
+	if err := validateObjectIndexBudget(index); err != nil {
+		return fmt.Errorf("validate manifest object index budget: %w", err)
 	}
 	referenced := []environmentartifact.Descriptor{manifest.Specification.Descriptor, manifest.LegacyBlueprint.Descriptor, manifest.Catalogs[0].Descriptor, manifest.ObjectIndex}
 	for _, entry := range index.Entries {

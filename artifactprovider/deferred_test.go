@@ -3,19 +3,40 @@ package artifactprovider
 import (
 	"context"
 	"errors"
+	"github.com/joshyorko/rcc/environmentartifact"
 	"strings"
 	"sync/atomic"
 	"testing"
 )
 
 func TestValidateV1Capabilities(t *testing.T) {
-	if err := ValidateV1Capabilities(Capabilities{[]int{1}, []string{"sha256"}, []string{"gzip"}}); err != nil {
+	if err := ValidateV1Capabilities(Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}}); err != nil {
 		t.Fatal(err)
 	}
-	for _, capabilities := range []Capabilities{{}, {[]int{2}, []string{"sha256"}, []string{"gzip"}}, {[]int{1}, []string{"sha512"}, []string{"gzip"}}, {[]int{1}, []string{"sha256"}, []string{"zstd"}}} {
+	for _, capabilities := range []Capabilities{{}, {SchemaVersions: []int{2}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}}, {SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha512"}, Encodings: []string{"gzip"}}, {SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"zstd"}}} {
 		if err := ValidateV1Capabilities(capabilities); err == nil {
 			t.Fatalf("accepted %+v", capabilities)
 		}
+	}
+}
+
+func TestValidateCapabilityIntersectionFailsClosed(t *testing.T) {
+	server := Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, SafeRestart: true}
+	if err := ValidateCapabilityIntersection(server, Capabilities{SchemaVersions: []int{1}, SafeRestart: true}); err != nil {
+		t.Fatal(err)
+	}
+	if err := ValidateCapabilityIntersection(server, Capabilities{RangeSupport: true}); err == nil {
+		t.Fatal("accepted unavailable range support")
+	}
+	if err := ValidateCapabilityIntersection(Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, RangeSupport: true}, Capabilities{}); err == nil {
+		t.Fatal("accepted range without safe restart")
+	}
+}
+
+func TestObjectIndexExpansionBudgetFailsClosed(t *testing.T) {
+	index := environmentartifact.ObjectIndex{Count: 1, TotalStoredBytes: 1, TotalLogicalBytes: maxProviderArchiveBytes, Entries: []environmentartifact.ObjectEntry{{StoredSize: 1, LogicalSize: maxProviderArchiveBytes}}}
+	if err := validateObjectIndexBudget(index); err == nil {
+		t.Fatal("accepted decompression expansion bomb")
 	}
 }
 
