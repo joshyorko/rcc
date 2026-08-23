@@ -126,7 +126,7 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 
 func cloneTLS(config *tls.Config) *tls.Config { if config == nil { return &tls.Config{} }; return config.Clone() }
 
-func NewHandler(provider *Filesystem) http.Handler {
+func NewHandler(provider Provider) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		if provider == nil || request.URL.RawPath != "" || request.URL.RawQuery != "" {
 			http.Error(writer, "invalid provider request", http.StatusBadRequest)
@@ -140,12 +140,13 @@ func NewHandler(provider *Filesystem) http.Handler {
 	})
 }
 
-func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, request *http.Request) {
+func handleProviderRequest(provider Provider, writer http.ResponseWriter, request *http.Request) {
 	ctx := request.Context()
 	switch {
 	case request.URL.Path == "/v1/health":
 		if request.Method != http.MethodGet { methodNotAllowed(writer); return }
-		health, err := provider.Health(ctx)
+		hp, ok := provider.(HealthProvider); if !ok { http.Error(writer, "health unavailable", http.StatusNotImplemented); return }
+		health, err := hp.Health(ctx)
 		writeProviderJSON(writer, health, err)
 	case request.URL.Path == "/v1/capabilities":
 		if request.Method != http.MethodGet {
@@ -214,7 +215,7 @@ func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, req
 	}
 }
 
-func handleManifestRequest(provider *Filesystem, writer http.ResponseWriter, request *http.Request) {
+func handleManifestRequest(provider Provider, writer http.ResponseWriter, request *http.Request) {
 	path := strings.TrimPrefix(request.URL.Path, "/v1/manifests/sha256/")
 	commit := strings.HasSuffix(path, "/commit")
 	if commit {
