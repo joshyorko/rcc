@@ -41,6 +41,7 @@ func TestGCProtectsManifestObjectIndexClosureAndReclaimsUnreferencedContent(t *t
 	if err := writeReferenceRoot(manifest, index); err != nil {
 		t.Fatal(err)
 	}
+	pinned := map[string]bool{manifestDigest.Hex(): true}
 	defaultReport, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot})
 	if err != nil {
 		t.Fatal(err)
@@ -51,14 +52,14 @@ func TestGCProtectsManifestObjectIndexClosureAndReclaimsUnreferencedContent(t *t
 	if _, err := os.Stat(filepath.Join(contentRoot, "objects", "sha256", dead.Hex()[:2], dead.Hex()[2:4], dead.Hex())); err != nil {
 		t.Fatalf("default GC removed unreferenced content: %v", err)
 	}
-	retained, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true, Retention: time.Hour})
+	retained, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true, Retention: time.Hour, Pinned: pinned})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if retained.ReclaimedBytes != 0 {
 		t.Fatalf("retention policy reclaimed fresh content: %+v", retained)
 	}
-	report, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true})
+	report, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot, Pressure: true, Pinned: pinned})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,5 +107,103 @@ func TestGCUsesActiveLeaseProtectedContentWhilePressureReclaimsDeadObjects(t *te
 	h := digest.Hex()
 	if _, err := os.Stat(filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)); !os.IsNotExist(err) {
 		t.Fatalf("dead object retained: %v", err)
+	}
+}
+
+func TestMaterializationEvictionRetiresRootBeforeCASReclamation(t *testing.T) {
+	m := acquiredMaterialization(t)
+	retention := time.Hour
+	report, err := Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Reclaimed == 0 {
+		t.Fatalf("materialization was not evicted: %+v", report)
+	}
+	root, err := readReferenceRoot(m.ArtifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if root.State != "retired" || root.Manifest != m.ArtifactDigest {
+		t.Fatalf("reference root lifecycle = %+v", root)
+	}
+	future := time.Now().Add(2 * retention)
+	if _, err := Collect(context.Background(), GCPolicy{Pressure: true, Retention: retention, Clock: func() time.Time { return future }}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := readReadyRecord(m.ArtifactDigest); !os.IsNotExist(err) {
+		t.Fatalf("ready record survived eviction: %v", err)
+	}
+}
+
+func TestActiveLeaseEmbeddedClosureSurvivesDamagedReferenceRoot(t *testing.T) {
+	for _, mode := range []string{"missing", "corrupt"} {
+		t.Run(mode, func(t *testing.T) {
+			m := acquiredMaterialization(t)
+			lease, err := NewLocalMaterializer().Lease(context.Background(), m)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer func() { _ = NewLocalMaterializer().Release(context.Background(), lease) }()
+			if len(lease.Protected) == 0 {
+				t.Fatal("lease did not persist protected closure")
+			}
+			rootPath := filepath.Join(recordRoot(), m.ArtifactDigest.Hex(), "references.json")
+			if mode == "missing" {
+				if err := os.Remove(rootPath); err != nil {
+					t.Fatal(err)
+				}
+			} else if err := os.WriteFile(rootPath, []byte("corrupt"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			report, err := Collect(context.Background(), GCPolicy{Pressure: true})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if report.ProtectedBytes == 0 {
+				t.Fatalf("active lease closure was not protected: %+v", report)
+			}
+			digest := lease.Protected[0]
+			h := digest.Hex()
+			if _, err := os.Stat(filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)); err != nil {
+				t.Fatalf("active lease payload removed: %v", err)
+			}
+		})
+	}
+}
+
+func TestRetiredRootHonorsPinnedLegalAndLocalOnlyPolicies(t *testing.T) {
+	for _, policyName := range []string{"pinned", "legal", "local-only"} {
+		t.Run(policyName, func(t *testing.T) {
+			m := acquiredMaterialization(t)
+			root, err := readReferenceRoot(m.ArtifactDigest)
+			if err != nil || len(root.Protected) == 0 {
+				t.Fatalf("root = %+v, err=%v", root, err)
+			}
+			if err := retireReferenceRoot(m.ArtifactDigest, time.Now()); err != nil {
+				t.Fatal(err)
+			}
+			key := m.ArtifactDigest.Hex()
+			policy := GCPolicy{Pressure: true}
+			switch policyName {
+			case "pinned":
+				policy.Pinned = map[string]bool{key: true}
+			case "legal":
+				policy.Legal = map[string]bool{key: true}
+			default:
+				policy.LocalOnly = map[string]bool{key: true}
+			}
+			if policy.LocalOnly != nil {
+				policy.RemoteKnown = map[string]bool{}
+			}
+			if _, err := Collect(context.Background(), policy); err != nil {
+				t.Fatal(err)
+			}
+			digest := root.Protected[0]
+			h := digest.Hex()
+			if _, err := os.Stat(filepath.Join(localContentRoot(), "objects", "sha256", h[:2], h[2:4], h)); err != nil {
+				t.Fatalf("policy %s removed protected payload: %v", policyName, err)
+			}
+		})
 	}
 }

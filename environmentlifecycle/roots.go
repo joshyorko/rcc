@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -12,11 +13,13 @@ import (
 type durableReferenceRoot struct {
 	Manifest  environmentartifact.Digest   `json:"manifest"`
 	Protected []environmentartifact.Digest `json:"protected"`
+	State     string                       `json:"state"`
+	RetiredAt time.Time                    `json:"retiredAt,omitempty"`
 }
 
 func writeReferenceRoot(manifest environmentartifact.Manifest, index environmentartifact.ObjectIndex) error {
 	graph := BuildReferenceGraph(manifest, index)
-	root := durableReferenceRoot{Manifest: graph.Manifest, Protected: graph.Protected}
+	root := durableReferenceRoot{Manifest: graph.Manifest, Protected: graph.Protected, State: "live"}
 	content, err := json.Marshal(root)
 	if err != nil {
 		return err
@@ -36,7 +39,29 @@ func readReferenceRoot(digest environmentartifact.Digest) (durableReferenceRoot,
 	if root.Manifest != digest {
 		return durableReferenceRoot{}, fmt.Errorf("reference root identity mismatch")
 	}
+	if root.State == "" {
+		root.State = "live"
+	}
+	if root.State != "live" && root.State != "retired" {
+		return durableReferenceRoot{}, fmt.Errorf("invalid reference root state")
+	}
 	return root, nil
+}
+
+func retireReferenceRoot(digest environmentartifact.Digest, at time.Time) error {
+	root, err := readReferenceRoot(digest)
+	if err != nil {
+		return err
+	}
+	if root.State == "retired" {
+		return nil
+	}
+	root.State, root.RetiredAt = "retired", at.UTC()
+	content, err := json.Marshal(root)
+	if err != nil {
+		return err
+	}
+	return writeAtomicMutable(recordRoot(), []string{digest.Hex(), "references.json"}, content)
 }
 
 func referenceRootExists(digest environmentartifact.Digest) bool {

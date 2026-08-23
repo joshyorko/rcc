@@ -37,7 +37,7 @@ func (it *LocalMaterializer) ExecutionHandle(ctx context.Context, lease Lease, c
 		return ExecutionHandle{}, fmt.Errorf("execution command is empty")
 	}
 	stored, err := readLease(lease.ArtifactDigest, lease.ID)
-	if err != nil || stored != lease {
+	if err != nil || !leasesEqual(stored, lease) {
 		return ExecutionHandle{}, fmt.Errorf("lease is absent or changed")
 	}
 	record, err := readReadyRecord(lease.ArtifactDigest)

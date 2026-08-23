@@ -101,12 +101,12 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		}
 		mergeGCReport(&report, one)
 	}
-	protected, roots, err := durableProtectedDigests(policy)
+	protected, roots, protectAll, err := durableProtectedDigests(policy)
 	if err != nil {
 		return report, err
 	}
 	report.ReferenceRoots = roots
-	protectedBytes, reclaimableBytes, reclaimedBytes, err := collectUnreferencedContent(ctx, policy, protected)
+	protectedBytes, reclaimableBytes, reclaimedBytes, err := collectUnreferencedContent(ctx, policy, protected, protectAll)
 	if err != nil {
 		return report, err
 	}
@@ -119,14 +119,15 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 	return report, nil
 }
 
-func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bool, int, error) {
+func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bool, int, bool, error) {
 	protected := map[environmentartifact.Digest]bool{}
+	protectAll := false
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
-		return protected, 0, nil
+		return protected, 0, false, nil
 	}
 	if err != nil {
-		return nil, 0, err
+		return nil, 0, false, err
 	}
 	roots := 0
 	for _, entry := range entries {
@@ -137,17 +138,8 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 		if err != nil {
 			continue
 		}
-		if !referenceRootExists(digest) {
-			continue
-		}
-		root, err := readReferenceRoot(digest)
-		if err != nil {
-			return nil, 0, err
-		}
-		roots++
-		// A durable root is always protected. Pin/legal/local-only policy can
-		// only add protection; it must never make a live root collectible.
-		protectRoot := true
+		leaseProtected := false
+		leaseEmbedded := false
 		leaseDir := filepath.Join(recordRoot(), digest.Hex(), "leases")
 		if leaseEntries, readErr := os.ReadDir(leaseDir); readErr == nil {
 			for _, leaseEntry := range leaseEntries {
@@ -155,11 +147,52 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 					continue
 				}
 				lease, leaseErr := readLease(digest, strings.TrimSuffix(leaseEntry.Name(), ".json"))
-				if leaseErr == nil && classifyLease(lease) != LeaseStale {
-					protectRoot = true
-					break
+				if leaseErr != nil {
+					protectAll = true
+					continue
+				}
+				if classifyLease(lease) != LeaseStale {
+					leaseProtected = true
+					if len(lease.Protected) == 0 {
+						protectAll = true
+					} else {
+						leaseEmbedded = true
+						for _, d := range lease.Protected {
+							protected[d] = true
+						}
+					}
 				}
 			}
+		}
+		if !referenceRootExists(digest) {
+			if leaseProtected && !leaseEmbedded {
+				protectAll = true
+			}
+			continue
+		}
+		root, rootErr := readReferenceRoot(digest)
+		if rootErr != nil {
+			if !leaseEmbedded {
+				protectAll = true
+			}
+			continue
+		}
+		roots++
+		protectRoot := root.State == "live" || leaseProtected
+		policyProtected := policy.Pinned[digest.Hex()] || policy.Legal[digest.Hex()] || (policy.LocalOnly[digest.Hex()] && !policy.RemoteKnown[digest.Hex()])
+		if root.State == "live" && !leaseProtected && !policyProtected {
+			if _, readyErr := readReadyRecord(digest); os.IsNotExist(readyErr) {
+				if retireErr := retireReferenceRoot(digest, policy.Clock()); retireErr == nil {
+					root, _ = readReferenceRoot(digest)
+					protectRoot = false
+				}
+			}
+		}
+		if root.State == "retired" && policy.Clock != nil && !root.RetiredAt.IsZero() && policy.Clock().Sub(root.RetiredAt) < policy.Retention {
+			protectRoot = true
+		}
+		if policyProtected {
+			protectRoot = true
 		}
 		if protectRoot {
 			for _, d := range root.Protected {
@@ -167,10 +200,10 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 			}
 		}
 	}
-	return protected, roots, nil
+	return protected, roots, protectAll, nil
 }
 
-func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected map[environmentartifact.Digest]bool) (int64, int64, int64, error) {
+func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected map[environmentartifact.Digest]bool, protectAll bool) (int64, int64, int64, error) {
 	root := policy.ContentRoot
 	if root == "" {
 		root = filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
@@ -222,6 +255,12 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 	})
 	if err != nil {
 		return protectedBytes, 0, 0, err
+	}
+	if protectAll {
+		for _, item := range candidates {
+			protectedBytes += item.size
+		}
+		return protectedBytes, 0, 0, nil
 	}
 	allow := policy.Pressure || (policy.MaxBytes > 0 && total > policy.MaxBytes)
 	if !allow {
@@ -312,6 +351,11 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	}
 	if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), "ready.json")); err != nil && !os.IsNotExist(err) {
 		return report, err
+	}
+	if referenceRootExists(digest) {
+		if err := retireReferenceRoot(digest, now); err != nil {
+			return report, err
+		}
 	}
 	report.Reclaimed++
 	report.ReclaimedBytes = report.ReclaimableBytes
