@@ -1,4 +1,4 @@
-//go:build linux
+//go:build darwin || linux
 
 package artifactprovider
 
@@ -90,7 +90,7 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 		return fmt.Errorf("close CAS object: %w", err)
 	}
 	destination := blob.Descriptor.Digest.Hex()
-	err = unix.Renameat2(destinationDir, temporary, destinationDir, destination, unix.RENAME_NOREPLACE)
+	err = publishNoReplaceAt(destinationDir, temporary, destination)
 	if errors.Is(err, unix.EEXIST) {
 		if verifyErr := verifyObjectAt(destinationDir, destination, blob.Descriptor); verifyErr != nil {
 			return fmt.Errorf("conflicting immutable CAS object: %w", verifyErr)
@@ -257,7 +257,10 @@ func openProviderRoot(path string) (int, error) {
 }
 
 func openProviderRootPath(path string, create bool) (int, error) {
-	clean := filepath.Clean(path)
+	clean, err := canonicalProviderRootPath(path, create)
+	if err != nil {
+		return -1, err
+	}
 	if !filepath.IsAbs(clean) || clean == string(filepath.Separator) {
 		return -1, fmt.Errorf("provider root must be a non-root absolute path")
 	}
@@ -454,7 +457,7 @@ func publishManifestBytesAt(ctx context.Context, directory int, name string, con
 	if err := file.Close(); err != nil {
 		return fmt.Errorf("close manifest temporary file: %w", err)
 	}
-	err = unix.Renameat2(directory, temporary, directory, name, unix.RENAME_NOREPLACE)
+	err = publishNoReplaceAt(directory, temporary, name)
 	if errors.Is(err, unix.EEXIST) {
 		existing, verifyErr := readRegularAt(ctx, directory, name, maxManifestBytes)
 		if verifyErr != nil {

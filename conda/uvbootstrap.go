@@ -283,7 +283,7 @@ func extractZip(zipPath, destDir string) (err error) {
 	defer reader.Close()
 
 	// Ensure destination directory exists without following symlinks.
-	err = ensureZipDirectory(destDir)
+	err = ensureZipDirectory(destDir, destDir)
 	fail.Fast(err)
 
 	var extractedBytes uint64
@@ -306,12 +306,12 @@ func extractZip(zipPath, destDir string) (err error) {
 
 		if mode.IsDir() {
 			// Create directory
-			err = ensureZipDirectory(target)
+			err = ensureZipDirectory(destDir, target)
 			fail.Fast(err)
 			continue
 		}
 		// Create the directory for this file
-		err = ensureZipDirectory(filepath.Dir(target))
+		err = ensureZipDirectory(destDir, filepath.Dir(target))
 		fail.Fast(err)
 		if info, statErr := os.Lstat(target); statErr == nil && info.Mode()&os.ModeSymlink != 0 {
 			fail.On(true, "zip target is a symlink: %s", file.Name)
@@ -371,17 +371,34 @@ func extractZipFile(file *zip.File, target string, remaining uint64) (written in
 	return written, nil
 }
 
-func ensureZipDirectory(directory string) error {
-	abs, err := filepath.Abs(directory)
+func ensureZipDirectory(root, directory string) error {
+	absRoot, err := filepath.Abs(root)
 	if err != nil {
 		return err
 	}
-	volumeRoot := filepath.VolumeName(abs) + string(os.PathSeparator)
-	relative, err := filepath.Rel(volumeRoot, abs)
+	absDirectory, err := filepath.Abs(directory)
 	if err != nil {
 		return err
 	}
-	current := volumeRoot
+	relative, err := filepath.Rel(absRoot, absDirectory)
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) || filepath.IsAbs(relative) {
+		return fmt.Errorf("zip directory outside of destination root: %s", directory)
+	}
+	if err := os.MkdirAll(absRoot, 0o750); err != nil {
+		return err
+	}
+	rootInfo, err := os.Lstat(absRoot)
+	if err != nil {
+		return err
+	}
+	if rootInfo.Mode()&os.ModeSymlink != 0 {
+		return fmt.Errorf("zip destination root is a symlink: %s", absRoot)
+	}
+	if !rootInfo.IsDir() {
+		return fmt.Errorf("zip destination root is not a directory: %s", absRoot)
+	}
+
+	current := absRoot
 	if relative == "." {
 		relative = ""
 	}

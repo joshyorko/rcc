@@ -252,6 +252,26 @@ func TestExtractZipAllowsNormalFile(t *testing.T) {
 	must_be.Equal("world", string(content))
 }
 
+func TestExtractZipAllowsSymlinkAboveDestinationRoot(t *testing.T) {
+	must_be, _ := hamlet.Specifications(t)
+
+	tmp := t.TempDir()
+	realParent := filepath.Join(tmp, "real-parent")
+	aliasParent := filepath.Join(tmp, "alias-parent")
+	must_be.Nil(os.MkdirAll(realParent, 0o755))
+	if err := os.Symlink(realParent, aliasParent); err != nil {
+		t.Skipf("symlinks are unavailable: %v", err)
+	}
+	archive := filepath.Join(tmp, "ok.zip")
+	destDir := filepath.Join(aliasParent, "dest")
+	must_be.Nil(writeZip(archive, map[string]string{"hello.txt": "world"}))
+
+	must_be.Nil(extractZip(archive, destDir))
+	content, err := os.ReadFile(filepath.Join(realParent, "dest", "hello.txt"))
+	must_be.Nil(err)
+	must_be.Equal("world", string(content))
+}
+
 func TestExtractZipRejectsSymlinkEntryBeforeLaterFile(t *testing.T) {
 	must_be, wont_be := hamlet.Specifications(t)
 

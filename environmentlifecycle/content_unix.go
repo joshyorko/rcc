@@ -1,4 +1,4 @@
-//go:build linux
+//go:build darwin || linux
 
 package environmentlifecycle
 
@@ -74,7 +74,7 @@ func installLegacyImmutable(rootPath string, components []string, descriptor env
 	if err := file.Close(); err != nil {
 		return fmt.Errorf("close legacy immutable content: %w", err)
 	}
-	err = unix.Renameat2(parent, temporary, parent, name, unix.RENAME_NOREPLACE)
+	err = publishLifecycleNoReplaceAt(parent, temporary, name)
 	if errors.Is(err, unix.EEXIST) {
 		return verifyLegacyAt(parent, name, descriptor)
 	}
@@ -89,7 +89,7 @@ func installLegacyImmutable(rootPath string, components []string, descriptor env
 }
 
 func openAbsoluteDirectory(path string, create bool) (int, error) {
-	absolute, err := filepath.Abs(path)
+	absolute, err := canonicalLifecycleRootPath(path, create)
 	if err != nil {
 		return -1, fmt.Errorf("resolve legacy root: %w", err)
 	}
