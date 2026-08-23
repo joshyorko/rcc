@@ -35,6 +35,17 @@ func TestParsePriorityMapResolvesSpecificationAndBuildIDs(t *testing.T) {
 	}
 }
 
+func TestCoordinatePrewarmRequiresConcreteBuildCommandFlag(t *testing.T) {
+	command := newEnvironmentCoordinateCommand()
+	prewarm, _, err := command.Find([]string{"prewarm"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if prewarm.Flag("build-command") == nil {
+		t.Fatal("prewarm command has no concrete staged build command flag")
+	}
+}
+
 var cliTestDigest = "sha256:" + strings.Repeat("a", 64)
 
 type inertProvider struct{}

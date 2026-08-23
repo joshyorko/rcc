@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"crypto/ed25519"
 	"encoding/base64"
 	"encoding/json"
@@ -38,6 +37,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	var jsonOut bool
 	var keys []string
 	var priorityMap []string
+	var buildCommand []string
 	key := func() buildcoord.BuildKey {
 		return buildcoord.BuildKey{SpecificationDigest: spec, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema}
 	}
@@ -131,12 +131,11 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
 		}
-		items, err := coordinator.PrewarmWithExecutor(cmd.Context(), request, buildcoord.EnforcedBuilderFunc(func(context.Context, buildcoord.Claim, buildcoord.ExecutionPolicy) (buildcoord.Artifact, error) {
-			if artifactDigest == "" {
-				return buildcoord.Artifact{}, fmt.Errorf("--artifact-digest is required for CLI prewarm")
-			}
-			return artifactFromFlags("cli-prewarm")
-		}))
+		executor, err := buildcoord.NewCommandExecutor(buildCommand)
+		if err != nil {
+			return write(cmd, coordinationResult{Items: nil}, err)
+		}
+		items, err := coordinator.PrewarmWithExecutor(cmd.Context(), request, executor)
 		return write(cmd, coordinationResult{Items: items}, err)
 	}}
 	for _, c := range []*cobra.Command{claim, heartbeat, wait, release, prewarm} {
@@ -161,6 +160,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		c.Flags().BoolVar(&jsonOut, "json", false, "Write JSON result")
 	}
 	prewarm.Flags().StringSliceVar(&keys, "key", nil, "Specification digest to prewarm (repeatable)")
+	prewarm.Flags().StringSliceVar(&buildCommand, "build-command", nil, "RCC-owned staged build command that writes one Artifact JSON record")
 	prewarm.Flags().IntVar(&capacity, "capacity", 0, "Maximum concurrent builders")
 	prewarm.Flags().IntVar(&priority, "priority", 0, "Prewarm priority")
 	prewarm.Flags().StringSliceVar(&priorityMap, "priority-map", nil, "Per-key priority entries in key=priority form")

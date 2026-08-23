@@ -5,9 +5,11 @@ import (
 	"crypto/ed25519"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -17,6 +19,16 @@ import (
 )
 
 type fakeClock struct{ now time.Time }
+
+type authoritativeFallbackBuilder struct{ artifact Artifact }
+
+func (b authoritativeFallbackBuilder) Build(context.Context, Claim, ExecutionPolicy) (Artifact, error) {
+	return b.artifact, nil
+}
+
+func (b authoritativeFallbackBuilder) VerifyCompletion(context.Context, Artifact) error {
+	return ValidateAuthoritativeCompletion(b.artifact)
+}
 
 func (c *fakeClock) Now() time.Time          { return c.now }
 func (c *fakeClock) Advance(d time.Duration) { c.now = c.now.Add(d) }
@@ -367,7 +379,7 @@ func TestPrewarmWithExecutorReceivesEnforcedPolicyAtStagingBoundary(t *testing.T
 	var received ExecutionPolicy
 	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Build: BuildRequest{CPULimit: 2, MemoryBytes: 4096, Network: true, Timeout: time.Second}}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, policy ExecutionPolicy) (Artifact, error) {
 		received = policy
-		return Artifact{Digest: "sha256:executor", Verified: true}, nil
+		return Artifact{Digest: "sha256:executor", Verified: true, Execution: &ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: false, CredentialsExcluded: true}}, nil
 	}))
 	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
 		t.Fatalf("typed prewarm: %#v %v", items, err)
@@ -386,16 +398,9 @@ func TestPrewarmUsesLocalFallbackWhenCoordinatorUnavailable(t *testing.T) {
 		t.Fatal(err)
 	}
 	c := newFilesystem(root, &fakeClock{now: time.Unix(100, 0)})
-	var called atomic.Int32
-	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, LocalFallback: true}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, _ ExecutionPolicy) (Artifact, error) {
-		called.Add(1)
-		return Artifact{Digest: "sha256:fallback", Verified: true}, nil
-	}))
+	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, LocalFallback: true}, authoritativeFallbackBuilder{artifact: Artifact{Digest: "sha256:fallback", Verified: true, Provider: "local", Completion: &CompletionReceipt{ArtifactDigest: "sha256:fallback", Provider: "local", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"}}})
 	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
 		t.Fatalf("fallback prewarm: %#v %v", items, err)
-	}
-	if called.Load() != 1 {
-		t.Fatalf("fallback executor calls = %d", called.Load())
 	}
 }
 
@@ -428,6 +433,121 @@ func TestPrewarmHonorsPerKeyPriorityOrder(t *testing.T) {
 	if first != high.SpecificationDigest {
 		t.Fatalf("first prewarm key = %q, want %q", first, high.SpecificationDigest)
 	}
+}
+
+func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("runtime process boundary is Linux-backed")
+	}
+	root := t.TempDir()
+	request := BuildRequest{Root: root, Network: false, CPULimit: 2, MemoryBytes: 64 << 20, Timeout: time.Second}
+	staging, cleanup, err := PrepareStaging(request, "owner")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cleanup()
+	policy, err := request.ExecutionPolicy(staging)
+	if err != nil {
+		t.Fatal(err)
+	}
+	claim := Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}
+	content := `{"digest":"sha256:` + strings.Repeat("a", 64) + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"sha256:` + strings.Repeat("a", 64) + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	executor, err := NewCommandExecutor([]string{"/bin/sh", "-c", fmt.Sprintf("printf '%%s' %s", shellQuote(content))})
+	if err != nil {
+		t.Fatal(err)
+	}
+	artifact, err := executor.Build(context.Background(), claim, policy)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if artifact.Execution == nil || artifact.Execution.StagingRoot != staging || artifact.Execution.CPULimit != 2 || artifact.Execution.MemoryBytes != 64<<20 || !artifact.Execution.NetworkIsolated || !artifact.Execution.CredentialsExcluded {
+		t.Fatalf("execution receipt: %#v", artifact.Execution)
+	}
+}
+
+func TestCommandExecutorRejectsStagingMismatch(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("runtime process boundary is Linux-backed")
+	}
+	root := t.TempDir()
+	policy, err := (BuildRequest{Root: root}).ExecutionPolicy(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	executor, err := NewCommandExecutor([]string{"/bin/true"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := executor.Build(context.Background(), Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: filepath.Join(root, "other")}, policy); !errors.Is(err, ErrStagingBoundary) {
+		t.Fatalf("staging mismatch: %v", err)
+	}
+}
+
+func TestCommandExecutorHonorsTimeout(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("runtime process boundary is Linux-backed")
+	}
+	root := t.TempDir()
+	request := BuildRequest{Root: root, Timeout: 20 * time.Millisecond}
+	staging, cleanup, err := PrepareStaging(request, "owner")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cleanup()
+	policy, err := request.ExecutionPolicy(staging)
+	if err != nil {
+		t.Fatal(err)
+	}
+	executor, err := NewCommandExecutor([]string{"/bin/sh", "-c", "sleep 1"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = executor.Build(context.Background(), Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}, policy)
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("timeout: %v", err)
+	}
+}
+
+func TestCommandExecutorRejectsCredentialEnvironment(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("runtime process boundary is Linux-backed")
+	}
+	root := t.TempDir()
+	staging, cleanup, err := PrepareStaging(BuildRequest{Root: root}, "owner")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cleanup()
+	policy, err := (BuildRequest{Root: root}).ExecutionPolicy(staging)
+	if err != nil {
+		t.Fatal(err)
+	}
+	executor, err := NewCommandExecutor([]string{"/bin/true"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	executor.Environment = []string{"AWS_SECRET_ACCESS_KEY=leak"}
+	if _, err := executor.Build(context.Background(), Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}, policy); err == nil {
+		t.Fatal("credential-bearing environment accepted")
+	}
+}
+
+func TestLocalFallbackRejectsNonAuthoritativeArtifact(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "coordinator-file")
+	if err := os.WriteFile(root, []byte("not-a-directory"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	c := newFilesystem(root, &fakeClock{now: time.Unix(100, 0)})
+	_, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, LocalFallback: true}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, _ ExecutionPolicy) (Artifact, error) {
+		return Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true}, nil
+	}))
+	if !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("non-authoritative fallback accepted: %v", err)
+	}
+}
+
+func shellQuote(value string) string {
+	return "'" + strings.ReplaceAll(value, "'", "'\\"+`"'"`+"'") + "'"
 }
 
 func TestPrewarmIsBoundedAndActionsNeutral(t *testing.T) {

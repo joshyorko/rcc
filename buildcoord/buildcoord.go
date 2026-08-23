@@ -27,6 +27,7 @@ var (
 	ErrClaimBusy          = errors.New("build claim is owned by another live builder")
 	ErrUnsafeState        = errors.New("unsafe coordinator state")
 	ErrWaitTimeout        = errors.New("timed out waiting for build artifact")
+	ErrStagingBoundary    = errors.New("executor did not use the claimed staging boundary")
 )
 
 type Clock interface{ Now() time.Time }
@@ -123,6 +124,31 @@ type Artifact struct {
 	ProviderAuthorization string                    `json:"providerAuthorization,omitempty"`
 	Signatures            []artifacttrust.Signature `json:"signatures,omitempty"`
 	NondeterminismPolicy  string                    `json:"nondeterminismPolicy,omitempty"`
+	Completion            *CompletionReceipt        `json:"completion,omitempty"`
+	Execution             *ExecutionReceipt         `json:"execution,omitempty"`
+}
+
+// CompletionReceipt is the authoritative provider/lifecycle handoff. A
+// coordinator may only treat an artifact as a generic fallback result after
+// the provider has committed its manifest and verified every referenced
+// object.
+type CompletionReceipt struct {
+	ArtifactDigest    string `json:"artifactDigest"`
+	Provider          string `json:"provider"`
+	ManifestCommitted bool   `json:"manifestCommitted"`
+	ObjectsVerified   bool   `json:"objectsVerified"`
+	Lifecycle         string `json:"lifecycle"`
+}
+
+type ExecutionReceipt struct {
+	StagingRoot         string        `json:"stagingRoot"`
+	PolicyDigest        string        `json:"policyDigest"`
+	ProcessID           int           `json:"processId"`
+	CPULimit            int           `json:"cpuLimit,omitempty"`
+	MemoryBytes         int64         `json:"memoryBytes,omitempty"`
+	Timeout             time.Duration `json:"timeout,omitempty"`
+	NetworkIsolated     bool          `json:"networkIsolated"`
+	CredentialsExcluded bool          `json:"credentialsExcluded"`
 }
 
 // ArtifactTrustDigest is the signature subject for a complete published
@@ -207,6 +233,32 @@ func (p ExecutionPolicy) RequiresBoundary() bool {
 	return p.Network || p.Credentials || p.CPULimit != 0 || p.MemoryBytes != 0 || p.Timeout != 0
 }
 
+func (p ExecutionPolicy) Digest() string {
+	content, _ := json.Marshal(p)
+	sum := sha256.Sum256(content)
+	return "sha256:" + hex.EncodeToString(sum[:])
+}
+
+func ValidateAuthoritativeCompletion(artifact Artifact) error {
+	if artifact.Provider == "" || artifact.Completion == nil || artifact.Completion.ArtifactDigest != artifact.Digest || artifact.Completion.Provider == "" || !artifact.Completion.ManifestCommitted || !artifact.Completion.ObjectsVerified || artifact.Completion.Lifecycle == "" {
+		return ErrUnverifiedArtifact
+	}
+	if artifact.Provider != "" && artifact.Completion.Provider != artifact.Provider {
+		return ErrUnverifiedArtifact
+	}
+	return nil
+}
+
+func ValidateExecutionReceipt(artifact Artifact, policy ExecutionPolicy) error {
+	if !policy.RequiresBoundary() {
+		return nil
+	}
+	if artifact.Execution == nil || artifact.Execution.StagingRoot == "" || mustRealPath(artifact.Execution.StagingRoot) != mustRealPath(policy.Root) || artifact.Execution.PolicyDigest != policy.Digest() || artifact.Execution.CPULimit != policy.CPULimit || artifact.Execution.MemoryBytes != policy.MemoryBytes || artifact.Execution.Timeout != policy.Timeout || (!policy.Network && !artifact.Execution.NetworkIsolated) || !artifact.Execution.CredentialsExcluded {
+		return ErrUnenforcedBuildPolicy
+	}
+	return nil
+}
+
 // ProcessBoundary is the optional concrete process/container enforcement
 // seam. A typed builder may implement equivalent enforcement internally; a
 // lifecycle bridge can instead delegate child creation here.
@@ -230,11 +282,71 @@ func (r BuildRequest) ExecutionPolicy(root string) (ExecutionPolicy, error) {
 	return ExecutionPolicy{Root: root, DiskBytes: r.DiskBytes, Network: r.Network, Credentials: false, CPULimit: r.CPULimit, MemoryBytes: r.MemoryBytes, Timeout: r.Timeout, QuarantineRoot: r.QuarantineRoot}, nil
 }
 
+// ValidateExecutionStaging proves that a builder is attached to the exact
+// owner-private staging directory allocated for this claim.
+func ValidateExecutionStaging(claim Claim, policy ExecutionPolicy) error {
+	if claim.Staging == "" || policy.Root == "" {
+		return ErrStagingBoundary
+	}
+	claimRoot, err := filepath.EvalSymlinks(claim.Staging)
+	if err != nil {
+		return errors.Join(ErrStagingBoundary, fmt.Errorf("resolve claim staging: %w", err))
+	}
+	policyRoot, err := filepath.EvalSymlinks(policy.Root)
+	if err != nil {
+		return errors.Join(ErrStagingBoundary, fmt.Errorf("resolve execution staging: %w", err))
+	}
+	if claimRoot != policyRoot {
+		return ErrStagingBoundary
+	}
+	info, err := os.Lstat(claim.Staging)
+	if err != nil || info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+		return ErrStagingBoundary
+	}
+	content, err := os.ReadFile(filepath.Join(claim.Staging, "policy.json"))
+	if err != nil {
+		return fmt.Errorf("read staging policy: %w", err)
+	}
+	var persisted struct {
+		Root        string `json:"root"`
+		Network     bool   `json:"network"`
+		Credentials bool   `json:"credentials"`
+		DiskBytes   int64  `json:"diskBytes"`
+		CPULimit    int    `json:"cpuLimit"`
+		MemoryBytes int64  `json:"memoryBytes"`
+		Timeout     string `json:"timeout"`
+	}
+	if err := json.Unmarshal(content, &persisted); err != nil {
+		return fmt.Errorf("decode staging policy: %w", err)
+	}
+	if persisted.Root != "" {
+		persistedRoot, rootErr := filepath.EvalSymlinks(persisted.Root)
+		if rootErr != nil || persistedRoot != policyRoot {
+			return ErrStagingBoundary
+		}
+	}
+	persistedTimeout, err := time.ParseDuration(persisted.Timeout)
+	if err != nil {
+		return fmt.Errorf("decode staging timeout: %w", err)
+	}
+	if persisted.Network != policy.Network || persisted.Credentials != policy.Credentials || persisted.DiskBytes != policy.DiskBytes || persisted.CPULimit != policy.CPULimit || persisted.MemoryBytes != policy.MemoryBytes || persistedTimeout != policy.Timeout {
+		return ErrStagingBoundary
+	}
+	return nil
+}
+
 // EnforcedBuilder is the safe prewarm extension point. Implementations own
 // the actual child process/container boundary and must apply policy before
 // returning a verified Artifact.
 type EnforcedBuilder interface {
 	Build(context.Context, Claim, ExecutionPolicy) (Artifact, error)
+}
+
+// AuthoritativeCompletionVerifier is required for coordinator-loss fallback.
+// A caller-supplied ready bit or receipt is not authority by itself; the
+// verifier must read back the committed provider/lifecycle state.
+type AuthoritativeCompletionVerifier interface {
+	VerifyCompletion(context.Context, Artifact) error
 }
 
 type EnforcedBuilderFunc func(context.Context, Claim, ExecutionPolicy) (Artifact, error)
@@ -286,7 +398,7 @@ func PrepareStaging(req BuildRequest, owner string) (string, func() error, error
 		os.RemoveAll(d)
 		return "", nil, fmt.Errorf("resource limits cannot be negative")
 	}
-	policy := map[string]any{"network": req.Network, "credentials": false, "diskBytes": req.DiskBytes, "cpuLimit": req.CPULimit, "memoryBytes": req.MemoryBytes, "timeout": req.Timeout.String()}
+	policy := map[string]any{"root": d, "network": req.Network, "credentials": false, "diskBytes": req.DiskBytes, "cpuLimit": req.CPULimit, "memoryBytes": req.MemoryBytes, "timeout": req.Timeout.String()}
 	pb, _ := json.Marshal(policy)
 	if e := os.WriteFile(filepath.Join(d, "policy.json"), pb, 0600); e != nil {
 		_ = reservation.Release()
@@ -1017,7 +1129,6 @@ func (r PrewarmRequest) priorityFor(key BuildKey) int {
 
 func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, key BuildKey, build EnforcedBuilder, coordinatorErr error) (Artifact, error) {
 	root := request.Build.Root
-	cleanup := func() {}
 	if root == "" {
 		root = c.Root
 	}
@@ -1027,17 +1138,38 @@ func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, ke
 			return Artifact{}, mkdirErr
 		}
 		root = fallbackRoot
-		cleanup = func() { _ = os.RemoveAll(fallbackRoot) }
 	}
-	defer cleanup()
-	policy, err := request.Build.ExecutionPolicy(root)
+	buildRequest := request.Build
+	buildRequest.Root = root
+	staging, cleanup, err := PrepareStaging(buildRequest, "fallback")
 	if err != nil {
 		return Artifact{}, err
 	}
-	claim := Claim{Key: key, Owner: "local-fallback", Epoch: 1}
+	defer cleanup()
+	policy, err := buildRequest.ExecutionPolicy(staging)
+	if err != nil {
+		return Artifact{}, err
+	}
+	claim := Claim{Key: key, Owner: "local-fallback", Epoch: 1, Staging: staging}
 	artifact, err := build.Build(ctx, claim, policy)
 	if err != nil {
 		return Artifact{}, fmt.Errorf("local fallback after coordinator failure (%v): %w", coordinatorErr, err)
+	}
+	if err := ValidateExecutionStaging(claim, policy); err != nil {
+		return Artifact{}, err
+	}
+	if err := ValidateExecutionReceipt(artifact, policy); err != nil {
+		return Artifact{}, err
+	}
+	if err := ValidateAuthoritativeCompletion(artifact); err != nil {
+		return Artifact{}, fmt.Errorf("local fallback lacks authoritative lifecycle completion: %w", err)
+	}
+	verifier, ok := build.(AuthoritativeCompletionVerifier)
+	if !ok {
+		return Artifact{}, fmt.Errorf("local fallback executor cannot verify authoritative lifecycle completion: %w", ErrUnverifiedArtifact)
+	}
+	if err := verifier.VerifyCompletion(ctx, artifact); err != nil {
+		return Artifact{}, fmt.Errorf("verify local fallback lifecycle completion: %w", err)
 	}
 	if artifact.Source == "" {
 		artifact.Source = "local-fallback"
@@ -1149,6 +1281,12 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	policy.Root = staging
 	artifact, err := build.Build(buildCtx, claim, policy)
 	stopHeartbeat()
+	if err == nil {
+		err = ValidateExecutionStaging(claim, policy)
+	}
+	if err == nil {
+		err = ValidateExecutionReceipt(artifact, policy)
+	}
 	cleanupErr := error(nil)
 	if err != nil && buildRequest.QuarantineRoot != "" {
 		_, cleanupErr = QuarantineStaging(staging, buildRequest.QuarantineRoot, err.Error())
