@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
@@ -26,6 +27,8 @@ type environmentExecResult struct {
 	Status            string                                     `json:"status,omitempty"`
 	Reason            string                                     `json:"reason,omitempty"`
 }
+
+var replaceReceipt = replaceReceiptFile
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
 	var artifact, providerURL, trustCarrierPath, trustCarrierType string
@@ -99,12 +102,16 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 				ArtifactDigest: acquired.ArtifactDigest, MaterializationID: acquired.MaterializationID,
 				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode, LeaseID: handle.LeaseID, Compatibility: compatibility,
 			}
-			if executionErr != nil {
+			if executionErr != nil && isExecutionCancellation(executionErr) {
 				output.Status = "cancelled"
 				output.Reason = executionErr.Error()
-			} else if child.ExitCode != 0 {
+			} else if executionErr != nil || child.ExitCode != 0 {
 				output.Status = "failed"
-				output.Reason = "child exited non-zero"
+				if executionErr != nil {
+					output.Reason = executionErr.Error()
+				} else {
+					output.Reason = "child exited non-zero"
+				}
 			} else {
 				output.Status = "completed"
 			}
@@ -171,15 +178,14 @@ func writeEnvironmentExecReceipt(path string, value environmentExecResult) error
 	if closeErr != nil {
 		return fmt.Errorf("close execution receipt: %w", closeErr)
 	}
-	if runtime.GOOS == "windows" {
-		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
-			return fmt.Errorf("replace execution receipt: %w", err)
-		}
-	}
-	if err := os.Rename(tmpPath, path); err != nil {
+	if err := replaceReceipt(tmpPath, path); err != nil {
 		return fmt.Errorf("install execution receipt: %w", err)
 	}
 	return nil
+}
+
+func isExecutionCancellation(err error) bool {
+	return errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded)
 }
 
 func validateReceiptPath(path string) error {

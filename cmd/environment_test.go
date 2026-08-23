@@ -529,6 +529,35 @@ func TestEnvironmentExecReceiptSafelyReplacesFilesAndRejectsSymlinks(t *testing.
 	}
 }
 
+func TestEnvironmentExecReceiptPreservesOldFileWhenReplacementFails(t *testing.T) {
+	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+	path := filepath.Join(t.TempDir(), "receipt.json")
+	if err := os.WriteFile(path, []byte("old"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	previous := replaceReceipt
+	replaceReceipt = func(_, _ string) error { return fmt.Errorf("injected replacement failure") }
+	t.Cleanup(func() { replaceReceipt = previous })
+	if err := writeEnvironmentExecReceipt(path, environmentExecResult{ArtifactDigest: digest, Status: "completed"}); err == nil {
+		t.Fatal("replacement failure was suppressed")
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || string(data) != "old" {
+		t.Fatalf("old receipt was not preserved: %q, %v", data, err)
+	}
+}
+
+func TestEnvironmentExecClassifiesOnlyContextErrorsAsCancelled(t *testing.T) {
+	if !isExecutionCancellation(context.Canceled) || !isExecutionCancellation(context.DeadlineExceeded) {
+		t.Fatal("context cancellation errors were not classified as cancelled")
+	}
+	for _, err := range []error{fmt.Errorf("spawn failed"), fmt.Errorf("signal failed"), fmt.Errorf("other failure")} {
+		if isExecutionCancellation(err) {
+			t.Fatalf("non-context error classified as cancelled: %v", err)
+		}
+	}
+}
+
 func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree
