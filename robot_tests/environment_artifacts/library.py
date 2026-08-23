@@ -4,6 +4,7 @@ import shutil
 import tempfile
 import time
 import urllib.request
+import zipfile
 from pathlib import Path
 
 
@@ -126,3 +127,45 @@ def package_manager_caches_should_be_empty(home):
         path = home_path / name
         files = [entry for entry in path.rglob("*") if entry.is_file()] if path.exists() else []
         assert not files, f"package-manager cache {path} contains {files[:5]}"
+
+
+def _write_platform_index(archive, output, platforms):
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+    artifact = manifest["artifactDigest"]
+    index = {
+        "mediaType": "application/vnd.rcc.environment.index.v1+json",
+        "schemaVersion": 1,
+        "specification": manifest["specification"]["digest"],
+        "artifacts": [
+            {"platform": platform, "artifact": digest}
+            for platform, digest in platforms
+        ],
+    }
+    Path(output).write_text(json.dumps(index, separators=(",", ":")), encoding="utf-8")
+    return str(Path(output).resolve())
+
+
+def create_multi_platform_index(archive, output):
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+    current = ("linux", "amd64", "linux_amd64")
+    other = ("darwin", "amd64", "darwin_amd64")
+    return _write_platform_index(
+        archive,
+        output,
+        [
+            ({"os": current[0], "arch": current[1], "rccPlatform": current[2]}, artifact),
+            ({"os": other[0], "arch": other[1], "rccPlatform": other[2]}, "sha256:" + "0" * 64),
+        ],
+    )
+
+
+def create_wrong_platform_index(archive, output):
+    return _write_platform_index(
+        archive,
+        output,
+        [
+            ({"os": "darwin", "arch": "amd64", "rccPlatform": "darwin_amd64"}, "sha256:" + "0" * 64),
+        ],
+    )
