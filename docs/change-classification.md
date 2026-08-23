@@ -12,4 +12,3 @@ records the class and evidence; maintainers may raise it during review.
 Generated-asset changes inherit the class of their source inputs. A change is
 not lower risk because its diff is small, and an unavailable platform gate must
 be reported rather than inferred green.
-

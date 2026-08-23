@@ -19,4 +19,3 @@ contract. A checked box or named tool is not evidence by itself.
 
 Approve only evidence demonstrated at the submitted head. Request changes for
 missing correctness or safety evidence; use comments for non-blocking follow-up.
-
