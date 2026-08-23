@@ -85,6 +85,29 @@ func ValidateV1Capabilities(c Capabilities) error {
 	if !contains(c.SchemaVersions, 1) || !contains(c.DigestAlgorithms, "sha256") || !contains(c.Encodings, "gzip") {
 		return fmt.Errorf("provider does not support environment artifact v1 gzip/sha256")
 	}
+	for _, version := range c.RequiredVersions {
+		if !contains(c.SchemaVersions, version) {
+			return fmt.Errorf("provider omits required schema version %d", version)
+		}
+	}
+	for _, feature := range c.RequiredFeatures {
+		switch feature {
+		case "range":
+			if !c.RangeSupport {
+				return fmt.Errorf("provider omits required range support")
+			}
+		case "resume":
+			if !c.ResumeSupport {
+				return fmt.Errorf("provider omits required resume support")
+			}
+		case "safeRestart":
+			if !c.SafeRestart {
+				return fmt.Errorf("provider omits required safe restart")
+			}
+		default:
+			return fmt.Errorf("provider advertises unknown required feature %q", feature)
+		}
+	}
 	return nil
 }
 

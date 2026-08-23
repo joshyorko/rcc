@@ -273,6 +273,23 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		}
 		n, err := admin.Cleanup(ctx)
 		writeProviderJSON(writer, map[string]int{"removed": n}, err)
+	case request.URL.Path == "/v1/admin/objects" || request.URL.Path == "/v1/admin/manifests":
+		admin, ok := provider.(ProviderV1Enumerable)
+		if !ok {
+			http.Error(writer, "enumeration unavailable", http.StatusNotImplemented)
+			return
+		}
+		if request.Method != http.MethodGet {
+			methodNotAllowed(writer)
+			return
+		}
+		if request.URL.Path == "/v1/admin/objects" {
+			objects, err := admin.ListObjects(ctx)
+			writeProviderJSON(writer, objects, err)
+		} else {
+			manifests, err := admin.ListManifests(ctx)
+			writeProviderJSON(writer, manifests, err)
+		}
 	case request.URL.Path == "/v1/admin/gc":
 		admin, ok := provider.(ProviderV1Admin)
 		if !ok {

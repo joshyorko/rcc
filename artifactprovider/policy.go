@@ -30,6 +30,69 @@ type Policy struct {
 	statePath                                  string
 }
 
+func (p *Policy) ListObjects(ctx context.Context) ([]ObjectInfo, error) {
+	e, ok := p.Provider.(ProviderV1Enumerable)
+	if !ok {
+		return nil, fmt.Errorf("enumeration unavailable")
+	}
+	return e.ListObjects(ctx)
+}
+func (p *Policy) ListManifests(ctx context.Context) ([]ManifestInfo, error) {
+	e, ok := p.Provider.(ProviderV1Enumerable)
+	if !ok {
+		return nil, fmt.Errorf("enumeration unavailable")
+	}
+	return e.ListManifests(ctx)
+}
+func (p *Policy) GarbageCollect(ctx context.Context, retention Retention) (GCReport, error) {
+	a, ok := p.Provider.(ProviderV1Admin)
+	if !ok {
+		return GCReport{}, fmt.Errorf("admin unavailable")
+	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	report, err := a.GarbageCollect(ctx, retention)
+	if err == nil {
+		p.reconcileLocked()
+		_ = p.persistLocked()
+	}
+	return report, err
+}
+func (p *Policy) Cleanup(ctx context.Context) (int, error) {
+	a, ok := p.Provider.(ProviderV1Admin)
+	if !ok {
+		return 0, fmt.Errorf("admin unavailable")
+	}
+	return a.Cleanup(ctx)
+}
+func (p *Policy) Repair(ctx context.Context) (Health, error) {
+	a, ok := p.Provider.(ProviderV1Admin)
+	if !ok {
+		return Health{}, fmt.Errorf("admin unavailable")
+	}
+	return a.Repair(ctx)
+}
+func (p *Policy) Backup(ctx context.Context, w io.Writer) error {
+	a, ok := p.Provider.(ProviderV1Backup)
+	if !ok {
+		return fmt.Errorf("backup unavailable")
+	}
+	return a.Backup(ctx, w)
+}
+func (p *Policy) Restore(ctx context.Context, r io.Reader) error {
+	a, ok := p.Provider.(ProviderV1Backup)
+	if !ok {
+		return fmt.Errorf("restore unavailable")
+	}
+	if err := a.Restore(ctx, r); err != nil {
+		return err
+	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.reconcileLocked()
+	return p.persistLocked()
+}
+
 type policyState struct {
 	Bytes, Objects, Manifests, Uploads, Window int64
 	WindowAt                                   time.Time
@@ -229,3 +292,5 @@ func (p *Policy) persistLocked() error {
 }
 
 var _ Provider = (*Policy)(nil)
+var _ ProviderV1Admin = (*Policy)(nil)
+var _ ProviderV1Backup = (*Policy)(nil)

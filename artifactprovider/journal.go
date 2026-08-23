@@ -341,6 +341,27 @@ func (j *Journal) append(r journalRecord) error {
 	}
 	return f.Sync()
 }
+
+func (j *Journal) appendBatch(records []journalRecord) error {
+	if len(records) == 0 {
+		return nil
+	}
+	f, err := os.OpenFile(j.path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	for _, record := range records {
+		b, err := json.Marshal(record)
+		if err != nil {
+			return err
+		}
+		if _, err = f.Write(append(b, '\n')); err != nil {
+			return err
+		}
+	}
+	return f.Sync()
+}
 func (j *Journal) ListObjects(ctx context.Context) ([]ObjectInfo, error) {
 	j.mu.RLock()
 	defer j.mu.RUnlock()
@@ -592,7 +613,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 			if e != nil {
 				return e
 			}
-			if b, e := os.ReadFile(target); e != nil || environmentartifact.DigestBytes(b) != d {
+			if e := verifyJournalFile(target, d.Hex(), h.Size); e != nil {
 				return fmt.Errorf("backup object digest mismatch")
 			}
 		} else if strings.HasPrefix(name, "manifests/") {
@@ -614,6 +635,11 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 	defer j.adminMu.Unlock()
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	objectRecords := make([]journalRecord, 0)
+	manifestRecords := make([]journalRecord, 0)
+	newObjects := make(map[string]objectRef)
+	newManifests := make(map[string][]byte)
+	newTimes := make(map[string]time.Time)
 	for name := range seen {
 		if !strings.HasPrefix(name, "objects/") && !strings.HasPrefix(name, "manifests/") {
 			continue
@@ -622,26 +648,32 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 		if strings.HasPrefix(name, "objects/") {
 			d := filepath.Base(name)
 			dst := filepath.Join(j.objectDir, d)
-			if old, e := os.ReadFile(dst); e == nil {
-				newb, _ := os.ReadFile(src)
-				if !bytes.Equal(old, newb) {
+			if _, e := os.Stat(dst); e == nil {
+				oldFile, oe := os.Open(dst)
+				newFile, ne := os.Open(src)
+				if oe != nil || ne != nil {
+					if oldFile != nil {
+						oldFile.Close()
+					}
+					if newFile != nil {
+						newFile.Close()
+					}
+					return fmt.Errorf("backup conflicts with immutable object %q", d)
+				}
+				same, ce := sameContent(oldFile, newFile)
+				oldFile.Close()
+				newFile.Close()
+				if ce != nil || !same {
 					return fmt.Errorf("backup conflicts with immutable object %q", d)
 				}
 				continue
 			}
-			if e := os.Rename(src, dst); e != nil {
-				return e
-			}
-			b, e := os.ReadFile(dst)
+			st, e := os.Stat(src)
 			if e != nil {
 				return e
 			}
-			st, _ := os.Stat(dst)
-			if e = j.append(journalRecord{Kind: "object", Digest: d, Size: st.Size()}); e != nil {
-				return e
-			}
-			j.objects[d] = objectRef{dst, st.Size(), ""}
-			_ = b
+			newObjects[d] = objectRef{dst, st.Size(), ""}
+			objectRecords = append(objectRecords, journalRecord{Kind: "object", Digest: d, Size: st.Size()})
 		} else {
 			d := filepath.Base(name)
 			b, e := os.ReadFile(src)
@@ -654,19 +686,77 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 				}
 				continue
 			}
-			m, e := environmentartifact.DecodeManifest(b)
-			if e != nil {
-				return e
-			}
-			if e = j.verifyManifestClosure(m); e != nil {
-				return e
-			}
-			if e = j.append(journalRecord{Kind: "manifest", Digest: d, Content: base64.StdEncoding.EncodeToString(b), At: time.Now().UnixNano()}); e != nil {
-				return e
-			}
-			j.manifests[d] = append([]byte(nil), b...)
-			j.manifestTimes[d] = time.Now()
+			newManifests[d] = append([]byte(nil), b...)
+			newTimes[d] = time.Now()
+			manifestRecords = append(manifestRecords, journalRecord{Kind: "manifest", Digest: d, Content: base64.StdEncoding.EncodeToString(b), At: newTimes[d].UnixNano()})
 		}
+	}
+	// Validate the complete staged closure before publishing anything.
+	for d, ref := range newObjects {
+		if e := verifyJournalFile(filepath.Join(stage, "objects", d), d, ref.size); e != nil {
+			return e
+		}
+	}
+	for _, b := range newManifests {
+		m, e := environmentartifact.DecodeManifest(b)
+		if e != nil {
+			return e
+		}
+		if len(m.Catalogs) == 0 {
+			return fmt.Errorf("manifest catalog is empty")
+		}
+		for _, x := range []environmentartifact.Descriptor{m.Specification.Descriptor, m.LegacyBlueprint.Descriptor, m.ObjectIndex, m.Catalogs[0].Descriptor} {
+			if ref, ok := j.objects[x.Digest.Hex()]; !ok {
+				if n, staged := newObjects[x.Digest.Hex()]; !staged || n.size != x.Size {
+					return fmt.Errorf("manifest dependency %s is not complete", x.Digest)
+				}
+			} else if ref.size != x.Size {
+				return fmt.Errorf("manifest dependency %s is not complete", x.Digest)
+			}
+		}
+		idxPath := filepath.Join(stage, "objects", m.ObjectIndex.Digest.Hex())
+		if _, ok := newObjects[m.ObjectIndex.Digest.Hex()]; !ok {
+			if ref, exists := j.objects[m.ObjectIndex.Digest.Hex()]; exists {
+				idxPath = ref.path
+			}
+		}
+		idxBytes, e := readBoundedJournalIndex(idxPath)
+		if e != nil {
+			return e
+		}
+		idx, e := environmentartifact.DecodeObjectIndex(idxBytes)
+		if e != nil {
+			return e
+		}
+		for _, x := range idx.Entries {
+			if ref, ok := j.objects[x.StoredDigest.Hex()]; !ok {
+				if n, staged := newObjects[x.StoredDigest.Hex()]; !staged || n.size != x.StoredSize {
+					return fmt.Errorf("manifest dependency %s is not complete", x.StoredDigest)
+				}
+			} else if ref.size != x.StoredSize {
+				return fmt.Errorf("manifest dependency %s is not complete", x.StoredDigest)
+			}
+		}
+	}
+	if e := j.appendBatch(objectRecords); e != nil {
+		return e
+	}
+	for d, ref := range newObjects {
+		if e := os.Rename(filepath.Join(stage, "objects", d), ref.path); e != nil {
+			return e
+		}
+		j.objects[d] = ref
+	}
+	if e := j.appendBatch(manifestRecords); e != nil {
+		for d, ref := range newObjects {
+			_ = os.Remove(ref.path)
+			delete(j.objects, d)
+		}
+		return e
+	}
+	for d, b := range newManifests {
+		j.manifests[d] = b
+		j.manifestTimes[d] = newTimes[d]
 	}
 	if src := filepath.Join(stage, "policy"); func() bool { _, e := os.Stat(src); return e == nil }() {
 		b, e := os.ReadFile(src)

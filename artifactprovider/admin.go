@@ -148,6 +148,9 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 		if info.IsDir() || strings.HasPrefix(info.Name(), ".upload-") || strings.HasPrefix(info.Name(), ".manifest-") {
 			return nil
 		}
+		if info.Size() < 0 || info.Size() > maxProviderObjectBytes {
+			return fmt.Errorf("backup member too large")
+		}
 		rel, e := filepath.Rel(it.root, path)
 		if e != nil {
 			return e
