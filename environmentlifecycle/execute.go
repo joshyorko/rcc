@@ -11,6 +11,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/conda"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -23,6 +24,7 @@ type ExecutionHandle struct {
 	Executable        string
 	Environment       []string
 	CacheHit          CacheProvenance
+	Verification      artifacttrust.VerificationReceipt
 }
 
 type ChildResult struct {
@@ -61,6 +63,7 @@ func (it *LocalMaterializer) ExecutionHandle(ctx context.Context, lease Lease, c
 		ArtifactDigest: lease.ArtifactDigest, MaterializationID: lease.MaterializationID,
 		LeaseID: lease.ID, CWD: record.Path, Executable: executable,
 		Environment: conda.CondaExecutionEnvironment(record.Path, nil, true), CacheHit: CacheLocalMaterialization,
+		Verification: lease.Verification,
 	}, nil
 }
 

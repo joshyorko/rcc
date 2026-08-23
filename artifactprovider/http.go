@@ -11,15 +11,18 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 const (
-	maxProviderJSONBytes   = 4 << 20
-	maxProviderObjectBytes = int64(64 << 30)
-	maxProviderErrorBytes  = 8 << 10
+	maxProviderJSONBytes    = 4 << 20
+	maxProviderObjectBytes  = int64(64 << 30)
+	maxProviderErrorBytes   = 8 << 10
+	maxTrustAttachmentBytes = 16 << 20
 )
 
 type HTTP struct {
@@ -157,7 +160,56 @@ func handleProviderRequest(provider *Filesystem, writer http.ResponseWriter, req
 	case strings.HasPrefix(request.URL.Path, "/v1/manifests/sha256/"):
 		handleManifestRequest(provider, writer, request)
 	default:
-		http.NotFound(writer, request)
+		if !handleTrustAttachmentRequest(provider, writer, request) {
+			http.NotFound(writer, request)
+		}
+	}
+}
+
+func handleTrustAttachmentRequest(provider *Filesystem, writer http.ResponseWriter, request *http.Request) bool {
+	if provider == nil || request.URL.RawQuery != "" || request.URL.RawPath != "" || request.URL.Path == "/" || strings.HasPrefix(request.URL.Path, "/v1/") {
+		return false
+	}
+	name := strings.TrimPrefix(request.URL.Path, "/")
+	carrier := artifacttrust.NewFilesystemCarrier(filepath.Join(provider.root, "trust"))
+	switch request.Method {
+	case http.MethodGet:
+		content, err := carrier.Read(name)
+		if err != nil {
+			if os.IsNotExist(err) {
+				http.NotFound(writer, request)
+			} else {
+				http.Error(writer, "trust attachment failed verification", http.StatusInternalServerError)
+			}
+			return true
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		writer.Header().Set("Content-Length", fmt.Sprintf("%d", len(content)))
+		_, _ = writer.Write(content)
+		return true
+	case http.MethodPut:
+		if request.Header.Get("Content-Type") != "application/json" {
+			http.Error(writer, "trust attachments require application/json", http.StatusUnsupportedMediaType)
+			return true
+		}
+		if request.ContentLength < 0 || request.ContentLength > maxTrustAttachmentBytes {
+			http.Error(writer, "invalid trust attachment size", http.StatusBadRequest)
+			return true
+		}
+		content, err := readExactBody(request.Body, request.ContentLength, maxTrustAttachmentBytes)
+		if err != nil {
+			http.Error(writer, "invalid trust attachment body", http.StatusBadRequest)
+			return true
+		}
+		if err := carrier.Write(name, content); err != nil {
+			http.Error(writer, "trust attachment failed verification", http.StatusUnprocessableEntity)
+			return true
+		}
+		writer.WriteHeader(http.StatusCreated)
+		return true
+	default:
+		methodNotAllowed(writer)
+		return true
 	}
 }
 

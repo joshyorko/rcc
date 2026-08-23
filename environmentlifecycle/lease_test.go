@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -42,6 +43,96 @@ func TestLeaseAndExecutionHandleHaveExplicitTypedLifecycle(t *testing.T) {
 	}
 	if err := materializer.Release(context.Background(), lease); err != nil {
 		t.Fatalf("idempotent release failed: %v", err)
+	}
+}
+
+func TestNewLeaseAndExecutionHandleRetainTrustDecision(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	materialization.Verification.DecisionID = "decision-1"
+	materialization.Verification.RevocationSnapshot = "sha256:revocations"
+	materializer := NewLocalMaterializer()
+	lease, err := materializer.Lease(context.Background(), materialization)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = materializer.Release(context.Background(), lease) }()
+	if lease.Verification.DecisionID != "decision-1" || lease.Verification.RevocationSnapshot != "sha256:revocations" || lease.Verification.LeaseID != lease.ID {
+		t.Fatalf("lease verification=%+v", lease.Verification)
+	}
+	handle, err := materializer.ExecutionHandle(context.Background(), lease, []string{"python", "-V"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if handle.Verification.DecisionID != lease.Verification.DecisionID || handle.Verification.LeaseID != lease.ID {
+		t.Fatalf("handle verification=%+v lease=%+v", handle.Verification, lease.Verification)
+	}
+}
+
+func TestNewLeaseRejectsInvalidTrustDecision(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	materialization.Verification = artifacttrust.VerificationReceipt{
+		ArtifactDigest: materialization.ArtifactDigest.String(), Code: artifacttrust.CodeRevoked,
+	}
+	if _, err := NewLocalMaterializer().Lease(context.Background(), materialization); err == nil {
+		t.Fatal("invalid trust decision acquired a lease")
+	}
+}
+
+func TestNewLeaseRefreshesRevocationsWithoutChangingRunningLease(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+	})
+
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	now := time.Now().UTC()
+	_, emptyRevocations, err := artifacttrust.NewRevocationBundleAt(artifactDigest.String(), nil, now, "offline-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "revocations", emptyRevocations); err != nil {
+		t.Fatal(err)
+	}
+	policy := &artifacttrust.Policy{
+		Mode: artifacttrust.PermissiveLocal, AllowUnsignedLocal: true,
+		FailClosedRevocations: true, RevocationMaxAge: 24 * time.Hour,
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: remote, TrustPolicy: policy, TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	materialization := Materialization{
+		ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path,
+		CacheHit: result.CacheHit, Verification: result.Verification,
+		TrustPolicy: result.TrustPolicy, TrustCarrier: result.TrustCarrier,
+	}
+	materializer := NewLocalMaterializer()
+	running, err := materializer.Lease(context.Background(), materialization)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = materializer.Release(context.Background(), running) }()
+
+	updated := now.Add(time.Second)
+	_, revokedBytes, err := artifacttrust.NewRevocationBundleAt(artifactDigest.String(), []artifacttrust.Revocation{{ArtifactDigests: []string{artifactDigest.String()}, UpdatedAt: artifacttrust.FreshTimestamp(updated)}}, updated, "offline-test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "revocations", revokedBytes); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := materializer.Lease(context.Background(), materialization); err == nil {
+		t.Fatal("new lease ignored refreshed revocation")
+	}
+	if _, err := materializer.ExecutionHandle(context.Background(), running, []string{"python", "-V"}); err != nil {
+		t.Fatalf("already-running lease was re-evaluated: %v", err)
 	}
 }
 
@@ -101,7 +192,9 @@ func TestReconcileTreatsPIDReuseAsStale(t *testing.T) {
 	processIdentityLookup = func(int) (string, error) { return "new-start-token", nil }
 	t.Cleanup(func() { processIdentityLookup = previous })
 	lease := Lease{OwnerPID: 42, OwnerStart: "old-start-token"}
-	if got := classifyLease(lease); got != LeaseStale { t.Fatalf("PID reuse status = %q", got) }
+	if got := classifyLease(lease); got != LeaseStale {
+		t.Fatalf("PID reuse status = %q", got)
+	}
 }
 
 func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {

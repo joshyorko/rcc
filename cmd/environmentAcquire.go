@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
 	"github.com/spf13/cobra"
@@ -16,10 +17,12 @@ type environmentAcquireResult struct {
 	Path              string                                     `json:"path"`
 	CacheHit          environmentlifecycle.CacheProvenance       `json:"cacheHit"`
 	Compatibility     *environmentlifecycle.CompatibilityReceipt `json:"compatibility,omitempty"`
+	Verification      *artifacttrust.VerificationReceipt         `json:"verification,omitempty"`
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var artifact, providerURL string
+	var artifact, providerURL, trustCarrierPath, trustCarrierType string
+	var strictRemote, permissiveLocal bool
 	var jsonOutput bool
 	command := &cobra.Command{
 		Use:          "acquire",
@@ -41,8 +44,16 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if dependencies.acquire == nil {
 				return fmt.Errorf("environment acquire dependency is unavailable")
 			}
+			policy, err := trustPolicyForCommand(strictRemote, permissiveLocal)
+			if err != nil {
+				return err
+			}
+			trustCarrier, err := optionalEnvironmentTrustCarrier(trustCarrierPath, trustCarrierType, providerURL)
+			if err != nil {
+				return err
+			}
 			result, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
-				ArtifactDigest: digest, Provider: provider,
+				ArtifactDigest: digest, Provider: provider, TrustPolicy: &policy, TrustCarrier: trustCarrier,
 			})
 			if err != nil {
 				return err
@@ -51,15 +62,23 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if result.Compatibility.SchemaVersion != 0 {
 				compatibility = &result.Compatibility
 			}
-			return json.NewEncoder(command.OutOrStdout()).Encode(environmentAcquireResult{
+			output := environmentAcquireResult{
 				ArtifactDigest: result.ArtifactDigest, MaterializationID: result.MaterializationID,
 				Path: result.Path, CacheHit: result.CacheHit, Compatibility: compatibility,
-			})
+			}
+			if result.Verification.Code != "" {
+				output.Verification = &result.Verification
+			}
+			return json.NewEncoder(command.OutOrStdout()).Encode(output)
 		},
 	}
 	command.Flags().StringVar(&artifact, "artifact", "", "Canonical sha256 environment artifact digest.")
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL; optional for local-ready artifacts.")
+	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Detached trust carrier path or URL; defaults to provider HTTP or local filesystem.")
+	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
+	command.Flags().BoolVar(&strictRemote, "strict-remote", false, "Require detached signatures before acquisition.")
+	command.Flags().BoolVar(&permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts.")
 	return command
 }
 

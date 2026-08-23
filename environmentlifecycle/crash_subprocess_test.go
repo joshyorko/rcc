@@ -149,6 +149,9 @@ func TestLifecycleCrashChild(t *testing.T) {
 	if os.Getenv("RCC_LIFECYCLE_CHILD") != "crash" {
 		return
 	}
+	previousVerifier := verifyMaterializedCompatibility
+	verifyMaterializedCompatibility = func(context.Context, string, environmentartifact.CompatibilityRequirements) error { return nil }
+	defer func() { verifyMaterializedCompatibility = previousVerifier }()
 	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
 	common.SharedHolotree = false
 	digest, err := environmentartifact.ParseDigest("sha256:" + os.Getenv("RCC_LIFECYCLE_DIGEST"))
@@ -198,6 +201,9 @@ func TestLifecycleRaceChild(t *testing.T) {
 	if os.Getenv("RCC_LIFECYCLE_CHILD") != "race" {
 		return
 	}
+	previousVerifier := verifyMaterializedCompatibility
+	verifyMaterializedCompatibility = func(context.Context, string, environmentartifact.CompatibilityRequirements) error { return nil }
+	defer func() { verifyMaterializedCompatibility = previousVerifier }()
 	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
 	common.SharedHolotree = false
 	digest, err := environmentartifact.ParseDigest("sha256:" + os.Getenv("RCC_LIFECYCLE_DIGEST"))

@@ -3,16 +3,21 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"crypto/ed25519"
 	"errors"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -81,6 +86,151 @@ func TestMaterializationUsesPortableV12CatalogWithoutChangingArtifactBytes(t *te
 	assertFileBytes(t, filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint))), fixture.catalogBytes)
 	if len(provider.events) == 0 {
 		t.Fatal("cold acquisition made no provider requests")
+	}
+}
+
+func TestAcquireLoadsSignatureFromFilesystemCarrierWithRequestTrustRoots(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	signature, err := artifacttrust.Sign(artifactDigest.String(), "build-key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, bundleBytes, err := artifacttrust.NewSignatureBundle(artifactDigest.String(), []artifacttrust.Signature{signature})
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "signature", bundleBytes); err != nil {
+		t.Fatal(err)
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: remote,
+		TrustPolicy:  &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, AcceptedKeys: []string{"build-key"}},
+		TrustRequest: &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"build-key": public}, At: time.Unix(10, 0)},
+		TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !result.Verification.Valid || result.Verification.KeyID != "build-key" {
+		t.Fatalf("verification=%+v", result.Verification)
+	}
+}
+
+func TestAcquirePersistsFailureReceiptForMalformedCarrierAttachment(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+	})
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	malformed := []byte(`{"mediaType":"application/vnd.rcc.environment.provenance.v1+json","artifactDigest":"` + artifactDigest.String() + `","unexpected":"credential=carrier-secret"}`)
+	if err := carrier.Write(artifacttrust.AttachmentName(artifactDigest.String(), "provenance"), malformed); err != nil {
+		t.Fatal(err)
+	}
+	_, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: remote,
+		TrustPolicy: &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, FailClosedRevocations: true}, TrustCarrier: carrier,
+	})
+	if err == nil {
+		t.Fatal("malformed carrier attachment was accepted")
+	}
+	history, err := artifacttrust.NewReceiptStore(filepath.Join(home, "artifacts", "v1", "verification")).History(artifactDigest.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(history) != 1 || history[0].Valid || history[0].Code != artifacttrust.CodeInvalid {
+		t.Fatalf("failure history=%+v", history)
+	}
+	data, err := history[0].JSON()
+	if err != nil || bytes.Contains(data, []byte("carrier-secret")) {
+		t.Fatalf("failure receipt leaked carrier data: %q err=%v", data, err)
+	}
+}
+
+func TestAcquireProviderAuthorizationDoesNotLeakToTrustCarrierClient(t *testing.T) {
+	_, filesystem, artifactDigest := publishedFixture(t)
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+	})
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	signature, err := artifacttrust.Sign(artifactDigest.String(), "build-key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, signatureBytes, err := artifacttrust.NewSignatureBundle(artifactDigest.String(), []artifacttrust.Signature{signature})
+	if err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now().UTC()
+	_, revocationBytes, err := artifacttrust.NewRevocationBundleAt(artifactDigest.String(), nil, now, "auth-isolated")
+	if err != nil {
+		t.Fatal(err)
+	}
+	const authorizationEnv = "RCC_TRUST_PROVIDER_AUTH_TEST"
+	const authorizationValue = "Bearer provider-secret-sentinel"
+	t.Setenv(authorizationEnv, authorizationValue)
+	var leaked string
+	providerHandler := artifactprovider.NewHandler(filesystem)
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if strings.HasPrefix(request.URL.Path, "/v1/") {
+			if request.Header.Get("Authorization") != authorizationValue {
+				http.Error(writer, "provider authorization missing", http.StatusUnauthorized)
+				return
+			}
+			providerHandler.ServeHTTP(writer, request)
+			return
+		}
+		if request.Header.Get("Authorization") != "" {
+			leaked = request.Header.Get("Authorization")
+		}
+		switch request.URL.Path {
+		case "/" + artifacttrust.AttachmentName(artifactDigest.String(), "signature"):
+			writer.WriteHeader(http.StatusOK)
+			_, _ = writer.Write(signatureBytes)
+		case "/" + artifacttrust.AttachmentName(artifactDigest.String(), "revocations"):
+			writer.WriteHeader(http.StatusOK)
+			_, _ = writer.Write(revocationBytes)
+		default:
+			http.NotFound(writer, request)
+		}
+	}))
+	defer server.Close()
+	provider, err := artifactprovider.NewHTTPWithOptions(server.URL, artifactprovider.HTTPOptions{Client: server.Client(), AuthorizationEnv: authorizationEnv})
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
+		ArtifactDigest: artifactDigest, Provider: provider,
+		TrustPolicy:  &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, FailClosedRevocations: true, AcceptedKeys: []string{"build-key"}},
+		TrustRequest: &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"build-key": public}},
+		TrustCarrier: &artifacttrust.HTTPCarrier{BaseURL: server.URL, Client: server.Client()},
+	})
+	if err != nil || !result.Verification.Valid {
+		t.Fatalf("acquire result=%+v err=%v", result, err)
+	}
+	if leaked != "" || strings.Contains(leaked, authorizationValue) {
+		t.Fatalf("provider authorization leaked to trust carrier: %q", leaked)
 	}
 }
 

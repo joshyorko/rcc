@@ -406,7 +406,7 @@ def test(c, cover=False):
 @task
 def artifactFocused(c):
     """Run the focused Environment Artifacts v1 package tests."""
-    c.run("go test -count=1 ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
+    c.run("go test -count=1 ./artifacttrust ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
     c.run(f"{PYTHON} -m unittest scripts/test_environment_artifact_tasks.py scripts/test_validate_release_topology.py")
 
 

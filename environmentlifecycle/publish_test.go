@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
+	"crypto/ed25519"
 	"crypto/sha256"
 	"errors"
 	"fmt"
@@ -12,9 +13,11 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -153,6 +156,109 @@ func TestPublishUploadsOnlyMissingContentThenCommitsManifest(t *testing.T) {
 	}
 	if manifest.LegacyBlueprint.LegacyBlueprintKey != common.BlueprintHash(fixture.build.LegacyBlueprint) {
 		t.Fatal("manifest did not retain the exact legacy blueprint compatibility key")
+	}
+}
+
+func TestPublishWritesGeneratedProvenanceToCarrierAfterManifestCommit(t *testing.T) {
+	t.Setenv("RCC_PUBLISH_AUTH_SECRET", "publish-provider-secret-sentinel")
+	fixture := newPublishFixture(t)
+	provider, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	result, err := Publish(context.Background(), PublishRequest{
+		RobotFile: "fixtures/robot.yaml", Provider: provider, Builder: &recordingBuilder{result: fixture.build}, TrustCarrier: carrier,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	attachments, err := artifacttrust.LoadAttachments(carrier, result.ArtifactDigest.String())
+	if err != nil || attachments.Provenance == nil || attachments.SBOM == nil {
+		t.Fatalf("attachments=%+v err=%v", attachments, err)
+	}
+	if attachments.Provenance.ArtifactDigest != result.ArtifactDigest.String() || attachments.Provenance.Platform != fixture.build.Platform.RCCPlatform || attachments.Provenance.Builder != fixture.build.Builder.Kind {
+		t.Fatalf("provenance=%+v", attachments.Provenance)
+	}
+	if len(attachments.SBOM.Components) == 0 || attachments.SBOM.ArtifactDigest != result.ArtifactDigest.String() {
+		t.Fatalf("SBOM=%+v", attachments.SBOM)
+	}
+	for _, kind := range []string{"provenance", "sbom", "revocations"} {
+		data, err := carrier.Read(artifacttrust.AttachmentName(result.ArtifactDigest.String(), kind))
+		if err != nil || bytes.Contains(data, []byte("publish-provider-secret-sentinel")) {
+			t.Fatalf("%s attachment leaked provider secret: %q err=%v", kind, data, err)
+		}
+	}
+}
+
+func TestPublishStoresGeneratedSignatureAndRevocationAttachments(t *testing.T) {
+	fixture := newPublishFixture(t)
+	provider, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Publish(context.Background(), PublishRequest{
+		RobotFile: "fixtures/robot.yaml", Provider: provider, Builder: &recordingBuilder{result: fixture.build},
+		TrustCarrier: carrier, TrustSigningKey: private, TrustSigningKeyID: "publish-key",
+		TrustRevocations: []artifacttrust.Revocation{{KeyIDs: []string{"incident-key"}}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	attachments, err := artifacttrust.LoadAttachments(carrier, result.ArtifactDigest.String())
+	if err != nil || !attachments.SignaturesPresent || !attachments.RevocationsPresent || len(attachments.Signatures) != 1 || len(attachments.Revocations) != 1 {
+		t.Fatalf("attachments=%+v err=%v", attachments, err)
+	}
+	if err := artifacttrust.VerifySignature(attachments.Signatures[0], public, result.ArtifactDigest.String()); err != nil {
+		t.Fatal(err)
+	}
+}
+
+type failingTrustCarrier struct {
+	delegate artifacttrust.Carrier
+	failOn   string
+}
+
+func (c failingTrustCarrier) Read(name string) ([]byte, error) { return c.delegate.Read(name) }
+
+func (c failingTrustCarrier) Write(name string, data []byte) error {
+	if strings.Contains(name, c.failOn) {
+		return errors.New("injected trust carrier write failure")
+	}
+	return c.delegate.Write(name, data)
+}
+
+func TestPublishStagesTrustBeforeManifestCommitAndRetryRecovers(t *testing.T) {
+	fixture := newPublishFixture(t)
+	provider, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	providerEvents := &recordingProvider{delegate: provider}
+	carrier := artifacttrust.NewFilesystemCarrier(t.TempDir())
+	failing := failingTrustCarrier{delegate: carrier, failOn: "sbom"}
+	if _, err := Publish(context.Background(), PublishRequest{
+		RobotFile: "fixtures/robot.yaml", Provider: providerEvents, Builder: &recordingBuilder{result: fixture.build}, TrustCarrier: failing,
+	}); err == nil {
+		t.Fatal("trust staging failure unexpectedly published")
+	}
+	for _, event := range providerEvents.events {
+		if event == "commit" {
+			t.Fatal("manifest committed before trust staging completed")
+		}
+	}
+	if _, err := Publish(context.Background(), PublishRequest{
+		RobotFile: "fixtures/robot.yaml", Provider: providerEvents, Builder: &recordingBuilder{result: fixture.build}, TrustCarrier: carrier,
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if len(providerEvents.events) == 0 || providerEvents.events[len(providerEvents.events)-1] != "commit" {
+		t.Fatalf("retry provider events=%v", providerEvents.events)
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -27,6 +28,9 @@ const (
 type AcquireRequest struct {
 	ArtifactDigest environmentartifact.Digest
 	Provider       artifactprovider.Provider
+	TrustPolicy    *artifacttrust.Policy
+	TrustRequest   *artifacttrust.VerifyRequest
+	TrustCarrier   artifacttrust.Carrier
 }
 
 type AcquireResult struct {
@@ -35,6 +39,10 @@ type AcquireResult struct {
 	Path              string
 	CacheHit          CacheProvenance
 	Compatibility     CompatibilityReceipt
+	Verification      artifacttrust.VerificationReceipt `json:"verification"`
+	TrustPolicy       *artifacttrust.Policy             `json:"-"`
+	TrustRequest      *artifacttrust.VerifyRequest      `json:"-"`
+	TrustCarrier      artifacttrust.Carrier             `json:"-"`
 }
 
 type CompatibilityReceipt struct {
@@ -49,6 +57,10 @@ type Materialization struct {
 	ID             string
 	Path           string
 	CacheHit       CacheProvenance
+	Verification   artifacttrust.VerificationReceipt
+	TrustPolicy    *artifacttrust.Policy
+	TrustRequest   *artifacttrust.VerifyRequest
+	TrustCarrier   artifacttrust.Carrier
 }
 
 type Materializer interface {
@@ -171,6 +183,24 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 }
 
 func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
+	verify := func(platform, builder string) (artifacttrust.VerificationReceipt, error) {
+		if request.TrustPolicy == nil {
+			return artifacttrust.VerificationReceipt{Valid: true, Code: artifacttrust.CodeValid, ArtifactDigest: request.ArtifactDigest.String()}, nil
+		}
+		at := time.Now().UTC()
+		q, err := trustRequestFor(request.ArtifactDigest.String(), platform, builder, request.TrustRequest, request.TrustCarrier, at)
+		if err != nil {
+			return persistTrustFailure(*request.TrustPolicy, request.ArtifactDigest.String(), platform, builder, err, at)
+		}
+		r := request.TrustPolicy.Verify(q)
+		if err := persistVerificationReceipt(r); err != nil {
+			return r, fmt.Errorf("persist artifact trust receipt: %w", err)
+		}
+		if !r.Valid {
+			return r, fmt.Errorf("artifact trust verification failed: %s: %s", r.Code, r.Diagnostic)
+		}
+		return r, nil
+	}
 	if _, err := reconcileLocked(ctx, request.ArtifactDigest); err != nil {
 		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
 	}
@@ -188,9 +218,14 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		if err != nil {
 			return AcquireResult{}, err
 		}
+		receipt, trustErr := verify(manifest.Platform.RCCPlatform, manifest.Builder.Kind)
+		if trustErr != nil {
+			return AcquireResult{}, trustErr
+		}
 		if result, err := warmMaterialization(ctx, manifest); err == nil {
 			result.Compatibility = compatibility
-			return result, nil
+			result.Verification = receipt
+			return bindTrustContext(result, request), nil
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
 		} else {
@@ -203,7 +238,12 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
-		return it.materialize(ctx, content.manifest, content.compatibility)
+		result, err := it.materialize(ctx, content.manifest, content.compatibility)
+		if err != nil {
+			return AcquireResult{}, err
+		}
+		result.Verification = receipt
+		return bindTrustContext(result, request), nil
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
@@ -222,7 +262,23 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	if err != nil {
 		return AcquireResult{}, err
 	}
-	return it.materialize(ctx, content.manifest, content.compatibility)
+	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform, content.manifest.Builder.Kind)
+	if trustErr != nil {
+		return AcquireResult{}, trustErr
+	}
+	result, err := it.materialize(ctx, content.manifest, content.compatibility)
+	if err != nil {
+		return AcquireResult{}, err
+	}
+	result.Verification = receipt
+	return bindTrustContext(result, request), nil
+}
+
+func bindTrustContext(result AcquireResult, request AcquireRequest) AcquireResult {
+	result.TrustPolicy = request.TrustPolicy
+	result.TrustRequest = request.TrustRequest
+	result.TrustCarrier = request.TrustCarrier
+	return result
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest, compatibility CompatibilityReceipt) (AcquireResult, error) {
