@@ -67,35 +67,72 @@ func (it *CommandExecutor) Build(ctx context.Context, claim Claim, policy Execut
 	var diagnostics boundedBuffer
 	command.Stdout = &output
 	command.Stderr = &diagnostics
-	var confinementInfo *os.File
-	var confinementPath string
+	var statusReader, statusWriter, blockReader, blockWriter *os.File
+	var statusStart <-chan statusStartResult
+	var statusDone <-chan error
+	parentNamespace := uint64(0)
+	confinementPID := 0
+	mountNamespace := uint64(0)
+	var validateErr error
 	if confined {
-		confinementInfo, err = os.CreateTemp("", "rcc-process-confinement-")
+		statusReader, statusWriter, err = os.Pipe()
 		if err != nil {
-			return Artifact{}, fmt.Errorf("create parent-owned confinement receipt: %w", err)
+			return Artifact{}, fmt.Errorf("create parent-owned confinement status pipe: %w", err)
 		}
-		confinementPath = confinementInfo.Name()
-		defer confinementInfo.Close()
-		defer os.Remove(confinementPath)
-		command.ExtraFiles = []*os.File{confinementInfo}
+		blockReader, blockWriter, err = os.Pipe()
+		if err != nil {
+			_ = statusReader.Close()
+			_ = statusWriter.Close()
+			return Artifact{}, fmt.Errorf("create parent-owned sandbox gate: %w", err)
+		}
+		defer statusReader.Close()
+		defer statusWriter.Close()
+		defer blockReader.Close()
+		defer blockWriter.Close()
+		statusStart, statusDone = readBwrapStatus(statusReader)
+		command.ExtraFiles = []*os.File{statusWriter, blockReader}
 	}
 	processID := 0
 	if err := command.Start(); err != nil {
 		return Artifact{}, fmt.Errorf("start staged build: %w", err)
 	}
 	processID = command.Process.Pid
-	err = command.Wait()
-	if confinementInfo != nil {
-		_ = confinementInfo.Close()
+	if confined {
+		// The parent writer is closed immediately after bwrap has inherited its
+		// descriptor. The payload only sees bwrap's closed status descriptor.
+		_ = statusWriter.Close()
+		select {
+		case result := <-statusStart:
+			if result.err != nil {
+				_ = command.Process.Kill()
+				_ = command.Wait()
+				return Artifact{}, result.err
+			}
+			parentNamespace, validateErr = validateConfinementStart(result.status, processID)
+			if validateErr != nil {
+				_ = command.Process.Kill()
+				_ = command.Wait()
+				return Artifact{}, validateErr
+			}
+			confinementPID = result.status.ChildPID
+			mountNamespace = result.status.MountNamespace
+			// bwrap's --block-fd holds the sandbox payload until this parent
+			// validation has completed.
+			_ = blockWriter.Close()
+		case <-runCtx.Done():
+			_ = command.Process.Kill()
+			_ = command.Wait()
+			return Artifact{}, runCtx.Err()
+		}
 	}
+	err = command.Wait()
 	if runCtx.Err() != nil {
 		return Artifact{}, runCtx.Err()
 	}
 	if err != nil {
 		return Artifact{}, fmt.Errorf("staged build failed: %w: %s", err, diagnostics.String())
 	}
-	confinementPID, mountNamespace, err := readConfinementReceipt(confinementPath, confined)
-	if err != nil {
+	if err := finishBwrapStatus(statusDone, confined); err != nil {
 		return Artifact{}, err
 	}
 	var artifact Artifact
@@ -111,7 +148,8 @@ func (it *CommandExecutor) Build(ctx context.Context, claim Claim, policy Execut
 	artifact.Execution = &ExecutionReceipt{
 		StagingRoot: policy.Root, PolicyDigest: policy.Digest(), ProcessID: processID,
 		ConfinementPID: confinementPID, MountNamespace: mountNamespace,
-		CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout,
+		ParentMountNamespace: parentNamespace,
+		CPULimit:             policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout,
 		NetworkIsolated: networkIsolated, CredentialsExcluded: true, FilesystemRestricted: confined,
 	}
 	return artifact, nil
@@ -191,7 +229,8 @@ exec "$@"
 		"--tmpfs", "/tmp",
 		"--bind", mustRealPath(policy.Root), mustRealPath(policy.Root),
 		"--chdir", mustRealPath(policy.Root),
-		"--info-fd", "3",
+		"--json-status-fd", "3",
+		"--block-fd", "4",
 	}
 	for _, systemPath := range []string{"/usr/bin", "/usr/lib", "/bin", "/lib", "/lib64"} {
 		if _, statErr := os.Lstat(systemPath); statErr != nil {
@@ -230,22 +269,104 @@ func pathWithin(path, root string) bool {
 	return err == nil && relative != "." && relative != ".." && !strings.HasPrefix(relative, ".."+string(filepath.Separator))
 }
 
-func readConfinementReceipt(path string, confined bool) (int, uint64, error) {
-	if !confined {
-		return 0, 0, nil
+type bwrapStatus struct {
+	ChildPID       int    `json:"child-pid"`
+	MountNamespace uint64 `json:"mnt-namespace"`
+	ExitCode       *int   `json:"exit-code,omitempty"`
+}
+
+type statusStartResult struct {
+	status bwrapStatus
+	err    error
+}
+
+func readBwrapStatus(reader *os.File) (<-chan statusStartResult, <-chan error) {
+	start := make(chan statusStartResult, 1)
+	done := make(chan error, 1)
+	go func() {
+		defer close(start)
+		defer close(done)
+		decoder := json.NewDecoder(reader)
+		var initial bwrapStatus
+		if err := decoder.Decode(&initial); err != nil {
+			start <- statusStartResult{err: fmt.Errorf("read bwrap start status: %w", err)}
+			done <- err
+			return
+		}
+		start <- statusStartResult{status: initial}
+		var terminal bwrapStatus
+		if err := decoder.Decode(&terminal); err != nil {
+			done <- fmt.Errorf("read bwrap terminal status: %w", err)
+			return
+		}
+		if terminal.ExitCode == nil || *terminal.ExitCode != 0 {
+			done <- fmt.Errorf("bwrap exited with status %v", terminal.ExitCode)
+			return
+		}
+		done <- nil
+	}()
+	return start, done
+}
+
+func validateConfinementStart(status bwrapStatus, bwrapPID int) (uint64, error) {
+	if status.ChildPID <= 0 || status.MountNamespace == 0 {
+		return 0, ErrStagingBoundary
 	}
-	content, err := os.ReadFile(path)
+	parentPID, err := processParent(status.ChildPID)
+	if err != nil || parentPID != bwrapPID {
+		return 0, ErrStagingBoundary
+	}
+	parentNamespace, err := namespaceID("/proc/self/ns/mnt")
 	if err != nil {
-		return 0, 0, fmt.Errorf("read parent-owned confinement receipt: %w", err)
+		return 0, err
 	}
-	var receipt struct {
-		ChildPID       int    `json:"child-pid"`
-		MountNamespace uint64 `json:"mnt-namespace"`
+	childPath := fmt.Sprintf("/proc/%d/ns/mnt", status.ChildPID)
+	childNamespace, err := namespaceID(childPath)
+	if err != nil || childNamespace != status.MountNamespace || childNamespace == parentNamespace {
+		return 0, ErrStagingBoundary
 	}
-	if err := json.Unmarshal(content, &receipt); err != nil || receipt.ChildPID <= 0 || receipt.MountNamespace == 0 {
-		return 0, 0, ErrStagingBoundary
+	return parentNamespace, nil
+}
+
+func finishBwrapStatus(done <-chan error, confined bool) error {
+	if !confined {
+		return nil
 	}
-	return receipt.ChildPID, receipt.MountNamespace, nil
+	if err := <-done; err != nil {
+		return err
+	}
+	return nil
+}
+
+func processParent(pid int) (int, error) {
+	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/status", pid))
+	if err != nil {
+		return 0, err
+	}
+	for _, line := range strings.Split(string(content), "\n") {
+		if !strings.HasPrefix(line, "PPid:") {
+			continue
+		}
+		var parent int
+		if _, err := fmt.Sscanf(line, "PPid:\t%d", &parent); err != nil {
+			return 0, err
+		}
+		return parent, nil
+	}
+	return 0, fmt.Errorf("process parent is missing")
+}
+
+func namespaceID(path string) (uint64, error) {
+	target, err := os.Readlink(path)
+	if err != nil {
+		return 0, err
+	}
+	start := strings.IndexByte(target, '[')
+	end := strings.IndexByte(target, ']')
+	if start < 0 || end <= start+1 {
+		return 0, fmt.Errorf("invalid namespace link %q", target)
+	}
+	return strconv.ParseUint(target[start+1:end], 10, 64)
 }
 
 func mustRealPath(path string) string {

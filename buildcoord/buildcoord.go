@@ -146,6 +146,7 @@ type ExecutionReceipt struct {
 	ProcessID            int           `json:"processId"`
 	ConfinementPID       int           `json:"confinementPid"`
 	MountNamespace       uint64        `json:"mountNamespace"`
+	ParentMountNamespace uint64        `json:"parentMountNamespace"`
 	CPULimit             int           `json:"cpuLimit,omitempty"`
 	MemoryBytes          int64         `json:"memoryBytes,omitempty"`
 	Timeout              time.Duration `json:"timeout,omitempty"`
@@ -256,7 +257,7 @@ func ValidateExecutionReceipt(artifact Artifact, policy ExecutionPolicy) error {
 	if !policy.RequiresBoundary() {
 		return nil
 	}
-	if artifact.Execution == nil || artifact.Execution.StagingRoot == "" || mustRealPath(artifact.Execution.StagingRoot) != mustRealPath(policy.Root) || artifact.Execution.PolicyDigest != policy.Digest() || artifact.Execution.CPULimit != policy.CPULimit || artifact.Execution.MemoryBytes != policy.MemoryBytes || artifact.Execution.Timeout != policy.Timeout || (!policy.Network && !artifact.Execution.NetworkIsolated) || !artifact.Execution.CredentialsExcluded || !artifact.Execution.FilesystemRestricted || artifact.Execution.ConfinementPID <= 0 || artifact.Execution.MountNamespace == 0 {
+	if artifact.Execution == nil || artifact.Execution.StagingRoot == "" || mustRealPath(artifact.Execution.StagingRoot) != mustRealPath(policy.Root) || artifact.Execution.PolicyDigest != policy.Digest() || artifact.Execution.CPULimit != policy.CPULimit || artifact.Execution.MemoryBytes != policy.MemoryBytes || artifact.Execution.Timeout != policy.Timeout || (!policy.Network && !artifact.Execution.NetworkIsolated) || !artifact.Execution.CredentialsExcluded || !artifact.Execution.FilesystemRestricted || artifact.Execution.ConfinementPID <= 0 || artifact.Execution.MountNamespace == 0 || artifact.Execution.ParentMountNamespace == 0 || artifact.Execution.MountNamespace == artifact.Execution.ParentMountNamespace {
 		return ErrUnenforcedBuildPolicy
 	}
 	return nil

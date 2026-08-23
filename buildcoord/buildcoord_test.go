@@ -379,7 +379,7 @@ func TestPrewarmWithExecutorReceivesEnforcedPolicyAtStagingBoundary(t *testing.T
 	var received ExecutionPolicy
 	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Build: BuildRequest{CPULimit: 2, MemoryBytes: 4096, Network: true, Timeout: time.Second}}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, policy ExecutionPolicy) (Artifact, error) {
 		received = policy
-		return Artifact{Digest: "sha256:executor", Verified: true, Execution: &ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), ConfinementPID: 1, MountNamespace: 1, CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: false, CredentialsExcluded: true, FilesystemRestricted: true}}, nil
+		return Artifact{Digest: "sha256:executor", Verified: true, Execution: &ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), ConfinementPID: 1, MountNamespace: 1, ParentMountNamespace: 2, CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: false, CredentialsExcluded: true, FilesystemRestricted: true}}, nil
 	}))
 	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
 		t.Fatalf("typed prewarm: %#v %v", items, err)
@@ -497,7 +497,7 @@ if printf overwrite > "$RCC_TEST_PRIVATE_FILE" 2>/dev/null; then printf writable
 if cat "$RCC_TEST_INPUT" >/dev/null 2>&1; then printf input-readable > "$RCC_BUILD_STAGING_ROOT/input-read"; else printf input-denied > "$RCC_BUILD_STAGING_ROOT/input-read"; fi
 if printf overwrite > "$RCC_TEST_INPUT" 2>/dev/null; then printf input-writable > "$RCC_BUILD_STAGING_ROOT/input-write"; else printf input-denied > "$RCC_BUILD_STAGING_ROOT/input-write"; fi
 printf forge > "$RCC_BUILD_STAGING_ROOT/.rcc-process-root"
-printf forged > /proc/self/fd/3 2>/dev/null || true
+if printf forged >&3 2>/dev/null; then printf fd-writable > "$RCC_BUILD_STAGING_ROOT/fd-forgery"; else printf fd-denied > "$RCC_BUILD_STAGING_ROOT/fd-forgery"; fi
 printf child-write > "$RCC_BUILD_STAGING_ROOT/staging-write"
 printf '%s' ` + shellQuote(content) + `
 `
@@ -511,7 +511,7 @@ printf '%s' ` + shellQuote(content) + `
 	if err != nil {
 		t.Fatal(err)
 	}
-	for name, want := range map[string]string{"host-read": "denied", "host-write": "denied", "input-read": "input-readable", "input-write": "input-denied", "staging-write": "child-write"} {
+	for name, want := range map[string]string{"host-read": "denied", "host-write": "denied", "input-read": "input-readable", "input-write": "input-denied", "fd-forgery": "fd-denied", "staging-write": "child-write"} {
 		got, readErr := os.ReadFile(filepath.Join(staging, name))
 		if readErr != nil || string(got) != want {
 			t.Fatalf("%s = %q, err=%v; want %q", name, got, readErr, want)
@@ -523,7 +523,7 @@ printf '%s' ` + shellQuote(content) + `
 	if got, err := os.ReadFile(inputPath); err != nil || string(got) != "explicit-input" {
 		t.Fatalf("read-only input changed: %q, err=%v", got, err)
 	}
-	if artifact.Execution == nil || artifact.Execution.MountNamespace == 0 || !artifact.Execution.FilesystemRestricted {
+	if artifact.Execution == nil || artifact.Execution.MountNamespace == 0 || artifact.Execution.MountNamespace == artifact.Execution.ParentMountNamespace || !artifact.Execution.FilesystemRestricted {
 		t.Fatalf("missing parent-owned confinement receipt: %#v", artifact.Execution)
 	}
 }
