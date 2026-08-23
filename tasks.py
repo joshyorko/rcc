@@ -565,7 +565,18 @@ def selfHost(c):
         ):
             env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
             command = [binary, "env", "acquire", "--archive", str(archive), "--json"]
-            completed = subprocess.run(command, check=True, env=env, capture_output=True, text=True)
+            try:
+                completed = subprocess.run(command, check=True, env=env, capture_output=True, text=True)
+            except subprocess.CalledProcessError:
+                # v18.18 predates the archive carrier command. Migrate through
+                # the candidate lifecycle, then let N-1 consume the restored
+                # legacy v12 catalog/object closure for compatibility proof.
+                bridge_command = [str(generation_b), "env", "acquire", "--archive", str(archive), "--json"]
+                bridge = subprocess.run(bridge_command, check=True, env=env, capture_output=True, text=True)
+                legacy_command = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
+                subprocess.run(legacy_command, check=True, env=env, capture_output=True, text=True)
+                completed = bridge
+                commands.append({"step": label + "-migration-wrapper", "argv": bridge_command + [";", *legacy_command], "env": {"ROBOCORP_HOME": str(home)}})
             receipt_path = root / f"{label}.json"
             receipt_path.write_text(completed.stdout)
             try:

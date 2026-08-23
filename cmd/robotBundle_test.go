@@ -3,6 +3,7 @@ package cmd
 import (
 	"archive/zip"
 	"encoding/json"
+	"github.com/joshyorko/rcc/environmentartifact"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -66,6 +67,31 @@ func TestCreateBundleWithArtifactDeclaresSourcePlusArtifactMode(t *testing.T) {
 	}
 	if !bundleEntries(t, output)["environment/artifact.rcca"] {
 		t.Fatal("source+artifact bundle omitted artifact payload")
+	}
+}
+
+func TestCreateBundleWithPlatformIndexEmbedsValidatedIndex(t *testing.T) {
+	root := t.TempDir()
+	robotYaml, hololib, conda := writeBundleFixture(t, root)
+	artifact := filepath.Join(t.TempDir(), "environment.rcca")
+	if err := os.WriteFile(artifact, []byte("artifact"), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	_, indexBytes, err := environmentartifact.NewPlatformIndex(environmentartifact.DigestBytes([]byte("spec")), []environmentartifact.PlatformArtifact{{Platform: environmentartifact.CurrentPlatform(), Artifact: environmentartifact.DigestBytes([]byte("artifact"))}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	indexPath := filepath.Join(t.TempDir(), "platform-index.json")
+	if err := os.WriteFile(indexPath, indexBytes, 0o640); err != nil {
+		t.Fatal(err)
+	}
+	output := filepath.Join(t.TempDir(), "bundle.py")
+	if err := createBundleWithArtifactAndIndex(robotYaml, hololib, output, conda, artifact, indexPath); err != nil {
+		t.Fatal(err)
+	}
+	entries := bundleEntries(t, output)
+	if !entries["environment/platform-index.json"] {
+		t.Fatal("bundle omitted platform index")
 	}
 }
 
