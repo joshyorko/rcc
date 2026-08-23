@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
@@ -27,6 +28,8 @@ const (
 type AcquireRequest struct {
 	ArtifactDigest environmentartifact.Digest
 	Provider       artifactprovider.Provider
+	TrustPolicy    *artifacttrust.Policy
+	TrustRequest   *artifacttrust.VerifyRequest
 }
 
 type AcquireResult struct {
@@ -34,6 +37,7 @@ type AcquireResult struct {
 	MaterializationID string
 	Path              string
 	CacheHit          CacheProvenance
+	Verification      artifacttrust.VerificationReceipt `json:"verification"`
 }
 
 type Materialization struct {
@@ -118,6 +122,12 @@ func NewAcquirer() *Acquirer {
 }
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
+	verify := func(platform string) (artifacttrust.VerificationReceipt, error) {
+		if request.TrustPolicy == nil { return artifacttrust.VerificationReceipt{Valid:true, Code:artifacttrust.CodeValid, ArtifactDigest:request.ArtifactDigest.String()}, nil }
+		q := artifacttrust.VerifyRequest{ArtifactDigest:request.ArtifactDigest.String(), Platform:platform}
+		if request.TrustRequest != nil { q=*request.TrustRequest; q.ArtifactDigest=request.ArtifactDigest.String(); if q.Platform=="" { q.Platform=platform } }
+		r := request.TrustPolicy.Verify(q); if !r.Valid { return r, fmt.Errorf("artifact trust verification failed: %s: %s",r.Code,r.Diagnostic) }; return r,nil
+	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {
 		return AcquireResult{}, fmt.Errorf("initialize local artifact cache: %w", err)
@@ -128,7 +138,9 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, err
 		}
+		receipt, trustErr := verify(manifest.Platform.RCCPlatform); if trustErr != nil { return AcquireResult{}, trustErr }
 		if result, err := warmMaterialization(manifest); err == nil {
+			result.Verification = receipt
 			return result, nil
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
@@ -137,7 +149,7 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
-		return it.materialize(ctx, content.manifest)
+		result, err := it.materialize(ctx, content.manifest); if err != nil { return AcquireResult{}, err }; result.Verification=receipt; return result,nil
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
@@ -156,7 +168,8 @@ func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (Acquir
 	if err != nil {
 		return AcquireResult{}, err
 	}
-	return it.materialize(ctx, content.manifest)
+	receipt, trustErr := verify(content.manifest.Platform.RCCPlatform); if trustErr != nil { return AcquireResult{}, trustErr }
+	result, err := it.materialize(ctx, content.manifest); if err != nil { return AcquireResult{}, err }; result.Verification=receipt; return result,nil
 }
 
 func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifact.Manifest) (AcquireResult, error) {
