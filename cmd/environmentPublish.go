@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -56,6 +57,13 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 					trustCarrierType = "filesystem"
 				}
 			}
+			if dependencies.builder == nil {
+				return fmt.Errorf("environment publish builder dependency is unavailable")
+			}
+			builder := dependencies.builder()
+			if builder == nil {
+				return fmt.Errorf("environment publish builder dependency is unavailable")
+			}
 			trustCarrier, err := optionalEnvironmentTrustCarrier(trustCarrierPath, trustCarrierType, providerURL)
 			if err != nil {
 				return err
@@ -98,7 +106,7 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 				}
 			}
 			result, err := dependencies.publish(command.Context(), environmentlifecycle.PublishRequest{
-				RobotFile: robotFile, Provider: provider, Builder: environmentlifecycle.CurrentRCCBuilder{},
+				RobotFile: robotFile, Provider: provider, Builder: builder,
 				TrustCarrier: trustCarrier, TrustProvenance: provenance, TrustSBOM: sbom,
 				TrustSignatures: trustSignatures, TrustRevocations: trustRevocations,
 				TrustSigningKey: signingKey, TrustSigningKeyID: signingKeyID,
@@ -136,10 +144,27 @@ func readTrustJSON[T any](path string) (*T, error) {
 		return nil, err
 	}
 	var value T
-	if err := json.Unmarshal(data, &value); err != nil {
+	if err := decodeStrictTrustJSON(data, &value); err != nil {
 		return nil, fmt.Errorf("invalid trust input")
 	}
 	return &value, nil
+}
+
+func decodeStrictTrustJSON(data []byte, value any) error {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(value); err != nil {
+		return err
+	}
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		return fmt.Errorf("trailing JSON input")
+	}
+	canonical, err := json.Marshal(value)
+	if err != nil || !bytes.Equal(canonical, bytes.TrimSpace(data)) {
+		return fmt.Errorf("non-canonical JSON input")
+	}
+	return nil
 }
 
 func readTrustPrivateKey(path string) (ed25519.PrivateKey, error) {

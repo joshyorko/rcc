@@ -3,7 +3,12 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
+	"compress/gzip"
 	"context"
+	"crypto/ed25519"
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -16,10 +21,74 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
+	"github.com/joshyorko/rcc/htfs"
 	"github.com/spf13/cobra"
 )
 
 var cliTestDigest = "sha256:" + strings.Repeat("a", 64)
+
+type testEnvironmentBuilder struct{}
+
+func (testEnvironmentBuilder) Build(context.Context, string) (environmentlifecycle.BuildResult, error) {
+	return environmentlifecycle.BuildResult{}, nil
+}
+
+type cliFixtureBuilder struct {
+	result environmentlifecycle.BuildResult
+}
+
+func (b cliFixtureBuilder) Build(context.Context, string) (environmentlifecycle.BuildResult, error) {
+	return b.result, nil
+}
+
+func newCLIEnvironmentBuild(t *testing.T) environmentlifecycle.BuildResult {
+	t.Helper()
+	if err := os.MkdirAll(common.HololibCatalogLocation(), 0750); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(common.HololibLibraryLocation(), 0750); err != nil {
+		t.Fatal(err)
+	}
+	legacyBlueprint := []byte("channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n")
+	logical := []byte("immutable python bytes")
+	logicalSum := sha256.Sum256(logical)
+	legacyObjectID := fmt.Sprintf("%x", logicalSum)
+	objectPath := htfs.ExactDefaultLocation(legacyObjectID)
+	if err := os.MkdirAll(filepath.Dir(objectPath), 0750); err != nil {
+		t.Fatal(err)
+	}
+	var stored bytes.Buffer
+	writer, err := gzip.NewWriterLevel(&stored, gzip.BestSpeed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := writer.Write(logical); err != nil {
+		t.Fatal(err)
+	}
+	if err := writer.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(objectPath, stored.Bytes(), 0640); err != nil {
+		t.Fatal(err)
+	}
+	root, err := htfs.NewRoot(filepath.Join(t.TempDir(), "h123456_123456789abcdeft"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	root.Blueprint = common.BlueprintHash(legacyBlueprint)
+	root.Tree.Mode = 0750 | os.ModeDir
+	root.Tree.Files["python"] = &htfs.File{Name: "python", Size: int64(len(logical)), Mode: 0750, Digest: legacyObjectID, Rewrite: []int64{}}
+	catalogPath := filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(root.Blueprint))
+	if err := root.SaveAs(catalogPath); err != nil {
+		t.Fatal(err)
+	}
+	return environmentlifecycle.BuildResult{
+		LegacyBlueprint: legacyBlueprint, CatalogPath: catalogPath,
+		SpecificationBytes: []byte(`{"dependencies":["python=3.11"],"source":"robot.yaml"}`),
+		SourceKind:         "robot.yaml", Platform: environmentartifact.CurrentPlatform(),
+		Builder: environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: "v0.test", CompatibilityKey: "v12-gzip-sha256"},
+	}
+}
 
 type inertProvider struct{}
 
@@ -127,6 +196,57 @@ func TestEnvironmentAcquireSelectsFilesystemAndArchiveTrustCarriers(t *testing.T
 	}
 }
 
+func TestEnvironmentExecSelectsArchiveTrustCarrier(t *testing.T) {
+	archivePath := filepath.Join(t.TempDir(), "trust.zip")
+	file, err := os.Create(archivePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := zip.NewWriter(file).Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+	var received artifacttrust.Carrier
+	command := newEnvironmentCommand(environmentCommandDependencies{
+		acquire: func(_ context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
+			received = request.TrustCarrier
+			return environmentlifecycle.AcquireResult{ArtifactDigest: digest}, nil
+		},
+		execute: func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error) {
+			return environmentlifecycle.ExecutionHandle{}, environmentlifecycle.ChildResult{}, nil
+		},
+		materializer: func() environmentlifecycle.Materializer { return nil },
+	})
+	var stdout bytes.Buffer
+	command.SetOut(&stdout)
+	if err := runCobraCommand(command, []string{"exec", "--artifact", cliTestDigest, "--trust-carrier", archivePath, "--trust-carrier-type", "archive", "--permissive-local", "--json", "--", "python", "-V"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := received.(*artifacttrust.ArchiveCarrier); !ok {
+		t.Fatalf("carrier=%T", received)
+	}
+}
+
+func TestRawSignatureAndRevocationInputsRequireStrictCanonicalJSON(t *testing.T) {
+	var signatures []artifacttrust.Signature
+	if err := decodeStrictTrustJSON([]byte(`[{"mediaType":"x","artifactDigest":"a","keyID":"k","algorithm":"Ed25519","signature":"s"}] trailing`), &signatures); err == nil {
+		t.Fatal("trailing signature input accepted")
+	}
+	if err := decodeStrictTrustJSON([]byte(`[{"mediaType":"x","artifactDigest":"a","keyID":"k","algorithm":"Ed25519","signature":"s","unexpected":"value"}]`), &signatures); err == nil {
+		t.Fatal("unknown signature field accepted")
+	}
+	var revocations []artifacttrust.Revocation
+	if err := decodeStrictTrustJSON([]byte(`[{"updatedAt":"1970-01-01T00:00:00Z","unexpected":"value"}]`), &revocations); err == nil {
+		t.Fatal("unknown revocation field accepted")
+	}
+	if err := decodeStrictTrustJSON([]byte(`[{"artifactDigest":"a","mediaType":"x","keyID":"k","algorithm":"Ed25519","signature":"s","notBefore":"","notAfter":""}]`), &signatures); err == nil {
+		t.Fatal("non-canonical signature field order accepted")
+	}
+}
+
 func TestEnvironmentRejectsNoncanonicalDigestBeforeLifecycleOrProvider(t *testing.T) {
 	called := false
 	dependencies := environmentCommandDependencies{
@@ -160,6 +280,7 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 	var providerURL, robotFile string
 	var trustCarrier artifacttrust.Carrier
 	dependencies := environmentCommandDependencies{
+		builder: func() environmentlifecycle.Builder { return testEnvironmentBuilder{} },
 		newProvider: func(value string) (artifactprovider.Provider, error) {
 			providerURL = value
 			return inertProvider{}, nil
@@ -186,6 +307,78 @@ func TestEnvironmentPublishEmitsStableJSON(t *testing.T) {
 	want := `{"artifactDigest":"` + cliTestDigest + `","specificationDigest":"` + specification.String() + `","legacyBlueprintKey":"legacy-key","objectCount":7,"uploadedBytes":101,"reusedBytes":202}` + "\n"
 	if stdout.String() != want || providerURL != "http://127.0.0.1:8080" || robotFile != "project/robot.yaml" || trustCarrier == nil {
 		t.Fatalf("publish output=%q provider=%q robot=%q carrier=%T", stdout.String(), providerURL, robotFile, trustCarrier)
+	}
+}
+
+func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.T) {
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	producerHome := t.TempDir()
+	common.Product.ForceHome(producerHome)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+	})
+	build := newCLIEnvironmentBuild(t)
+	provider, err := artifactprovider.NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	trustRoot := filepath.Join(producerHome, "artifacts", "v1", "trust")
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	keyPath := filepath.Join(t.TempDir(), "signing.key")
+	if err := os.WriteFile(keyPath, private, 0600); err != nil {
+		t.Fatal(err)
+	}
+	var published environmentlifecycle.PublishResult
+	dependencies := environmentCommandDependencies{
+		newProvider: func(string) (artifactprovider.Provider, error) { return provider, nil },
+		builder:     func() environmentlifecycle.Builder { return cliFixtureBuilder{result: build} },
+		publish: func(ctx context.Context, request environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error) {
+			result, err := environmentlifecycle.Publish(ctx, request)
+			if err == nil {
+				published = result
+			}
+			return result, err
+		},
+		acquire: func(ctx context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
+			request.TrustRequest = &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"publish-key": public}}
+			return environmentlifecycle.NewAcquirer().Acquire(ctx, request)
+		},
+	}
+	publishCommand := newEnvironmentCommand(dependencies)
+	var publishOutput bytes.Buffer
+	publishCommand.SetOut(&publishOutput)
+	if err := runCobraCommand(publishCommand, []string{
+		"publish", "--robot", "robot.yaml", "--provider", "provider", "--trust-carrier", trustRoot,
+		"--trust-carrier-type", "filesystem", "--signing-key", keyPath, "--signing-key-id", "publish-key", "--json",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if published.ArtifactDigest.String() == "" || !strings.Contains(publishOutput.String(), published.ArtifactDigest.String()) {
+		t.Fatalf("publish output=%q result=%+v", publishOutput.String(), published)
+	}
+	acquireCommand := newEnvironmentCommand(dependencies)
+	var acquireOutput bytes.Buffer
+	acquireCommand.SetOut(&acquireOutput)
+	if err := runCobraCommand(acquireCommand, []string{
+		"acquire", "--artifact", published.ArtifactDigest.String(), "--provider", "provider",
+		"--trust-carrier", trustRoot, "--trust-carrier-type", "filesystem", "--json",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		Verification artifacttrust.VerificationReceipt `json:"verification"`
+	}
+	if err := json.Unmarshal(acquireOutput.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if !result.Verification.Valid || result.Verification.KeyID != "publish-key" {
+		t.Fatalf("acquire output=%s", acquireOutput.String())
 	}
 }
 

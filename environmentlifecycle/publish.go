@@ -166,11 +166,11 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 		}
 		uploadedBytes += blob.descriptor.Size
 	}
-	if err := request.Provider.CommitManifest(ctx, manifestBytes); err != nil {
-		return PublishResult{}, fmt.Errorf("commit manifest %s: %w", manifest.ArtifactDigest, err)
-	}
 	if err := publishTrustAttachments(request, manifest, build, inventory); err != nil {
 		return PublishResult{}, err
+	}
+	if err := request.Provider.CommitManifest(ctx, manifestBytes); err != nil {
+		return PublishResult{}, fmt.Errorf("commit manifest %s: %w", manifest.ArtifactDigest, err)
 	}
 	return PublishResult{
 		ArtifactDigest: manifest.ArtifactDigest, SpecificationDigest: specificationDescriptor.Digest,

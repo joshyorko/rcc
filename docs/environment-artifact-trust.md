@@ -21,6 +21,10 @@ independent of the provider/carrier; HTTP, filesystem, and validated offline
 ZIP carriers use the same attachment names. `env acquire` and `env exec` expose
 explicit filesystem/archive carrier selection.
 
+Publication stages the required trust set before committing the provider
+manifest, so a failed trust write leaves no visible manifest; a later retry can
+reuse the staged objects and commit atomically.
+
 Policies are worker/deployment input. An explicit local policy may allow
 unsigned local artifacts. A remote or production policy requires a valid
 signature, restricts signer keys, builders, platforms, RCC versions, source and

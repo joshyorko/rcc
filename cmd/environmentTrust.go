@@ -63,7 +63,7 @@ func newEnvironmentTrustCommand() *cobra.Command {
 			}
 			if bundle, err := artifacttrust.DecodeSignatureBundle(data, artifact); err == nil {
 				q.Signatures = bundle.Signatures
-			} else if err := json.Unmarshal(data, &q.Signatures); err != nil {
+			} else if err := decodeStrictTrustJSON(data, &q.Signatures); err != nil {
 				return fmt.Errorf("invalid signature attachment")
 			}
 		}
@@ -82,7 +82,7 @@ func newEnvironmentTrustCommand() *cobra.Command {
 					q.RevocationFetchedAt = fetchedAt
 				}
 				q.RevocationSource = bundle.Source
-			} else if err := json.Unmarshal(data, &q.Revocations); err != nil {
+			} else if err := decodeStrictTrustJSON(data, &q.Revocations); err != nil {
 				return fmt.Errorf("invalid revocation attachment")
 			}
 		}

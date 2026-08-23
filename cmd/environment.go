@@ -10,6 +10,7 @@ import (
 
 type environmentCommandDependencies struct {
 	newProvider  func(string) (artifactprovider.Provider, error)
+	builder      func() environmentlifecycle.Builder
 	publish      func(context.Context, environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error)
 	acquire      func(context.Context, environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error)
 	execute      func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error)
@@ -19,6 +20,7 @@ type environmentCommandDependencies struct {
 func defaultEnvironmentCommandDependencies() environmentCommandDependencies {
 	return environmentCommandDependencies{
 		newProvider: newProviderReference,
+		builder:     func() environmentlifecycle.Builder { return environmentlifecycle.CurrentRCCBuilder{} },
 		publish:     environmentlifecycle.Publish,
 		acquire: func(ctx context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
 			return environmentlifecycle.NewAcquirer().Acquire(ctx, request)
