@@ -208,14 +208,14 @@ class ArtifactTaskTests(unittest.TestCase):
       tasks.releaseCandidate.body(Context())
 
     self.assertEqual(commands, [
-        "invoke artifactFocused",
-        "invoke artifactRace",
-        "invoke artifactVertical",
-        "invoke artifactRobot",
-        "invoke binaryInventory",
-        "invoke robot",
-        "invoke selfHost",
-        "invoke goVet",
+        f"{tasks.PYTHON} -m invoke artifactFocused",
+        f"{tasks.PYTHON} -m invoke artifactRace",
+        f"{tasks.PYTHON} -m invoke artifactVertical",
+        f"{tasks.PYTHON} -m invoke artifactRobot",
+        f"{tasks.PYTHON} -m invoke binaryInventory",
+        f"{tasks.PYTHON} -m invoke robot",
+        f"{tasks.PYTHON} -m invoke selfHost",
+        f"{tasks.PYTHON} -m invoke goVet",
     ])
 
   def test_release_candidate_fails_before_dispatch_on_non_linux(self):

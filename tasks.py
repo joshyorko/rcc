@@ -561,10 +561,10 @@ def releaseCandidate(c):
         "artifactRobot",
         "binaryInventory",
     ):
-        c.run(f"invoke {task_name}")
-    c.run("invoke robot")
-    c.run("invoke selfHost")
-    c.run("invoke goVet")
+        c.run(f"{PYTHON} -m invoke {task_name}")
+    c.run(f"{PYTHON} -m invoke robot")
+    c.run(f"{PYTHON} -m invoke selfHost")
+    c.run(f"{PYTHON} -m invoke goVet")
 
 
 def version() -> str:
