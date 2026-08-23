@@ -111,7 +111,7 @@ compatible with the exported environment; it does not include RCC itself.`,
 
 			if pathlib.IsDir(sourceDir) {
 				common.Debug("Copying artifacts from %q to %q", sourceDir, targetDir)
-				err := copyBundleArtifacts(artifactDir, workarea, ".")
+				err := copyBundleArtifacts(relPath, workarea, ".")
 				pretty.Guard(err == nil, 7, "Failed to copy artifacts: %v", err)
 				common.Log("Artifacts copied to %q", targetDir)
 			}

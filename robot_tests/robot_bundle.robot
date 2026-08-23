@@ -3,6 +3,7 @@ Library  OperatingSystem
 Library  supporting.py
 Resource  resources.robot
 Suite Setup  Bundle setup
+Test Setup  Remove Directory    output    True
 
 *** Keywords ***
 Bundle setup
