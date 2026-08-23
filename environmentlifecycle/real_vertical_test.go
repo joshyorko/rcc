@@ -336,7 +336,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 		t.Fatal("exact binary CLI producer and consumer homes are not isolated")
 	}
 	acquireOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json",
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
 	}, consumerHome, true)
 	var acquired exactBinaryAcquireResult
 	decodeExactBinaryJSON(t, acquireOutput, &acquired)
@@ -347,7 +347,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 
 	proofFile := filepath.Join(t.TempDir(), "cli-python-proof.json")
 	execOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json", "--", "python", "-c", exactNativeProofProgram(), proofFile,
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", exactNativeProofProgram(), proofFile,
 	}, consumerHome, true)
 	var executed exactBinaryExecResult
 	decodeExactBinaryJSON(t, execOutput, &executed)
@@ -397,7 +397,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 		t.Fatal(err)
 	}
 	mismatchOutput := runExactBinaryCLIAllowFailure(t, binary, []string{
-		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--json",
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
 	}, filepath.Join(t.TempDir(), "mismatch-home"), true)
 	if mismatchOutput.err == nil || !strings.Contains(strings.ToLower(mismatchOutput.stderr), "incompatible") {
 		t.Fatalf("exact binary mismatch result = stdout %q stderr %q err %v", mismatchOutput.stdout, mismatchOutput.stderr, mismatchOutput.err)
@@ -409,7 +409,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 
 	server.Close()
 	warmAcquireOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json",
+		"env", "acquire", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
 	}, consumerHome, true)
 	var warmAcquired exactBinaryAcquireResult
 	decodeExactBinaryJSON(t, warmAcquireOutput, &warmAcquired)
@@ -418,7 +418,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	}
 	assertIndependentWorkerCapabilities(t, warmAcquired.Compatibility)
 	warmExecOutput := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--json", "--", "python", "-c", "print('warm')",
+		"env", "exec", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", "print('warm')",
 	}, consumerHome, true)
 	var warmExecuted exactBinaryExecResult
 	decodeExactBinaryJSON(t, warmExecOutput, &warmExecuted)
@@ -525,7 +525,7 @@ func runExactPlatformProbe(t *testing.T, binary, home, providerURL string, diges
 	t.Helper()
 	probeFile := filepath.Join(t.TempDir(), "platform-probe.json")
 	output := runExactBinaryCLI(t, binary, []string{
-		"env", "exec", "--artifact", digest.String(), "--provider", providerURL, "--json", "--", "python", "-c", exactPlatformProbeProgram(), nativeExtension, probeFile,
+		"env", "exec", "--artifact", digest.String(), "--provider", providerURL, "--permissive-local", "--json", "--", "python", "-c", exactPlatformProbeProgram(), nativeExtension, probeFile,
 	}, home, true)
 	var executed exactBinaryExecResult
 	decodeExactBinaryJSON(t, output, &executed)
@@ -611,7 +611,7 @@ func runExactCompatibilityCase(t *testing.T, binary, providerURL string, provide
 	}
 	objectGets.Store(0)
 	output := runExactBinaryCLIAllowFailure(t, binary, []string{
-		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--json",
+		"env", "acquire", "--artifact", mutated.ArtifactDigest.String(), "--provider", providerURL, "--permissive-local", "--json",
 	}, filepath.Join(t.TempDir(), "platform-mismatch-home"), true)
 	if reject {
 		if output.err == nil || !strings.Contains(strings.ToLower(output.stderr), "incompatible") || objectGets.Load() != 0 {
