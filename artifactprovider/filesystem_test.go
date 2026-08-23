@@ -186,6 +186,28 @@ func TestFilesystemObjectReaderRejectsTamperedProviderBytes(t *testing.T) {
 	}
 }
 
+func TestFilesystemIdempotentPublicationFailsClosedWhenAuditIsUnavailable(t *testing.T) {
+	root := t.TempDir()
+	p, err := NewFilesystem(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	blob := testBlob([]byte("audit failure publication"))
+	if err := p.PutObject(context.Background(), blob); err != nil {
+		t.Fatal(err)
+	}
+	auditPath := filepath.Join(root, filesystemAuditFile)
+	if err := os.Remove(auditPath); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Mkdir(auditPath, 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader([]byte("audit failure publication"))}); err == nil {
+		t.Fatal("idempotent publication ignored audit failure")
+	}
+}
+
 func TestFilesystemRestoreRollbackMarkerRecoversAfterPublicationFailure(t *testing.T) {
 	root := t.TempDir()
 	provider, err := NewFilesystem(root)

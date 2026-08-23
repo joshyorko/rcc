@@ -96,7 +96,9 @@ func (it *Filesystem) PutObject(ctx context.Context, blob Blob) error {
 		if verifyErr := verifyObjectAt(destinationDir, destination, blob.Descriptor); verifyErr != nil {
 			return fmt.Errorf("conflicting immutable CAS object: %w", verifyErr)
 		}
-		_ = it.appendAudit("publish-object-idempotent", blob.Descriptor.Digest)
+		if err := it.appendAudit("publish-object-idempotent", blob.Descriptor.Digest); err != nil {
+			return err
+		}
 		return nil
 	}
 	if err != nil {
