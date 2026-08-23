@@ -84,6 +84,7 @@ type Artifact struct {
 	Provider              string                    `json:"provider,omitempty"`
 	ProviderAuthorization string                    `json:"providerAuthorization,omitempty"`
 	Signatures            []artifacttrust.Signature `json:"signatures,omitempty"`
+	NondeterminismPolicy  string                    `json:"nondeterminismPolicy,omitempty"`
 }
 type Event struct {
 	Time   time.Time `json:"time"`
@@ -168,6 +169,7 @@ type Claim struct {
 	Epoch     uint64    `json:"epoch"`
 	ExpiresAt time.Time `json:"expiresAt"`
 	Artifact  Artifact  `json:"artifact,omitempty"`
+	Staging   string    `json:"-"`
 }
 type Outcome string
 
@@ -183,6 +185,7 @@ type Filesystem struct {
 	lockWait             time.Duration
 	RequireArtifactProof bool
 	Verifier             ArtifactVerifier
+	NondeterminismPolicy string
 }
 
 func NewFilesystem(root string, clock Clock) *Filesystem {
@@ -190,6 +193,18 @@ func NewFilesystem(root string, clock Clock) *Filesystem {
 		clock = RealClock{}
 	}
 	return &Filesystem{Root: root, Clock: clock, lockWait: 2 * time.Second}
+}
+
+// NewFilesystemWithVerifier constructs a coordinator with mandatory
+// trust-backed publication verification.
+func NewFilesystemWithVerifier(root string, clock Clock, verifier ArtifactVerifier) (*Filesystem, error) {
+	if verifier == nil {
+		return nil, fmt.Errorf("artifact verifier is required")
+	}
+	c := NewFilesystem(root, clock)
+	c.RequireArtifactProof = true
+	c.Verifier = verifier
+	return c, nil
 }
 
 func (c *Filesystem) Claim(key BuildKey, owner string, ttl time.Duration) (Claim, Outcome, error) {
@@ -348,7 +363,7 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 			}
 			return nil
 		}
-		eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest})
+		eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest + " policy=" + artifact.NondeterminismPolicy})
 		return errors.Join(ErrDivergentArtifact, eventErr)
 	}
 	current, ok, err := c.readClaim(claim.Key)
@@ -389,8 +404,8 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
 		if current.Digest == artifact.Digest {
 			return nil
 		}
-		_ = c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest})
-		return ErrDivergentArtifact
+		eventErr := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest + " policy=" + artifact.NondeterminismPolicy})
+		return errors.Join(ErrDivergentArtifact, eventErr)
 	}
 	if err := c.writeJSON(c.artifactPath(key), artifact); err != nil {
 		return err
@@ -493,10 +508,13 @@ type PrewarmRequest struct {
 	Backoff              time.Duration
 	LeaseTTL             time.Duration
 	Owner                string
+	Build                BuildRequest
+	NondeterminismPolicy string
 }
 type PrewarmItem struct {
 	Key    BuildKey
 	Status PrewarmStatus
+	Reason string `json:"reason,omitempty"`
 }
 type PrewarmStatus string
 
@@ -504,6 +522,8 @@ const (
 	PrewarmNeeded          PrewarmStatus = "needed"
 	PrewarmReady           PrewarmStatus = "ready"
 	PrewarmCapacityLimited PrewarmStatus = "capacity-limited"
+	PrewarmFailed          PrewarmStatus = "failed"
+	PrewarmDegraded        PrewarmStatus = "degraded"
 )
 
 func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build func(context.Context, Claim) (Artifact, error)) ([]PrewarmItem, error) {
@@ -520,7 +540,11 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		if len(request.Keys) == 0 {
 			return []PrewarmItem{}, nil
 		}
-		return []PrewarmItem{{Status: PrewarmCapacityLimited}}, nil
+		items := make([]PrewarmItem, len(request.Keys))
+		for i, key := range request.Keys {
+			items[i] = PrewarmItem{Key: key, Status: PrewarmCapacityLimited, Reason: "capacity is zero"}
+		}
+		return items, nil
 	}
 	if request.Backoff <= 0 {
 		request.Backoff = 25 * time.Millisecond
@@ -553,6 +577,10 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 				items[i].Status = PrewarmNeeded
 			}
 			if itemErr != nil {
+				items[i].Reason = itemErr.Error()
+				if !errors.Is(itemErr, ErrWaitTimeout) && !errors.Is(itemErr, context.Canceled) {
+					items[i].Status = PrewarmFailed
+				}
 				errMu.Lock()
 				firstErr = errors.Join(firstErr, itemErr)
 				errMu.Unlock()
@@ -563,10 +591,11 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		wg.Add(1)
 		go worker()
 	}
+feed:
 	for i := 0; i < limit; i++ {
 		select {
 		case <-ctx.Done():
-			break
+			break feed
 		case jobs <- i:
 		}
 	}
@@ -576,6 +605,9 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 }
 
 func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key BuildKey, build func(context.Context, Claim) (Artifact, error)) error {
+	if err := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "prewarm-requested", Detail: fmt.Sprintf("priority=%d", request.Priority)}); err != nil {
+		return err
+	}
 	claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
 	if err != nil && !errors.Is(err, ErrClaimBusy) {
 		return err
@@ -627,6 +659,16 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 		}
 	}
 	buildCtx, stopHeartbeat := context.WithCancel(ctx)
+	buildRequest := request.Build
+	if buildRequest.Root == "" {
+		buildRequest.Root = c.Root
+	}
+	staging, cleanup, stagingErr := PrepareStaging(buildRequest, request.Owner)
+	if stagingErr != nil {
+		stopHeartbeat()
+		return stagingErr
+	}
+	claim.Staging = staging
 	reservation, reservationErr := ReserveDisk(c.Root, request.DiskReservationBytes)
 	if reservationErr != nil {
 		stopHeartbeat()
@@ -636,16 +678,35 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
 	artifact, err := build(buildCtx, claim)
 	stopHeartbeat()
+	cleanupErr := error(nil)
+	if err != nil && buildRequest.QuarantineRoot != "" {
+		_, cleanupErr = QuarantineStaging(staging, buildRequest.QuarantineRoot, err.Error())
+		if cleanupErr == nil {
+			cleanupErr = nil
+		}
+	} else {
+		cleanupErr = cleanup()
+	}
+	if err == nil && cleanupErr != nil {
+		err = cleanupErr
+	}
 	reservationErr = reservation.Release()
 	if err == nil && reservationErr != nil {
 		err = reservationErr
 	}
-	select {
-	case hbErr := <-heartbeatErr:
-		if err == nil && !errors.Is(hbErr, context.Canceled) {
-			err = hbErr
+	hbErr := <-heartbeatErr
+	if err == nil && !errors.Is(hbErr, context.Canceled) {
+		err = hbErr
+	}
+	if err == nil {
+		if artifact.NondeterminismPolicy == "" {
+			artifact.NondeterminismPolicy = request.NondeterminismPolicy
 		}
-	default:
+		if current, ok, readErr := c.readClaim(claim.Key); readErr != nil {
+			err = readErr
+		} else if !ok || current.Owner != claim.Owner || current.Epoch != claim.Epoch || !current.ExpiresAt.After(c.Clock.Now()) {
+			err = ErrStaleClaim
+		}
 	}
 	if err == nil {
 		err = c.Publish(claim, artifact)

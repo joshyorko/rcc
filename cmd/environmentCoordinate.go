@@ -25,6 +25,11 @@ type coordinationResult struct {
 func newEnvironmentCoordinateCommand() *cobra.Command {
 	var root, spec, platform, builder, resolution, trust, schema, owner string
 	var ttl, interval time.Duration
+	var backoff, buildTimeout time.Duration
+	var capacity, priority, cpuLimit int
+	var diskBytes, memoryBytes int64
+	var network, independent, waitForClaim bool
+	var quarantineRoot string
 	var epoch uint64
 	var artifactDigest, closureDigest, provider, authorization string
 	var trustKeyID, trustPublicKey, trustSignature string
@@ -84,7 +89,10 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coord().Release(claimFromFlags()))
 	}}
 	prewarm := &cobra.Command{Use: "prewarm", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		request := buildcoord.PrewarmRequest{Capacity: len(keys), Wait: true}
+		request := buildcoord.PrewarmRequest{Capacity: capacity, Priority: priority, Wait: waitForClaim, IndependentBuild: independent, DiskReservationBytes: diskBytes, Backoff: backoff, LeaseTTL: ttl, Owner: owner, Build: buildcoord.BuildRequest{Root: root, DiskBytes: diskBytes, Network: network, QuarantineRoot: quarantineRoot, CPULimit: cpuLimit, MemoryBytes: memoryBytes, Timeout: buildTimeout}}
+		if request.Capacity == 0 {
+			request.Capacity = len(keys)
+		}
 		for _, encoded := range keys {
 			request.Keys = append(request.Keys, buildcoord.BuildKey{SpecificationDigest: encoded, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema})
 		}
@@ -118,6 +126,17 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		c.Flags().BoolVar(&jsonOut, "json", false, "Write JSON result")
 	}
 	prewarm.Flags().StringSliceVar(&keys, "key", nil, "Specification digest to prewarm (repeatable)")
+	prewarm.Flags().IntVar(&capacity, "capacity", 0, "Maximum concurrent builders")
+	prewarm.Flags().IntVar(&priority, "priority", 0, "Prewarm priority")
+	prewarm.Flags().BoolVar(&waitForClaim, "wait", true, "Wait for an existing claim")
+	prewarm.Flags().BoolVar(&independent, "independent-build", false, "Build independently when another owner is active")
+	prewarm.Flags().DurationVar(&backoff, "backoff", 25*time.Millisecond, "Claim retry backoff")
+	prewarm.Flags().Int64Var(&diskBytes, "disk-bytes", 0, "Per-build disk reservation")
+	prewarm.Flags().BoolVar(&network, "network", false, "Allow package network access")
+	prewarm.Flags().IntVar(&cpuLimit, "cpu-limit", 0, "Builder CPU limit")
+	prewarm.Flags().Int64Var(&memoryBytes, "memory-bytes", 0, "Builder memory limit")
+	prewarm.Flags().DurationVar(&buildTimeout, "build-timeout", 0, "Builder timeout")
+	prewarm.Flags().StringVar(&quarantineRoot, "quarantine-root", "", "Failed staging quarantine root")
 	rootCmd := &cobra.Command{Use: "coordinate", Short: "Coordinate optional cold environment builds."}
 	rootCmd.AddCommand(claim, heartbeat, wait, release, prewarm)
 	return rootCmd
