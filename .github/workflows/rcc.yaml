@@ -98,14 +98,25 @@ jobs:
             tmp/output/
 
   robot:
-    name: Robot Tests
+    name: Native Runtime (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
     # Only run tests on push to main or PRs, not on release workflows
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "macos-13", "windows-latest"]
+        include:
+          - os: "ubuntu-latest"
+            platform: linux-amd64
+          - os: "macos-13"
+            platform: macos-amd64
+          - os: "macos-latest"
+            platform: macos-arm64
+          - os: "windows-latest"
+            platform: windows-amd64
+    env:
+      RCC_NATIVE_PLATFORM: ${{ matrix.platform }}
+      RCC_NATIVE_STATUS: ${{ job.status }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
@@ -123,10 +134,29 @@ jobs:
         run: inv what
       - name: Run Robot Framework Tests
         run: inv robot
+      - name: Write native runtime receipt
+        if: success() || failure()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, platform, sys
+          from pathlib import Path
+          Path("tmp/output").mkdir(parents=True, exist_ok=True)
+          Path("tmp/output/native-runtime-receipt.json").write_text(json.dumps({
+              "platform": os.environ["RCC_NATIVE_PLATFORM"],
+              "runnerOs": platform.platform(),
+              "machine": platform.machine(),
+              "python": sys.version,
+              "status": os.environ["RCC_NATIVE_STATUS"],
+              "suite": "robot_tests/environment_artifacts.robot",
+              "evidenceDir": "tmp/output",
+              "lifecycle": ["build", "publish", "acquire", "verify", "materialize", "lease", "execute", "warm-reuse", "mismatch-rejection"],
+          }, indent=2) + "\n")
+          PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: success() || failure()
         with:
-          name: ${{ matrix.os }}-test-reports
+          name: ${{ matrix.platform }}-native-runtime-receipt
           path: ./tmp/output/
 
   release:

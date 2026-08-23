@@ -49,6 +49,17 @@ class ArtifactTaskTests(unittest.TestCase):
         ("windows", "amd64", "windows64", ".exe"),
     ])
 
+  def test_native_robot_matrix_has_explicit_platform_receipts(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertIn("platform: linux-amd64", workflow)
+    self.assertIn("platform: macos-amd64", workflow)
+    self.assertIn("platform: macos-arm64", workflow)
+    self.assertIn("platform: windows-amd64", workflow)
+    self.assertIn("RCC_NATIVE_PLATFORM", workflow)
+    self.assertIn("native-runtime-receipt.json", workflow)
+    self.assertIn("name: Native Runtime", workflow)
+    self.assertIn("- robot", workflow)
+
 
   def test_linux_only_tasks_fail_explicitly(self):
     previous = tasks.sys.platform
