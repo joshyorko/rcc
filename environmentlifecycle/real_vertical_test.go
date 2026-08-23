@@ -30,6 +30,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if os.Getenv("RCC_REAL_ARTIFACT_TEST") != "1" {
 		t.Skip("set RCC_REAL_ARTIFACT_TEST=1 and RCC_REAL_BINARY to run the real A/B proof")
 	}
+	t.Setenv("RCC_HOLOTREE_MODE", "private")
 	binary := os.Getenv("RCC_REAL_BINARY")
 	if binary == "" {
 		t.Fatal("RCC_REAL_BINARY is required")
