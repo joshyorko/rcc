@@ -22,6 +22,7 @@ type ReconcileReport struct {
 	Active, Stale, Ambiguous int
 	Repaired                 []string
 	Items                    []ReconcileItem
+	Provisional, ProvisionalRemoved int `json:"provisional,omitempty"`
 }
 
 type ReconcileItem struct {
@@ -68,6 +69,16 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 		return ReconcileReport{}, err
 	}
 	report := ReconcileReport{ArtifactDigest: digest}
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		path := filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")
+		if _, statErr := os.Stat(path); statErr == nil {
+			report.Provisional++
+			// These records are transactional intent, never readiness. Remove the
+			// journal entry after a crash; the ready record remains authoritative.
+			if err := os.Remove(path); err != nil && !os.IsNotExist(err) { return report, err }
+			report.ProvisionalRemoved++
+		}
+	}
 	dir := filepath.Join(recordRoot(), digest.Hex(), "leases")
 	entries, err := os.ReadDir(dir)
 	if os.IsNotExist(err) {

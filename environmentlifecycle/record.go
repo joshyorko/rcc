@@ -31,6 +31,7 @@ const (
 var lifecycleCrashHook func(CrashPoint) error
 func SetCrashHook(hook func(CrashPoint) error) { lifecycleCrashHook = hook }
 func crash(point CrashPoint) error { if lifecycleCrashHook != nil { return lifecycleCrashHook(point) }; return nil }
+func CrashPoints() []CrashPoint { return []CrashPoint{CrashBeforeVerified,CrashAfterVerified,CrashBeforeMaterializing,CrashAfterMaterializing,CrashBeforeReady,CrashAfterReady,CrashBeforeLease,CrashAfterLease,CrashBeforeRelease,CrashAfterRelease,CrashBeforeGC,CrashAfterGC} }
 
 type materializationState string
 

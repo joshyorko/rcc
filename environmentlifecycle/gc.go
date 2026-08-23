@@ -15,12 +15,21 @@ import (
 type GCPolicy struct {
 	Retention time.Duration
 	DryRun    bool
+	Clock     func() time.Time
+	MaxBytes  int64
+	Pressure  bool
+	LocalOnly map[string]bool
+	Pinned    map[string]bool
+	Legal     map[string]bool
+	RemoteKnown map[string]bool
 }
 
 type GCReport struct {
 	Scanned, Reclaimed, SkippedActive, SkippedAmbiguous int
 	ReclaimedDigests                                    []environmentartifact.Digest
 	Items                                               []GCItem
+	ProtectedBytes, ReclaimableBytes, ReclaimedBytes    int64 `json:"protectedBytes"`
+	LastVerified                                        time.Time `json:"lastVerified,omitempty"`
 }
 type GCItem struct {
 	Digest string `json:"digest"`
@@ -33,9 +42,11 @@ func (it *LocalMaterializer) Collect(ctx context.Context, policy GCPolicy) (GCRe
 }
 
 func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
+	if err := crash(CrashBeforeGC); err != nil { return GCReport{}, err }
 	if policy.Retention < 0 {
 		policy.Retention = 0
 	}
+	if policy.Clock == nil { policy.Clock = time.Now }
 	var report GCReport
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
@@ -70,7 +81,7 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		}
 		mergeGCReport(&report, one)
 	}
-	return report, nil
+	if err := crash(CrashAfterGC); err != nil { return report, err }; return report, nil
 }
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {
@@ -82,6 +93,11 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	if reconcile.Ambiguous > 0 {
 		report.SkippedAmbiguous++
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "ambiguous-lease"})
+		return report, nil
+	}
+	key := digest.Hex()
+	if policy.Pinned[key] || policy.Legal[key] || (policy.LocalOnly[key] && !policy.RemoteKnown[key]) {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "protected", Reason: "retention-policy"})
 		return report, nil
 	}
 	if reconcile.Active > 0 {
@@ -100,9 +116,15 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "ready-record-path-out-of-root"})
 		return report, nil
 	}
-	if policy.Retention > 0 && time.Since(record.VerifiedAt) < policy.Retention {
+	now := policy.Clock()
+	report.LastVerified = record.VerifiedAt
+	if policy.Retention > 0 && now.Sub(record.VerifiedAt) < policy.Retention {
 		return report, nil
 	}
+	if policy.MaxBytes > 0 && !policy.Pressure {
+		return report, nil
+	}
+	report.ReclaimableBytes = materializationSize(record.Path)
 	if policy.DryRun {
 		report.Reclaimed++
 		report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
@@ -116,9 +138,16 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 		return report, err
 	}
 	report.Reclaimed++
+	report.ReclaimedBytes = report.ReclaimableBytes
 	report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
 	report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "reclaimed", Reason: "eligible"})
 	return report, nil
+}
+
+func materializationSize(root string) int64 {
+	var total int64
+	_ = filepath.Walk(root, func(_ string, info os.FileInfo, err error) error { if err == nil && info.Mode().IsRegular() { total += info.Size() }; return nil })
+	return total
 }
 
 func mergeGCReport(dst *GCReport, src GCReport) {

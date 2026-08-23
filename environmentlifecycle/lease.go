@@ -50,6 +50,7 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if err := ctx.Err(); err != nil {
 		return Lease{}, err
 	}
+	if err := crash(CrashBeforeLease); err != nil { return Lease{}, err }
 	record, err := readReadyRecord(materialization.ArtifactDigest)
 	if err != nil {
 		return Lease{}, fmt.Errorf("lease requires a ready materialization: %w", err)
@@ -80,6 +81,7 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if err := installLegacyImmutable(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID), descriptor, content); err != nil {
 		return Lease{}, fmt.Errorf("publish lease: %w", err)
 	}
+	if err := crash(CrashAfterLease); err != nil { return Lease{}, err }
 	return lease, nil
 }
 
@@ -102,6 +104,7 @@ func readLease(digest environmentartifact.Digest, id string) (Lease, error) {
 }
 
 func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
+	if err := crash(CrashBeforeRelease); err != nil { return err }
 	lock := artifactLock(lease.ArtifactDigest)
 	lock.Lock()
 	defer lock.Unlock()
@@ -113,5 +116,5 @@ func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
 	if lease.ID == "" || len(lease.ArtifactDigest.Hex()) != 64 {
 		return fmt.Errorf("invalid lease")
 	}
-	return removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
+	err = removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID)); if err == nil { err = crash(CrashAfterRelease) }; return err
 }
