@@ -22,6 +22,7 @@ type GCPolicy struct {
 	Pinned      map[string]bool
 	Legal       map[string]bool
 	RemoteKnown map[string]bool
+	ContentRoot string
 }
 
 type GCReport struct {
@@ -57,9 +58,9 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 	var report GCReport
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
-		return report, nil
+		entries = nil
 	}
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return report, err
 	}
 	for _, entry := range entries {
@@ -88,10 +89,105 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		}
 		mergeGCReport(&report, one)
 	}
+	protected, roots, err := durableProtectedDigests()
+	if err != nil {
+		return report, err
+	}
+	report.ReferenceRoots = roots
+	protectedBytes, reclaimableBytes, reclaimedBytes, err := collectUnreferencedContent(ctx, policy, protected)
+	if err != nil {
+		return report, err
+	}
+	report.ProtectedBytes += protectedBytes
+	report.ReclaimableBytes += reclaimableBytes
+	report.ReclaimedBytes += reclaimedBytes
 	if err := crash(CrashAfterGC); err != nil {
 		return report, err
 	}
 	return report, nil
+}
+
+func durableProtectedDigests() (map[environmentartifact.Digest]bool, int, error) {
+	protected := map[environmentartifact.Digest]bool{}
+	entries, err := os.ReadDir(recordRoot())
+	if os.IsNotExist(err) {
+		return protected, 0, nil
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+	roots := 0
+	for _, entry := range entries {
+		if !entry.IsDir() || len(entry.Name()) != 64 {
+			continue
+		}
+		digest, err := environmentartifact.ParseDigest("sha256:" + entry.Name())
+		if err != nil {
+			continue
+		}
+		if !referenceRootExists(digest) {
+			continue
+		}
+		root, err := readReferenceRoot(digest)
+		if err != nil {
+			return nil, 0, err
+		}
+		roots++
+		for _, d := range root.Protected {
+			protected[d] = true
+		}
+	}
+	return protected, roots, nil
+}
+
+func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected map[environmentartifact.Digest]bool) (int64, int64, int64, error) {
+	root := policy.ContentRoot
+	if root == "" {
+		root = filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
+	}
+	objects := filepath.Join(root, "objects", "sha256")
+	var protectedBytes, reclaimableBytes, reclaimedBytes int64
+	err := filepath.WalkDir(objects, func(path string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			if os.IsNotExist(walkErr) {
+				return nil
+			}
+			return walkErr
+		}
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if entry.IsDir() {
+			return nil
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return fmt.Errorf("refuse symlink in content CAS: %s", path)
+		}
+		if len(entry.Name()) != 64 {
+			return nil
+		}
+		digest, err := environmentartifact.ParseDigest("sha256:" + entry.Name())
+		if err != nil {
+			return nil
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if protected[digest] {
+			protectedBytes += info.Size()
+			return nil
+		}
+		reclaimableBytes += info.Size()
+		if !policy.DryRun {
+			if err := os.Remove(path); err != nil {
+				return err
+			}
+			reclaimedBytes += info.Size()
+		}
+		return nil
+	})
+	return protectedBytes, reclaimableBytes, reclaimedBytes, err
 }
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {

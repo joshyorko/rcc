@@ -32,9 +32,13 @@ func TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook(t *testing.T) {
 			cmd.Env = append(os.Environ(),
 				"RCC_LIFECYCLE_CHILD=crash", "RCC_LIFECYCLE_HOME="+home,
 				"RCC_LIFECYCLE_DIGEST="+digest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot,
-				"RCC_LIFECYCLE_POINT="+string(point))
+				"RCC_LIFECYCLE_POINT="+string(point), "RCC_LIFECYCLE_PROOF="+filepath.Join(home, "hook-proof"))
 			if err := cmd.Run(); err == nil {
 				t.Fatalf("crash point %s did not terminate the subprocess", point)
+			}
+			proof, err := os.ReadFile(filepath.Join(home, "hook-proof"))
+			if err != nil || string(proof) != string(point) {
+				t.Fatalf("hook proof = %q, err=%v", proof, err)
 			}
 			common.Product.ForceHome(home)
 			common.SharedHolotree = false
@@ -106,6 +110,9 @@ func TestLifecycleCrashChild(t *testing.T) {
 	point := CrashPoint(os.Getenv("RCC_LIFECYCLE_POINT"))
 	SetCrashHook(func(got CrashPoint) error {
 		if got == point {
+			if proof := os.Getenv("RCC_LIFECYCLE_PROOF"); proof != "" {
+				_ = os.WriteFile(proof, []byte(got), 0o600)
+			}
 			return os.ErrProcessDone
 		}
 		return nil

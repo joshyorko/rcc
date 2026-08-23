@@ -94,7 +94,7 @@ func inspectLocked(ctx context.Context, digest environmentartifact.Digest) (Insp
 	if err := ctx.Err(); err != nil {
 		return Inspection{}, err
 	}
-	report, err := Reconcile(ctx, digest)
+	report, err := reconcileLocked(ctx, digest)
 	if err != nil {
 		return Inspection{}, err
 	}

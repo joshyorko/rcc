@@ -1,6 +1,7 @@
 package environmentlifecycle
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/joshyorko/rcc/common"
@@ -83,5 +84,17 @@ func TestRetentionEligibilityUsesInjectedClock(t *testing.T) {
 	}
 	if !RetentionEligible(record, now, 10*time.Second) {
 		t.Fatal("record at retention boundary not eligible")
+	}
+}
+
+func TestInspectDoesNotDeadlockInsideArtifactTransaction(t *testing.T) {
+	digest := environmentartifact.DigestBytes([]byte("inspect-transaction"))
+	previous := common.Product.Home()
+	common.Product.ForceHome(t.TempDir())
+	t.Cleanup(func() { common.Product.ForceHome(previous) })
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if _, err := Inspect(ctx, digest); err != nil && !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("inspect failed: %v", err)
 	}
 }
