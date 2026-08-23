@@ -71,6 +71,7 @@ jobs:
     env:
       ROBOCORP_HOME: ${{ github.workspace }}/tmp/rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
+      RCC_N1_BINARY: ${{ runner.temp }}/released-rcc/rcc
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
       - name: Install pinned released RCC

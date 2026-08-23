@@ -548,7 +548,11 @@ def selfHost(c):
     v12(released, home_b, "released-v12-compatibility")
     n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     if os.environ.get("RCC_N1_BINARY") and not n1_archive:
-        raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
+        generated_archive = root / "n1-environment.rcca"
+        archive_env = _contained_go_env()
+        archive_env.update({"RCC_WRITE_N1_ARCHIVE": "1", "RCC_N1_ARCHIVE": str(generated_archive)})
+        subprocess.run(["go", "test", "./environmentlifecycle", "-run", "^TestWriteEnvironmentArtifactN1Fixture$", "-count=1"], check=True, env=archive_env)
+        n1_archive = str(generated_archive)
     if n1_archive:
         archive = Path(n1_archive).resolve()
         if not archive.is_file():

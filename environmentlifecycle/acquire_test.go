@@ -472,3 +472,17 @@ func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
 		t.Fatalf("legacy execution materialization = %+v", result)
 	}
 }
+
+func TestWriteEnvironmentArtifactN1Fixture(t *testing.T) {
+	if os.Getenv("RCC_WRITE_N1_ARCHIVE") != "1" {
+		t.Skip("fixture writer is opt-in")
+	}
+	output := os.Getenv("RCC_N1_ARCHIVE")
+	if output == "" {
+		t.Fatal("RCC_N1_ARCHIVE is required")
+	}
+	_, remote, artifactDigest := publishedFixture(t)
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: output}); err != nil {
+		t.Fatal(err)
+	}
+}
