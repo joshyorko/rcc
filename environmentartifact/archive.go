@@ -24,6 +24,11 @@ const (
 
 const maxArchiveMemberSize int64 = 16 << 20
 const maxArchiveSize int64 = 256 << 20
+const maxArchiveMembers = 4096
+const maxArchiveCompressionRatio uint64 = 1000
+
+// MaxArchiveSize is the largest encoded archive accepted by ReadArchive.
+const MaxArchiveSize = maxArchiveSize
 
 // WriteArchive writes the canonical offline carrier. ZIP metadata is fixed so
 // the same entries always produce the same bytes, regardless of filename or
@@ -131,6 +136,9 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		return nil, fmt.Errorf("nil environment archive")
 	}
 	entries := make(map[string][]byte, len(r.File))
+	if len(r.File) > maxArchiveMembers {
+		return nil, fmt.Errorf("environment archive contains too many members (maximum %d)", maxArchiveMembers)
+	}
 	for _, file := range r.File {
 		if err := validateArchivePath(file.Name); err != nil {
 			return nil, err
@@ -140,6 +148,9 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		}
 		if file.UncompressedSize64 > uint64(maxArchiveMemberSize) {
 			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
+		}
+		if file.CompressedSize64 > 0 && file.UncompressedSize64/file.CompressedSize64 > maxArchiveCompressionRatio {
+			return nil, fmt.Errorf("environment archive member %q has an unsafe compression ratio", file.Name)
 		}
 		if _, exists := entries[file.Name]; exists {
 			return nil, fmt.Errorf("environment archive contains duplicate entry %q", file.Name)

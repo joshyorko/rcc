@@ -63,6 +63,21 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 			content    []byte
 		}{descriptor, entries[environmentartifact.ArchiveObjectDirectory+entry.StoredDigest.Hex()]})
 	}
+	allDescriptors := make([]environmentartifact.Descriptor, 0, len(descriptors))
+	for _, item := range descriptors {
+		allDescriptors = append(allDescriptors, item.descriptor)
+	}
+	missing, err := local.MissingObjects(ctx, allDescriptors)
+	if err != nil { return environmentartifact.Manifest{}, fmt.Errorf("check archive rollback set: %w", err) }
+	missingSet := make(map[string]bool, len(missing))
+	for _, digest := range missing { missingSet[digest.Hex()] = true }
+	committed := false
+	defer func() {
+		if committed { return }
+		for _, item := range descriptors {
+			if missingSet[item.descriptor.Digest.Hex()] { _ = local.RemoveObject(item.descriptor.Digest) }
+		}
+	}()
 	for _, item := range descriptors {
 		if err := ctx.Err(); err != nil {
 			return environmentartifact.Manifest{}, err
@@ -74,6 +89,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 	if err := local.CommitManifest(ctx, entries[environmentartifact.ArchiveManifest]); err != nil {
 		return environmentartifact.Manifest{}, fmt.Errorf("commit imported manifest: %w", err)
 	}
+	committed = true
 	return manifest, nil
 }
 

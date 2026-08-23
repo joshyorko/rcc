@@ -84,6 +84,37 @@ func TestWriteArchiveRejectsOversizedMember(t *testing.T) {
 	}
 }
 
+func TestArchiveEntriesRejectsMemberCountBomb(t *testing.T) {
+	archive := new(bytes.Buffer)
+	zw := zip.NewWriter(archive)
+	for i := 0; i < maxArchiveMembers+1; i++ {
+		w, err := zw.Create(ArchiveRoot + "/objects/" + strings.Repeat("a", 63) + string(rune('a'+i%26)))
+		if err != nil { t.Fatal(err) }
+		if _, err := w.Write([]byte("x")); err != nil { t.Fatal(err) }
+	}
+	if err := zw.Close(); err != nil { t.Fatal(err) }
+	zr, err := zip.NewReader(bytes.NewReader(archive.Bytes()), int64(archive.Len()))
+	if err != nil { t.Fatal(err) }
+	if _, err := ArchiveEntries(zr); err == nil || !strings.Contains(err.Error(), "too many members") {
+		t.Fatalf("expected member-count rejection, got %v", err)
+	}
+}
+
+func TestArchiveEntriesRejectsCompressionBomb(t *testing.T) {
+	archive := new(bytes.Buffer)
+	zw := zip.NewWriter(archive)
+	name := ArchiveObjectDirectory + strings.Repeat("b", 64)
+	w, err := zw.Create(name)
+	if err != nil { t.Fatal(err) }
+	if _, err := w.Write(bytes.Repeat([]byte{'x'}, 2<<20)); err != nil { t.Fatal(err) }
+	if err := zw.Close(); err != nil { t.Fatal(err) }
+	zr, err := zip.NewReader(bytes.NewReader(archive.Bytes()), int64(archive.Len()))
+	if err != nil { t.Fatal(err) }
+	if _, err := ArchiveEntries(zr); err == nil || !strings.Contains(err.Error(), "compression ratio") {
+		t.Fatalf("expected compression-ratio rejection, got %v", err)
+	}
+}
+
 func TestValidateArchiveVerifiesCompleteManifestClosure(t *testing.T) {
 	spec := []byte(`{"dependencies":["python=3.10"]}`)
 	blueprint := []byte("legacy blueprint")
