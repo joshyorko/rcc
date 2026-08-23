@@ -460,9 +460,36 @@ func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
 	previousHome := common.Product.Home()
 	common.Product.ForceHome(t.TempDir())
 	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath})
 	if err != nil || imported.ArtifactDigest != manifest.ArtifactDigest {
 		t.Fatalf("legacy import = %s, %v", imported.ArtifactDigest, err)
+	}
+	for digest, want := range input.Objects {
+		reader, getErr := local.GetObject(context.Background(), environmentartifact.Descriptor{Digest: digest, Size: int64(len(want))})
+		if getErr != nil {
+			t.Fatal(getErr)
+		}
+		got, readErr := io.ReadAll(reader)
+		closeErr := reader.Close()
+		if readErr != nil || closeErr != nil {
+			t.Fatalf("legacy object %s read: %v, close: %v", digest, readErr, closeErr)
+		}
+		if !bytes.Equal(got, want) {
+			t.Fatalf("legacy object %s changed during wrap/import", digest)
+		}
+	}
+	catalogReader, err := local.GetObject(context.Background(), input.Catalog.Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotCatalog, readErr := io.ReadAll(catalogReader)
+	closeErr := catalogReader.Close()
+	if readErr != nil || closeErr != nil || !bytes.Equal(gotCatalog, input.CatalogBytes) {
+		t.Fatalf("legacy catalog changed during wrap/import: read=%v close=%v", readErr, closeErr)
 	}
 	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: imported.ArtifactDigest})
 	if err != nil {
