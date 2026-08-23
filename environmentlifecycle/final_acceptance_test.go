@@ -96,7 +96,11 @@ func TestGCVsFinalizationDoesNotDeleteActiveLease(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer NewLocalMaterializer().Release(context.Background(), lease)
+	defer func() {
+		if err := NewLocalMaterializer().Release(context.Background(), lease); err != nil {
+			t.Errorf("release active lease: %v", err)
+		}
+	}()
 	var report GCReport
 	var gcErr error
 	done := make(chan struct{})

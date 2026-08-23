@@ -116,7 +116,7 @@ func (it CompatibilityRequirements) Validate() error {
 		return fmt.Errorf("unsupported translation policy %q", it.OS.TranslationPolicy)
 	}
 	if it.OS.Family == "linux" && (it.OS.LibC == "" || it.OS.LibCMinimum == "") {
-		return fmt.Errorf("Linux compatibility requires libc identity")
+		return fmt.Errorf("linux compatibility requires libc identity")
 	}
 	if it.CPU.Architecture == "" || it.CPU.Architecture != it.OS.NativeArchitecture {
 		return fmt.Errorf("CPU and native operating-system architecture must match")

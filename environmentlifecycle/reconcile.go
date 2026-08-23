@@ -18,11 +18,12 @@ const (
 )
 
 type ReconcileReport struct {
-	ArtifactDigest                  environmentartifact.Digest
-	Active, Stale, Ambiguous        int
-	Repaired                        []string
-	Items                           []ReconcileItem
-	Provisional, ProvisionalRemoved int `json:"provisional,omitempty"`
+	ArtifactDigest           environmentartifact.Digest
+	Active, Stale, Ambiguous int
+	Repaired                 []string
+	Items                    []ReconcileItem
+	Provisional              int `json:"provisional,omitempty"`
+	ProvisionalRemoved       int `json:"provisionalRemoved,omitempty"`
 }
 
 type ReconcileItem struct {
