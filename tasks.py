@@ -6,6 +6,7 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 from invoke import task
@@ -34,6 +35,27 @@ def _state_digests(root):
     for path in sorted(root.rglob("*")):
         if path.is_file() and not path.is_symlink():
             state[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return state
+
+
+def _legacy_closure_state(home, archive):
+    """Hash only the v12 catalog and exact legacy objects named by an archive."""
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        object_index = json.loads(carrier.read("rcc-environment/object-index.json"))
+    hololib = Path(home) / "hololib"
+    paths = {
+        "catalog": hololib / "catalog" / manifest["catalogs"][0]["legacyName"],
+    }
+    for entry in object_index["entries"]:
+        legacy_id = entry["legacyObjectId"]
+        paths[f"object:{legacy_id}"] = hololib / "library" / legacy_id[:2] / legacy_id[2:4] / legacy_id[4:6] / legacy_id
+    state = {}
+    for label, path in sorted(paths.items()):
+        if not path.is_file() or path.is_symlink():
+            raise RuntimeError(f"legacy v12 closure member is missing: {path}")
+        content = path.read_bytes()
+        state[label] = {"path": str(path), "size": len(content), "sha256": hashlib.sha256(content).hexdigest()}
     return state
 
 
@@ -516,7 +538,10 @@ def selfHost(c):
     candidate = Path("build/self-host/candidate/rcc").resolve()
     commands = []
     fixture = root / "robot.yaml"
-    fixture.write_text("tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\n")
+    fixture.write_text(
+        "tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\n"
+        "condaConfigFile: conda.yaml\n"
+    )
     conda = root / "conda.yaml"
     conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
 
@@ -558,10 +583,7 @@ def selfHost(c):
         commands.append({"step": label, "argv": argv, "env": {"ROBOCORP_HOME": str(home)},
                          "evidencePath": str(evidence_path)})
     v12(released, home_a, "released-v12")
-    legacy_released = _state_digests(home_a / "holotree")
     v12(str(generation_b), home_a, "candidate-v12")
-    legacy_before = _state_digests(home_a / "holotree")
-    artifact_before = _state_digests(home_a / "artifacts" / "v1")
     v12(released, home_b, "released-v12-compatibility")
     n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     if os.environ.get("RCC_N1_BINARY") and not n1_archive:
@@ -570,6 +592,8 @@ def selfHost(c):
         archive = Path(n1_archive).resolve()
         if not archive.is_file():
             raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        legacy_before = _legacy_closure_state(home_a, archive)
+        artifact_before = _state_digests(home_a / "artifacts" / "v1")
         archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
         archive_hash_path = root / "n1-archive-sha256.txt"
         archive_hash_path.write_text(archive_digest + "\n")
@@ -579,7 +603,9 @@ def selfHost(c):
         # old binary then consumes that same home through its legacy command.
         candidate_env = os.environ.copy(); candidate_env["ROBOCORP_HOME"] = str(home_a)
         candidate_command = [str(generation_b), "env", "acquire", "--archive", str(archive), "--json"]
-        candidate_result = subprocess.run(candidate_command, check=True, env=candidate_env, capture_output=True, text=True)
+        candidate_result = subprocess.run(
+            candidate_command, check=True, env=candidate_env, capture_output=True, text=True
+        )
         candidate_receipt = json.loads(candidate_result.stdout)
         artifact_digest = candidate_receipt.get("artifactDigest")
         if not artifact_digest or not candidate_receipt.get("materializationId"):
@@ -588,15 +614,19 @@ def selfHost(c):
         candidate_path.write_text(candidate_result.stdout); artifact_evidence.append(candidate_path)
         commands.append({"step": "candidate-archive-upgrade", "argv": candidate_command,
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(candidate_path)})
-        legacy_after_upgrade = _state_digests(home_a / "holotree")
+        legacy_after_upgrade = _legacy_closure_state(home_a, archive)
         artifact_after_upgrade = _state_digests(home_a / "artifacts" / "v1")
         if legacy_after_upgrade != legacy_before:
             raise RuntimeError("candidate archive upgrade changed the legacy v12 catalog/object closure")
         old_command = [released, "env", "acquire", "--archive", str(archive), "--json"]
         old_attempt = subprocess.run(old_command, env=candidate_env, capture_output=True, text=True)
         old_attempt_path = root / "released-archive-rollback-attempt.json"
-        old_attempt_path.write_text(json.dumps({"argv": old_command, "returncode": old_attempt.returncode,
-                                                "stdout": old_attempt.stdout, "stderr": old_attempt.stderr}, indent=2, sort_keys=True) + "\n")
+        old_attempt_path.write_text(json.dumps({
+            "argv": old_command,
+            "returncode": old_attempt.returncode,
+            "stdout": old_attempt.stdout,
+            "stderr": old_attempt.stderr,
+        }, indent=2, sort_keys=True) + "\n")
         artifact_evidence.append(old_attempt_path)
         commands.append({"step": "released-archive-rollback-attempt", "argv": old_command,
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(old_attempt_path)})
@@ -607,13 +637,19 @@ def selfHost(c):
         )
         if not unsupported_archive_cli:
             raise RuntimeError("released N-1 archive rollback was not the expected unsupported CLI error")
-        legacy_command = [released, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
+        legacy_command = [released, "task", "testrun", "--robot", str(fixture), "--task", "proof", "--no-outputs"]
         legacy = subprocess.run(legacy_command, check=True, env=candidate_env, capture_output=True, text=True)
+        legacy_output = legacy.stdout + "\n" + legacy.stderr
+        if "n1-old-task-ok" not in legacy_output:
+            raise RuntimeError(f"released N-1 task did not execute the imported v12 closure: {legacy_output[-2000:]}")
         legacy_receipt_path = root / "released-v12-rollback-consumption.json"
-        legacy_receipt_path.write_text(legacy.stdout); artifact_evidence.append(legacy_receipt_path)
+        legacy_receipt_path.write_text(json.dumps({"argv": legacy_command, "returncode": legacy.returncode,
+                                                   "stdout": legacy.stdout, "stderr": legacy.stderr},
+                                                  indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(legacy_receipt_path)
         commands.append({"step": "released-v12-rollback-consumption", "argv": legacy_command,
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(legacy_receipt_path)})
-        legacy_after_rollback = _state_digests(home_a / "holotree")
+        legacy_after_rollback = _legacy_closure_state(home_a, archive)
         artifact_after_rollback = _state_digests(home_a / "artifacts" / "v1")
         if legacy_after_rollback != legacy_before:
             raise RuntimeError("N-1 legacy v12 consumption changed catalog/object bytes")
@@ -622,10 +658,11 @@ def selfHost(c):
         rollback_receipt = root / "n1-rollback-state.json"
         rollback_receipt.write_text(json.dumps({"archiveSha256": archive_digest, "artifactDigest": artifact_digest,
                                                 "materializationId": candidate_receipt["materializationId"],
-                                                "legacyReleased": legacy_released, "legacyBefore": legacy_before,
+                                                "legacyBefore": legacy_before,
                                                 "legacyAfterUpgrade": legacy_after_upgrade,
                                                 "legacyAfterRollback": legacy_after_rollback,
-                                                "artifactBefore": artifact_before, "artifactAfterRollback": artifact_after_rollback},
+                                                "artifactBefore": artifact_before,
+                                                "artifactAfterRollback": artifact_after_rollback},
                                                indent=2, sort_keys=True) + "\n")
         artifact_evidence.append(rollback_receipt)
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
