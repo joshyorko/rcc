@@ -487,6 +487,48 @@ func TestEnvironmentExecInheritStreamsRequiresReceiptFile(t *testing.T) {
 	}
 }
 
+func TestEnvironmentExecInheritStreamsNeverSuppressesArtifactParseError(t *testing.T) {
+	command := newEnvironmentCommand(environmentCommandDependencies{})
+	if err := runCobraCommand(command, []string{"exec", "--artifact", "not-a-digest", "--inherit-streams", "--receipt-file", filepath.Join(t.TempDir(), "receipt.json"), "--", "echo", "ok"}); err == nil {
+		t.Fatal("invalid artifact digest was suppressed")
+	}
+}
+
+func TestEnvironmentExecReceiptSafelyReplacesFilesAndRejectsSymlinks(t *testing.T) {
+	root := t.TempDir()
+	receipt := filepath.Join(root, "receipt.json")
+	if err := os.WriteFile(receipt, []byte("old"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	digest, _ := environmentartifact.ParseDigest(cliTestDigest)
+	value := environmentExecResult{ArtifactDigest: digest, Status: "cancelled", Reason: "context canceled", ExitCode: -1}
+	if err := writeEnvironmentExecReceipt(receipt, value); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(receipt)
+	if err != nil || !bytes.Contains(data, []byte(`"status":"cancelled"`)) {
+		t.Fatalf("receipt replacement = %q, %v", data, err)
+	}
+	if err := os.Symlink(receipt, filepath.Join(root, "target-link")); err == nil {
+		if writeErr := writeEnvironmentExecReceipt(filepath.Join(root, "target-link"), value); writeErr == nil {
+			t.Fatal("symlink receipt target accepted")
+		}
+	}
+	parent := filepath.Join(root, "parent")
+	if err := os.Mkdir(parent, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	linkedParent := filepath.Join(root, "linked-parent")
+	if err := os.Symlink(parent, linkedParent); err == nil {
+		if writeErr := writeEnvironmentExecReceipt(filepath.Join(linkedParent, "receipt.json"), value); writeErr == nil {
+			t.Fatal("symlink receipt parent accepted")
+		}
+	}
+	if err := writeEnvironmentExecReceipt(parent, value); err == nil {
+		t.Fatal("directory receipt target accepted")
+	}
+}
+
 func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree

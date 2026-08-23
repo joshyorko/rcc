@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
@@ -22,6 +23,8 @@ type environmentExecResult struct {
 	LeaseID           string                                     `json:"leaseId"`
 	Compatibility     *environmentlifecycle.CompatibilityReceipt `json:"compatibility,omitempty"`
 	Verification      *artifacttrust.VerificationReceipt         `json:"verification,omitempty"`
+	Status            string                                     `json:"status,omitempty"`
+	Reason            string                                     `json:"reason,omitempty"`
 }
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
@@ -45,9 +48,8 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 				return fmt.Errorf("--receipt-file is required with --inherit-streams")
 			}
 			digest, err := environmentartifact.ParseDigest(artifact)
-			executionErr := err
-			if executionErr != nil && !inheritStreams {
-				return executionErr
+			if err != nil {
+				return err
 			}
 			provider, err := optionalEnvironmentProvider(providerURL, dependencies.newProvider)
 			if err != nil {
@@ -85,8 +87,9 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			} else {
 				handle, child, err = dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
 			}
-			if err != nil {
-				return err
+			executionErr := err
+			if executionErr != nil && !inheritStreams {
+				return executionErr
 			}
 			var compatibility *environmentlifecycle.CompatibilityReceipt
 			if acquired.Compatibility.SchemaVersion != 0 {
@@ -95,6 +98,15 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			output := environmentExecResult{
 				ArtifactDigest: acquired.ArtifactDigest, MaterializationID: acquired.MaterializationID,
 				Path: acquired.Path, CacheHit: acquired.CacheHit, ExitCode: child.ExitCode, LeaseID: handle.LeaseID, Compatibility: compatibility,
+			}
+			if executionErr != nil {
+				output.Status = "cancelled"
+				output.Reason = executionErr.Error()
+			} else if child.ExitCode != 0 {
+				output.Status = "failed"
+				output.Reason = "child exited non-zero"
+			} else {
+				output.Status = "completed"
 			}
 			verification := handle.Verification
 			if verification.Code == "" {
@@ -110,7 +122,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			} else if err := json.NewEncoder(command.OutOrStdout()).Encode(output); err != nil {
 				return err
 			}
-			if child.ExitCode != 0 {
+			if child.ExitCode != 0 && executionErr == nil {
 				panic(common.ExitCode{Code: child.ExitCode})
 			}
 			if executionErr != nil {
@@ -139,6 +151,9 @@ func writeEnvironmentExecReceipt(path string, value environmentExecResult) error
 	if err := os.MkdirAll(dir, 0750); err != nil {
 		return fmt.Errorf("create receipt directory: %w", err)
 	}
+	if err := validateReceiptPath(path); err != nil {
+		return err
+	}
 	tmp, err := os.CreateTemp(dir, ".rcc-receipt-*")
 	if err != nil {
 		return fmt.Errorf("create receipt temporary file: %w", err)
@@ -156,8 +171,52 @@ func writeEnvironmentExecReceipt(path string, value environmentExecResult) error
 	if closeErr != nil {
 		return fmt.Errorf("close execution receipt: %w", closeErr)
 	}
+	if runtime.GOOS == "windows" {
+		if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("replace execution receipt: %w", err)
+		}
+	}
 	if err := os.Rename(tmpPath, path); err != nil {
 		return fmt.Errorf("install execution receipt: %w", err)
+	}
+	return nil
+}
+
+func validateReceiptPath(path string) error {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return fmt.Errorf("invalid --receipt-file: %w", err)
+	}
+	if info, err := os.Lstat(abs); err == nil {
+		if info.IsDir() {
+			return fmt.Errorf("--receipt-file is a directory")
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("--receipt-file must not be a symlink")
+		}
+	} else if !os.IsNotExist(err) {
+		return fmt.Errorf("inspect --receipt-file: %w", err)
+	}
+	parent := filepath.Dir(abs)
+	for {
+		info, statErr := os.Lstat(parent)
+		if statErr == nil {
+			if info.Mode()&os.ModeSymlink != 0 {
+				return fmt.Errorf("receipt parent must not contain symlinks")
+			}
+			if !info.IsDir() {
+				return fmt.Errorf("receipt parent is not a directory")
+			}
+			if parent == filepath.Dir(parent) {
+				break
+			}
+			parent = filepath.Dir(parent)
+			continue
+		}
+		if !os.IsNotExist(statErr) {
+			return fmt.Errorf("inspect receipt parent: %w", statErr)
+		}
+		parent = filepath.Dir(parent)
 	}
 	return nil
 }

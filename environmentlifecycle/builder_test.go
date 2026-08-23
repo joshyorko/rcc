@@ -117,3 +117,57 @@ func TestCurrentRCCBuilderUsesExistingV12BuildPathWithoutRebuilding(t *testing.T
 		t.Fatal(err)
 	}
 }
+
+func TestCurrentRCCBuilderBuildsPackageYAMLAndBindsOnlySourceKind(t *testing.T) {
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	previousLockless := pathlib.Lockless
+	previousCollector := collectBuildCompatibility
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+	pathlib.Lockless = true
+	collectBuildCompatibility = func(context.Context, htfs.Library, []byte, environmentartifact.Platform) (environmentartifact.CompatibilityRequirements, error) {
+		return testBuildCompatibility(environmentartifact.CurrentPlatform()), nil
+	}
+	t.Cleanup(func() {
+		common.Product.ForceHome(previousHome)
+		common.SharedHolotree = previousShared
+		pathlib.Lockless = previousLockless
+		collectBuildCompatibility = previousCollector
+	})
+	project := t.TempDir()
+	packageFile := filepath.Join(project, "package.yaml")
+	if err := os.WriteFile(packageFile, []byte("name: fixture\nversion: 0.0.1\ndependencies:\n  conda-forge:\n    - python=3.11\n"), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	_, wantBlueprint, err := htfs.ComposeFinalBlueprint([]string{packageFile}, "", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(common.HololibCatalogLocation(), 0o750); err != nil {
+		t.Fatal(err)
+	}
+	root, err := htfs.NewRoot(filepath.Join(t.TempDir(), "producer"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	root.Blueprint = common.BlueprintHash(wantBlueprint)
+	root.Tree.Mode = os.ModeDir | 0o750
+	catalogPath := filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(root.Blueprint))
+	if err := root.SaveAs(catalogPath); err != nil {
+		t.Fatal(err)
+	}
+	result, err := (CurrentRCCBuilder{}).Build(context.Background(), packageFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.SourceKind != "package.yaml" {
+		t.Fatalf("source kind = %q", result.SourceKind)
+	}
+	if !bytes.Contains(result.SpecificationBytes, []byte(`"sourceKind":"package.yaml"`)) {
+		t.Fatalf("specification omitted package source kind: %s", result.SpecificationBytes)
+	}
+	if bytes.Contains(result.SpecificationBytes, []byte(project)) || bytes.Contains(result.SpecificationBytes, []byte("provider")) {
+		t.Fatalf("specification leaked source path/provider: %s", result.SpecificationBytes)
+	}
+}

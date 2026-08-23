@@ -25,9 +25,10 @@ source paths are not. `rcc env exec --json -- <command>` keeps child output
 away from its single JSON receipt. Long-lived protocol consumers must opt into
 `--inherit-streams --receipt-file <path>`: RCC connects stdin/stdout/stderr for
 the child lifetime, keeps the artifact lease until the child is reaped, and
-atomically installs the receipt at the caller-selected path after exit. Child
-protocol bytes therefore never contaminate the machine receipt, including on
-non-zero exit or cancellation.
+atomically installs the typed receipt at the caller-selected path after exit.
+Receipts report `completed`, `failed`, or `cancelled` status with a reason and
+exit code when available. Child protocol bytes therefore never contaminate the
+machine receipt, including on non-zero exit or cancellation.
 
 ## Program completion boundary
 
