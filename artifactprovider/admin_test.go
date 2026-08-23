@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 )
 
 type failingReader struct {
@@ -301,6 +302,31 @@ func TestHTTPPartialTransferRestartHealthAndAudit(t *testing.T) {
 	}
 	if len(audit) != 0 {
 		t.Fatalf("failed transfers audited as committed: %+v", audit)
+	}
+}
+
+func TestHTTPFanoutLoadStaysBounded(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(p))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	descriptors := make([]environmentartifact.Descriptor, maxProviderDescriptorFanout+1)
+	started := time.Now()
+	done := make(chan struct{}, 32)
+	for i := 0; i < 32; i++ {
+		go func() { _, _ = client.MissingObjects(context.Background(), descriptors); done <- struct{}{} }()
+	}
+	for i := 0; i < 32; i++ {
+		<-done
+	}
+	if time.Since(started) > 2*time.Second {
+		t.Fatal("fanout load exceeded bounded latency")
 	}
 }
 

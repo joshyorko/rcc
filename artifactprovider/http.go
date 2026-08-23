@@ -305,11 +305,13 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		if err == nil && (caps.RangeSupport || caps.ResumeSupport) {
 			transfer = "resumable"
 		}
-		extensions := []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}
+		extensions := []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore", "rcc.artifact.v2/compat"}
 		if requested := request.Header.Get("X-RCC-Artifact-Extensions"); requested != "" {
 			extensions = intersectExtensions(strings.Split(requested, ","), extensions)
+		} else if request.Header.Get("X-RCC-Artifact-Versions") != "" {
+			extensions = []string{}
 		}
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: extensions, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1, 2}, SelectedVersion: selected, Extensions: extensions, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -728,7 +730,8 @@ func (it *HTTP) ProtocolWithOptions(ctx context.Context, versions []int, extensi
 	if err := requireHTTPJSONEOF(decoder); err != nil {
 		return result, err
 	}
-	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || (result.AuthRequired && result.AuthChallenge == "") || result.RestartOutcome != "safe" || result.Immutability != "content-addressed" || result.TransferOutcome != "full-restart-only") {
+	selectedOK := result.SelectedVersion == 1 || (result.SelectedVersion == 2 && contains(result.Extensions, "rcc.artifact.v2/compat"))
+	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || !selectedOK || (result.AuthRequired && result.AuthChallenge == "") || result.RestartOutcome != "safe" || result.Immutability != "content-addressed" || result.TransferOutcome != "full-restart-only") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}
 	if err == nil {
@@ -740,6 +743,11 @@ func (it *HTTP) ProtocolWithOptions(ctx context.Context, versions []int, extensi
 func negotiateVersion(raw string) int {
 	if raw == "" {
 		return 1
+	}
+	for _, value := range strings.Split(raw, ",") {
+		if strings.TrimSpace(value) == "2" {
+			return 2
+		}
 	}
 	for _, value := range strings.Split(raw, ",") {
 		if strings.TrimSpace(value) == "1" {

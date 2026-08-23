@@ -325,6 +325,18 @@ func TestPolicyRateLimitIsCallerVisibleAndTyped(t *testing.T) {
 	}
 }
 
+func TestPolicyRateWindowPersistenceFailsClosed(t *testing.T) {
+	j, err := NewJournal(t.TempDir() + "/allow.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := NewPolicy(j, Limits{RequestsPerSecond: 1})
+	p.statePath = t.TempDir()
+	if _, err := p.MissingObjects(context.Background(), nil); err == nil {
+		t.Fatal("accepted request without durable policy state")
+	}
+}
+
 func TestPolicyPersistenceFailureReportsCommittedMutation(t *testing.T) {
 	j, err := NewJournal(t.TempDir() + "/outcome.log")
 	if err != nil {

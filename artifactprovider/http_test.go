@@ -71,11 +71,14 @@ func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
 	if caps.SelectedVersion != 1 || caps.TransferOutcome != "full-restart-only" || caps.Immutability != "content-addressed" || len(caps.Extensions) == 0 {
 		t.Fatalf("negotiated diagnostics=%+v", caps)
 	}
-	if negotiated, err := client.ProtocolWithOptions(context.Background(), []int{2, 1}, []string{"rcc.artifact.v1/backup", "rcc.artifact.v2/unknown"}); err != nil || negotiated.SelectedVersion != 1 || len(negotiated.Extensions) != 1 {
+	if negotiated, err := client.ProtocolWithOptions(context.Background(), []int{1}, []string{"rcc.artifact.v1/backup", "rcc.artifact.v2/unknown"}); err != nil || negotiated.SelectedVersion != 1 || len(negotiated.Extensions) != 1 {
 		t.Fatalf("negotiation=%+v err=%v", negotiated, err)
 	}
+	if negotiated, err := client.ProtocolWithOptions(context.Background(), []int{2}, []string{"rcc.artifact.v2/compat"}); err != nil || negotiated.SelectedVersion != 2 {
+		t.Fatalf("v2 negotiation=%+v err=%v", negotiated, err)
+	}
 	if _, err := client.ProtocolWithOptions(context.Background(), []int{2}, nil); err == nil {
-		t.Fatal("unsupported protocol version was accepted")
+		t.Fatal("v2 negotiation without compatibility extension was accepted")
 	}
 	health, err := client.Health(context.Background())
 	if err != nil || !health.Ready || health.Storage != "ok" {
