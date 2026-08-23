@@ -12,6 +12,7 @@ import (
 )
 
 const maxMaterializationRecordBytes = 64 << 10
+const maxProtectionRecordBytes = 4 << 20
 
 type CrashPoint string
 

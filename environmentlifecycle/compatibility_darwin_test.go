@@ -73,3 +73,23 @@ func TestDarwinMachOAndSystemLibraryProbeReturnsCanonicalRequirements(t *testing
 		t.Fatal(err)
 	}
 }
+
+func TestDarwinSystemInstallNamesAreCoveredByMinimumOS(t *testing.T) {
+	for _, library := range []string{
+		"/usr/lib/libSystem.B.dylib",
+		"/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+	} {
+		if !darwinSystemInstallName(library) {
+			t.Fatalf("Apple system install name not recognized: %s", library)
+		}
+	}
+	for _, library := range []string{
+		"/usr/local/lib/libexternal.dylib",
+		"/opt/homebrew/lib/libexternal.dylib",
+		"@rpath/libbundled.dylib",
+	} {
+		if darwinSystemInstallName(library) {
+			t.Fatalf("external or relocatable install name treated as an OS library: %s", library)
+		}
+	}
+}

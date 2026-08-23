@@ -65,12 +65,19 @@ func darwinNativeRequirements(root string) ([]string, error) {
 		}
 		for _, library := range imports {
 			base := strings.ToLower(filepath.Base(library))
-			if _, bundled := available[base]; !bundled && (strings.HasPrefix(library, "/usr/lib/") || strings.HasPrefix(library, "/System/")) {
+			if _, bundled := available[base]; !bundled && filepath.IsAbs(library) && !darwinSystemInstallName(library) {
 				required[library] = struct{}{}
 			}
 		}
 	}
 	return canonicalStrings(required), nil
+}
+
+func darwinSystemInstallName(library string) bool {
+	// Modern macOS may serve these install names from the dyld shared cache
+	// without a stat-able file. The minimum OS requirement covers them.
+	clean := filepath.ToSlash(filepath.Clean(library))
+	return strings.HasPrefix(clean, "/usr/lib/") || strings.HasPrefix(clean, "/System/")
 }
 
 func platformWorkerCapabilities(_ context.Context, required environmentartifact.CompatibilityRequirements) (environmentartifact.OSCapabilities, environmentartifact.CPUCapabilities, error) {

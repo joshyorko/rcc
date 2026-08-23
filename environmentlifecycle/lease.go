@@ -112,6 +112,9 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 	if err != nil {
 		return Lease{}, err
 	}
+	if len(content) > maxProtectionRecordBytes {
+		return Lease{}, fmt.Errorf("lease exceeds bounded protection record size")
+	}
 	descriptor := environmentartifact.Descriptor{MediaType: "application/vnd.rcc.environment.lease.v1+json", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
 	if err := installLegacyImmutable(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID), descriptor, content); err != nil {
 		return Lease{}, fmt.Errorf("publish lease: %w", err)
@@ -130,7 +133,7 @@ func (it *LocalMaterializer) Lease(ctx context.Context, materialization Material
 }
 
 func readLease(digest environmentartifact.Digest, id string) (Lease, error) {
-	content, err := readRegularNoFollow(recordRoot(), leaseComponents(digest, id), maxMaterializationRecordBytes)
+	content, err := readRegularNoFollow(recordRoot(), leaseComponents(digest, id), maxProtectionRecordBytes)
 	if err != nil {
 		return Lease{}, err
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"strings"
@@ -73,6 +74,45 @@ func TestManifestObjectIndexReferenceRootSurvivesLifecycleRestart(t *testing.T) 
 	}
 	if got.Manifest != digest || !referenceRootExists(digest) {
 		t.Fatalf("reference root = %+v", got)
+	}
+}
+
+func TestProtectionRecordsCoverRepresentativeLargeClosure(t *testing.T) {
+	const objectCount = 5694
+	previous := common.Product.Home()
+	common.Product.ForceHome(t.TempDir())
+	t.Cleanup(func() { common.Product.ForceHome(previous) })
+
+	manifest := environmentartifact.DigestBytes([]byte("large-reference-root"))
+	protected := make([]environmentartifact.Digest, objectCount+4)
+	for index := range protected {
+		protected[index] = environmentartifact.DigestBytes([]byte(fmt.Sprintf("protected-%d", index)))
+	}
+	root := durableReferenceRoot{Manifest: manifest, Protected: protected, State: "live"}
+	content, err := json.Marshal(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(content) <= maxMaterializationRecordBytes {
+		t.Fatalf("large closure did not exceed the small record bound: %d", len(content))
+	}
+	if err := writeAtomicMutable(recordRoot(), []string{manifest.Hex(), "references.json"}, content); err != nil {
+		t.Fatal(err)
+	}
+	if loaded, err := readReferenceRoot(manifest); err != nil || len(loaded.Protected) != len(protected) {
+		t.Fatalf("large reference root = %d, %v", len(loaded.Protected), err)
+	}
+
+	lease := Lease{ID: "large-lease", ArtifactDigest: manifest, Protected: protected}
+	leaseContent, err := json.Marshal(lease)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := writeAtomicMutable(recordRoot(), leaseComponents(manifest, lease.ID), leaseContent); err != nil {
+		t.Fatal(err)
+	}
+	if loaded, err := readLease(manifest, lease.ID); err != nil || len(loaded.Protected) != len(protected) {
+		t.Fatalf("large lease protection = %d, %v", len(loaded.Protected), err)
 	}
 }
 

@@ -24,11 +24,14 @@ func writeReferenceRoot(manifest environmentartifact.Manifest, index environment
 	if err != nil {
 		return err
 	}
+	if len(content) > maxProtectionRecordBytes {
+		return fmt.Errorf("reference root exceeds bounded protection record size")
+	}
 	return writeAtomicMutable(recordRoot(), []string{manifest.ArtifactDigest.Hex(), "references.json"}, content)
 }
 
 func readReferenceRoot(digest environmentartifact.Digest) (durableReferenceRoot, error) {
-	content, err := readRegularNoFollow(recordRoot(), []string{digest.Hex(), "references.json"}, maxMaterializationRecordBytes)
+	content, err := readRegularNoFollow(recordRoot(), []string{digest.Hex(), "references.json"}, maxProtectionRecordBytes)
 	if err != nil {
 		return durableReferenceRoot{}, err
 	}
@@ -60,6 +63,9 @@ func retireReferenceRoot(digest environmentartifact.Digest, at time.Time) error 
 	content, err := json.Marshal(root)
 	if err != nil {
 		return err
+	}
+	if len(content) > maxProtectionRecordBytes {
+		return fmt.Errorf("reference root exceeds bounded protection record size")
 	}
 	return writeAtomicMutable(recordRoot(), []string{digest.Hex(), "references.json"}, content)
 }
