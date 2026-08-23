@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
@@ -22,12 +23,13 @@ type Limits struct {
 	Retention         time.Duration
 }
 type Policy struct {
-	Provider                                   Provider
-	Limits                                     Limits
-	mu                                         sync.Mutex
-	bytes, objects, manifests, uploads, window int64
-	windowAt                                   time.Time
-	statePath                                  string
+	Provider                                                        Provider
+	Limits                                                          Limits
+	mu                                                              sync.Mutex
+	bytes, objects, manifests, uploads, window                      int64
+	windowAt                                                        time.Time
+	statePath                                                       string
+	requests, failures, quotaFailures, repairs, gcRuns, auditEvents atomic.Int64
 }
 
 func (p *Policy) ListObjects(ctx context.Context) ([]ObjectInfo, error) {
@@ -44,7 +46,19 @@ func (p *Policy) ListManifests(ctx context.Context) ([]ManifestInfo, error) {
 	}
 	return e.ListManifests(ctx)
 }
+func (p *Policy) Audit(ctx context.Context) ([]AuditRecord, error) {
+	a, ok := p.Provider.(ProviderV1Audit)
+	if !ok {
+		return nil, fmt.Errorf("audit unavailable")
+	}
+	records, err := a.Audit(ctx)
+	if err == nil {
+		p.auditEvents.Store(int64(len(records)))
+	}
+	return records, err
+}
 func (p *Policy) GarbageCollect(ctx context.Context, retention Retention) (GCReport, error) {
+	p.gcRuns.Add(1)
 	a, ok := p.Provider.(ProviderV1Admin)
 	if !ok {
 		return GCReport{}, fmt.Errorf("admin unavailable")
@@ -66,6 +80,7 @@ func (p *Policy) Cleanup(ctx context.Context) (int, error) {
 	return a.Cleanup(ctx)
 }
 func (p *Policy) Repair(ctx context.Context) (Health, error) {
+	p.repairs.Add(1)
 	a, ok := p.Provider.(ProviderV1Admin)
 	if !ok {
 		return Health{}, fmt.Errorf("admin unavailable")
@@ -132,24 +147,28 @@ func (p *Policy) Capabilities(ctx context.Context) (Capabilities, error) {
 	return p.Provider.Capabilities(ctx)
 }
 func (p *Policy) MissingObjects(ctx context.Context, ds []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	p.requests.Add(1)
 	if err := p.allow(); err != nil {
 		return nil, err
 	}
 	return p.Provider.MissingObjects(ctx, ds)
 }
 func (p *Policy) GetObject(ctx context.Context, d environmentartifact.Descriptor) (io.ReadCloser, error) {
+	p.requests.Add(1)
 	if err := p.allow(); err != nil {
 		return nil, err
 	}
 	return p.Provider.GetObject(ctx, d)
 }
 func (p *Policy) ResolveManifest(ctx context.Context, d environmentartifact.Digest) ([]byte, error) {
+	p.requests.Add(1)
 	if err := p.allow(); err != nil {
 		return nil, err
 	}
 	return p.Provider.ResolveManifest(ctx, d)
 }
 func (p *Policy) PutObject(ctx context.Context, b Blob) error {
+	p.requests.Add(1)
 	if err := p.allow(); err != nil {
 		return err
 	}
@@ -161,12 +180,15 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.Limits.MaxUploads > 0 && p.uploads >= p.Limits.MaxUploads {
+		p.quotaFailures.Add(1)
 		return fmt.Errorf("%w: uploads", ErrQuotaExceeded)
 	}
 	if p.Limits.MaxObjects > 0 && p.objects >= p.Limits.MaxObjects {
+		p.quotaFailures.Add(1)
 		return fmt.Errorf("%w: objects", ErrQuotaExceeded)
 	}
 	if p.Limits.MaxBytes > 0 && p.bytes+b.Descriptor.Size > p.Limits.MaxBytes {
+		p.quotaFailures.Add(1)
 		return fmt.Errorf("%w: bytes", ErrQuotaExceeded)
 	}
 	p.uploads++
@@ -185,12 +207,14 @@ func (p *Policy) PutObject(ctx context.Context, b Blob) error {
 	return nil
 }
 func (p *Policy) CommitManifest(ctx context.Context, content []byte) error {
+	p.requests.Add(1)
 	if err := p.allow(); err != nil {
 		return err
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.Limits.MaxManifests > 0 && p.manifests >= p.Limits.MaxManifests {
+		p.quotaFailures.Add(1)
 		return fmt.Errorf("%w: manifests", ErrQuotaExceeded)
 	}
 	if err := p.Provider.CommitManifest(ctx, content); err != nil {
@@ -217,9 +241,15 @@ func (p *Policy) Health(ctx context.Context) (Health, error) {
 			h.Quota = "exhausted"
 			h.Degraded = true
 		}
+		h.Requests = p.requests.Load()
+		h.Errors = p.failures.Load()
+		h.QuotaFailures = p.quotaFailures.Load()
+		h.Repairs = p.repairs.Load()
+		h.GCRuns = p.gcRuns.Load()
+		h.AuditEvents = p.auditEvents.Load()
 		return h, nil
 	}
-	return Health{Ready: true, Storage: "ok", Capability: "ok", Quota: "managed", GC: "idle", Process: "local", Audit: "append-only"}, nil
+	return Health{Ready: true, Storage: "ok", Capability: "ok", Quota: "managed", GC: "idle", Process: "local", Audit: "append-only", Requests: p.requests.Load(), Errors: p.failures.Load(), QuotaFailures: p.quotaFailures.Load(), Repairs: p.repairs.Load(), GCRuns: p.gcRuns.Load(), AuditEvents: p.auditEvents.Load()}, nil
 }
 func (p *Policy) allow() error {
 	p.mu.Lock()
@@ -231,6 +261,7 @@ func (p *Policy) allow() error {
 		p.window = 0
 	}
 	if p.Limits.RequestsPerSecond > 0 && p.window >= p.Limits.RequestsPerSecond {
+		p.failures.Add(1)
 		return ErrRateLimited
 	}
 	p.window++
@@ -298,3 +329,4 @@ func (p *Policy) persistLocked() error {
 var _ Provider = (*Policy)(nil)
 var _ ProviderV1Admin = (*Policy)(nil)
 var _ ProviderV1Backup = (*Policy)(nil)
+var _ ProviderV1Audit = (*Policy)(nil)

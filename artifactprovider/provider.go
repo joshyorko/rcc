@@ -65,23 +65,29 @@ var (
 )
 
 type Health struct {
-	Ready      bool   `json:"ready"`
-	Storage    string `json:"storage"`
-	Capability string `json:"capability"`
-	Auth       string `json:"auth"`
-	Quota      string `json:"quota"`
-	Degraded   bool   `json:"degraded"`
-	Corrupt    bool   `json:"corrupt"`
-	GC         string `json:"gc"`
-	Objects    int64  `json:"objects"`
-	Manifests  int64  `json:"manifests"`
-	Bytes      int64  `json:"bytes"`
-	LatencyMS  int64  `json:"latencyMs,omitempty"`
-	Process    string `json:"process,omitempty"`
-	Audit      string `json:"audit,omitempty"`
-	Error      string `json:"error,omitempty"`
-	Operations int64  `json:"operations,omitempty"`
-	Errors     int64  `json:"errors,omitempty"`
+	Ready         bool   `json:"ready"`
+	Storage       string `json:"storage"`
+	Capability    string `json:"capability"`
+	Auth          string `json:"auth"`
+	Quota         string `json:"quota"`
+	Degraded      bool   `json:"degraded"`
+	Corrupt       bool   `json:"corrupt"`
+	GC            string `json:"gc"`
+	Objects       int64  `json:"objects"`
+	Manifests     int64  `json:"manifests"`
+	Bytes         int64  `json:"bytes"`
+	LatencyMS     int64  `json:"latencyMs,omitempty"`
+	Process       string `json:"process,omitempty"`
+	Audit         string `json:"audit,omitempty"`
+	Error         string `json:"error,omitempty"`
+	Operations    int64  `json:"operations,omitempty"`
+	Errors        int64  `json:"errors,omitempty"`
+	Requests      int64  `json:"requests,omitempty"`
+	Corruptions   int64  `json:"corruptions,omitempty"`
+	QuotaFailures int64  `json:"quotaFailures,omitempty"`
+	Repairs       int64  `json:"repairs,omitempty"`
+	GCRuns        int64  `json:"gcRuns,omitempty"`
+	AuditEvents   int64  `json:"auditEvents,omitempty"`
 }
 
 type HealthProvider interface {

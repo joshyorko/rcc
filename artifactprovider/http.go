@@ -259,7 +259,11 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		selected := 0
 		restart := "unsafe"
 		if err == nil {
-			selected = 1
+			rawVersions := request.Header.Get("X-RCC-Artifact-Versions")
+			selected = negotiateVersion(rawVersions)
+			if rawVersions == "" {
+				selected = 1
+			}
 			if caps.SafeRestart {
 				restart = "safe"
 			}
@@ -268,7 +272,11 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 		if err == nil && (caps.RangeSupport || caps.ResumeSupport) {
 			transfer = "resumable"
 		}
-		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
+		extensions := []string{"rcc.artifact.v1/admin", "rcc.artifact.v1/backup", "rcc.artifact.v1/restore"}
+		if requested := request.Header.Get("X-RCC-Artifact-Extensions"); requested != "" {
+			extensions = intersectExtensions(strings.Split(requested, ","), extensions)
+		}
+		writeProviderJSON(writer, ProtocolCapabilities{Protocol: "rcc.artifact.v1", Versions: []int{1}, SelectedVersion: selected, Extensions: extensions, AuthRequired: false, RestartOutcome: restart, TransferOutcome: transfer, RetentionPolicy: "caller-selected", Immutability: "content-addressed", Capabilities: caps}, err)
 	case request.URL.Path == "/v1/objects/missing":
 		if request.Method != http.MethodPost {
 			methodNotAllowed(writer)
@@ -645,8 +653,48 @@ func (it *HTTP) Capabilities(ctx context.Context) (Capabilities, error) {
 }
 
 func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
+	return it.ProtocolWithOptions(ctx, nil, nil)
+}
+
+func (it *HTTP) ProtocolWithOptions(ctx context.Context, versions []int, extensions []string) (ProtocolCapabilities, error) {
 	var result ProtocolCapabilities
-	err := it.doJSON(ctx, http.MethodGet, "/v1/protocol", nil, &result)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, it.baseURL+"/v1/protocol", nil)
+	if err != nil {
+		return result, err
+	}
+	if len(versions) > 0 {
+		request.Header.Set("X-RCC-Artifact-Versions", joinInts(versions))
+	}
+	if len(extensions) > 0 {
+		request.Header.Set("X-RCC-Artifact-Extensions", strings.Join(extensions, ","))
+	}
+	it.setHeaders(request)
+	response, err := it.client.Do(request)
+	if err != nil {
+		return result, err
+	}
+	defer response.Body.Close()
+	if err := providerResponseError(response); err != nil {
+		return result, err
+	}
+	if response.Header.Get("Content-Type") != "application/json" {
+		return result, fmt.Errorf("unexpected JSON response Content-Type %q", response.Header.Get("Content-Type"))
+	}
+	content, err := io.ReadAll(io.LimitReader(response.Body, maxProviderJSONBytes+1))
+	if err != nil {
+		return result, err
+	}
+	if len(content) > maxProviderJSONBytes || rejectDuplicateHTTPJSON(content) != nil {
+		return result, fmt.Errorf("invalid protocol response")
+	}
+	decoder := json.NewDecoder(bytes.NewReader(content))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&result); err != nil {
+		return result, err
+	}
+	if err := requireHTTPJSONEOF(decoder); err != nil {
+		return result, err
+	}
 	if err == nil && (result.Protocol != "rcc.artifact.v1" || len(result.Versions) == 0 || len(result.Versions) > 8 || !contains(result.Versions, 1) || result.SelectedVersion != 1 || (result.AuthRequired && result.AuthChallenge == "") || result.RestartOutcome != "safe" || result.Immutability != "content-addressed" || result.TransferOutcome != "full-restart-only") {
 		err = fmt.Errorf("unsupported artifact provider protocol")
 	}
@@ -654,6 +702,37 @@ func (it *HTTP) Protocol(ctx context.Context) (ProtocolCapabilities, error) {
 		err = ValidateCapabilities(result.Capabilities)
 	}
 	return result, err
+}
+
+func negotiateVersion(raw string) int {
+	if raw == "" {
+		return 1
+	}
+	for _, value := range strings.Split(raw, ",") {
+		if strings.TrimSpace(value) == "1" {
+			return 1
+		}
+	}
+	return 0
+}
+func intersectExtensions(requested, supported []string) []string {
+	out := []string{}
+	for _, want := range requested {
+		want = strings.TrimSpace(want)
+		for _, have := range supported {
+			if want == have {
+				out = append(out, have)
+			}
+		}
+	}
+	return out
+}
+func joinInts(values []int) string {
+	out := make([]string, len(values))
+	for i, value := range values {
+		out[i] = fmt.Sprint(value)
+	}
+	return strings.Join(out, ",")
 }
 
 func (it *HTTP) NegotiateCapabilities(ctx context.Context, required Capabilities) (Capabilities, error) {
