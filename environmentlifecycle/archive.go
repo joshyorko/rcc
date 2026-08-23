@@ -72,7 +72,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 	for _, item := range descriptors {
 		allDescriptors = append(allDescriptors, item.descriptor)
 	}
-	missing, err := local.MissingObjects(ctx, allDescriptors)
+	missing, err := artifactprovider.MissingObjectsBatched(ctx, local, allDescriptors)
 	if err != nil {
 		return environmentartifact.Manifest{}, fmt.Errorf("check archive rollback set: %w", err)
 	}

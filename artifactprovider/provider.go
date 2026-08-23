@@ -42,7 +42,8 @@ type Capabilities struct {
 const (
 	maxProviderArchiveMembers   = 4096
 	maxProviderArchiveBytes     = int64(128 << 30)
-	maxProviderDescriptorFanout = 4096
+	MaxDescriptorFanout         = 4096
+	maxProviderDescriptorFanout = MaxDescriptorFanout
 )
 
 type ProtocolCapabilities struct {
@@ -206,6 +207,30 @@ type Provider interface {
 	PutObject(context.Context, Blob) error
 	GetObject(context.Context, environmentartifact.Descriptor) (io.ReadCloser, error)
 	CommitManifest(context.Context, []byte) error
+}
+
+// MissingObjectsBatched negotiates an arbitrarily large object closure while
+// preserving the bounded fanout of each provider request.
+func MissingObjectsBatched(ctx context.Context, provider Provider, descriptors []environmentartifact.Descriptor) ([]environmentartifact.Digest, error) {
+	if provider == nil {
+		return nil, errors.New("artifact provider is required")
+	}
+	missing := make([]environmentartifact.Digest, 0, len(descriptors))
+	for start := 0; start < len(descriptors); start += MaxDescriptorFanout {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		end := start + MaxDescriptorFanout
+		if end > len(descriptors) {
+			end = len(descriptors)
+		}
+		batch, err := provider.MissingObjects(ctx, descriptors[start:end])
+		if err != nil {
+			return nil, err
+		}
+		missing = append(missing, batch...)
+	}
+	return missing, nil
 }
 
 var _ Provider = (*Filesystem)(nil)

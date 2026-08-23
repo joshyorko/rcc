@@ -144,7 +144,7 @@ func Publish(ctx context.Context, request PublishRequest) (PublishResult, error)
 		descriptors[index] = blob.descriptor
 		totalBytes += blob.descriptor.Size
 	}
-	missing, err := request.Provider.MissingObjects(ctx, descriptors)
+	missing, err := artifactprovider.MissingObjectsBatched(ctx, request.Provider, descriptors)
 	if err != nil {
 		return PublishResult{}, fmt.Errorf("negotiate missing objects: %w", err)
 	}
