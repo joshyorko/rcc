@@ -521,17 +521,26 @@ def selfHost(c):
     (home_b / "artifacts" / "v1").mkdir(parents=True, exist_ok=True)
     (home_b / "artifacts" / "v1" / "metadata.json").write_text('{"schemaVersion":1}\n')
     invoke(released, home_b, "selfHostProbe")
+    v12_evidence = []
     def v12(binary, home, label):
         env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
         argv = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
-        _run_checked(argv, env)
-        commands.append({"step": label, "argv": argv, "env": {"ROBOCORP_HOME": str(home)}})
+        completed = subprocess.run([str(part) for part in argv], check=True, env=env,
+                                   capture_output=True, text=True)
+        variables = json.loads(completed.stdout)
+        keys = {entry.get("key") for entry in variables if isinstance(entry, dict)}
+        if not {"RCC_INSTALLATION_ID", "RCC_HOLOTREE_SPACE_ROOT"}.issubset(keys):
+            raise RuntimeError(f"{label} did not return the required v12 identity variables")
+        evidence_path = root / f"{label}.json"
+        evidence_path.write_text(json.dumps(variables, indent=2, sort_keys=True) + "\n")
+        v12_evidence.append(evidence_path)
+        commands.append({"step": label, "argv": argv, "env": {"ROBOCORP_HOME": str(home)},
+                         "evidencePath": str(evidence_path)})
     v12(released, home_a, "released-v12")
     v12(str(generation_b), home_a, "candidate-v12")
     v12(released, home_b, "released-v12-compatibility")
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
-                home_a / "holotree", home_b / "holotree",
-                home_b / "artifacts" / "v1" / "metadata.json"]
+                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence]
     receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
                                        home_a=home_a, home_b=home_b, commands=commands,
                                        binary_metadata={"released": released_info, "candidate": candidate_info,
