@@ -3,7 +3,10 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -367,5 +370,187 @@ func assertFileBytes(t *testing.T, path string, want []byte) {
 	}
 	if !bytes.Equal(got, want) {
 		t.Fatalf("%s = %q, want %q", path, got, want)
+	}
+}
+
+func TestHTTPAndOfflineArchiveConvergeOnExactArtifactIdentity(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	handler := artifactprovider.NewHandler(remote)
+	server := httptest.NewServer(http.HandlerFunc(handler.ServeHTTP))
+	defer server.Close()
+	httpProvider, err := artifactprovider.NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	manifest, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: httpProvider, OutputPath: archivePath})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manifest.ArtifactDigest != artifactDigest {
+		t.Fatalf("HTTP export digest = %s, want %s", manifest.ArtifactDigest, artifactDigest)
+	}
+	previousHome := common.Product.Home()
+	consumerHome := t.TempDir()
+	common.Product.ForceHome(consumerHome)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if imported.ArtifactDigest != artifactDigest {
+		t.Fatalf("offline import digest = %s, want %s", imported.ArtifactDigest, artifactDigest)
+	}
+	local, err := artifactprovider.NewFilesystem(filepath.Join(consumerHome, "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	resolved, err := local.ResolveManifest(context.Background(), artifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := environmentartifact.DecodeManifest(resolved)
+	if err != nil || decoded.ArtifactDigest != artifactDigest {
+		t.Fatalf("offline local record identity = %s, %v", decoded.ArtifactDigest, err)
+	}
+}
+
+func TestImportArchiveRollsBackStagedObjectsAfterInjectedFailure(t *testing.T) {
+	fixture, remote, artifactDigest := publishedFixture(t)
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: archivePath}); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	home := t.TempDir()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	local, err := artifactprovider.NewFilesystem(filepath.Join(home, "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var puts int
+	errInjected := errors.New("injected archive import failure")
+	_, err = ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath, PutObject: func(ctx context.Context, blob artifactprovider.Blob) error {
+		puts++
+		if puts == 2 {
+			return errInjected
+		}
+		return local.PutObject(ctx, blob)
+	}})
+	if !errors.Is(err, errInjected) {
+		t.Fatalf("import error = %v, want injected failure", err)
+	}
+	if puts != 2 {
+		t.Fatalf("PutObject calls = %d, want 2", puts)
+	}
+	if _, err := local.ResolveManifest(context.Background(), artifactDigest); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("manifest after rollback = %v", err)
+	}
+	objectsRoot := filepath.Join(home, "artifacts", "v1", "content", "objects")
+	var residual int
+	_ = filepath.Walk(objectsRoot, func(path string, info os.FileInfo, walkErr error) error {
+		if walkErr == nil && info.Mode().IsRegular() {
+			residual++
+		}
+		return nil
+	})
+	if residual != 0 {
+		t.Fatalf("rollback left %d staged object files", residual)
+	}
+	_ = fixture
+}
+
+func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
+	fixture := newPublishFixture(t)
+	inventory, err := environmentartifact.InventoryV12(environmentartifact.InventoryInput{CatalogPath: fixture.build.CatalogPath, LegacyBlueprint: fixture.build.LegacyBlueprint, ExpectedPlatform: fixture.build.Platform.RCCPlatform})
+	if err != nil {
+		t.Fatal(err)
+	}
+	specificationBytes, err := semanticSpecificationBytes(fixture.build.SourceKind, fixture.build.LegacyBlueprint, fixture.build.Platform, fixture.build.Builder, fixture.build.Compatibility)
+	if err != nil {
+		t.Fatal(err)
+	}
+	specification := environmentartifact.Specification{Descriptor: descriptor(environmentartifact.SpecificationMediaType, specificationBytes), SourceKind: fixture.build.SourceKind, Platform: fixture.build.Platform, Builder: fixture.build.Builder}
+	legacyBlueprint := environmentartifact.LegacyBlueprint{Descriptor: inventory.LegacyBlueprint, LegacyBlueprintKey: inventory.LegacyBlueprintKey}
+	input := environmentartifact.LegacyV12Input{Specification: specification, SpecificationBytes: specificationBytes, LegacyBlueprint: legacyBlueprint, LegacyBlueprintBytes: fixture.build.LegacyBlueprint, Catalog: inventory.Catalog, CatalogBytes: fixture.catalogBytes, Index: inventory.Index, IndexBytes: inventory.IndexBytes, Platform: fixture.build.Platform, Builder: fixture.build.Builder, Compatibility: fixture.build.Compatibility}
+	input.Objects = make(map[environmentartifact.Digest][]byte, len(inventory.Objects))
+	for digest, path := range inventory.Objects {
+		content, readErr := os.ReadFile(path)
+		if readErr != nil {
+			t.Fatal(readErr)
+		}
+		input.Objects[digest] = content
+	}
+	manifest, _, entries, err := environmentartifact.WrapLegacyV12(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	if err := environmentartifact.WriteArchive(&archive, entries); err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(t.TempDir(), "legacy.rcca")
+	if err := os.WriteFile(archivePath, archive.Bytes(), 0o640); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	common.Product.ForceHome(t.TempDir())
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath})
+	if err != nil || imported.ArtifactDigest != manifest.ArtifactDigest {
+		t.Fatalf("legacy import = %s, %v", imported.ArtifactDigest, err)
+	}
+	for digest, want := range input.Objects {
+		reader, getErr := local.GetObject(context.Background(), environmentartifact.Descriptor{Digest: digest, Size: int64(len(want))})
+		if getErr != nil {
+			t.Fatal(getErr)
+		}
+		got, readErr := io.ReadAll(reader)
+		closeErr := reader.Close()
+		if readErr != nil || closeErr != nil {
+			t.Fatalf("legacy object %s read: %v, close: %v", digest, readErr, closeErr)
+		}
+		if !bytes.Equal(got, want) {
+			t.Fatalf("legacy object %s changed during wrap/import", digest)
+		}
+	}
+	catalogReader, err := local.GetObject(context.Background(), input.Catalog.Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotCatalog, readErr := io.ReadAll(catalogReader)
+	closeErr := catalogReader.Close()
+	if readErr != nil || closeErr != nil || !bytes.Equal(gotCatalog, input.CatalogBytes) {
+		t.Fatalf("legacy catalog changed during wrap/import: read=%v close=%v", readErr, closeErr)
+	}
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: imported.ArtifactDigest})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ArtifactDigest != manifest.ArtifactDigest || result.Path == "" {
+		t.Fatalf("legacy execution materialization = %+v", result)
+	}
+	_, child, err := Execute(context.Background(), NewLocalMaterializer(), Materialization{ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path, CacheHit: result.CacheHit}, []string{"sh", "-c", "test -f python"})
+	if err != nil || child.ExitCode != 0 {
+		t.Fatalf("legacy materialization task execution = %+v, %v", child, err)
+	}
+}
+
+func TestWriteEnvironmentArtifactN1Fixture(t *testing.T) {
+	if os.Getenv("RCC_WRITE_N1_ARCHIVE") != "1" {
+		t.Skip("fixture writer is opt-in")
+	}
+	output := os.Getenv("RCC_N1_ARCHIVE")
+	if output == "" {
+		t.Fatal("RCC_N1_ARCHIVE is required")
+	}
+	_, remote, artifactDigest := publishedFixture(t)
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: output}); err != nil {
+		t.Fatal(err)
 	}
 }

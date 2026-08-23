@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"sort"
 	"sync"
@@ -14,6 +15,20 @@ import (
 type contextReader struct {
 	ctx    context.Context
 	reader io.Reader
+}
+
+// RemoveObject rolls back an object staged by a failed import. Digests are
+// validated before this path is constructed, so the target cannot escape the
+// provider root.
+func (it *Filesystem) RemoveObject(digest environmentartifact.Digest) error {
+	path := it.objectPath(digest)
+	if path == "" {
+		return fmt.Errorf("invalid object digest")
+	}
+	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return nil
 }
 
 func (it *contextReader) Read(target []byte) (int, error) {

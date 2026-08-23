@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/operations"
 	"github.com/joshyorko/rcc/pathlib"
@@ -18,8 +20,10 @@ import (
 )
 
 var (
-	bundleRobot  string
-	bundleOutput string
+	bundleRobot         string
+	bundleOutput        string
+	bundleArtifact      string
+	bundlePlatformIndex string
 )
 
 var bundleCmd = &cobra.Command{
@@ -88,7 +92,7 @@ run the robot with 'rcc robot run-from-bundle'. It is not an RCC carrier executa
 
 		// 3. Create bundle
 		common.Log("Creating bundle %s...", bundleOutput)
-		err = createBundle(bundleRobot, tempHololib, bundleOutput, config.CondaConfigFile())
+		err = createBundleWithArtifactAndIndex(bundleRobot, tempHololib, bundleOutput, config.CondaConfigFile(), bundleArtifact, bundlePlatformIndex)
 		pretty.Guard(err == nil, 7, "Failed to create bundle: %v", err)
 
 		pretty.Ok()
@@ -99,9 +103,19 @@ func init() {
 	robotCmd.AddCommand(bundleCmd)
 	bundleCmd.Flags().StringVarP(&bundleRobot, "robot", "r", "robot.yaml", "Path to robot.yaml.")
 	bundleCmd.Flags().StringVarP(&bundleOutput, "output", "o", "bundle.py", "Output bundle filename.")
+	bundleCmd.Flags().StringVar(&bundleArtifact, "artifact-archive", "", "Optional canonical environment artifact archive to embed.")
+	bundleCmd.Flags().StringVar(&bundlePlatformIndex, "artifact-index", "", "Optional canonical multi-platform artifact index to embed.")
 }
 
 func createBundle(robotYamlPath, hololibPath, outputPath, condaConfigPath string) error {
+	return createBundleWithArtifact(robotYamlPath, hololibPath, outputPath, condaConfigPath, "")
+}
+
+func createBundleWithArtifact(robotYamlPath, hololibPath, outputPath, condaConfigPath, artifactPath string) error {
+	return createBundleWithArtifactAndIndex(robotYamlPath, hololibPath, outputPath, condaConfigPath, artifactPath, "")
+}
+
+func createBundleWithArtifactAndIndex(robotYamlPath, hololibPath, outputPath, condaConfigPath, artifactPath, platformIndexPath string) error {
 	config, err := robot.LoadRobotYaml(robotYamlPath, false)
 	if err != nil {
 		return err
@@ -228,6 +242,47 @@ if __name__ == "__main__":
 		return err
 	}
 	if err := copyBundleFile(w, hololibPath); err != nil {
+		return err
+	}
+	manifest := map[string]string{"schemaVersion": "1", "sourceMode": "source-only"}
+	if artifactPath != "" {
+		manifest["sourceMode"] = "source+artifact"
+		if platformIndexPath != "" {
+			manifest["sourceMode"] = "source+artifact-index"
+		}
+		artifactWriter, err := zw.Create("environment/artifact.rcca")
+		if err != nil {
+			return err
+		}
+		if err := copyBundleFile(artifactWriter, artifactPath); err != nil {
+			return err
+		}
+	}
+	if platformIndexPath != "" {
+		indexBytes, err := os.ReadFile(platformIndexPath)
+		if err != nil {
+			return err
+		}
+		if _, err := environmentartifact.DecodePlatformIndex(indexBytes); err != nil {
+			return fmt.Errorf("invalid platform index: %w", err)
+		}
+		indexWriter, err := zw.Create("environment/platform-index.json")
+		if err != nil {
+			return err
+		}
+		if _, err := indexWriter.Write(indexBytes); err != nil {
+			return err
+		}
+	}
+	manifestWriter, err := zw.Create("environment/bundle.json")
+	if err != nil {
+		return err
+	}
+	encoded, err := json.Marshal(manifest)
+	if err != nil {
+		return err
+	}
+	if _, err := manifestWriter.Write(encoded); err != nil {
 		return err
 	}
 	if err := zw.Close(); err != nil {

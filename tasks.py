@@ -6,6 +6,7 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 from invoke import task
@@ -23,6 +24,39 @@ def _binary_inventory_targets():
 def _require_linux(task_name):
     if sys.platform != "linux":
         raise RuntimeError(f"Linux-only task unsupported on {sys.platform}: {task_name}")
+
+
+def _state_digests(root):
+    """Return exact relative-file digests for one self-host state boundary."""
+    root = Path(root)
+    if not root.exists():
+        return {}
+    state = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_file() and not path.is_symlink():
+            state[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return state
+
+
+def _legacy_closure_state(home, archive):
+    """Hash only the v12 catalog and exact legacy objects named by an archive."""
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        object_index = json.loads(carrier.read("rcc-environment/object-index.json"))
+    hololib = Path(home) / "hololib"
+    paths = {
+        "catalog": hololib / "catalog" / manifest["catalogs"][0]["legacyName"],
+    }
+    for entry in object_index["entries"]:
+        legacy_id = entry["legacyObjectId"]
+        paths[f"object:{legacy_id}"] = hololib / "library" / legacy_id[:2] / legacy_id[2:4] / legacy_id[4:6] / legacy_id
+    state = {}
+    for label, path in sorted(paths.items()):
+        if not path.is_file() or path.is_symlink():
+            raise RuntimeError(f"legacy v12 closure member is missing: {path}")
+        content = path.read_bytes()
+        state[label] = {"path": str(path), "size": len(content), "sha256": hashlib.sha256(content).hexdigest()}
+    return state
 
 
 def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a, home_b, commands,
@@ -443,6 +477,8 @@ def artifactVertical(c):
         "RCC_NATIVE_PLATFORM": "linux-amd64",
         "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "native-runtime-receipt.json").resolve()),
     })
+    if os.environ.get("RCC_N1_ARCHIVE"):
+        env["RCC_N1_ARCHIVE_OUTPUT"] = str(Path(os.environ["RCC_N1_ARCHIVE"]).resolve())
     c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=env)
 
 
@@ -490,7 +526,7 @@ def selfHostProbe(c):
 def selfHost(c):
     """Exercise released-to-candidate and candidate-to-released self-hosting."""
     _require_linux("selfHost")
-    released = os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
+    released = os.environ.get("RCC_N1_BINARY") or os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
     if not released:
         raise RuntimeError("RCC_SELF_HOST_RELEASED_BINARY or PATH rcc is required")
     released = str(Path(released).resolve())
@@ -504,7 +540,10 @@ def selfHost(c):
     candidate = Path("build/self-host/candidate/rcc").resolve()
     commands = []
     fixture = root / "robot.yaml"
-    fixture.write_text("tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\n")
+    fixture.write_text(
+        "tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\n"
+        "condaConfigFile: conda.yaml\n"
+    )
     conda = root / "conda.yaml"
     conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
 
@@ -530,6 +569,7 @@ def selfHost(c):
     (home_b / "artifacts" / "v1" / "metadata.json").write_text('{"schemaVersion":1}\n')
     invoke(released, home_b, "selfHostProbe")
     v12_evidence = []
+    artifact_evidence = []
     def v12(binary, home, label):
         env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
         argv = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
@@ -547,8 +587,88 @@ def selfHost(c):
     v12(released, home_a, "released-v12")
     v12(str(generation_b), home_a, "candidate-v12")
     v12(released, home_b, "released-v12-compatibility")
+    n1_archive = os.environ.get("RCC_N1_ARCHIVE")
+    if os.environ.get("RCC_N1_BINARY") and not n1_archive:
+        raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
+    if n1_archive:
+        archive = Path(n1_archive).resolve()
+        if not archive.is_file():
+            raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        legacy_before = _legacy_closure_state(home_a, archive)
+        artifact_before = _state_digests(home_a / "artifacts" / "v1")
+        archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        archive_hash_path = root / "n1-archive-sha256.txt"
+        archive_hash_path.write_text(archive_digest + "\n")
+        artifact_evidence.append(archive_hash_path)
+        # N-1 acceptance is deliberately one home: the released binary first
+        # creates the v12 closure, the candidate imports the archive, and the
+        # old binary then consumes that same home through its legacy command.
+        candidate_env = os.environ.copy(); candidate_env["ROBOCORP_HOME"] = str(home_a)
+        candidate_command = [str(generation_b), "env", "acquire", "--archive", str(archive), "--json"]
+        candidate_result = subprocess.run(
+            candidate_command, check=True, env=candidate_env, capture_output=True, text=True
+        )
+        candidate_receipt = json.loads(candidate_result.stdout)
+        artifact_digest = candidate_receipt.get("artifactDigest")
+        if not artifact_digest or not candidate_receipt.get("materializationId"):
+            raise RuntimeError(f"candidate archive receipt lacks artifact identity: {candidate_receipt}")
+        candidate_path = root / "candidate-archive-upgrade.json"
+        candidate_path.write_text(candidate_result.stdout); artifact_evidence.append(candidate_path)
+        commands.append({"step": "candidate-archive-upgrade", "argv": candidate_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(candidate_path)})
+        legacy_after_upgrade = _legacy_closure_state(home_a, archive)
+        artifact_after_upgrade = _state_digests(home_a / "artifacts" / "v1")
+        if legacy_after_upgrade != legacy_before:
+            raise RuntimeError("candidate archive upgrade changed the legacy v12 catalog/object closure")
+        old_command = [released, "env", "acquire", "--archive", str(archive), "--json"]
+        old_attempt = subprocess.run(old_command, env=candidate_env, capture_output=True, text=True)
+        old_attempt_path = root / "released-archive-rollback-attempt.json"
+        old_attempt_path.write_text(json.dumps({
+            "argv": old_command,
+            "returncode": old_attempt.returncode,
+            "stdout": old_attempt.stdout,
+            "stderr": old_attempt.stderr,
+        }, indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(old_attempt_path)
+        commands.append({"step": "released-archive-rollback-attempt", "argv": old_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(old_attempt_path)})
+        old_error = (old_attempt.stdout + "\n" + old_attempt.stderr).lower()
+        unsupported_archive_cli = old_attempt.returncode != 0 and (
+            ("unknown flag" in old_error and "archive" in old_error)
+            or ("unknown command" in old_error and "archive" in old_error)
+        )
+        if not unsupported_archive_cli:
+            raise RuntimeError("released N-1 archive rollback was not the expected unsupported CLI error")
+        legacy_command = [released, "task", "testrun", "--robot", str(fixture), "--task", "proof", "--no-outputs"]
+        legacy = subprocess.run(legacy_command, check=True, env=candidate_env, capture_output=True, text=True)
+        legacy_output = legacy.stdout + "\n" + legacy.stderr
+        if "n1-old-task-ok" not in legacy_output:
+            raise RuntimeError(f"released N-1 task did not execute the imported v12 closure: {legacy_output[-2000:]}")
+        legacy_receipt_path = root / "released-v12-rollback-consumption.json"
+        legacy_receipt_path.write_text(json.dumps({"argv": legacy_command, "returncode": legacy.returncode,
+                                                   "stdout": legacy.stdout, "stderr": legacy.stderr},
+                                                  indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(legacy_receipt_path)
+        commands.append({"step": "released-v12-rollback-consumption", "argv": legacy_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(legacy_receipt_path)})
+        legacy_after_rollback = _legacy_closure_state(home_a, archive)
+        artifact_after_rollback = _state_digests(home_a / "artifacts" / "v1")
+        if legacy_after_rollback != legacy_before:
+            raise RuntimeError("N-1 legacy v12 consumption changed catalog/object bytes")
+        if artifact_after_rollback != artifact_after_upgrade:
+            raise RuntimeError("N-1 artifact state was not stable after rollback consumption")
+        rollback_receipt = root / "n1-rollback-state.json"
+        rollback_receipt.write_text(json.dumps({"archiveSha256": archive_digest, "artifactDigest": artifact_digest,
+                                                "materializationId": candidate_receipt["materializationId"],
+                                                "legacyBefore": legacy_before,
+                                                "legacyAfterUpgrade": legacy_after_upgrade,
+                                                "legacyAfterRollback": legacy_after_rollback,
+                                                "artifactBefore": artifact_before,
+                                                "artifactAfterRollback": artifact_after_rollback},
+                                               indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(rollback_receipt)
     evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
-                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence]
+                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence, *artifact_evidence]
     receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
                                        home_a=home_a, home_b=home_b, commands=commands,
                                        binary_metadata={"released": released_info, "candidate": candidate_info,

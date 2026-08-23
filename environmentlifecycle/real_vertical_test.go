@@ -212,6 +212,32 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 
 	mismatch := runRealMismatchCheck(t, httpProvider, published.ArtifactDigest)
 
+	// Export the provider closure, then prove a fresh home can import and
+	// materialize the identical Artifact without the HTTP carrier.
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: published.ArtifactDigest, Provider: httpProvider, OutputPath: archivePath}); err != nil {
+		t.Fatalf("export canonical archive: %v", err)
+	}
+	if archiveOutput := os.Getenv("RCC_N1_ARCHIVE_OUTPUT"); archiveOutput != "" {
+		archiveBytes, err := os.ReadFile(archivePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(archiveOutput, archiveBytes, 0o640); err != nil {
+			t.Fatal(err)
+		}
+	}
+	offlineHome := filepath.Join(t.TempDir(), "offline-home")
+	common.Product.ForceHome(offlineHome)
+	if imported, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath}); err != nil || imported.ArtifactDigest != published.ArtifactDigest {
+		t.Fatalf("offline import identity = %s, %v", imported.ArtifactDigest, err)
+	}
+	offlineResult, offlineErr := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: published.ArtifactDigest})
+	offline := realConsumerReceipt{ArtifactDigest: offlineResult.ArtifactDigest, MaterializationID: offlineResult.MaterializationID, Path: offlineResult.Path, CacheHit: offlineResult.CacheHit}
+	if offlineErr != nil || offline.ArtifactDigest != published.ArtifactDigest || offline.CacheHit != CacheProvider {
+		t.Fatalf("offline archive changed artifact identity or provenance: %+v, %v", offline, offlineErr)
+	}
+
 	server.Close()
 	warm := runRealConsumerProcess(t, "warm", consumerHome, published.ArtifactDigest, "", "")
 	if warm.CacheHit != CacheLocalMaterialization || warm.ArtifactDigest != cold.ArtifactDigest || warm.MaterializationID != cold.MaterializationID || warm.Path != cold.Path {

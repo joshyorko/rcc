@@ -128,6 +128,76 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Not Be Empty    ${proof}[sqliteVersion]
     Package Manager Caches Should Be Empty    ${B_HOME}
 
+    ${source_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}source-only.py
+    ${source_bundle_result}=    Run Process
+    ...    ${RCC}    robot    bundle
+    ...    --robot    ${ROBOT}
+    ...    --output    ${source_bundle}
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${source_bundle_result.rc}    0
+    ${source_run_result}=    Run Process
+    ...    ${RCC}    robot    run-from-bundle    ${source_bundle}
+    ...    --task    proof
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${source_run_result.rc}    0
+
+    ${archive}=    Set Variable    ${FIXTURE_ROOT}${/}artifact.rcca
+    ${export_result}=    Run Process
+    ...    ${RCC}    env    export
+    ...    --artifact    ${artifact}
+    ...    --provider    office
+    ...    --output    ${archive}
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${export_result.rc}    0
+    ${artifact_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}source-artifact.py
+    ${artifact_bundle_result}=    Run Process
+    ...    ${RCC}    robot    bundle
+    ...    --robot    ${ROBOT}
+    ...    --artifact-archive    ${archive}
+    ...    --output    ${artifact_bundle}
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${artifact_bundle_result.rc}    0
+    ${artifact_run_result}=    Run Process
+    ...    ${RCC}    robot    run-from-bundle    ${artifact_bundle}
+    ...    --task    proof
+    ...    env=${B_ENV}
+    Should Be Equal As Integers    ${artifact_run_result.rc}    0
+
+    ${platform_index}=    Set Variable    ${FIXTURE_ROOT}${/}platform-index.json
+    ${index_path}=    Create Multi Platform Index    ${archive}    ${platform_index}
+    ${indexed_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}multi-platform.py
+    ${indexed_bundle_result}=    Run Process
+    ...    ${RCC}    robot    bundle
+    ...    --robot    ${ROBOT}
+    ...    --artifact-archive    ${archive}
+    ...    --artifact-index    ${index_path}
+    ...    --output    ${indexed_bundle}
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${indexed_bundle_result.rc}    0
+    ${indexed_run_result}=    Run Process
+    ...    ${RCC}    robot    run-from-bundle    ${indexed_bundle}
+    ...    --task    proof
+    ...    env=${B_ENV}
+    Should Be Equal As Integers    ${indexed_run_result.rc}    0
+
+    ${wrong_index}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform-index.json
+    ${wrong_index_path}=    Create Wrong Platform Index    ${archive}    ${wrong_index}
+    ${wrong_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform.py
+    ${wrong_bundle_result}=    Run Process
+    ...    ${RCC}    robot    bundle
+    ...    --robot    ${ROBOT}
+    ...    --artifact-archive    ${archive}
+    ...    --artifact-index    ${wrong_index_path}
+    ...    --output    ${wrong_bundle}
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${wrong_bundle_result.rc}    0
+    ${wrong_run_result}=    Run Process
+    ...    ${RCC}    robot    run-from-bundle    ${wrong_bundle}
+    ...    --task    proof
+    ...    env=${B_ENV}
+    Should Not Be Equal As Integers    ${wrong_run_result.rc}    0
+    Should Contain    ${wrong_run_result.stderr}    no exact environment artifact for platform
+
     ${stopped}=    Terminate Process    environment-provider
     Should Be Equal As Integers    ${stopped.rc}    0
     Provider Should Be Unreachable    ${provider_url}
