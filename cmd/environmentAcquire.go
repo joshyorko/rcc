@@ -18,7 +18,7 @@ type environmentAcquireResult struct {
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
-	var artifact, providerURL string
+	var artifact, providerURL, archivePath string
 	var jsonOutput bool
 	command := &cobra.Command{
 		Use:          "acquire",
@@ -29,9 +29,15 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if !jsonOutput {
 				return fmt.Errorf("--json is required")
 			}
-			digest, err := environmentartifact.ParseDigest(artifact)
-			if err != nil {
-				return err
+			var digest environmentartifact.Digest
+			if archivePath != "" {
+				manifest, err := environmentlifecycle.ImportArchive(command.Context(), environmentlifecycle.ImportArchiveRequest{Path: archivePath})
+				if err != nil { return err }
+				digest = manifest.ArtifactDigest
+			} else {
+				var err error
+				digest, err = environmentartifact.ParseDigest(artifact)
+				if err != nil { return err }
 			}
 			provider, err := optionalEnvironmentProvider(providerURL, dependencies.newProvider)
 			if err != nil {
@@ -53,6 +59,7 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 		},
 	}
 	command.Flags().StringVar(&artifact, "artifact", "", "Canonical sha256 environment artifact digest.")
+	command.Flags().StringVar(&archivePath, "archive", "", "Offline canonical environment archive to import.")
 	command.Flags().StringVar(&providerURL, "provider", "", "Environment artifact provider URL; optional for local-ready artifacts.")
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
 	return command
