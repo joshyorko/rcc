@@ -18,6 +18,7 @@ type Capabilities struct {
 	MaxRequestBytes  int64    `json:"maxRequestBytes,omitempty"`
 	RangeSupport     bool     `json:"rangeSupport,omitempty"`
 	ResumeSupport    bool     `json:"resumeSupport,omitempty"`
+	SafeRestart      bool     `json:"safeRestart,omitempty"`
 }
 
 type ProtocolCapabilities struct {

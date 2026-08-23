@@ -184,8 +184,19 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			http.Error(writer, err.Error(), http.StatusBadRequest)
 			return
 		}
+		if len(input.Descriptors)>4096 { http.Error(writer,"descriptor fanout exceeds limit",http.StatusRequestEntityTooLarge); return }
 		missing, err := provider.MissingObjects(ctx, input.Descriptors)
 		writeProviderJSON(writer, missingResponse{Missing: missing}, err)
+	case request.URL.Path == "/v1/admin/cleanup":
+		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};n,err:=admin.Cleanup(ctx);writeProviderJSON(writer,map[string]int{"removed":n},err)
+	case request.URL.Path == "/v1/admin/gc":
+		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};var input struct{MaxAgeSeconds int64 `json:"maxAgeSeconds"`;KeepManifests int `json:"keepManifests"`};if err:=decodeBoundedJSON(request.Body,request.ContentLength,maxProviderJSONBytes,&input);err!=nil{http.Error(writer,err.Error(),http.StatusBadRequest);return};report,err:=admin.GarbageCollect(ctx,Retention{MaxAge:time.Duration(input.MaxAgeSeconds)*time.Second,KeepManifests:input.KeepManifests});writeProviderJSON(writer,report,err)
+	case request.URL.Path == "/v1/admin/repair":
+		admin,ok:=provider.(ProviderV1Admin);if !ok{http.Error(writer,"admin unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};health,err:=admin.Repair(ctx);writeProviderJSON(writer,health,err)
+	case request.URL.Path == "/v1/admin/backup":
+		backup,ok:=provider.(ProviderV1Backup);if !ok{http.Error(writer,"backup unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodGet{methodNotAllowed(writer);return};writer.Header().Set("Content-Type","application/x-tar");if err:=backup.Backup(ctx,writer);err!=nil{return}
+	case request.URL.Path == "/v1/admin/restore":
+		backup,ok:=provider.(ProviderV1Backup);if !ok{http.Error(writer,"restore unavailable",http.StatusNotImplemented);return};if request.Method!=http.MethodPost{methodNotAllowed(writer);return};if request.ContentLength<0||request.ContentLength>maxProviderObjectBytes{http.Error(writer,"invalid restore size",http.StatusBadRequest);return};if err:=backup.Restore(ctx,io.LimitReader(request.Body,request.ContentLength+1));err!=nil{http.Error(writer,err.Error(),http.StatusUnprocessableEntity);return};writer.WriteHeader(http.StatusNoContent)
 	case strings.HasPrefix(request.URL.Path, "/v1/objects/sha256/"):
 		digest, ok := digestFromExactPath(request.URL.Path, "/v1/objects/sha256/")
 		if !ok {
@@ -207,6 +218,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			}
 			writer.WriteHeader(http.StatusCreated)
 		case http.MethodGet:
+			if request.Header.Get("Range")!="" { writer.Header().Set("Accept-Ranges","none");http.Error(writer,"range requests unsupported; restart the full object",http.StatusRequestedRangeNotSatisfiable);return }
 			readerProvider, ok := provider.(ObjectReaderProvider); if !ok { http.Error(writer, "object reads unavailable", http.StatusNotImplemented); return }
 			reader, size, err := readerProvider.GetObjectByDigest(ctx, digest)
 			if err != nil {

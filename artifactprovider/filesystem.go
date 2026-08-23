@@ -76,7 +76,7 @@ func (it *Filesystem) manifestPath(digest environmentartifact.Digest) string {
 }
 
 func (it *Filesystem) Capabilities(context.Context) (Capabilities, error) {
-	return Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, MaxObjectBytes: maxProviderObjectBytes, MaxManifestBytes: maxManifestBytes, MaxRequestBytes: maxProviderJSONBytes, RangeSupport: false, ResumeSupport: false}, nil
+	return Capabilities{SchemaVersions: []int{1}, DigestAlgorithms: []string{"sha256"}, Encodings: []string{"gzip"}, MaxObjectBytes: maxProviderObjectBytes, MaxManifestBytes: maxManifestBytes, MaxRequestBytes: maxProviderJSONBytes, RangeSupport: false, ResumeSupport: false, SafeRestart: true}, nil
 }
 
 func (it *Filesystem) Health(ctx context.Context) (Health, error) {
