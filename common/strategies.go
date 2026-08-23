@@ -1,6 +1,9 @@
 package common
 
-import "os"
+import (
+	"os"
+	"sync"
+)
 
 const (
 	ROBOCORP_HOME_VARIABLE = `ROBOCORP_HOME`
@@ -20,6 +23,7 @@ type (
 	}
 
 	legacyStrategy struct {
+		mutex      sync.RWMutex
 		forcedHome string
 	}
 )
@@ -42,6 +46,8 @@ func (it *legacyStrategy) AllowInternalMetrics() bool {
 }
 
 func (it *legacyStrategy) ForceHome(value string) {
+	it.mutex.Lock()
+	defer it.mutex.Unlock()
 	it.forcedHome = value
 }
 
@@ -50,6 +56,8 @@ func (it *legacyStrategy) HomeVariable() string {
 }
 
 func (it *legacyStrategy) Home() string {
+	it.mutex.RLock()
+	defer it.mutex.RUnlock()
 	if len(it.forcedHome) > 0 {
 		return ExpandPath(it.forcedHome)
 	}
