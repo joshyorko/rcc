@@ -30,18 +30,18 @@ func ReserveDisk(root string, bytes int64) (*DiskReservation, error) {
 	}
 	if bytes > 0 {
 		if err := syscall.Fallocate(int(f.Fd()), 0, 0, bytes); err != nil {
-			f.Close()
-			os.Remove(f.Name())
+			_ = f.Close()
+			_ = os.Remove(f.Name())
 			return nil, fmt.Errorf("reserve staging disk: %w", err)
 		}
 	}
 	if err := f.Sync(); err != nil {
-		f.Close()
-		os.Remove(f.Name())
+		_ = f.Close()
+		_ = os.Remove(f.Name())
 		return nil, err
 	}
 	if err := f.Close(); err != nil {
-		os.Remove(f.Name())
+		_ = os.Remove(f.Name())
 		return nil, err
 	}
 	return &DiskReservation{path: f.Name()}, nil

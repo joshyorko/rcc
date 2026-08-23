@@ -160,30 +160,6 @@ func (it *Filesystem) getObjectBytes(ctx context.Context, descriptor environment
 	return readVerifiedAt(ctx, directory, descriptor.Digest.Hex(), descriptor.Digest, descriptor.Size)
 }
 
-func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmentartifact.Digest) ([]byte, error) {
-	if len(digest.Hex()) != 64 {
-		return nil, fmt.Errorf("invalid object digest")
-	}
-	root, err := openProviderRoot(it.root)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = unix.Close(root) }()
-	directory, err := openObjectDirectory(root, digest, false)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = unix.Close(directory) }()
-	content, err := readRegularAt(ctx, directory, digest.Hex(), maxProviderObjectBytes)
-	if err != nil {
-		return nil, err
-	}
-	if environmentartifact.DigestBytes(content) != digest {
-		return nil, fmt.Errorf("stored object digest mismatch")
-	}
-	return content, nil
-}
-
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {
 	it.requests.Add(1)
 	manifest, err := environmentartifact.DecodeManifest(content)

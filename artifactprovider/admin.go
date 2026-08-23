@@ -22,7 +22,7 @@ func (it *Filesystem) ListManifests(ctx context.Context) ([]ManifestInfo, error)
 	objects, e := listProviderFiles(ctx, filepath.Join(it.root, "manifests", "sha256"))
 	out := make([]ManifestInfo, len(objects))
 	for i, v := range objects {
-		out[i] = ManifestInfo{Digest: v.Digest, Size: v.Size, ModifiedAt: v.ModifiedAt}
+		out[i] = ManifestInfo(v)
 	}
 	return out, e
 }
@@ -87,8 +87,8 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 		if e != nil {
 			return report, e
 		}
-		keep[manifest.Specification.Descriptor.Digest.Hex()] = true
-		keep[manifest.LegacyBlueprint.Descriptor.Digest.Hex()] = true
+		keep[manifest.Specification.Digest.Hex()] = true
+		keep[manifest.LegacyBlueprint.Digest.Hex()] = true
 		keep[manifest.ObjectIndex.Digest.Hex()] = true
 		for _, c := range manifest.Catalogs {
 			keep[c.Digest.Hex()] = true
@@ -98,7 +98,9 @@ func (it *Filesystem) GarbageCollect(ctx context.Context, r Retention) (GCReport
 			return report, e
 		}
 		idxBytes, e := io.ReadAll(io.LimitReader(idx, maxManifestBytes+1))
-		idx.Close()
+		if closeErr := idx.Close(); e == nil {
+			e = closeErr
+		}
 		if e != nil {
 			return report, e
 		}
@@ -157,10 +159,9 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 		return fmt.Errorf("nil backup writer")
 	}
 	tw := tar.NewWriter(w)
-	defer tw.Close()
 	members := 0
 	var total int64
-	return filepath.Walk(it.root, func(path string, info os.FileInfo, e error) error {
+	walkErr := filepath.Walk(it.root, func(path string, info os.FileInfo, e error) error {
 		if e != nil {
 			return e
 		}
@@ -186,13 +187,21 @@ func (it *Filesystem) Backup(ctx context.Context, w io.Writer) error {
 		if e != nil {
 			return e
 		}
-		defer f.Close()
 		if e = tw.WriteHeader(&tar.Header{Name: rel, Mode: 0600, Size: info.Size(), ModTime: info.ModTime()}); e != nil {
+			_ = f.Close()
 			return e
 		}
 		_, e = io.Copy(tw, io.LimitReader(f, maxProviderObjectBytes+1))
+		if closeErr := f.Close(); e == nil {
+			e = closeErr
+		}
 		return e
 	})
+	if walkErr != nil {
+		_ = tw.Close()
+		return walkErr
+	}
+	return tw.Close()
 }
 
 func (it *Filesystem) Restore(ctx context.Context, r io.Reader) error {
@@ -203,7 +212,7 @@ func (it *Filesystem) Restore(ctx context.Context, r io.Reader) error {
 	if e != nil {
 		return e
 	}
-	defer os.RemoveAll(stage)
+	defer func() { _ = os.RemoveAll(stage) }()
 	return it.restoreArchive(ctx, r, stage, map[string]bool{})
 }
 func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage string, seen map[string]bool) error {
@@ -273,12 +282,16 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 		if old, e := os.Open(dst); e == nil {
 			newf, ne := os.Open(src)
 			if ne != nil {
-				old.Close()
+				_ = old.Close()
 				return ne
 			}
 			same, ce := sameContent(old, newf)
-			old.Close()
-			newf.Close()
+			if closeErr := old.Close(); ce == nil {
+				ce = closeErr
+			}
+			if closeErr := newf.Close(); ce == nil {
+				ce = closeErr
+			}
 			if ce != nil {
 				return ce
 			}
@@ -307,7 +320,9 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 	fm, e := os.OpenFile(tmpMarker, os.O_WRONLY, 0600)
 	if e == nil {
 		e = fm.Sync()
-		fm.Close()
+		if closeErr := fm.Close(); e == nil {
+			e = closeErr
+		}
 	}
 	if e != nil {
 		_ = os.Remove(tmpMarker)

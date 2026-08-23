@@ -85,10 +85,10 @@ func (it *CommandExecutor) Build(ctx context.Context, claim Claim, policy Execut
 			_ = statusWriter.Close()
 			return Artifact{}, fmt.Errorf("create parent-owned sandbox gate: %w", err)
 		}
-		defer statusReader.Close()
-		defer statusWriter.Close()
-		defer blockReader.Close()
-		defer blockWriter.Close()
+		defer func() { _ = statusReader.Close() }()
+		defer func() { _ = statusWriter.Close() }()
+		defer func() { _ = blockReader.Close() }()
+		defer func() { _ = blockWriter.Close() }()
 		statusStart, statusDone = readBwrapStatus(statusReader)
 		command.ExtraFiles = []*os.File{statusWriter, blockReader}
 	}

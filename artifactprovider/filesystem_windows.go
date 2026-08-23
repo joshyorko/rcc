@@ -106,13 +106,6 @@ func (it *Filesystem) getObjectBytes(ctx context.Context, descriptor environment
 	return readWindowsRegular(ctx, it.root, it.objectPath(descriptor.Digest), descriptor.Size, descriptor.Digest)
 }
 
-func (it *Filesystem) getObjectByDigest(ctx context.Context, digest environmentartifact.Digest) ([]byte, error) {
-	if len(digest.Hex()) != 64 {
-		return nil, fmt.Errorf("invalid object digest")
-	}
-	return readWindowsRegular(ctx, it.root, it.objectPath(digest), maxProviderObjectBytes, digest)
-}
-
 func (it *Filesystem) CommitManifest(ctx context.Context, content []byte) error {
 	it.requests.Add(1)
 	manifest, err := environmentartifact.DecodeManifest(content)
