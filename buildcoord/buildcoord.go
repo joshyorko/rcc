@@ -141,14 +141,17 @@ type CompletionReceipt struct {
 }
 
 type ExecutionReceipt struct {
-	StagingRoot         string        `json:"stagingRoot"`
-	PolicyDigest        string        `json:"policyDigest"`
-	ProcessID           int           `json:"processId"`
-	CPULimit            int           `json:"cpuLimit,omitempty"`
-	MemoryBytes         int64         `json:"memoryBytes,omitempty"`
-	Timeout             time.Duration `json:"timeout,omitempty"`
-	NetworkIsolated     bool          `json:"networkIsolated"`
-	CredentialsExcluded bool          `json:"credentialsExcluded"`
+	StagingRoot          string        `json:"stagingRoot"`
+	PolicyDigest         string        `json:"policyDigest"`
+	ProcessID            int           `json:"processId"`
+	ConfinementPID       int           `json:"confinementPid"`
+	MountNamespace       uint64        `json:"mountNamespace"`
+	CPULimit             int           `json:"cpuLimit,omitempty"`
+	MemoryBytes          int64         `json:"memoryBytes,omitempty"`
+	Timeout              time.Duration `json:"timeout,omitempty"`
+	NetworkIsolated      bool          `json:"networkIsolated"`
+	CredentialsExcluded  bool          `json:"credentialsExcluded"`
+	FilesystemRestricted bool          `json:"filesystemRestricted"`
 }
 
 // ArtifactTrustDigest is the signature subject for a complete published
@@ -253,7 +256,7 @@ func ValidateExecutionReceipt(artifact Artifact, policy ExecutionPolicy) error {
 	if !policy.RequiresBoundary() {
 		return nil
 	}
-	if artifact.Execution == nil || artifact.Execution.StagingRoot == "" || mustRealPath(artifact.Execution.StagingRoot) != mustRealPath(policy.Root) || artifact.Execution.PolicyDigest != policy.Digest() || artifact.Execution.CPULimit != policy.CPULimit || artifact.Execution.MemoryBytes != policy.MemoryBytes || artifact.Execution.Timeout != policy.Timeout || (!policy.Network && !artifact.Execution.NetworkIsolated) || !artifact.Execution.CredentialsExcluded {
+	if artifact.Execution == nil || artifact.Execution.StagingRoot == "" || mustRealPath(artifact.Execution.StagingRoot) != mustRealPath(policy.Root) || artifact.Execution.PolicyDigest != policy.Digest() || artifact.Execution.CPULimit != policy.CPULimit || artifact.Execution.MemoryBytes != policy.MemoryBytes || artifact.Execution.Timeout != policy.Timeout || (!policy.Network && !artifact.Execution.NetworkIsolated) || !artifact.Execution.CredentialsExcluded || !artifact.Execution.FilesystemRestricted || artifact.Execution.ConfinementPID <= 0 || artifact.Execution.MountNamespace == 0 {
 		return ErrUnenforcedBuildPolicy
 	}
 	return nil

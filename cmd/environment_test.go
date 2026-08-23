@@ -41,7 +41,7 @@ func TestCoordinatePrewarmRequiresConcreteBuildCommandFlag(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if prewarm.Flag("build-command") == nil {
+	if prewarm.Flag("build-command") == nil || prewarm.Flag("read-only-input") == nil {
 		t.Fatal("prewarm command has no concrete staged build command flag")
 	}
 }

@@ -92,7 +92,7 @@ func TestCoordinatedBuilderDelegatesPolicyToProcessBoundary(t *testing.T) {
 		received = policy
 		artifact, err := build(ctx)
 		if err == nil {
-			artifact.Execution = &buildcoord.ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: true, CredentialsExcluded: true}
+			artifact.Execution = &buildcoord.ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), ConfinementPID: 1, MountNamespace: 1, CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: true, CredentialsExcluded: true, FilesystemRestricted: true}
 		}
 		return artifact, err
 	})}

@@ -379,7 +379,7 @@ func TestPrewarmWithExecutorReceivesEnforcedPolicyAtStagingBoundary(t *testing.T
 	var received ExecutionPolicy
 	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Build: BuildRequest{CPULimit: 2, MemoryBytes: 4096, Network: true, Timeout: time.Second}}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, policy ExecutionPolicy) (Artifact, error) {
 		received = policy
-		return Artifact{Digest: "sha256:executor", Verified: true, Execution: &ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: false, CredentialsExcluded: true}}, nil
+		return Artifact{Digest: "sha256:executor", Verified: true, Execution: &ExecutionReceipt{StagingRoot: policy.Root, PolicyDigest: policy.Digest(), ConfinementPID: 1, MountNamespace: 1, CPULimit: policy.CPULimit, MemoryBytes: policy.MemoryBytes, Timeout: policy.Timeout, NetworkIsolated: false, CredentialsExcluded: true, FilesystemRestricted: true}}, nil
 	}))
 	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
 		t.Fatalf("typed prewarm: %#v %v", items, err)
@@ -462,6 +462,69 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 	}
 	if artifact.Execution == nil || artifact.Execution.StagingRoot != staging || artifact.Execution.CPULimit != 2 || artifact.Execution.MemoryBytes != 64<<20 || !artifact.Execution.NetworkIsolated || !artifact.Execution.CredentialsExcluded {
 		t.Fatalf("execution receipt: %#v", artifact.Execution)
+	}
+}
+
+func TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("restricted namespace is Linux-backed")
+	}
+	root := t.TempDir()
+	hostSecret := filepath.Join(t.TempDir(), "unrelated-host-secret")
+	if err := os.WriteFile(hostSecret, []byte("do-not-read-or-overwrite"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	inputRoot := t.TempDir()
+	inputPath := filepath.Join(inputRoot, "provider-cache.txt")
+	if err := os.WriteFile(inputPath, []byte("explicit-input"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	request := BuildRequest{Root: root}
+	staging, cleanup, err := PrepareStaging(request, "owner")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cleanup()
+	policy, err := request.ExecutionPolicy(staging)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest := "sha256:" + strings.Repeat("a", 64)
+	content := `{"digest":"` + digest + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"` + digest + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	script := `set -eu
+if cat "$RCC_TEST_PRIVATE_FILE" >/dev/null 2>&1; then printf readable > "$RCC_BUILD_STAGING_ROOT/host-read"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-read"; fi
+if printf overwrite > "$RCC_TEST_PRIVATE_FILE" 2>/dev/null; then printf writable > "$RCC_BUILD_STAGING_ROOT/host-write"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-write"; fi
+if cat "$RCC_TEST_INPUT" >/dev/null 2>&1; then printf input-readable > "$RCC_BUILD_STAGING_ROOT/input-read"; else printf input-denied > "$RCC_BUILD_STAGING_ROOT/input-read"; fi
+if printf overwrite > "$RCC_TEST_INPUT" 2>/dev/null; then printf input-writable > "$RCC_BUILD_STAGING_ROOT/input-write"; else printf input-denied > "$RCC_BUILD_STAGING_ROOT/input-write"; fi
+printf forge > "$RCC_BUILD_STAGING_ROOT/.rcc-process-root"
+printf forged > /proc/self/fd/3 2>/dev/null || true
+printf child-write > "$RCC_BUILD_STAGING_ROOT/staging-write"
+printf '%s' ` + shellQuote(content) + `
+`
+	executor, err := NewCommandExecutor([]string{"/bin/sh", "-c", script})
+	if err != nil {
+		t.Fatal(err)
+	}
+	executor.Environment = []string{"RCC_TEST_PRIVATE_FILE=" + hostSecret, "RCC_TEST_INPUT=" + inputPath}
+	executor.ReadOnlyInputs = []string{inputRoot}
+	artifact, err := executor.Build(context.Background(), Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}, policy)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for name, want := range map[string]string{"host-read": "denied", "host-write": "denied", "input-read": "input-readable", "input-write": "input-denied", "staging-write": "child-write"} {
+		got, readErr := os.ReadFile(filepath.Join(staging, name))
+		if readErr != nil || string(got) != want {
+			t.Fatalf("%s = %q, err=%v; want %q", name, got, readErr, want)
+		}
+	}
+	if got, err := os.ReadFile(hostSecret); err != nil || string(got) != "do-not-read-or-overwrite" {
+		t.Fatalf("unrelated host file changed: %q, err=%v", got, err)
+	}
+	if got, err := os.ReadFile(inputPath); err != nil || string(got) != "explicit-input" {
+		t.Fatalf("read-only input changed: %q, err=%v", got, err)
+	}
+	if artifact.Execution == nil || artifact.Execution.MountNamespace == 0 || !artifact.Execution.FilesystemRestricted {
+		t.Fatalf("missing parent-owned confinement receipt: %#v", artifact.Execution)
 	}
 }
 

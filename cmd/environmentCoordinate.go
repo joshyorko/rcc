@@ -38,6 +38,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	var keys []string
 	var priorityMap []string
 	var buildCommand []string
+	var readOnlyInputs []string
 	key := func() buildcoord.BuildKey {
 		return buildcoord.BuildKey{SpecificationDigest: spec, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema}
 	}
@@ -135,6 +136,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		if err != nil {
 			return write(cmd, coordinationResult{Items: nil}, err)
 		}
+		executor.ReadOnlyInputs = append([]string(nil), readOnlyInputs...)
 		items, err := coordinator.PrewarmWithExecutor(cmd.Context(), request, executor)
 		return write(cmd, coordinationResult{Items: items}, err)
 	}}
@@ -161,6 +163,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	}
 	prewarm.Flags().StringSliceVar(&keys, "key", nil, "Specification digest to prewarm (repeatable)")
 	prewarm.Flags().StringSliceVar(&buildCommand, "build-command", nil, "RCC-owned staged build command that writes one Artifact JSON record")
+	prewarm.Flags().StringSliceVar(&readOnlyInputs, "read-only-input", nil, "Explicit RCC cache/provider path to mount read-only in the build namespace")
 	prewarm.Flags().IntVar(&capacity, "capacity", 0, "Maximum concurrent builders")
 	prewarm.Flags().IntVar(&priority, "priority", 0, "Prewarm priority")
 	prewarm.Flags().StringSliceVar(&priorityMap, "priority-map", nil, "Per-key priority entries in key=priority form")
