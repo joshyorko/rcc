@@ -57,6 +57,56 @@ func TestJournalRestoreChildProcessBoundary(t *testing.T) {
 	}
 }
 
+func TestJournalRestoreCrashMatrix(t *testing.T) {
+	if os.Getenv("RCC_JOURNAL_CRASH_CHILD") == "1" {
+		path := os.Getenv("RCC_JOURNAL_CRASH_PATH")
+		archive, _ := os.ReadFile(os.Getenv("RCC_JOURNAL_CRASH_ARCHIVE"))
+		j, err := NewJournal(path)
+		if err != nil {
+			os.Exit(2)
+		}
+		_ = j.Restore(context.Background(), bytes.NewReader(archive))
+		os.Exit(4)
+	}
+	source, err := NewJournal(t.TempDir() + "/source.log")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixture := newProviderFixture(t)
+	for _, blob := range fixture.blobs {
+		raw, _ := io.ReadAll(blob.Reader)
+		if err := source.PutObject(context.Background(), Blob{Descriptor: blob.Descriptor, Reader: bytes.NewReader(raw)}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := source.CommitManifest(context.Background(), fixture.manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	var archive bytes.Buffer
+	if err := source.Backup(context.Background(), &archive); err != nil {
+		t.Fatal(err)
+	}
+	archivePath := filepath.Join(t.TempDir(), "backup.tar")
+	if err := os.WriteFile(archivePath, archive.Bytes(), 0600); err != nil {
+		t.Fatal(err)
+	}
+	for _, boundary := range []string{"journal-begin", "journal-objects", "journal-commit"} {
+		path := filepath.Join(t.TempDir(), "target.log")
+		cmd := exec.Command(os.Args[0], "-test.run=TestJournalRestoreCrashMatrix")
+		cmd.Env = append(os.Environ(), "RCC_JOURNAL_CRASH_CHILD=1", "RCC_JOURNAL_CRASH_PATH="+path, "RCC_JOURNAL_CRASH_ARCHIVE="+archivePath, "RCC_PROVIDER_RESTORE_CRASH="+boundary)
+		if err := cmd.Run(); err == nil {
+			t.Fatalf("boundary %s did not crash", boundary)
+		}
+		restarted, err := NewJournal(path)
+		if err != nil {
+			t.Fatalf("boundary %s restart=%v", boundary, err)
+		}
+		if health, err := restarted.Health(context.Background()); err != nil || !health.Ready {
+			t.Fatalf("boundary %s health=%+v err=%v", boundary, health, err)
+		}
+	}
+}
+
 func (p *policyFlipProvider) PutObject(ctx context.Context, b Blob) error {
 	err := p.Journal.PutObject(ctx, b)
 	p.policy.statePath = p.failurePath

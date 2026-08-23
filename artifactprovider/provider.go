@@ -4,10 +4,17 @@ import (
 	"context"
 	"errors"
 	"io"
+	"os"
 	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func crashRestoreBoundary(name string) {
+	if os.Getenv("RCC_PROVIDER_RESTORE_CRASH") == name {
+		os.Exit(86)
+	}
+}
 
 type Capabilities struct {
 	SchemaVersions   []int    `json:"schemaVersions"`

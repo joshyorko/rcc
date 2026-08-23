@@ -942,6 +942,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 	if e := j.append(journalRecord{Kind: "restore-begin", Txn: txn}); e != nil {
 		return e
 	}
+	crashRestoreBoundary("journal-begin")
 	if e := j.appendBatch(objectRecords); e != nil {
 		return e
 	}
@@ -951,6 +952,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 		}
 		j.objects[d] = ref
 	}
+	crashRestoreBoundary("journal-objects")
 	if e := j.appendBatch(appendJournalRecord(manifestRecords, policyRecord)); e != nil {
 		for d, ref := range newObjects {
 			_ = os.Remove(ref.path)
@@ -965,6 +967,7 @@ func (j *Journal) Restore(ctx context.Context, r io.Reader) error {
 		}
 		return e
 	}
+	crashRestoreBoundary("journal-commit")
 	if policyRecord.Kind != "" {
 		if e := j.applyJournalRecord(policyRecord); e != nil {
 			return e

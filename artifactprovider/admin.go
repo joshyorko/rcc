@@ -320,6 +320,7 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 	if e = syncFilesystemDir(it.root); e != nil {
 		return e
 	}
+	crashRestoreBoundary("filesystem-marker")
 	for rel := range seen {
 		src := filepath.Join(stage, rel)
 		dst := filepath.Join(it.root, rel)
@@ -338,8 +339,10 @@ func (it *Filesystem) restoreArchive(ctx context.Context, r io.Reader, stage str
 			_ = os.Remove(filepath.Join(it.root, filesystemRestoreMarker))
 			return e
 		}
+		crashRestoreBoundary("filesystem-publish")
 		created = append(created, dst)
 	}
+	crashRestoreBoundary("filesystem-complete")
 	if e := os.Remove(filepath.Join(it.root, filesystemRestoreMarker)); e != nil && !os.IsNotExist(e) {
 		return e
 	}
