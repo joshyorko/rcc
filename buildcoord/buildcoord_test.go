@@ -2,6 +2,8 @@ package buildcoord
 
 import (
 	"context"
+	"crypto/ed25519"
+	"encoding/json"
 	"errors"
 	"os"
 	"os/exec"
@@ -10,6 +12,8 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/joshyorko/rcc/artifacttrust"
 )
 
 type fakeClock struct{ now time.Time }
@@ -34,7 +38,58 @@ func TestBuildKeyIsDeterministicAndIncludesCompatibility(t *testing.T) {
 }
 
 func TestVerifierConstructorRequiresTrustBoundary(t *testing.T) {
-	if _, err := NewFilesystemWithVerifier(t.TempDir(), nil, nil); err == nil { t.Fatal("nil verifier accepted") }
+	if _, err := NewFilesystemWithVerifier(t.TempDir(), nil, nil); err == nil {
+		t.Fatal("nil verifier accepted")
+	}
+}
+
+func TestVerifierConstructorRejectsUnkeyedVerifier(t *testing.T) {
+	if _, err := NewFilesystemWithVerifier(t.TempDir(), nil, artifactVerifierFunc(func(Artifact) error { return nil })); err == nil {
+		t.Fatal("unkeyed verifier accepted")
+	}
+}
+
+func TestTrustVerifierBindsClosureAndProviderToKeyedSignature(t *testing.T) {
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "authorization-a"}
+	signature, err := artifacttrust.Sign(ArtifactTrustDigest(artifact), "build-key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	artifact.Signatures = []artifacttrust.Signature{signature}
+	verifier, err := NewTrustVerifier(artifacttrust.Policy{RequireSignature: true, AcceptedKeys: []string{"build-key"}, AcceptedPlatforms: []string{"linux_amd64"}, AcceptedBuilders: []string{"builder-v1"}}, map[string]ed25519.PublicKey{"build-key": public}, nil, false, "linux_amd64", "builder-v1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := verifier.VerifyArtifact(artifact); err != nil {
+		t.Fatalf("valid artifact rejected: %v", err)
+	}
+	artifact.Provider = "provider-b"
+	if err := verifier.VerifyArtifact(artifact); err == nil {
+		t.Fatal("provider mutation accepted by digest-only signature")
+	}
+}
+
+func TestFilesystemCopiesKeyedTrustConfiguration(t *testing.T) {
+	public, _, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	verifier, err := NewTrustVerifier(artifacttrust.Policy{RequireSignature: true, AcceptedKeys: []string{"build-key"}}, map[string]ed25519.PublicKey{"build-key": public}, nil, false, "linux_amd64", "builder-v1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	coordinator, err := NewFilesystem(t.TempDir(), nil, verifier)
+	if err != nil {
+		t.Fatal(err)
+	}
+	verifier.Keys["build-key"][0] ^= 0xff
+	if coordinator.verifier.(*TrustVerifier).Keys["build-key"][0] == verifier.Keys["build-key"][0] {
+		t.Fatal("coordinator trust keys alias caller configuration")
+	}
 }
 
 func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
@@ -49,7 +104,7 @@ func TestBuildKeyIncludesPolicyAndArtifactSchema(t *testing.T) {
 }
 
 func TestReleaseAndWaitAreStableLeaseOperations(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	key := testKey()
 	claim, outcome, err := c.Claim(key, "owner", time.Minute)
 	if err != nil || outcome != Claimed {
@@ -58,15 +113,17 @@ func TestReleaseAndWaitAreStableLeaseOperations(t *testing.T) {
 	if err := c.Release(claim); err != nil {
 		t.Fatal(err)
 	}
-	if _, _, err := c.Wait(context.Background(), key, 5*time.Millisecond); err == nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Millisecond)
+	defer cancel()
+	if _, _, err := c.Wait(ctx, key, 5*time.Millisecond); err == nil {
 		t.Fatal("wait unexpectedly succeeded without artifact")
 	}
 }
 
 func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
-	c.RequireArtifactProof = true
-	c.Verifier = artifactVerifierFunc(func(a Artifact) error {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c.requireArtifactProof = true
+	c.verifier = artifactVerifierFunc(func(a Artifact) error {
 		if a.ProviderAuthorization == "" {
 			return errors.New("missing authorization")
 		}
@@ -119,7 +176,7 @@ func TestReserveDiskChecksAndReleasesCapacity(t *testing.T) {
 }
 
 func TestClaimFailureMatrixCoreBoundaries(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), RealClock{})
+	c := newFilesystem(t.TempDir(), RealClock{})
 	k := testKey()
 	if _, _, err := c.Claim(BuildKey{}, "x", time.Minute); err == nil {
 		t.Fatal("empty key accepted")
@@ -147,7 +204,7 @@ func TestClaimFailureMatrixCoreBoundaries(t *testing.T) {
 }
 
 func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	if _, _, err := c.Claim(BuildKey{}, "owner", time.Minute); err == nil {
 		t.Fatal("empty build key accepted")
 	}
@@ -162,7 +219,7 @@ func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
 
 func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
 	clock := &fakeClock{now: time.Unix(100, 0)}
-	c := NewFilesystem(t.TempDir(), clock)
+	c := newFilesystem(t.TempDir(), clock)
 	key := testKey()
 	if err := os.MkdirAll(c.dir(key), 0o700); err != nil {
 		t.Fatal(err)
@@ -186,7 +243,7 @@ func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
 
 func TestFilesystemCoordinatorFencesTakeoverAndRejectsStalePublish(t *testing.T) {
 	clock := &fakeClock{now: time.Unix(100, 0)}
-	c := NewFilesystem(t.TempDir(), clock)
+	c := newFilesystem(t.TempDir(), clock)
 	key := testKey()
 	first, outcome, err := c.Claim(key, "first", time.Minute)
 	if err != nil || outcome != Claimed || first.Epoch != 1 {
@@ -210,7 +267,7 @@ func TestFilesystemCoordinatorFencesTakeoverAndRejectsStalePublish(t *testing.T)
 }
 
 func TestCommittedArtifactWinsAndDivergenceIsVisible(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	key := testKey()
 	claim, _, err := c.Claim(key, "builder", time.Minute)
 	if err != nil {
@@ -233,8 +290,148 @@ func TestCommittedArtifactWinsAndDivergenceIsVisible(t *testing.T) {
 	}
 }
 
+func TestCommittedArtifactRecoveryAcknowledgesClaimTransaction(t *testing.T) {
+	clock := &fakeClock{now: time.Unix(100, 0)}
+	c := newFilesystem(t.TempDir(), clock)
+	key := testKey()
+	claim, _, err := c.Claim(key, "builder", time.Minute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	artifact := Artifact{Digest: "sha256:one", Verified: true}
+	if err := c.writeJSON(c.artifactPath(key), artifact); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.writeJSON(c.commitPath(key), commitRecord{Key: key, Claim: claim, Artifact: artifact, State: commitStateCommitted}); err != nil {
+		t.Fatal(err)
+	}
+	if _, outcome, err := c.Claim(key, "recovery", time.Minute); err != nil || outcome != ExistingArtifact {
+		t.Fatalf("recovery claim: %v %v", outcome, err)
+	}
+	if _, err := os.Stat(c.claimPath(key)); !os.IsNotExist(err) {
+		t.Fatalf("claim was not acknowledged: %v", err)
+	}
+	events, err := c.Events(key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	foundAck := false
+	for _, event := range events {
+		if event.Event == "published-ack" {
+			foundAck = true
+		}
+	}
+	if !foundAck {
+		t.Fatalf("recovery acknowledgment missing: %#v", events)
+	}
+}
+
+func TestNondeterminismPersistsBothArtifactsAndPolicyOutcome(t *testing.T) {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	key := testKey()
+	claim, _, err := c.Claim(key, "builder", time.Minute)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Publish(claim, Artifact{Digest: "sha256:first", Verified: true, NondeterminismPolicy: "reject"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.Publish(Claim{Key: key, Owner: "other", Epoch: claim.Epoch + 1}, Artifact{Digest: "sha256:second", Verified: true, NondeterminismPolicy: "reject"}); !errors.Is(err, ErrDivergentArtifact) {
+		t.Fatalf("divergent publish: %v", err)
+	}
+	content, err := os.ReadFile(filepath.Join(c.dir(key), "nondeterministic.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var record NondeterministicRecord
+	if err := json.Unmarshal([]byte(strings.Split(strings.TrimSpace(string(content)), "\n")[0]), &record); err != nil {
+		t.Fatal(err)
+	}
+	if record.Existing.Digest != "sha256:first" || record.Candidate.Digest != "sha256:second" || record.PolicyOutcome == "" {
+		t.Fatalf("incomplete nondeterminism record: %#v", record)
+	}
+}
+
+func TestPrewarmRejectsUnenforcedResourcePolicy(t *testing.T) {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Build: BuildRequest{CPULimit: 1, MemoryBytes: 1024, Network: true}}, func(context.Context, Claim) (Artifact, error) {
+		return Artifact{Digest: "sha256:unsafe", Verified: true}, nil
+	})
+	if !errors.Is(err, ErrUnenforcedBuildPolicy) {
+		t.Fatalf("unenforced resource policy accepted: %v", err)
+	}
+}
+
+func TestPrewarmWithExecutorReceivesEnforcedPolicyAtStagingBoundary(t *testing.T) {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	var received ExecutionPolicy
+	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Build: BuildRequest{CPULimit: 2, MemoryBytes: 4096, Network: true, Timeout: time.Second}}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, policy ExecutionPolicy) (Artifact, error) {
+		received = policy
+		return Artifact{Digest: "sha256:executor", Verified: true}, nil
+	}))
+	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
+		t.Fatalf("typed prewarm: %#v %v", items, err)
+	}
+	if received.Root == "" || received.CPULimit != 2 || received.MemoryBytes != 4096 || !received.Network || received.Timeout != time.Second {
+		t.Fatalf("executor policy: %#v", received)
+	}
+	if _, err := os.Stat(filepath.Join(received.Root, "policy.json")); !os.IsNotExist(err) {
+		t.Fatalf("staging was not cleaned after build: %v", err)
+	}
+}
+
+func TestPrewarmUsesLocalFallbackWhenCoordinatorUnavailable(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "coordinator-file")
+	if err := os.WriteFile(root, []byte("not-a-directory"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	c := newFilesystem(root, &fakeClock{now: time.Unix(100, 0)})
+	var called atomic.Int32
+	items, err := c.PrewarmWithExecutor(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, LocalFallback: true}, EnforcedBuilderFunc(func(_ context.Context, _ Claim, _ ExecutionPolicy) (Artifact, error) {
+		called.Add(1)
+		return Artifact{Digest: "sha256:fallback", Verified: true}, nil
+	}))
+	if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
+		t.Fatalf("fallback prewarm: %#v %v", items, err)
+	}
+	if called.Load() != 1 {
+		t.Fatalf("fallback executor calls = %d", called.Load())
+	}
+}
+
+func TestPrewarmRetainsReadyPreviousGenerationWhenNextLacksCapacity(t *testing.T) {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 0, Generation: "n-plus-one", PreviousGeneration: "n", PreviousReady: true}, func(context.Context, Claim) (Artifact, error) {
+		t.Fatal("builder called while capacity is zero")
+		return Artifact{}, nil
+	})
+	if err != nil || len(items) != 1 || items[0].Status != PrewarmDegraded || items[0].Generation != "n-plus-one" {
+		t.Fatalf("rolling generation result: %#v %v", items, err)
+	}
+}
+
+func TestPrewarmHonorsPerKeyPriorityOrder(t *testing.T) {
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	low := testKey()
+	high := low
+	high.SpecificationDigest = "sha256:high"
+	var first string
+	items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{low, high}, Capacity: 1, Priorities: map[string]int{high.ID(): 10, low.ID(): 1}}, func(_ context.Context, claim Claim) (Artifact, error) {
+		if first == "" {
+			first = claim.Key.SpecificationDigest
+		}
+		return Artifact{Digest: "sha256:priority", Verified: true}, nil
+	})
+	if err != nil || len(items) != 2 {
+		t.Fatalf("priority prewarm: %#v %v", items, err)
+	}
+	if first != high.SpecificationDigest {
+		t.Fatalf("first prewarm key = %q, want %q", first, high.SpecificationDigest)
+	}
+}
+
 func TestPrewarmIsBoundedAndActionsNeutral(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey(), {SpecificationDigest: "sha256:other", Platform: "linux_amd64", BuilderCompatibility: "v12"}}, Capacity: 1}, func(context.Context, Claim) (Artifact, error) {
 		return Artifact{Digest: "sha256:prewarm", Verified: true}, nil
 	})
@@ -244,7 +441,7 @@ func TestPrewarmIsBoundedAndActionsNeutral(t *testing.T) {
 }
 
 func TestPrewarmZeroCapacityReturnsWithoutBuilding(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	items, err := c.Prewarm(ctx, PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 0}, func(context.Context, Claim) (Artifact, error) {
@@ -257,7 +454,7 @@ func TestPrewarmZeroCapacityReturnsWithoutBuilding(t *testing.T) {
 }
 
 func TestObsoleteLockReleaseDoesNotRemoveSuccessorLock(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	firstRelease, err := c.lock(context.Background(), testKey())
 	if err != nil {
 		t.Fatal(err)
@@ -279,7 +476,7 @@ func TestObsoleteLockReleaseDoesNotRemoveSuccessorLock(t *testing.T) {
 }
 
 func TestPersistedCoordinatorStateFailsClosed(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	key := testKey()
 	if err := os.MkdirAll(c.dir(key), 0o700); err != nil {
 		t.Fatal(err)
@@ -293,7 +490,7 @@ func TestPersistedCoordinatorStateFailsClosed(t *testing.T) {
 }
 
 func TestPrewarmBuildsOnceAndWaitersReuseCommittedArtifact(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	var builds atomic.Int32
 	build := func(ctx context.Context, claim Claim) (Artifact, error) {
 		builds.Add(1)
@@ -317,7 +514,7 @@ func TestPrewarmBuildsOnceAndWaitersReuseCommittedArtifact(t *testing.T) {
 }
 
 func TestPrewarmHonorsCancellation(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	_, err := c.Prewarm(ctx, PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1}, func(context.Context, Claim) (Artifact, error) { t.Fatal("builder called"); return Artifact{}, nil })
@@ -327,7 +524,7 @@ func TestPrewarmHonorsCancellation(t *testing.T) {
 }
 
 func TestFailedPrewarmBuilderRelinquishesClaimForRetry(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
+	c := newFilesystem(t.TempDir(), &fakeClock{now: time.Unix(100, 0)})
 	buildFailure := errors.New("build failed")
 	_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1}, func(context.Context, Claim) (Artifact, error) {
 		return Artifact{}, buildFailure
@@ -346,7 +543,7 @@ func TestFailedPrewarmBuilderRelinquishesClaimForRetry(t *testing.T) {
 }
 
 func TestWaitingPrewarmTakesOverAfterBuilderFailure(t *testing.T) {
-	c := NewFilesystem(t.TempDir(), RealClock{})
+	c := newFilesystem(t.TempDir(), RealClock{})
 	firstStarted := make(chan struct{})
 	releaseFirst := make(chan struct{})
 	var attempts atomic.Int32
@@ -360,7 +557,7 @@ func TestWaitingPrewarmTakesOverAfterBuilderFailure(t *testing.T) {
 	}
 	firstDone := make(chan error, 1)
 	go func() {
-		_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1}, build)
+		_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Wait: true}, build)
 		firstDone <- err
 	}()
 	<-firstStarted
@@ -368,7 +565,7 @@ func TestWaitingPrewarmTakesOverAfterBuilderFailure(t *testing.T) {
 	defer cancel()
 	secondDone := make(chan error, 1)
 	go func() {
-		_, err := c.Prewarm(ctx, PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1}, build)
+		_, err := c.Prewarm(ctx, PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Wait: true}, build)
 		secondDone <- err
 	}()
 	time.Sleep(20 * time.Millisecond)
@@ -386,7 +583,7 @@ func TestWaitingPrewarmTakesOverAfterBuilderFailure(t *testing.T) {
 
 func TestHelperProcessClaimRace(t *testing.T) {
 	if os.Getenv("BUILDCOORD_HELPER") == "1" {
-		c := NewFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
 		_, outcome, err := c.Claim(testKey(), os.Getenv("BUILDCOORD_OWNER"), time.Minute)
 		if err != nil {
 			os.Exit(2)

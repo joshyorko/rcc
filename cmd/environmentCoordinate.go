@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
@@ -35,28 +37,32 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	var trustKeyID, trustPublicKey, trustSignature string
 	var jsonOut bool
 	var keys []string
+	var priorityMap []string
 	key := func() buildcoord.BuildKey {
 		return buildcoord.BuildKey{SpecificationDigest: spec, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema}
 	}
-	coord := func() *buildcoord.Filesystem {
-		c := buildcoord.NewFilesystem(root, nil)
-		c.RequireArtifactProof = true
-		c.Verifier = buildcoord.ArtifactVerifierFunc(func(a buildcoord.Artifact) error {
-			if err := buildcoord.VerifyArtifactProof(a); err != nil {
-				return err
-			}
-			keyBytes, err := base64.RawStdEncoding.DecodeString(trustPublicKey)
-			if err != nil || len(keyBytes) != ed25519.PublicKeySize {
-				return fmt.Errorf("trusted public key is required")
-			}
-			if trustKeyID == "" || trustSignature == "" {
-				return fmt.Errorf("trusted signature is required")
-			}
-			sig := artifacttrust.Signature{MediaType: artifacttrust.SignatureMediaType, ArtifactDigest: a.Digest, KeyID: trustKeyID, Algorithm: "Ed25519", Signature: trustSignature}
-			k := key()
-			return artifacttrust.Policy{RequireSignature: true, AcceptedKeys: []string{trustKeyID}}.Evaluate(false, a.Digest, k.Platform, k.BuilderCompatibility, []artifacttrust.Signature{sig}, nil, map[string]ed25519.PublicKey{trustKeyID: keyBytes})
-		})
-		return c
+	coord := func() (*buildcoord.Filesystem, error) {
+		keyBytes, err := decodePublicKey(trustPublicKey)
+		if err != nil {
+			return nil, err
+		}
+		if trustKeyID == "" {
+			return nil, fmt.Errorf("trusted key ID is required")
+		}
+		k := key()
+		verifier, err := buildcoord.NewTrustVerifier(artifacttrust.Policy{RequireSignature: true, AcceptedKeys: []string{trustKeyID}, AcceptedPlatforms: []string{k.Platform}, AcceptedBuilders: []string{k.BuilderCompatibility}}, map[string]ed25519.PublicKey{trustKeyID: keyBytes}, nil, false, k.Platform, k.BuilderCompatibility)
+		if err != nil {
+			return nil, err
+		}
+		return buildcoord.NewFilesystem(root, nil, verifier)
+	}
+	artifactFromFlags := func(source string) (buildcoord.Artifact, error) {
+		artifact := buildcoord.Artifact{Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest, Provider: provider, ProviderAuthorization: authorization, Source: source}
+		if trustKeyID == "" || trustSignature == "" {
+			return artifact, fmt.Errorf("trusted signature is required")
+		}
+		artifact.Signatures = []artifacttrust.Signature{{MediaType: artifacttrust.SignatureMediaType, ArtifactDigest: buildcoord.ArtifactTrustDigest(artifact), KeyID: trustKeyID, Algorithm: "Ed25519", Signature: trustSignature}}
+		return artifact, nil
 	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
 		if err != nil {
@@ -72,23 +78,48 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	}
 	claimFromFlags := func() buildcoord.Claim { return buildcoord.Claim{Key: key(), Owner: owner, Epoch: epoch} }
 	claim := &cobra.Command{Use: "claim", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		cl, out, err := coord().ClaimContext(cmd.Context(), key(), owner, ttl)
+		coordinator, err := coord()
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key()}, err)
+		}
+		cl, out, err := coordinator.ClaimContext(cmd.Context(), key(), owner, ttl)
 		if err == nil && artifactDigest != "" && out == buildcoord.Claimed {
-			err = coord().Publish(cl, buildcoord.Artifact{Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest, Provider: provider, ProviderAuthorization: authorization, Source: "cli"})
+			artifact, artifactErr := artifactFromFlags("cli")
+			if artifactErr != nil {
+				err = artifactErr
+			} else {
+				err = coordinator.Publish(cl, artifact)
+			}
 		}
 		return write(cmd, coordinationResult{Key: key(), Claim: cl, Outcome: out}, err)
 	}}
 	heartbeat := &cobra.Command{Use: "heartbeat", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coord().Heartbeat(claimFromFlags(), ttl))
+		coordinator, err := coord()
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
+		}
+		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coordinator.Heartbeat(claimFromFlags(), ttl))
 	}}
 	wait := &cobra.Command{Use: "wait", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		artifact, out, err := coord().Wait(cmd.Context(), key(), interval)
+		coordinator, err := coord()
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key()}, err)
+		}
+		artifact, out, err := coordinator.Wait(cmd.Context(), key(), interval)
 		return write(cmd, coordinationResult{Key: key(), Outcome: out, Artifact: artifact}, err)
 	}}
 	release := &cobra.Command{Use: "release", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coord().Release(claimFromFlags()))
+		coordinator, err := coord()
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
+		}
+		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coordinator.Release(claimFromFlags()))
 	}}
 	prewarm := &cobra.Command{Use: "prewarm", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		coordinator, err := coord()
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key()}, err)
+		}
 		request := buildcoord.PrewarmRequest{Capacity: capacity, Priority: priority, Wait: waitForClaim, IndependentBuild: independent, DiskReservationBytes: diskBytes, Backoff: backoff, LeaseTTL: ttl, Owner: owner, Build: buildcoord.BuildRequest{Root: root, DiskBytes: diskBytes, Network: network, QuarantineRoot: quarantineRoot, CPULimit: cpuLimit, MemoryBytes: memoryBytes, Timeout: buildTimeout}}
 		if request.Capacity == 0 {
 			request.Capacity = len(keys)
@@ -96,12 +127,16 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		for _, encoded := range keys {
 			request.Keys = append(request.Keys, buildcoord.BuildKey{SpecificationDigest: encoded, Platform: platform, BuilderCompatibility: builder, ResolutionPolicy: resolution, TrustPolicy: trust, ArtifactSchema: schema})
 		}
-		items, err := coord().Prewarm(cmd.Context(), request, func(context.Context, buildcoord.Claim) (buildcoord.Artifact, error) {
+		request.Priorities, err = parsePriorityMap(priorityMap, request.Keys, priority)
+		if err != nil {
+			return write(cmd, coordinationResult{Key: key()}, err)
+		}
+		items, err := coordinator.PrewarmWithExecutor(cmd.Context(), request, buildcoord.EnforcedBuilderFunc(func(context.Context, buildcoord.Claim, buildcoord.ExecutionPolicy) (buildcoord.Artifact, error) {
 			if artifactDigest == "" {
 				return buildcoord.Artifact{}, fmt.Errorf("--artifact-digest is required for CLI prewarm")
 			}
-			return buildcoord.Artifact{Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest, Provider: provider, ProviderAuthorization: authorization, Source: "cli-prewarm"}, nil
-		})
+			return artifactFromFlags("cli-prewarm")
+		}))
 		return write(cmd, coordinationResult{Items: items}, err)
 	}}
 	for _, c := range []*cobra.Command{claim, heartbeat, wait, release, prewarm} {
@@ -128,6 +163,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	prewarm.Flags().StringSliceVar(&keys, "key", nil, "Specification digest to prewarm (repeatable)")
 	prewarm.Flags().IntVar(&capacity, "capacity", 0, "Maximum concurrent builders")
 	prewarm.Flags().IntVar(&priority, "priority", 0, "Prewarm priority")
+	prewarm.Flags().StringSliceVar(&priorityMap, "priority-map", nil, "Per-key priority entries in key=priority form")
 	prewarm.Flags().BoolVar(&waitForClaim, "wait", true, "Wait for an existing claim")
 	prewarm.Flags().BoolVar(&independent, "independent-build", false, "Build independently when another owner is active")
 	prewarm.Flags().DurationVar(&backoff, "backoff", 25*time.Millisecond, "Claim retry backoff")
@@ -140,4 +176,47 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	rootCmd := &cobra.Command{Use: "coordinate", Short: "Coordinate optional cold environment builds."}
 	rootCmd.AddCommand(claim, heartbeat, wait, release, prewarm)
 	return rootCmd
+}
+
+func decodePublicKey(value string) (ed25519.PublicKey, error) {
+	if value == "" {
+		return nil, fmt.Errorf("trusted public key is required")
+	}
+	decoded, err := base64.RawStdEncoding.DecodeString(value)
+	if err != nil {
+		decoded, err = base64.StdEncoding.DecodeString(value)
+	}
+	if err != nil || len(decoded) != ed25519.PublicKeySize {
+		return nil, fmt.Errorf("trusted public key must be a base64 Ed25519 key")
+	}
+	return ed25519.PublicKey(decoded), nil
+}
+
+func parsePriorityMap(entries []string, keys []buildcoord.BuildKey, fallback int) (map[string]int, error) {
+	priorities := make(map[string]int, len(keys))
+	for _, key := range keys {
+		priorities[key.ID()] = fallback
+	}
+	for _, entry := range entries {
+		parts := strings.SplitN(entry, "=", 2)
+		if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" {
+			return nil, fmt.Errorf("priority entry %q must be key=integer", entry)
+		}
+		value, err := strconv.Atoi(strings.TrimSpace(parts[1]))
+		if err != nil {
+			return nil, fmt.Errorf("priority entry %q: %w", entry, err)
+		}
+		name := strings.TrimSpace(parts[0])
+		matched := false
+		for _, key := range keys {
+			if name == key.ID() || name == key.SpecificationDigest {
+				priorities[key.ID()] = value
+				matched = true
+			}
+		}
+		if !matched {
+			return nil, fmt.Errorf("priority entry %q does not identify a requested build key", entry)
+		}
+	}
+	return priorities, nil
 }

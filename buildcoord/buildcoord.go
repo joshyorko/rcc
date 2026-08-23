@@ -44,13 +44,50 @@ type TrustVerifier struct {
 	Local       bool
 	Platform    string
 	Builder     string
+	keyed       bool
 }
 
 func (v TrustVerifier) VerifyArtifact(a Artifact) error {
+	if !v.keyed {
+		return fmt.Errorf("keyed artifact trust verifier is required")
+	}
 	if err := VerifyArtifactProof(a); err != nil {
 		return err
 	}
-	return v.Policy.Evaluate(v.Local, a.Digest, v.Platform, v.Builder, a.Signatures, v.Revocations, v.Keys)
+	return v.Policy.Evaluate(v.Local, ArtifactTrustDigest(a), v.Platform, v.Builder, a.Signatures, v.Revocations, v.Keys)
+}
+
+// NewTrustVerifier creates the only production trust verifier accepted by the
+// coordinator. The key set and policy are copied and validated so callers
+// cannot later mutate the authorization boundary behind the coordinator.
+func NewTrustVerifier(policy artifacttrust.Policy, keys map[string]ed25519.PublicKey, revocations []artifacttrust.Revocation, local bool, platform, builder string) (*TrustVerifier, error) {
+	if len(keys) == 0 {
+		return nil, fmt.Errorf("at least one trusted artifact key is required")
+	}
+	trusted := make(map[string]ed25519.PublicKey, len(keys))
+	for id, key := range keys {
+		if id == "" || len(key) != ed25519.PublicKeySize {
+			return nil, fmt.Errorf("invalid trusted artifact key %q", id)
+		}
+		trusted[id] = append(ed25519.PublicKey(nil), key...)
+	}
+	if policy.RequireSignature {
+		if len(policy.AcceptedKeys) == 0 {
+			return nil, fmt.Errorf("signature policy must name accepted keys")
+		}
+		for _, id := range policy.AcceptedKeys {
+			if _, ok := trusted[id]; !ok {
+				return nil, fmt.Errorf("signature policy key %q is not trusted", id)
+			}
+		}
+	}
+	if platform == "" || builder == "" {
+		return nil, fmt.Errorf("trust verifier platform and builder are required")
+	}
+	return &TrustVerifier{
+		Policy: policy, Keys: trusted, Revocations: append([]artifacttrust.Revocation(nil), revocations...),
+		Local: local, Platform: platform, Builder: builder, keyed: true,
+	}, nil
 }
 
 func (RealClock) Now() time.Time { return time.Now().UTC() }
@@ -87,13 +124,56 @@ type Artifact struct {
 	Signatures            []artifacttrust.Signature `json:"signatures,omitempty"`
 	NondeterminismPolicy  string                    `json:"nondeterminismPolicy,omitempty"`
 }
+
+// ArtifactTrustDigest is the signature subject for a complete published
+// artifact. It binds the immutable artifact digest to its closure and provider
+// authorization, so changing either cannot pass a digest-only signature.
+func ArtifactTrustDigest(artifact Artifact) string {
+	content, _ := json.Marshal(struct {
+		Digest                string `json:"digest"`
+		ClosureDigest         string `json:"closureDigest"`
+		Provider              string `json:"provider"`
+		ProviderAuthorization string `json:"providerAuthorization"`
+	}{artifact.Digest, artifact.ClosureDigest, artifact.Provider, artifact.ProviderAuthorization})
+	sum := sha256.Sum256(content)
+	return "sha256:" + hex.EncodeToString(sum[:])
+}
+
 type Event struct {
-	Time   time.Time `json:"time"`
-	Key    string    `json:"key"`
-	Owner  string    `json:"owner,omitempty"`
-	Epoch  uint64    `json:"epoch,omitempty"`
-	Event  string    `json:"event"`
-	Detail string    `json:"detail,omitempty"`
+	Time              time.Time `json:"time"`
+	Key               string    `json:"key"`
+	Owner             string    `json:"owner,omitempty"`
+	Epoch             uint64    `json:"epoch,omitempty"`
+	Event             string    `json:"event"`
+	Detail            string    `json:"detail,omitempty"`
+	PolicyOutcome     string    `json:"policyOutcome,omitempty"`
+	ExistingArtifact  *Artifact `json:"existingArtifact,omitempty"`
+	CandidateArtifact *Artifact `json:"candidateArtifact,omitempty"`
+}
+
+type NondeterministicRecord struct {
+	Time          time.Time `json:"time"`
+	Key           string    `json:"key"`
+	Existing      Artifact  `json:"existing"`
+	Candidate     Artifact  `json:"candidate"`
+	Policy        string    `json:"policy,omitempty"`
+	PolicyOutcome string    `json:"policyOutcome"`
+}
+
+type commitState string
+
+const (
+	commitStatePrepared     commitState = "prepared"
+	commitStateCommitted    commitState = "committed"
+	commitStateAcknowledged commitState = "acknowledged"
+)
+
+type commitRecord struct {
+	Key       BuildKey    `json:"key"`
+	Claim     Claim       `json:"claim"`
+	Artifact  Artifact    `json:"artifact"`
+	State     commitState `json:"state"`
+	UpdatedAt time.Time   `json:"updatedAt"`
 }
 
 type BuildRequest struct {
@@ -105,6 +185,62 @@ type BuildRequest struct {
 	CPULimit       int
 	MemoryBytes    int64
 	Timeout        time.Duration
+}
+
+var ErrUnenforcedBuildPolicy = errors.New("build executor does not enforce the requested resource or network policy")
+
+// ExecutionPolicy is the typed boundary passed to a prewarm executor. An
+// executor must enforce these values at the process boundary before invoking
+// the environment builder; metadata-only staging is not sufficient.
+type ExecutionPolicy struct {
+	Root           string
+	DiskBytes      int64
+	Network        bool
+	Credentials    bool
+	CPULimit       int
+	MemoryBytes    int64
+	Timeout        time.Duration
+	QuarantineRoot string
+}
+
+func (p ExecutionPolicy) RequiresBoundary() bool {
+	return p.Network || p.Credentials || p.CPULimit != 0 || p.MemoryBytes != 0 || p.Timeout != 0
+}
+
+// ProcessBoundary is the optional concrete process/container enforcement
+// seam. A typed builder may implement equivalent enforcement internally; a
+// lifecycle bridge can instead delegate child creation here.
+type ProcessBoundary interface {
+	Run(context.Context, ExecutionPolicy, func(context.Context) (Artifact, error)) (Artifact, error)
+}
+
+type ProcessBoundaryFunc func(context.Context, ExecutionPolicy, func(context.Context) (Artifact, error)) (Artifact, error)
+
+func (f ProcessBoundaryFunc) Run(ctx context.Context, policy ExecutionPolicy, build func(context.Context) (Artifact, error)) (Artifact, error) {
+	return f(ctx, policy, build)
+}
+
+func (r BuildRequest) ExecutionPolicy(root string) (ExecutionPolicy, error) {
+	if r.DiskBytes < 0 || r.CPULimit < 0 || r.MemoryBytes < 0 || r.Timeout < 0 {
+		return ExecutionPolicy{}, fmt.Errorf("resource limits cannot be negative")
+	}
+	if r.Credentials {
+		return ExecutionPolicy{}, fmt.Errorf("production credentials are not permitted in build staging")
+	}
+	return ExecutionPolicy{Root: root, DiskBytes: r.DiskBytes, Network: r.Network, Credentials: false, CPULimit: r.CPULimit, MemoryBytes: r.MemoryBytes, Timeout: r.Timeout, QuarantineRoot: r.QuarantineRoot}, nil
+}
+
+// EnforcedBuilder is the safe prewarm extension point. Implementations own
+// the actual child process/container boundary and must apply policy before
+// returning a verified Artifact.
+type EnforcedBuilder interface {
+	Build(context.Context, Claim, ExecutionPolicy) (Artifact, error)
+}
+
+type EnforcedBuilderFunc func(context.Context, Claim, ExecutionPolicy) (Artifact, error)
+
+func (f EnforcedBuilderFunc) Build(ctx context.Context, claim Claim, policy ExecutionPolicy) (Artifact, error) {
+	return f(ctx, claim, policy)
 }
 
 // QuarantineStaging makes failed staging non-authoritative while preserving
@@ -184,28 +320,51 @@ type Filesystem struct {
 	Root                 string
 	Clock                Clock
 	lockWait             time.Duration
-	RequireArtifactProof bool
-	Verifier             ArtifactVerifier
+	requireArtifactProof bool
+	verifier             ArtifactVerifier
 	NondeterminismPolicy string
 }
 
-func NewFilesystem(root string, clock Clock) *Filesystem {
+func newFilesystem(root string, clock Clock) *Filesystem {
 	if clock == nil {
 		clock = RealClock{}
 	}
 	return &Filesystem{Root: root, Clock: clock, lockWait: 2 * time.Second}
 }
 
-// NewFilesystemWithVerifier constructs a coordinator with mandatory
-// trust-backed publication verification.
-func NewFilesystemWithVerifier(root string, clock Clock, verifier ArtifactVerifier) (*Filesystem, error) {
-	if verifier == nil {
-		return nil, fmt.Errorf("artifact verifier is required")
+// NewFilesystem constructs a coordinator with mandatory keyed artifact trust.
+// Tests in this package use newFilesystem so production callers cannot create
+// an unverifying coordinator accidentally.
+func NewFilesystem(root string, clock Clock, verifier *TrustVerifier) (*Filesystem, error) {
+	if strings.TrimSpace(root) == "" || filepath.Clean(root) == string(filepath.Separator) {
+		return nil, fmt.Errorf("coordinator root must be a non-root directory")
 	}
-	c := NewFilesystem(root, clock)
-	c.RequireArtifactProof = true
-	c.Verifier = verifier
+	if verifier == nil || !verifier.keyed {
+		return nil, fmt.Errorf("keyed artifact trust verifier is required")
+	}
+	trusted := *verifier
+	trusted.Policy.AcceptedKeys = append([]string(nil), verifier.Policy.AcceptedKeys...)
+	trusted.Policy.AcceptedBuilders = append([]string(nil), verifier.Policy.AcceptedBuilders...)
+	trusted.Policy.AcceptedPlatforms = append([]string(nil), verifier.Policy.AcceptedPlatforms...)
+	trusted.Keys = make(map[string]ed25519.PublicKey, len(verifier.Keys))
+	for id, key := range verifier.Keys {
+		trusted.Keys[id] = append(ed25519.PublicKey(nil), key...)
+	}
+	trusted.Revocations = append([]artifacttrust.Revocation(nil), verifier.Revocations...)
+	c := newFilesystem(root, clock)
+	c.requireArtifactProof = true
+	c.verifier = &trusted
 	return c, nil
+}
+
+// NewFilesystemWithVerifier is retained as an explicit alias for callers that
+// used the earlier name; it accepts only the keyed verifier type.
+func NewFilesystemWithVerifier(root string, clock Clock, verifier any) (*Filesystem, error) {
+	trust, ok := verifier.(*TrustVerifier)
+	if !ok {
+		return nil, fmt.Errorf("keyed artifact trust verifier is required")
+	}
+	return NewFilesystem(root, clock, trust)
 }
 
 func (c *Filesystem) Claim(key BuildKey, owner string, ttl time.Duration) (Claim, Outcome, error) {
@@ -230,6 +389,12 @@ func (c *Filesystem) ClaimContext(ctx context.Context, key BuildKey, owner strin
 	if artifact, ok, err := c.readArtifact(key); err != nil {
 		return Claim{}, "", err
 	} else if ok {
+		if err := c.verifyArtifact(artifact); err != nil {
+			return Claim{}, "", errors.Join(ErrUnsafeState, err)
+		}
+		if err := c.recoverCommittedLocked(key, artifact); err != nil {
+			return Claim{}, "", err
+		}
 		return Claim{Key: key, Artifact: artifact}, ExistingArtifact, nil
 	}
 	previous, ok, err := c.readClaim(key)
@@ -325,6 +490,12 @@ func (c *Filesystem) Wait(ctx context.Context, key BuildKey, interval time.Durat
 			return Artifact{}, "", err
 		}
 		if ok {
+			if err := c.verifyArtifact(artifact); err != nil {
+				return Artifact{}, "", errors.Join(ErrUnsafeState, err)
+			}
+			if err := c.Recover(key); err != nil {
+				return Artifact{}, "", err
+			}
 			return artifact, ExistingArtifact, nil
 		}
 		t := time.NewTimer(interval)
@@ -338,7 +509,7 @@ func (c *Filesystem) Wait(ctx context.Context, key BuildKey, interval time.Durat
 }
 
 func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
-	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (c.Verifier == nil || c.Verifier.VerifyArtifact(artifact) != nil)) {
+	if err := c.verifyArtifact(artifact); err != nil {
 		return ErrUnverifiedArtifact
 	}
 	release, err := c.lock(context.Background(), claim.Key)
@@ -353,18 +524,16 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	if current, ok, err := c.readArtifact(claim.Key); err != nil {
 		return err
 	} else if ok {
+		if err := c.verifyArtifact(current); err != nil {
+			return errors.Join(ErrUnsafeState, err)
+		}
+		if err := c.recoverCommittedLocked(claim.Key, current); err != nil {
+			return err
+		}
 		if current.Digest == artifact.Digest {
-			if persisted, claimOK, claimErr := c.readClaim(claim.Key); claimErr == nil && claimOK && persisted.Owner == claim.Owner && persisted.Epoch == claim.Epoch {
-				if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "published-ack", Detail: artifact.Digest}); eventErr != nil {
-					return fmt.Errorf("record publication acknowledgment: %w", eventErr)
-				}
-				if removeErr := os.Remove(c.claimPath(claim.Key)); removeErr != nil && !os.IsNotExist(removeErr) {
-					return removeErr
-				}
-			}
 			return nil
 		}
-		eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest + " policy=" + artifact.NondeterminismPolicy})
+		eventErr := c.recordNondeterminism(claim.Key, current, artifact)
 		return errors.Join(ErrDivergentArtifact, eventErr)
 	}
 	current, ok, err := c.readClaim(claim.Key)
@@ -374,11 +543,28 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 	if !ok || current.Owner != claim.Owner || current.Epoch != claim.Epoch || !current.ExpiresAt.After(c.Clock.Now()) {
 		return ErrStaleClaim
 	}
+	record := commitRecord{Key: claim.Key, Claim: claim, Artifact: artifact, State: commitStatePrepared, UpdatedAt: c.Clock.Now()}
+	if err := c.writeJSON(c.commitPath(claim.Key), record); err != nil {
+		return err
+	}
 	if err := c.writeJSON(c.artifactPath(claim.Key), artifact); err != nil {
+		return err
+	}
+	record.State = commitStateCommitted
+	record.UpdatedAt = c.Clock.Now()
+	if err := c.writeJSON(c.commitPath(claim.Key), record); err != nil {
 		return err
 	}
 	if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "published", Detail: artifact.Digest}); eventErr != nil {
 		return fmt.Errorf("record publication event: %w", eventErr)
+	}
+	record.State = commitStateAcknowledged
+	record.UpdatedAt = c.Clock.Now()
+	if err := c.writeJSON(c.commitPath(claim.Key), record); err != nil {
+		return err
+	}
+	if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "published-ack", Detail: artifact.Digest}); eventErr != nil {
+		return fmt.Errorf("record publication acknowledgment: %w", eventErr)
 	}
 	return os.Remove(c.claimPath(claim.Key))
 }
@@ -389,7 +575,7 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
 	if err := key.validate(); err != nil {
 		return err
 	}
-	if !artifact.Verified || artifact.Digest == "" || (c.RequireArtifactProof && (c.Verifier == nil || c.Verifier.VerifyArtifact(artifact) != nil)) {
+	if err := c.verifyArtifact(artifact); err != nil {
 		return ErrUnverifiedArtifact
 	}
 	release, err := c.lock(context.Background(), key)
@@ -402,28 +588,85 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) error {
 		return err
 	}
 	if ok {
+		if err := c.verifyArtifact(current); err != nil {
+			return errors.Join(ErrUnsafeState, err)
+		}
 		if current.Digest == artifact.Digest {
 			return nil
 		}
-		eventErr := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest + " policy=" + artifact.NondeterminismPolicy})
+		eventErr := c.recordNondeterminism(key, current, artifact)
 		return errors.Join(ErrDivergentArtifact, eventErr)
+	}
+	record := commitRecord{Key: key, Claim: Claim{Key: key, Owner: "independent", Epoch: 1}, Artifact: artifact, State: commitStatePrepared, UpdatedAt: c.Clock.Now()}
+	if err := c.writeJSON(c.commitPath(key), record); err != nil {
+		return err
 	}
 	if err := c.writeJSON(c.artifactPath(key), artifact); err != nil {
 		return err
 	}
-	return c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "published-independent", Detail: artifact.Digest})
+	record.State = commitStateCommitted
+	record.UpdatedAt = c.Clock.Now()
+	if err := c.writeJSON(c.commitPath(key), record); err != nil {
+		return err
+	}
+	if err := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Owner: "independent", Epoch: 1, Event: "published-independent", Detail: artifact.Digest}); err != nil {
+		return err
+	}
+	record.State = commitStateAcknowledged
+	record.UpdatedAt = c.Clock.Now()
+	if err := c.writeJSON(c.commitPath(key), record); err != nil {
+		return err
+	}
+	return c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Owner: "independent", Epoch: 1, Event: "published-ack", Detail: artifact.Digest})
 }
 
 // VerifyArtifactProof validates complete closure metadata. Trust is established
 // by TrustVerifier's keyed artifacttrust policy, never by a caller hash.
 func VerifyArtifactProof(artifact Artifact) error {
-	if artifact.ClosureDigest == "" || artifact.Provider == "" {
+	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || artifact.ProviderAuthorization == "" {
 		return ErrUnverifiedArtifact
 	}
 	return nil
 }
 
-func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) { return c.readArtifact(key) }
+func isSHA256Digest(value string) bool {
+	if !strings.HasPrefix(value, "sha256:") || len(value) != len("sha256:")+64 {
+		return false
+	}
+	for _, r := range value[len("sha256:"):] {
+		if !((r >= '0' && r <= '9') || (r >= 'a' && r <= 'f')) {
+			return false
+		}
+	}
+	return true
+}
+
+func (c *Filesystem) verifyArtifact(artifact Artifact) error {
+	if !artifact.Verified || artifact.Digest == "" {
+		return ErrUnverifiedArtifact
+	}
+	if !c.requireArtifactProof {
+		return nil
+	}
+	if c.verifier == nil {
+		return ErrUnverifiedArtifact
+	}
+	return c.verifier.VerifyArtifact(artifact)
+}
+
+func (c *Filesystem) Committed(key BuildKey) (Artifact, bool, error) {
+	artifact, ok, err := c.readArtifact(key)
+	if err != nil || !ok {
+		return artifact, ok, err
+	}
+	if err := c.verifyArtifact(artifact); err != nil {
+		return Artifact{}, false, errors.Join(ErrUnsafeState, err)
+	}
+	if err := c.Recover(key); err != nil {
+		return Artifact{}, false, err
+	}
+	return artifact, true, nil
+}
 func (c *Filesystem) Events(key BuildKey) ([]Event, error) {
 	b, err := os.ReadFile(filepath.Join(c.dir(key), "events.jsonl"))
 	if os.IsNotExist(err) {
@@ -445,6 +688,120 @@ func (c *Filesystem) Events(key BuildKey) ([]Event, error) {
 	}
 	return out, nil
 }
+
+// Recover completes an interrupted artifact transaction. It is safe to call
+// after a process restart and is idempotent once the commit acknowledgment is
+// durable.
+func (c *Filesystem) Recover(key BuildKey) error {
+	if err := key.validate(); err != nil {
+		return err
+	}
+	release, err := c.lock(context.Background(), key)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = release() }()
+	artifact, ok, err := c.readArtifact(key)
+	if err != nil || !ok {
+		return err
+	}
+	if err := c.verifyArtifact(artifact); err != nil {
+		return err
+	}
+	return c.recoverCommittedLocked(key, artifact)
+}
+
+func (c *Filesystem) recoverCommittedLocked(key BuildKey, artifact Artifact) error {
+	var record commitRecord
+	recordOK, err := c.readJSON(c.commitPath(key), &record)
+	if err != nil {
+		return err
+	}
+	if recordOK {
+		if record.Key != key || record.Artifact.Digest != artifact.Digest || record.Artifact.ClosureDigest != artifact.ClosureDigest || record.Artifact.Provider != artifact.Provider {
+			return ErrUnsafeState
+		}
+		if record.State == commitStatePrepared {
+			record.State = commitStateCommitted
+		}
+	}
+	claim, claimOK, err := c.readClaim(key)
+	if err != nil {
+		return err
+	}
+	if claimOK {
+		if recordOK && (claim.Owner != record.Claim.Owner || claim.Epoch != record.Claim.Epoch) {
+			// A foreign live claim must not be removed merely because an old
+			// artifact transaction exists. The artifact still wins on reads.
+			return nil
+		}
+		if !recordOK {
+			record = commitRecord{Key: key, Claim: claim, Artifact: artifact, State: commitStateCommitted, UpdatedAt: c.Clock.Now()}
+			recordOK = true
+		}
+		if err := os.Remove(c.claimPath(key)); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+	if !recordOK {
+		return nil
+	}
+	record.Artifact = artifact
+	record.State = commitStateAcknowledged
+	record.UpdatedAt = c.Clock.Now()
+	if err := c.writeJSON(c.commitPath(key), record); err != nil {
+		return err
+	}
+	events, err := c.Events(key)
+	if err != nil {
+		return err
+	}
+	for _, event := range events {
+		if event.Event == "published-ack" && event.Epoch == record.Claim.Epoch && event.Detail == artifact.Digest {
+			return nil
+		}
+	}
+	return c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Owner: record.Claim.Owner, Epoch: record.Claim.Epoch, Event: "published-ack", Detail: artifact.Digest})
+}
+
+func (c *Filesystem) recordNondeterminism(key BuildKey, existing, candidate Artifact) error {
+	policy := candidate.NondeterminismPolicy
+	if policy == "" {
+		policy = c.NondeterminismPolicy
+	}
+	if policy == "" {
+		policy = "reject"
+	}
+	record := NondeterministicRecord{Time: c.Clock.Now(), Key: key.ID(), Existing: existing, Candidate: candidate, Policy: policy, PolicyOutcome: "rejected-conflicting-artifact"}
+	if err := c.appendJSONLine(c.nondeterministicPath(key), record); err != nil {
+		return err
+	}
+	existingCopy, candidateCopy := existing, candidate
+	return c.event(Event{Time: record.Time, Key: key.ID(), Event: "nondeterministic", Detail: existing.Digest + " != " + candidate.Digest, PolicyOutcome: record.PolicyOutcome, ExistingArtifact: &existingCopy, CandidateArtifact: &candidateCopy})
+}
+
+func (c *Filesystem) Nondeterminism(key BuildKey) ([]NondeterministicRecord, error) {
+	content, err := os.ReadFile(c.nondeterministicPath(key))
+	if os.IsNotExist(err) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var out []NondeterministicRecord
+	for _, line := range strings.Split(strings.TrimSpace(string(content)), "\n") {
+		if line == "" {
+			continue
+		}
+		var record NondeterministicRecord
+		if err := json.Unmarshal([]byte(line), &record); err != nil {
+			return nil, err
+		}
+		out = append(out, record)
+	}
+	return out, nil
+}
+
 func (c *Filesystem) event(e Event) error {
 	b, err := json.Marshal(e)
 	if err != nil {
@@ -481,6 +838,27 @@ func (c *Filesystem) event(e Event) error {
 	return err
 }
 
+func (c *Filesystem) appendJSONLine(path string, value any) error {
+	b, err := json.Marshal(value)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
+		return err
+	}
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		return err
+	}
+	if _, err = f.Write(append(b, '\n')); err == nil {
+		err = f.Sync()
+	}
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	return err
+}
+
 type PrewarmRequest struct {
 	Keys                 []BuildKey
 	Capacity             int
@@ -494,11 +872,16 @@ type PrewarmRequest struct {
 	Build                BuildRequest
 	NondeterminismPolicy string
 	Priorities           map[string]int
+	LocalFallback        bool
+	Generation           string
+	PreviousGeneration   string
+	PreviousReady        bool
 }
 type PrewarmItem struct {
-	Key    BuildKey
-	Status PrewarmStatus
-	Reason string `json:"reason,omitempty"`
+	Key        BuildKey
+	Status     PrewarmStatus
+	Reason     string `json:"reason,omitempty"`
+	Generation string `json:"generation,omitempty"`
 }
 type PrewarmStatus string
 
@@ -511,14 +894,33 @@ const (
 )
 
 func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build func(context.Context, Claim) (Artifact, error)) ([]PrewarmItem, error) {
+	if build == nil {
+		return nil, fmt.Errorf("prewarm builder is required")
+	}
+	if request.Build.Network || request.Build.Credentials || request.Build.CPULimit != 0 || request.Build.MemoryBytes != 0 || request.Build.Timeout != 0 {
+		return nil, ErrUnenforcedBuildPolicy
+	}
+	return c.prewarm(ctx, request, EnforcedBuilderFunc(func(ctx context.Context, claim Claim, _ ExecutionPolicy) (Artifact, error) {
+		return build(ctx, claim)
+	}))
+}
+
+// PrewarmWithExecutor runs prewarm through a typed policy-enforcing executor.
+// This is the production path for resource, network, timeout, or credential
+// policy; the executor receives the exact staging boundary and policy.
+func (c *Filesystem) PrewarmWithExecutor(ctx context.Context, request PrewarmRequest, build EnforcedBuilder) ([]PrewarmItem, error) {
+	if build == nil {
+		return nil, fmt.Errorf("prewarm builder is required")
+	}
+	return c.prewarm(ctx, request, build)
+}
+
+func (c *Filesystem) prewarm(ctx context.Context, request PrewarmRequest, build EnforcedBuilder) ([]PrewarmItem, error) {
 	if request.Capacity < 0 {
 		return nil, fmt.Errorf("capacity cannot be negative")
 	}
 	if request.DiskReservationBytes < 0 {
 		return nil, fmt.Errorf("disk reservation cannot be negative")
-	}
-	if build == nil {
-		return nil, fmt.Errorf("prewarm builder is required")
 	}
 	if request.Capacity == 0 {
 		if len(request.Keys) == 0 {
@@ -526,7 +928,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		}
 		items := make([]PrewarmItem, len(request.Keys))
 		for i, key := range request.Keys {
-			items[i] = PrewarmItem{Key: key, Status: PrewarmCapacityLimited, Reason: "capacity is zero"}
+			items[i] = PrewarmItem{Key: key, Status: c.capacityStatus(request), Reason: "capacity is zero", Generation: request.Generation}
 		}
 		return items, nil
 	}
@@ -544,7 +946,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 	}
 	items := make([]PrewarmItem, len(request.Keys))
 	for i, key := range request.Keys {
-		items[i] = PrewarmItem{Key: key, Status: PrewarmCapacityLimited}
+		items[i] = PrewarmItem{Key: key, Status: c.capacityStatus(request), Generation: request.Generation}
 	}
 	limit := min(len(request.Keys), request.Capacity)
 	order := make([]int, len(request.Keys))
@@ -552,7 +954,7 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 		order[i] = i
 	}
 	sort.SliceStable(order, func(i, j int) bool {
-		return request.Priorities[request.Keys[order[i]].ID()] > request.Priorities[request.Keys[order[j]].ID()]
+		return request.priorityFor(request.Keys[order[i]]) > request.priorityFor(request.Keys[order[j]])
 	})
 	jobs := make(chan int)
 	var wg sync.WaitGroup
@@ -569,7 +971,9 @@ func (c *Filesystem) Prewarm(ctx context.Context, request PrewarmRequest, build 
 			}
 			if itemErr != nil {
 				items[i].Reason = itemErr.Error()
-				if !errors.Is(itemErr, ErrWaitTimeout) && !errors.Is(itemErr, context.Canceled) {
+				if request.PreviousReady && request.PreviousGeneration != "" {
+					items[i].Status = PrewarmDegraded
+				} else if !errors.Is(itemErr, ErrWaitTimeout) && !errors.Is(itemErr, context.Canceled) {
 					items[i].Status = PrewarmFailed
 				}
 				errMu.Lock()
@@ -595,12 +999,75 @@ feed:
 	return items, firstErr
 }
 
-func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key BuildKey, build func(context.Context, Claim) (Artifact, error)) error {
-	if err := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "prewarm-requested", Detail: fmt.Sprintf("priority=%d", request.Priority)}); err != nil {
+func (c *Filesystem) capacityStatus(request PrewarmRequest) PrewarmStatus {
+	if request.PreviousReady && request.PreviousGeneration != "" {
+		return PrewarmDegraded
+	}
+	return PrewarmCapacityLimited
+}
+
+func (r PrewarmRequest) priorityFor(key BuildKey) int {
+	if r.Priorities != nil {
+		if priority, ok := r.Priorities[key.ID()]; ok {
+			return priority
+		}
+	}
+	return r.Priority
+}
+
+func (c *Filesystem) runFallback(ctx context.Context, request PrewarmRequest, key BuildKey, build EnforcedBuilder, coordinatorErr error) (Artifact, error) {
+	root := request.Build.Root
+	cleanup := func() {}
+	if root == "" {
+		root = c.Root
+	}
+	if info, err := os.Stat(root); err != nil || !info.IsDir() {
+		fallbackRoot, mkdirErr := os.MkdirTemp("", "rcc-prewarm-fallback-")
+		if mkdirErr != nil {
+			return Artifact{}, mkdirErr
+		}
+		root = fallbackRoot
+		cleanup = func() { _ = os.RemoveAll(fallbackRoot) }
+	}
+	defer cleanup()
+	policy, err := request.Build.ExecutionPolicy(root)
+	if err != nil {
+		return Artifact{}, err
+	}
+	claim := Claim{Key: key, Owner: "local-fallback", Epoch: 1}
+	artifact, err := build.Build(ctx, claim, policy)
+	if err != nil {
+		return Artifact{}, fmt.Errorf("local fallback after coordinator failure (%v): %w", coordinatorErr, err)
+	}
+	if artifact.Source == "" {
+		artifact.Source = "local-fallback"
+	}
+	return artifact, nil
+}
+
+func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key BuildKey, build EnforcedBuilder) error {
+	if err := c.event(Event{Time: c.Clock.Now(), Key: key.ID(), Event: "prewarm-requested", Detail: fmt.Sprintf("priority=%d generation=%s", request.priorityFor(key), request.Generation)}); err != nil {
+		if request.LocalFallback {
+			_, fallbackErr := c.runFallback(ctx, request, key, build, err)
+			if fallbackErr == nil {
+				return nil
+			}
+			return errors.Join(err, fallbackErr)
+		}
 		return err
 	}
 	claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
 	if err != nil && !errors.Is(err, ErrClaimBusy) {
+		if request.LocalFallback {
+			_, fallbackErr := c.runFallback(ctx, request, key, build, err)
+			if fallbackErr == nil {
+				// A local fallback has already completed the real lifecycle
+				// publication. It must remain functional even when the optional
+				// coordinator's state root is unavailable.
+				return nil
+			}
+			return errors.Join(err, fallbackErr)
+		}
 		return err
 	}
 	if outcome == ExistingArtifact {
@@ -608,7 +1075,11 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	}
 	if outcome == Waiting {
 		if request.IndependentBuild {
-			independent, buildErr := build(ctx, Claim{Key: key, Owner: "independent"})
+			policy, policyErr := request.Build.ExecutionPolicy(c.Root)
+			if policyErr != nil {
+				return policyErr
+			}
+			independent, buildErr := build.Build(ctx, Claim{Key: key, Owner: "independent"}, policy)
 			if buildErr == nil {
 				buildErr = c.PublishIndependent(key, independent)
 			}
@@ -625,7 +1096,7 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 			if readErr != nil {
 				return readErr
 			}
-			if ok && artifact.Verified {
+			if ok && c.verifyArtifact(artifact) == nil {
 				return nil
 			}
 			retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
@@ -656,6 +1127,10 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	if buildRequest.DiskBytes == 0 {
 		buildRequest.DiskBytes = request.DiskReservationBytes
 	}
+	policy, policyErr := buildRequest.ExecutionPolicy(buildRequest.Root)
+	if policyErr != nil {
+		return errors.Join(policyErr, c.abandon(claim))
+	}
 	var buildCtx context.Context
 	var stopHeartbeat context.CancelFunc
 	if buildRequest.Timeout > 0 {
@@ -671,7 +1146,8 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	claim.Staging = staging
 	heartbeatErr := make(chan error, 1)
 	go func() { heartbeatErr <- c.HeartbeatContext(buildCtx, claim, request.LeaseTTL) }()
-	artifact, err := build(buildCtx, claim)
+	policy.Root = staging
+	artifact, err := build.Build(buildCtx, claim, policy)
 	stopHeartbeat()
 	cleanupErr := error(nil)
 	if err != nil && buildRequest.QuarantineRoot != "" {
@@ -737,7 +1213,11 @@ func min(a, b int) int {
 func (c *Filesystem) dir(key BuildKey) string        { return filepath.Join(c.Root, key.ID()) }
 func (c *Filesystem) claimPath(k BuildKey) string    { return filepath.Join(c.dir(k), "claim.json") }
 func (c *Filesystem) artifactPath(k BuildKey) string { return filepath.Join(c.dir(k), "artifact.json") }
-func (c *Filesystem) lockPath(k BuildKey) string     { return filepath.Join(c.dir(k), "lock") }
+func (c *Filesystem) commitPath(k BuildKey) string   { return filepath.Join(c.dir(k), "commit.json") }
+func (c *Filesystem) nondeterministicPath(k BuildKey) string {
+	return filepath.Join(c.dir(k), "nondeterministic.jsonl")
+}
+func (c *Filesystem) lockPath(k BuildKey) string { return filepath.Join(c.dir(k), "lock") }
 
 type lockRecord struct {
 	Owner      string    `json:"owner"`
@@ -886,5 +1366,13 @@ func (c *Filesystem) writeJSON(path string, value any) error {
 		_ = os.Remove(tmp)
 		return err
 	}
-	return nil
+	dir, err := os.Open(filepath.Dir(path))
+	if err != nil {
+		return err
+	}
+	if err := dir.Sync(); err != nil {
+		_ = dir.Close()
+		return err
+	}
+	return dir.Close()
 }
