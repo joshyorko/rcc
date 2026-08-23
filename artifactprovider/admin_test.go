@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync/atomic"
  "testing"
  "github.com/joshyorko/rcc/environmentartifact"
@@ -44,4 +45,12 @@ func TestHTTPProxyAndNoProxyRealRequests(t *testing.T) {
 	proxy:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){proxyHits.Add(1);w.Header().Set("Content-Type","application/json");_,_=w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))}));defer proxy.Close()
 	via,e:=NewHTTPWithOptions(target.URL,HTTPOptions{Client:target.Client(),ProxyURL:proxy.URL});if e!=nil{t.Fatal(e)};if _,e=via.Capabilities(context.Background());e!=nil{t.Fatal(e)};if proxyHits.Load()!=1{t.Fatalf("proxy hits=%d",proxyHits.Load())}
 	direct,e:=NewHTTPWithOptions(target.URL,HTTPOptions{Client:target.Client(),ProxyURL:proxy.URL,NoProxy:"127.0.0.1"});if e!=nil{t.Fatal(e)};if _,e=direct.Capabilities(context.Background());e!=nil{t.Fatal(e)};if proxyHits.Load()!=1{t.Fatalf("no-proxy request used proxy: hits=%d",proxyHits.Load())}
+}
+
+func TestHTTPAbuseBoundaries(t *testing.T) {
+	p, err := NewFilesystem(t.TempDir()); if err != nil { t.Fatal(err) }
+	h := NewHandler(p)
+	for _, tc := range []struct{name, method, path, body string}{{"encoded traversal",http.MethodGet,"/v1/objects/sha256/%2e%2e/secret",""},{"oversized missing request",http.MethodPost,"/v1/objects/missing",strings.Repeat("x",maxProviderJSONBytes+1)}} {
+		t.Run(tc.name,func(t *testing.T){req:=httptest.NewRequest(tc.method,tc.path,strings.NewReader(tc.body));if tc.body!=""{req.Header.Set("Content-Type","application/json")};rec:=httptest.NewRecorder();h.ServeHTTP(rec,req);if rec.Code<400||rec.Code>=500{t.Fatalf("abuse request status=%d",rec.Code)}})
+	}
 }
