@@ -3,6 +3,7 @@ package buildcoord
 
 import (
 	"context"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
@@ -13,6 +14,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/joshyorko/rcc/artifacttrust"
 )
 
 var (
@@ -30,6 +33,23 @@ type ArtifactVerifier interface{ VerifyArtifact(Artifact) error }
 type ArtifactVerifierFunc func(Artifact) error
 
 func (f ArtifactVerifierFunc) VerifyArtifact(a Artifact) error { return f(a) }
+
+// TrustVerifier binds publication to RCC's keyed artifact trust policy.
+type TrustVerifier struct {
+	Policy      artifacttrust.Policy
+	Keys        map[string]ed25519.PublicKey
+	Revocations []artifacttrust.Revocation
+	Local       bool
+	Platform    string
+	Builder     string
+}
+
+func (v TrustVerifier) VerifyArtifact(a Artifact) error {
+	if err := VerifyArtifactProof(a); err != nil {
+		return err
+	}
+	return v.Policy.Evaluate(v.Local, a.Digest, v.Platform, v.Builder, a.Signatures, v.Revocations, v.Keys)
+}
 
 func (RealClock) Now() time.Time { return time.Now().UTC() }
 
@@ -55,13 +75,14 @@ func (k BuildKey) validate() error {
 }
 
 type Artifact struct {
-	Digest                string `json:"digest"`
-	Verified              bool   `json:"verified"`
-	Source                string `json:"source,omitempty"`
-	Nondeterministic      bool   `json:"nondeterministic,omitempty"`
-	ClosureDigest         string `json:"closureDigest,omitempty"`
-	Provider              string `json:"provider,omitempty"`
-	ProviderAuthorization string `json:"providerAuthorization,omitempty"`
+	Digest                string                    `json:"digest"`
+	Verified              bool                      `json:"verified"`
+	Source                string                    `json:"source,omitempty"`
+	Nondeterministic      bool                      `json:"nondeterministic,omitempty"`
+	ClosureDigest         string                    `json:"closureDigest,omitempty"`
+	Provider              string                    `json:"provider,omitempty"`
+	ProviderAuthorization string                    `json:"providerAuthorization,omitempty"`
+	Signatures            []artifacttrust.Signature `json:"signatures,omitempty"`
 }
 type Event struct {
 	Time   time.Time `json:"time"`
@@ -290,6 +311,14 @@ func (c *Filesystem) Publish(claim Claim, artifact Artifact) (err error) {
 		return err
 	} else if ok {
 		if current.Digest == artifact.Digest {
+			if persisted, claimOK, claimErr := c.readClaim(claim.Key); claimErr == nil && claimOK && persisted.Owner == claim.Owner && persisted.Epoch == claim.Epoch {
+				if eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "published-ack", Detail: artifact.Digest}); eventErr != nil {
+					return fmt.Errorf("record publication acknowledgment: %w", eventErr)
+				}
+				if removeErr := os.Remove(c.claimPath(claim.Key)); removeErr != nil && !os.IsNotExist(removeErr) {
+					return removeErr
+				}
+			}
 			return nil
 		}
 		eventErr := c.event(Event{Time: c.Clock.Now(), Key: claim.Key.ID(), Owner: claim.Owner, Epoch: claim.Epoch, Event: "nondeterministic", Detail: current.Digest + " != " + artifact.Digest})
