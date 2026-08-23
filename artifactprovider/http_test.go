@@ -6,12 +6,37 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
+
+func TestHTTPOptionsConfigureUserAgentAndTimeout(t *testing.T) {
+	var got string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.Header.Get("User-Agent")
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`))
+	}))
+	defer server.Close()
+	client, err := NewHTTPWithOptions(server.URL, HTTPOptions{UserAgent: "rcc/test", Timeout: time.Second})
+	if err != nil { t.Fatal(err) }
+	if _, err := client.Capabilities(context.Background()); err != nil { t.Fatal(err) }
+	if got != "rcc/test" { t.Fatalf("user-agent = %q", got) }
+}
+
+func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
+	file, err := os.CreateTemp(t.TempDir(), "ca-*.pem")
+	if err != nil { t.Fatal(err) }
+	defer file.Close()
+	if _, err := file.WriteString("not a certificate"); err != nil { t.Fatal(err) }
+	_, err = NewHTTPWithOptions("https://example.test", HTTPOptions{CAFile: file.Name()})
+	if err == nil || !strings.Contains(err.Error(), "CA") { t.Fatalf("expected CA error, got %v", err) }
+}
 
 func newHTTPProviderTestServer(t *testing.T) (*Filesystem, *HTTP, *httptest.Server) {
 	t.Helper()

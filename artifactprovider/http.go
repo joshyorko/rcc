@@ -3,6 +3,8 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -10,8 +12,11 @@ import (
 	"hash"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -25,11 +30,19 @@ const (
 type HTTP struct {
 	baseURL string
 	client  *http.Client
+	userAgent string
 }
 
 type HTTPOptions struct {
 	Client           *http.Client
 	AuthorizationEnv string
+	ProxyURL         string
+	NoProxy          string
+	CAFile           string
+	CAPEM            []byte
+	TLSMinVersion    uint16
+	Timeout          time.Duration
+	UserAgent        string
 }
 
 type authorizationTransport struct {
@@ -66,21 +79,52 @@ func NewHTTPWithOptions(raw string, options HTTPOptions) (*HTTP, error) {
 	}
 	base := options.Client
 	if base == nil {
-		base = http.DefaultClient
+		base = &http.Client{}
 	}
 	clone := *base
+	if options.Timeout > 0 {
+		clone.Timeout = options.Timeout
+	}
 	clone.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	transport := clone.Transport
 	if transport == nil {
 		transport = http.DefaultTransport
+	}
+	if options.ProxyURL != "" || options.NoProxy != "" || options.CAFile != "" || len(options.CAPEM) != 0 || options.TLSMinVersion != 0 {
+		baseTransport, ok := transport.(*http.Transport)
+		if !ok { return nil, fmt.Errorf("provider transport does not support TLS/proxy configuration") }
+		configured := baseTransport.Clone()
+		if options.ProxyURL != "" {
+			proxy, err := url.Parse(options.ProxyURL); if err != nil || proxy.Scheme == "" || proxy.Host == "" { return nil, fmt.Errorf("invalid provider proxy URL") }
+			configured.Proxy = http.ProxyURL(proxy)
+		}
+		if options.NoProxy != "" {
+			configured.Proxy = func(request *http.Request) (*url.URL, error) {
+				for _, host := range strings.Split(options.NoProxy, ",") { if strings.EqualFold(strings.TrimSpace(host), request.URL.Hostname()) { return nil, nil } }
+				if options.ProxyURL == "" { return http.ProxyFromEnvironment(request) }
+				proxy, err := url.Parse(options.ProxyURL); return proxy, err
+			}
+		}
+		if options.CAFile != "" {
+			pem, err := os.ReadFile(filepath.Clean(options.CAFile)); if err != nil { return nil, fmt.Errorf("read provider CA file: %w", err) }; options.CAPEM = append(options.CAPEM, pem...)
+		}
+		if len(options.CAPEM) != 0 {
+			pool, err := x509.SystemCertPool(); if err != nil { pool = x509.NewCertPool() }
+			if !pool.AppendCertsFromPEM(options.CAPEM) { return nil, fmt.Errorf("provider CA PEM could not be parsed") }
+			configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig); configured.TLSClientConfig.RootCAs = pool
+		}
+		if options.TLSMinVersion != 0 { configured.TLSClientConfig = cloneTLS(configured.TLSClientConfig); configured.TLSClientConfig.MinVersion = options.TLSMinVersion }
+		transport = configured
 	}
 	if options.AuthorizationEnv != "" {
 		clone.Transport = authorizationTransport{base: transport, env: options.AuthorizationEnv}
 	} else {
 		clone.Transport = transport
 	}
-	return &HTTP{baseURL: baseURL, client: &clone}, nil
+	return &HTTP{baseURL: baseURL, client: &clone, userAgent: options.UserAgent}, nil
 }
+
+func cloneTLS(config *tls.Config) *tls.Config { if config == nil { return &tls.Config{} }; return config.Clone() }
 
 func NewHandler(provider *Filesystem) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -361,6 +405,7 @@ func (it *HTTP) PutObject(ctx context.Context, blob Blob) error {
 	}
 	request.ContentLength = blob.Descriptor.Size
 	request.Header.Set("Content-Type", blob.Descriptor.MediaType)
+	it.setHeaders(request)
 	response, err := it.client.Do(request)
 	return closeProviderResponse(response, err)
 }
@@ -373,6 +418,7 @@ func (it *HTTP) GetObject(ctx context.Context, descriptor environmentartifact.De
 	if err != nil {
 		return nil, err
 	}
+	it.setHeaders(request)
 	response, err := it.client.Do(request)
 	if err != nil {
 		return nil, err
@@ -459,6 +505,7 @@ func (it *HTTP) CommitManifest(ctx context.Context, content []byte) error {
 	}
 	request.ContentLength = int64(len(content))
 	request.Header.Set("Content-Type", environmentartifact.ManifestMediaType)
+	it.setHeaders(request)
 	response, err := it.client.Do(request)
 	return closeProviderResponse(response, err)
 }
@@ -468,6 +515,7 @@ func (it *HTTP) ResolveManifest(ctx context.Context, digest environmentartifact.
 	if err != nil {
 		return nil, err
 	}
+	it.setHeaders(request)
 	response, err := it.client.Do(request)
 	if err != nil {
 		return nil, err
@@ -506,6 +554,7 @@ func (it *HTTP) doJSON(ctx context.Context, method, path string, input, output a
 	if input != nil {
 		request.Header.Set("Content-Type", "application/json")
 	}
+	it.setHeaders(request)
 	response, err := it.client.Do(request)
 	if err != nil {
 		return err
@@ -533,6 +582,10 @@ func (it *HTTP) doJSON(ctx context.Context, method, path string, input, output a
 		return err
 	}
 	return requireHTTPJSONEOF(decoder)
+}
+
+func (it *HTTP) setHeaders(request *http.Request) {
+	if it.userAgent != "" { request.Header.Set("User-Agent", it.userAgent) }
 }
 
 func closeProviderResponse(response *http.Response, err error) error {
