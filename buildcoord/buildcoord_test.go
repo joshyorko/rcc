@@ -764,6 +764,68 @@ func TestWaitingPrewarmTakesOverAfterBuilderFailure(t *testing.T) {
 	}
 }
 
+// TestBlackBoxCoordinationContract exercises the public filesystem coordinator
+// boundary as one acceptance scenario. Its optional receipt is derived from
+// every observed outcome, so an omitted branch fails the acceptance itself.
+func TestBlackBoxCoordinationContract(t *testing.T) {
+	clock := &fakeClock{now: time.Unix(100, 0)}
+	c := newFilesystem(t.TempDir(), clock)
+	results := map[string]string{}
+	key := testKey()
+	claim, outcome, err := c.Claim(key, "worker-a", time.Minute)
+	if err != nil || outcome != Claimed { t.Fatalf("claim: %v %v", outcome, err) }
+	results["claim"] = string(outcome)
+	if err := c.Heartbeat(claim, time.Minute); err != nil { t.Fatal(err) }
+	results["heartbeat"] = "renewed"
+	if err := c.Publish(claim, Artifact{Digest: "sha256:verified", Verified: true}); err != nil { t.Fatal(err) }
+	results["verified-publish"] = "committed"
+	if _, outcome, err := c.Claim(key, "waiter", time.Minute); err != nil || outcome != ExistingArtifact { t.Fatalf("waiter reuse: %v %v", outcome, err) }
+	results["waiter-reuse"] = "existing-artifact"
+	takeoverKey := key; takeoverKey.SpecificationDigest = "sha256:takeover"
+	stale, _, err := c.Claim(takeoverKey, "stale", time.Minute); if err != nil { t.Fatal(err) }
+	clock.Advance(2 * time.Minute)
+	current, outcome, err := c.Claim(takeoverKey, "new", time.Minute); if err != nil || outcome != Claimed { t.Fatalf("takeover: %v %v", outcome, err) }
+	if err := c.Publish(stale, Artifact{Digest: "sha256:stale", Verified: true}); !errors.Is(err, ErrStaleClaim) { t.Fatalf("stale publish: %v", err) }
+	if err := c.Publish(current, Artifact{Digest: "sha256:new", Verified: true}); err != nil { t.Fatal(err) }
+	results["stale-takeover"] = "fenced"
+	conflictKey := key; conflictKey.SpecificationDigest = "sha256:conflict"
+	first, _, err := c.Claim(conflictKey, "one", time.Minute); if err != nil { t.Fatal(err) }
+	if err := c.Publish(first, Artifact{Digest: "sha256:first", Verified: true}); err != nil { t.Fatal(err) }
+	if err := c.Publish(Claim{Key: conflictKey, Owner: "two", Epoch: first.Epoch + 1}, Artifact{Digest: "sha256:second", Verified: true}); !errors.Is(err, ErrDivergentArtifact) { t.Fatalf("conflict: %v", err) }
+	if records, err := c.Nondeterminism(conflictKey); err != nil || len(records) != 1 { t.Fatalf("nondeterminism: %v %#v", err, records) }
+	results["nondeterminism"] = "recorded"
+	if err := c.Release(current); err != nil { t.Fatal(err) }
+	results["release"] = "released"
+	providerRoot := filepath.Join(t.TempDir(), "not-a-directory")
+	if err := os.WriteFile(providerRoot, []byte("broken"), 0o600); err != nil { t.Fatal(err) }
+	failed := newFilesystem(providerRoot, clock)
+	if _, err := failed.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1}, func(context.Context, Claim) (Artifact, error) { return Artifact{}, errors.New("provider unavailable") }); err == nil { t.Fatal("provider failure was hidden") }
+	results["provider-failure"] = "failed"
+	var builds atomic.Int32
+	prewarmKey := key
+	prewarmKey.SpecificationDigest = "sha256:prewarm-key"
+	prewarm := func() error {
+		_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{prewarmKey}, Capacity: 1, Wait: true}, func(context.Context, Claim) (Artifact, error) {
+			builds.Add(1); time.Sleep(10 * time.Millisecond); return Artifact{Digest: "sha256:prewarm", Verified: true}, nil
+		})
+		return err
+	}
+	var workers sync.WaitGroup
+	for i := 0; i < 4; i++ { workers.Add(1); go func() { defer workers.Done(); if err := prewarm(); err != nil { t.Error(err) } }() }
+	workers.Wait()
+	if builds.Load() != 1 { t.Fatalf("bounded prewarm built %d times", builds.Load()) }
+	results["n-worker-prewarm"] = "one-cold-build-reused"
+	items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{prewarmKey}, Capacity: 0, Generation: "n+1", PreviousGeneration: "n", PreviousReady: true}, func(context.Context, Claim) (Artifact, error) { t.Fatal("capacity-zero builder called"); return Artifact{}, nil })
+	if err != nil || len(items) != 1 || items[0].Status != PrewarmDegraded { t.Fatalf("retention: %#v %v", items, err) }
+	results["staging-capacity-generation"] = string(items[0].Status)
+	wanted := []string{"claim", "heartbeat", "verified-publish", "waiter-reuse", "stale-takeover", "nondeterminism", "release", "provider-failure", "n-worker-prewarm", "staging-capacity-generation"}
+	for _, name := range wanted { if results[name] == "" { t.Fatalf("missing acceptance outcome %q", name) } }
+	if path := os.Getenv("RCC_COORDINATION_RECEIPT"); path != "" {
+		bytes, err := json.MarshalIndent(map[string]any{"schemaVersion": 1, "scenarios": results}, "", "  "); if err != nil { t.Fatal(err) }
+		if err := os.WriteFile(path, append(bytes, '\n'), 0o644); err != nil { t.Fatal(err) }
+	}
+}
+
 func TestHelperProcessClaimRace(t *testing.T) {
 	if os.Getenv("BUILDCOORD_HELPER") == "1" {
 		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})

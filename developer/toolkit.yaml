@@ -49,6 +49,8 @@ devTasks:
     shell: python call_invoke.py selfHostProbe
   releaseCandidate:
     shell: python call_invoke.py releaseCandidate
+  coordinationAcceptance:
+    shell: python call_invoke.py coordinationAcceptance
   holotreeBenchmark:
     shell: python benchmarks/holotree.py
 

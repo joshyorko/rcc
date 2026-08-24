@@ -118,6 +118,27 @@ def _promote_self_host_generation(source, candidate):
             "sourceSha256": source_digest, "candidateSha256": candidate_digest}
 
 
+def _write_release_candidate_receipt(root, *, source, commands):
+    """Write a stable, machine-readable receipt for one release-candidate run."""
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    source = Path(source).resolve()
+    source_record = {"path": str(source)}
+    if source.is_file():
+        source_record["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    if len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
+        raise RuntimeError(f"git returned a non-exact commit SHA: {commit!r}")
+    receipt = root / "release-candidate-v1.json"
+    receipt.write_text(json.dumps({
+        "schemaVersion": 1,
+        "commitSha": commit,
+        "source": source_record,
+        "commands": list(commands),
+    }, indent=2, sort_keys=True) + "\n")
+    return receipt
+
+
 def _run_checked(argv, env=None):
     subprocess.run([str(part) for part in argv], check=True, env=env)
 
@@ -693,6 +714,32 @@ def releaseCandidate(c):
     c.run(_invoke_command("robot"))
     c.run(_invoke_command("selfHost"))
     c.run(_invoke_command("goVet"))
+    c.run(_invoke_command("coordinationAcceptance"))
+    receipt = _write_release_candidate_receipt(
+        "tmp", source=Path("build/rcc"),
+        commands=[_invoke_command("releaseCandidate")])
+    print(f"Release-candidate receipt: {receipt}")
+
+
+@task
+def coordinationAcceptance(c):
+    """Run the exact-binary coordination CLI gate and black-box scenarios."""
+    _require_linux("coordinationAcceptance")
+    binary = Path("build/rcc").resolve()
+    if not binary.is_file():
+        raise RuntimeError(f"exact RCC binary is missing: {binary}")
+    c.run(f"{shlex.quote(str(binary))} env coordinate --help")
+    receipt = Path("tmp/coordination-blackbox-v1.json").resolve()
+    env = os.environ.copy()
+    env["RCC_COORDINATION_RECEIPT"] = str(receipt)
+    c.run("GOARCH=amd64 CGO_ENABLED=0 go test ./buildcoord -run '^TestBlackBoxCoordinationContract$' -count=1", env=env)
+    payload = json.loads(receipt.read_text())
+    required = {"claim", "heartbeat", "verified-publish", "waiter-reuse", "stale-takeover",
+                "nondeterminism", "release", "provider-failure", "n-worker-prewarm",
+                "staging-capacity-generation"}
+    if set(payload.get("scenarios", {})) != required:
+        raise RuntimeError("coordination receipt is missing required scenario outcomes")
+    print(f"Coordination black-box receipt: {receipt}")
 
 
 def version() -> str:

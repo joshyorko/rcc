@@ -28,6 +28,7 @@ class ArtifactTaskTests(unittest.TestCase):
         "binaryInventory",
         "selfHost",
         "releaseCandidate",
+        "coordinationAcceptance",
     }
     assert expected <= set(collection.task_names)
 
@@ -344,6 +345,7 @@ class ArtifactTaskTests(unittest.TestCase):
     task_names = [
         "artifactFocused", "artifactRace", "artifactVertical", "artifactRobot",
         "binaryInventory", "selfHost", "robot",
+        "coordinationAcceptance",
     ]
     with ExitStack() as stack:
       for name in task_names:
@@ -359,6 +361,7 @@ class ArtifactTaskTests(unittest.TestCase):
         tasks._invoke_command("robot"),
         tasks._invoke_command("selfHost"),
         tasks._invoke_command("goVet"),
+        tasks._invoke_command("coordinationAcceptance"),
     ])
 
   def test_release_candidate_fails_before_dispatch_on_non_linux(self):
@@ -372,6 +375,19 @@ class ArtifactTaskTests(unittest.TestCase):
 
     with self.assertRaisesRegex(RuntimeError, "Linux-only"):
       tasks.releaseCandidate.body(Context())
+
+  def test_release_candidate_receipt_records_exact_source_sha(self):
+    with tempfile.TemporaryDirectory() as directory:
+      source = Path(directory) / "source"
+      source.write_bytes(b"release-candidate")
+      receipt = tasks._write_release_candidate_receipt(
+          directory, source=source, commands=["rcc run -t releaseCandidate"])
+      payload = json.loads(receipt.read_text())
+      self.assertEqual(payload["schemaVersion"], 1)
+      self.assertRegex(payload["commitSha"], r"^[0-9a-f]{40}$")
+      self.assertEqual(payload["source"]["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+      self.assertEqual(payload["source"]["path"], str(source.resolve()))
+      self.assertEqual(payload["commands"], ["rcc run -t releaseCandidate"])
 
   def test_go_vet_accepts_only_clean_or_exact_known_baseline(self):
     baseline = "\n".join(tasks._known_go_vet_findings()) + "\n"
