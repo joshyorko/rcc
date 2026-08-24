@@ -71,7 +71,7 @@ func TestHTTPOptionsUseProxyNoProxyAndCustomCAForRealRequests(t *testing.T) {
 			http.Error(w, err.Error(), http.StatusBadGateway)
 			return
 		}
-		defer response.Body.Close()
+		defer func() { _ = response.Body.Close() }()
 		for key, values := range response.Header {
 			w.Header()[key] = values
 		}

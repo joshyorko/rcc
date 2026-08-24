@@ -125,13 +125,10 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		descriptor := environmentartifact.Descriptor{MediaType: "application/vnd.rcc.hololib.object.v12+gzip", Digest: entry.StoredDigest, Size: entry.StoredSize}
 		descriptors = append(descriptors, descriptor)
 	}
-	allDescriptors := make([]environmentartifact.Descriptor, 0, len(descriptors))
+	allDescriptors := append([]environmentartifact.Descriptor(nil), descriptors...)
 	putObject := local.PutObject
 	if request.PutObject != nil {
 		putObject = request.PutObject
-	}
-	for _, descriptor := range descriptors {
-		allDescriptors = append(allDescriptors, descriptor)
 	}
 	missing, err := artifactprovider.MissingObjectsBatched(ctx, local, allDescriptors)
 	if err != nil {
