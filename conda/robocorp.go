@@ -213,7 +213,7 @@ func CondaExecutionEnvironment(location string, inject []string, full bool) []st
 	)
 	for _, entry := range LoadActivationEnvironment(location) {
 		name, _, found := strings.Cut(strings.TrimSpace(entry), "=")
-		if found && strings.EqualFold(name, "MAMBA_ROOT_PREFIX") {
+		if found && rccOwnsActivationVariable(name) {
 			continue
 		}
 		environment = append(environment, entry)
@@ -230,6 +230,19 @@ func CondaExecutionEnvironment(location string, inject []string, full bool) []st
 		environment = appendIfValue(environment, "NODE_EXTRA_CA_CERTS", common.CaBundleFile())
 	}
 	return environment
+}
+
+func rccOwnsActivationVariable(name string) bool {
+	name = strings.ToUpper(strings.TrimSpace(name))
+	if name == strings.ToUpper(common.Product.HomeVariable()) || strings.HasPrefix(name, "CONDA_PREFIX_") {
+		return true
+	}
+	switch name {
+	case "PATH", "CONDA_DEFAULT_ENV", "CONDA_PREFIX", "CONDA_PROMPT_MODIFIER", "CONDA_SHLVL", "MAMBA_ROOT_PREFIX":
+		return true
+	default:
+		return false
+	}
 }
 
 func appendIfValue(environment []string, key, value string) []string {
