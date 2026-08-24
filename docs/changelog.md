@@ -24,6 +24,11 @@
   and validate the Homebrew handoff before making a release public
 - gate tag publication on the four-platform native Robot matrix and mark
   `-rc.N` tags as GitHub prereleases
+- add exact-SHA release receipts for coordination, bounded multi-gigabyte
+  provider streaming, native lifecycle, Robot, and N-1 self-host gates
+- serve both filesystem and append-journal providers through the same hardened
+  HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
+  acceptance
 
 ### Security
 
@@ -34,6 +39,11 @@
   - apply `robot.yaml` `ignoreFiles` consistently during bundle creation
 
 ### Reliability
+
+- stream offline archive objects through bounded verification, preserve and
+  validate trust attachments, and keep incomplete archive imports invisible
+- supervise Windows execution descendants with Job Objects, block correctly on
+  cross-process artifact locks, and preserve macOS system-alias no-follow paths
 
 - create robot bundle outputs and temporary Holotree exports with unique
   temporary files, publish completed outputs atomically, and propagate file
