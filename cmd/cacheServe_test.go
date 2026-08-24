@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 func TestCacheServeCommandDefaultsToEphemeralLoopback(t *testing.T) {
@@ -43,6 +45,22 @@ func TestCacheServeCommandPassesProviderLimits(t *testing.T) {
 	}
 	if got != (artifactprovider.Limits{MaxBytes: 10, MaxObjects: 2, MaxManifests: 3, MaxUploads: 4, RequestsPerSecond: 5}) {
 		t.Fatalf("provider limits = %+v", got)
+	}
+}
+
+func TestCacheServeCommandSelectsJournalBackend(t *testing.T) {
+	var gotBackend string
+	command := newCacheCommand(cacheCommandDependencies{
+		serveConfigured: func(_ context.Context, _, _ string, _ io.Writer, backend string, _ artifactprovider.Limits) error {
+			gotBackend = backend
+			return nil
+		},
+	})
+	if err := runCobraCommand(command, []string{"serve", "--root", "provider", "--backend", "journal", "--json"}); err != nil {
+		t.Fatal(err)
+	}
+	if gotBackend != "journal" {
+		t.Fatalf("provider backend = %q", gotBackend)
 	}
 }
 
@@ -112,6 +130,52 @@ func TestCacheServePolicyLimitsAreVisibleOverHTTP(t *testing.T) {
 	_ = second.Body.Close()
 	if first.StatusCode != http.StatusOK || second.StatusCode != http.StatusTooManyRequests {
 		t.Fatalf("policy health statuses = %d/%d, want 200/429", first.StatusCode, second.StatusCode)
+	}
+	cancel()
+	if err := <-done; err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCacheServeJournalBackendPersistsAcrossRestart(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "journal-provider")
+	content := []byte("journal-shared-provider")
+	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
+	start := func() (context.CancelFunc, <-chan error, artifactprovider.Provider) {
+		ctx, cancel := context.WithCancel(context.Background())
+		reader, writer := io.Pipe()
+		done := make(chan error, 1)
+		go func() {
+			done <- serveArtifactCacheConfigured(ctx, root, "127.0.0.1:0", writer, "journal", artifactprovider.Limits{})
+			_ = writer.Close()
+		}()
+		var started cacheServeResult
+		if err := json.NewDecoder(reader).Decode(&started); err != nil {
+			t.Fatal(err)
+		}
+		provider, err := artifactprovider.NewHTTP(started.URL, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return cancel, done, provider
+	}
+	cancel, done, provider := start()
+	if err := provider.PutObject(context.Background(), artifactprovider.Blob{Descriptor: descriptor, Reader: bytes.NewReader(content)}); err != nil {
+		t.Fatal(err)
+	}
+	cancel()
+	if err := <-done; err != nil {
+		t.Fatal(err)
+	}
+	cancel, done, provider = start()
+	reader, err := provider.GetObject(context.Background(), descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := io.ReadAll(reader)
+	_ = reader.Close()
+	if err != nil || !bytes.Equal(got, content) {
+		t.Fatalf("restarted journal content = %q, err=%v", got, err)
 	}
 	cancel()
 	if err := <-done; err != nil {

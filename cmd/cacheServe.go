@@ -25,7 +25,7 @@ type cacheServeResult struct {
 }
 
 func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command {
-	var root, listen string
+	var root, listen, backend string
 	var maxBytes, maxObjects, maxManifests, maxUploads, requestsPerSecond int64
 	var jsonOutput bool
 	command := &cobra.Command{
@@ -37,7 +37,7 @@ func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command 
 			if !jsonOutput {
 				return fmt.Errorf("--json is required")
 			}
-			if root == "" || (dependencies.serve == nil && dependencies.serveWithLimit == nil) {
+			if root == "" || (dependencies.serve == nil && dependencies.serveWithLimit == nil && dependencies.serveConfigured == nil) {
 				return fmt.Errorf("--root is required")
 			}
 			ctx, stop := signal.NotifyContext(command.Context(), os.Interrupt, syscall.SIGTERM)
@@ -45,6 +45,15 @@ func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command 
 			limits := artifactprovider.Limits{MaxBytes: maxBytes, MaxObjects: maxObjects, MaxManifests: maxManifests, MaxUploads: maxUploads, RequestsPerSecond: requestsPerSecond}
 			if limits.MaxBytes < 0 || limits.MaxObjects < 0 || limits.MaxManifests < 0 || limits.MaxUploads < 0 || limits.RequestsPerSecond < 0 {
 				return fmt.Errorf("cache provider limits must be non-negative")
+			}
+			if backend != "filesystem" && backend != "journal" {
+				return fmt.Errorf("unsupported cache provider backend %q", backend)
+			}
+			if dependencies.serveConfigured != nil {
+				return dependencies.serveConfigured(ctx, root, listen, command.OutOrStdout(), backend, limits)
+			}
+			if backend != "filesystem" {
+				return fmt.Errorf("cache provider backend %q is unavailable", backend)
 			}
 			if dependencies.serveWithLimit != nil {
 				return dependencies.serveWithLimit(ctx, root, listen, command.OutOrStdout(), limits)
@@ -54,6 +63,7 @@ func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command 
 	}
 	command.Flags().StringVar(&root, "root", "", "Filesystem provider root.")
 	command.Flags().StringVar(&listen, "listen", "127.0.0.1:0", "Loopback listen address.")
+	command.Flags().StringVar(&backend, "backend", "filesystem", "Provider backend: filesystem or journal.")
 	command.Flags().Int64Var(&maxBytes, "max-bytes", 0, "Maximum committed object bytes (0 means unlimited).")
 	command.Flags().Int64Var(&maxObjects, "max-objects", 0, "Maximum committed objects (0 means unlimited).")
 	command.Flags().Int64Var(&maxManifests, "max-manifests", 0, "Maximum committed manifests (0 means unlimited).")
@@ -68,6 +78,10 @@ func serveArtifactCache(ctx context.Context, root, listen string, output io.Writ
 }
 
 func serveArtifactCacheWithOptions(ctx context.Context, root, listen string, output io.Writer, limits artifactprovider.Limits) error {
+	return serveArtifactCacheConfigured(ctx, root, listen, output, "filesystem", limits)
+}
+
+func serveArtifactCacheConfigured(ctx context.Context, root, listen string, output io.Writer, backend string, limits artifactprovider.Limits) error {
 	if err := validateLoopbackListen(listen); err != nil {
 		return err
 	}
@@ -75,13 +89,22 @@ func serveArtifactCacheWithOptions(ctx context.Context, root, listen string, out
 	if err != nil {
 		return fmt.Errorf("resolve cache root: %w", err)
 	}
-	filesystem, err := artifactprovider.NewFilesystem(absoluteRoot)
+	var provider artifactprovider.Provider
+	switch backend {
+	case "filesystem":
+		provider, err = artifactprovider.NewFilesystem(absoluteRoot)
+	case "journal":
+		if err = os.MkdirAll(absoluteRoot, 0o700); err == nil {
+			provider, err = artifactprovider.NewJournal(filepath.Join(absoluteRoot, "provider.journal"))
+		}
+	default:
+		return fmt.Errorf("unsupported cache provider backend %q", backend)
+	}
 	if err != nil {
 		return err
 	}
-	provider := artifactprovider.Provider(filesystem)
 	if limits != (artifactprovider.Limits{}) {
-		provider = artifactprovider.NewPolicy(filesystem, limits)
+		provider = artifactprovider.NewPolicy(provider, limits)
 	}
 	listener, err := net.Listen("tcp", listen)
 	if err != nil {
