@@ -234,7 +234,7 @@ jobs:
           set -euo pipefail
           RCC_REAL_ARTIFACT_TEST=1 go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
       - name: Run Environment Artifact Robot acceptance against exact binary
-        timeout-minutes: 25
+        timeout-minutes: 8
         run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot
       - name: Bind Robot evidence into native runtime receipt
         if: success() || failure()
