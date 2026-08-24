@@ -89,6 +89,11 @@ def environment_artifact_process_environment(home, offline=False):
         "SYSTEMROOT",
         "WINDIR",
         "PATHEXT",
+        "USERPROFILE",
+        "HOMEDRIVE",
+        "HOMEPATH",
+        "USERNAME",
+        "COMSPEC",
         "SSL_CERT_FILE",
         "SSL_CERT_DIR",
     )

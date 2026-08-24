@@ -94,6 +94,20 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertTrue(artifact_robot_library.native_rcc_binary("nt").endswith("build/rcc.exe"))
     self.assertTrue(artifact_robot_library.native_rcc_binary("posix").endswith("build/rcc"))
 
+  def test_native_robot_environment_preserves_windows_home_identity(self):
+    windows = {
+        "PATH": "C:\\Windows\\System32",
+        "USERPROFILE": "C:\\Users\\runner",
+        "HOMEDRIVE": "C:",
+        "HOMEPATH": "\\Users\\runner",
+        "USERNAME": "runner",
+        "COMSPEC": "C:\\Windows\\System32\\cmd.exe",
+    }
+    with mock.patch.dict("os.environ", windows, clear=True):
+      environment = artifact_robot_library.environment_artifact_process_environment("C:\\rcc-home")
+    for name, value in windows.items():
+      self.assertEqual(environment[name], value)
+
   def test_multi_platform_index_includes_the_native_runner_platform(self):
     manifest = {
         "artifactDigest": "sha256:" + "1" * 64,
