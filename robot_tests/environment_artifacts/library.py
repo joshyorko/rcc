@@ -10,6 +10,16 @@ import zipfile
 from pathlib import Path
 
 
+def log_to_console(message):
+    phase_path = Path(__file__).resolve().parents[2] / "tmp" / "output" / "native-runtime-robot-phases.log"
+    phase_path.parent.mkdir(parents=True, exist_ok=True)
+    with phase_path.open("a", encoding="utf-8") as stream:
+        stream.write(str(message) + "\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    print(message, flush=True)
+
+
 def new_environment_artifact_fixture():
     temporary_root = Path(__file__).resolve().parents[2] / "tmp"
     temporary_root.mkdir(parents=True, exist_ok=True)
