@@ -234,6 +234,41 @@ func TestExecuteRunsPythonAndReleasesProcessScopedLease(t *testing.T) {
 	}
 }
 
+func TestExecuteInDirectoryUsesMaterializedEnvironmentWithSourceCWD(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	hostPython, err := hostPythonPath()
+	if err != nil {
+		t.Skip("host Python is unavailable")
+	}
+	if runtime.GOOS == "windows" {
+		installWindowsTestPython(t, materialization.Path, hostPython)
+	} else {
+		python := filepath.Join(materialization.Path, "python")
+		wrapper := []byte(fmt.Sprintf("#!/bin/sh\nexec %q \"$@\"\n", hostPython))
+		if err := os.WriteFile(python, wrapper, 0o750); err != nil {
+			t.Fatal(err)
+		}
+	}
+	source := t.TempDir()
+	if err := os.WriteFile(filepath.Join(source, "task.py"), []byte("from pathlib import Path; Path('proof.txt').write_text('source-cwd')\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	handle, child, err := ExecuteInDirectory(context.Background(), NewLocalMaterializer(), materialization, []string{"python", "task.py"}, source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if child.ExitCode != 0 || handle.CWD != source {
+		t.Fatalf("source execution = handle %+v child %+v", handle, child)
+	}
+	if content, err := os.ReadFile(filepath.Join(source, "proof.txt")); err != nil || string(content) != "source-cwd" {
+		t.Fatalf("source proof = %q, %v", content, err)
+	}
+	if _, err := readLease(handle.ArtifactDigest, handle.LeaseID); !os.IsNotExist(err) {
+		t.Fatalf("source execution lease survived: %v", err)
+	}
+}
+
 func TestExecuteReturnsChildExitCodeAndStillReleasesLease(t *testing.T) {
 	materialization := acquiredMaterialization(t)
 	command := []string{"python"}

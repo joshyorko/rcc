@@ -92,6 +92,9 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
     ...    --provider    office
+    ...    --trust-carrier    ${TRUST_ROOT}
+    ...    --trust-carrier-type    filesystem
+    ...    --permissive-local
     ...    --json
     ...    env=${B_ENV}
     Log    ${cold_result.stderr}
@@ -107,6 +110,9 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${exec_result}=    Run Process
     ...    ${RCC}    env    exec
     ...    --artifact    ${artifact}
+    ...    --trust-carrier    ${TRUST_ROOT}
+    ...    --trust-carrier-type    filesystem
+    ...    --permissive-local
     ...    --json
     ...    --    python    ${TASK}    ${PROOF_FILE}
     ...    env=${B_ENV}
@@ -135,10 +141,14 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${source_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${source_bundle_result.rc}    0
+    ${source_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}source-run
+    Create Directory    ${source_run_cwd}
     ${source_run_result}=    Run Process
     ...    ${RCC}    robot    run-from-bundle    ${source_bundle}
     ...    --task    proof
+    ...    cwd=${source_run_cwd}
     ...    env=${A_ENV}
+    Log    ${source_run_result.stderr}
     Should Be Equal As Integers    ${source_run_result.rc}    0
 
     ${archive}=    Set Variable    ${FIXTURE_ROOT}${/}artifact.rcca
@@ -157,10 +167,14 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${artifact_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${artifact_bundle_result.rc}    0
+    ${artifact_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}artifact-run
+    Create Directory    ${artifact_run_cwd}
     ${artifact_run_result}=    Run Process
     ...    ${RCC}    robot    run-from-bundle    ${artifact_bundle}
     ...    --task    proof
+    ...    cwd=${artifact_run_cwd}
     ...    env=${B_ENV}
+    Log    ${artifact_run_result.stderr}
     Should Be Equal As Integers    ${artifact_run_result.rc}    0
 
     ${platform_index}=    Set Variable    ${FIXTURE_ROOT}${/}platform-index.json
@@ -174,10 +188,14 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${indexed_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${indexed_bundle_result.rc}    0
+    ${indexed_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}indexed-run
+    Create Directory    ${indexed_run_cwd}
     ${indexed_run_result}=    Run Process
     ...    ${RCC}    robot    run-from-bundle    ${indexed_bundle}
     ...    --task    proof
+    ...    cwd=${indexed_run_cwd}
     ...    env=${B_ENV}
+    Log    ${indexed_run_result.stderr}
     Should Be Equal As Integers    ${indexed_run_result.rc}    0
 
     ${wrong_index}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform-index.json
@@ -191,9 +209,12 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${wrong_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${wrong_bundle_result.rc}    0
+    ${wrong_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-run
+    Create Directory    ${wrong_run_cwd}
     ${wrong_run_result}=    Run Process
     ...    ${RCC}    robot    run-from-bundle    ${wrong_bundle}
     ...    --task    proof
+    ...    cwd=${wrong_run_cwd}
     ...    env=${B_ENV}
     Should Not Be Equal As Integers    ${wrong_run_result.rc}    0
     Should Contain    ${wrong_run_result.stderr}    no exact environment artifact for platform
@@ -218,6 +239,9 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
     ...    --provider    office
+    ...    --trust-carrier    ${TRUST_ROOT}
+    ...    --trust-carrier-type    filesystem
+    ...    --permissive-local
     ...    --json
     ...    env=${B_ENV}
     Should Be Equal As Integers    ${warm_result.rc}    0
@@ -240,6 +264,7 @@ Prepare Environment Artifact Acceptance
     Set Suite Variable    ${FIXTURE_ROOT}      ${fixture}[root]
     Set Suite Variable    ${A_HOME}            ${fixture}[aHome]
     Set Suite Variable    ${B_HOME}            ${fixture}[bHome]
+    Set Suite Variable    ${TRUST_ROOT}        ${fixture}[bHome]${/}artifacts${/}v1${/}trust
     Set Suite Variable    ${PROVIDER_ROOT}     ${fixture}[providerRoot]
     Set Suite Variable    ${SERVER_STDOUT}     ${fixture}[serverStdout]
     Set Suite Variable    ${SERVER_STDERR}     ${fixture}[serverStderr]

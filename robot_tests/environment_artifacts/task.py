@@ -18,4 +18,8 @@ proof = {
     "nativeExtension": _sqlite3.__file__,
     "sqliteVersion": sqlite3.sqlite_version,
 }
-Path(sys.argv[1]).write_text(json.dumps(proof, sort_keys=True), encoding="utf-8")
+encoded = json.dumps(proof, sort_keys=True)
+if len(sys.argv) > 1:
+    Path(sys.argv[1]).write_text(encoded, encoding="utf-8")
+else:
+    print(encoded)

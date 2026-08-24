@@ -75,6 +75,15 @@ func Execute(ctx context.Context, materializer Materializer, materialization Mat
 	return executeWithSignalsAndStreams(ctx, materializer, materialization, command, signals, nil, nil, nil)
 }
 
+// ExecuteInDirectory runs a source command with the materialized environment
+// while keeping the process-scoped lease tied to that materialization.
+func ExecuteInDirectory(ctx context.Context, materializer Materializer, materialization Materialization, command []string, workingDirectory string) (handle ExecutionHandle, child ChildResult, err error) {
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+	defer signal.Stop(signals)
+	return executeWithSignalsAndStreamsInDirectory(ctx, materializer, materialization, command, signals, nil, nil, nil, workingDirectory)
+}
+
 func executeWithSignals(ctx context.Context, materializer Materializer, materialization Materialization, command []string, signals <-chan os.Signal) (handle ExecutionHandle, child ChildResult, err error) {
 	return executeWithSignalsAndStreams(ctx, materializer, materialization, command, signals, nil, nil, nil)
 }
@@ -89,6 +98,10 @@ func ExecuteWithStreams(ctx context.Context, materializer Materializer, material
 }
 
 func executeWithSignalsAndStreams(ctx context.Context, materializer Materializer, materialization Materialization, command []string, signals <-chan os.Signal, stdin io.Reader, stdout, stderr io.Writer) (handle ExecutionHandle, child ChildResult, err error) {
+	return executeWithSignalsAndStreamsInDirectory(ctx, materializer, materialization, command, signals, stdin, stdout, stderr, "")
+}
+
+func executeWithSignalsAndStreamsInDirectory(ctx context.Context, materializer Materializer, materialization Materialization, command []string, signals <-chan os.Signal, stdin io.Reader, stdout, stderr io.Writer, workingDirectory string) (handle ExecutionHandle, child ChildResult, err error) {
 	child.ExitCode = -1
 	lease, err := materializer.Lease(ctx, materialization)
 	if err != nil {
@@ -102,6 +115,17 @@ func executeWithSignalsAndStreams(ctx context.Context, materializer Materializer
 	handle, err = materializer.ExecutionHandle(ctx, lease, command)
 	if err != nil {
 		return handle, child, err
+	}
+	if workingDirectory != "" {
+		workingDirectory, err = filepath.Abs(workingDirectory)
+		if err != nil {
+			return handle, child, fmt.Errorf("resolve execution working directory: %w", err)
+		}
+		info, statErr := os.Lstat(workingDirectory)
+		if statErr != nil || info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+			return handle, child, fmt.Errorf("execution working directory is not a regular directory")
+		}
+		handle.CWD = workingDirectory
 	}
 	process := exec.CommandContext(ctx, handle.Executable, command[1:]...)
 	process.Dir = handle.CWD

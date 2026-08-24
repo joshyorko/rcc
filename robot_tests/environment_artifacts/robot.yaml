@@ -4,3 +4,4 @@ tasks:
       - python
       - task.py
 condaConfigFile: conda.yaml
+artifactsDir: output

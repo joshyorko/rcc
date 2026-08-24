@@ -105,7 +105,7 @@ compatible with the exported environment; it does not include RCC itself.`,
 				pretty.Exit(6, "Could not resolve task %q from bundled source metadata.", runTask)
 			}
 			materialization := environmentlifecycle.Materialization{ArtifactDigest: artifactMaterialization.ArtifactDigest, ID: artifactMaterialization.MaterializationID, Path: artifactMaterialization.Path, CacheHit: artifactMaterialization.CacheHit}
-			_, child, execErr := environmentlifecycle.Execute(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline())
+			_, child, execErr := environmentlifecycle.ExecuteInDirectory(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline(), workarea)
 			pretty.Guard(execErr == nil && child.ExitCode == 0, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
 			return
 		}
