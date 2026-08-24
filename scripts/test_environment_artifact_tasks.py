@@ -2,6 +2,7 @@ import json
 import sys
 import tempfile
 import unittest
+import zipfile
 from contextlib import ExitStack
 from pathlib import Path
 from unittest import mock
@@ -12,6 +13,7 @@ from invoke import Collection
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT))
 import tasks  # noqa: E402
+from robot_tests.environment_artifacts import library as artifact_robot_library  # noqa: E402
 
 
 class ArtifactTaskTests(unittest.TestCase):
@@ -69,6 +71,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
+    self.assertIn("go test -timeout 30m", native_job)
     self.assertNotIn('"lifecycle": [', workflow)
 
   def test_native_acceptance_fixture_exercises_sqlite_extension(self):
@@ -77,6 +80,38 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("nativeImport", task)
     self.assertIn("nativeExtension", task)
     self.assertIn("sqliteVersion", task)
+
+  def test_multi_platform_index_includes_the_native_runner_platform(self):
+    manifest = {
+        "artifactDigest": "sha256:" + "1" * 64,
+        "specification": {"digest": "sha256:" + "2" * 64},
+    }
+    with tempfile.TemporaryDirectory() as directory:
+      archive = Path(directory) / "artifact.rcca"
+      output = Path(directory) / "index.json"
+      with zipfile.ZipFile(archive, "w") as carrier:
+        carrier.writestr("rcc-environment/manifest.json", json.dumps(manifest))
+      with mock.patch("platform.system", return_value="Darwin"), mock.patch("platform.machine", return_value="arm64"):
+        artifact_robot_library.create_multi_platform_index(archive, output)
+      index = json.loads(output.read_text())
+    platforms = [entry["platform"] for entry in index["artifacts"]]
+    self.assertIn({"os": "darwin", "arch": "arm64", "rccPlatform": "darwin_arm64"}, platforms)
+
+  def test_wrong_platform_index_excludes_the_native_runner_platform(self):
+    manifest = {
+        "artifactDigest": "sha256:" + "1" * 64,
+        "specification": {"digest": "sha256:" + "2" * 64},
+    }
+    with tempfile.TemporaryDirectory() as directory:
+      archive = Path(directory) / "artifact.rcca"
+      output = Path(directory) / "index.json"
+      with zipfile.ZipFile(archive, "w") as carrier:
+        carrier.writestr("rcc-environment/manifest.json", json.dumps(manifest))
+      with mock.patch("platform.system", return_value="Darwin"), mock.patch("platform.machine", return_value="x86_64"):
+        artifact_robot_library.create_wrong_platform_index(archive, output)
+      index = json.loads(output.read_text())
+    platforms = [entry["platform"] for entry in index["artifacts"]]
+    self.assertNotIn({"os": "darwin", "arch": "amd64", "rccPlatform": "darwin_amd64"}, platforms)
 
   def test_real_vertical_receipt_is_evidence_backed(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import platform
 import shutil
 import tempfile
 import time
@@ -197,12 +198,24 @@ def _write_platform_index(archive, output, platforms):
     return str(Path(output).resolve())
 
 
+def _native_rcc_platform():
+    operating_system = platform.system().lower()
+    architecture = platform.machine().lower()
+    architecture = {
+        "aarch64": "arm64",
+        "x86_64": "amd64",
+    }.get(architecture, architecture)
+    return operating_system, architecture, f"{operating_system}_{architecture}"
+
+
 def create_multi_platform_index(archive, output):
     with zipfile.ZipFile(archive) as carrier:
         manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
     artifact = manifest["artifactDigest"]
-    current = ("linux", "amd64", "linux_amd64")
+    current = _native_rcc_platform()
     other = ("darwin", "amd64", "darwin_amd64")
+    if current == other:
+        other = ("linux", "amd64", "linux_amd64")
     return _write_platform_index(
         archive,
         output,
@@ -214,10 +227,13 @@ def create_multi_platform_index(archive, output):
 
 
 def create_wrong_platform_index(archive, output):
+    wrong = ("darwin", "amd64", "darwin_amd64")
+    if _native_rcc_platform() == wrong:
+        wrong = ("linux", "amd64", "linux_amd64")
     return _write_platform_index(
         archive,
         output,
         [
-            ({"os": "darwin", "arch": "amd64", "rccPlatform": "darwin_amd64"}, "sha256:" + "0" * 64),
+            ({"os": wrong[0], "arch": wrong[1], "rccPlatform": wrong[2]}, "sha256:" + "0" * 64),
         ],
     )
