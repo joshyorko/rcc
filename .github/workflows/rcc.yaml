@@ -130,7 +130,7 @@ jobs:
             binary: build/rcc
             goos: linux
             goarch: amd64
-          - os: "macos-13"
+          - os: "macos-15-intel"
             platform: macos-amd64
             asset: rcc-macos64
             binary: build/rcc

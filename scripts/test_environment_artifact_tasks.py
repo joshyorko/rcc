@@ -55,6 +55,8 @@ class ArtifactTaskTests(unittest.TestCase):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     self.assertIn("platform: linux-amd64", workflow)
     self.assertIn("platform: macos-amd64", workflow)
+    self.assertIn('os: "macos-15-intel"', workflow)
+    self.assertNotIn('os: "macos-13"', workflow)
     self.assertIn("platform: macos-arm64", workflow)
     self.assertIn("platform: windows-amd64", workflow)
     self.assertIn("RCC_NATIVE_PLATFORM", workflow)
