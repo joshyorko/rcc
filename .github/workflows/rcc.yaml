@@ -135,7 +135,11 @@ jobs:
             sudo apt-get update
             sudo apt-get install --yes bubblewrap
           fi
+          if sysctl -n kernel.apparmor_restrict_unprivileged_userns >/dev/null 2>&1; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
           bwrap --version
+          bwrap --unshare-user --unshare-net --ro-bind / / -- /bin/true
       - name: Run contained release candidate gate
         run: rcc run -r developer/toolkit.yaml --dev -t releaseCandidate
       - name: Upload release candidate evidence

@@ -38,6 +38,8 @@
   jobs remain self-contained on clean checkouts
 - provision the Linux sandbox dependency before the trusted tag candidate gate
   so build-coordination policy tests run fail-closed on ephemeral runners
+- enable and smoke-test the ephemeral runner's unprivileged user/network
+  namespaces before exercising the same sandbox policy
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance

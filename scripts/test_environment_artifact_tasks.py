@@ -404,6 +404,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertLess(sandbox, gate)
     self.assertIn("bubblewrap", release_candidate)
     self.assertIn("bwrap --version", release_candidate)
+    self.assertIn("kernel.apparmor_restrict_unprivileged_userns", release_candidate)
+    self.assertIn("bwrap --unshare-user --unshare-net --ro-bind / / -- /bin/true", release_candidate)
 
   def test_native_receipt_aggregation_checks_candidate_commit(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
