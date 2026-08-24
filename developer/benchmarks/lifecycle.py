@@ -1,131 +1,135 @@
 #!/usr/bin/env python3
-"""Collect deterministic, raw evidence for RCC environment lifecycle work.
-
-The default run is an offline fixture baseline. It measures filesystem work
-only; unavailable provider and consumer phases are recorded as such rather
-than inferred. A caller may provide candidate IDs and retain the JSON beside
-the exact RCC binary used for a real lifecycle run.
-"""
+"""Run RCC environment-artifact lifecycle commands and retain raw receipts."""
 
 import argparse
 import hashlib
 import json
 import os
 import platform
-import shutil
+import resource
+import subprocess
 import tempfile
 import time
 from pathlib import Path
 
-PHASES = ("publish", "acquire", "verify", "materialize", "lease", "startup", "import", "warm", "provider-dead", "gc")
-FIXTURES = (
-    {"id": "many-small-files-v1", "kind": "many-small-files", "files": 128},
-    {"id": "python-package-v1", "kind": "python-package", "files": 24},
-)
+FIXTURES = ({"id": "python-package-v1", "kind": "python-package", "package": "pyyaml"},)
 
 
 def _context():
     stat = os.statvfs(tempfile.gettempdir())
-    return {
-        "platform": platform.system().lower(),
-        "platform_release": platform.release(),
-        "architecture": platform.machine(),
-        "python": platform.python_version(),
-        "filesystem": {"temp_root": tempfile.gettempdir(), "block_size": stat.f_bsize},
-    }
+    return {"platform": platform.system().lower(), "platform_release": platform.release(),
+            "architecture": platform.machine(), "python": platform.python_version(),
+            "filesystem": {"temp_root": tempfile.gettempdir(), "block_size": stat.f_bsize}}
 
 
-def _fixture(root, fixture):
-    source = root / "source"
-    source.mkdir(parents=True)
-    payload = (fixture["id"] + "\n").encode() * 8
-    for index in range(fixture["files"]):
-        path = source / f"package_{index // 16:04d}" / f"object_{index:06d}.py"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(payload)
-    return source
-
-
-def _inventory(source):
+def _fixture(root):
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "conda.yaml").write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n  - pyyaml=6.0.2\n", encoding="utf-8")
+    (root / "task.py").write_text("import yaml\nprint(yaml.__version__)\n", encoding="utf-8")
+    (root / "robot.yaml").write_text("tasks:\n  proof:\n    command: [python, task.py]\ncondaConfigFile: conda.yaml\n", encoding="utf-8")
     digest = hashlib.sha256()
-    files = 0
-    total = 0
-    for path in sorted(source.rglob("*")):
-        if path.is_file():
-            data = path.read_bytes()
-            digest.update(path.relative_to(source).as_posix().encode() + b"\0" + data)
-            files += 1
-            total += len(data)
-    return {"files": files, "bytes": total, "digest": digest.hexdigest()}
+    for path in sorted(root.iterdir()):
+        digest.update(path.name.encode() + b"\0" + path.read_bytes())
+    return {"id": "python-package-v1", "kind": "python-package", "source_digest": digest.hexdigest(),
+            "robot": str(root / "robot.yaml")}
 
 
-def _timed(phase_id, operation, function):
-    started = time.perf_counter_ns()
-    cpu_started = time.process_time_ns()
-    result = function()
-    return {"id": phase_id, "operation": operation, "status": "measured",
+def _record(phase, command, result, started, usage_before):
+    usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return {"id": phase, "operation": " ".join(command),
+            "status": "measured" if result["returncode"] == 0 else "failed",
             "wall_ns": time.perf_counter_ns() - started,
-            "cpu_ns": time.process_time_ns() - cpu_started, "evidence": result}
+            "cpu_ns": int((usage.ru_utime - usage_before.ru_utime + usage.ru_stime - usage_before.ru_stime) * 1e9),
+            "max_rss": usage.ru_maxrss, "returncode": result["returncode"],
+            "stdout": result["stdout"], "stderr": result["stderr"]}
 
 
-def _unavailable(phase_id, reason):
-    return {"id": phase_id, "operation": phase_id, "status": "unavailable",
-            "wall_ns": None, "reason": reason, "evidence": {}}
+class RCCRunner:
+    def __init__(self, binary, home):
+        self.binary = str(Path(binary).resolve())
+        if not Path(self.binary).is_file() or not os.access(self.binary, os.X_OK):
+            raise ValueError("--binary must name an executable RCC candidate")
+        self.home = Path(home)
+
+    def run(self, args, phase):
+        command = [self.binary, *args]
+        started = time.perf_counter_ns()
+        before = resource.getrusage(resource.RUSAGE_CHILDREN)
+        process = subprocess.run(command, env={**os.environ, "ROBOCORP_HOME": str(self.home)},
+                                 text=True, capture_output=True, check=False)
+        result = {"returncode": process.returncode, "stdout": process.stdout.strip(), "stderr": process.stderr.strip()}
+        return _record(phase, command, result, started, before)
 
 
-def _run_fixture(root, fixture):
-    source = _fixture(root, fixture)
-    target = root / "materialized"
-    inventory = _inventory(source)
-    phases = [
-        _timed("publish", "fixture-catalog", lambda: inventory),
-        _timed("acquire", "local-content", lambda: {"cache_hit": False}),
-        _timed("verify", "identity-and-content", lambda: _inventory(source)),
-        _timed("materialize", "copy", lambda: (shutil.copytree(source, target), inventory)[1]),
-        _timed("lease", "process-scope", lambda: {"lease": "fixture-only"}),
-        _unavailable("startup", "requires an RCC consumer command"),
-        _unavailable("import", "requires an RCC consumer command"),
-        _unavailable("warm", "requires repeated consumer requests"),
-        _unavailable("provider-dead", "requires provider-backed acquisition"),
-        _timed("gc", "fixture-cleanup", lambda: {"removed": False}),
-    ]
-    gates = {"identity": inventory["digest"] == _inventory(target)["digest"],
-             "file_count": inventory["files"] == _inventory(target)["files"],
-             "provider": "not-run"}
-    return {"fixture_id": fixture["id"], "phases": phases,
-            "correctness_gates": gates, "fixture_inventory": inventory}
+def _json_output(record):
+    try:
+        return json.loads(record["stdout"])
+    except (json.JSONDecodeError, TypeError):
+        return {}
 
 
-def build_report(candidate, fixtures, runs, context):
-    return {"schema_version": 2, "benchmark": "rcc-environment-lifecycle-v2",
-            "candidate": candidate, "fixtures": fixtures, "context": context,
-            "runs": runs}
-
-
-def run_benchmark(work_root, repetitions=1, candidate=None):
-    candidate = candidate or {"rcc_sha": "unknown", "consumer_sha": "unknown", "binary": "unknown"}
-    fixtures = list(FIXTURES)
+def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_factory=RCCRunner):
+    if repetitions < 1:
+        raise ValueError("repetitions must be positive")
     runs = []
     with tempfile.TemporaryDirectory(prefix="rcc-lifecycle-", dir=work_root) as directory:
         base = Path(directory)
-        for repetition in range(repetitions):
-            for fixture in fixtures:
-                runs.append({"repetition": repetition, **_run_fixture(base / str(repetition) / fixture["id"], fixture)})
-    return build_report(candidate, fixtures, runs, _context())
+        fixture = _fixture(base / "fixture")
+        producer_home, consumer_home, provider_root = (base / name for name in ("producer-home", "consumer-home", "provider"))
+        producer, consumer = runner_factory(binary, producer_home), runner_factory(binary, consumer_home)
+        provider = subprocess.Popen([str(Path(binary).resolve()), "cache", "serve", "--root", str(provider_root), "--json"],
+                                    env={**os.environ, "ROBOCORP_HOME": str(producer_home)}, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, text=True)
+        provider_url = json.loads(provider.stdout.readline())["url"]
+        try:
+            published = producer.run(["env", "publish", "--robot", fixture["robot"], "--provider", provider_url, "--json"], "publish")
+            artifact = _json_output(published).get("artifactDigest", "")
+            for repetition in range(repetitions):
+                phases = [published]
+                acquired = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", provider_url, "--json"], "acquire")
+                phases += [acquired, consumer.run(["env", "lifecycle", "verify", "--artifact", artifact, "--json"], "verify")]
+                execution = consumer.run(["env", "exec", "--artifact", artifact, "--provider", provider_url, "--json", "--",
+                                          "python", "-c", "import yaml; print(yaml.__version__)"], "startup")
+                phases.append(execution)
+                phases.append({**execution, "id": "import", "operation": "child import (aggregate env exec)",
+                               "status": "unavailable", "wall_ns": None, "reason": "RCC reports aggregate exec timing"})
+                phases.append(consumer.run(["env", "acquire", "--artifact", artifact, "--provider", provider_url, "--json"], "warm"))
+                provider.terminate()
+                provider.wait(timeout=10)
+                provider_dead = consumer.run(["env", "acquire", "--artifact", artifact, "--json"], "provider-dead")
+                phases.append(provider_dead)
+                exec_json = _json_output(execution)
+                phases.append({"id": "lease", "operation": "leaseId from env exec receipt", "status": "observed",
+                               "wall_ns": None, "evidence": {"leaseId": exec_json.get("leaseId")}})
+                phases.append({"id": "gc", "operation": "RCC environment GC", "status": "unavailable", "wall_ns": None,
+                               "reason": "no public environment artifact GC command"})
+                acquired_json = _json_output(acquired)
+                runs.append({"repetition": repetition, "fixture_id": fixture["id"], "phases": phases,
+                             "correctness_gates": {"artifact_digest": bool(artifact),
+                                                   "verification_receipt": bool(acquired_json.get("verification")),
+                                                   "materialization_receipt": bool(acquired_json.get("materializationId")),
+                                                   "provider_dead_warm": provider_dead["status"] == "measured"}})
+        finally:
+            if provider.poll() is None:
+                provider.terminate()
+                provider.wait(timeout=10)
+    return build_report({"rcc_sha": rcc_sha, "consumer_sha": "external-unavailable", "binary": str(Path(binary).resolve())},
+                        [fixture], runs, _context())
+
+
+def build_report(candidate, fixtures, runs, context):
+    return {"schema_version": 2, "benchmark": "rcc-environment-lifecycle-v2", "candidate": candidate,
+            "fixtures": fixtures, "context": context, "runs": runs}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--binary", required=True)
+    parser.add_argument("--rcc-sha", required=True)
     parser.add_argument("--repetitions", type=int, default=1)
-    parser.add_argument("--rcc-sha", default="unknown")
-    parser.add_argument("--consumer-sha", default="unknown")
-    parser.add_argument("--binary", default="unknown")
     parser.add_argument("--output", type=Path, default=Path("tmp/lifecycle-baseline.json"))
     args = parser.parse_args()
-    if args.repetitions < 1:
-        parser.error("--repetitions must be positive")
-    report = run_benchmark(Path(tempfile.gettempdir()), args.repetitions,
-                           {"rcc_sha": args.rcc_sha, "consumer_sha": args.consumer_sha, "binary": args.binary})
+    report = run_benchmark(Path(tempfile.gettempdir()), args.binary, args.repetitions, args.rcc_sha)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(args.output)

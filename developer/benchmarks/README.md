@@ -20,17 +20,20 @@ verification, fallback, and rollback behavior.
 
 ## Lifecycle evidence (schema v2)
 
-`lifecycle.py` records raw, sorted-key JSON for representative fixture IDs
-`many-small-files-v1` and `python-package-v1`. It includes candidate IDs,
-platform/filesystem context, correctness gates, and phase IDs for publish,
-acquire, verify, materialize, lease, startup, import, warm, provider-dead, and
-GC. Consumer/provider phases are explicitly marked `unavailable` unless a real
-consumer runner supplies evidence; no optimization winner is inferred.
+`lifecycle.py` requires an exact executable RCC candidate and records raw,
+sorted-key JSON for the deterministic `python-package-v1` fixture. It invokes
+`cache serve`, `env publish`, clean `env acquire`, lifecycle verification,
+`env exec` startup/import, warm acquire, and provider-dead acquire in isolated
+producer/consumer `ROBOCORP_HOME` directories. It captures RCC JSON receipts,
+digests, cache classes, wall/CPU/RSS metrics, platform/filesystem context, and
+correctness gates. Only consumer reload evidence and the absent public artifact
+GC command are marked unavailable; no optimization winner is inferred.
 
 Run an offline fixture baseline from the repository root:
 
 ```sh
 python3 developer/benchmarks/lifecycle.py \
+  --binary ./build/rcc \
   --rcc-sha "$(git rev-parse HEAD)" \
   --output tmp/lifecycle-baseline.json
 ```

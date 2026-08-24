@@ -5,22 +5,18 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from lifecycle import build_report, run_benchmark
+from lifecycle import RCCRunner, build_report
 
 
 class LifecycleBenchmarkTest(unittest.TestCase):
-    def test_report_has_schema_two_phases_and_correctness_gates(self):
-        with tempfile.TemporaryDirectory() as directory:
-            report = run_benchmark(Path(directory), repetitions=1)
-
+    def test_report_has_schema_two_and_candidate_provenance(self):
+        report = build_report({"rcc_sha": "abc", "binary": "/x/rcc"}, [], [], {"platform": "test"})
         self.assertEqual(report["schema_version"], 2)
-        self.assertEqual(report["candidate"]["rcc_sha"], "unknown")
-        self.assertEqual(
-            report["fixtures"][0]["id"], "many-small-files-v1"
-        )
-        phases = {phase["id"] for phase in report["runs"][0]["phases"]}
-        self.assertTrue({"publish", "acquire", "verify", "materialize", "lease", "gc"} <= phases)
-        self.assertIn("identity", report["runs"][0]["correctness_gates"])
+        self.assertEqual(report["candidate"]["rcc_sha"], "abc")
+
+    def test_runner_rejects_non_executable_candidate(self):
+        with self.assertRaises(ValueError):
+            RCCRunner("/does/not/exist", Path("/tmp/home"))
 
     def test_build_report_is_deterministic(self):
         report = build_report(
