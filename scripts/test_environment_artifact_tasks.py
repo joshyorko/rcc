@@ -161,6 +161,11 @@ class ArtifactTaskTests(unittest.TestCase):
     for marker in ("TestHTTPMultiGiByteStreamingAcceptance", "RCC_LARGE_STREAM_RECEIPT", "restartPolicy", "bufferBytes"):
       self.assertIn(marker, http_tests)
 
+  def test_coordination_receipt_binds_source_and_binary(self):
+    source = (ROOT / "tasks.py").read_text()
+    self.assertIn('payload["commitSha"]', source)
+    self.assertIn('payload["binarySha256"]', source)
+
   def test_real_receipt_separates_exact_binary_cli_from_source_api(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
     self.assertIn("exactBinaryCLI", source)

@@ -754,6 +754,9 @@ def coordinationAcceptance(c):
                 "staging-capacity-generation"}
     if set(payload.get("scenarios", {})) != required:
         raise RuntimeError("coordination receipt is missing required scenario outcomes")
+    payload["commitSha"] = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    payload["binarySha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
+    receipt.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     print(f"Coordination black-box receipt: {receipt}")
 
 
