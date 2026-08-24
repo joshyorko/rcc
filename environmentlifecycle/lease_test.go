@@ -3,6 +3,7 @@ package environmentlifecycle
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -409,6 +410,51 @@ func TestExecuteWithStreamsPreservesRequestResponseAndReleasesAfterReap(t *testi
 	}
 	if _, err := readLease(handle.ArtifactDigest, handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived stream child reap: %v", err)
+	}
+}
+
+func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	hostPython, err := hostPythonPath()
+	if err != nil {
+		t.Skip("host Python is unavailable")
+	}
+	if runtime.GOOS == "windows" {
+		installWindowsTestPython(t, materialization.Path, hostPython)
+	} else {
+		python := filepath.Join(materialization.Path, "python")
+		wrapper := []byte(fmt.Sprintf("#!/bin/sh\nexec %q \"$@\"\n", hostPython))
+		if err := os.WriteFile(python, wrapper, 0o750); err != nil {
+			t.Fatal(err)
+		}
+	}
+	ready := filepath.Join(t.TempDir(), "parent-ready")
+	grandchild := "import time; time.sleep(8)"
+	parent := "import pathlib, subprocess, sys, time; subprocess.Popen([sys.executable, '-c', " + fmt.Sprintf("%q", grandchild) + "]); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var stdout, stderr bytes.Buffer
+	type result struct {
+		handle ExecutionHandle
+		err    error
+	}
+	done := make(chan result, 1)
+	go func() {
+		handle, _, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", "-c", parent, ready}, nil, &stdout, &stderr)
+		done <- result{handle: handle, err: executeErr}
+	}()
+	waitForFile(t, ready)
+	started := time.Now()
+	cancel()
+	outcome := <-done
+	if !errors.Is(outcome.err, context.Canceled) {
+		t.Fatalf("cancelled execution error = %v", outcome.err)
+	}
+	if elapsed := time.Since(started); elapsed > 4*time.Second {
+		t.Fatalf("cancelled execution waited %s for grandchild-inherited streams", elapsed)
+	}
+	if _, err := readLease(outcome.handle.ArtifactDigest, outcome.handle.LeaseID); !os.IsNotExist(err) {
+		t.Fatalf("lease survived cancelled execution: %v", err)
 	}
 }
 

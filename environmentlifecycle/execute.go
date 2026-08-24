@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/conda"
@@ -133,6 +134,7 @@ func executeWithSignalsAndStreamsInDirectory(ctx context.Context, materializer M
 	process.Stdin = stdin
 	process.Stdout = stdout
 	process.Stderr = stderr
+	process.WaitDelay = 3 * time.Second
 	if err = process.Start(); err != nil {
 		return handle, child, err
 	}
