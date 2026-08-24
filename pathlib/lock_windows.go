@@ -51,10 +51,13 @@ func Locker(filename string, trycount int, sharedLocation bool) (Releaser, error
 			return nil, err
 		}
 	}
+	retryForever := trycount < 0
 	for {
-		trycount -= 1
-		file, err = os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o666)
-		if err != nil && trycount < 0 {
+		if !retryForever {
+			trycount -= 1
+		}
+		file, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0o666)
+		if err != nil && !retryForever && trycount < 0 {
 			return nil, err
 		}
 		if err != nil {
@@ -63,14 +66,18 @@ func Locker(filename string, trycount int, sharedLocation bool) (Releaser, error
 		}
 		_, err = shared.MakeSharedFile(filename)
 		if err != nil {
+			_ = file.Close()
 			return nil, err
 		}
 		break
 	}
 	for {
-		trycount -= 1
+		if !retryForever {
+			trycount -= 1
+		}
 		success, err := trylock(lockFile, file)
-		if err != nil && trycount < 0 {
+		if err != nil && !retryForever && trycount < 0 {
+			_ = file.Close()
 			return nil, err
 		}
 		if success {
