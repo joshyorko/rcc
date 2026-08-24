@@ -2,12 +2,14 @@ package environmentlifecycle
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
@@ -15,8 +17,9 @@ import (
 // ImportArchiveRequest describes an offline carrier import. Import validates
 // the complete closure before writing any content to the local provider.
 type ImportArchiveRequest struct {
-	Path      string
-	PutObject func(context.Context, artifactprovider.Blob) error
+	Path         string
+	PutObject    func(context.Context, artifactprovider.Blob) error
+	TrustCarrier artifacttrust.Carrier
 }
 
 // ImportArchive verifies and stores a canonical archive in the local content
@@ -25,11 +28,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 	if request.Path == "" {
 		return environmentartifact.Manifest{}, fmt.Errorf("archive path is required")
 	}
-	content, err := os.ReadFile(filepath.Clean(request.Path))
-	if err != nil {
-		return environmentartifact.Manifest{}, fmt.Errorf("read environment archive: %w", err)
-	}
-	entries, err := environmentartifact.ReadArchive(content)
+	entries, err := environmentartifact.ReadArchiveFile(filepath.Clean(request.Path))
 	if err != nil {
 		return environmentartifact.Manifest{}, err
 	}
@@ -39,6 +38,9 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 	}
 	if err := manifest.Platform.CompatibleWithCurrent(); err != nil {
 		return environmentartifact.Manifest{}, fmt.Errorf("reject incompatible environment archive: %w", err)
+	}
+	if err := importArchiveTrust(entries, manifest.ArtifactDigest.String(), request.TrustCarrier); err != nil {
+		return environmentartifact.Manifest{}, err
 	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))
 	if err != nil {
@@ -104,6 +106,37 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 	}
 	committed = true
 	return manifest, nil
+}
+
+func importArchiveTrust(entries map[string][]byte, artifact string, target artifacttrust.Carrier) error {
+	archiveCarrier := &artifacttrust.ArchiveCarrier{Files: map[string][]byte{}}
+	for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+		data, ok := entries[environmentartifact.ArchiveAttestationDir+kind+".json"]
+		if !ok {
+			continue
+		}
+		archiveCarrier.Files[artifacttrust.AttachmentName(artifact, kind)] = data
+	}
+	_, err := artifacttrust.LoadAttachments(archiveCarrier, artifact)
+	if err != nil {
+		return fmt.Errorf("validate archive trust attachments: %w", err)
+	}
+	if target == nil {
+		return nil
+	}
+	for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+		data, getErr := artifacttrust.GetAttachment(archiveCarrier, artifact, kind)
+		if getErr != nil {
+			if errors.Is(getErr, os.ErrNotExist) {
+				continue
+			}
+			return fmt.Errorf("read archive %s trust attachment: %w", kind, getErr)
+		}
+		if err := target.Write(artifacttrust.AttachmentName(artifact, kind), data); err != nil {
+			return fmt.Errorf("store archive %s trust attachment: %w", kind, err)
+		}
+	}
+	return nil
 }
 
 func bytesReader(content []byte) io.Reader { return &sliceReader{content: content} }

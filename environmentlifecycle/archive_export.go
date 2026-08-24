@@ -2,17 +2,20 @@ package environmentlifecycle
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
 type ExportArchiveRequest struct {
 	ArtifactDigest environmentartifact.Digest
 	Provider       artifactprovider.Provider
+	TrustCarrier   artifacttrust.Carrier
 	OutputPath     string
 }
 
@@ -63,6 +66,18 @@ func ExportArchive(ctx context.Context, request ExportArchiveRequest) (environme
 	}
 	if _, err := environmentartifact.ValidateArchive(entries); err != nil {
 		return environmentartifact.Manifest{}, err
+	}
+	if request.TrustCarrier != nil {
+		for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+			data, trustErr := artifacttrust.GetAttachment(request.TrustCarrier, request.ArtifactDigest.String(), kind)
+			if errors.Is(trustErr, os.ErrNotExist) {
+				continue
+			}
+			if trustErr != nil {
+				return environmentartifact.Manifest{}, fmt.Errorf("read %s trust attachment: %w", kind, trustErr)
+			}
+			entries[environmentartifact.ArchiveAttestationDir+kind+".json"] = data
+		}
 	}
 	if err := writeArchiveAtomically(request.OutputPath, entries); err != nil {
 		return environmentartifact.Manifest{}, err

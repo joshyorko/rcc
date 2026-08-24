@@ -3,6 +3,7 @@ package environmentartifact
 import (
 	"archive/zip"
 	"bytes"
+	"os"
 	"strings"
 	"testing"
 )
@@ -70,6 +71,38 @@ func TestWriteArchiveIsByteDeterministic(t *testing.T) {
 	}
 	if string(got[ArchiveRoot+"/objects/a"]) != "a" {
 		t.Fatalf("archive object = %q", got[ArchiveRoot+"/objects/a"])
+	}
+}
+
+func TestReadArchiveFileStreamsAndRejectsTruncatedArchives(t *testing.T) {
+	var encoded bytes.Buffer
+	if err := WriteArchive(&encoded, map[string][]byte{ArchiveManifest: []byte("manifest"), ArchiveObjectIndex: []byte("index")}); err != nil {
+		t.Fatal(err)
+	}
+	path := t.TempDir() + "/environment.rcca"
+	if err := os.WriteFile(path, encoded.Bytes(), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ReadArchiveFile(path); err != nil {
+		t.Fatalf("ReadArchiveFile: %v", err)
+	}
+	corrupt := append([]byte(nil), encoded.Bytes()...)
+	corrupt[len(corrupt)-22] ^= 0xff
+	for _, tc := range []struct {
+		name string
+		data []byte
+	}{
+		{name: "truncated", data: encoded.Bytes()[:encoded.Len()-1]},
+		{name: "corrupt", data: corrupt},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if err := os.WriteFile(path, tc.data, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := ReadArchiveFile(path); err == nil {
+				t.Fatalf("%s archive accepted", tc.name)
+			}
+		})
 	}
 }
 

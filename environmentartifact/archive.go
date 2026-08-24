@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"os"
 	"path"
 	"sort"
 	"strings"
@@ -81,6 +82,29 @@ func ReadArchive(content []byte) (map[string][]byte, error) {
 		return nil, fmt.Errorf("environment archive exceeds %d bytes", maxArchiveSize)
 	}
 	reader, err := zip.NewReader(bytes.NewReader(content), int64(len(content)))
+	if err != nil {
+		return nil, fmt.Errorf("open environment archive: %w", err)
+	}
+	return ArchiveEntries(reader)
+}
+
+// ReadArchiveFile opens an archive directly from disk. The ZIP directory is
+// read from the file and individual members remain bounded by ArchiveEntries;
+// the encoded archive is never copied into one whole-archive []byte.
+func ReadArchiveFile(filePath string) (map[string][]byte, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("open environment archive: %w", err)
+	}
+	defer func() { _ = file.Close() }()
+	info, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("stat environment archive: %w", err)
+	}
+	if info.Size() > maxArchiveSize {
+		return nil, fmt.Errorf("environment archive exceeds %d bytes", maxArchiveSize)
+	}
+	reader, err := zip.NewReader(file, info.Size())
 	if err != nil {
 		return nil, fmt.Errorf("open environment archive: %w", err)
 	}
