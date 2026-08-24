@@ -87,8 +87,8 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
     with tempfile.TemporaryDirectory(prefix="rcc-lifecycle-", dir=work_root) as directory:
         base = Path(directory)
         fixture = _fixture(base / "fixture")
-        producer_home, consumer_home, provider_root = (base / name for name in ("producer-home", "consumer-home", "provider"))
-        producer, consumer = runner_factory(binary, producer_home, base), runner_factory(binary, consumer_home, base)
+        producer_home, provider_root = base / "producer-home", base / "provider"
+        producer = runner_factory(binary, producer_home, base)
         provider = subprocess.Popen([str(Path(binary).resolve()), "cache", "serve", "--root", str(provider_root), "--json"],
                                     env={**os.environ, "ROBOCORP_HOME": str(producer_home)}, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE, text=True)
@@ -96,15 +96,18 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
         try:
             provider_args = ["provider", "add", "office", "--type", "http", "--url", provider_url,
                              "--authorization-env", "RCC_TEST_PROVIDER_AUTHORIZATION", "--json"]
-            producer.run(provider_args, "provider-profile")
-            consumer.run(provider_args, "provider-profile")
             env = {"RCC_TEST_PROVIDER_AUTHORIZATION": "Bearer robot-test"}
             producer.run_env = env
-            consumer.run_env = env
+            producer.run(provider_args, "provider-profile")
             published = producer.run(["env", "publish", "--robot", fixture["robot"], "--provider", "office", "--json"], "publish")
             artifact = _json_output(published).get("artifactDigest", "")
+            pending = []
             for repetition in range(repetitions):
-                phases = [published]
+                consumer_home = base / f"consumer-home-{repetition}"
+                consumer = runner_factory(binary, consumer_home, base)
+                consumer.run_env = env
+                consumer.run(provider_args, "provider-profile")
+                phases = [published] if repetition == 0 else []
                 trust = ["--trust-carrier", str(consumer_home / "artifacts" / "v1" / "trust"),
                          "--trust-carrier-type", "filesystem", "--permissive-local"]
                 acquired = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "acquire")
@@ -114,22 +117,28 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
                 phases.append(execution)
                 phases.append({**execution, "id": "import", "operation": "child import (aggregate env exec)",
                                "status": "unavailable", "wall_ns": None, "reason": "RCC reports aggregate exec timing"})
-                phases.append(consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "warm"))
-                provider.terminate()
-                provider.wait(timeout=10)
-                provider_dead = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "provider-dead")
-                phases.append(provider_dead)
+                warm = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "warm")
+                phases.append(warm)
                 exec_json = _json_output(execution)
                 phases.append({"id": "lease", "operation": "leaseId from env exec receipt", "status": "observed",
                                "wall_ns": None, "evidence": {"leaseId": exec_json.get("leaseId")}})
                 phases.append({"id": "gc", "operation": "RCC environment GC", "status": "unavailable", "wall_ns": None,
                                "reason": "no public environment artifact GC command"})
                 acquired_json = _json_output(acquired)
-                runs.append({"repetition": repetition, "fixture_id": fixture["id"], "phases": phases,
-                             "correctness_gates": {"artifact_digest": bool(artifact),
-                                                   "verification_receipt": bool(acquired_json.get("verification")),
-                                                   "materialization_receipt": bool(acquired_json.get("materializationId")),
-                                                   "provider_dead_warm": provider_dead["status"] == "measured"}})
+                run = {"repetition": repetition, "fixture_id": fixture["id"], "phases": phases,
+                       "correctness_gates": {"artifact_digest": bool(artifact),
+                                             "verification_receipt": bool(acquired_json.get("verification")),
+                                             "materialization_receipt": bool(acquired_json.get("materializationId")),
+                                             "clean_cache_provider": acquired_json.get("cacheHit") == "provider",
+                                             "warm_cache_local_materialization": _json_output(warm).get("cacheHit") == "local-materialization"}}
+                pending.append((run, consumer, trust))
+            provider.terminate()
+            provider.wait(timeout=10)
+            for run, consumer, trust in pending:
+                provider_dead = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "provider-dead")
+                run["phases"].append(provider_dead)
+                run["correctness_gates"]["provider_dead_cache_local_materialization"] = _json_output(provider_dead).get("cacheHit") == "local-materialization"
+                runs.append(run)
         finally:
             if provider.poll() is None:
                 provider.terminate()
