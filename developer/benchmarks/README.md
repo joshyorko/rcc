@@ -17,3 +17,24 @@ No materializer or storage optimization is selected by this change. FUSE,
 packfiles, reflinks/hardlinks, and encoding changes remain experiments until a
 named workload shows repeated material improvement while preserving identity,
 verification, fallback, and rollback behavior.
+
+## Lifecycle evidence (schema v2)
+
+`lifecycle.py` records raw, sorted-key JSON for representative fixture IDs
+`many-small-files-v1` and `python-package-v1`. It includes candidate IDs,
+platform/filesystem context, correctness gates, and phase IDs for publish,
+acquire, verify, materialize, lease, startup, import, warm, provider-dead, and
+GC. Consumer/provider phases are explicitly marked `unavailable` unless a real
+consumer runner supplies evidence; no optimization winner is inferred.
+
+Run an offline fixture baseline from the repository root:
+
+```sh
+python3 developer/benchmarks/lifecycle.py \
+  --rcc-sha "$(git rev-parse HEAD)" \
+  --output tmp/lifecycle-baseline.json
+```
+
+Keep the output with the exact RCC candidate. For a consumer run, pass
+`--consumer-sha` and `--binary` as additional provenance. The output is raw
+evidence, not a storage or materialization decision.
