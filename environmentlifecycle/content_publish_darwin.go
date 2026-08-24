@@ -14,8 +14,10 @@ func canonicalLifecycleRootPath(path string, _ bool) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if absolute == "/var" || strings.HasPrefix(absolute, "/var/") {
-		absolute = "/private" + absolute
+	for _, alias := range []string{"/var", "/tmp", "/etc"} {
+		if absolute == alias || strings.HasPrefix(absolute, alias+"/") {
+			return "/private" + absolute, nil
+		}
 	}
 	return absolute, nil
 }

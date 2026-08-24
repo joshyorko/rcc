@@ -11,8 +11,10 @@ import (
 
 func canonicalProviderRootPath(path string, _ bool) (string, error) {
 	clean := filepath.Clean(path)
-	if clean == "/var" || strings.HasPrefix(clean, "/var/") {
-		clean = "/private" + clean
+	for _, alias := range []string{"/var", "/tmp", "/etc"} {
+		if clean == alias || strings.HasPrefix(clean, alias+"/") {
+			return "/private" + clean, nil
+		}
 	}
 	return clean, nil
 }

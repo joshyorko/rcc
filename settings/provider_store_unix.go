@@ -139,8 +139,13 @@ func openSettingsParent(filename string, create bool) (int, string, error) {
 	if err != nil {
 		return -1, "", fmt.Errorf("resolve custom settings path: %w", err)
 	}
-	if runtime.GOOS == "darwin" && (absolute == "/var" || strings.HasPrefix(absolute, "/var/")) {
-		absolute = "/private" + absolute
+	if runtime.GOOS == "darwin" {
+		for _, alias := range []string{"/var", "/tmp", "/etc"} {
+			if absolute == alias || strings.HasPrefix(absolute, alias+"/") {
+				absolute = "/private" + absolute
+				break
+			}
+		}
 	}
 	clean := filepath.Clean(absolute)
 	parts := strings.Split(strings.TrimPrefix(clean, string(filepath.Separator)), string(filepath.Separator))
