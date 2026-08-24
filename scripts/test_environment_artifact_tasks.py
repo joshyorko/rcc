@@ -29,6 +29,7 @@ class ArtifactTaskTests(unittest.TestCase):
         "selfHost",
         "releaseCandidate",
         "coordinationAcceptance",
+        "largeStream",
     }
     assert expected <= set(collection.task_names)
 
@@ -148,6 +149,15 @@ class ArtifactTaskTests(unittest.TestCase):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
     for marker in ("LeaseID", "ProviderObjectGets", "runRealMismatchCheck", "RCC_REAL_BINARY_SHA256", "sqlite3"):
       self.assertIn(marker, source)
+
+  def test_large_stream_gate_is_release_wired_and_receipt_backed(self):
+    source = (ROOT / "tasks.py").read_text()
+    self.assertIn("def largeStream", source)
+    self.assertIn("RCC_REAL_LARGE_STREAM", source)
+    self.assertIn('"largeStream"', source.split("def releaseCandidate", 1)[1])
+    http_tests = (ROOT / "artifactprovider" / "http_test.go").read_text()
+    for marker in ("TestHTTPMultiGiByteStreamingAcceptance", "RCC_LARGE_STREAM_RECEIPT", "restartPolicy", "bufferBytes"):
+      self.assertIn(marker, http_tests)
 
   def test_real_receipt_separates_exact_binary_cli_from_source_api(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
@@ -344,7 +354,7 @@ class ArtifactTaskTests(unittest.TestCase):
 
     task_names = [
         "artifactFocused", "artifactRace", "artifactVertical", "artifactRobot",
-        "binaryInventory", "selfHost", "robot",
+        "binaryInventory", "largeStream", "selfHost", "robot",
         "coordinationAcceptance",
     ]
     with ExitStack() as stack:
@@ -358,6 +368,7 @@ class ArtifactTaskTests(unittest.TestCase):
         tasks._invoke_command("artifactVertical"),
         tasks._invoke_command("artifactRobot"),
         tasks._invoke_command("binaryInventory"),
+        tasks._invoke_command("largeStream"),
         tasks._invoke_command("robot"),
         tasks._invoke_command("selfHost"),
         tasks._invoke_command("goVet"),

@@ -51,6 +51,8 @@ devTasks:
     shell: python call_invoke.py releaseCandidate
   coordinationAcceptance:
     shell: python call_invoke.py coordinationAcceptance
+  largeStream:
+    shell: python call_invoke.py largeStream
   holotreeBenchmark:
     shell: python benchmarks/holotree.py
 

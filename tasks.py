@@ -700,6 +700,22 @@ def selfHost(c):
 
 
 @task
+def largeStream(c):
+    """Run the opt-in multi-gigabyte bounded HTTP streaming acceptance gate."""
+    _require_linux("largeStream")
+    if os.environ.get("RCC_REAL_LARGE_STREAM") != "1":
+        print("Skipping largeStream: set RCC_REAL_LARGE_STREAM=1 to run the 2 GiB gate")
+        return
+    receipt = Path(os.environ.get("RCC_LARGE_STREAM_RECEIPT", "tmp/large-stream-receipt.json")).resolve()
+    receipt.parent.mkdir(parents=True, exist_ok=True)
+    env = _contained_go_env()
+    env.update({"RCC_REAL_LARGE_STREAM": "1", "RCC_LARGE_STREAM_RECEIPT": str(receipt)})
+    c.run("go test -count=1 ./artifactprovider -run '^TestHTTPMultiGiByteStreamingAcceptance$' -timeout 30m", env=env)
+    if not receipt.is_file():
+        raise RuntimeError(f"largeStream did not produce receipt: {receipt}")
+
+
+@task
 def releaseCandidate(c):
     """Run the complete Environment Artifacts v1 release-candidate gate."""
     _require_linux("releaseCandidate")
@@ -709,6 +725,7 @@ def releaseCandidate(c):
         "artifactVertical",
         "artifactRobot",
         "binaryInventory",
+        "largeStream",
     ):
         c.run(_invoke_command(task_name))
     c.run(_invoke_command("robot"))
