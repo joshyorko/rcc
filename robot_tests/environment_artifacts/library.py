@@ -3,11 +3,13 @@ import json
 import os
 import platform
 import shutil
+import subprocess
 import tempfile
 import time
 import urllib.request
 import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 
 
 def log_to_console(message):
@@ -23,6 +25,27 @@ def log_to_console(message):
 def native_rcc_binary(platform_name=None):
     suffix = ".exe" if (platform_name or os.name) == "nt" else ""
     return str((Path(__file__).resolve().parents[2] / "build" / f"rcc{suffix}").resolve())
+
+
+def run_process_without_group(*command, **configuration):
+    environment = configuration.pop("env", None)
+    cwd = configuration.pop("cwd", None)
+    timeout = configuration.pop("timeout", 20 * 60)
+    if configuration:
+        raise AssertionError(f"unsupported process configuration: {sorted(configuration)}")
+    try:
+        result = subprocess.run(
+            [str(argument) for argument in command],
+            cwd=str(cwd) if cwd else None,
+            env=dict(environment) if environment is not None else None,
+            capture_output=True,
+            text=True,
+            timeout=float(timeout),
+            check=False,
+        )
+    except subprocess.TimeoutExpired as error:
+        raise AssertionError(f"process timed out after {timeout}s: {command}") from error
+    return SimpleNamespace(rc=result.returncode, stdout=result.stdout, stderr=result.stderr)
 
 
 def new_environment_artifact_fixture():

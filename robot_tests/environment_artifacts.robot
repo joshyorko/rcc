@@ -22,7 +22,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     library.Log To Console    phase=consumer-home-empty:complete
 
     library.Log To Console    phase=binary-version:start
-    ${binary_version_result}=    Run Process    ${RCC}    version
+    ${binary_version_result}=    Run Process Without Group    ${RCC}    version
     Should Be Equal As Integers    ${binary_version_result.rc}    0
     ${binary_version}=    Set Variable    ${binary_version_result.stdout}
     library.Log To Console    phase=binary-version:complete
@@ -47,7 +47,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
     Set To Dictionary    ${A_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
     Log To Console    phase=producer-profile:start
-    ${a_profile_result}=    Run Process
+    ${a_profile_result}=    Run Process Without Group
     ...    ${RCC}    provider    add    office
     ...    --type    http
     ...    --url    ${provider_url}
@@ -66,7 +66,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
     Set To Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
     Log To Console    phase=consumer-profile:start
-    ${b_profile_result}=    Run Process
+    ${b_profile_result}=    Run Process Without Group
     ...    ${RCC}    provider    add    office
     ...    --type    http
     ...    --url    ${provider_url}
@@ -84,7 +84,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Log To Console    phase=consumer-profile:complete
 
     Log To Console    phase=publish:start
-    ${published_result}=    Run Process
+    ${published_result}=    Run Process Without Group
     ...    ${RCC}    env    publish
     ...    --robot    ${ROBOT}
     ...    --provider    office
@@ -103,7 +103,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Provider Should Contain Manifest    ${PROVIDER_ROOT}    ${artifact}
 
     Log To Console    phase=cold-acquire:start
-    ${cold_result}=    Run Process
+    ${cold_result}=    Run Process Without Group
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
     ...    --provider    office
@@ -124,7 +124,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Log To Console    phase=cold-acquire:complete
 
     Log To Console    phase=artifact-exec:start
-    ${exec_result}=    Run Process
+    ${exec_result}=    Run Process Without Group
     ...    ${RCC}    env    exec
     ...    --artifact    ${artifact}
     ...    --trust-carrier    ${TRUST_ROOT}
@@ -154,7 +154,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
     ${source_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}source-only.py
     Log To Console    phase=source-bundle:start
-    ${source_bundle_result}=    Run Process
+    ${source_bundle_result}=    Run Process Without Group
     ...    ${RCC}    robot    bundle
     ...    --robot    ${ROBOT}
     ...    --output    ${source_bundle}
@@ -164,7 +164,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${source_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}source-run
     Create Directory    ${source_run_cwd}
     Log To Console    phase=source-bundle-run:start
-    ${source_run_result}=    Run Process
+    ${source_run_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${source_bundle}
     ...    --task    proof
     ...    cwd=${source_run_cwd}
@@ -175,7 +175,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
     ${archive}=    Set Variable    ${FIXTURE_ROOT}${/}artifact.rcca
     Log To Console    phase=artifact-export:start
-    ${export_result}=    Run Process
+    ${export_result}=    Run Process Without Group
     ...    ${RCC}    env    export
     ...    --artifact    ${artifact}
     ...    --provider    office
@@ -185,7 +185,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Log To Console    phase=artifact-export:complete
     ${artifact_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}source-artifact.py
     Log To Console    phase=artifact-bundle:start
-    ${artifact_bundle_result}=    Run Process
+    ${artifact_bundle_result}=    Run Process Without Group
     ...    ${RCC}    robot    bundle
     ...    --robot    ${ROBOT}
     ...    --artifact-archive    ${archive}
@@ -196,7 +196,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${artifact_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}artifact-run
     Create Directory    ${artifact_run_cwd}
     Log To Console    phase=artifact-bundle-run:start
-    ${artifact_run_result}=    Run Process
+    ${artifact_run_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${artifact_bundle}
     ...    --task    proof
     ...    cwd=${artifact_run_cwd}
@@ -209,7 +209,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${index_path}=    Create Multi Platform Index    ${archive}    ${platform_index}
     ${indexed_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}multi-platform.py
     Log To Console    phase=indexed-bundle:start
-    ${indexed_bundle_result}=    Run Process
+    ${indexed_bundle_result}=    Run Process Without Group
     ...    ${RCC}    robot    bundle
     ...    --robot    ${ROBOT}
     ...    --artifact-archive    ${archive}
@@ -221,7 +221,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${indexed_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}indexed-run
     Create Directory    ${indexed_run_cwd}
     Log To Console    phase=indexed-bundle-run:start
-    ${indexed_run_result}=    Run Process
+    ${indexed_run_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${indexed_bundle}
     ...    --task    proof
     ...    cwd=${indexed_run_cwd}
@@ -234,7 +234,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${wrong_index_path}=    Create Wrong Platform Index    ${archive}    ${wrong_index}
     ${wrong_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform.py
     Log To Console    phase=wrong-platform-bundle:start
-    ${wrong_bundle_result}=    Run Process
+    ${wrong_bundle_result}=    Run Process Without Group
     ...    ${RCC}    robot    bundle
     ...    --robot    ${ROBOT}
     ...    --artifact-archive    ${archive}
@@ -246,7 +246,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${wrong_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-run
     Create Directory    ${wrong_run_cwd}
     Log To Console    phase=wrong-platform-run:start
-    ${wrong_run_result}=    Run Process
+    ${wrong_run_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${wrong_bundle}
     ...    --task    proof
     ...    cwd=${wrong_run_cwd}
@@ -262,7 +262,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Remove From Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION
 
     Log To Console    phase=provider-dead-test:start
-    ${provider_test_result}=    Run Process
+    ${provider_test_result}=    Run Process Without Group
     ...    ${RCC}    provider    test    office    --json
     ...    env=${B_ENV}
     Should Not Be Equal As Integers    ${provider_test_result.rc}    0
@@ -274,7 +274,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Log To Console    phase=provider-dead-test:complete
 
     Log To Console    phase=provider-dead-warm:start
-    ${warm_result}=    Run Process
+    ${warm_result}=    Run Process Without Group
     ...    ${RCC}    env    acquire
     ...    --artifact    ${artifact}
     ...    --provider    office
