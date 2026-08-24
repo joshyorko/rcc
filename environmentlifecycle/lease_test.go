@@ -430,19 +430,28 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 	}
 	ready := filepath.Join(t.TempDir(), "parent-ready")
 	grandchildProof := filepath.Join(t.TempDir(), "grandchild-survived")
-	grandchild := "import pathlib, time; time.sleep(5); pathlib.Path(" + fmt.Sprintf("%q", grandchildProof) + ").write_text('alive')"
-	parent := "import pathlib, subprocess, sys, time; subprocess.Popen([" + fmt.Sprintf("%q", hostPython) + ", '-c', " + fmt.Sprintf("%q", grandchild) + "]); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
+	parentScript := filepath.Join(t.TempDir(), "parent.py")
+	parent := "" +
+		"import pathlib, subprocess, sys, time\n" +
+		"grandchild = \"import pathlib, sys, time; time.sleep(5); pathlib.Path(sys.argv[1]).write_text('alive')\"\n" +
+		"subprocess.Popen([sys.argv[3], '-c', grandchild, sys.argv[2]])\n" +
+		"pathlib.Path(sys.argv[1]).write_text('ready')\n" +
+		"time.sleep(30)\n"
+	if err := os.WriteFile(parentScript, []byte(parent), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var stdout, stderr bytes.Buffer
 	type result struct {
 		handle ExecutionHandle
+		child  ChildResult
 		err    error
 	}
 	done := make(chan result, 1)
 	go func() {
-		handle, _, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", "-c", parent, ready}, nil, &stdout, &stderr)
-		done <- result{handle: handle, err: executeErr}
+		handle, child, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", parentScript, ready, grandchildProof, hostPython}, nil, &stdout, &stderr)
+		done <- result{handle: handle, child: child, err: executeErr}
 	}()
 	deadline := time.Now().Add(5 * time.Second)
 	for {
@@ -451,7 +460,7 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 		}
 		select {
 		case outcome := <-done:
-			t.Fatalf("execution exited before parent readiness: %v; stdout=%q stderr=%q", outcome.err, stdout.String(), stderr.String())
+			t.Fatalf("execution exited before parent readiness: child=%+v err=%v; stdout=%q stderr=%q", outcome.child, outcome.err, stdout.String(), stderr.String())
 		default:
 		}
 		if time.Now().After(deadline) {
