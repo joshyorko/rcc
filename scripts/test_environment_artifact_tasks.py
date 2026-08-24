@@ -1,4 +1,5 @@
 import json
+import hashlib
 import sys
 import tempfile
 import unittest
@@ -154,6 +155,7 @@ class ArtifactTaskTests(unittest.TestCase):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn("def largeStream", source)
     self.assertIn("RCC_REAL_LARGE_STREAM", source)
+    self.assertNotIn("Skipping largeStream", source)
     self.assertIn('"largeStream"', source.split("def releaseCandidate", 1)[1])
     http_tests = (ROOT / "artifactprovider" / "http_test.go").read_text()
     for marker in ("TestHTTPMultiGiByteStreamingAcceptance", "RCC_LARGE_STREAM_RECEIPT", "restartPolicy", "bufferBytes"):

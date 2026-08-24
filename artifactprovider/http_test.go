@@ -44,12 +44,16 @@ func TestHTTPMultiGiByteStreamingAcceptance(t *testing.T) {
 	hash := sha256.New()
 	for remaining := size; remaining > 0; {
 		chunk := pattern
-		if int64(len(chunk)) > remaining { chunk = chunk[:remaining] }
+		if int64(len(chunk)) > remaining {
+			chunk = chunk[:remaining]
+		}
 		_, _ = hash.Write(chunk)
 		remaining -= int64(len(chunk))
 	}
 	digest, err := environmentartifact.ParseDigest("sha256:" + hex.EncodeToString(hash.Sum(nil)))
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	var requests atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requests.Add(1)
@@ -58,32 +62,58 @@ func TestHTTPMultiGiByteStreamingAcceptance(t *testing.T) {
 		remaining := size
 		for remaining > 0 {
 			chunk := pattern
-			if int64(len(chunk)) > remaining { chunk = chunk[:remaining] }
-			if _, err := w.Write(chunk); err != nil { return }
+			if int64(len(chunk)) > remaining {
+				chunk = chunk[:remaining]
+			}
+			if _, err := w.Write(chunk); err != nil {
+				return
+			}
 			remaining -= int64(len(chunk))
 		}
 	}))
 	defer server.Close()
 	client, err := NewHTTP(server.URL, server.Client())
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: digest, Size: size}
 	var before, after runtime.MemStats
 	runtime.ReadMemStats(&before)
 	reader, err := client.GetObject(context.Background(), descriptor)
-	if err != nil { t.Fatal(err) }
+	if err != nil {
+		t.Fatal(err)
+	}
 	const transferBufferBytes = 64 * 1024
 	bytesRead, err := io.CopyBuffer(io.Discard, reader, make([]byte, transferBufferBytes))
 	closeErr := reader.Close()
 	runtime.ReadMemStats(&after)
-	if err != nil || closeErr != nil { t.Fatalf("stream err=%v close=%v", err, closeErr) }
-	if bytesRead != size { t.Fatalf("bytes=%d want=%d", bytesRead, size) }
-	if requests.Load() != 1 { t.Fatalf("requests=%d want=1", requests.Load()) }
+	if err != nil || closeErr != nil {
+		t.Fatalf("stream err=%v close=%v", err, closeErr)
+	}
+	if bytesRead != size {
+		t.Fatalf("bytes=%d want=%d", bytesRead, size)
+	}
+	if requests.Load() != 1 {
+		t.Fatalf("requests=%d want=1", requests.Load())
+	}
 	receiptPath := os.Getenv("RCC_LARGE_STREAM_RECEIPT")
-	if receiptPath == "" { receiptPath = "tmp/large-stream-receipt.json" }
+	if receiptPath == "" {
+		receiptPath = "tmp/large-stream-receipt.json"
+	}
 	receipt := map[string]any{"schemaVersion": 1, "sha256": digest.Hex(), "platform": runtime.GOOS + "/" + runtime.GOARCH, "bytes": bytesRead, "memoryBytes": after.Alloc, "memoryDeltaBytes": int64(after.Alloc) - int64(before.Alloc), "bufferBytes": transferBufferBytes, "requests": requests.Load(), "restartPolicy": "full-restart", "interruptionAcceptance": "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds"}
-	if err := os.MkdirAll(filepath.Dir(receiptPath), 0o755); err != nil { t.Fatal(err) }
-	data, err := json.MarshalIndent(receipt, "", "  "); if err != nil { t.Fatal(err) }
-	if err := os.WriteFile(receiptPath, append(data, '\n'), 0o644); err != nil { t.Fatal(err) }
+	if sourceSHA := os.Getenv("RCC_SOURCE_SHA"); sourceSHA != "" {
+		receipt["commitSha"] = sourceSHA
+	}
+	if err := os.MkdirAll(filepath.Dir(receiptPath), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	data, err := json.MarshalIndent(receipt, "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(receiptPath, append(data, '\n'), 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestHTTPOptionsConfigureUserAgentAndTimeout(t *testing.T) {
