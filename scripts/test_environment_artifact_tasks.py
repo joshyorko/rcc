@@ -50,6 +50,12 @@ class ArtifactTaskTests(unittest.TestCase):
       self.assertEqual((home / "hololib" / "catalog" / "fixture-v12").read_bytes(), catalog)
       self.assertEqual((home / "hololib" / "library" / "aa" / "aa" / "aa" / legacy_id).read_bytes(), stored)
 
+  def test_self_host_archive_uses_explicit_local_trust_policy(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split('candidate_command =', 1)[1].split('candidate_result =', 1)[0]
+    for marker in ('--trust-carrier', '--trust-carrier-type', 'filesystem', '--permissive-local'):
+      self.assertIn(marker, block)
+
   def test_artifact_tasks_are_registered_in_invoke_and_toolkit(self):
     collection = Collection.from_module(tasks)
     expected = {

@@ -662,7 +662,10 @@ def selfHost(c):
         # creates the v12 closure, the candidate imports the archive, and the
         # old binary then consumes that same home through its legacy command.
         candidate_env = os.environ.copy(); candidate_env["ROBOCORP_HOME"] = str(home_a)
-        candidate_command = [str(generation_b), "env", "acquire", "--archive", str(archive), "--json"]
+        trust_root = home_a / "artifacts" / "v1" / "trust"
+        candidate_command = [str(generation_b), "env", "acquire", "--archive", str(archive),
+                             "--trust-carrier", str(trust_root), "--trust-carrier-type", "filesystem",
+                             "--permissive-local", "--json"]
         candidate_result = subprocess.run(
             candidate_command, check=True, env=candidate_env, capture_output=True, text=True
         )
