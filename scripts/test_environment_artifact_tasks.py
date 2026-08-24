@@ -88,6 +88,10 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("nativeExtension", task)
     self.assertIn("sqliteVersion", task)
 
+  def test_native_robot_binary_uses_the_platform_executable_suffix(self):
+    self.assertTrue(artifact_robot_library.native_rcc_binary("nt").endswith("build/rcc.exe"))
+    self.assertTrue(artifact_robot_library.native_rcc_binary("posix").endswith("build/rcc"))
+
   def test_multi_platform_index_includes_the_native_runner_platform(self):
     manifest = {
         "artifactDigest": "sha256:" + "1" * 64,

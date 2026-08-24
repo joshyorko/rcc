@@ -300,6 +300,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 *** Keywords ***
 Prepare Environment Artifact Acceptance
     library.Log To Console    phase=suite-setup:start
+    ${native_rcc}=    Native RCC Binary
+    Set Suite Variable    ${RCC}    ${native_rcc}
     Set Suite Variable    ${FIXTURE_ROOT}    ${None}
     ${fixture}=    New Environment Artifact Fixture
     Set Suite Variable    ${FIXTURE_ROOT}      ${fixture}[root]

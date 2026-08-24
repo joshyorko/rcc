@@ -20,6 +20,11 @@ def log_to_console(message):
     print(message, flush=True)
 
 
+def native_rcc_binary(platform_name=None):
+    suffix = ".exe" if (platform_name or os.name) == "nt" else ""
+    return str((Path(__file__).resolve().parents[2] / "build" / f"rcc{suffix}").resolve())
+
+
 def new_environment_artifact_fixture():
     temporary_root = Path(__file__).resolve().parents[2] / "tmp"
     temporary_root.mkdir(parents=True, exist_ok=True)
