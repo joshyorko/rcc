@@ -16,13 +16,18 @@ ${TASK}         ${CURDIR}/environment_artifacts/task.py
 
 *** Test Cases ***
 Portable Environment Is Published Acquired Executed And Reused Offline
+    library.Log To Console    phase=test:start
     Should Not Be Equal    ${A_HOME}    ${B_HOME}
     Environment Artifact Home Should Be Empty    ${B_HOME}
+    library.Log To Console    phase=consumer-home-empty:complete
 
+    library.Log To Console    phase=binary-version:start
     ${binary_version_result}=    Run Process    ${RCC}    version
     Should Be Equal As Integers    ${binary_version_result.rc}    0
     ${binary_version}=    Set Variable    ${binary_version_result.stdout}
+    library.Log To Console    phase=binary-version:complete
 
+    library.Log To Console    phase=provider-server-start:start
     ${server}=    Start Process
     ...    ${RCC}    cache    serve
     ...    --root    ${PROVIDER_ROOT}
@@ -33,9 +38,12 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    stderr=${SERVER_STDERR}
     ...    env=${A_ENV}
     Set Suite Variable    ${SERVER}    ${server}
+    library.Log To Console    phase=provider-server-start:complete
+    library.Log To Console    phase=provider-server-json:start
     ${server_json}=    Wait For JSON File    ${SERVER_STDOUT}
     ${provider_url}=    Set Variable    ${server_json}[url]
     Should Be Equal    ${server_json}[root]    ${PROVIDER_ROOT}
+    library.Log To Console    phase=provider-server-json:complete
 
     Set To Dictionary    ${A_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test
     Log To Console    phase=producer-profile:start
@@ -291,6 +299,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
 
 *** Keywords ***
 Prepare Environment Artifact Acceptance
+    library.Log To Console    phase=suite-setup:start
     Set Suite Variable    ${FIXTURE_ROOT}    ${None}
     ${fixture}=    New Environment Artifact Fixture
     Set Suite Variable    ${FIXTURE_ROOT}      ${fixture}[root]
@@ -305,6 +314,7 @@ Prepare Environment Artifact Acceptance
     ${b_env}=    Environment Artifact Process Environment    ${B_HOME}    ${True}
     Set Suite Variable    ${A_ENV}    ${a_env}
     Set Suite Variable    ${B_ENV}    ${b_env}
+    library.Log To Console    phase=suite-setup:complete
 
 Clean Environment Artifact Acceptance
     Run Keyword And Ignore Error    Terminate All Processes    kill=${True}
