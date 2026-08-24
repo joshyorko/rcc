@@ -429,7 +429,8 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 		}
 	}
 	ready := filepath.Join(t.TempDir(), "parent-ready")
-	grandchild := "import time; time.sleep(8)"
+	grandchildProof := filepath.Join(t.TempDir(), "grandchild-survived")
+	grandchild := "import pathlib, time; time.sleep(5); pathlib.Path(" + fmt.Sprintf("%q", grandchildProof) + ").write_text('alive')"
 	parent := "import pathlib, subprocess, sys, time; subprocess.Popen([sys.executable, '-c', " + fmt.Sprintf("%q", grandchild) + "]); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -452,6 +453,14 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 	}
 	if elapsed := time.Since(started); elapsed > 4*time.Second {
 		t.Fatalf("cancelled execution waited %s for grandchild-inherited streams", elapsed)
+	}
+	if runtime.GOOS == "windows" {
+		time.Sleep(3 * time.Second)
+		if _, err := os.Stat(grandchildProof); err == nil {
+			t.Fatal("cancelled execution left its Windows grandchild running")
+		} else if !os.IsNotExist(err) {
+			t.Fatal(err)
+		}
 	}
 	if _, err := readLease(outcome.handle.ArtifactDigest, outcome.handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived cancelled execution: %v", err)

@@ -220,6 +220,10 @@ jobs:
           inv robotsetup
       - name: Show commit info
         run: inv what
+      - name: Run Windows descendant supervision acceptance
+        if: matrix.goos == 'windows'
+        shell: bash
+        run: go test -count=1 ./environmentlifecycle -run '^TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams$' -v
       - name: Run real native A-to-B acceptance
         shell: bash
         run: |
