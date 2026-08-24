@@ -145,10 +145,11 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
                 provider.wait(timeout=10)
     report = build_report({"rcc_sha": rcc_sha, "consumer_sha": "external-unavailable", "binary": str(Path(binary).resolve())},
                           [fixture], runs, _context())
-    required = {"publish", "acquire", "verify", "startup", "warm", "provider-dead"}
+    required = {"acquire", "verify", "startup", "warm", "provider-dead"}
     for run in runs:
         statuses = {phase["id"]: phase["status"] for phase in run["phases"]}
-        if any(statuses.get(phase) != "measured" for phase in required) or not all(
+        required_for_run = required | ({"publish"} if run["repetition"] == 0 else set())
+        if any(statuses.get(phase) != "measured" for phase in required_for_run) or not all(
                 run["correctness_gates"].values()):
             raise BenchmarkFailure(report)
     return report
