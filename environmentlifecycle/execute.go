@@ -135,7 +135,21 @@ func executeWithSignalsAndStreamsInDirectory(ctx context.Context, materializer M
 	process.Stdout = stdout
 	process.Stderr = stderr
 	process.WaitDelay = 3 * time.Second
+	supervisor, err := newExecutionSupervisor()
+	if err != nil {
+		return handle, child, err
+	}
+	defer func() {
+		if closeErr := supervisor.close(); err == nil && closeErr != nil {
+			err = fmt.Errorf("close execution supervisor: %w", closeErr)
+		}
+	}()
 	if err = process.Start(); err != nil {
+		return handle, child, err
+	}
+	if err = supervisor.attach(process.Process); err != nil {
+		_ = process.Process.Kill()
+		_ = process.Wait()
 		return handle, child, err
 	}
 	waited := make(chan error, 1)
@@ -147,13 +161,13 @@ func executeWithSignalsAndStreamsInDirectory(ctx context.Context, materializer M
 		case received := <-signals:
 			if received != nil {
 				if signalErr := process.Process.Signal(received); signalErr != nil && !errors.Is(signalErr, os.ErrProcessDone) {
-					_ = process.Process.Kill()
+					_ = supervisor.terminate(process.Process)
 					<-waited
 					return handle, child, fmt.Errorf("forward child signal: %w", signalErr)
 				}
 			}
 		case <-ctx.Done():
-			_ = process.Process.Kill()
+			_ = supervisor.terminate(process.Process)
 			<-waited
 			return handle, child, ctx.Err()
 		}
