@@ -111,6 +111,9 @@ jobs:
           name: release-candidate-evidence
           path: |
             tmp/self-host-v1.json
+            tmp/release-candidate-v1.json
+            tmp/coordination-blackbox-v1.json
+            tmp/large-stream-receipt.json
             tmp/environment-artifacts-robot/
             tmp/output/
 

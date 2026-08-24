@@ -399,13 +399,15 @@ class ArtifactTaskTests(unittest.TestCase):
       source = Path(directory) / "source"
       source.write_bytes(b"release-candidate")
       receipt = tasks._write_release_candidate_receipt(
-          directory, source=source, commands=["rcc run -t releaseCandidate"])
+          directory, source=source, commands=["rcc run -t releaseCandidate"],
+          gates={"artifactFocused": "passed", "largeStream": "passed"})
       payload = json.loads(receipt.read_text())
       self.assertEqual(payload["schemaVersion"], 1)
       self.assertRegex(payload["commitSha"], r"^[0-9a-f]{40}$")
       self.assertEqual(payload["source"]["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
       self.assertEqual(payload["source"]["path"], str(source.resolve()))
       self.assertEqual(payload["commands"], ["rcc run -t releaseCandidate"])
+      self.assertEqual(payload["gates"], {"artifactFocused": "passed", "largeStream": "passed"})
 
   def test_go_vet_accepts_only_clean_or_exact_known_baseline(self):
     baseline = "\n".join(tasks._known_go_vet_findings()) + "\n"

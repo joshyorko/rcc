@@ -118,7 +118,7 @@ def _promote_self_host_generation(source, candidate):
             "sourceSha256": source_digest, "candidateSha256": candidate_digest}
 
 
-def _write_release_candidate_receipt(root, *, source, commands):
+def _write_release_candidate_receipt(root, *, source, commands, gates=None):
     """Write a stable, machine-readable receipt for one release-candidate run."""
     root = Path(root)
     root.mkdir(parents=True, exist_ok=True)
@@ -135,6 +135,7 @@ def _write_release_candidate_receipt(root, *, source, commands):
         "commitSha": commit,
         "source": source_record,
         "commands": list(commands),
+        "gates": dict(gates or {}),
     }, indent=2, sort_keys=True) + "\n")
     return receipt
 
@@ -717,22 +718,28 @@ def largeStream(c):
 def releaseCandidate(c):
     """Run the complete Environment Artifacts v1 release-candidate gate."""
     _require_linux("releaseCandidate")
-    for task_name in (
+    task_names = (
         "artifactFocused",
         "artifactRace",
         "artifactVertical",
         "artifactRobot",
         "binaryInventory",
         "largeStream",
-    ):
-        c.run(_invoke_command(task_name))
-    c.run(_invoke_command("robot"))
-    c.run(_invoke_command("selfHost"))
-    c.run(_invoke_command("goVet"))
-    c.run(_invoke_command("coordinationAcceptance"))
+        "robot",
+        "selfHost",
+        "goVet",
+        "coordinationAcceptance",
+    )
+    commands = []
+    gates = {}
+    for task_name in task_names:
+        command = _invoke_command(task_name)
+        commands.append(command)
+        c.run(command)
+        gates[task_name] = "passed"
     receipt = _write_release_candidate_receipt(
         "tmp", source=Path("build/rcc"),
-        commands=[_invoke_command("releaseCandidate")])
+        commands=commands, gates=gates)
     print(f"Release-candidate receipt: {receipt}")
 
 
