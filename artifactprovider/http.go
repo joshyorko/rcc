@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"hash"
 	"io"
@@ -460,7 +461,7 @@ func handleProviderRequest(provider Provider, writer http.ResponseWriter, reques
 			descriptor := environmentartifact.Descriptor{MediaType: mediaType, Digest: digest, Size: request.ContentLength}
 			err := provider.PutObject(ctx, Blob{Descriptor: descriptor, Reader: io.LimitReader(request.Body, request.ContentLength+1)})
 			if err != nil {
-				writeProviderFailure(writer, http.StatusUnprocessableEntity)
+				writeProviderFailure(writer, providerErrorStatus(err))
 				return
 			}
 			writer.WriteHeader(http.StatusCreated)
@@ -582,7 +583,7 @@ func handleManifestRequest(provider Provider, writer http.ResponseWriter, reques
 			return
 		}
 		if err := provider.CommitManifest(request.Context(), content); err != nil {
-			writeProviderFailure(writer, http.StatusUnprocessableEntity)
+			writeProviderFailure(writer, providerErrorStatus(err))
 			return
 		}
 		writer.WriteHeader(http.StatusCreated)
@@ -625,11 +626,22 @@ func writeProviderReadError(writer http.ResponseWriter, request *http.Request, e
 
 func writeProviderJSON(writer http.ResponseWriter, value any, err error) {
 	if err != nil {
-		writeProviderFailure(writer, http.StatusUnprocessableEntity)
+		writeProviderFailure(writer, providerErrorStatus(err))
 		return
 	}
 	writer.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(writer).Encode(value)
+}
+
+func providerErrorStatus(err error) int {
+	switch {
+	case errors.Is(err, ErrRateLimited):
+		return http.StatusTooManyRequests
+	case errors.Is(err, ErrQuotaExceeded):
+		return http.StatusInsufficientStorage
+	default:
+		return http.StatusUnprocessableEntity
+	}
 }
 
 func writeProviderFailure(writer http.ResponseWriter, status int) {

@@ -166,6 +166,18 @@ func (p *Policy) GetObject(ctx context.Context, d environmentartifact.Descriptor
 	}
 	return p.Provider.GetObject(ctx, d)
 }
+
+func (p *Policy) GetObjectByDigest(ctx context.Context, d environmentartifact.Digest) (io.ReadCloser, int64, error) {
+	p.requests.Add(1)
+	if err := p.allow(); err != nil {
+		return nil, 0, err
+	}
+	reader, ok := p.Provider.(ObjectReaderProvider)
+	if !ok {
+		return nil, 0, fmt.Errorf("object reads unavailable")
+	}
+	return reader.GetObjectByDigest(ctx, d)
+}
 func (p *Policy) ResolveManifest(ctx context.Context, d environmentartifact.Digest) ([]byte, error) {
 	p.requests.Add(1)
 	if err := p.allow(); err != nil {

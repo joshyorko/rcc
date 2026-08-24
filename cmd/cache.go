@@ -4,11 +4,13 @@ import (
 	"context"
 	"io"
 
+	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/spf13/cobra"
 )
 
 type cacheCommandDependencies struct {
-	serve func(context.Context, string, string, io.Writer) error
+	serve          func(context.Context, string, string, io.Writer) error
+	serveWithLimit func(context.Context, string, string, io.Writer, artifactprovider.Limits) error
 }
 
 func newCacheCommand(dependencies cacheCommandDependencies) *cobra.Command {
@@ -22,5 +24,5 @@ func newCacheCommand(dependencies cacheCommandDependencies) *cobra.Command {
 }
 
 func init() {
-	rootCmd.AddCommand(newCacheCommand(cacheCommandDependencies{serve: serveArtifactCache}))
+	rootCmd.AddCommand(newCacheCommand(cacheCommandDependencies{serve: serveArtifactCache, serveWithLimit: serveArtifactCacheWithOptions}))
 }

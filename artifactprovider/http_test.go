@@ -3,6 +3,7 @@ package artifactprovider
 import (
 	"bytes"
 	"context"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"net"
@@ -10,8 +11,10 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -51,6 +54,64 @@ func TestHTTPOptionsLoadCustomCAFile(t *testing.T) {
 	_, err = NewHTTPWithOptions("https://example.test", HTTPOptions{CAFile: file.Name()})
 	if err == nil || !strings.Contains(err.Error(), "CA") {
 		t.Fatalf("expected CA error, got %v", err)
+	}
+}
+
+func TestHTTPOptionsUseProxyNoProxyAndCustomCAForRealRequests(t *testing.T) {
+	target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{}`)
+	}))
+	defer target.Close()
+	var proxied atomic.Int32
+	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		proxied.Add(1)
+		response, err := http.DefaultTransport.RoundTrip(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadGateway)
+			return
+		}
+		defer response.Body.Close()
+		for key, values := range response.Header {
+			w.Header()[key] = values
+		}
+		w.WriteHeader(response.StatusCode)
+		_, _ = io.Copy(w, response.Body)
+	}))
+	defer proxy.Close()
+	client, err := NewHTTPWithOptions(target.URL, HTTPOptions{ProxyURL: proxy.URL, NoProxy: target.Listener.Addr().String()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Health(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if proxied.Load() != 0 {
+		t.Fatalf("no-proxy request went through proxy: %d", proxied.Load())
+	}
+	client, err = NewHTTPWithOptions(target.URL, HTTPOptions{ProxyURL: proxy.URL})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := client.Health(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if proxied.Load() != 1 {
+		t.Fatalf("proxied request count=%d, want 1", proxied.Load())
+	}
+
+	tlsTarget := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(w, `{}`)
+	}))
+	defer tlsTarget.Close()
+	ca := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: tlsTarget.Certificate().Raw})
+	tlsClient, err := NewHTTPWithOptions(tlsTarget.URL, HTTPOptions{CAPEM: ca})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := tlsClient.Health(context.Background()); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -224,6 +285,93 @@ func TestHTTPProviderMatchesFilesystemProviderSemantics(t *testing.T) {
 	}
 	if !bytes.Equal(resolved, fixture.manifestBytes) {
 		t.Fatal("HTTP-resolved manifest differs from committed bytes")
+	}
+}
+
+func TestHTTPInterruptedUploadIsInvisibleUntilFullRestart(t *testing.T) {
+	provider, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(provider))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	content := []byte("restartable upload")
+	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
+	if err := client.PutObject(context.Background(), Blob{Descriptor: descriptor, Reader: bytes.NewReader(content[:len(content)-1])}); err == nil {
+		t.Fatal("short upload unexpectedly succeeded")
+	}
+	if _, err := provider.GetObject(context.Background(), descriptor); err == nil {
+		t.Fatal("short upload became visible")
+	}
+	if err := client.PutObject(context.Background(), Blob{Descriptor: descriptor, Reader: bytes.NewReader(content)}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestHTTPPolicyQuotaFailureIsExplicit(t *testing.T) {
+	filesystem, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(NewPolicy(filesystem, Limits{MaxBytes: 2})))
+	defer server.Close()
+	content := []byte("too large")
+	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: environmentartifact.DigestBytes(content), Size: int64(len(content))}
+	request, err := http.NewRequest(http.MethodPut, server.URL+"/v1/objects/sha256/"+descriptor.Digest.Hex(), bytes.NewReader(content))
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Content-Type", descriptor.MediaType)
+	request.ContentLength = descriptor.Size
+	response, err := server.Client().Do(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = response.Body.Close()
+	if response.StatusCode != http.StatusInsufficientStorage {
+		t.Fatalf("quota status=%d, want %d", response.StatusCode, http.StatusInsufficientStorage)
+	}
+}
+
+func TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds(t *testing.T) {
+	content := []byte("restartable download")
+	digest := environmentartifact.DigestBytes(content)
+	var requests atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Length", strconv.Itoa(len(content)))
+		if requests.Add(1) == 1 {
+			_, _ = w.Write(content[:len(content)-1])
+			return
+		}
+		_, _ = w.Write(content)
+	}))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+	descriptor := environmentartifact.Descriptor{MediaType: "application/octet-stream", Digest: digest, Size: int64(len(content))}
+	reader, err := client.GetObject(context.Background(), descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := io.ReadAll(reader); err == nil {
+		t.Fatal("truncated download unexpectedly verified")
+	}
+	_ = reader.Close()
+	reader, err = client.GetObject(context.Background(), descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := io.ReadAll(reader)
+	_ = reader.Close()
+	if err != nil || !bytes.Equal(got, content) {
+		t.Fatalf("full restart err=%v content=%q", err, got)
 	}
 }
 
