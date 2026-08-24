@@ -122,7 +122,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_REAL_BINARY", native_job)
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
-    self.assertIn("RCC_SOURCE_SHA: ${{ github.sha }}", native_job)
+    self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
@@ -398,7 +398,7 @@ class ArtifactTaskTests(unittest.TestCase):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
     self.assertIn("_validate_receipt_commit", native_job)
-    self.assertIn('os.environ["GITHUB_SHA"]', native_job)
+    self.assertIn('os.environ["RCC_CANDIDATE_SHA"]', native_job)
 
   def test_release_candidate_validates_complete_promotion_receipt_closure(self):
     expected = {

@@ -26,9 +26,22 @@ jobs:
     runs-on: ubuntu-latest
     # Build the exact commit bytes consumed by native runtime jobs and releases.
     if: github.event_name == 'push' || github.event_name == 'pull_request'
+    env:
+      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha="$(git rev-parse HEAD)"
+          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
+            echo "Build checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
+            exit 1
+          fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: "1.26.5"
@@ -84,12 +97,24 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     env:
+      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       ROBOCORP_HOME: ${{ github.workspace }}/../rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
       RCC_N1_BINARY: ${{ github.workspace }}/tmp/released-rcc/rcc
       RCC_N1_ARCHIVE: ${{ github.workspace }}/tmp/rcc-n1-environment.rcca
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha="$(git rev-parse HEAD)"
+          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
+            echo "Release-candidate checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
+            exit 1
+          fi
       - name: Install pinned released RCC
         run: |
           set -euo pipefail
@@ -153,15 +178,27 @@ jobs:
             goos: windows
             goarch: amd64
     env:
+      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       RCC_NATIVE_PLATFORM: ${{ matrix.platform }}
       RCC_NATIVE_ASSET: ${{ matrix.asset }}
       RCC_NATIVE_BINARY: ${{ matrix.binary }}
       RCC_NATIVE_GOOS: ${{ matrix.goos }}
       RCC_NATIVE_GOARCH: ${{ matrix.goarch }}
-      RCC_SOURCE_SHA: ${{ github.sha }}
+      RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact candidate checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha="$(git rev-parse HEAD)"
+          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
+            echo "Native checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
+            exit 1
+          fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: "1.26.5"
@@ -318,7 +355,7 @@ jobs:
 
           try:
               data = json.loads(receipt.read_text())
-              _validate_receipt_commit(data, os.environ["GITHUB_SHA"])
+              _validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])
               robot_evidence = json.loads(robot.read_text())
               binary = require(data, "binary", "receipt")
               exact = require(data, "exactBinaryCLI", "receipt")
@@ -372,6 +409,8 @@ jobs:
     # Grant only the permissions needed to publish a release
     permissions:
       contents: write
+    env:
+      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
     steps:
       - name: Debug Release Job
@@ -380,6 +419,18 @@ jobs:
           echo "GitHub event name: ${{ github.event_name }}"
           echo "Build job status: ${{ needs.build.result }}"
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Assert exact candidate checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_sha="$(git rev-parse HEAD)"
+          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
+            echo "Release checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
+            exit 1
+          fi
       - name: Download Built RCC Binaries
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
@@ -454,9 +505,16 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
+          set -euo pipefail
           TAG="$RELEASE_TAG"
           if [[ ! "$TAG" =~ ^v[0-9]+(\.[0-9]+)*([-.][0-9A-Za-z]+)*$ ]]; then
             echo "Invalid release tag: $TAG"
+            exit 1
+          fi
+          git fetch --force origin "refs/tags/${TAG}:refs/tags/${TAG}"
+          tag_sha="$(git rev-parse "${TAG}^{commit}")"
+          if [[ "$tag_sha" != "$RCC_CANDIDATE_SHA" ]]; then
+            echo "Release tag target differs: $tag_sha != $RCC_CANDIDATE_SHA"
             exit 1
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
@@ -473,7 +531,7 @@ jobs:
         with:
           files: rcc-builds/*
           tag_name: ${{ steps.validate_tag.outputs.tag }}
-          target_commitish: ${{ github.sha }}
+          target_commitish: ${{ github.event.pull_request.head.sha || github.sha }}
           draft: true
           prerelease: ${{ contains(github.ref_name, '-rc.') }}
 

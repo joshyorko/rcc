@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import validate_release_topology as topology
 from validate_release_topology import validate
 
 
@@ -61,6 +62,42 @@ class ReleaseTopologyTests(unittest.TestCase):
     def test_repository_workflow_marks_rc_tags_as_prereleases(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
+
+    def test_candidate_identity_resolves_pr_head_main_push_and_tag_push(self):
+        resolver = getattr(topology, "resolve_candidate_sha", None)
+        self.assertIsNotNone(resolver, "release candidate SHA resolver is missing")
+        merge_sha = "1" * 40
+        head_sha = "2" * 40
+        self.assertEqual(resolver("pull_request", merge_sha, head_sha), head_sha)
+        self.assertNotEqual(resolver("pull_request", merge_sha, head_sha), merge_sha)
+        self.assertEqual(resolver("push", "3" * 40), "3" * 40)
+        self.assertEqual(resolver("tag", "4" * 40), "4" * 40)
+
+    def test_repository_workflow_closes_release_identity_topology(self):
+        validator = getattr(topology, "validate_release_identity_topology", None)
+        self.assertIsNotNone(validator, "release identity topology validator is missing")
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        self.assertEqual(validator(workflow), [])
+
+    def test_release_identity_topology_rejects_merge_checkout_and_sha_drift(self):
+        validator = getattr(topology, "validate_release_identity_topology", None)
+        self.assertIsNotNone(validator, "release identity topology validator is missing")
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        candidate = "${{ github.event.pull_request.head.sha || github.sha }}"
+        for old, replacement in (
+            (candidate, "${{ github.sha }}"),
+            (f"ref: {candidate}", "ref: refs/pull/119/merge"),
+            (f"RCC_SOURCE_SHA: {candidate}", "RCC_SOURCE_SHA: ${{ github.sha }}"),
+            (f"target_commitish: {candidate}", "target_commitish: ${{ github.sha }}"),
+        ):
+            mutated = workflow.replace(old, replacement, 1)
+            self.assertTrue(validator(mutated), (old, replacement))
+
+    def test_manual_stable_tag_path_requires_current_main_identity(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/create-release-tag.yml").read_text()
+        self.assertIn('target_sha="$(git rev-parse HEAD)"', workflow)
+        self.assertIn('main_sha="$(git rev-parse refs/remotes/origin/main)"', workflow)
+        self.assertIn('if [[ "$target_sha" != "$main_sha" ]]', workflow)
 
     def test_rejects_any_runtime_root_beneath_checkout(self):
         for variable in ("ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"):

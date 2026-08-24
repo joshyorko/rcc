@@ -17,6 +17,48 @@ INDEX_ASSETS = {
 }
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
+CANDIDATE_SHA_EXPRESSION = "${{ github.event.pull_request.head.sha || github.sha }}"
+RELEASE_IDENTITY_JOBS = ("build", "release-candidate", "robot", "release")
+
+
+def resolve_candidate_sha(event_name, github_sha, pull_request_head_sha=None):
+    candidate = pull_request_head_sha if event_name == "pull_request" else github_sha
+    if not isinstance(candidate, str) or re.fullmatch(r"[0-9a-f]{40}", candidate) is None:
+        raise ValueError(f"invalid candidate SHA for {event_name}: {candidate!r}")
+    return candidate
+
+
+def _workflow_job(workflow_text, name):
+    match = re.search(rf"(?ms)^  {re.escape(name)}:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow_text)
+    return match.group(1) if match else ""
+
+
+def validate_release_identity_topology(workflow_text):
+    errors = []
+    for name in RELEASE_IDENTITY_JOBS:
+        job = _workflow_job(workflow_text, name)
+        if not job:
+            errors.append(f"missing release identity job: {name}")
+            continue
+        if f"RCC_CANDIDATE_SHA: {CANDIDATE_SHA_EXPRESSION}" not in job:
+            errors.append(f"{name} does not derive the intended candidate SHA")
+        if f"ref: {CANDIDATE_SHA_EXPRESSION}" not in job:
+            errors.append(f"{name} checkout is not pinned to the intended candidate SHA")
+        for marker in ("Assert exact candidate checkout", "git rev-parse HEAD", '"$actual_sha" != "$RCC_CANDIDATE_SHA"'):
+            if marker not in job:
+                errors.append(f"{name} lacks candidate checkout assertion: {marker}")
+    native = _workflow_job(workflow_text, "robot")
+    if f"RCC_SOURCE_SHA: {CANDIDATE_SHA_EXPRESSION}" not in native:
+        errors.append("robot native source SHA is not the intended candidate SHA")
+    if '_validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])' not in native:
+        errors.append("robot native receipt is not validated against the intended candidate SHA")
+    release = _workflow_job(workflow_text, "release")
+    if f"target_commitish: {CANDIDATE_SHA_EXPRESSION}" not in release:
+        errors.append("release target is not the intended candidate SHA")
+    for marker in ('git rev-parse "${TAG}^{commit}"', '"$tag_sha" != "$RCC_CANDIDATE_SHA"'):
+        if marker not in release:
+            errors.append(f"release tag target assertion is missing: {marker}")
+    return errors
 
 
 def _runtime_root_is_beneath_checkout(value):
@@ -62,6 +104,8 @@ def validate(root, workflow, index, asset_root=None):
         if staged != ASSETS:
             errors.append(f"workflow staged assets mismatch: {sorted(staged)}")
         errors.extend(validate_release_runtime_roots(text))
+        if re.search(r"(?m)^  build:\s*$", text):
+            errors.extend(validate_release_identity_topology(text))
     if index:
         data = json.loads(Path(index).read_text())
         tested = data.get("tested", [])

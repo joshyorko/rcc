@@ -30,6 +30,8 @@
   self-host/aggregate receipts atomically with exact commit identity
 - isolate tag-job RCC state outside the checkout and require direct exact-SHA
   binding across the complete promotion-receipt closure
+- pin PR build/native and tag promotion to one event-resolved candidate SHA,
+  with runtime checkout and release-tag target assertions
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance
