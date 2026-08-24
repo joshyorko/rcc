@@ -415,31 +415,23 @@ func TestExecuteWithStreamsPreservesRequestResponseAndReleasesAfterReap(t *testi
 
 func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.T) {
 	materialization := acquiredMaterialization(t)
-	hostPython, err := hostPythonPath()
+	testExecutable, err := os.Executable()
 	if err != nil {
-		t.Skip("host Python is unavailable")
+		t.Fatal(err)
 	}
+	executableName := "python"
 	if runtime.GOOS == "windows" {
-		installWindowsTestPython(t, materialization.Path, hostPython)
-	} else {
-		python := filepath.Join(materialization.Path, "python")
-		wrapper := []byte(fmt.Sprintf("#!/bin/sh\nexec %q \"$@\"\n", hostPython))
-		if err := os.WriteFile(python, wrapper, 0o750); err != nil {
-			t.Fatal(err)
-		}
+		executableName += ".exe"
+	}
+	testBinary, err := os.ReadFile(testExecutable)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(materialization.Path, executableName), testBinary, 0o750); err != nil {
+		t.Fatal(err)
 	}
 	ready := filepath.Join(t.TempDir(), "parent-ready")
 	grandchildProof := filepath.Join(t.TempDir(), "grandchild-survived")
-	parentScript := filepath.Join(t.TempDir(), "parent.py")
-	parent := "" +
-		"import pathlib, subprocess, sys, time\n" +
-		"grandchild = \"import pathlib, sys, time; time.sleep(5); pathlib.Path(sys.argv[1]).write_text('alive')\"\n" +
-		"subprocess.Popen([sys.argv[3], '-c', grandchild, sys.argv[2]])\n" +
-		"pathlib.Path(sys.argv[1]).write_text('ready')\n" +
-		"time.sleep(30)\n"
-	if err := os.WriteFile(parentScript, []byte(parent), 0o600); err != nil {
-		t.Fatal(err)
-	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var stdout, stderr bytes.Buffer
@@ -450,7 +442,7 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 	}
 	done := make(chan result, 1)
 	go func() {
-		handle, child, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", parentScript, ready, grandchildProof, hostPython}, nil, &stdout, &stderr)
+		handle, child, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", "-test.run=^TestExecutionDescendantHelper$", "--", "parent", ready, grandchildProof}, nil, &stdout, &stderr)
 		done <- result{handle: handle, child: child, err: executeErr}
 	}()
 	deadline := time.Now().Add(5 * time.Second)
@@ -487,6 +479,46 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 	}
 	if _, err := readLease(outcome.handle.ArtifactDigest, outcome.handle.LeaseID); !os.IsNotExist(err) {
 		t.Fatalf("lease survived cancelled execution: %v", err)
+	}
+}
+
+func TestExecutionDescendantHelper(t *testing.T) {
+	separator := -1
+	for index, argument := range os.Args {
+		if argument == "--" {
+			separator = index
+			break
+		}
+	}
+	if separator < 0 || len(os.Args) <= separator+1 {
+		return
+	}
+	arguments := os.Args[separator+1:]
+	switch arguments[0] {
+	case "parent":
+		if len(arguments) != 3 {
+			os.Exit(91)
+		}
+		grandchild := exec.Command(os.Args[0], "-test.run=^TestExecutionDescendantHelper$", "--", "grandchild", arguments[2])
+		grandchild.Stdout = os.Stdout
+		grandchild.Stderr = os.Stderr
+		if err := grandchild.Start(); err != nil {
+			os.Exit(92)
+		}
+		if err := os.WriteFile(arguments[1], []byte("ready"), 0o600); err != nil {
+			os.Exit(93)
+		}
+		time.Sleep(30 * time.Second)
+	case "grandchild":
+		if len(arguments) != 2 {
+			os.Exit(94)
+		}
+		time.Sleep(5 * time.Second)
+		if err := os.WriteFile(arguments[1], []byte("alive"), 0o600); err != nil {
+			os.Exit(95)
+		}
+	default:
+		os.Exit(96)
 	}
 }
 
