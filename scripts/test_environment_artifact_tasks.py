@@ -18,6 +18,17 @@ from robot_tests.environment_artifacts import library as artifact_robot_library 
 
 
 class ArtifactTaskTests(unittest.TestCase):
+  def test_self_host_uses_the_archive_legacy_blueprint(self):
+    with tempfile.TemporaryDirectory() as directory:
+      archive = Path(directory) / "fixture.rcca"
+      blueprint = b"channels:\n- conda-forge\ndependencies:\n- python=3.11\n"
+      digest = hashlib.sha256(blueprint).hexdigest()
+      manifest = {"legacyBlueprint": {"digest": "sha256:" + digest}}
+      with zipfile.ZipFile(archive, "w") as carrier:
+        carrier.writestr("rcc-environment/manifest.json", json.dumps(manifest))
+        carrier.writestr(f"rcc-environment/legacy-blueprints/{digest}", blueprint)
+      self.assertEqual(tasks._archive_legacy_blueprint(archive), blueprint)
+
   def test_artifact_tasks_are_registered_in_invoke_and_toolkit(self):
     collection = Collection.from_module(tasks)
     expected = {

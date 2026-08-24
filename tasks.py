@@ -59,6 +59,13 @@ def _legacy_closure_state(home, archive):
     return state
 
 
+def _archive_legacy_blueprint(archive):
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        digest = manifest["legacyBlueprint"]["digest"].split(":", 1)[1]
+        return carrier.read(f"rcc-environment/legacy-blueprints/{digest}")
+
+
 def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a, home_b, commands,
                              binary_metadata=None, evidence_paths=None):
     if not binary_metadata or not evidence_paths:
@@ -566,8 +573,12 @@ def selfHost(c):
         "tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\n"
         "condaConfigFile: conda.yaml\n"
     )
+    n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     conda = root / "conda.yaml"
-    conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
+    if n1_archive:
+        conda.write_bytes(_archive_legacy_blueprint(Path(n1_archive).resolve()))
+    else:
+        conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
 
     def invoke(binary, home, step, generation=None):
         env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
@@ -609,7 +620,6 @@ def selfHost(c):
     v12(released, home_a, "released-v12")
     v12(str(generation_b), home_a, "candidate-v12")
     v12(released, home_b, "released-v12-compatibility")
-    n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     if os.environ.get("RCC_N1_BINARY") and not n1_archive:
         raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
     if n1_archive:
