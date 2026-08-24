@@ -29,6 +29,9 @@
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance
+- retain the proven v12 gzip/object-per-file materializer for v18.19 while
+  keeping comparative materializer/storage optimization research in #125
+  explicitly post-release
 
 ### Security
 

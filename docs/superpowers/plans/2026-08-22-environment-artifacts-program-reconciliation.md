@@ -35,8 +35,7 @@
 | #124 | Canonical archive names and basic traversal bounds | Partial | `environmentartifact/archive.go`; `9ddcd041` |
 | #124 | v12 wrap/export/import, cross-carrier identity, bundle modes, corrupt/bomb/interruption tests | Missing | no archive writer or lifecycle importer |
 | #124 | Upgrade/rollback and legacy Hololib/bundle compatibility | Partial | legacy tests/docs exist; no Manifest carrier migration proof |
-| #125 | Reproducible toolkit benchmark and committed raw evidence | Partial | synthetic `developer/benchmarks/holotree.py`; no raw baseline |
-| #125 | Real Actions workload, prior #64 retirement, ranked optimization decision | Missing | no current workload evidence or ranked decision |
+| #125 | Post-v18.19 materializer/storage R&D; reproducible benchmark, real workload, and ranked decision | Non-blocking | retained open under the authoritative scope correction; not a v18.19 release gate |
 | #126 | Deterministic provenance/SBOM identity binding and policy model | Partial | `artifacttrust/trust.go`; `535ebbf2` |
 | #126 | HTTP/archive integration, tamper/unknown/expired/revoked signer, execution enforcement, receipts/redaction | Missing | unit-only trust package |
 | #127 | Claim/heartbeat/epoch/takeover coordination and conflict policy | Missing | `docs/environment-build-coordination.md` only |
@@ -163,7 +162,10 @@
 - [ ] Run local Linux tests and dispatch platform workflows; record exact native receipts and correct unsupported claims.
 - [ ] Commit with DCO and push.
 
-### Task 7: Benchmark Evidence and Optimization Decision
+### Task 7: Post-v18.19 Benchmark Evidence and Optimization Decision (Non-blocking)
+
+This task remains valid R&D under #125 but is explicitly outside the v18.19
+release-critical dependency graph.
 
 **Files:**
 - Extend: `developer/benchmarks/holotree.py`, `developer/benchmarks/README.md`, `developer/toolkit.yaml`

@@ -37,16 +37,19 @@ versioned machine-readable CLI/JSON output; this release does not promise an
 arbitrary embeddable-Go-library API. That boundary does not reduce the
 Environment Artifacts program scope.
 
-Before v18.19.0 can be released, the RCC-owned acceptance criteria in #121
-through #127 must be implemented and proven: full compatibility rejection,
+Before v18.19.0 can be released, the RCC-owned acceptance criteria in #121,
+#122, #123, #124, #126, and #127 must be implemented and proven: full
+compatibility rejection,
 lease/crash/repair/GC, production providers and a second provider,
 deterministic offline carrier convergence, executable trust and revocation,
-generic build coordination/prewarming, and the representative benchmark plus
-optimization decision. Internal `artifacttrust` or `buildcoord` seams alone do
-not satisfy those contracts.
+and generic build coordination/prewarming. Internal `artifacttrust` or
+`buildcoord` seams alone do not satisfy those contracts.
+
+#125 remains open as post-v18.19 materializer/storage performance research. Its
+comparative benchmark and optimization decision do not block this release.
 
 Optional experiments remain conditional on evidence and explicit issue
 language: OCI, FUSE, zstd, packfiles, reflinks, and hardlinks are not mandatory
-unless the accepted benchmark decision gates justify one. Kubernetes, a
+for v18.19. Kubernetes, a
 broker, a shared writable fleet Holotree, a TUI, and replacement of
 `rccremote` remain non-goals.
