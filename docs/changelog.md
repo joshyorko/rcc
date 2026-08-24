@@ -32,6 +32,8 @@
   binding across the complete promotion-receipt closure
 - pin PR build/native and tag promotion to one event-resolved candidate SHA,
   with runtime checkout and release-tag target assertions
+- compare the documented legacy `go vet` baseline independent of parallel
+  package output order while still rejecting any finding drift
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance

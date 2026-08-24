@@ -536,6 +536,8 @@ class ArtifactTaskTests(unittest.TestCase):
   def test_go_vet_accepts_only_clean_or_exact_known_baseline(self):
     baseline = "\n".join(tasks._known_go_vet_findings()) + "\n"
     tasks._validate_go_vet_result(1, baseline)
+    reordered = "\n".join(reversed(tasks._known_go_vet_findings())) + "\n"
+    tasks._validate_go_vet_result(1, reordered)
     tasks._validate_go_vet_result(0, "")
     with self.assertRaisesRegex(RuntimeError, "unexpected go vet findings"):
       tasks._validate_go_vet_result(1, baseline + "new/file.go:1:1: new finding\n")

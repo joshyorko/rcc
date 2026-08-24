@@ -273,7 +273,7 @@ def _validate_go_vet_result(returncode, output):
     findings = [line.strip() for line in output.splitlines() if line.strip()]
     if returncode == 0 and not findings:
         return
-    if findings != _known_go_vet_findings():
+    if sorted(findings) != sorted(_known_go_vet_findings()):
         raise RuntimeError(f"unexpected go vet findings: {findings}")
 
 # Determine OS-specific commands
