@@ -77,6 +77,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("Run macOS system-alias no-follow acceptance", native_job)
     self.assertIn("TestDarwinSystemAliasPathsPreserveNoFollow", native_job)
     self.assertIn("TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm", native_job)
+    self.assertIn("timeout-minutes: 25", native_job)
     self.assertIn("go test -timeout 30m", native_job)
     self.assertNotIn('"lifecycle": [', workflow)
 
