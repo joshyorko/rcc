@@ -254,7 +254,7 @@ def _new_self_host_homes():
 
 
 def _artifact_race_packages():
-    return ["./environmentartifact", "./artifactprovider", "./environmentlifecycle", "./htfs", "./cmd"]
+    return ["./common", "./environmentartifact", "./artifactprovider", "./environmentlifecycle", "./htfs", "./cmd"]
 
 
 def _known_go_vet_findings():

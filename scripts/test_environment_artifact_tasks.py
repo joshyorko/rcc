@@ -544,6 +544,7 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_artifact_race_scope_is_pinned_to_non_legacy_subpackages(self):
     self.assertEqual(tasks._artifact_race_packages(), [
+        "./common",
         "./environmentartifact",
         "./artifactprovider",
         "./environmentlifecycle",

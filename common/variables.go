@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/set"
@@ -63,7 +64,7 @@ var (
 	When                    int64
 	Clock                   *stopwatch
 	randomIdentifier        string
-	verbosity               Verbosity
+	verbosity               atomic.Uint32
 	LogHides                []string
 	Product                 ProductStrategy
 )
@@ -86,10 +87,10 @@ func init() {
 	NoTempManagement = set.Member(args, "--no-temp-management")
 	NoPycManagement = set.Member(args, "--no-pyc-management")
 	if set.Member(args, "--debug") {
-		verbosity = Debugging
+		verbosity.Store(uint32(Debugging))
 	}
 	if set.Member(args, "--trace") {
-		verbosity = Tracing
+		verbosity.Store(uint32(Tracing))
 	}
 
 	// Note: HololibCatalogLocation, HololibLibraryLocation and HololibUsageLocation
@@ -156,11 +157,11 @@ func WarrantyVoided() bool {
 }
 
 func DebugFlag() bool {
-	return verbosity >= Debugging
+	return Verbosity(verbosity.Load()) >= Debugging
 }
 
 func TraceFlag() bool {
-	return verbosity >= Tracing
+	return Verbosity(verbosity.Load()) >= Tracing
 }
 
 func VerboseEnvironmentBuilding() bool {
@@ -345,18 +346,18 @@ func DefineVerbosity(silent, debug, trace bool) {
 	override := os.Getenv(RCC_VERBOSITY)
 	switch {
 	case silent || override == SILENTLY:
-		verbosity = Silently
+		verbosity.Store(uint32(Silently))
 	case trace || override == TRACING:
-		verbosity = Tracing
+		verbosity.Store(uint32(Tracing))
 	case debug || override == DEBUGGING:
-		verbosity = Debugging
+		verbosity.Store(uint32(Debugging))
 	default:
-		verbosity = Normal
+		verbosity.Store(uint32(Normal))
 	}
 }
 
 func Silent() bool {
-	return verbosity == Silently
+	return Verbosity(verbosity.Load()) == Silently
 }
 
 func UnifyStageHandling() {
