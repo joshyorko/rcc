@@ -71,8 +71,9 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
-    self.assertIn("Run Windows descendant supervision acceptance", native_job)
+    self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
+    self.assertIn("TestIndependentProcessArtifactLockContentionBlocks", native_job)
     self.assertIn("go test -timeout 30m", native_job)
     self.assertNotIn('"lifecycle": [', workflow)
 
