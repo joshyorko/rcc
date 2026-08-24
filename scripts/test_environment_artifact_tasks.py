@@ -29,6 +29,27 @@ class ArtifactTaskTests(unittest.TestCase):
         carrier.writestr(f"rcc-environment/legacy-blueprints/{digest}", blueprint)
       self.assertEqual(tasks._archive_legacy_blueprint(archive), blueprint)
 
+  def test_self_host_installs_verified_archive_legacy_closure(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      archive = root / "fixture.rcca"
+      catalog = b"catalog"
+      stored = b"stored-object"
+      catalog_digest = hashlib.sha256(catalog).hexdigest()
+      stored_digest = hashlib.sha256(stored).hexdigest()
+      legacy_id = "a" * 64
+      manifest = {"catalogs": [{"digest": "sha256:" + catalog_digest, "legacyName": "fixture-v12"}]}
+      index = {"entries": [{"storedDigest": "sha256:" + stored_digest, "storedSize": len(stored), "legacyObjectId": legacy_id}]}
+      with zipfile.ZipFile(archive, "w") as carrier:
+        carrier.writestr("rcc-environment/manifest.json", json.dumps(manifest))
+        carrier.writestr("rcc-environment/object-index.json", json.dumps(index))
+        carrier.writestr(f"rcc-environment/catalogs/{catalog_digest}", catalog)
+        carrier.writestr(f"rcc-environment/objects/{stored_digest}", stored)
+      home = root / "home"
+      tasks._install_archive_legacy_closure(home, archive)
+      self.assertEqual((home / "hololib" / "catalog" / "fixture-v12").read_bytes(), catalog)
+      self.assertEqual((home / "hololib" / "library" / "aa" / "aa" / "aa" / legacy_id).read_bytes(), stored)
+
   def test_artifact_tasks_are_registered_in_invoke_and_toolkit(self):
     collection = Collection.from_module(tasks)
     expected = {

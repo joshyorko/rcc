@@ -66,6 +66,30 @@ def _archive_legacy_blueprint(archive):
         return carrier.read(f"rcc-environment/legacy-blueprints/{digest}")
 
 
+def _install_archive_legacy_closure(home, archive):
+    home = Path(home)
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        object_index = json.loads(carrier.read("rcc-environment/object-index.json"))
+        catalog = manifest["catalogs"][0]
+        catalog_digest = catalog["digest"].split(":", 1)[1]
+        catalog_bytes = carrier.read(f"rcc-environment/catalogs/{catalog_digest}")
+        if hashlib.sha256(catalog_bytes).hexdigest() != catalog_digest:
+            raise RuntimeError("archive catalog digest mismatch")
+        catalog_path = home / "hololib" / "catalog" / catalog["legacyName"]
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        catalog_path.write_bytes(catalog_bytes)
+        for entry in object_index["entries"]:
+            stored_digest = entry["storedDigest"].split(":", 1)[1]
+            content = carrier.read(f"rcc-environment/objects/{stored_digest}")
+            if len(content) != entry["storedSize"] or hashlib.sha256(content).hexdigest() != stored_digest:
+                raise RuntimeError(f"archive object verification failed: {stored_digest}")
+            legacy_id = entry["legacyObjectId"]
+            path = home / "hololib" / "library" / legacy_id[:2] / legacy_id[2:4] / legacy_id[4:6] / legacy_id
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+
+
 def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a, home_b, commands,
                              binary_metadata=None, evidence_paths=None):
     if not binary_metadata or not evidence_paths:
@@ -626,6 +650,8 @@ def selfHost(c):
         archive = Path(n1_archive).resolve()
         if not archive.is_file():
             raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        _install_archive_legacy_closure(home_a, archive)
+        v12(released, home_a, "released-v12-archive-closure")
         legacy_before = _legacy_closure_state(home_a, archive)
         artifact_before = _state_digests(home_a / "artifacts" / "v1")
         archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
