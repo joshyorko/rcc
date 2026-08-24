@@ -49,6 +49,8 @@
 
 ### Reliability
 
+- retry benign per-key lock turnover during concurrent prewarm so waiters do
+  not report unsafe state or start duplicate cold builds
 - stream offline archive objects through bounded verification, preserve and
   validate trust attachments, and keep incomplete archive imports invisible
 - supervise Windows execution descendants with Job Objects, block correctly on

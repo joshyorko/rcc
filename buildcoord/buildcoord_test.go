@@ -888,6 +888,50 @@ func TestBlackBoxCoordinationContract(t *testing.T) {
 	}
 }
 
+func TestConcurrentPrewarmRetriesVanishedContendedLock(t *testing.T) {
+	const (
+		iterations = 50
+		callers    = 12
+	)
+	root := t.TempDir()
+	for iteration := 0; iteration < iterations; iteration++ {
+		clock := &fakeClock{now: time.Unix(100, 0)}
+		c := newFilesystem(filepath.Join(root, fmt.Sprintf("iteration-%d", iteration)), clock)
+		key := testKey()
+		key.SpecificationDigest = fmt.Sprintf("sha256:vanished-lock-%d", iteration)
+		start := make(chan struct{})
+		errorsSeen := make(chan error, callers)
+		var builds atomic.Int32
+		var workers sync.WaitGroup
+		for caller := 0; caller < callers; caller++ {
+			workers.Add(1)
+			go func() {
+				defer workers.Done()
+				<-start
+				_, err := c.Prewarm(context.Background(), PrewarmRequest{
+					Keys: []BuildKey{key}, Capacity: 1, Wait: true, Backoff: 100 * time.Microsecond,
+				}, func(context.Context, Claim) (Artifact, error) {
+					builds.Add(1)
+					time.Sleep(500 * time.Microsecond)
+					return Artifact{Digest: "sha256:one-cold-build", Verified: true}, nil
+				})
+				errorsSeen <- err
+			}()
+		}
+		close(start)
+		workers.Wait()
+		close(errorsSeen)
+		for err := range errorsSeen {
+			if err != nil {
+				t.Fatalf("iteration %d concurrent prewarm: %v", iteration, err)
+			}
+		}
+		if builds.Load() != 1 {
+			t.Fatalf("iteration %d cold builds = %d", iteration, builds.Load())
+		}
+	}
+}
+
 func TestHelperProcessClaimRace(t *testing.T) {
 	if os.Getenv("BUILDCOORD_HELPER") == "1" {
 		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})

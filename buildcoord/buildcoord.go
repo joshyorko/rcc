@@ -1407,7 +1407,13 @@ func (c *Filesystem) lock(ctx context.Context, key BuildKey) (func() error, erro
 			}, nil
 		}
 		if os.IsExist(err) {
-			if info, statErr := os.Lstat(c.lockPath(key)); statErr != nil || info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+			info, statErr := os.Lstat(c.lockPath(key))
+			if os.IsNotExist(statErr) {
+				// The holder released the lock after O_EXCL observed it.
+				// Retry instead of misclassifying normal lock turnover as unsafe state.
+				continue
+			}
+			if statErr != nil || info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
 				return nil, ErrUnsafeState
 			}
 			if record, readErr := c.readLock(key); readErr == nil {
