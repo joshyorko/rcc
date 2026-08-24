@@ -60,6 +60,10 @@ class ArtifactTaskTests(unittest.TestCase):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn("'\"env\"' in old_error", source)
 
+  def test_self_host_legacy_fixture_declares_artifacts_directory(self):
+    source = (ROOT / "tasks.py").read_text()
+    self.assertIn('condaConfigFile: conda.yaml\\nartifactsDir: output\\n', source)
+
   def test_artifact_tasks_are_registered_in_invoke_and_toolkit(self):
     collection = Collection.from_module(tasks)
     expected = {

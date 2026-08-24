@@ -595,7 +595,7 @@ def selfHost(c):
     fixture = root / "robot.yaml"
     fixture.write_text(
         "tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\n"
-        "condaConfigFile: conda.yaml\n"
+        "condaConfigFile: conda.yaml\nartifactsDir: output\n"
     )
     n1_archive = os.environ.get("RCC_N1_ARCHIVE")
     conda = root / "conda.yaml"
