@@ -224,6 +224,9 @@ jobs:
         if: matrix.goos == 'windows'
         shell: bash
         run: go test -count=1 ./environmentlifecycle -run '^(TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams|TestIndependentProcessArtifactLockContentionBlocks)$' -v
+      - name: Run Windows Robot binary spelling acceptance
+        if: matrix.goos == 'windows'
+        run: python -m robot -d tmp/native-binary-probe robot_tests/environment_artifact_binary.robot
       - name: Run macOS system-alias no-follow acceptance
         if: matrix.goos == 'darwin'
         shell: bash

@@ -74,6 +74,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
     self.assertIn("TestIndependentProcessArtifactLockContentionBlocks", native_job)
+    self.assertIn("Run Windows Robot binary spelling acceptance", native_job)
+    self.assertIn("environment_artifact_binary.robot", native_job)
     self.assertIn("Run macOS system-alias no-follow acceptance", native_job)
     self.assertIn("TestDarwinSystemAliasPathsPreserveNoFollow", native_job)
     self.assertIn("TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm", native_job)
