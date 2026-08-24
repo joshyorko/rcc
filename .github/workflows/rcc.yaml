@@ -232,12 +232,17 @@ jobs:
         if: matrix.goos == 'darwin'
         shell: bash
         run: go test -count=1 ./artifactprovider ./environmentlifecycle ./settings -run '^(TestDarwinSystemAliasPathsPreserveNoFollow|TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm)$' -v
+      - name: Run Windows Environment Artifact Robot acceptance against exact binary
+        if: matrix.goos == 'windows'
+        timeout-minutes: 8
+        run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot
       - name: Run real native A-to-B acceptance
         shell: bash
         run: |
           set -euo pipefail
           RCC_REAL_ARTIFACT_TEST=1 go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
       - name: Run Environment Artifact Robot acceptance against exact binary
+        if: matrix.goos != 'windows'
         timeout-minutes: 8
         run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot
       - name: Bind Robot evidence into native runtime receipt

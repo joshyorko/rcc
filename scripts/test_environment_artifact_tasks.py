@@ -76,6 +76,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("TestIndependentProcessArtifactLockContentionBlocks", native_job)
     self.assertIn("Run Windows Robot binary spelling acceptance", native_job)
     self.assertIn("environment_artifact_binary.robot", native_job)
+    self.assertIn("Run Windows Environment Artifact Robot acceptance against exact binary", native_job)
     self.assertIn("Run macOS system-alias no-follow acceptance", native_job)
     self.assertIn("TestDarwinSystemAliasPathsPreserveNoFollow", native_job)
     self.assertIn("TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm", native_job)
