@@ -36,6 +36,8 @@
   package output order while still rejecting any finding drift
 - regenerate embedded assets before release-candidate tests so trusted tag
   jobs remain self-contained on clean checkouts
+- provision the Linux sandbox dependency before the trusted tag candidate gate
+  so build-coordination policy tests run fail-closed on ephemeral runners
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance

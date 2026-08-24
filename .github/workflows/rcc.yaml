@@ -127,6 +127,15 @@ jobs:
           echo "ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf02f2c9bb4b4ef0bfcf  ${rcc_path}" | sha256sum --check -
           chmod +x "$rcc_path"
           echo "$rcc_dir" >> "$GITHUB_PATH"
+      - name: Install Linux sandbox dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v bwrap >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install --yes bubblewrap
+          fi
+          bwrap --version
       - name: Run contained release candidate gate
         run: rcc run -r developer/toolkit.yaml --dev -t releaseCandidate
       - name: Upload release candidate evidence

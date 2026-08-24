@@ -394,6 +394,17 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
 
+  def test_release_candidate_provisions_linux_sandbox_before_contained_gate(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    release_candidate = workflow.split("\n  release-candidate:\n", 1)[1].split("\n  robot:\n", 1)[0]
+    sandbox_marker = "- name: Install Linux sandbox dependency"
+    self.assertIn(sandbox_marker, release_candidate)
+    sandbox = release_candidate.index(sandbox_marker)
+    gate = release_candidate.index("- name: Run contained release candidate gate")
+    self.assertLess(sandbox, gate)
+    self.assertIn("bubblewrap", release_candidate)
+    self.assertIn("bwrap --version", release_candidate)
+
   def test_native_receipt_aggregation_checks_candidate_commit(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
