@@ -15,6 +15,12 @@ from pathlib import Path
 FIXTURES = ({"id": "python-package-v1", "kind": "python-package", "package": "pyyaml"},)
 
 
+class BenchmarkFailure(RuntimeError):
+    def __init__(self, report):
+        super().__init__("required RCC lifecycle phase or correctness gate failed")
+        self.report = report
+
+
 def _context():
     stat = os.statvfs(tempfile.gettempdir())
     return {"platform": platform.system().lower(), "platform_release": platform.release(),
@@ -34,31 +40,37 @@ def _fixture(root):
             "robot": str(root / "robot.yaml")}
 
 
-def _record(phase, command, result, started, usage_before):
+def _scrub(value, root):
+    return value.replace(str(root), "<run-root>") if isinstance(value, str) else value
+
+
+def _record(phase, command, result, started, usage_before, scrub_root):
     usage = resource.getrusage(resource.RUSAGE_CHILDREN)
-    return {"id": phase, "operation": " ".join(command),
+    return {"id": phase, "operation": _scrub(" ".join(command), scrub_root),
             "status": "measured" if result["returncode"] == 0 else "failed",
             "wall_ns": time.perf_counter_ns() - started,
             "cpu_ns": int((usage.ru_utime - usage_before.ru_utime + usage.ru_stime - usage_before.ru_stime) * 1e9),
             "max_rss": usage.ru_maxrss, "returncode": result["returncode"],
-            "stdout": result["stdout"], "stderr": result["stderr"]}
+            "stdout": _scrub(result["stdout"], scrub_root), "stderr": _scrub(result["stderr"], scrub_root)}
 
 
 class RCCRunner:
-    def __init__(self, binary, home):
+    def __init__(self, binary, home, scrub_root=None):
         self.binary = str(Path(binary).resolve())
         if not Path(self.binary).is_file() or not os.access(self.binary, os.X_OK):
             raise ValueError("--binary must name an executable RCC candidate")
         self.home = Path(home)
+        self.scrub_root = scrub_root or self.home.parent
+        self.run_env = {}
 
     def run(self, args, phase):
         command = [self.binary, *args]
         started = time.perf_counter_ns()
         before = resource.getrusage(resource.RUSAGE_CHILDREN)
-        process = subprocess.run(command, env={**os.environ, "ROBOCORP_HOME": str(self.home)},
+        process = subprocess.run(command, env={**os.environ, **self.run_env, "ROBOCORP_HOME": str(self.home)},
                                  text=True, capture_output=True, check=False)
         result = {"returncode": process.returncode, "stdout": process.stdout.strip(), "stderr": process.stderr.strip()}
-        return _record(phase, command, result, started, before)
+        return _record(phase, command, result, started, before, self.scrub_root)
 
 
 def _json_output(record):
@@ -76,27 +88,36 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
         base = Path(directory)
         fixture = _fixture(base / "fixture")
         producer_home, consumer_home, provider_root = (base / name for name in ("producer-home", "consumer-home", "provider"))
-        producer, consumer = runner_factory(binary, producer_home), runner_factory(binary, consumer_home)
+        producer, consumer = runner_factory(binary, producer_home, base), runner_factory(binary, consumer_home, base)
         provider = subprocess.Popen([str(Path(binary).resolve()), "cache", "serve", "--root", str(provider_root), "--json"],
                                     env={**os.environ, "ROBOCORP_HOME": str(producer_home)}, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE, text=True)
         provider_url = json.loads(provider.stdout.readline())["url"]
         try:
-            published = producer.run(["env", "publish", "--robot", fixture["robot"], "--provider", provider_url, "--json"], "publish")
+            provider_args = ["provider", "add", "office", "--type", "http", "--url", provider_url,
+                             "--authorization-env", "RCC_TEST_PROVIDER_AUTHORIZATION", "--json"]
+            producer.run(provider_args, "provider-profile")
+            consumer.run(provider_args, "provider-profile")
+            env = {"RCC_TEST_PROVIDER_AUTHORIZATION": "Bearer robot-test"}
+            producer.run_env = env
+            consumer.run_env = env
+            published = producer.run(["env", "publish", "--robot", fixture["robot"], "--provider", "office", "--json"], "publish")
             artifact = _json_output(published).get("artifactDigest", "")
             for repetition in range(repetitions):
                 phases = [published]
-                acquired = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", provider_url, "--json"], "acquire")
+                trust = ["--trust-carrier", str(consumer_home / "artifacts" / "v1" / "trust"),
+                         "--trust-carrier-type", "filesystem", "--permissive-local"]
+                acquired = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "acquire")
                 phases += [acquired, consumer.run(["env", "lifecycle", "verify", "--artifact", artifact, "--json"], "verify")]
-                execution = consumer.run(["env", "exec", "--artifact", artifact, "--provider", provider_url, "--json", "--",
+                execution = consumer.run(["env", "exec", "--artifact", artifact, *trust, "--json", "--",
                                           "python", "-c", "import yaml; print(yaml.__version__)"], "startup")
                 phases.append(execution)
                 phases.append({**execution, "id": "import", "operation": "child import (aggregate env exec)",
                                "status": "unavailable", "wall_ns": None, "reason": "RCC reports aggregate exec timing"})
-                phases.append(consumer.run(["env", "acquire", "--artifact", artifact, "--provider", provider_url, "--json"], "warm"))
+                phases.append(consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "warm"))
                 provider.terminate()
                 provider.wait(timeout=10)
-                provider_dead = consumer.run(["env", "acquire", "--artifact", artifact, "--json"], "provider-dead")
+                provider_dead = consumer.run(["env", "acquire", "--artifact", artifact, "--provider", "office", *trust, "--json"], "provider-dead")
                 phases.append(provider_dead)
                 exec_json = _json_output(execution)
                 phases.append({"id": "lease", "operation": "leaseId from env exec receipt", "status": "observed",
@@ -113,8 +134,15 @@ def run_benchmark(work_root, binary, repetitions=1, rcc_sha="unknown", runner_fa
             if provider.poll() is None:
                 provider.terminate()
                 provider.wait(timeout=10)
-    return build_report({"rcc_sha": rcc_sha, "consumer_sha": "external-unavailable", "binary": str(Path(binary).resolve())},
-                        [fixture], runs, _context())
+    report = build_report({"rcc_sha": rcc_sha, "consumer_sha": "external-unavailable", "binary": str(Path(binary).resolve())},
+                          [fixture], runs, _context())
+    required = {"publish", "acquire", "verify", "startup", "warm", "provider-dead"}
+    for run in runs:
+        statuses = {phase["id"]: phase["status"] for phase in run["phases"]}
+        if any(statuses.get(phase) != "measured" for phase in required) or not all(
+                run["correctness_gates"].values()):
+            raise BenchmarkFailure(report)
+    return report
 
 
 def build_report(candidate, fixtures, runs, context):
@@ -129,7 +157,13 @@ def main():
     parser.add_argument("--repetitions", type=int, default=1)
     parser.add_argument("--output", type=Path, default=Path("tmp/lifecycle-baseline.json"))
     args = parser.parse_args()
-    report = run_benchmark(Path(tempfile.gettempdir()), args.binary, args.repetitions, args.rcc_sha)
+    try:
+        report = run_benchmark(Path(tempfile.gettempdir()), args.binary, args.repetitions, args.rcc_sha)
+    except BenchmarkFailure as error:
+        report = error.report
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        parser.exit(1, f"{error}\nraw evidence: {args.output}\n")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(args.output)
