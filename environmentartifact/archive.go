@@ -92,23 +92,111 @@ func ReadArchive(content []byte) (map[string][]byte, error) {
 // read from the file and individual members remain bounded by ArchiveEntries;
 // the encoded archive is never copied into one whole-archive []byte.
 func ReadArchiveFile(filePath string) (map[string][]byte, error) {
+	archive, err := OpenArchiveFile(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = archive.Close() }()
+	return archive.Entries()
+}
+
+// ArchiveReader keeps only the ZIP directory resident. Members are opened and
+// consumed independently, so large object closures never become one map of
+// byte slices in memory.
+type ArchiveReader struct {
+	file  *os.File
+	files map[string]*zip.File
+}
+
+func OpenArchiveFile(filePath string) (*ArchiveReader, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("open environment archive: %w", err)
 	}
-	defer func() { _ = file.Close() }()
 	info, err := file.Stat()
 	if err != nil {
+		_ = file.Close()
 		return nil, fmt.Errorf("stat environment archive: %w", err)
 	}
 	if info.Size() > maxArchiveSize {
+		_ = file.Close()
 		return nil, fmt.Errorf("environment archive exceeds %d bytes", maxArchiveSize)
 	}
 	reader, err := zip.NewReader(file, info.Size())
 	if err != nil {
+		_ = file.Close()
 		return nil, fmt.Errorf("open environment archive: %w", err)
 	}
-	return ArchiveEntries(reader)
+	files, err := validateArchiveFiles(reader.File)
+	if err != nil {
+		_ = file.Close()
+		return nil, err
+	}
+	return &ArchiveReader{file: file, files: files}, nil
+}
+
+func (a *ArchiveReader) Close() error {
+	if a == nil || a.file == nil {
+		return nil
+	}
+	err := a.file.Close()
+	a.file = nil
+	return err
+}
+
+func (a *ArchiveReader) HasMember(name string) bool {
+	_, ok := a.files[name]
+	return ok
+}
+
+func (a *ArchiveReader) MemberSize(name string) (int64, bool) {
+	file, ok := a.files[name]
+	if !ok {
+		return 0, false
+	}
+	return int64(file.UncompressedSize64), true
+}
+
+func (a *ArchiveReader) OpenMember(name string) (io.ReadCloser, error) {
+	file, ok := a.files[name]
+	if !ok {
+		return nil, os.ErrNotExist
+	}
+	return file.Open()
+}
+
+func (a *ArchiveReader) ReadMember(name string) ([]byte, error) {
+	reader, err := a.OpenMember(name)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = reader.Close() }()
+	content, err := io.ReadAll(io.LimitReader(reader, maxArchiveMemberSize+1))
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(content)) > maxArchiveMemberSize {
+		return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
+	}
+	return content, nil
+}
+
+func (a *ArchiveReader) Entries() (map[string][]byte, error) {
+	if !a.HasMember(ArchiveManifest) {
+		return nil, fmt.Errorf("environment archive is missing %s", ArchiveManifest)
+	}
+	if !a.HasMember(ArchiveObjectIndex) {
+		return nil, fmt.Errorf("environment archive is missing %s", ArchiveObjectIndex)
+	}
+	entries := make(map[string][]byte, len(a.files))
+	for name := range a.files {
+		content, err := a.ReadMember(name)
+		if err != nil {
+			return nil, fmt.Errorf("read environment archive member %q: %w", name, err)
+		}
+		entries[name] = content
+	}
+	return entries, nil
 }
 
 // ValidateArchive verifies the complete content closure of a Manifest. It is
@@ -184,12 +272,42 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 	if r == nil {
 		return nil, fmt.Errorf("nil environment archive")
 	}
-	entries := make(map[string][]byte, len(r.File))
-	var uncompressedSize uint64
-	if err := validateArchiveUncompressedBudget(len(r.File), 0); err != nil {
+	files, err := validateArchiveFiles(r.File)
+	if err != nil {
 		return nil, err
 	}
-	for _, file := range r.File {
+	entries := make(map[string][]byte, len(files))
+	for name, file := range files {
+		reader, err := file.Open()
+		if err != nil {
+			return nil, fmt.Errorf("open environment archive member %q: %w", file.Name, err)
+		}
+		content, err := io.ReadAll(io.LimitReader(reader, maxArchiveMemberSize+1))
+		closeErr := reader.Close()
+		if err != nil {
+			return nil, fmt.Errorf("read environment archive member %q: %w", file.Name, err)
+		}
+		if closeErr != nil || int64(len(content)) > maxArchiveMemberSize {
+			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
+		}
+		entries[name] = content
+	}
+	if _, ok := entries[ArchiveManifest]; !ok {
+		return nil, fmt.Errorf("environment archive is missing %s", ArchiveManifest)
+	}
+	if _, ok := entries[ArchiveObjectIndex]; !ok {
+		return nil, fmt.Errorf("environment archive is missing %s", ArchiveObjectIndex)
+	}
+	return entries, nil
+}
+
+func validateArchiveFiles(files []*zip.File) (map[string]*zip.File, error) {
+	if err := validateArchiveUncompressedBudget(len(files), 0); err != nil {
+		return nil, err
+	}
+	validated := make(map[string]*zip.File, len(files))
+	var uncompressedSize uint64
+	for _, file := range files {
 		if err := validateArchivePath(file.Name); err != nil {
 			return nil, err
 		}
@@ -206,30 +324,12 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		if file.CompressedSize64 > 0 && file.UncompressedSize64/file.CompressedSize64 > maxArchiveCompressionRatio {
 			return nil, fmt.Errorf("environment archive member %q has an unsafe compression ratio", file.Name)
 		}
-		if _, exists := entries[file.Name]; exists {
+		if _, exists := validated[file.Name]; exists {
 			return nil, fmt.Errorf("environment archive contains duplicate entry %q", file.Name)
 		}
-		reader, err := file.Open()
-		if err != nil {
-			return nil, fmt.Errorf("open environment archive member %q: %w", file.Name, err)
-		}
-		content, err := io.ReadAll(io.LimitReader(reader, maxArchiveMemberSize+1))
-		closeErr := reader.Close()
-		if err != nil {
-			return nil, fmt.Errorf("read environment archive member %q: %w", file.Name, err)
-		}
-		if closeErr != nil || int64(len(content)) > maxArchiveMemberSize {
-			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
-		}
-		entries[file.Name] = content
+		validated[file.Name] = file
 	}
-	if _, ok := entries[ArchiveManifest]; !ok {
-		return nil, fmt.Errorf("environment archive is missing %s", ArchiveManifest)
-	}
-	if _, ok := entries[ArchiveObjectIndex]; !ok {
-		return nil, fmt.Errorf("environment archive is missing %s", ArchiveObjectIndex)
-	}
-	return entries, nil
+	return validated, nil
 }
 
 func validateArchiveUncompressedBudget(memberCount int, total uint64) error {
