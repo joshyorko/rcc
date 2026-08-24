@@ -696,7 +696,7 @@ def selfHost(c):
         old_error = (old_attempt.stdout + "\n" + old_attempt.stderr).lower()
         unsupported_archive_cli = old_attempt.returncode != 0 and (
             ("unknown flag" in old_error and "archive" in old_error)
-            or ("unknown command" in old_error and "archive" in old_error)
+            or ("unknown command" in old_error and ('"env"' in old_error or "archive" in old_error))
         )
         if not unsupported_archive_cli:
             raise RuntimeError("released N-1 archive rollback was not the expected unsupported CLI error")

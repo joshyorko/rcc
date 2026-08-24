@@ -56,6 +56,10 @@ class ArtifactTaskTests(unittest.TestCase):
     for marker in ('--trust-carrier', '--trust-carrier-type', 'filesystem', '--permissive-local'):
       self.assertIn(marker, block)
 
+  def test_self_host_accepts_exact_pre_feature_env_command_rejection(self):
+    source = (ROOT / "tasks.py").read_text()
+    self.assertIn("'\"env\"' in old_error", source)
+
   def test_artifact_tasks_are_registered_in_invoke_and_toolkit(self):
     collection = Collection.from_module(tasks)
     expected = {
