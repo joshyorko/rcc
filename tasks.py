@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+import re
 import shutil
 import shlex
 import subprocess
@@ -43,6 +44,36 @@ def _exact_commit_sha():
     if len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
         raise RuntimeError(f"git returned a non-exact commit SHA: {commit!r}")
     return commit
+
+
+_PROMOTION_RECEIPT_FILES = (
+    "native-runtime-receipt.json",
+    "self-host-v1.json",
+    "large-stream-receipt.json",
+    "coordination-blackbox-v1.json",
+)
+
+
+def _validate_receipt_commit(payload, candidate):
+    if not isinstance(payload, dict) or "commitSha" not in payload:
+        raise ValueError("promotion receipt is missing commitSha")
+    commit = payload["commitSha"]
+    if not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise ValueError(f"promotion receipt has malformed commitSha: {commit!r}")
+    if commit != candidate:
+        raise ValueError(f"promotion receipt commitSha differs: {commit} != {candidate}")
+    return commit
+
+
+def _validate_promotion_receipts(root, candidate):
+    root = Path(root)
+    for name in _PROMOTION_RECEIPT_FILES:
+        path = root / name
+        try:
+            payload = json.loads(path.read_text())
+            _validate_receipt_commit(payload, candidate)
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            raise ValueError(f"{name}: {error}") from error
 
 
 def _write_json_atomic(path, payload):
@@ -548,6 +579,7 @@ def artifactVertical(c):
     env = _contained_go_env()
     env.update({
         "RCC_REAL_ARTIFACT_TEST": "1",
+        "RCC_SOURCE_SHA": _exact_commit_sha(),
         "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
         "RCC_NATIVE_PLATFORM": "linux-amd64",
         "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "native-runtime-receipt.json").resolve()),
@@ -800,6 +832,7 @@ def releaseCandidate(c):
         commands.append(command)
         c.run(command)
         gates[task_name] = "passed"
+    _validate_promotion_receipts(receipt_root, _exact_commit_sha())
     receipt = _write_release_candidate_receipt(
         receipt_root, source=Path("build/rcc"),
         commands=commands, gates=gates)

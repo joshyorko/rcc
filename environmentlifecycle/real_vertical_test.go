@@ -74,6 +74,7 @@ type realCLIEvidence struct {
 
 type realVerticalReceipt struct {
 	SchemaVersion  int                        `json:"schemaVersion"`
+	CommitSHA      string                     `json:"commitSha"`
 	Platform       string                     `json:"platform"`
 	ProducerHome   string                     `json:"producerHome"`
 	ConsumerHome   string                     `json:"consumerHome"`
@@ -81,6 +82,20 @@ type realVerticalReceipt struct {
 	Binary         realBinaryReceipt          `json:"binary"`
 	ExactBinaryCLI realCLIEvidence            `json:"exactBinaryCLI"`
 	SourceAPI      realAPIEvidence            `json:"sourceAPI"`
+}
+
+func requireExactCommitSHA(t *testing.T) string {
+	t.Helper()
+	commit := os.Getenv("RCC_SOURCE_SHA")
+	if len(commit) != 40 {
+		t.Fatalf("RCC_SOURCE_SHA is not an exact commit SHA: %q", commit)
+	}
+	for _, char := range commit {
+		if !strings.ContainsRune("0123456789abcdef", char) {
+			t.Fatalf("RCC_SOURCE_SHA is not an exact commit SHA: %q", commit)
+		}
+	}
+	return commit
 }
 
 type mismatchProvider struct {
@@ -257,7 +272,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 		t.Fatalf("exact binary CLI and source API identities differ: cli=%s api=%s", exactCLI.ArtifactDigest, published.ArtifactDigest)
 	}
 	writeRealVerticalReceipt(t, realVerticalReceipt{
-		SchemaVersion: 1, Platform: common.Platform(), ProducerHome: producerHome, ConsumerHome: consumerHome,
+		SchemaVersion: 1, CommitSHA: requireExactCommitSHA(t), Platform: common.Platform(), ProducerHome: producerHome, ConsumerHome: consumerHome,
 		ArtifactDigest: exactCLI.ArtifactDigest, Binary: binaryReceipt, ExactBinaryCLI: exactCLI, SourceAPI: sourceAPI,
 	})
 }

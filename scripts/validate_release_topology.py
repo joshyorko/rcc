@@ -16,6 +16,28 @@ INDEX_ASSETS = {
     "macosarm64": "rcc-macosarm64",
 }
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
+RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
+
+
+def _runtime_root_is_beneath_checkout(value):
+    value = value.strip().strip('"\'')
+    workspace_roots = ("${{ github.workspace }}", "$GITHUB_WORKSPACE", "${GITHUB_WORKSPACE}")
+    for workspace in workspace_roots:
+        if value == workspace:
+            return True
+        if value.startswith(workspace + "/"):
+            return not value.startswith(workspace + "/../")
+    return not re.match(r"^(?:/|~|\$|[A-Za-z]:[\\/])", value)
+
+
+def validate_release_runtime_roots(workflow_text):
+    errors = []
+    assignment = re.compile(r"^\s*(" + "|".join(sorted(RUNTIME_ROOT_ENV_VARS)) + r"):\s*(\S.*?)\s*$")
+    for line in workflow_text.splitlines():
+        match = assignment.match(line)
+        if match and _runtime_root_is_beneath_checkout(match.group(2)):
+            errors.append(f"{match.group(1)} runtime root must be outside the checkout: {match.group(2)}")
+    return errors
 
 
 def validate(root, workflow, index, asset_root=None):
@@ -39,6 +61,7 @@ def validate(root, workflow, index, asset_root=None):
         staged = set(re.findall(r"\bcp\s+\S+\s+rcc-builds/([^\s]+)", text))
         if staged != ASSETS:
             errors.append(f"workflow staged assets mismatch: {sorted(staged)}")
+        errors.extend(validate_release_runtime_roots(text))
     if index:
         data = json.loads(Path(index).read_text())
         tested = data.get("tested", [])

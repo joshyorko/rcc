@@ -28,6 +28,8 @@
   provider streaming, native lifecycle, Robot, and N-1 self-host gates
 - invalidate stale release-candidate receipts before gate execution and publish
   self-host/aggregate receipts atomically with exact commit identity
+- isolate tag-job RCC state outside the checkout and require direct exact-SHA
+  binding across the complete promotion-receipt closure
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance

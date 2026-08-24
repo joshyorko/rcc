@@ -122,6 +122,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_REAL_BINARY", native_job)
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
+    self.assertIn("RCC_SOURCE_SHA: ${{ github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
@@ -135,6 +136,20 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("timeout-minutes: 8", native_job)
     self.assertIn("go test -timeout 30m", native_job)
     self.assertNotIn('"lifecycle": [', workflow)
+
+  def test_promotion_receipt_commit_validation_rejects_unbound_receipts(self):
+    validator = getattr(tasks, "_validate_receipt_commit", None)
+    self.assertIsNotNone(validator, "promotion receipt commit validator is missing")
+    expected = "a" * 40
+    self.assertEqual(validator({"commitSha": expected}, expected), expected)
+    for payload, candidate in (
+        ({}, expected),
+        ({"commitSha": "abc"}, expected),
+        ({"commitSha": "g" * 40}, expected),
+        ({"commitSha": "b" * 40}, expected),
+    ):
+      with self.assertRaises(ValueError):
+        validator(payload, candidate)
 
   def test_native_acceptance_fixture_exercises_sqlite_extension(self):
     task = (ROOT / "robot_tests" / "environment_artifacts" / "task.py").read_text()
@@ -370,12 +385,51 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
     self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-amd64")
     self.assertEqual(kwargs["env"]["RCC_REAL_RECEIPT_FILE"], str((ROOT / "tmp" / "native-runtime-receipt.json").resolve()))
+    self.assertIn("RCC_SOURCE_SHA", kwargs["env"])
+    self.assertRegex(kwargs["env"]["RCC_SOURCE_SHA"], r"^[0-9a-f]{40}$")
 
   def test_release_workflow_gates_publication_on_contained_release_candidate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     self.assertIn("  release-candidate:", workflow)
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
+
+  def test_native_receipt_aggregation_checks_candidate_commit(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
+    self.assertIn("_validate_receipt_commit", native_job)
+    self.assertIn('os.environ["GITHUB_SHA"]', native_job)
+
+  def test_release_candidate_validates_complete_promotion_receipt_closure(self):
+    expected = {
+        "native-runtime-receipt.json",
+        "self-host-v1.json",
+        "large-stream-receipt.json",
+        "coordination-blackbox-v1.json",
+    }
+    self.assertEqual(set(getattr(tasks, "_PROMOTION_RECEIPT_FILES", ())), expected)
+    validator = getattr(tasks, "_validate_promotion_receipts", None)
+    self.assertIsNotNone(validator, "promotion receipt closure validator is missing")
+    commit = "a" * 40
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      for name in expected:
+        (root / name).write_text(json.dumps({"commitSha": commit}))
+      validator(root, commit)
+      for name in sorted(expected):
+        path = root / name
+        valid = path.read_text()
+        path.write_text(json.dumps({"commitSha": "b" * 40}))
+        with self.assertRaisesRegex(ValueError, name):
+          validator(root, commit)
+        path.write_text(valid)
+
+  def test_release_candidate_uploads_complete_promotion_receipt_closure(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    release_job = workflow.split("\n  release-candidate:\n", 1)[1].split("\n  robot:\n", 1)[0]
+    self.assertIn("tmp/release-candidate-v1.json", release_job)
+    for name in tasks._PROMOTION_RECEIPT_FILES:
+      self.assertIn(f"tmp/{name}", release_job)
 
   def test_job_level_environment_uses_only_planning_contexts(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
@@ -413,6 +467,9 @@ class ArtifactTaskTests(unittest.TestCase):
         "coordinationAcceptance",
     ]
     with tempfile.TemporaryDirectory() as directory:
+      commit = tasks._exact_commit_sha()
+      for name in tasks._PROMOTION_RECEIPT_FILES:
+        (Path(directory) / name).write_text(json.dumps({"commitSha": commit}))
       with ExitStack() as stack:
         stack.enter_context(mock.patch.dict(
             os.environ, {"RCC_RELEASE_CANDIDATE_RECEIPT_ROOT": directory}))

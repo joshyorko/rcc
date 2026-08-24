@@ -62,6 +62,18 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
 
+    def test_rejects_any_runtime_root_beneath_checkout(self):
+        for variable in ("ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"):
+            root, workflow, index = self.fixture()
+            workflow.write_text(workflow.read_text() + f"\n    {variable}: ${{{{ github.workspace }}}}/runtime-state\n")
+            errors = validate(root, workflow, index)
+            self.assertTrue(any(f"{variable} runtime root" in error for error in errors), (variable, errors))
+
+    def test_repository_release_runtime_roots_are_outside_checkout(self):
+        root, _, index = self.fixture()
+        errors = validate(root, REPOSITORY_ROOT / ".github/workflows/rcc.yaml", index)
+        self.assertFalse(any("runtime root" in error for error in errors), errors)
+
     def test_repository_release_waits_for_native_robot_matrix(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         release_job = workflow.split("\n  release:\n", 1)[1]
