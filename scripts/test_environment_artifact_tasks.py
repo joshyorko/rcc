@@ -1,5 +1,6 @@
 import json
 import hashlib
+import os
 import sys
 import tempfile
 import unittest
@@ -275,6 +276,7 @@ class ArtifactTaskTests(unittest.TestCase):
           evidence_paths=[proof],
       )
       data = json.loads(receipt.read_text())
+      self.assertRegex(data["commitSha"], r"^[0-9a-f]{40}$")
       self.assertEqual(data["releasedBinary"], "/usr/bin/rcc")
       self.assertEqual(data["candidateBinary"], "build/rcc")
       self.assertNotEqual(data["homes"]["a"], data["homes"]["b"])
@@ -410,10 +412,14 @@ class ArtifactTaskTests(unittest.TestCase):
         "binaryInventory", "largeStream", "selfHost", "robot",
         "coordinationAcceptance",
     ]
-    with ExitStack() as stack:
-      for name in task_names:
-        stack.enter_context(mock.patch.object(tasks, name, lambda _context: None))
-      tasks.releaseCandidate.body(Context())
+    with tempfile.TemporaryDirectory() as directory:
+      with ExitStack() as stack:
+        stack.enter_context(mock.patch.dict(
+            os.environ, {"RCC_RELEASE_CANDIDATE_RECEIPT_ROOT": directory}))
+        for name in task_names:
+          stack.enter_context(mock.patch.object(tasks, name, lambda _context: None))
+        tasks.releaseCandidate.body(Context())
+      self.assertTrue((Path(directory) / "release-candidate-v1.json").is_file())
 
     self.assertEqual(commands, [
         tasks._invoke_command("artifactFocused"),
@@ -427,6 +433,21 @@ class ArtifactTaskTests(unittest.TestCase):
         tasks._invoke_command("goVet"),
         tasks._invoke_command("coordinationAcceptance"),
     ])
+
+  def test_release_candidate_removes_stale_receipt_before_running_gates(self):
+    with tempfile.TemporaryDirectory() as directory:
+      receipt = Path(directory) / "release-candidate-v1.json"
+      receipt.write_text('{"stale":true}\n')
+
+      class Context:
+        def run(self, _command, **_kwargs):
+          raise RuntimeError("gate failed")
+
+      with mock.patch.dict(
+          os.environ, {"RCC_RELEASE_CANDIDATE_RECEIPT_ROOT": directory}):
+        with self.assertRaisesRegex(RuntimeError, "gate failed"):
+          tasks.releaseCandidate.body(Context())
+      self.assertFalse(receipt.exists())
 
   def test_release_candidate_fails_before_dispatch_on_non_linux(self):
     previous = tasks.sys.platform

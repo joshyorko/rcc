@@ -38,6 +38,32 @@ def _state_digests(root):
     return state
 
 
+def _exact_commit_sha():
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    if len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
+        raise RuntimeError(f"git returned a non-exact commit SHA: {commit!r}")
+    return commit
+
+
+def _write_json_atomic(path, payload):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent,
+        prefix=f".{path.name}.", delete=False,
+    )
+    temporary = Path(handle.name)
+    try:
+        with handle:
+            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return path
+
+
 def _legacy_closure_state(home, archive):
     """Hash only the v12 catalog and exact legacy objects named by an archive."""
     with zipfile.ZipFile(archive) as carrier:
@@ -103,16 +129,16 @@ def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a,
         raise ValueError(f"self-host evidence paths do not exist: {missing}")
     root = Path(root)
     root.mkdir(parents=True, exist_ok=True)
-    receipt = root / "self-host-v1.json"
-    receipt.write_text(json.dumps({
+    receipt = _write_json_atomic(root / "self-host-v1.json", {
         "schemaVersion": 1,
+        "commitSha": _exact_commit_sha(),
         "releasedBinary": str(released_binary),
         "candidateBinary": str(candidate_binary),
         "homes": {"a": str(home_a), "b": str(home_b)},
         "commands": commands,
         "binaries": binary_metadata,
         "evidencePaths": [str(path) for path in evidence_paths],
-    }, indent=2, sort_keys=True) + "\n")
+    })
     return receipt
 
 
@@ -157,17 +183,13 @@ def _write_release_candidate_receipt(root, *, source, commands, gates=None):
     source_record = {"path": str(source)}
     if source.is_file():
         source_record["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
-    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    if len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
-        raise RuntimeError(f"git returned a non-exact commit SHA: {commit!r}")
-    receipt = root / "release-candidate-v1.json"
-    receipt.write_text(json.dumps({
+    receipt = _write_json_atomic(root / "release-candidate-v1.json", {
         "schemaVersion": 1,
-        "commitSha": commit,
+        "commitSha": _exact_commit_sha(),
         "source": source_record,
         "commands": list(commands),
         "gates": dict(gates or {}),
-    }, indent=2, sort_keys=True) + "\n")
+    })
     return receipt
 
 
@@ -757,6 +779,8 @@ def largeStream(c):
 def releaseCandidate(c):
     """Run the complete Environment Artifacts v1 release-candidate gate."""
     _require_linux("releaseCandidate")
+    receipt_root = Path(os.environ.get("RCC_RELEASE_CANDIDATE_RECEIPT_ROOT", "tmp"))
+    (receipt_root / "release-candidate-v1.json").unlink(missing_ok=True)
     task_names = (
         "artifactFocused",
         "artifactRace",
@@ -777,7 +801,7 @@ def releaseCandidate(c):
         c.run(command)
         gates[task_name] = "passed"
     receipt = _write_release_candidate_receipt(
-        "tmp", source=Path("build/rcc"),
+        receipt_root, source=Path("build/rcc"),
         commands=commands, gates=gates)
     print(f"Release-candidate receipt: {receipt}")
 

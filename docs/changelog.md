@@ -26,6 +26,8 @@
   `-rc.N` tags as GitHub prereleases
 - add exact-SHA release receipts for coordination, bounded multi-gigabyte
   provider streaming, native lifecycle, Robot, and N-1 self-host gates
+- invalidate stale release-candidate receipts before gate execution and publish
+  self-host/aggregate receipts atomically with exact commit identity
 - serve both filesystem and append-journal providers through the same hardened
   HTTP contract, including quotas, rate limits, restart, proxy, and custom-CA
   acceptance
