@@ -1,4 +1,5 @@
 import json
+import gzip
 import hashlib
 import os
 import sys
@@ -50,6 +51,30 @@ class ArtifactTaskTests(unittest.TestCase):
       tasks._install_archive_legacy_closure(home, archive)
       self.assertEqual((home / "hololib" / "catalog" / "fixture-v12").read_bytes(), catalog)
       self.assertEqual((home / "hololib" / "library" / "aa" / "aa" / "aa" / legacy_id).read_bytes(), stored)
+
+  def test_self_host_accepts_only_consumer_rebased_catalog_with_unchanged_objects(self):
+    with tempfile.TemporaryDirectory() as directory:
+      home = Path(directory) / "consumer"
+      catalog = home / "hololib" / "catalog" / "fixture-v12"
+      catalog.parent.mkdir(parents=True)
+      identity = "h123"
+      catalog.write_bytes(gzip.compress(json.dumps({
+          "path": str(home / "holotree" / identity), "identity": identity,
+      }).encode()))
+      before = {
+          "catalog": {"path": str(catalog), "sha256": "producer"},
+          "object:a": {"path": "object", "size": 1, "sha256": "immutable"},
+      }
+      after = {
+          "catalog": {"path": str(catalog), "sha256": "consumer"},
+          "object:a": before["object:a"],
+      }
+      parsed = tasks._validate_rebased_legacy_closure(before, after, home)
+      self.assertEqual(parsed["identity"], identity)
+      changed = dict(after)
+      changed["object:a"] = {"path": "object", "size": 1, "sha256": "changed"}
+      with self.assertRaisesRegex(RuntimeError, "object bytes"):
+        tasks._validate_rebased_legacy_closure(before, changed, home)
 
   def test_self_host_archive_uses_explicit_local_trust_policy(self):
     source = (ROOT / "tasks.py").read_text()

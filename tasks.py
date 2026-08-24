@@ -1,5 +1,6 @@
 import os
 import json
+import gzip
 import hashlib
 import re
 import shutil
@@ -114,6 +115,26 @@ def _legacy_closure_state(home, archive):
         content = path.read_bytes()
         state[label] = {"path": str(path), "size": len(content), "sha256": hashlib.sha256(content).hexdigest()}
     return state
+
+
+def _validate_rebased_legacy_closure(before, after, home):
+    """Require immutable v12 objects and a consumer-local derived catalog."""
+    before_objects = {key: value for key, value in before.items() if key.startswith("object:")}
+    after_objects = {key: value for key, value in after.items() if key.startswith("object:")}
+    if after_objects != before_objects:
+        raise RuntimeError("candidate archive upgrade changed legacy v12 object bytes")
+    catalog_path = Path(after["catalog"]["path"])
+    try:
+        catalog = json.loads(gzip.decompress(catalog_path.read_bytes()))
+    except (OSError, ValueError, KeyError) as error:
+        raise RuntimeError(f"candidate legacy catalog is unreadable: {error}") from error
+    expected_base = (Path(home) / "holotree").resolve()
+    catalog_root = Path(catalog.get("path", "")).resolve()
+    if catalog_root.parent != expected_base or catalog_root.name != catalog.get("identity"):
+        raise RuntimeError(
+            f"candidate legacy catalog is not rooted in consumer home: {catalog_root} != {expected_base}"
+        )
+    return catalog
 
 
 def _archive_legacy_blueprint(archive):
@@ -733,8 +754,9 @@ def selfHost(c):
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(candidate_path)})
         legacy_after_upgrade = _legacy_closure_state(home_a, archive)
         artifact_after_upgrade = _state_digests(home_a / "artifacts" / "v1")
-        if legacy_after_upgrade != legacy_before:
-            raise RuntimeError("candidate archive upgrade changed the legacy v12 catalog/object closure")
+        _validate_rebased_legacy_closure(legacy_before, legacy_after_upgrade, home_a)
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
+            raise RuntimeError("candidate archive upgrade changed canonical archive bytes")
         old_command = [released, "env", "acquire", "--archive", str(archive), "--json"]
         old_attempt = subprocess.run(old_command, env=candidate_env, capture_output=True, text=True)
         old_attempt_path = root / "released-archive-rollback-attempt.json"
@@ -768,8 +790,9 @@ def selfHost(c):
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(legacy_receipt_path)})
         legacy_after_rollback = _legacy_closure_state(home_a, archive)
         artifact_after_rollback = _state_digests(home_a / "artifacts" / "v1")
-        if legacy_after_rollback != legacy_before:
-            raise RuntimeError("N-1 legacy v12 consumption changed catalog/object bytes")
+        _validate_rebased_legacy_closure(legacy_before, legacy_after_rollback, home_a)
+        if legacy_after_rollback != legacy_after_upgrade:
+            raise RuntimeError("N-1 legacy v12 consumption changed the rebased consumer closure")
         if artifact_after_rollback != artifact_after_upgrade:
             raise RuntimeError("N-1 artifact state was not stable after rollback consumption")
         rollback_receipt = root / "n1-rollback-state.json"

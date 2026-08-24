@@ -1,6 +1,8 @@
 package htfs
 
 import (
+	"bytes"
+	"compress/gzip"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -19,6 +21,29 @@ func LoadPortableCatalog(filename string) (*PortableCatalog, error) {
 	if err := root.LoadFrom(filename); err != nil {
 		return nil, fmt.Errorf("load portable catalog: %w", err)
 	}
+	return newPortableCatalog(root)
+}
+
+func LoadPortableCatalogBytes(content []byte) (*PortableCatalog, error) {
+	root, err := NewRoot(".")
+	if err != nil {
+		return nil, fmt.Errorf("create portable catalog view: %w", err)
+	}
+	reader, err := gzip.NewReader(bytes.NewReader(content))
+	if err != nil {
+		return nil, fmt.Errorf("open portable catalog bytes: %w", err)
+	}
+	if err := root.ReadFrom(reader); err != nil {
+		_ = reader.Close()
+		return nil, fmt.Errorf("decode portable catalog bytes: %w", err)
+	}
+	if err := reader.Close(); err != nil {
+		return nil, fmt.Errorf("close portable catalog bytes: %w", err)
+	}
+	return newPortableCatalog(root)
+}
+
+func newPortableCatalog(root *Root) (*PortableCatalog, error) {
 	if root.Info == nil || root.Identity == "" || filepath.Base(root.Path) != root.Identity {
 		return nil, fmt.Errorf("portable catalog has inconsistent producer path and identity")
 	}
@@ -44,6 +69,30 @@ func (it *PortableCatalog) Rebase(base, retainedIdentity string) error {
 	it.root.Path = rebased
 	it.root.Identity = retainedIdentity
 	return nil
+}
+
+func (it *PortableCatalog) Snapshot() (catalog, info []byte, err error) {
+	content, err := it.root.AsJson()
+	if err != nil {
+		return nil, nil, fmt.Errorf("encode portable catalog: %w", err)
+	}
+	var buffer bytes.Buffer
+	writer, err := gzip.NewWriterLevel(&buffer, gzip.BestSpeed)
+	if err != nil {
+		return nil, nil, fmt.Errorf("create portable catalog compressor: %w", err)
+	}
+	if _, err := writer.Write(content); err != nil {
+		_ = writer.Close()
+		return nil, nil, fmt.Errorf("compress portable catalog: %w", err)
+	}
+	if err := writer.Close(); err != nil {
+		return nil, nil, fmt.Errorf("close portable catalog compressor: %w", err)
+	}
+	info, err = it.root.Info.AsJson()
+	if err != nil {
+		return nil, nil, fmt.Errorf("encode portable catalog info: %w", err)
+	}
+	return buffer.Bytes(), info, nil
 }
 
 func (it *PortableCatalog) Restore(library Library, target string) error {

@@ -222,6 +222,9 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		if trustErr != nil {
 			return AcquireResult{}, trustErr
 		}
+		if err := registerCachedConsumerLegacyCatalog(ctx, local, manifest); err != nil {
+			return AcquireResult{}, fmt.Errorf("repair consumer legacy registration: %w", err)
+		}
 		if result, err := warmMaterialization(ctx, manifest); err == nil {
 			result.Compatibility = compatibility
 			result.Verification = receipt

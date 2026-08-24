@@ -149,14 +149,48 @@ func acquireVerifiedContentLocked(ctx context.Context, artifactDigest environmen
 			return verifiedContent{}, fmt.Errorf("install legacy object %s: %w", legacyID, err)
 		}
 	}
-	catalogDescriptor := manifest.Catalogs[0].Descriptor
-	if err := installLegacyImmutable(common.HololibLocation(), []string{"catalog", manifest.Catalogs[0].LegacyName}, catalogDescriptor, catalogBytes); err != nil {
-		return verifiedContent{}, fmt.Errorf("install legacy catalog: %w", err)
+	if err := registerConsumerLegacyCatalog(manifest, catalogBytes); err != nil {
+		return verifiedContent{}, fmt.Errorf("register consumer legacy catalog: %w", err)
 	}
 	if err := writeReferenceRoot(manifest, index); err != nil {
 		return verifiedContent{}, fmt.Errorf("persist manifest reference root: %w", err)
 	}
 	return verifiedContent{manifest: manifest, index: index, compatibility: compatibility}, nil
+}
+
+func registerCachedConsumerLegacyCatalog(ctx context.Context, local artifactprovider.Provider, manifest environmentartifact.Manifest) error {
+	catalogBytes, err := readProviderObject(ctx, local, manifest.Catalogs[0].Descriptor)
+	if err != nil {
+		return fmt.Errorf("read canonical catalog for consumer registration: %w", err)
+	}
+	return registerConsumerLegacyCatalog(manifest, catalogBytes)
+}
+
+func registerConsumerLegacyCatalog(manifest environmentartifact.Manifest, canonicalCatalog []byte) error {
+	portable, err := htfs.LoadPortableCatalogBytes(canonicalCatalog)
+	if err != nil {
+		return err
+	}
+	root := portable.Root()
+	if root.Blueprint != manifest.LegacyBlueprint.LegacyBlueprintKey || root.Platform != manifest.Platform.RCCPlatform {
+		return fmt.Errorf("canonical catalog identity does not match manifest")
+	}
+	producerIdentity := root.Identity
+	if err := portable.Rebase(common.HolotreeLocation(), producerIdentity); err != nil {
+		return fmt.Errorf("rebase legacy catalog to consumer: %w", err)
+	}
+	catalogBytes, infoBytes, err := portable.Snapshot()
+	if err != nil {
+		return err
+	}
+	legacyName := manifest.Catalogs[0].LegacyName
+	if err := writeAtomicMutable(common.HololibLocation(), []string{"catalog", legacyName + ".info"}, infoBytes); err != nil {
+		return fmt.Errorf("publish consumer legacy catalog info: %w", err)
+	}
+	if err := writeAtomicMutable(common.HololibLocation(), []string{"catalog", legacyName}, catalogBytes); err != nil {
+		return fmt.Errorf("publish consumer legacy catalog: %w", err)
+	}
+	return nil
 }
 
 func preflightCompatibility(ctx context.Context, manifest environmentartifact.Manifest) (CompatibilityReceipt, error) {

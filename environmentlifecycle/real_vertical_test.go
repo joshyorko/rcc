@@ -149,7 +149,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	project := t.TempDir()
 	robotFile := filepath.Join(project, "robot.yaml")
 	writeRealFixture(t, filepath.Join(project, "conda.yaml"), "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n")
-	writeRealFixture(t, robotFile, "tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\n")
+	writeRealFixture(t, robotFile, "tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n")
 
 	producerHome := os.Getenv("RCC_REAL_PRODUCER_HOME")
 	if producerHome == "" {
@@ -396,6 +396,41 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 			platformChecks["nativeOnlyOnRosetta"] = "skipped:native-runner"
 		}
 	}
+	archivePath := filepath.Join(t.TempDir(), "environment.rcca")
+	runExactBinaryCLI(t, binary, []string{
+		"env", "export", "--artifact", published.ArtifactDigest.String(), "--provider", providerURL, "--output", archivePath,
+	}, producerHome, false)
+	offlineHome := filepath.Join(t.TempDir(), "offline-home")
+	offlineTrustRoot := filepath.Join(offlineHome, "artifacts", "v1", "trust")
+	offlineAcquireOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "acquire", "--archive", archivePath, "--trust-carrier", offlineTrustRoot,
+		"--trust-carrier-type", "filesystem", "--permissive-local", "--json",
+	}, offlineHome, true)
+	var offlineAcquired exactBinaryAcquireResult
+	decodeExactBinaryJSON(t, offlineAcquireOutput, &offlineAcquired)
+	if offlineAcquired.ArtifactDigest != published.ArtifactDigest || offlineAcquired.CacheHit != CacheProvider {
+		t.Fatalf("exact binary offline acquire = %+v", offlineAcquired)
+	}
+
+	unavailableProducer := producerHome + "-unavailable"
+	if err := os.Rename(producerHome, unavailableProducer); err != nil {
+		t.Fatalf("make producer home unavailable: %v", err)
+	}
+	producerRestored := false
+	defer func() {
+		if producerRestored {
+			return
+		}
+		_ = os.RemoveAll(producerHome)
+		_ = os.Rename(unavailableProducer, producerHome)
+	}()
+	proveExactLegacyCompatibility(t, binary, robotFile, consumerHome, producerHome, localTrustRoot, published.ArtifactDigest, acquired.Path)
+	proveExactLegacyCompatibility(t, binary, robotFile, offlineHome, producerHome, offlineTrustRoot, published.ArtifactDigest, offlineAcquired.Path)
+	if err := os.Rename(unavailableProducer, producerHome); err != nil {
+		t.Fatalf("restore producer home after compatibility proof: %v", err)
+	}
+	producerRestored = true
+
 	cold := realConsumerReceipt{
 		ArtifactDigest: executed.ArtifactDigest, MaterializationID: executed.MaterializationID, Path: executed.Path,
 		CacheHit: acquired.CacheHit, ExitCode: executed.ExitCode, LeaseID: executed.LeaseID,
@@ -451,6 +486,74 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 		ArtifactDigest: published.ArtifactDigest, ObjectCount: published.ObjectCount,
 		ProducerHome: producerHome, ConsumerHome: consumerHome, Cold: cold, Warm: warm, Mismatch: mismatch, PlatformChecks: platformChecks,
 	}
+}
+
+func proveExactLegacyCompatibility(t *testing.T, binary, robotFile, consumerHome, producerHome, trustRoot string, digest environmentartifact.Digest, materializationPath string) {
+	t.Helper()
+	assertProducerUnavailable := func(stage string) {
+		t.Helper()
+		if _, err := os.Lstat(producerHome); !os.IsNotExist(err) {
+			t.Fatalf("%s recreated or accessed producer home %q: %v", stage, producerHome, err)
+		}
+	}
+	assertConsumerPath := func(key, value string) {
+		t.Helper()
+		relative, err := filepath.Rel(consumerHome, value)
+		if err != nil || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(os.PathSeparator)) {
+			t.Fatalf("%s = %q is not rooted in consumer home %q", key, value, consumerHome)
+		}
+	}
+
+	variablesResult := runExactBinaryCLIAllowFailure(t, binary, []string{
+		"--no-build", "ht", "vars", "--robot", robotFile, "--json",
+	}, consumerHome, true)
+	if variablesResult.err != nil {
+		t.Fatalf("consumer ordinary --no-build ht vars: %v\nstdout=%s\nstderr=%s", variablesResult.err, variablesResult.stdout, variablesResult.stderr)
+	}
+	var entries []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	}
+	decodeExactBinaryJSON(t, variablesResult.stdout, &entries)
+	variables := make(map[string]string, len(entries))
+	producerEntries := make([]string, 0)
+	for _, entry := range entries {
+		variables[entry.Key] = entry.Value
+		if strings.Contains(entry.Value, producerHome) {
+			producerEntries = append(producerEntries, entry.Key+"="+entry.Value)
+		}
+	}
+	if len(producerEntries) != 0 {
+		t.Fatalf("consumer variables retained producer paths: %v", producerEntries)
+	}
+	for _, key := range []string{"PYTHON_EXE", "CONDA_PREFIX", "RCC_HOLOTREE_SPACE_ROOT"} {
+		value := variables[key]
+		if value == "" {
+			t.Fatalf("consumer ordinary environment omitted %s", key)
+		}
+		assertConsumerPath(key, value)
+	}
+	assertProducerUnavailable("ht vars")
+
+	runResult := runExactBinaryCLIAllowFailure(t, binary, []string{
+		"--no-build", "run", "--robot", robotFile, "--task", "proof",
+	}, consumerHome, true)
+	if runResult.err != nil {
+		t.Fatalf("consumer ordinary --no-build rcc run: %v\nstdout=%s\nstderr=%s", runResult.err, runResult.stdout, runResult.stderr)
+	}
+	assertProducerUnavailable("rcc run")
+
+	execOutput := runExactBinaryCLI(t, binary, []string{
+		"env", "exec", "--artifact", digest.String(), "--trust-carrier", trustRoot,
+		"--trust-carrier-type", "filesystem", "--permissive-local", "--json", "--", "python", "-c", "print('artifact-exec-ok')",
+	}, consumerHome, true)
+	var executed exactBinaryExecResult
+	decodeExactBinaryJSON(t, execOutput, &executed)
+	if executed.ExitCode != 0 || executed.Path != materializationPath || executed.CacheHit != CacheLocalMaterialization {
+		t.Fatalf("consumer providerless env exec changed materialization: %+v want path %q", executed, materializationPath)
+	}
+	assertConsumerPath("env exec path", executed.Path)
+	assertProducerUnavailable("env exec")
 }
 
 func runExactBinaryCLI(t *testing.T, binary string, arguments []string, home string, offline bool) string {

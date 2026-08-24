@@ -211,7 +211,14 @@ func CondaExecutionEnvironment(location string, inject []string, full bool) []st
 		"RCC_VERSION="+common.Version,
 		FindPath(location).AsEnvironmental("PATH"),
 	)
-	environment = append(environment, LoadActivationEnvironment(location)...)
+	for _, entry := range LoadActivationEnvironment(location) {
+		name, _, found := strings.Cut(strings.TrimSpace(entry), "=")
+		if found && strings.EqualFold(name, "MAMBA_ROOT_PREFIX") {
+			continue
+		}
+		environment = append(environment, entry)
+	}
+	environment = append(environment, "MAMBA_ROOT_PREFIX="+common.MambaRootPrefix())
 	environment = injectNetworkEnvironment(environment)
 	if settings.Global.HasPipRc() {
 		environment = appendIfValue(environment, "PIP_CONFIG_FILE", common.PipRcFile())

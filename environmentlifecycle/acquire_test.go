@@ -36,7 +36,7 @@ func (it corruptingProvider) GetObject(ctx context.Context, descriptor environme
 	return io.NopCloser(bytes.NewReader(bytes.Repeat([]byte("x"), int(descriptor.Size)))), nil
 }
 
-func TestAcquireVerifiedContentInstallsExactLegacyClosure(t *testing.T) {
+func TestAcquireVerifiedContentRegistersConsumerLocalLegacyCatalogAndPreservesCanonicalBytes(t *testing.T) {
 	fixture, remote, artifactDigest := publishedFixture(t)
 	consumerHome := t.TempDir()
 	common.Product.ForceHome(consumerHome)
@@ -50,7 +50,14 @@ func TestAcquireVerifiedContentInstallsExactLegacyClosure(t *testing.T) {
 		t.Fatalf("verified content = %+v", content)
 	}
 	catalogPath := filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint)))
-	assertFileBytes(t, catalogPath, fixture.catalogBytes)
+	legacyCatalog, err := htfs.LoadPortableCatalog(catalogPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantBase := filepath.Join(consumerHome, "holotree")
+	if legacyCatalog.Root().HolotreeBase() != wantBase {
+		t.Fatalf("legacy catalog base = %q, want consumer base %q", legacyCatalog.Root().HolotreeBase(), wantBase)
+	}
 	logicalID := content.index.Entries[0].LegacyObjectID
 	assertFileBytes(t, htfs.ExactDefaultLocation(logicalID), fixture.objectBytes)
 	if _, err := os.Lstat(common.HololibCompressMarker()); !os.IsNotExist(err) {
@@ -62,6 +69,15 @@ func TestAcquireVerifiedContentInstallsExactLegacyClosure(t *testing.T) {
 	}
 	if _, err := local.ResolveManifest(context.Background(), artifactDigest); err != nil {
 		t.Fatalf("canonical local manifest cache is incomplete: %v", err)
+	}
+	catalogReader, err := local.GetObject(context.Background(), content.manifest.Catalogs[0].Descriptor)
+	if err != nil {
+		t.Fatal(err)
+	}
+	canonicalCatalog, readErr := io.ReadAll(catalogReader)
+	closeErr := catalogReader.Close()
+	if readErr != nil || closeErr != nil || !bytes.Equal(canonicalCatalog, fixture.catalogBytes) {
+		t.Fatalf("canonical catalog changed during consumer registration: read=%v close=%v", readErr, closeErr)
 	}
 }
 

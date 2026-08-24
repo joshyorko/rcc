@@ -83,7 +83,13 @@ func TestMaterializationUsesPortableV12CatalogWithoutChangingArtifactBytes(t *te
 	if info, err := os.Lstat(filepath.Join(result.Path, "python")); err != nil || !info.Mode().IsRegular() {
 		t.Fatalf("materialized Python is not a regular file: %v, %v", info, err)
 	}
-	assertFileBytes(t, filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint))), fixture.catalogBytes)
+	consumerCatalog, err := htfs.LoadPortableCatalog(filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint))))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if consumerCatalog.Root().HolotreeBase() != common.HolotreeLocation() {
+		t.Fatalf("legacy catalog base = %q, want consumer base %q", consumerCatalog.Root().HolotreeBase(), common.HolotreeLocation())
+	}
 	if len(provider.events) == 0 {
 		t.Fatal("cold acquisition made no provider requests")
 	}
@@ -235,12 +241,19 @@ func TestAcquireProviderAuthorizationDoesNotLeakToTrustCarrierClient(t *testing.
 }
 
 func TestWarmAcquireDoesNotTouchProviderOrBuilder(t *testing.T) {
-	_, remote, artifactDigest := publishedFixture(t)
+	fixture, remote, artifactDigest := publishedFixture(t)
 	common.Product.ForceHome(t.TempDir())
 	common.SharedHolotree = false
 	acquirer := NewAcquirer()
 	first, err := acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
 	if err != nil {
+		t.Fatal(err)
+	}
+	legacyCatalog := filepath.Join(common.HololibCatalogLocation(), htfs.CatalogName(common.BlueprintHash(fixture.build.LegacyBlueprint)))
+	if err := os.Remove(legacyCatalog); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Remove(legacyCatalog + ".info"); err != nil {
 		t.Fatal(err)
 	}
 
@@ -258,6 +271,13 @@ func TestWarmAcquireDoesNotTouchProviderOrBuilder(t *testing.T) {
 	}
 	if got, err := os.ReadFile(filepath.Join(second.Path, "python")); err != nil || !bytes.Equal(got, []byte("immutable python bytes")) {
 		t.Fatalf("warm materialization is invalid: %q, %v", got, err)
+	}
+	repaired, err := htfs.LoadPortableCatalog(legacyCatalog)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if repaired.Root().HolotreeBase() != common.HolotreeLocation() {
+		t.Fatalf("warm repair legacy catalog base = %q, want %q", repaired.Root().HolotreeBase(), common.HolotreeLocation())
 	}
 }
 

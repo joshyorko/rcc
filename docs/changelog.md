@@ -1,6 +1,17 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.1 (date: 24.08.2026)
+
+### Bug Fixes
+
+- rebase acquired Environment Artifact legacy v12 catalogs and activation
+  roots to the consumer `ROBOCORP_HOME`, allowing ordinary `--no-build ht
+  vars` and `rcc run` compatibility paths to operate without the producer
+  filesystem
+- preserve canonical Artifact, archive, catalog, and object identity while
+  atomically installing and repairing the consumer-derived legacy catalog
+
 ## v18.19.0 (date: 22.08.2026)
 
 ### New Features
