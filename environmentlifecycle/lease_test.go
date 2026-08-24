@@ -431,7 +431,7 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 	ready := filepath.Join(t.TempDir(), "parent-ready")
 	grandchildProof := filepath.Join(t.TempDir(), "grandchild-survived")
 	grandchild := "import pathlib, time; time.sleep(5); pathlib.Path(" + fmt.Sprintf("%q", grandchildProof) + ").write_text('alive')"
-	parent := "import pathlib, subprocess, sys, time; subprocess.Popen([sys.executable, '-c', " + fmt.Sprintf("%q", grandchild) + "]); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
+	parent := "import pathlib, subprocess, sys, time; subprocess.Popen([" + fmt.Sprintf("%q", hostPython) + ", '-c', " + fmt.Sprintf("%q", grandchild) + "]); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	var stdout, stderr bytes.Buffer
@@ -444,7 +444,21 @@ func TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams(t *testing.
 		handle, _, executeErr := ExecuteWithStreams(ctx, NewLocalMaterializer(), materialization, []string{"python", "-c", parent, ready}, nil, &stdout, &stderr)
 		done <- result{handle: handle, err: executeErr}
 	}()
-	waitForFile(t, ready)
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		if _, err := os.Stat(ready); err == nil {
+			break
+		}
+		select {
+		case outcome := <-done:
+			t.Fatalf("execution exited before parent readiness: %v; stdout=%q stderr=%q", outcome.err, stdout.String(), stderr.String())
+		default:
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("parent never became ready; stdout=%q stderr=%q", stdout.String(), stderr.String())
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
 	started := time.Now()
 	cancel()
 	outcome := <-done
