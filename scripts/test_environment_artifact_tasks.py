@@ -479,6 +479,7 @@ class ArtifactTaskTests(unittest.TestCase):
       self.assertTrue((Path(directory) / "release-candidate-v1.json").is_file())
 
     self.assertEqual(commands, [
+        tasks._invoke_command("assets"),
         tasks._invoke_command("artifactFocused"),
         tasks._invoke_command("artifactRace"),
         tasks._invoke_command("artifactVertical"),

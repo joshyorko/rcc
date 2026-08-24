@@ -825,8 +825,9 @@ def releaseCandidate(c):
         "goVet",
         "coordinationAcceptance",
     )
-    commands = []
+    commands = [_invoke_command("assets")]
     gates = {}
+    c.run(commands[0])
     for task_name in task_names:
         command = _invoke_command(task_name)
         commands.append(command)
