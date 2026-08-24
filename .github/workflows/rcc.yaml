@@ -227,7 +227,7 @@ jobs:
       - name: Run macOS system-alias no-follow acceptance
         if: matrix.goos == 'darwin'
         shell: bash
-        run: go test -count=1 ./artifactprovider ./environmentlifecycle ./settings -run '^TestDarwinSystemAliasPathsPreserveNoFollow$' -v
+        run: go test -count=1 ./artifactprovider ./environmentlifecycle ./settings -run '^(TestDarwinSystemAliasPathsPreserveNoFollow|TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm)$' -v
       - name: Run real native A-to-B acceptance
         shell: bash
         run: |
