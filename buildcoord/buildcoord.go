@@ -419,6 +419,24 @@ type Claim struct {
 	Artifact  Artifact  `json:"artifact,omitempty"`
 	Staging   string    `json:"-"`
 }
+
+const MachineContractSchemaVersion = 1
+
+// MachineContract is the stable, Actions-neutral JSON envelope for the
+// coordination CLI. Consumers must branch on schemaVersion, operation, and
+// status; the detailed coordination records remain optional extensions.
+type MachineContract struct {
+	SchemaVersion int           `json:"schemaVersion"`
+	Operation     string        `json:"operation"`
+	Status        string        `json:"status"`
+	Key           BuildKey      `json:"key"`
+	Claim         *Claim        `json:"claim,omitempty"`
+	Outcome       Outcome       `json:"outcome,omitempty"`
+	Artifact      Artifact      `json:"artifact,omitempty"`
+	Items         []PrewarmItem `json:"items,omitempty"`
+	Error         string        `json:"error,omitempty"`
+}
+
 type Outcome string
 
 const (
