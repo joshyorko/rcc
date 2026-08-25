@@ -239,6 +239,9 @@ func TestGCPolicyRejectsCrossDigestProvisionalMaterialization(t *testing.T) {
 	if _, err := os.Stat(sentinel); err != nil {
 		t.Fatalf("cross-digest provisional removed B materialization: %v", err)
 	}
+	if _, err := os.Stat(filepath.Join(recordRoot(), digestA.Hex(), string(stateMaterializing)+".json")); err != nil {
+		t.Fatalf("cross-digest provisional removed A record: %v", err)
+	}
 	if _, err := readReadyRecord(digestB); err != nil {
 		t.Fatalf("cross-digest provisional removed B ready record: %v", err)
 	}

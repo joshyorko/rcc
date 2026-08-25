@@ -329,6 +329,10 @@ func gcContentRoot(policy GCPolicy) string {
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {
 	var report GCReport
+	if err := validateProvisionalRecords(digest); err != nil {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "invalid-provisional-record"})
+		return report, nil
+	}
 	incomplete, err := incompleteMaterializations(digest)
 	if err != nil {
 		return report, err
@@ -458,6 +462,38 @@ func incompleteMaterializations(digest environmentartifact.Digest) ([]string, er
 		paths = append(paths, record.Path)
 	}
 	return paths, nil
+}
+
+func validateProvisionalRecords(digest environmentartifact.Digest) error {
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		content, err := readRegularNoFollow(recordRoot(), recordComponents(digest, state), maxMaterializationRecordBytes)
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		var record materializationRecord
+		decoder := json.NewDecoder(bytes.NewReader(content))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&record); err != nil {
+			return fmt.Errorf("decode provisional materialization record: %w", err)
+		}
+		if record.ArtifactDigest != digest || record.State != state || record.MaterializationID != materializationID(digest) {
+			return fmt.Errorf("provisional materialization record identity mismatch")
+		}
+		canonical, err := json.Marshal(record)
+		if err != nil {
+			return err
+		}
+		if !bytes.Equal(canonical, content) {
+			return fmt.Errorf("provisional materialization record is not canonical")
+		}
+		if err := validateMaterializationPath(record.Path, record.MaterializationID); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func materializationSize(root string) (int64, error) {
