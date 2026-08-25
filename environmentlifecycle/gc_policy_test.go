@@ -443,10 +443,10 @@ func TestMaterializationRemovalReportsMidRecursiveCancellation(t *testing.T) {
 	if err := os.MkdirAll(filepath.Dir(first), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
+	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
+	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -484,10 +484,10 @@ func TestGCReportPreservesPartialMaterializationProgress(t *testing.T) {
 	if err := os.MkdirAll(filepath.Dir(first), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
+	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
+	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	if err := writeMaterializationRecord(materializationRecord{

@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync/atomic"
 
@@ -418,6 +419,7 @@ func removeMaterializationEntries(ctx context.Context, directory int) (int, erro
 	if closeErr != nil {
 		return 0, closeErr
 	}
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
 
 	removed := 0
 	for _, entry := range entries {
