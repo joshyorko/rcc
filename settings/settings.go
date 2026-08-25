@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -379,8 +380,63 @@ func init() {
 			httpTransport.Proxy = http.ProxyURL(link)
 		}
 	}
+	if noProxy := Global.NoProxy(); noProxy != "" {
+		httpTransport.Proxy = withNoProxy(httpTransport.Proxy, noProxy)
+	}
 	httpTransport.TLSClientConfig = &tls.Config{
 		InsecureSkipVerify: !verifySsl,
 		RootCAs:            Global.loadRootCAs(),
 	}
+}
+
+func withNoProxy(proxy func(*http.Request) (*url.URL, error), noProxy string) func(*http.Request) (*url.URL, error) {
+	return func(request *http.Request) (*url.URL, error) {
+		if noProxyMatch(request.URL, noProxy) {
+			return nil, nil
+		}
+		if proxy != nil {
+			return proxy(request)
+		}
+		return nil, nil
+	}
+}
+
+func noProxyMatch(target *url.URL, raw string) bool {
+	host := strings.ToLower(target.Hostname())
+	ip := net.ParseIP(host)
+	for _, rawToken := range strings.Split(raw, ",") {
+		token := strings.TrimSpace(strings.ToLower(rawToken))
+		if token == "" {
+			continue
+		}
+		if token == "*" {
+			return true
+		}
+		port := ""
+		if h, p, err := net.SplitHostPort(token); err == nil {
+			token, port = h, p
+		} else if strings.Count(token, ":") == 1 {
+			parts := strings.SplitN(token, ":", 2)
+			token, port = parts[0], parts[1]
+		}
+		if port != "" && port != target.Port() {
+			continue
+		}
+		token = strings.Trim(token, "[]")
+		if _, cidr, err := net.ParseCIDR(token); err == nil {
+			if ip != nil && cidr.Contains(ip) {
+				return true
+			}
+			continue
+		}
+		if strings.HasPrefix(token, ".") {
+			domain := strings.TrimPrefix(token, ".")
+			if host == domain || strings.HasSuffix(host, "."+domain) {
+				return true
+			}
+		} else if token == host {
+			return true
+		}
+	}
+	return false
 }
