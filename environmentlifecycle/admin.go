@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -157,103 +156,12 @@ func localContentManifestComponents(digest environmentartifact.Digest) []string 
 	return []string{"manifests", "sha256", h[:2], h[2:4], h}
 }
 
-const (
-	linuxDirectoryFlag = 0x10000
-	linuxNoFollowFlag  = 0x20000
-)
-
-func validLocalContentComponent(component string) bool {
-	return component != "" && component != "." && component != ".." && filepath.Base(component) == component
-}
-
-func linuxDirectoryFDPath(file *os.File) string {
-	return filepath.Join("/proc/self/fd", fmt.Sprintf("%d", file.Fd()))
-}
-
-func openLinuxDirectoryChildNoFollow(parent *os.File, component string) (*os.File, error) {
-	if !validLocalContentComponent(component) {
-		return nil, fmt.Errorf("unsafe local content path component %q", component)
-	}
-	return os.OpenFile(filepath.Join(linuxDirectoryFDPath(parent), component), os.O_RDONLY|linuxDirectoryFlag|linuxNoFollowFlag, 0)
-}
-
-func openLinuxDirectoryNoFollow(path string) (*os.File, error) {
-	if path == "" {
-		return nil, fmt.Errorf("empty local content root")
-	}
-	absoluteRoot, err := filepath.Abs(path)
-	if err != nil {
-		return nil, err
-	}
-	current, err := os.OpenFile(string(filepath.Separator), os.O_RDONLY|linuxDirectoryFlag|linuxNoFollowFlag, 0)
-	if err != nil {
-		return nil, err
-	}
-	for _, component := range strings.Split(strings.TrimPrefix(filepath.Clean(absoluteRoot), string(filepath.Separator)), string(filepath.Separator)) {
-		if component == "" {
-			continue
-		}
-		next, err := openLinuxDirectoryChildNoFollow(current, component)
-		if err != nil {
-			_ = current.Close()
-			return nil, err
-		}
-		_ = current.Close()
-		current = next
-	}
-	return current, nil
-}
-
 func removeLocalContentEntry(root string, components []string) error {
 	removeErr := removeRegularNoFollow(root, components)
 	if removeErr == nil || os.IsNotExist(removeErr) {
 		return nil
 	}
-	if runtime.GOOS != "linux" {
-		return removeErr
-	}
-	if len(components) == 0 {
-		return removeErr
-	}
-	for _, component := range components {
-		if !validLocalContentComponent(component) {
-			return removeErr
-		}
-	}
-	parent, err := openLinuxDirectoryNoFollow(root)
-	if err != nil {
-		return removeErr
-	}
-	defer func() { _ = parent.Close() }()
-	for _, component := range components[:len(components)-1] {
-		next, err := openLinuxDirectoryChildNoFollow(parent, component)
-		if os.IsNotExist(err) {
-			return nil
-		}
-		if err != nil {
-			return removeErr
-		}
-		_ = parent.Close()
-		parent = next
-	}
-	path := filepath.Join(linuxDirectoryFDPath(parent), components[len(components)-1])
-	info, err := os.Lstat(path)
-	if os.IsNotExist(err) {
-		return nil
-	}
-	if err != nil {
-		return removeErr
-	}
-	if info.Mode().IsRegular() && info.Mode()&os.ModeSymlink == 0 {
-		return removeErr
-	}
-	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("remove non-regular local content: %w", err)
-	}
-	if err := parent.Sync(); err != nil {
-		return fmt.Errorf("fsync local content directory: %w", err)
-	}
-	return nil
+	return removeNonRegularLocalContentEntry(root, components)
 }
 
 func removeUnreadableLocalContentEntry(root string, components []string, expectedSize int64, readErr error) error {

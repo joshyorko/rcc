@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -318,9 +319,6 @@ func TestRepairFromProviderRestoresCorruptClosureWithSameArtifactIdentity(t *tes
 }
 
 func TestRepairFromProviderRestoresNonRegularCorruptClosureWithSameArtifactIdentity(t *testing.T) {
-	if runtime.GOOS != "linux" {
-		t.Skip("Linux no-follow CAS repair")
-	}
 	_, remote, digest, manifest, _ := acquiredAdminFixture(t)
 	path := adminContentObjectPath(manifest.LegacyBlueprint.Digest)
 	if err := os.Remove(path); err != nil {
@@ -348,30 +346,62 @@ func TestRepairFromProviderRestoresNonRegularCorruptClosureWithSameArtifactIdent
 }
 
 func TestRepairFromProviderDoesNotFollowCorruptClosureSymlink(t *testing.T) {
-	if runtime.GOOS != "linux" {
-		t.Skip("Linux no-follow CAS repair")
-	}
-	_, remote, digest, manifest, _ := acquiredAdminFixture(t)
-	outside := t.TempDir()
-	sentinelPath := filepath.Join(outside, "sentinel")
-	sentinel := []byte("must remain outside the CAS")
-	if err := os.WriteFile(sentinelPath, sentinel, 0o600); err != nil {
-		t.Fatal(err)
-	}
-	path := adminContentObjectPath(manifest.LegacyBlueprint.Digest)
-	if err := os.Remove(path); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Symlink(outside, path); err != nil {
-		t.Fatal(err)
-	}
+	t.Run("leaf", func(t *testing.T) {
+		_, remote, digest, manifest, _ := acquiredAdminFixture(t)
+		outside := t.TempDir()
+		sentinelPath := filepath.Join(outside, "sentinel")
+		sentinel := []byte("must remain outside the CAS")
+		if err := os.WriteFile(sentinelPath, sentinel, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		path := adminContentObjectPath(manifest.LegacyBlueprint.Digest)
+		if err := os.Remove(path); err != nil {
+			t.Fatal(err)
+		}
+		if err := createAdminDirectoryLink(outside, path); err != nil {
+			t.Fatal(err)
+		}
 
-	if _, err := RepairFromProvider(context.Background(), digest, remote); err != nil {
-		t.Fatalf("RepairFromProvider error = %v", err)
+		if _, err := RepairFromProvider(context.Background(), digest, remote); err != nil {
+			t.Fatalf("RepairFromProvider error = %v", err)
+		}
+		if got, err := os.ReadFile(sentinelPath); err != nil || !bytes.Equal(got, sentinel) {
+			t.Fatalf("outside sentinel = %q, %v", got, err)
+		}
+	})
+
+	t.Run("swapped-parent", func(t *testing.T) {
+		_, remote, digest, _, _ := acquiredAdminFixture(t)
+		manifestPath := adminContentManifestPath(digest)
+		parent := filepath.Dir(manifestPath)
+		held := parent + ".held"
+		if err := os.Rename(parent, held); err != nil {
+			t.Fatal(err)
+		}
+		outside := t.TempDir()
+		sentinelPath := filepath.Join(outside, filepath.Base(manifestPath))
+		sentinel := []byte("must remain outside a swapped CAS parent")
+		if err := os.WriteFile(sentinelPath, sentinel, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if err := createAdminDirectoryLink(outside, parent); err != nil {
+			t.Fatal(err)
+		}
+
+		if _, err := RepairFromProvider(context.Background(), digest, remote); !errors.Is(err, ErrMaterializationCorrupt) {
+			t.Fatalf("RepairFromProvider error = %v, want fail-closed local corruption", err)
+		}
+		if got, err := os.ReadFile(sentinelPath); err != nil || !bytes.Equal(got, sentinel) {
+			t.Fatalf("outside swapped-parent sentinel = %q, %v", got, err)
+		}
+	})
+}
+
+func createAdminDirectoryLink(target, link string) error {
+	if runtime.GOOS != "windows" {
+		return os.Symlink(target, link)
 	}
-	if got, err := os.ReadFile(sentinelPath); err != nil || !bytes.Equal(got, sentinel) {
-		t.Fatalf("outside sentinel = %q, %v", got, err)
-	}
+	return exec.Command("cmd", "/c", "mklink", "/J", link, target).Run()
 }
 
 func TestRepairFromProviderPreservesValidSharedCASObjectWhenProviderRepairFails(t *testing.T) {
