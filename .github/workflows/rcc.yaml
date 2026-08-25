@@ -296,6 +296,14 @@ jobs:
         run: |
           set -euo pipefail
           RCC_REAL_ARTIFACT_TEST=1 go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
+      - name: Run JAT-class real consumer A-to-B acceptance
+        if: matrix.goos == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          RCC_REAL_JAT_CLASS_TEST=1 \
+          RCC_REAL_RECEIPT_FILE="$(pwd)/tmp/output/jat-class-consumer-receipt.json" \
+          go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$' -v
       - name: Run Environment Artifact Robot acceptance against exact binary
         if: matrix.goos != 'windows'
         timeout-minutes: 8

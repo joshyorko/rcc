@@ -117,10 +117,44 @@ func (it *mismatchProvider) GetObject(ctx context.Context, descriptor environmen
 	return it.Provider.GetObject(ctx, descriptor)
 }
 
+type realEnvironmentFixture struct {
+	conda         string
+	robot         string
+	sources       map[string]string
+	packageFiles  []string
+	allowHomeFrom bool
+}
+
 func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if os.Getenv("RCC_REAL_ARTIFACT_TEST") != "1" {
 		t.Skip("set RCC_REAL_ARTIFACT_TEST=1 and RCC_REAL_BINARY to run the real A/B proof")
 	}
+	runRealRCCAtoBVertical(t, realEnvironmentFixture{
+		conda:         "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n",
+		robot:         "tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n",
+		allowHomeFrom: true,
+	})
+}
+
+func TestRealJATClassRCCAtoBVertical(t *testing.T) {
+	if os.Getenv("RCC_REAL_JAT_CLASS_TEST") != "1" {
+		t.Skip("set RCC_REAL_JAT_CLASS_TEST=1 and RCC_REAL_BINARY to run the JAT-class A/B proof")
+	}
+	if runtime.GOOS != "linux" {
+		t.Skip("the deterministic Git/Perl package filename fixture is Linux-only")
+	}
+	runRealRCCAtoBVertical(t, realEnvironmentFixture{
+		conda: "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n  - git\n  - pyyaml\n",
+		robot: "tasks:\n  proof:\n    command: [python, task.py]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n",
+		sources: map[string]string{
+			"task.py": "import yaml\nassert yaml.safe_load('proof: portable')['proof'] == 'portable'\nprint('jat-class-portable')\n",
+		},
+		packageFiles: []string{"B::Terse.3", "B::Op_private.3", "B::Showlex.3"},
+	})
+}
+
+func runRealRCCAtoBVertical(t *testing.T, fixture realEnvironmentFixture) {
+	t.Helper()
 	t.Setenv("RCC_HOLOTREE_MODE", "private")
 	binary := os.Getenv("RCC_REAL_BINARY")
 	if binary == "" {
@@ -148,11 +182,14 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 
 	project := t.TempDir()
 	robotFile := filepath.Join(project, "robot.yaml")
-	writeRealFixture(t, filepath.Join(project, "conda.yaml"), "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n")
-	writeRealFixture(t, robotFile, "tasks:\n  proof:\n    command: [python, -V]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n")
+	writeRealFixture(t, filepath.Join(project, "conda.yaml"), fixture.conda)
+	writeRealFixture(t, robotFile, fixture.robot)
+	for name, content := range fixture.sources {
+		writeRealFixture(t, filepath.Join(project, name), content)
+	}
 
 	producerHome := os.Getenv("RCC_REAL_PRODUCER_HOME")
-	if producerHome == "" {
+	if producerHome == "" || !fixture.allowHomeFrom {
 		producerHome = filepath.Join(t.TempDir(), "producer-home")
 		build := exec.Command(binary, "holotree", "variables", "--robot", robotFile, "--json")
 		build.Env = environmentWith(os.Environ(), map[string]string{
@@ -168,7 +205,8 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	exactCLI := runExactBinaryCLIVertical(t, binary, robotFile, producerHome)
+	packageSnapshot := snapshotNamedPackageFiles(t, producerHome, fixture.packageFiles)
+	exactCLI := runExactBinaryCLIVertical(t, binary, robotFile, producerHome, packageSnapshot)
 
 	providerRoot := filepath.Join(t.TempDir(), "provider")
 	filesystem, err := artifactprovider.NewFilesystem(providerRoot)
@@ -212,6 +250,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if cold.CacheHit != CacheProvider || !strings.HasPrefix(cold.Path, filepath.Join(consumerHome, "holotree")+string(os.PathSeparator)) || cold.ExitCode != 0 {
 		t.Fatalf("cold B process did not acquire, materialize, and execute: %+v", cold)
 	}
+	assertPackageSnapshot(t, cold.Path, packageSnapshot)
 	proofContent, err := os.ReadFile(proofFile)
 	if err != nil {
 		t.Fatal(err)
@@ -252,6 +291,7 @@ func TestRealCurrentRCCAtoBVertical(t *testing.T) {
 	if offlineErr != nil || offline.ArtifactDigest != published.ArtifactDigest || offline.CacheHit != CacheProvider {
 		t.Fatalf("offline archive changed artifact identity or provenance: %+v, %v", offline, offlineErr)
 	}
+	assertPackageSnapshot(t, offline.Path, packageSnapshot)
 
 	server.Close()
 	warm := runRealConsumerProcess(t, "warm", consumerHome, published.ArtifactDigest, "", "")
@@ -319,7 +359,7 @@ type exactBinaryExecResult struct {
 	Compatibility     *CompatibilityReceipt      `json:"compatibility,omitempty"`
 }
 
-func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome string) realCLIEvidence {
+func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome string, packageSnapshot map[string][sha256.Size]byte) realCLIEvidence {
 	t.Helper()
 	providerRoot := filepath.Join(t.TempDir(), "provider")
 	filesystem, err := artifactprovider.NewFilesystem(providerRoot)
@@ -359,6 +399,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if acquired.ArtifactDigest != published.ArtifactDigest || acquired.CacheHit != CacheProvider {
 		t.Fatalf("exact binary cold acquire = %+v", acquired)
 	}
+	assertPackageSnapshot(t, acquired.Path, packageSnapshot)
 	if objectGets.Load() == 0 {
 		t.Fatal("exact binary cold lifecycle made no provider object requests")
 	}
@@ -411,6 +452,7 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	if offlineAcquired.ArtifactDigest != published.ArtifactDigest || offlineAcquired.CacheHit != CacheProvider {
 		t.Fatalf("exact binary offline acquire = %+v", offlineAcquired)
 	}
+	assertPackageSnapshot(t, offlineAcquired.Path, packageSnapshot)
 
 	unavailableProducer := producerHome + "-unavailable"
 	if err := os.Rename(producerHome, unavailableProducer); err != nil {
@@ -485,6 +527,66 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	return realCLIEvidence{
 		ArtifactDigest: published.ArtifactDigest, ObjectCount: published.ObjectCount,
 		ProducerHome: producerHome, ConsumerHome: consumerHome, Cold: cold, Warm: warm, Mismatch: mismatch, PlatformChecks: platformChecks,
+	}
+}
+
+func snapshotNamedPackageFiles(t *testing.T, producerHome string, names []string) map[string][sha256.Size]byte {
+	t.Helper()
+	if len(names) == 0 {
+		return nil
+	}
+	wanted := make(map[string]bool, len(names))
+	found := make(map[string]bool, len(names))
+	for _, name := range names {
+		wanted[name] = true
+	}
+	base := filepath.Join(producerHome, "holotree")
+	snapshot := make(map[string][sha256.Size]byte)
+	err := filepath.WalkDir(base, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.IsDir() || !wanted[entry.Name()] {
+			return nil
+		}
+		relative, err := filepath.Rel(base, path)
+		if err != nil {
+			return err
+		}
+		parts := strings.Split(relative, string(os.PathSeparator))
+		if len(parts) < 2 {
+			return fmt.Errorf("package file %q is not inside a materialization", path)
+		}
+		content, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		snapshot[filepath.Join(parts[1:]...)] = sha256.Sum256(content)
+		found[entry.Name()] = true
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range names {
+		if !found[name] {
+			t.Fatalf("JAT-class producer environment omitted package file %q", name)
+		}
+	}
+	return snapshot
+}
+
+func assertPackageSnapshot(t *testing.T, materialization string, snapshot map[string][sha256.Size]byte) {
+	t.Helper()
+	for relative, expected := range snapshot {
+		path := filepath.Join(materialization, relative)
+		content, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("portable package file %q is unavailable: %v", relative, err)
+		}
+		if actual := sha256.Sum256(content); actual != expected {
+			t.Fatalf("portable package file %q changed bytes", relative)
+		}
 	}
 }
 

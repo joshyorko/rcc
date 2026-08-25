@@ -1,6 +1,22 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.2 (date: 25.08.2026)
+
+### Bug Fixes
+
+- validate v12 catalog components, producer roots, and symlink targets using
+  the Artifact target platform, preserving Windows volume protections while
+  accepting legitimate POSIX package filenames such as `B::Terse.3`
+- allow immutable archive members up to the existing 256 MiB total archive
+  budget so real Git/Perl/ICU-class environments export without weakening
+  cumulative-size, member-count, path, file-type, or compression-ratio checks
+
+### Release Hardening
+
+- add a permanent Linux JAT-class Git/Perl/PyYAML publication, archive, HTTP,
+  producer-unavailable, normal RCC, and provider-dead warm-reuse gate
+
 ## v18.19.1 (date: 24.08.2026)
 
 ### Bug Fixes

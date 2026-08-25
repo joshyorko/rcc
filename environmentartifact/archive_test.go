@@ -106,14 +106,30 @@ func TestReadArchiveFileStreamsAndRejectsTruncatedArchives(t *testing.T) {
 	}
 }
 
-func TestWriteArchiveRejectsOversizedMember(t *testing.T) {
+func TestArchiveMemberBudgetRejectsMemberBeyondTotalBudget(t *testing.T) {
+	if err := validateArchiveMemberSize(ArchiveRoot+"/objects/a", uint64(maxArchiveMemberSize)+1); err == nil {
+		t.Fatal("expected oversized archive member to be rejected")
+	}
+}
+
+func TestWriteArchiveAcceptsJATClassImmutableObjectWithinTotalBudget(t *testing.T) {
+	const jatObjectSize = 24879282
+	object := bytes.Repeat([]byte{'j'}, jatObjectSize)
 	entries := map[string][]byte{
 		ArchiveManifest:            []byte("manifest"),
 		ArchiveObjectIndex:         []byte("index"),
-		ArchiveRoot + "/objects/a": bytes.Repeat([]byte{'x'}, int(maxArchiveMemberSize)+1),
+		ArchiveRoot + "/objects/a": object,
 	}
-	if err := WriteArchive(&bytes.Buffer{}, entries); err == nil {
-		t.Fatal("expected oversized archive member to be rejected")
+	var encoded bytes.Buffer
+	if err := WriteArchive(&encoded, entries); err != nil {
+		t.Fatalf("JAT-class immutable object rejected: %v", err)
+	}
+	decoded, err := ReadArchive(encoded.Bytes())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(decoded[ArchiveRoot+"/objects/a"], object) {
+		t.Fatal("JAT-class immutable object did not round-trip byte-for-byte")
 	}
 }
 

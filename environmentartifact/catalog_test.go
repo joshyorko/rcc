@@ -40,6 +40,117 @@ func TestValidateV12CatalogAcceptsSupportedSurface(t *testing.T) {
 	}
 }
 
+func TestValidateV12CatalogAcceptsPOSIXGitPerlPackageNames(t *testing.T) {
+	for _, platform := range []string{"linux_amd64", "darwin_arm64"} {
+		t.Run(platform, func(t *testing.T) {
+			root, index, identity := validCatalogForValidation(t)
+			root.Platform = platform
+			for _, name := range []string{"B::Terse.3", "B::Op_private.3", "B::Showlex.3"} {
+				root.Tree.Files[name] = &htfs.File{
+					Name: name, Mode: 0o640, Size: root.Tree.Files["python"].Size,
+					Digest: root.Tree.Files["python"].Digest,
+				}
+			}
+			if err := ValidateV12Catalog(root, index, identity); err != nil {
+				t.Fatalf("POSIX package filenames rejected unchanged: %v", err)
+			}
+		})
+	}
+}
+
+func TestValidateV12CatalogUsesTargetPlatformPathSemantics(t *testing.T) {
+	cases := []struct {
+		name, platform, component string
+		wantValid                 bool
+	}{
+		{name: "linux colon", platform: "linux_amd64", component: "B::Terse.3", wantValid: true},
+		{name: "darwin colon", platform: "darwin_amd64", component: "B::Terse.3", wantValid: true},
+		{name: "linux backslash", platform: "linux_amd64", component: `dir\python`, wantValid: true},
+		{name: "windows drive", platform: "windows_amd64", component: "B::Terse.3", wantValid: false},
+		{name: "windows backslash", platform: "windows_amd64", component: `dir\python`, wantValid: false},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			root, index, identity := validCatalogForValidation(t)
+			root.Platform = test.platform
+			file := root.Tree.Files["python"]
+			root.Tree.Files = map[string]*htfs.File{
+				test.component: {
+					Name: test.component, Mode: file.Mode, Size: file.Size,
+					Digest: file.Digest, Rewrite: file.Rewrite,
+				},
+			}
+			err := ValidateV12Catalog(root, index, identity)
+			if test.wantValid && err != nil {
+				t.Fatalf("target-valid component rejected: %v", err)
+			}
+			if !test.wantValid && err == nil {
+				t.Fatal("target-invalid component accepted")
+			}
+		})
+	}
+}
+
+func TestValidateV12CatalogRejectsUniversalAndWindowsTargetEscapes(t *testing.T) {
+	cases := []struct {
+		name, platform, component string
+	}{
+		{name: "empty POSIX", platform: "linux_amd64", component: ""},
+		{name: "dot POSIX", platform: "linux_amd64", component: "."},
+		{name: "dotdot POSIX", platform: "linux_amd64", component: ".."},
+		{name: "absolute POSIX", platform: "linux_amd64", component: "/escape"},
+		{name: "slash POSIX", platform: "linux_amd64", component: "dir/python"},
+		{name: "drive relative Windows", platform: "windows_amd64", component: `C:escape`},
+		{name: "drive absolute Windows", platform: "windows_amd64", component: `C:\escape`},
+		{name: "rooted Windows", platform: "windows_amd64", component: `\escape`},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			root, index, identity := validCatalogForValidation(t)
+			root.Platform = test.platform
+			file := root.Tree.Files["python"]
+			root.Tree.Files = map[string]*htfs.File{
+				test.component: {
+					Name: test.component, Mode: file.Mode, Size: file.Size,
+					Digest: file.Digest, Rewrite: file.Rewrite,
+				},
+			}
+			if err := ValidateV12Catalog(root, index, identity); err == nil {
+				t.Fatal("unsafe target component accepted")
+			}
+		})
+	}
+}
+
+func TestValidateV12CatalogUsesTargetPlatformForProducerRootAndSymlinks(t *testing.T) {
+	cases := []struct {
+		name, platform, rootPath, target string
+		wantValid                        bool
+	}{
+		{name: "POSIX package link", platform: "linux_amd64", rootPath: "/producer/h123456_123456789abcdeft", target: "B::Terse.3", wantValid: true},
+		{name: "POSIX backslash link", platform: "darwin_arm64", rootPath: "/producer/h123456_123456789abcdeft", target: `dir\python`, wantValid: true},
+		{name: "Windows relative link", platform: "windows_amd64", rootPath: `C:\producer\h123456_123456789abcdeft`, target: "python", wantValid: true},
+		{name: "Windows drive link", platform: "windows_amd64", rootPath: `C:\producer\h123456_123456789abcdeft`, target: `C:escape`, wantValid: false},
+		{name: "Windows rooted link", platform: "windows_amd64", rootPath: `C:\producer\h123456_123456789abcdeft`, target: `\escape`, wantValid: false},
+		{name: "POSIX escaping link", platform: "linux_amd64", rootPath: "/producer/h123456_123456789abcdeft", target: "../escape", wantValid: false},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			root, index, identity := validCatalogForValidation(t)
+			root.Platform = test.platform
+			root.Path = test.rootPath
+			root.Tree.Files["link"] = &htfs.File{Name: "link", Mode: os.ModeSymlink, Symlink: test.target}
+			err := ValidateV12Catalog(root, index, identity)
+			if test.wantValid && err != nil {
+				t.Fatalf("target-valid root or symlink rejected: %v", err)
+			}
+			if !test.wantValid && err == nil {
+				t.Fatal("target-invalid root or symlink accepted")
+			}
+		})
+	}
+}
+
 func TestValidateV12CatalogRejectsUnsafeTreeMetadata(t *testing.T) {
 	cases := map[string]func(*htfs.Root){
 		"symlink root": func(root *htfs.Root) { root.Tree.Symlink = "elsewhere" },
@@ -47,7 +158,7 @@ func TestValidateV12CatalogRejectsUnsafeTreeMetadata(t *testing.T) {
 			root.Tree.Files = map[string]*htfs.File{"/escape": {Name: "/escape", Mode: 0o640, Digest: root.Tree.Files["python"].Digest, Size: 128}}
 		},
 		"dot name":  func(root *htfs.Root) { root.Tree.Files["python"].Name = ".." },
-		"separator": func(root *htfs.Root) { root.Tree.Files["python"].Name = `dir\python` },
+		"separator": func(root *htfs.Root) { root.Tree.Files["python"].Name = `dir/python` },
 		"file directory collision": func(root *htfs.Root) {
 			root.Tree.Dirs["python"] = &htfs.Dir{Name: "python", Mode: os.ModeDir | 0o750, Dirs: map[string]*htfs.Dir{}, Files: map[string]*htfs.File{}}
 		},

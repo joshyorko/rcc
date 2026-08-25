@@ -3,7 +3,7 @@ package environmentartifact
 import (
 	"fmt"
 	"os"
-	"path/filepath"
+	"path"
 	"regexp"
 	"strings"
 
@@ -12,11 +12,22 @@ import (
 
 var windowsVolumePattern = regexp.MustCompile(`^[A-Za-z]:`)
 
+type catalogPathSemantics bool
+
+const (
+	posixCatalogPaths   catalogPathSemantics = false
+	windowsCatalogPaths catalogPathSemantics = true
+)
+
 func ValidateV12Catalog(root *htfs.Root, index ObjectIndex, producerIdentity string) error {
 	if root == nil || root.Info == nil || root.Tree == nil {
 		return fmt.Errorf("catalog root is incomplete")
 	}
-	if producerIdentity == "" || filepath.Base(root.Path) != producerIdentity || root.Identity != producerIdentity {
+	semantics, err := catalogSemantics(root.Platform)
+	if err != nil {
+		return err
+	}
+	if producerIdentity == "" || semantics.base(root.Path) != producerIdentity || root.Identity != producerIdentity {
 		return fmt.Errorf("catalog producer identity mismatch")
 	}
 	if root.Tree.IsSymlink() {
@@ -30,7 +41,7 @@ func ValidateV12Catalog(root *htfs.Root, index ObjectIndex, producerIdentity str
 		indexed[entry.LegacyObjectID] = entry
 	}
 	referenced := make(map[string]bool, len(index.Entries))
-	if err := validateCatalogDirectory(root.Tree, nil, indexed, referenced, len(producerIdentity)); err != nil {
+	if err := validateCatalogDirectory(root.Tree, nil, indexed, referenced, len(producerIdentity), semantics); err != nil {
 		return err
 	}
 	for legacyID := range indexed {
@@ -41,7 +52,25 @@ func ValidateV12Catalog(root *htfs.Root, index ObjectIndex, producerIdentity str
 	return nil
 }
 
-func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed map[string]ObjectEntry, referenced map[string]bool, rewriteWidth int) error {
+func catalogSemantics(platform string) (catalogPathSemantics, error) {
+	switch platform {
+	case "linux_amd64", "darwin_amd64", "darwin_arm64":
+		return posixCatalogPaths, nil
+	case "windows_amd64":
+		return windowsCatalogPaths, nil
+	default:
+		return posixCatalogPaths, fmt.Errorf("unsupported catalog target platform %q", platform)
+	}
+}
+
+func (it catalogPathSemantics) base(value string) string {
+	if it == windowsCatalogPaths {
+		value = strings.ReplaceAll(value, `\`, "/")
+	}
+	return path.Base(value)
+}
+
+func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed map[string]ObjectEntry, referenced map[string]bool, rewriteWidth int, semantics catalogPathSemantics) error {
 	if directory == nil {
 		return fmt.Errorf("nil catalog directory")
 	}
@@ -49,10 +78,10 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 		return fmt.Errorf("unsupported directory mode %v", directory.Mode)
 	}
 	if directory.IsSymlink() {
-		return validateCatalogSymlink(components, directory.Symlink)
+		return validateCatalogSymlink(components, directory.Symlink, semantics)
 	}
 	for key, child := range directory.Dirs {
-		if err := validateCatalogName(key); err != nil {
+		if err := validateCatalogName(key, semantics); err != nil {
 			return err
 		}
 		if child == nil || child.Name != key {
@@ -61,12 +90,12 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 		if _, collision := directory.Files[key]; collision {
 			return fmt.Errorf("catalog file/directory collision at %q", key)
 		}
-		if err := validateCatalogDirectory(child, appendPath(components, key), indexed, referenced, rewriteWidth); err != nil {
+		if err := validateCatalogDirectory(child, appendPath(components, key), indexed, referenced, rewriteWidth, semantics); err != nil {
 			return err
 		}
 	}
 	for key, file := range directory.Files {
-		if err := validateCatalogName(key); err != nil {
+		if err := validateCatalogName(key, semantics); err != nil {
 			return err
 		}
 		if file == nil || file.Name != key {
@@ -74,7 +103,7 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 		}
 		path := appendPath(components, key)
 		if file.IsSymlink() {
-			if err := validateCatalogSymlink(path, file.Symlink); err != nil {
+			if err := validateCatalogSymlink(path, file.Symlink, semantics); err != nil {
 				return err
 			}
 			continue
@@ -94,24 +123,37 @@ func validateCatalogDirectory(directory *htfs.Dir, components []string, indexed 
 	return nil
 }
 
-func validateCatalogName(name string) error {
-	if name == "" || name == "." || name == ".." || filepath.IsAbs(name) || filepath.VolumeName(name) != "" || windowsVolumePattern.MatchString(name) || strings.ContainsAny(name, `/\`) {
+func validateCatalogName(name string, semantics catalogPathSemantics) error {
+	unsafe := name == "" || name == "." || name == ".." || strings.Contains(name, "/")
+	if semantics == windowsCatalogPaths {
+		unsafe = unsafe || windowsVolumePattern.MatchString(name) || strings.Contains(name, `\`)
+	}
+	if unsafe {
 		return fmt.Errorf("unsafe catalog path component %q", name)
 	}
 	return nil
 }
 
-func validateCatalogSymlink(path []string, target string) error {
-	if target == "" || strings.HasPrefix(target, "/") || filepath.IsAbs(target) || filepath.VolumeName(target) != "" || windowsVolumePattern.MatchString(target) || strings.Contains(target, `\`) {
+func validateCatalogSymlink(catalogPath []string, target string, semantics catalogPathSemantics) error {
+	if target == "" || strings.HasPrefix(target, "/") || (semantics == windowsCatalogPaths && (windowsVolumePattern.MatchString(target) || strings.Contains(target, `\`))) {
 		return fmt.Errorf("unsafe catalog symlink target %q", target)
 	}
-	parent := path[:len(path)-1]
-	parts := append([]string{"/materialization"}, parent...)
-	parts = append(parts, target)
-	resolved := filepath.Clean(filepath.Join(parts...))
-	root := string(filepath.Separator) + "materialization"
-	if resolved != root && !strings.HasPrefix(resolved, root+string(filepath.Separator)) {
-		return fmt.Errorf("catalog symlink %q escapes materialization root", target)
+	depth := len(catalogPath) - 1
+	for _, component := range strings.Split(target, "/") {
+		switch component {
+		case "", ".":
+			continue
+		case "..":
+			depth--
+			if depth < 0 {
+				return fmt.Errorf("catalog symlink %q escapes materialization root", target)
+			}
+		default:
+			if err := validateCatalogName(component, semantics); err != nil {
+				return fmt.Errorf("unsafe catalog symlink target %q", target)
+			}
+			depth++
+		}
 	}
 	return nil
 }

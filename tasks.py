@@ -611,6 +611,22 @@ def artifactVertical(c):
 
 
 @task
+def artifactConsumerVertical(c):
+    """Run the real Linux JAT-class portable consumer lifecycle test."""
+    _require_linux("artifactConsumerVertical")
+    local(c, do_test=False)
+    env = _contained_go_env()
+    env.update({
+        "RCC_REAL_JAT_CLASS_TEST": "1",
+        "RCC_SOURCE_SHA": _exact_commit_sha(),
+        "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
+        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "jat-class-consumer-receipt.json").resolve()),
+    })
+    c.run("go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$'", env=env)
+
+
+@task
 def artifactRobot(c):
     """Build and run only the Environment Artifacts robot acceptance suite."""
     _require_linux("artifactRobot")
@@ -840,6 +856,7 @@ def releaseCandidate(c):
         "artifactFocused",
         "artifactRace",
         "artifactVertical",
+        "artifactConsumerVertical",
         "artifactRobot",
         "binaryInventory",
         "largeStream",

@@ -96,6 +96,7 @@ class ArtifactTaskTests(unittest.TestCase):
         "artifactFocused",
         "artifactRace",
         "artifactVertical",
+        "artifactConsumerVertical",
         "artifactRobot",
         "goVet",
         "binaryInventory",
@@ -149,6 +150,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
     self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
+    self.assertIn("TestRealJATClassRCCAtoBVertical", native_job)
+    self.assertIn("RCC_REAL_JAT_CLASS_TEST=1", native_job)
     self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
     self.assertIn("TestIndependentProcessArtifactLockContentionBlocks", native_job)
@@ -413,6 +416,27 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("RCC_SOURCE_SHA", kwargs["env"])
     self.assertRegex(kwargs["env"]["RCC_SOURCE_SHA"], r"^[0-9a-f]{40}$")
 
+  def test_artifact_consumer_vertical_builds_candidate_and_runs_jat_class_proof(self):
+    calls = []
+
+    class Context:
+      def run(self, command, **kwargs):
+        calls.append((command, kwargs))
+
+    context = Context()
+    with mock.patch.object(tasks, "local") as local_build:
+      tasks.artifactConsumerVertical.body(context)
+
+    local_build.assert_called_once_with(context, do_test=False)
+    self.assertEqual(len(calls), 1)
+    command, kwargs = calls[0]
+    self.assertIn("TestRealJATClassRCCAtoBVertical", command)
+    self.assertIn("-timeout 30m", command)
+    self.assertEqual(kwargs["env"]["RCC_REAL_JAT_CLASS_TEST"], "1")
+    self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
+    self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-amd64")
+    self.assertEqual(kwargs["env"]["RCC_REAL_RECEIPT_FILE"], str((ROOT / "tmp" / "jat-class-consumer-receipt.json").resolve()))
+
   def test_release_workflow_gates_publication_on_contained_release_candidate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     self.assertIn("  release-candidate:", workflow)
@@ -500,7 +524,7 @@ class ArtifactTaskTests(unittest.TestCase):
         commands.append(command)
 
     task_names = [
-        "artifactFocused", "artifactRace", "artifactVertical", "artifactRobot",
+        "artifactFocused", "artifactRace", "artifactVertical", "artifactConsumerVertical", "artifactRobot",
         "binaryInventory", "largeStream", "selfHost", "robot",
         "coordinationAcceptance",
     ]
@@ -521,6 +545,7 @@ class ArtifactTaskTests(unittest.TestCase):
         tasks._invoke_command("artifactFocused"),
         tasks._invoke_command("artifactRace"),
         tasks._invoke_command("artifactVertical"),
+        tasks._invoke_command("artifactConsumerVertical"),
         tasks._invoke_command("artifactRobot"),
         tasks._invoke_command("binaryInventory"),
         tasks._invoke_command("largeStream"),

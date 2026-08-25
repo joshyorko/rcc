@@ -24,8 +24,8 @@ const (
 	ArchiveBlueprintDir     = ArchiveRoot + "/legacy-blueprints/"
 )
 
-const maxArchiveMemberSize int64 = 16 << 20
 const maxArchiveSize int64 = 256 << 20
+const maxArchiveMemberSize int64 = maxArchiveSize
 const maxArchiveMembers = 32768
 const maxArchiveCompressionRatio uint64 = 1000
 const maxArchiveUncompressedSize uint64 = 256 << 20
@@ -53,8 +53,8 @@ func WriteArchive(w io.Writer, entries map[string][]byte) error {
 	}
 	zw := zip.NewWriter(w)
 	for _, name := range names {
-		if int64(len(entries[name])) > maxArchiveMemberSize {
-			return fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
+		if err := validateArchiveMemberSize(name, uint64(len(entries[name]))); err != nil {
+			return err
 		}
 		header := &zip.FileHeader{Name: name, Method: zip.Store}
 		header.Modified = time.Unix(0, 0).UTC()
@@ -175,8 +175,8 @@ func (a *ArchiveReader) ReadMember(name string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if int64(len(content)) > maxArchiveMemberSize {
-		return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
+	if err := validateArchiveMemberSize(name, uint64(len(content))); err != nil {
+		return nil, err
 	}
 	return content, nil
 }
@@ -287,8 +287,11 @@ func ArchiveEntries(r *zip.Reader) (map[string][]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("read environment archive member %q: %w", file.Name, err)
 		}
-		if closeErr != nil || int64(len(content)) > maxArchiveMemberSize {
-			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
+		if closeErr != nil {
+			return nil, fmt.Errorf("close environment archive member %q: %w", file.Name, closeErr)
+		}
+		if err := validateArchiveMemberSize(file.Name, uint64(len(content))); err != nil {
+			return nil, err
 		}
 		entries[name] = content
 	}
@@ -314,8 +317,8 @@ func validateArchiveFiles(files []*zip.File) (map[string]*zip.File, error) {
 		if file.FileInfo().IsDir() || file.Mode()&0o170000 == 0o120000 {
 			return nil, fmt.Errorf("environment archive contains non-regular entry %q", file.Name)
 		}
-		if file.UncompressedSize64 > uint64(maxArchiveMemberSize) {
-			return nil, fmt.Errorf("environment archive member %q exceeds %d bytes", file.Name, maxArchiveMemberSize)
+		if err := validateArchiveMemberSize(file.Name, file.UncompressedSize64); err != nil {
+			return nil, err
 		}
 		if file.UncompressedSize64 > maxArchiveUncompressedSize-uncompressedSize {
 			return nil, fmt.Errorf("environment archive cumulative uncompressed size exceeds %d bytes", maxArchiveUncompressedSize)
@@ -330,6 +333,13 @@ func validateArchiveFiles(files []*zip.File) (map[string]*zip.File, error) {
 		validated[file.Name] = file
 	}
 	return validated, nil
+}
+
+func validateArchiveMemberSize(name string, size uint64) error {
+	if size > uint64(maxArchiveMemberSize) {
+		return fmt.Errorf("environment archive member %q exceeds %d bytes", name, maxArchiveMemberSize)
+	}
+	return nil
 }
 
 func validateArchiveUncompressedBudget(memberCount int, total uint64) error {

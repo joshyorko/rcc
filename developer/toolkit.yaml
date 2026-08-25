@@ -37,6 +37,8 @@ devTasks:
     shell: python call_invoke.py goVet
   artifactVertical:
     shell: python call_invoke.py artifactVertical
+  artifactConsumerVertical:
+    shell: python call_invoke.py artifactConsumerVertical
   artifactRobot:
     shell: python call_invoke.py artifactRobot
   binaryInventory:
