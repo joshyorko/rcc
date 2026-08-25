@@ -376,6 +376,41 @@ def get_official_micromamba_url(version, platform):
     return f"{base}/{conda_platform}/{version}"
 
 
+def _download_micromamba_archive(url, destination, *, run=None, sleep=None, attempts=3):
+    """Download and validate a micromamba bzip2 tar archive with bounded retries."""
+    import tarfile
+    import time
+
+    run = run or subprocess.run
+    sleep = sleep or time.sleep
+    destination = Path(destination)
+    last_error = "unknown download error"
+
+    for attempt in range(1, attempts + 1):
+        result = run(
+            ["curl", "--fail", "--silent", "--show-error", "--location",
+             url, "-o", str(destination)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode:
+            last_error = (result.stderr or f"curl exited with status {result.returncode}").strip()
+        else:
+            try:
+                with tarfile.open(destination, "r:bz2") as archive:
+                    archive.getmembers()
+                return destination
+            except (OSError, tarfile.TarError):
+                last_error = "downloaded payload is not a valid bzip2 tar archive"
+
+        if attempt < attempts:
+            sleep(0.25 * attempt)
+
+    raise RuntimeError(
+        f"micromamba download failed after {attempts} attempts for {url}: {last_error}"
+    )
+
+
 @task
 def micromamba(c):
     """Download micromamba files from official conda-forge source"""
@@ -420,7 +455,7 @@ def micromamba(c):
 
         # Download the archive
         archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
-        c.run(f'curl -sL "{url}" -o "{archive_path}"')
+        _download_micromamba_archive(url, archive_path)
 
         # Extract the binary from the archive
         # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
