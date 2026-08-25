@@ -322,6 +322,134 @@ func TestGCPolicyRejectsCrossDigestReadyMaterialization(t *testing.T) {
 	}
 }
 
+func TestReconcileRejectsUnsafeProvisionalJournals(t *testing.T) {
+	cases := []struct {
+		name      string
+		state     materializationState
+		malformed bool
+	}{
+		{name: "verified-content-cross-digest", state: stateVerifiedContent},
+		{name: "verified-content-malformed", state: stateVerifiedContent, malformed: true},
+		{name: "materializing-cross-digest", state: stateMaterializing},
+		{name: "materializing-malformed", state: stateMaterializing, malformed: true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			home := t.TempDir()
+			previous := common.Product.Home()
+			previousShared := common.SharedHolotree
+			common.Product.ForceHome(home)
+			common.SharedHolotree = false
+			t.Cleanup(func() {
+				common.SharedHolotree = previousShared
+				common.Product.ForceHome(previous)
+			})
+
+			digestA := environmentartifact.DigestBytes([]byte("reconcile-unsafe-a-" + tc.name))
+			digestB := environmentartifact.DigestBytes([]byte("reconcile-unsafe-b-" + tc.name))
+			idB := materializationID(digestB)
+			pathB := filepath.Join(common.HolotreeLocation(), idB)
+			if err := os.MkdirAll(pathB, 0o700); err != nil {
+				t.Fatal(err)
+			}
+			sentinel := filepath.Join(pathB, "must-survive")
+			if err := os.WriteFile(sentinel, []byte("B"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if err := writeMaterializationRecord(materializationRecord{
+				ArtifactDigest: digestB, MaterializationID: idB, Path: pathB,
+				State: stateReady, VerifiedAt: time.Unix(1, 0),
+			}); err != nil {
+				t.Fatal(err)
+			}
+			if err := writeReferenceRoot(environmentartifact.Manifest{ArtifactDigest: digestB}, environmentartifact.ObjectIndex{}); err != nil {
+				t.Fatal(err)
+			}
+
+			journalPath := filepath.Join(recordRoot(), digestA.Hex(), string(tc.state)+".json")
+			if tc.malformed {
+				if err := os.MkdirAll(filepath.Dir(journalPath), 0o700); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(journalPath, []byte(`{"artifactDigest":`), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			} else if err := writeMaterializationRecord(materializationRecord{
+				ArtifactDigest: digestA, MaterializationID: idB, Path: pathB,
+				State: tc.state, VerifiedAt: time.Unix(1, 0),
+			}); err != nil {
+				t.Fatal(err)
+			}
+			before, err := os.ReadFile(journalPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			report, err := Reconcile(context.Background(), digestA)
+			if err == nil {
+				t.Fatal("unsafe provisional journal unexpectedly reconciled")
+			}
+			if report.Provisional != 0 || report.ProvisionalRemoved != 0 {
+				t.Fatalf("unsafe provisional journal reported mutation: %+v", report)
+			}
+			after, err := os.ReadFile(journalPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.Equal(before, after) {
+				t.Fatal("unsafe provisional journal bytes changed")
+			}
+			if _, err := os.Stat(sentinel); err != nil {
+				t.Fatalf("unsafe Reconcile removed B sentinel: %v", err)
+			}
+			if _, err := readReadyRecord(digestB); err != nil {
+				t.Fatalf("unsafe Reconcile removed B ready record: %v", err)
+			}
+			rootB, err := readReferenceRoot(digestB)
+			if err != nil || rootB.State != "live" {
+				t.Fatalf("unsafe Reconcile changed B reference root: %+v, %v", rootB, err)
+			}
+		})
+	}
+}
+
+func TestReconcileRemovesValidProvisionalJournals(t *testing.T) {
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		t.Run(string(state), func(t *testing.T) {
+			home := t.TempDir()
+			previous := common.Product.Home()
+			previousShared := common.SharedHolotree
+			common.Product.ForceHome(home)
+			common.SharedHolotree = false
+			t.Cleanup(func() {
+				common.SharedHolotree = previousShared
+				common.Product.ForceHome(previous)
+			})
+
+			digest := environmentartifact.DigestBytes([]byte("reconcile-valid-" + string(state)))
+			id := materializationID(digest)
+			path := filepath.Join(common.HolotreeLocation(), id)
+			if err := writeMaterializationRecord(materializationRecord{
+				ArtifactDigest: digest, MaterializationID: id, Path: path,
+				State: state, VerifiedAt: time.Unix(1, 0),
+			}); err != nil {
+				t.Fatal(err)
+			}
+
+			report, err := Reconcile(context.Background(), digest)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if report.Provisional != 1 || report.ProvisionalRemoved != 1 {
+				t.Fatalf("valid provisional reconciliation report = %+v", report)
+			}
+			if _, err := os.Stat(filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")); !os.IsNotExist(err) {
+				t.Fatalf("valid %s journal survived reconciliation: %v", state, err)
+			}
+		})
+	}
+}
+
 func TestLocalOnlyRemoteKnownPolicyAllowsBoundedReclamation(t *testing.T) {
 	home := t.TempDir()
 	previous := common.Product.Home()

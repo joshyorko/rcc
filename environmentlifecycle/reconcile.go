@@ -68,6 +68,9 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 		return ReconcileReport{}, err
 	}
 	report := ReconcileReport{ArtifactDigest: digest}
+	if err := validateProvisionalRecords(digest); err != nil {
+		return report, err
+	}
 	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
 		path := filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")
 		if _, statErr := os.Stat(path); statErr == nil {
