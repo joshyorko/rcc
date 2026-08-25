@@ -14,14 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type coordinationResult struct {
-	Key      buildcoord.BuildKey      `json:"key"`
-	Claim    buildcoord.Claim         `json:"claim,omitempty"`
-	Outcome  buildcoord.Outcome       `json:"outcome,omitempty"`
-	Artifact buildcoord.Artifact      `json:"artifact,omitempty"`
-	Items    []buildcoord.PrewarmItem `json:"items,omitempty"`
-	Error    string                   `json:"error,omitempty"`
-}
+type coordinationResult = buildcoord.MachineContract
 
 func newEnvironmentCoordinateCommand() *cobra.Command {
 	var root, spec, platform, builder, resolution, trust, schema, owner string
@@ -66,6 +59,19 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return artifact, nil
 	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
+		result.SchemaVersion = buildcoord.MachineContractSchemaVersion
+		result.Operation = cmd.Name()
+		if err != nil {
+			result.Status = "failed"
+		} else if result.Status == "" {
+			if result.Outcome != "" {
+				result.Status = string(result.Outcome)
+			} else if len(result.Items) > 0 {
+				result.Status = string(result.Items[0].Status)
+			} else {
+				result.Status = "ok"
+			}
+		}
 		if err != nil {
 			result.Error = err.Error()
 		}
