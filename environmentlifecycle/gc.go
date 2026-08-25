@@ -479,7 +479,7 @@ func validateProvisionalRecords(digest environmentartifact.Digest) error {
 		if err := decoder.Decode(&record); err != nil {
 			return fmt.Errorf("decode provisional materialization record: %w", err)
 		}
-		if record.ArtifactDigest != digest || record.State != state || record.MaterializationID != materializationID(digest) {
+		if record.ArtifactDigest != digest || record.State != state {
 			return fmt.Errorf("provisional materialization record identity mismatch")
 		}
 		canonical, err := json.Marshal(record)
@@ -489,11 +489,46 @@ func validateProvisionalRecords(digest environmentartifact.Digest) error {
 		if !bytes.Equal(canonical, content) {
 			return fmt.Errorf("provisional materialization record is not canonical")
 		}
-		if err := validateMaterializationPath(record.Path, record.MaterializationID); err != nil {
+		if record.MaterializationID == materializationID(digest) {
+			if err := validateMaterializationPath(record.Path, record.MaterializationID); err != nil {
+				return err
+			}
+			continue
+		}
+		if err := validateAbsentOrphanMaterializationPath(record.Path, record.MaterializationID); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func validateAbsentOrphanMaterializationPath(path, id string) error {
+	if id == "" || !filepath.IsAbs(path) || filepath.Clean(path) != path || filepath.Base(path) != id {
+		return fmt.Errorf("refuse unsafe orphan materialization path")
+	}
+	root, err := filepath.Abs(common.HolotreeLocation())
+	if err != nil {
+		return err
+	}
+	expected := filepath.Join(root, id)
+	actual, err := filepath.Abs(path)
+	if err != nil || actual != expected {
+		return fmt.Errorf("refuse orphan materialization path outside root")
+	}
+	if err := validateGCDirectory(root); err != nil {
+		return err
+	}
+	info, err := os.Lstat(path)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+		return fmt.Errorf("refuse existing orphan materialization path")
+	}
+	return fmt.Errorf("orphan materialization path exists")
 }
 
 func materializationSize(root string) (int64, error) {

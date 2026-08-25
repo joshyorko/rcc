@@ -413,6 +413,60 @@ func TestReconcileRejectsUnsafeProvisionalJournals(t *testing.T) {
 	}
 }
 
+func TestReconcileRemovesAbsentOrphanProvisionalJournals(t *testing.T) {
+	home := t.TempDir()
+	previous := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previous)
+	})
+
+	digest := environmentartifact.DigestBytes([]byte("reconcile-absent-orphan"))
+	staleID := "stale-provisional"
+	stalePath := filepath.Join(common.HolotreeLocation(), staleID)
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		if err := writeMaterializationRecord(materializationRecord{
+			ArtifactDigest: digest, LegacyBlueprintKey: staleID, MaterializationID: staleID,
+			Path: stalePath, State: state, CreatedAt: time.Unix(1, 0).UTC(), VerifiedAt: time.Unix(1, 0).UTC(),
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	sentinel := filepath.Join(home, "artifacts", "v1", "content", "objects", "sha256", "aa", "bb", ".upload-stale")
+	if err := os.MkdirAll(filepath.Dir(sentinel), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(sentinel, []byte("stale content"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := Reconcile(context.Background(), digest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Provisional != 2 || report.ProvisionalRemoved != 2 {
+		t.Fatalf("absent orphan reconciliation report = %+v", report)
+	}
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		if _, err := os.Stat(filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")); !os.IsNotExist(err) {
+			t.Fatalf("stale %s journal survived reconciliation: %v", state, err)
+		}
+	}
+	if _, err := readReadyRecord(digest); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("absent orphan reconciliation created ready record: %v", err)
+	}
+	content, err := os.ReadFile(sentinel)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(content) != "stale content" {
+		t.Fatalf("unrelated stale content changed: %q", content)
+	}
+}
+
 func TestReconcileRemovesValidProvisionalJournals(t *testing.T) {
 	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
 		t.Run(string(state), func(t *testing.T) {
