@@ -19,6 +19,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
@@ -36,6 +37,8 @@ type HTTP struct {
 	baseURL   string
 	client    *http.Client
 	userAgent string
+	requests  atomic.Int64
+	errors    atomic.Int64
 }
 
 type HTTPOptions struct {
@@ -855,8 +858,16 @@ func (it *HTTP) NegotiateCapabilities(ctx context.Context, required Capabilities
 }
 
 func (it *HTTP) Health(ctx context.Context) (Health, error) {
+	it.requests.Add(1)
 	var result Health
 	err := it.doJSON(ctx, http.MethodGet, "/v1/health", nil, &result)
+	if err != nil {
+		it.errors.Add(1)
+		result.Ready = false
+		result.Error = "HTTP provider health request failed"
+	}
+	result.Requests = it.requests.Load()
+	result.Errors = it.errors.Load()
 	return result, err
 }
 
