@@ -4,6 +4,7 @@ package environmentlifecycle
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -321,6 +322,185 @@ func removeRegularNoFollow(rootPath string, components []string) error {
 		return err
 	}
 	return unix.Fsync(parent)
+}
+
+func removeMaterializationContext(ctx context.Context, path string) (int, error) {
+	if ctx == nil {
+		return 0, fmt.Errorf("nil materialization removal context")
+	}
+	if err := validateMaterializationPath(path, filepath.Base(path)); err != nil {
+		return 0, err
+	}
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
+
+	parent, err := openAbsoluteDirectory(filepath.Dir(path), false)
+	if errors.Is(err, unix.ENOENT) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	defer func() { _ = unix.Close(parent) }()
+	name := filepath.Base(path)
+	if !safeComponent(name) {
+		return 0, fmt.Errorf("unsafe materialization root component %q", name)
+	}
+	var rootInfo unix.Stat_t
+	if err := unix.Fstatat(parent, name, &rootInfo, unix.AT_SYMLINK_NOFOLLOW); errors.Is(err, unix.ENOENT) {
+		return 0, nil
+	} else if err != nil {
+		return 0, err
+	}
+	if rootInfo.Mode&unix.S_IFMT != unix.S_IFDIR {
+		return 0, fmt.Errorf("refuse unsafe materialization root")
+	}
+	root, err := unix.Openat(parent, name, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+	if errors.Is(err, unix.ENOENT) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("open materialization root without following links: %w", err)
+	}
+	var openedRootInfo unix.Stat_t
+	if err := unix.Fstat(root, &openedRootInfo); err != nil {
+		_ = unix.Close(root)
+		return 0, err
+	}
+	if !sameUnixFile(rootInfo, openedRootInfo) {
+		_ = unix.Close(root)
+		return 0, fmt.Errorf("materialization root changed before removal")
+	}
+	removed, removeErr := removeMaterializationEntries(ctx, root)
+	closeErr := unix.Close(root)
+	if removeErr != nil {
+		return removed, removeErr
+	}
+	if closeErr != nil {
+		return removed, closeErr
+	}
+	var currentInfo unix.Stat_t
+	if err := unix.Fstatat(parent, name, &currentInfo, unix.AT_SYMLINK_NOFOLLOW); errors.Is(err, unix.ENOENT) {
+		return removed, nil
+	} else if err != nil {
+		return removed, err
+	}
+	if !sameUnixFile(rootInfo, currentInfo) {
+		return removed, fmt.Errorf("materialization root changed during removal")
+	}
+	if err := ctx.Err(); err != nil {
+		return removed, err
+	}
+	if err := unix.Unlinkat(parent, name, unix.AT_REMOVEDIR); errors.Is(err, unix.ENOENT) {
+		return removed, nil
+	} else if err != nil {
+		return removed, fmt.Errorf("remove materialization root: %w", err)
+	}
+	removed++
+	if err := unix.Fsync(parent); err != nil {
+		return removed, err
+	}
+	return removed, nil
+}
+
+func removeMaterializationEntries(ctx context.Context, directory int) (int, error) {
+	listing, err := unix.Dup(directory)
+	if err != nil {
+		return 0, err
+	}
+	listingFile := os.NewFile(uintptr(listing), "materialization-directory")
+	entries, err := listingFile.ReadDir(-1)
+	closeErr := listingFile.Close()
+	if err != nil {
+		return 0, err
+	}
+	if closeErr != nil {
+		return 0, closeErr
+	}
+
+	removed := 0
+	for _, entry := range entries {
+		name := entry.Name()
+		if !safeComponent(name) {
+			return removed, fmt.Errorf("unsafe materialization entry %q", name)
+		}
+		var info unix.Stat_t
+		if err := unix.Fstatat(directory, name, &info, unix.AT_SYMLINK_NOFOLLOW); errors.Is(err, unix.ENOENT) {
+			continue
+		} else if err != nil {
+			return removed, err
+		}
+		switch info.Mode & unix.S_IFMT {
+		case unix.S_IFREG:
+			if err := ctx.Err(); err != nil {
+				return removed, err
+			}
+			if err := unix.Unlinkat(directory, name, 0); errors.Is(err, unix.ENOENT) {
+				continue
+			} else if err != nil {
+				return removed, fmt.Errorf("remove materialization file %q: %w", name, err)
+			}
+			removed++
+			if err := unix.Fsync(directory); err != nil {
+				return removed, err
+			}
+		case unix.S_IFDIR:
+			child, err := unix.Openat(directory, name, unix.O_RDONLY|unix.O_DIRECTORY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+			if errors.Is(err, unix.ENOENT) {
+				continue
+			}
+			if err != nil {
+				return removed, fmt.Errorf("open materialization directory %q without following links: %w", name, err)
+			}
+			var childInfo unix.Stat_t
+			if err := unix.Fstat(child, &childInfo); err != nil {
+				_ = unix.Close(child)
+				return removed, err
+			}
+			if !sameUnixFile(info, childInfo) {
+				_ = unix.Close(child)
+				return removed, fmt.Errorf("materialization directory %q changed before removal", name)
+			}
+			childRemoved, childErr := removeMaterializationEntries(ctx, child)
+			closeErr := unix.Close(child)
+			removed += childRemoved
+			if childErr != nil {
+				return removed, childErr
+			}
+			if closeErr != nil {
+				return removed, closeErr
+			}
+			var currentChild unix.Stat_t
+			if err := unix.Fstatat(directory, name, &currentChild, unix.AT_SYMLINK_NOFOLLOW); errors.Is(err, unix.ENOENT) {
+				continue
+			} else if err != nil {
+				return removed, err
+			}
+			if !sameUnixFile(childInfo, currentChild) {
+				return removed, fmt.Errorf("materialization directory %q changed during removal", name)
+			}
+			if err := ctx.Err(); err != nil {
+				return removed, err
+			}
+			if err := unix.Unlinkat(directory, name, unix.AT_REMOVEDIR); errors.Is(err, unix.ENOENT) {
+				continue
+			} else if err != nil {
+				return removed, fmt.Errorf("remove materialization directory %q: %w", name, err)
+			}
+			removed++
+			if err := unix.Fsync(directory); err != nil {
+				return removed, err
+			}
+		default:
+			return removed, fmt.Errorf("refuse unsupported materialization entry %q", name)
+		}
+	}
+	return removed, nil
+}
+
+func sameUnixFile(a, b unix.Stat_t) bool {
+	return a.Dev == b.Dev && a.Ino == b.Ino
 }
 
 func executableNoFollow(rootPath string, components []string) (string, error) {

@@ -323,3 +323,223 @@ func TestReferenceRootRejectsMaterializationSymlinkEscape(t *testing.T) {
 		t.Fatalf("GC damaged escaped materialization: %v", err)
 	}
 }
+
+func TestGCPolicyContentRootBoundedToConsumerHome(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previousHome)
+	})
+
+	outside := t.TempDir()
+	outsideRoot := filepath.Join(outside, "content")
+	lexicalEscape := home + string(os.PathSeparator) + ".." + string(os.PathSeparator) + filepath.Base(outside) + string(os.PathSeparator) + "content"
+	symlinkedAncestor := filepath.Join(home, "external-link", "content")
+	if err := os.Symlink(outside, filepath.Join(home, "external-link")); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, test := range []struct {
+		name string
+		root string
+	}{
+		{name: "ordinary-external", root: outsideRoot},
+		{name: "lexical-escape", root: lexicalEscape},
+		{name: "symlinked-ancestor", root: symlinkedAncestor},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			content := []byte("external-content-" + test.name)
+			digest := environmentartifact.DigestBytes(content)
+			provider, err := artifactprovider.NewFilesystem(outsideRoot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := provider.PutObject(context.Background(), artifactprovider.Blob{
+				Descriptor: environmentartifact.Descriptor{Digest: digest, Size: int64(len(content))},
+				Reader:     bytes.NewReader(content),
+			}); err != nil {
+				t.Fatal(err)
+			}
+
+			_, err = Collect(context.Background(), GCPolicy{
+				ContentRoot: test.root,
+				Pressure:    true,
+				Clock:       func() time.Time { return time.Unix(100, 0) },
+			})
+			if err == nil {
+				t.Fatalf("GC accepted ContentRoot outside consumer home: %s", test.root)
+			}
+			h := digest.Hex()
+			objectPath := filepath.Join(outsideRoot, "objects", "sha256", h[:2], h[2:4], h)
+			if _, statErr := os.Stat(objectPath); statErr != nil {
+				t.Fatalf("external content was modified after root rejection: %v", statErr)
+			}
+		})
+	}
+}
+
+func TestMaterializationRemovalResistsParentSymlinkSwap(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previousHome)
+	})
+
+	materializationID := "h123456_123456789abcdeft"
+	path := filepath.Join(common.HolotreeLocation(), materializationID)
+	child := filepath.Join(path, "child")
+	outside := t.TempDir()
+	sentinel := filepath.Join(outside, "sentinel")
+	if err := os.MkdirAll(child, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(child, "payload"), []byte("inside"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(sentinel, []byte("must-survive"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	ctx := &materializationSwapContext{
+		Context: context.Background(),
+		swap: func() {
+			if err := os.Rename(child, filepath.Join(path, "child-original")); err != nil {
+				t.Fatalf("swap original child: %v", err)
+			}
+			if err := os.Symlink(outside, child); err != nil {
+				t.Fatalf("install swapped child: %v", err)
+			}
+		},
+	}
+	_, _ = removeMaterializationContext(ctx, path)
+	if _, err := os.Stat(sentinel); err != nil {
+		t.Fatalf("parent symlink swap redirected deletion outside materialization: %v", err)
+	}
+}
+
+func TestMaterializationRemovalReportsMidRecursiveCancellation(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previousHome)
+	})
+
+	materializationID := "h123456_123456789abcdeft"
+	path := filepath.Join(common.HolotreeLocation(), materializationID)
+	first := filepath.Join(path, "a")
+	second := filepath.Join(path, "b")
+	if err := os.MkdirAll(filepath.Dir(first), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	removed, err := removeMaterializationContext(&cancelAfterRemovalContext{
+		Context: context.Background(),
+		watched: first,
+	}, path)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("mid-removal cancellation error = %v", err)
+	}
+	if removed != 1 {
+		t.Fatalf("completed removal count = %d, want 1", removed)
+	}
+	if _, err := os.Stat(second); err != nil {
+		t.Fatalf("cancellation removed work not yet completed: %v", err)
+	}
+}
+
+func TestGCReportPreservesPartialMaterializationProgress(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previousHome)
+	})
+
+	digest := environmentartifact.DigestBytes([]byte("partial-report-materialization"))
+	materializationID := "h123456_123456789abcdeft"
+	path := filepath.Join(common.HolotreeLocation(), materializationID)
+	first := filepath.Join(path, "a")
+	second := filepath.Join(path, "b")
+	if err := os.MkdirAll(filepath.Dir(first), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(first, []byte("first"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(second, []byte("second"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeMaterializationRecord(materializationRecord{
+		ArtifactDigest: digest, MaterializationID: materializationID, Path: path,
+		State: stateReady, VerifiedAt: time.Unix(1, 0),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeReferenceRoot(environmentartifact.Manifest{ArtifactDigest: digest}, environmentartifact.ObjectIndex{}); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := Collect(&cancelAfterRemovalContext{
+		Context: context.Background(),
+		watched: first,
+	}, GCPolicy{Pressure: true, Clock: func() time.Time { return time.Unix(100, 0) }})
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("partial GC error = %v", err)
+	}
+	if report.Scanned != 1 || report.Reclaimed != 0 {
+		t.Fatalf("partial GC counters = %+v", report)
+	}
+	if len(report.Items) != 1 || report.Items[0].Status != "partial" || report.Items[0].Reason != "materialization-removal-partial" {
+		t.Fatalf("partial GC report items = %+v", report.Items)
+	}
+	if _, err := os.Stat(second); err != nil {
+		t.Fatalf("partial GC removed work not yet completed: %v", err)
+	}
+}
+
+type materializationSwapContext struct {
+	context.Context
+	swap   func()
+	checks int
+}
+
+func (c *materializationSwapContext) Err() error {
+	c.checks++
+	if c.checks == 2 {
+		c.swap()
+	}
+	return nil
+}
+
+type cancelAfterRemovalContext struct {
+	context.Context
+	watched string
+}
+
+func (c *cancelAfterRemovalContext) Err() error {
+	if _, err := os.Lstat(c.watched); os.IsNotExist(err) {
+		return context.Canceled
+	}
+	return nil
+}
