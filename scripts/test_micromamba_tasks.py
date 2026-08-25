@@ -6,6 +6,7 @@ import tarfile
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).parents[1]
@@ -23,7 +24,122 @@ def _archive_bytes():
   return stream.getvalue()
 
 
+def _archive_with_members(members):
+  stream = io.BytesIO()
+  with tarfile.open(fileobj=stream, mode="w:bz2") as archive:
+    for member in members:
+      if member.isreg() and member.size:
+        archive.addfile(member, io.BytesIO(b"x" * member.size))
+      else:
+        archive.addfile(member)
+  return stream.getvalue()
+
+
 class MicromambaDownloadTests(unittest.TestCase):
+  def test_download_rejects_oversized_payload_at_curl_and_local_boundaries(self):
+    """Break caught: configured sources can force unbounded archive resource use."""
+    calls = []
+
+    def run(argv, **kwargs):
+      calls.append(argv)
+      destination = Path(argv[argv.index("-o") + 1])
+      with destination.open("wb") as output:
+        output.seek(tasks.MICROMAMBA_MAX_ARCHIVE_BYTES)
+        output.write(b"x")
+      return subprocess.CompletedProcess(argv, 0, stderr="")
+
+    with tempfile.TemporaryDirectory() as directory:
+      destination = Path(directory) / "micromamba.tar.bz2"
+      with self.assertRaisesRegex(
+          RuntimeError,
+          r"https://primary\.test/micromamba.*size.*67108864",
+      ):
+        tasks._download_micromamba_archive(
+            "https://primary.test/micromamba",
+            destination,
+            expected_sha256="0" * 64,
+            run=run,
+            sleep=lambda _: None,
+        )
+
+    self.assertIn("--max-filesize", calls[0])
+    self.assertIn("67108864", calls[0])
+
+  def test_archive_hashing_streams_without_reading_the_whole_file(self):
+    """Break caught: archive hashing regresses to Path.read_bytes materialization."""
+    archive = _archive_bytes()
+    digest = hashlib.sha256(archive).hexdigest()
+
+    def run(argv, **kwargs):
+      Path(argv[argv.index("-o") + 1]).write_bytes(archive)
+      return subprocess.CompletedProcess(argv, 0, stderr="")
+
+    with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+        Path, "read_bytes", side_effect=AssertionError("whole-file read"),
+    ):
+      destination = Path(directory) / "micromamba.tar.bz2"
+      tasks._download_micromamba_archive(
+          "https://primary.test/micromamba",
+          destination,
+          expected_sha256=digest,
+          run=run,
+          sleep=lambda _: None,
+      )
+
+  def test_archive_validation_rejects_unsafe_paths_and_special_entries(self):
+    """Break caught: Python 3.10 tar extraction accepts unsafe or special members."""
+    special_members = []
+    symlink = tarfile.TarInfo("bin/link")
+    symlink.type = tarfile.SYMTYPE
+    symlink.linkname = "micromamba"
+    special_members.append(symlink)
+    hardlink = tarfile.TarInfo("bin/hardlink")
+    hardlink.type = tarfile.LNKTYPE
+    hardlink.linkname = "bin/micromamba"
+    special_members.append(hardlink)
+    for entry_type in (tarfile.FIFOTYPE, tarfile.CHRTYPE, tarfile.BLKTYPE):
+      special = tarfile.TarInfo("bin/special")
+      special.type = entry_type
+      special_members.append(special)
+
+    traversal = tarfile.TarInfo("../escape")
+    traversal.size = 1
+    special_members.append(traversal)
+    absolute = tarfile.TarInfo("/absolute")
+    absolute.size = 1
+    special_members.append(absolute)
+
+    for unsafe in special_members:
+      with self.subTest(member=unsafe.name, type=unsafe.type):
+        payload = _archive_with_members([unsafe])
+        with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+          with self.assertRaisesRegex(ValueError, r"Unsafe archive"):
+            tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
+  def test_archive_validation_requires_regular_expected_executable(self):
+    """Break caught: extraction proceeds without the exact regular executable member."""
+    missing = tarfile.TarInfo("bin/other")
+    missing.size = 1
+    payload = _archive_with_members([missing])
+    with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+      with self.assertRaisesRegex(ValueError, r"expected executable member"):
+        tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
+    directory = tarfile.TarInfo("bin/micromamba")
+    directory.type = tarfile.DIRTYPE
+    payload = _archive_with_members([directory])
+    with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+      with self.assertRaisesRegex(ValueError, r"expected executable member"):
+        tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
+  def test_micromamba_base_override_remains_the_primary_url(self):
+    """Break caught: fallback hardening silently discards RCC_MICROMAMBA_BASE."""
+    with mock.patch.dict("os.environ", {"RCC_MICROMAMBA_BASE": "https://mirror.test/root/"}):
+      self.assertEqual(
+          tasks.get_official_micromamba_url("v2.5.0", "linux64"),
+          "https://mirror.test/root/linux-64/2.5.0",
+      )
+
   def test_fallback_metadata_is_bound_to_exact_release_archives(self):
     """Break caught: a mutable or wrong-version fallback bypasses integrity binding."""
     expected = {
