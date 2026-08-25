@@ -125,6 +125,29 @@ class MicromambaDownloadTests(unittest.TestCase):
       with self.assertRaisesRegex(ValueError, r"drive-relative"):
         tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
 
+  def test_archive_validation_rejects_windows_drive_absolute_paths(self):
+    """Break caught: drive-qualified absolute names must not reach extraction."""
+    for name in ("C:/escape", "C:\\escape", "\\\\server\\share\\escape"):
+      with self.subTest(member=name):
+        member = tarfile.TarInfo(name)
+        member.size = 1
+        payload = _archive_with_members([member])
+        with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+          with self.assertRaisesRegex(ValueError, r"Unsafe archive"):
+            tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
+  def test_archive_validation_accepts_legitimate_relative_regular_members(self):
+    """Break caught: drive checks accidentally reject valid relative archive members."""
+    directory = tarfile.TarInfo("bin")
+    directory.type = tarfile.DIRTYPE
+    executable = tarfile.TarInfo("bin/micromamba")
+    executable.size = 1
+    data = tarfile.TarInfo("bin/data")
+    data.size = 1
+    payload = _archive_with_members([directory, executable, data])
+    with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+      tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
   def test_archive_validation_requires_regular_expected_executable(self):
     """Break caught: extraction proceeds without the exact regular executable member."""
     missing = tarfile.TarInfo("bin/other")
