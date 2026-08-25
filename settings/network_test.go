@@ -98,8 +98,9 @@ func TestWithNoProxyAndCustomCAWorkForRealRequests(t *testing.T) {
 		t.Fatalf("no-proxy response=%q err=%v proxy-count=%d", body, err, proxied.Load())
 	}
 
-	transport.Proxy = http.ProxyURL(proxyURL)
-	response, err = (&http.Client{Transport: transport}).Get(target.URL)
+	proxiedTransport := http.DefaultTransport.(*http.Transport).Clone()
+	proxiedTransport.Proxy = http.ProxyURL(proxyURL)
+	response, err = (&http.Client{Transport: proxiedTransport}).Get(target.URL)
 	if err != nil {
 		t.Fatal(err)
 	}
