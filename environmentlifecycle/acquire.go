@@ -29,6 +29,10 @@ func localContentRoot() string {
 	return filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
 }
 
+func newLocalContentProvider() (artifactprovider.Provider, error) {
+	return artifactprovider.NewFilesystem(localContentRoot())
+}
+
 func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartifact.Digest, remote artifactprovider.Provider) (verifiedContent, error) {
 	var content verifiedContent
 	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
@@ -40,6 +44,10 @@ func acquireVerifiedContent(ctx context.Context, artifactDigest environmentartif
 }
 
 func acquireVerifiedContentLocked(ctx context.Context, artifactDigest environmentartifact.Digest, remote artifactprovider.Provider) (verifiedContent, error) {
+	return acquireVerifiedContentLockedWithLocal(ctx, artifactDigest, remote, nil)
+}
+
+func acquireVerifiedContentLockedWithLocal(ctx context.Context, artifactDigest environmentartifact.Digest, remote, local artifactprovider.Provider) (verifiedContent, error) {
 	if remote == nil || len(artifactDigest.Hex()) != 64 {
 		return verifiedContent{}, fmt.Errorf("acquire requires a provider and canonical artifact digest")
 	}
@@ -65,9 +73,11 @@ func acquireVerifiedContentLocked(ctx context.Context, artifactDigest environmen
 		return verifiedContent{}, err
 	}
 
-	local, err := artifactprovider.NewFilesystem(localContentRoot())
-	if err != nil {
-		return verifiedContent{}, fmt.Errorf("initialize local artifact content cache: %w", err)
+	if local == nil {
+		local, err = newLocalContentProvider()
+		if err != nil {
+			return verifiedContent{}, fmt.Errorf("initialize local artifact content cache: %w", err)
+		}
 	}
 	primary := []environmentartifact.Descriptor{
 		manifest.Specification.Descriptor,
@@ -209,7 +219,7 @@ func preflightCompatibility(ctx context.Context, manifest environmentartifact.Ma
 	}, nil
 }
 
-func cacheProviderObject(ctx context.Context, remote artifactprovider.Provider, local *artifactprovider.Filesystem, descriptor environmentartifact.Descriptor) error {
+func cacheProviderObject(ctx context.Context, remote, local artifactprovider.Provider, descriptor environmentartifact.Descriptor) error {
 	missing, err := local.MissingObjects(ctx, []environmentartifact.Descriptor{descriptor})
 	if err != nil {
 		return fmt.Errorf("inspect local content %s: %w", descriptor.Digest, err)
@@ -224,7 +234,7 @@ func cacheProviderObject(ctx context.Context, remote artifactprovider.Provider, 
 	putErr := local.PutObject(ctx, artifactprovider.Blob{Descriptor: descriptor, Reader: reader})
 	closeErr := reader.Close()
 	if putErr != nil {
-		return fmt.Errorf("cache provider object %s: %w", descriptor.Digest, putErr)
+		return fmt.Errorf("local cache write object %s: %w", descriptor.Digest, putErr)
 	}
 	if closeErr != nil {
 		return fmt.Errorf("close provider object %s: %w", descriptor.Digest, closeErr)

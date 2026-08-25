@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/joshyorko/rcc/artifactprovider"
@@ -24,6 +25,18 @@ type corruptingProvider struct {
 	target environmentartifact.Digest
 }
 
+type localCacheENOSPCProvider struct {
+	artifactprovider.Provider
+	failPut bool
+}
+
+func (it *localCacheENOSPCProvider) PutObject(ctx context.Context, blob artifactprovider.Blob) error {
+	if it.failPut {
+		return syscall.ENOSPC
+	}
+	return it.Provider.PutObject(ctx, blob)
+}
+
 func (it corruptingProvider) GetObject(ctx context.Context, descriptor environmentartifact.Descriptor) (io.ReadCloser, error) {
 	reader, err := it.Provider.GetObject(ctx, descriptor)
 	if err != nil {
@@ -34,6 +47,66 @@ func (it corruptingProvider) GetObject(ctx context.Context, descriptor environme
 	}
 	_ = reader.Close()
 	return io.NopCloser(bytes.NewReader(bytes.Repeat([]byte("x"), int(descriptor.Size)))), nil
+}
+
+func TestAcquireLocalCASENOSPCFailsClosedAndRetries(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	consumerHome := t.TempDir()
+	common.Product.ForceHome(consumerHome)
+	common.SharedHolotree = false
+
+	remoteManifest, err := remote.ResolveManifest(context.Background(), artifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	local, err := artifactprovider.NewFilesystem(localContentRoot())
+	if err != nil {
+		t.Fatal(err)
+	}
+	localProvider := &localCacheENOSPCProvider{Provider: local, failPut: true}
+	acquirer := NewAcquirer()
+	acquirer.localProviderFactory = func() (artifactprovider.Provider, error) {
+		return localProvider, nil
+	}
+
+	_, err = acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
+	if err == nil || !errors.Is(err, syscall.ENOSPC) || !strings.Contains(err.Error(), "local cache write") {
+		t.Fatalf("local CAS ENOSPC error = %v, want local cache write wrapping ENOSPC", err)
+	}
+	if _, err := local.ResolveManifest(context.Background(), artifactDigest); !os.IsNotExist(err) {
+		t.Fatalf("local manifest after failed import = %v, want not exist", err)
+	}
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing, stateReady} {
+		path := filepath.Join(recordRoot(), artifactDigest.Hex(), string(state)+".json")
+		if _, err := os.Lstat(path); !os.IsNotExist(err) {
+			t.Fatalf("%s record after failed import = %v, want not exist", state, err)
+		}
+	}
+	resolvedRemote, err := remote.ResolveManifest(context.Background(), artifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(resolvedRemote, remoteManifest) {
+		t.Fatal("remote manifest changed during failed local import")
+	}
+	manifest, err := environmentartifact.DecodeManifest(resolvedRemote)
+	if err != nil || manifest.ArtifactDigest != artifactDigest {
+		t.Fatalf("remote artifact identity after failed import = %s, %v", manifest.ArtifactDigest, err)
+	}
+
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: artifactDigest, Provider: remote})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ArtifactDigest != artifactDigest || result.Path == "" {
+		t.Fatalf("repaired acquire result = %+v", result)
+	}
+	if _, err := local.ResolveManifest(context.Background(), artifactDigest); err != nil {
+		t.Fatalf("local manifest after repair = %v", err)
+	}
+	if _, err := readReadyRecord(artifactDigest); err != nil {
+		t.Fatalf("ready materialization after repair = %v", err)
+	}
 }
 
 func TestAcquireVerifiedContentRegistersConsumerLocalLegacyCatalogAndPreservesCanonicalBytes(t *testing.T) {

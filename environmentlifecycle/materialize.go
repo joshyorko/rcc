@@ -163,11 +163,12 @@ func (it *LocalMaterializer) materializeLocked(ctx context.Context, manifest env
 }
 
 type Acquirer struct {
-	materializer Materializer
+	materializer         Materializer
+	localProviderFactory func() (artifactprovider.Provider, error)
 }
 
 func NewAcquirer() *Acquirer {
-	return &Acquirer{materializer: NewLocalMaterializer()}
+	return &Acquirer{materializer: NewLocalMaterializer(), localProviderFactory: newLocalContentProvider}
 }
 
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
@@ -204,7 +205,11 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	if _, err := reconcileLocked(ctx, request.ArtifactDigest); err != nil {
 		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
 	}
-	local, err := artifactprovider.NewFilesystem(localContentRoot())
+	localProviderFactory := it.localProviderFactory
+	if localProviderFactory == nil {
+		localProviderFactory = newLocalContentProvider
+	}
+	local, err := localProviderFactory()
 	if err != nil {
 		return AcquireResult{}, fmt.Errorf("initialize local artifact cache: %w", err)
 	}
@@ -237,7 +242,7 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 				return AcquireResult{}, err
 			}
 		}
-		content, err := acquireVerifiedContentLocked(ctx, request.ArtifactDigest, local)
+		content, err := acquireVerifiedContentLockedWithLocal(ctx, request.ArtifactDigest, local, local)
 		if err != nil {
 			return AcquireResult{}, fmt.Errorf("restore local verified content: %w", err)
 		}
@@ -261,7 +266,7 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	if err := artifactprovider.ValidateV1Capabilities(capabilities); err != nil {
 		return AcquireResult{}, fmt.Errorf("negotiate provider capabilities: %w", err)
 	}
-	content, err := acquireVerifiedContentLocked(ctx, request.ArtifactDigest, request.Provider)
+	content, err := acquireVerifiedContentLockedWithLocal(ctx, request.ArtifactDigest, request.Provider, local)
 	if err != nil {
 		return AcquireResult{}, err
 	}
