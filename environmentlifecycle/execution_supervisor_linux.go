@@ -1,13 +1,25 @@
-//go:build !windows && !linux
+//go:build linux
 
 package environmentlifecycle
 
-import "os"
+import (
+	"os"
+	"os/exec"
+	"syscall"
+)
 
 type executionSupervisor struct{}
 
 func newExecutionSupervisor() (*executionSupervisor, error) {
 	return &executionSupervisor{}, nil
+}
+
+func (supervisor *executionSupervisor) prepare(command *exec.Cmd) error {
+	if command.SysProcAttr == nil {
+		command.SysProcAttr = &syscall.SysProcAttr{}
+	}
+	command.SysProcAttr.Pdeathsig = syscall.SIGKILL
+	return nil
 }
 
 func (supervisor *executionSupervisor) attach(process *os.Process) error {

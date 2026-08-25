@@ -44,6 +44,9 @@ func (it *LocalMaterializer) ExecutionHandle(ctx context.Context, lease Lease, c
 	if err != nil || !leasesEqual(stored, lease) {
 		return ExecutionHandle{}, fmt.Errorf("lease is absent or changed")
 	}
+	if classifyLease(lease) != LeaseActive {
+		return ExecutionHandle{}, fmt.Errorf("lease owner identity is no longer current")
+	}
 	record, err := readReadyRecord(lease.ArtifactDigest)
 	if err != nil || record.MaterializationID != lease.MaterializationID {
 		return ExecutionHandle{}, fmt.Errorf("lease materialization is not ready")
@@ -144,6 +147,11 @@ func executeWithSignalsAndStreamsInDirectory(ctx context.Context, materializer M
 			err = fmt.Errorf("close execution supervisor: %w", closeErr)
 		}
 	}()
+	if preparer, ok := any(supervisor).(interface{ prepare(*exec.Cmd) error }); ok {
+		if err = preparer.prepare(process); err != nil {
+			return handle, child, fmt.Errorf("prepare execution supervisor: %w", err)
+		}
+	}
 	if err = process.Start(); err != nil {
 		return handle, child, err
 	}
