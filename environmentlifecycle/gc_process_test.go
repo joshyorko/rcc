@@ -54,8 +54,34 @@ func TestGCSeparateProcessSkipsActiveChildThenReclaimsAfterRelease(t *testing.T)
 	}
 }
 
+func TestCrashedLeaseIsReconciledThenReclaimed(t *testing.T) {
+	m := acquiredMaterialization(t)
+	ready := filepath.Join(t.TempDir(), "ready")
+	cmd := exec.Command(os.Args[0], "-test.run=TestLifecycleLeaseChildHelper", "--")
+	cmd.Env = append(os.Environ(), "RCC_LIFECYCLE_CRASH_CHILD=1", "RCC_LIFECYCLE_HOME="+common.Product.Home(), "RCC_LIFECYCLE_DIGEST="+m.ArtifactDigest.Hex(), "RCC_LIFECYCLE_ID="+m.ID, "RCC_LIFECYCLE_PATH="+m.Path, "RCC_LIFECYCLE_READY="+ready)
+	if err := cmd.Run(); err == nil {
+		t.Fatal("crashed lease child unexpectedly succeeded")
+	}
+	waitForFile(t, ready)
+
+	report, err := Reconcile(context.Background(), m.ArtifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Stale != 1 || len(report.Repaired) != 1 {
+		t.Fatalf("stale lease reconciliation = %+v", report)
+	}
+	gc, err := Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if gc.Reclaimed != 1 {
+		t.Fatalf("reclaimed materializations = %+v", gc)
+	}
+}
+
 func TestLifecycleLeaseChildHelper(t *testing.T) {
-	if os.Getenv("RCC_LIFECYCLE_CHILD") != "1" {
+	if os.Getenv("RCC_LIFECYCLE_CHILD") != "1" && os.Getenv("RCC_LIFECYCLE_CRASH_CHILD") != "1" {
 		return
 	}
 	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
@@ -68,6 +94,9 @@ func TestLifecycleLeaseChildHelper(t *testing.T) {
 	}
 	if err := os.WriteFile(os.Getenv("RCC_LIFECYCLE_READY"), []byte(lease.ID), 0600); err != nil {
 		t.Fatal(err)
+	}
+	if os.Getenv("RCC_LIFECYCLE_CRASH_CHILD") == "1" {
+		os.Exit(42)
 	}
 	for {
 		if _, err := os.Stat(os.Getenv("RCC_LIFECYCLE_RELEASE")); err == nil {
