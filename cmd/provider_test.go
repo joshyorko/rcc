@@ -101,6 +101,31 @@ func TestProviderReferenceDoesNotLoadAtConstruction(t *testing.T) {
 		t.Fatalf("settings loads after first operation = %d, want 1", loads)
 	}
 }
+
+func TestProviderReferenceWiresConfiguredTransportAndAuthSource(t *testing.T) {
+	const authEnv = "RCC_PROVIDER_AUTH_SOURCE"
+	var captured artifactprovider.HTTPOptions
+	p, err := newProviderReferenceWithDependencies("office", providerResolverDependencies{
+		load: func() (*settings.Settings, error) {
+			return &settings.Settings{Providers: settings.ProviderProfiles{
+				"office": {Type: "http", URL: "https://cache.example", AuthorizationEnv: authEnv},
+			}}, nil
+		},
+		http: func(_ string, options artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+			captured = options
+			return validProvider{}, nil
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if captured.Client == nil || captured.AuthorizationEnv != authEnv {
+		t.Fatalf("HTTP options = %+v", captured)
+	}
+}
 func TestProviderReferenceLocalUsesExactProviderRoot(t *testing.T) {
 	var captured string
 	p, err := newProviderReferenceWithDependencies("local", providerResolverDependencies{filesystem: func(root string) (artifactprovider.Provider, error) {
