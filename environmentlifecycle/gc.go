@@ -370,6 +370,10 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "missing-or-invalid-ready-record"})
 		return report, nil
 	}
+	if record.MaterializationID != materializationID(digest) {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "ready-record-materialization-id-mismatch"})
+		return report, nil
+	}
 	_, rootErr := readReferenceRoot(digest)
 	if rootErr != nil {
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "invalid-reference-root"})
@@ -441,7 +445,7 @@ func incompleteMaterializations(digest environmentartifact.Digest) ([]string, er
 		var record materializationRecord
 		decoder := json.NewDecoder(bytes.NewReader(content))
 		decoder.DisallowUnknownFields()
-		if err := decoder.Decode(&record); err != nil || record.ArtifactDigest != digest || record.State != state || record.MaterializationID == "" {
+		if err := decoder.Decode(&record); err != nil || record.ArtifactDigest != digest || record.State != state || record.MaterializationID != materializationID(digest) {
 			continue
 		}
 		canonical, err := json.Marshal(record)

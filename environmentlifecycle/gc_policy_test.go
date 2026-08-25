@@ -121,7 +121,7 @@ func TestGCInterruptionRecoversAfterMaterializationRemoval(t *testing.T) {
 	})
 
 	digest := environmentartifact.DigestBytes([]byte("interrupted-materialization"))
-	materializationID := "h123456_123456789abcdeft"
+	materializationID := materializationID(digest)
 	path := filepath.Join(common.HolotreeLocation(), materializationID)
 	if err := writeMaterializationRecord(materializationRecord{
 		ArtifactDigest: digest, MaterializationID: materializationID, Path: path,
@@ -157,7 +157,7 @@ func TestGCPolicyCleansProvisionalMaterialization(t *testing.T) {
 	})
 
 	digest := environmentartifact.DigestBytes([]byte("provisional-materialization"))
-	materializationID := "h123456_123456789abcdeft"
+	materializationID := materializationID(digest)
 	path := filepath.Join(common.HolotreeLocation(), materializationID)
 	if err := os.MkdirAll(path, 0o700); err != nil {
 		t.Fatal(err)
@@ -185,6 +185,137 @@ func TestGCPolicyCleansProvisionalMaterialization(t *testing.T) {
 		if _, err := os.Stat(filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")); !os.IsNotExist(err) {
 			t.Fatalf("provisional %s record survived cleanup: %v", state, err)
 		}
+	}
+}
+
+func TestGCPolicyRejectsCrossDigestProvisionalMaterialization(t *testing.T) {
+	home := t.TempDir()
+	previous := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previous)
+	})
+
+	digestA := environmentartifact.DigestBytes([]byte("cross-digest-provisional-a"))
+	digestB := environmentartifact.DigestBytes([]byte("cross-digest-provisional-b"))
+	idB := materializationID(digestB)
+	pathB := filepath.Join(common.HolotreeLocation(), idB)
+	if err := os.MkdirAll(pathB, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	sentinel := filepath.Join(pathB, "must-survive")
+	if err := os.WriteFile(sentinel, []byte("B"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeMaterializationRecord(materializationRecord{
+		ArtifactDigest: digestA, MaterializationID: idB, Path: pathB,
+		State: stateMaterializing, VerifiedAt: time.Unix(1, 0),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeMaterializationRecord(materializationRecord{
+		ArtifactDigest: digestB, MaterializationID: idB, Path: pathB,
+		State: stateReady, VerifiedAt: time.Unix(1, 0),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeReferenceRoot(environmentartifact.Manifest{ArtifactDigest: digestB}, environmentartifact.ObjectIndex{}); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := Collect(context.Background(), GCPolicy{
+		Pressure: true, Keep: map[string]bool{digestB.Hex(): true},
+		Clock: func() time.Time { return time.Unix(100, 0) },
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Reclaimed != 0 {
+		t.Fatalf("cross-digest provisional reclaimed = %d, want 0", report.Reclaimed)
+	}
+	if _, err := os.Stat(sentinel); err != nil {
+		t.Fatalf("cross-digest provisional removed B materialization: %v", err)
+	}
+	if _, err := readReadyRecord(digestB); err != nil {
+		t.Fatalf("cross-digest provisional removed B ready record: %v", err)
+	}
+	rootB, err := readReferenceRoot(digestB)
+	if err != nil || rootB.State != "live" {
+		t.Fatalf("cross-digest provisional changed B reference root: %+v, %v", rootB, err)
+	}
+}
+
+func TestGCPolicyRejectsCrossDigestReadyMaterialization(t *testing.T) {
+	home := t.TempDir()
+	previous := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previous)
+	})
+
+	digestA := environmentartifact.DigestBytes([]byte("cross-digest-ready-a"))
+	digestB := environmentartifact.DigestBytes([]byte("cross-digest-ready-b"))
+	idB := materializationID(digestB)
+	pathB := filepath.Join(common.HolotreeLocation(), idB)
+	if err := os.MkdirAll(pathB, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	sentinel := filepath.Join(pathB, "must-survive")
+	if err := os.WriteFile(sentinel, []byte("B"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeMaterializationRecord(materializationRecord{
+		ArtifactDigest: digestA, MaterializationID: idB, Path: pathB,
+		State: stateReady, VerifiedAt: time.Unix(1, 0),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeMaterializationRecord(materializationRecord{
+		ArtifactDigest: digestB, MaterializationID: idB, Path: pathB,
+		State: stateReady, VerifiedAt: time.Unix(1, 0),
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeReferenceRoot(environmentartifact.Manifest{ArtifactDigest: digestA}, environmentartifact.ObjectIndex{}); err != nil {
+		t.Fatal(err)
+	}
+	if err := writeReferenceRoot(environmentartifact.Manifest{ArtifactDigest: digestB}, environmentartifact.ObjectIndex{}); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := Collect(context.Background(), GCPolicy{
+		Pressure: true, Keep: map[string]bool{digestB.Hex(): true},
+		Clock: func() time.Time { return time.Unix(100, 0) },
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Reclaimed != 0 {
+		t.Fatalf("cross-digest ready reclaimed = %d, want 0", report.Reclaimed)
+	}
+	for _, item := range report.Items {
+		if item.Status == "partial" || item.Status == "reclaimed" {
+			t.Fatalf("cross-digest ready reported destructive progress: %+v", report.Items)
+		}
+	}
+	if _, err := os.Stat(sentinel); err != nil {
+		t.Fatalf("cross-digest ready removed B materialization: %v", err)
+	}
+	if _, err := readReadyRecord(digestA); err != nil {
+		t.Fatalf("cross-digest ready removed A record: %v", err)
+	}
+	if _, err := readReadyRecord(digestB); err != nil {
+		t.Fatalf("cross-digest ready removed B record: %v", err)
+	}
+	rootA, err := readReferenceRoot(digestA)
+	if err != nil || rootA.State != "live" {
+		t.Fatalf("cross-digest ready changed A reference root: %+v, %v", rootA, err)
 	}
 }
 
@@ -290,7 +421,7 @@ func TestReferenceRootRejectsMaterializationSymlinkEscape(t *testing.T) {
 	})
 
 	digest := environmentartifact.DigestBytes([]byte("symlinked-materialization"))
-	materializationID := "h123456_123456789abcdeft"
+	materializationID := materializationID(digest)
 	outside := t.TempDir()
 	outsideMaterialization := filepath.Join(outside, materializationID)
 	if err := os.MkdirAll(outsideMaterialization, 0o700); err != nil {
@@ -477,7 +608,7 @@ func TestGCReportPreservesPartialMaterializationProgress(t *testing.T) {
 	})
 
 	digest := environmentartifact.DigestBytes([]byte("partial-report-materialization"))
-	materializationID := "h123456_123456789abcdeft"
+	materializationID := materializationID(digest)
 	path := filepath.Join(common.HolotreeLocation(), materializationID)
 	first := filepath.Join(path, "a")
 	second := filepath.Join(path, "b")
