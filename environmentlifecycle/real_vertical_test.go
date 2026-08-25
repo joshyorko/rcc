@@ -582,7 +582,7 @@ func snapshotNamedPackageFiles(t *testing.T, materialization string, names []str
 		if entry.IsDir() || !wanted[entry.Name()] {
 			return nil
 		}
-		relative, err := filepath.Rel(base, path)
+		relative, err := filepath.Rel(materialization, path)
 		if err != nil {
 			return err
 		}
