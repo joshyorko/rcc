@@ -71,6 +71,12 @@ func retireReferenceRoot(digest environmentartifact.Digest, at time.Time) error 
 }
 
 func referenceRootExists(digest environmentartifact.Digest) bool {
-	_, err := os.Stat(filepath.Join(recordRoot(), digest.Hex(), "references.json"))
-	return err == nil
+	if err := validateGCDirectory(recordRoot()); err != nil {
+		return false
+	}
+	if err := validateGCDirectory(filepath.Join(recordRoot(), digest.Hex())); err != nil {
+		return false
+	}
+	info, err := os.Lstat(filepath.Join(recordRoot(), digest.Hex(), "references.json"))
+	return err == nil && info.Mode().IsRegular() && info.Mode()&os.ModeSymlink == 0
 }

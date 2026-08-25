@@ -1,7 +1,9 @@
 package environmentlifecycle
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
@@ -23,6 +25,7 @@ type GCPolicy struct {
 	LocalOnly   map[string]bool
 	Pinned      map[string]bool
 	Legal       map[string]bool
+	Keep        map[string]bool
 	RemoteKnown map[string]bool
 	ContentRoot string
 }
@@ -68,6 +71,9 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		policy.Clock = time.Now
 	}
 	var report GCReport
+	if err := validateGCDirectory(recordRoot()); err != nil {
+		return report, err
+	}
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
 		entries = nil
@@ -106,7 +112,7 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 		return report, err
 	}
 	report.ReferenceRoots = roots
-	protectedBytes, reclaimableBytes, reclaimedBytes, err := collectUnreferencedContent(ctx, policy, protected, protectAll)
+	protectedBytes, reclaimableBytes, reclaimedBytes, err := collectUnreferencedContent(ctx, policy, protected, protectAll, &report)
 	if err != nil {
 		return report, err
 	}
@@ -122,6 +128,9 @@ func collectLocked(ctx context.Context, policy GCPolicy) (GCReport, error) {
 func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bool, int, bool, error) {
 	protected := map[environmentartifact.Digest]bool{}
 	protectAll := false
+	if err := validateGCDirectory(recordRoot()); err != nil {
+		return nil, 0, false, err
+	}
 	entries, err := os.ReadDir(recordRoot())
 	if os.IsNotExist(err) {
 		return protected, 0, false, nil
@@ -164,22 +173,17 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 				}
 			}
 		}
-		if !referenceRootExists(digest) {
-			if leaseProtected && !leaseEmbedded {
-				protectAll = true
-			}
-			continue
-		}
+		_, readyErr := readReadyRecord(digest)
 		root, rootErr := readReferenceRoot(digest)
 		if rootErr != nil {
-			if !leaseEmbedded {
+			if readyErr == nil || !leaseEmbedded {
 				protectAll = true
 			}
 			continue
 		}
 		roots++
 		protectRoot := root.State == "live" || leaseProtected
-		policyProtected := policy.Pinned[digest.Hex()] || policy.Legal[digest.Hex()] || (policy.LocalOnly[digest.Hex()] && !policy.RemoteKnown[digest.Hex()])
+		policyProtected := gcPolicyProtects(policy, digest)
 		if root.State == "live" && !leaseProtected && !policyProtected {
 			if _, readyErr := readReadyRecord(digest); os.IsNotExist(readyErr) {
 				if retireErr := retireReferenceRoot(digest, policy.Clock()); retireErr == nil {
@@ -203,12 +207,18 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 	return protected, roots, protectAll, nil
 }
 
-func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected map[environmentartifact.Digest]bool, protectAll bool) (int64, int64, int64, error) {
+func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected map[environmentartifact.Digest]bool, protectAll bool, report *GCReport) (int64, int64, int64, error) {
 	root := policy.ContentRoot
 	if root == "" {
 		root = filepath.Join(common.Product.Home(), "artifacts", "v1", "content")
 	}
+	if err := validateGCDirectory(root); err != nil {
+		return 0, 0, 0, err
+	}
 	objects := filepath.Join(root, "objects", "sha256")
+	if err := validateGCDirectory(objects); err != nil {
+		return 0, 0, 0, err
+	}
 	type candidate struct {
 		path     string
 		digest   environmentartifact.Digest
@@ -266,14 +276,26 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 	if !allow {
 		return protectedBytes, 0, 0, nil
 	}
-	sort.Slice(candidates, func(i, j int) bool { return candidates[i].modified.Before(candidates[j].modified) })
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i].modified.Equal(candidates[j].modified) {
+			return candidates[i].digest.Hex() < candidates[j].digest.Hex()
+		}
+		return candidates[i].modified.Before(candidates[j].modified)
+	})
 	if policy.Clock == nil {
 		policy.Clock = time.Now
 	}
 	var reclaimableBytes, reclaimedBytes int64
 	for _, item := range candidates {
+		if err := ctx.Err(); err != nil {
+			return protectedBytes, reclaimableBytes, reclaimedBytes, err
+		}
 		if policy.Retention > 0 && policy.Clock().Sub(item.modified) < policy.Retention {
+			report.Items = append(report.Items, GCItem{Digest: item.digest.String(), Status: "skipped", Reason: "unreferenced-content-retention"})
 			continue
+		}
+		if err := ctx.Err(); err != nil {
+			return protectedBytes, reclaimableBytes, reclaimedBytes, err
 		}
 		if policy.MaxBytes > 0 && total <= policy.MaxBytes {
 			break
@@ -281,19 +303,26 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 		reclaimableBytes += item.size
 		if policy.DryRun {
 			total -= item.size
+			report.Items = append(report.Items, GCItem{Digest: item.digest.String(), Status: "dry-run", Reason: "unreferenced-content"})
 			continue
 		}
-		if err := os.Remove(item.path); err != nil {
+		h := item.digest.Hex()
+		if err := removeRegularNoFollow(root, []string{"objects", "sha256", h[:2], h[2:4], h}); err != nil && !os.IsNotExist(err) {
 			return protectedBytes, reclaimableBytes, reclaimedBytes, err
 		}
 		total -= item.size
 		reclaimedBytes += item.size
+		report.Items = append(report.Items, GCItem{Digest: item.digest.String(), Status: "reclaimed", Reason: "unreferenced-content"})
 	}
 	return protectedBytes, reclaimableBytes, reclaimedBytes, nil
 }
 
 func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmentartifact.Digest) (GCReport, error) {
 	var report GCReport
+	incomplete, err := incompleteMaterializations(digest)
+	if err != nil {
+		return report, err
+	}
 	reconcile, err := reconcileLocked(ctx, digest)
 	if err != nil {
 		return report, err
@@ -303,8 +332,7 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "ambiguous-lease"})
 		return report, nil
 	}
-	key := digest.Hex()
-	if policy.Pinned[key] || policy.Legal[key] || (policy.LocalOnly[key] && !policy.RemoteKnown[key]) {
+	if gcPolicyProtects(policy, digest) {
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "protected", Reason: "retention-policy"})
 		return report, nil
 	}
@@ -315,19 +343,28 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	}
 	record, err := readReadyRecord(digest)
 	if err != nil {
+		if len(incomplete) > 0 {
+			for _, path := range incomplete {
+				if err := ctx.Err(); err != nil {
+					return report, err
+				}
+				if err := removeMaterialization(path); err != nil {
+					return report, err
+				}
+			}
+			report.Reclaimed++
+			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "reclaimed", Reason: "provisional-materialization"})
+		}
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "skipped", Reason: "missing-or-invalid-ready-record"})
 		return report, nil
 	}
-	if referenceRootExists(digest) {
-		if _, err := readReferenceRoot(digest); err != nil {
-			report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "invalid-reference-root"})
-			return report, nil
-		}
-		report.ReferenceRoots = 1
+	_, rootErr := readReferenceRoot(digest)
+	if rootErr != nil {
+		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "invalid-reference-root"})
+		return report, nil
 	}
-	want, _ := filepath.Abs(filepath.Join(common.HolotreeLocation(), record.MaterializationID))
-	actual, _ := filepath.Abs(record.Path)
-	if actual != want || filepath.Base(record.Path) != record.MaterializationID {
+	report.ReferenceRoots = 1
+	if err := validateMaterializationPath(record.Path, record.MaterializationID); err != nil {
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "blocked", Reason: "ready-record-path-out-of-root"})
 		return report, nil
 	}
@@ -339,23 +376,30 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	if policy.MaxBytes > 0 && !policy.Pressure {
 		return report, nil
 	}
-	report.ReclaimableBytes = materializationSize(record.Path)
+	report.ReclaimableBytes, err = materializationSize(record.Path)
+	if err != nil {
+		return report, err
+	}
 	if policy.DryRun {
 		report.Reclaimed++
 		report.ReclaimedDigests = append(report.ReclaimedDigests, digest)
 		report.Items = append(report.Items, GCItem{Digest: digest.String(), Status: "dry-run", Reason: "eligible"})
 		return report, nil
 	}
+	if err := ctx.Err(); err != nil {
+		return report, err
+	}
 	if err := removeMaterialization(record.Path); err != nil {
 		return report, err
 	}
-	if err := os.Remove(filepath.Join(recordRoot(), digest.Hex(), "ready.json")); err != nil && !os.IsNotExist(err) {
+	if err := ctx.Err(); err != nil {
 		return report, err
 	}
-	if referenceRootExists(digest) {
-		if err := retireReferenceRoot(digest, now); err != nil {
-			return report, err
-		}
+	if err := removeRegularNoFollow(recordRoot(), recordComponents(digest, stateReady)); err != nil && !os.IsNotExist(err) {
+		return report, err
+	}
+	if err := retireReferenceRoot(digest, now); err != nil {
+		return report, err
 	}
 	report.Reclaimed++
 	report.ReclaimedBytes = report.ReclaimableBytes
@@ -364,15 +408,61 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	return report, nil
 }
 
-func materializationSize(root string) int64 {
+func gcPolicyProtects(policy GCPolicy, digest environmentartifact.Digest) bool {
+	key := digest.Hex()
+	return policy.Pinned[key] || policy.Legal[key] || policy.Keep[key] || (policy.LocalOnly[key] && !policy.RemoteKnown[key])
+}
+
+func incompleteMaterializations(digest environmentartifact.Digest) ([]string, error) {
+	paths := make([]string, 0, 2)
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		content, err := readRegularNoFollow(recordRoot(), recordComponents(digest, state), maxMaterializationRecordBytes)
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		var record materializationRecord
+		decoder := json.NewDecoder(bytes.NewReader(content))
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&record); err != nil || record.ArtifactDigest != digest || record.State != state || record.MaterializationID == "" {
+			continue
+		}
+		canonical, err := json.Marshal(record)
+		if err != nil || !bytes.Equal(canonical, content) {
+			continue
+		}
+		if err := validateMaterializationPath(record.Path, record.MaterializationID); err != nil {
+			return nil, err
+		}
+		paths = append(paths, record.Path)
+	}
+	return paths, nil
+}
+
+func materializationSize(root string) (int64, error) {
 	var total int64
-	_ = filepath.Walk(root, func(_ string, info os.FileInfo, err error) error {
-		if err == nil && info.Mode().IsRegular() {
+	err := filepath.WalkDir(root, func(_ string, entry fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if entry.Type()&os.ModeSymlink != 0 {
+			return fmt.Errorf("refuse symlink in materialization")
+		}
+		if entry.Type().IsRegular() {
+			info, err := entry.Info()
+			if err != nil {
+				return err
+			}
 			total += info.Size()
 		}
 		return nil
 	})
-	return total
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+	return total, err
 }
 
 func mergeGCReport(dst *GCReport, src GCReport) {
@@ -392,8 +482,14 @@ func mergeGCReport(dst *GCReport, src GCReport) {
 }
 
 func removeMaterialization(path string) error {
+	if err := validateMaterializationPath(path, filepath.Base(path)); err != nil {
+		return err
+	}
 	info, err := os.Lstat(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return err
 	}
 	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
@@ -415,8 +511,55 @@ func removeMaterialization(path string) error {
 	}
 	for i := len(paths) - 1; i >= 0; i-- {
 		if err := os.Remove(paths[i]); err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
 			return err
 		}
 	}
 	return nil
+}
+
+func validateGCDirectory(path string) error {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	current := filepath.VolumeName(abs) + string(filepath.Separator)
+	for _, component := range strings.Split(strings.TrimPrefix(filepath.Clean(abs), current), string(filepath.Separator)) {
+		if component == "" {
+			continue
+		}
+		current = filepath.Join(current, component)
+		info, err := os.Lstat(current)
+		if os.IsNotExist(err) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if info.Mode()&os.ModeSymlink != 0 || !info.IsDir() {
+			return fmt.Errorf("refuse unsafe GC directory: %s", path)
+		}
+	}
+	return nil
+}
+
+func validateMaterializationPath(path, id string) error {
+	if id == "" || !filepath.IsAbs(path) || filepath.Clean(path) != path || filepath.Base(path) != id {
+		return fmt.Errorf("refuse unsafe materialization path")
+	}
+	root, err := filepath.Abs(common.HolotreeLocation())
+	if err != nil {
+		return err
+	}
+	expected := filepath.Join(root, id)
+	actual, err := filepath.Abs(path)
+	if err != nil || actual != expected {
+		return fmt.Errorf("refuse materialization path outside root")
+	}
+	if err := validateGCDirectory(root); err != nil {
+		return err
+	}
+	return validateGCDirectory(path)
 }
