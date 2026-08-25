@@ -466,6 +466,18 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 	}
 }
 
+func TestRuntimeToolMountRejectsUnmappedToolDirectory(t *testing.T) {
+	toolDir := t.TempDir()
+	tool := filepath.Join(toolDir, "prlimit")
+	if err := os.WriteFile(tool, []byte("tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"}); err == nil || !strings.Contains(err.Error(), "outside mounted runtime paths") {
+		t.Fatalf("runtime tool validation error = %v", err)
+	}
+}
+
 func TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable(t *testing.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("restricted namespace is Linux-backed")
