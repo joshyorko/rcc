@@ -469,6 +469,43 @@ func TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds(t *test
 	}
 }
 
+func TestHTTPRangeRequestIsRejectedForFullRestartOnlyPolicy(t *testing.T) {
+	provider, err := NewFilesystem(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	content := []byte("full restart only")
+	descriptor := environmentartifact.Descriptor{
+		MediaType: "application/octet-stream",
+		Digest:    environmentartifact.DigestBytes(content),
+		Size:      int64(len(content)),
+	}
+	if err := provider.PutObject(context.Background(), Blob{Descriptor: descriptor, Reader: bytes.NewReader(content)}); err != nil {
+		t.Fatal(err)
+	}
+	server := httptest.NewServer(NewHandler(provider))
+	defer server.Close()
+	request, err := http.NewRequest(http.MethodGet, server.URL+"/v1/objects/sha256/"+descriptor.Digest.Hex(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	request.Header.Set("Range", "bytes=4-")
+	response, err := server.Client().Do(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = response.Body.Close() }()
+	if response.StatusCode != http.StatusRequestedRangeNotSatisfiable {
+		t.Fatalf("range status = %d, want %d", response.StatusCode, http.StatusRequestedRangeNotSatisfiable)
+	}
+	if got := response.Header.Get("Accept-Ranges"); got != "none" {
+		t.Fatalf("Accept-Ranges = %q, want none", got)
+	}
+	if body, err := io.ReadAll(response.Body); err != nil || !bytes.Contains(body, []byte("restart the full object")) {
+		t.Fatalf("range response body = %q, err=%v", body, err)
+	}
+}
+
 func TestHTTPProviderStoresAndServesDetachedTrustAttachments(t *testing.T) {
 	_, _, server := newHTTPProviderTestServer(t)
 	artifact := "sha256:carrier"
