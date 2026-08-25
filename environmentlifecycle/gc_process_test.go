@@ -54,6 +54,81 @@ func TestGCSeparateProcessSkipsActiveChildThenReclaimsAfterRelease(t *testing.T)
 	}
 }
 
+func TestCrashedLeaseIsReconciledThenReclaimed(t *testing.T) {
+	m := acquiredMaterialization(t)
+	ready := filepath.Join(t.TempDir(), "ready")
+	cmd := exec.Command(os.Args[0], "-test.run=^TestCrashedLeaseChild$", "--")
+	cmd.Env = append(os.Environ(), "RCC_LIFECYCLE_CRASHED_LEASE=1", "RCC_LIFECYCLE_HOME="+common.Product.Home(), "RCC_LIFECYCLE_DIGEST="+m.ArtifactDigest.Hex(), "RCC_LIFECYCLE_ID="+m.ID, "RCC_LIFECYCLE_PATH="+m.Path, "RCC_LIFECYCLE_READY="+ready)
+	if err := cmd.Start(); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if cmd.Process != nil {
+			_ = cmd.Process.Kill()
+		}
+		_ = cmd.Wait()
+	})
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		if _, err := os.Stat(ready); err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("caller did not publish a lease")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if err := cmd.Wait(); err == nil {
+		t.Fatal("caller exited cleanly after acquiring a lease")
+	} else if exitErr, ok := err.(*exec.ExitError); !ok || exitErr.ExitCode() != 42 {
+		t.Fatalf("caller exit = %v, want exit code 42", err)
+	}
+	leaseID, err := os.ReadFile(ready)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reconciled, err := Reconcile(context.Background(), m.ArtifactDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if reconciled.Active != 0 || reconciled.Stale != 1 || reconciled.Ambiguous != 0 || len(reconciled.Repaired) != 1 || reconciled.Repaired[0] != string(leaseID) {
+		t.Fatalf("stale lease reconciliation = %+v, lease=%q", reconciled, leaseID)
+	}
+	if _, err := readLease(m.ArtifactDigest, string(leaseID)); !os.IsNotExist(err) {
+		t.Fatalf("reconciled lease still exists: %v", err)
+	}
+	collected, err := Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if collected.Reclaimed != 1 || len(collected.ReclaimedDigests) != 1 || collected.ReclaimedDigests[0] != m.ArtifactDigest {
+		t.Fatalf("reclaimed materialization = %+v", collected)
+	}
+	if _, err := os.Stat(m.Path); !os.IsNotExist(err) {
+		t.Fatalf("materialization still exists after reclaim: %v", err)
+	}
+}
+
+func TestCrashedLeaseChild(t *testing.T) {
+	if os.Getenv("RCC_LIFECYCLE_CRASHED_LEASE") != "1" {
+		return
+	}
+	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
+	common.SharedHolotree = false
+	digest, err := environmentartifact.ParseDigest("sha256:" + os.Getenv("RCC_LIFECYCLE_DIGEST"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	lease, err := NewLocalMaterializer().Lease(context.Background(), Materialization{ArtifactDigest: digest, ID: os.Getenv("RCC_LIFECYCLE_ID"), Path: os.Getenv("RCC_LIFECYCLE_PATH")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(os.Getenv("RCC_LIFECYCLE_READY"), []byte(lease.ID), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	os.Exit(42)
+}
+
 func TestLifecycleLeaseChildHelper(t *testing.T) {
 	if os.Getenv("RCC_LIFECYCLE_CHILD") != "1" {
 		return
