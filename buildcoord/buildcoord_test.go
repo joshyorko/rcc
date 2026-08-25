@@ -38,6 +38,33 @@ func testKey() BuildKey {
 	return BuildKey{SpecificationDigest: "sha256:spec", Platform: "linux_amd64", BuilderCompatibility: "v12-gzip-sha256"}
 }
 
+func TestBackoffNormalizationUsesDefaultAndUpperBound(t *testing.T) {
+	if got := normalizeBackoff(0); got != defaultBackoff {
+		t.Fatalf("zero backoff = %s, want %s", got, defaultBackoff)
+	}
+	if got := normalizeBackoff(-time.Second); got != defaultBackoff {
+		t.Fatalf("negative backoff = %s, want %s", got, defaultBackoff)
+	}
+	if got := normalizeBackoff(maxBackoff + time.Second); got != maxBackoff {
+		t.Fatalf("oversized backoff = %s, want %s", got, maxBackoff)
+	}
+	if got := normalizeBackoff(100 * time.Millisecond); got != 100*time.Millisecond {
+		t.Fatalf("normal backoff = %s, want 100ms", got)
+	}
+}
+
+func TestBackoffWaitHonorsCancellation(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	started := time.Now()
+	if err := waitBackoff(ctx, time.Hour); !errors.Is(err, context.Canceled) {
+		t.Fatalf("cancelled backoff = %v, want context.Canceled", err)
+	}
+	if elapsed := time.Since(started); elapsed > 100*time.Millisecond {
+		t.Fatalf("cancelled backoff waited %s", elapsed)
+	}
+}
+
 func TestBuildKeyIsDeterministicAndIncludesCompatibility(t *testing.T) {
 	key := testKey()
 	if key.ID() != (BuildKey{SpecificationDigest: "sha256:spec", Platform: "linux_amd64", BuilderCompatibility: "v12-gzip-sha256"}).ID() {

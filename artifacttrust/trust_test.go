@@ -288,3 +288,85 @@ func TestVerificationAndReceiptDoNotEchoCredentialBearingInputs(t *testing.T) {
 		t.Fatalf("receipt leaked credential: %s", data)
 	}
 }
+
+func TestPersistedReceiptRedactsProviderAndBuildDiagnostics(t *testing.T) {
+	root := t.TempDir()
+	store := NewReceiptStore(root)
+	receipt := (Policy{}).FailureReceipt(
+		"sha256:a", "linux/amd64", "builder", CodeInvalid,
+		"provider build failed: Authorization: Bearer provider-secret", time.Unix(1, 0),
+	)
+	if err := store.Put(receipt); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, "sha256_a.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(data, []byte("provider-secret")) || bytes.Contains(data, []byte("Authorization:")) {
+		t.Fatalf("persisted receipt leaked provider/build diagnostic: %s", data)
+	}
+	if !bytes.Contains(data, []byte("trust attachment could not be decoded")) {
+		t.Fatalf("persisted receipt lacks bounded diagnostic: %s", data)
+	}
+}
+
+func TestStrictTrustBundleEvaluatesAttestationsAndFailureReceipt(t *testing.T) {
+	public, private, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const (
+		artifact = "sha256:bundle"
+		platform = "linux/amd64"
+		builder  = "builder-v1"
+	)
+	at := time.Unix(100, 0).UTC()
+	provenance := &Provenance{
+		MediaType: ProvenanceMediaType, ArtifactDigest: artifact, Platform: platform,
+		Builder: builder, RCCVersion: "v1", CreatedAt: FreshTimestamp(at),
+	}
+	sbom, _, err := NewSBOM(artifact, []Component{{Name: "python", Version: "3.10", PackageType: "conda"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	signature, err := Sign(artifact, "build-key", private)
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy := Policy{Mode: StrictRemote, AcceptedKeys: []string{"build-key"}, AcceptedPlatforms: []string{platform}, AcceptedBuilders: []string{builder}}
+	request := VerifyRequest{
+		ArtifactDigest: artifact, Platform: platform, Builder: builder,
+		Provenance: provenance, SBOM: &sbom, Signatures: []Signature{signature},
+		Keys: map[string]ed25519.PublicKey{"build-key": public}, At: at,
+	}
+	valid := policy.Verify(request)
+	if !valid.Valid || valid.Code != CodeValid || valid.ProvenanceDigest == "" || valid.SBOMDigest == "" || valid.KeyID != "build-key" {
+		t.Fatalf("valid trust bundle receipt=%+v", valid)
+	}
+
+	tampered := request
+	tampered.Provenance = &Provenance{}
+	*tampered.Provenance = *provenance
+	tampered.Provenance.Builder = "untrusted-builder"
+	tamperedReceipt := policy.Verify(tampered)
+	if tamperedReceipt.Valid || tamperedReceipt.Code != CodeBinding {
+		t.Fatalf("tampered trust bundle receipt=%+v", tamperedReceipt)
+	}
+
+	revoked := request
+	revoked.Revocations = []Revocation{{KeyIDs: []string{"build-key"}, UpdatedAt: FreshTimestamp(at)}}
+	revokedReceipt := policy.Verify(revoked)
+	if revokedReceipt.Valid || revokedReceipt.Code != CodeRevoked {
+		t.Fatalf("revoked trust bundle receipt=%+v", revokedReceipt)
+	}
+
+	failure := policy.FailureReceipt(artifact, platform, builder, CodeInvalid, "provider build failed: Authorization: Bearer bundle-secret", at)
+	data, err := failure.JSON()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(data, []byte("bundle-secret")) || bytes.Contains(data, []byte("Authorization:")) || !bytes.Contains(data, []byte("trust attachment could not be decoded")) {
+		t.Fatalf("redacted failure receipt=%s", data)
+	}
+}

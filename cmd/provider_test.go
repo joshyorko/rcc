@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -99,6 +101,55 @@ func TestProviderReferenceDoesNotLoadAtConstruction(t *testing.T) {
 	}
 	if loads != 1 {
 		t.Fatalf("settings loads after first operation = %d, want 1", loads)
+	}
+}
+
+func TestProviderReferenceWiresConfiguredTransportAndAuthSource(t *testing.T) {
+	const authEnv = "RCC_PROVIDER_AUTH_SOURCE"
+	var captured artifactprovider.HTTPOptions
+	p, err := newProviderReferenceWithDependencies("office", providerResolverDependencies{
+		load: func() (*settings.Settings, error) {
+			return &settings.Settings{Providers: settings.ProviderProfiles{
+				"office": {Type: "http", URL: "https://cache.example", AuthorizationEnv: authEnv},
+			}}, nil
+		},
+		http: func(_ string, options artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+			captured = options
+			return validProvider{}, nil
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if captured.Client == nil || captured.AuthorizationEnv != authEnv {
+		t.Fatalf("HTTP options = %+v", captured)
+	}
+}
+
+func TestProviderReferenceConfiguredClientMakesRealRequest(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Content-Type", "application/json")
+		_, _ = io.WriteString(writer, `{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"]}`)
+	}))
+	defer server.Close()
+	var captured artifactprovider.HTTPOptions
+	p, err := newProviderReferenceWithDependencies(server.URL, providerResolverDependencies{
+		http: func(raw string, options artifactprovider.HTTPOptions) (artifactprovider.Provider, error) {
+			captured = options
+			return artifactprovider.NewHTTPWithOptions(raw, options)
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := p.Capabilities(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if captured.Client == nil || captured.Client.Transport == nil {
+		t.Fatal("provider construction did not retain configured HTTP transport")
 	}
 }
 func TestProviderReferenceLocalUsesExactProviderRoot(t *testing.T) {
