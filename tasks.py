@@ -441,6 +441,9 @@ def _validate_micromamba_archive_members(tar, expected_member):
     for member in tar.getmembers():
         portable_name = member.name.replace("\\", "/")
         normalized = posixpath.normpath(portable_name)
+        drive, _ = ntpath.splitdrive(portable_name)
+        if drive:
+            raise ValueError(f"Unsafe archive drive-relative path: {member.name}")
         if portable_name.startswith("/") or ntpath.isabs(portable_name):
             raise ValueError(f"Unsafe archive absolute path: {member.name}")
         if normalized == ".." or normalized.startswith("../"):

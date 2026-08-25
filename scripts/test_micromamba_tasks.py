@@ -116,6 +116,15 @@ class MicromambaDownloadTests(unittest.TestCase):
           with self.assertRaisesRegex(ValueError, r"Unsafe archive"):
             tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
 
+  def test_archive_validation_rejects_windows_drive_relative_paths(self):
+    """Break caught: D:escape can resolve outside the extraction root on Windows."""
+    drive_relative = tarfile.TarInfo("D:escape")
+    drive_relative.size = 1
+    payload = _archive_with_members([drive_relative])
+    with tarfile.open(fileobj=io.BytesIO(payload), mode="r:bz2") as archive:
+      with self.assertRaisesRegex(ValueError, r"drive-relative"):
+        tasks._validate_micromamba_archive_members(archive, "bin/micromamba")
+
   def test_archive_validation_requires_regular_expected_executable(self):
     """Break caught: extraction proceeds without the exact regular executable member."""
     missing = tarfile.TarInfo("bin/other")
