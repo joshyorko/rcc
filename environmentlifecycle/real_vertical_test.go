@@ -122,6 +122,7 @@ type realEnvironmentFixture struct {
 	robot         string
 	sources       map[string]string
 	packageFiles  []string
+	minimumFiles  int
 	allowHomeFrom bool
 }
 
@@ -150,6 +151,7 @@ func TestRealJATClassRCCAtoBVertical(t *testing.T) {
 			"task.py": "import yaml\nassert yaml.safe_load('proof: portable')['proof'] == 'portable'\nprint('jat-class-portable')\n",
 		},
 		packageFiles: []string{"B::Terse.3", "B::Op_private.3", "B::Showlex.3"},
+		minimumFiles: 1000,
 	})
 }
 
@@ -205,7 +207,9 @@ func runRealRCCAtoBVertical(t *testing.T, fixture realEnvironmentFixture) {
 			t.Fatal(err)
 		}
 	}
-	packageSnapshot := snapshotNamedPackageFiles(t, producerHome, fixture.packageFiles)
+	producerMaterialization := realProducerMaterialization(t, binary, robotFile, producerHome)
+	assertMaterializationSize(t, producerMaterialization, fixture.minimumFiles)
+	packageSnapshot := snapshotNamedPackageFiles(t, producerMaterialization, fixture.packageFiles)
 	exactCLI := runExactBinaryCLIVertical(t, binary, robotFile, producerHome, packageSnapshot)
 
 	providerRoot := filepath.Join(t.TempDir(), "provider")
@@ -530,7 +534,37 @@ func runExactBinaryCLIVertical(t *testing.T, binary, robotFile, producerHome str
 	}
 }
 
-func snapshotNamedPackageFiles(t *testing.T, producerHome string, names []string) map[string][sha256.Size]byte {
+func realProducerMaterialization(t *testing.T, binary, robotFile, producerHome string) string {
+	t.Helper()
+	command := exec.Command(binary, "holotree", "variables", "--robot", robotFile, "--json")
+	command.Env = environmentWith(os.Environ(), map[string]string{
+		"ROBOCORP_HOME": producerHome, "RCC_HOLOTREE_MODE": "private",
+	})
+	output, err := command.Output()
+	if err != nil {
+		t.Fatalf("inspect producer environment: %v", err)
+	}
+	var entries []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	}
+	if err := json.Unmarshal(output, &entries); err != nil {
+		t.Fatalf("decode producer environment variables: %v", err)
+	}
+	for _, entry := range entries {
+		if entry.Key == "CONDA_PREFIX" && entry.Value != "" {
+			info, err := os.Stat(entry.Value)
+			if err != nil || !info.IsDir() {
+				t.Fatalf("producer CONDA_PREFIX is not a directory: %q (%v)", entry.Value, err)
+			}
+			return entry.Value
+		}
+	}
+	t.Fatal("producer environment omitted CONDA_PREFIX")
+	return ""
+}
+
+func snapshotNamedPackageFiles(t *testing.T, materialization string, names []string) map[string][sha256.Size]byte {
 	t.Helper()
 	if len(names) == 0 {
 		return nil
@@ -540,9 +574,8 @@ func snapshotNamedPackageFiles(t *testing.T, producerHome string, names []string
 	for _, name := range names {
 		wanted[name] = true
 	}
-	base := filepath.Join(producerHome, "holotree")
 	snapshot := make(map[string][sha256.Size]byte)
-	err := filepath.WalkDir(base, func(path string, entry os.DirEntry, walkErr error) error {
+	err := filepath.WalkDir(materialization, func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
@@ -553,15 +586,11 @@ func snapshotNamedPackageFiles(t *testing.T, producerHome string, names []string
 		if err != nil {
 			return err
 		}
-		parts := strings.Split(relative, string(os.PathSeparator))
-		if len(parts) < 2 {
-			return fmt.Errorf("package file %q is not inside a materialization", path)
-		}
 		content, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		snapshot[filepath.Join(parts[1:]...)] = sha256.Sum256(content)
+		snapshot[relative] = sha256.Sum256(content)
 		found[entry.Name()] = true
 		return nil
 	})
@@ -574,6 +603,26 @@ func snapshotNamedPackageFiles(t *testing.T, producerHome string, names []string
 		}
 	}
 	return snapshot
+}
+
+func assertMaterializationSize(t *testing.T, materialization string, minimumFiles int) {
+	t.Helper()
+	files := 0
+	err := filepath.WalkDir(materialization, func(_ string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if !entry.IsDir() {
+			files++
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("walk produced environment %q: %v", materialization, err)
+	}
+	if files < minimumFiles {
+		t.Fatalf("produced environment %q has %d files; want at least %d", materialization, files, minimumFiles)
+	}
 }
 
 func assertPackageSnapshot(t *testing.T, materialization string, snapshot map[string][sha256.Size]byte) {
