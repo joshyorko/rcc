@@ -2,6 +2,26 @@ package environmentartifact
 
 import "testing"
 
+func TestPlatformValidateRejectsInconsistentTargetMetadata(t *testing.T) {
+	tests := []struct {
+		name     string
+		platform Platform
+		want     string
+	}{
+		{"linux catalog label", Platform{OS: "linux", Arch: "amd64", RCCPlatform: "darwin_amd64"}, "platform catalog"},
+		{"darwin catalog label", Platform{OS: "darwin", Arch: "arm64", RCCPlatform: "darwin_amd64"}, "platform catalog"},
+		{"windows catalog label", Platform{OS: "windows", Arch: "amd64", RCCPlatform: "linux_amd64"}, "platform catalog"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			err := test.platform.Validate()
+			if err == nil || err.Error() != "platform catalog metadata is inconsistent with operating system and architecture" {
+				t.Fatalf("Validate() error = %v", err)
+			}
+		})
+	}
+}
+
 func TestPlatformIndexSelectsOnlyExactPlatform(t *testing.T) {
 	linux := Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}
 	index, content, err := NewPlatformIndex(testDigest(t, "a"), []PlatformArtifact{{Platform: linux, Artifact: testDigest(t, "b")}})
