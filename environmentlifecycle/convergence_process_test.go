@@ -30,6 +30,7 @@ type convergenceReceipt struct {
 	VerifyFailed       bool                       `json:"verifyFailed,omitempty"`
 	ProvisionalRemoved int                        `json:"provisionalRemoved,omitempty"`
 	Reclaimed          int                        `json:"reclaimed,omitempty"`
+	SkippedActive      int                        `json:"skippedActive,omitempty"`
 }
 
 func TestIndependentProcessConvergence(t *testing.T) {
@@ -72,14 +73,14 @@ func TestIndependentProcessUnrelatedArtifacts(t *testing.T) {
 	firstDigest, secondDigest, _ := publishTwoConvergenceArtifacts(t)
 	home := t.TempDir()
 	release := filepath.Join(home, "release")
-	first := convergenceChildCommand(home, firstDigest, "", "lock", map[string]string{
+	first := convergenceChildCommand(home, firstDigest, "", "transaction", map[string]string{
 		"RCC_CONVERGENCE_ROLE":    "holder",
 		"RCC_CONVERGENCE_HELD":    filepath.Join(home, "holder-held"),
 		"RCC_CONVERGENCE_RELEASE": release,
 		"RCC_CONVERGENCE_READY":   filepath.Join(home, "holder-ready"),
 		"RCC_CONVERGENCE_STATUS":  filepath.Join(home, "holder-status"),
 	})
-	second := convergenceChildCommand(home, secondDigest, "", "lock", map[string]string{
+	second := convergenceChildCommand(home, secondDigest, "", "transaction", map[string]string{
 		"RCC_CONVERGENCE_ROLE":     "contender",
 		"RCC_CONVERGENCE_STARTED":  filepath.Join(home, "contender-started"),
 		"RCC_CONVERGENCE_ACQUIRED": filepath.Join(home, "contender-acquired"),
@@ -201,11 +202,15 @@ func TestIndependentProcessGCFinalization(t *testing.T) {
 		"RCC_CONVERGENCE_STATUS":          filepath.Join(home, "acquire-status"),
 		"RCC_CONVERGENCE_CONTENT_HELD":    filepath.Join(home, "content-held"),
 		"RCC_CONVERGENCE_CONTENT_RELEASE": contentRelease,
+		"RCC_CONVERGENCE_LEASE_RELEASE":   filepath.Join(home, "lease-release"),
 	})
 	gc := convergenceChildCommand(home, digest, "", "gc", map[string]string{
-		"RCC_CONVERGENCE_READY":  filepath.Join(home, "gc-ready"),
-		"RCC_CONVERGENCE_STATUS": filepath.Join(home, "gc-status"),
-		"RCC_CONVERGENCE_DONE":   filepath.Join(home, "gc-done"),
+		"RCC_CONVERGENCE_READY":            filepath.Join(home, "gc-ready"),
+		"RCC_CONVERGENCE_STATUS":           filepath.Join(home, "gc-status"),
+		"RCC_CONVERGENCE_DONE":             filepath.Join(home, "gc-done"),
+		"RCC_CONVERGENCE_GC_LOCK_ENTRY":    filepath.Join(home, "gc-lock-entry"),
+		"RCC_CONVERGENCE_GC_ACQUIRED":      filepath.Join(home, "gc-content-acquired"),
+		"RCC_CONVERGENCE_GC_PROBE_RELEASE": filepath.Join(home, "gc-probe-release"),
 	})
 	startConvergenceChildren(t, []*exec.Cmd{acquire})
 	waitForConvergenceFile(t, filepath.Join(home, "acquire-ready"))
@@ -213,14 +218,25 @@ func TestIndependentProcessGCFinalization(t *testing.T) {
 	waitForConvergenceFile(t, filepath.Join(home, "content-held"))
 	startConvergenceChildren(t, []*exec.Cmd{gc})
 	waitForConvergenceFile(t, filepath.Join(home, "gc-ready"))
+	waitForConvergenceFile(t, filepath.Join(home, "gc-lock-entry"))
+	if _, err := os.Stat(filepath.Join(home, "gc-content-acquired")); err == nil {
+		t.Fatal("GC acquired the content transaction before finalization released it")
+	}
+	if _, err := os.Stat(filepath.Join(home, "gc-done")); err == nil {
+		t.Fatal("GC completed before finalization released its content transaction")
+	}
 	writeConvergenceSignal(t, contentRelease)
+	waitForConvergenceFile(t, filepath.Join(home, "gc-content-acquired"))
+	writeConvergenceSignal(t, filepath.Join(home, "gc-probe-release"))
 	waitForConvergenceFile(t, filepath.Join(home, "gc-done"))
 	assertConvergedLocalState(t, home, remoteRoot, digest)
+	gcReceipt := readConvergenceReceipt(t, filepath.Join(home, "gc-status"))
+	if gcReceipt.Reclaimed != 0 || gcReceipt.SkippedActive == 0 {
+		t.Fatalf("GC did not protect the active finalization lease: %+v", gcReceipt)
+	}
+	writeConvergenceSignal(t, filepath.Join(home, "lease-release"))
 	waitForConvergenceChild(t, acquire)
 	waitForConvergenceChild(t, gc)
-	if got := readConvergenceReceipt(t, filepath.Join(home, "gc-status")); got.Reclaimed != 0 {
-		t.Fatalf("GC reclaimed newly finalized materialization: %+v", got)
-	}
 	assertConvergedLocalState(t, home, remoteRoot, digest)
 }
 
@@ -262,12 +278,30 @@ func TestConvergenceProcessChild(t *testing.T) {
 			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_CONTENT_HELD"))
 			waitForConvergenceFile(t, os.Getenv("RCC_CONVERGENCE_CONTENT_RELEASE"))
 		}
-		result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: remote})
-		contentTransactionProbe = nil
+		defer func() { contentTransactionProbe = nil }()
+		request := AcquireRequest{ArtifactDigest: digest, Provider: remote}
+		var result AcquireResult
+		var lease Lease
+		err := withContentTransaction(context.Background(), localContentRoot(), func(ctx context.Context) error {
+			if err := withArtifactTransaction(ctx, digest, func(ctx context.Context) error {
+				var err error
+				result, err = NewAcquirer().acquireLocked(ctx, request)
+				return err
+			}); err != nil {
+				return err
+			}
+			var err error
+			lease, err = NewLocalMaterializer().Lease(ctx, Materialization{ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path})
+			return err
+		})
 		if err != nil {
 			t.Fatal(err)
 		}
 		receipt.MaterializationID, receipt.Path, receipt.CacheHit = result.MaterializationID, result.Path, result.CacheHit
+		waitForConvergenceFile(t, os.Getenv("RCC_CONVERGENCE_LEASE_RELEASE"))
+		if err := NewLocalMaterializer().Release(context.Background(), lease); err != nil {
+			t.Fatal(err)
+		}
 	case "repair":
 		remote := convergenceProvider(t)
 		report, err := RepairFromProvider(context.Background(), digest, remote)
@@ -275,21 +309,19 @@ func TestConvergenceProcessChild(t *testing.T) {
 			t.Fatal(err)
 		}
 		receipt.Ready, receipt.Verified = report.Verification.State == string(stateReady), report.Verification.Verified
-	case "lock":
+	case "transaction":
 		if os.Getenv("RCC_CONVERGENCE_ROLE") != "holder" {
 			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_STARTED"))
 		}
-		release, err := acquireCrossArtifactLock(digest)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if os.Getenv("RCC_CONVERGENCE_ROLE") == "holder" {
-			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_HELD"))
-			waitForConvergenceFile(t, os.Getenv("RCC_CONVERGENCE_RELEASE"))
-		} else {
-			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_ACQUIRED"))
-		}
-		if err := release(); err != nil {
+		if err := withArtifactTransaction(context.Background(), digest, func(context.Context) error {
+			if os.Getenv("RCC_CONVERGENCE_ROLE") == "holder" {
+				writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_HELD"))
+				waitForConvergenceFile(t, os.Getenv("RCC_CONVERGENCE_RELEASE"))
+			} else {
+				writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_ACQUIRED"))
+			}
+			return nil
+		}); err != nil {
 			t.Fatal(err)
 		}
 	case "reconcile":
@@ -304,12 +336,21 @@ func TestConvergenceProcessChild(t *testing.T) {
 		_, verifyErr := Verify(context.Background(), digest)
 		receipt.ProvisionalRemoved, receipt.Ready, receipt.State, receipt.VerifyFailed = report.ProvisionalRemoved, inspection.Ready, inspection.State, verifyErr != nil
 	case "gc":
-		report, err := Collect(context.Background(), GCPolicy{Pressure: true, Retention: time.Hour})
+		contentTransactionBeforeAcquire = func() {
+			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_GC_LOCK_ENTRY"))
+		}
+		defer func() { contentTransactionBeforeAcquire = nil }()
+		contentTransactionProbe = func() {
+			writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_GC_ACQUIRED"))
+			waitForConvergenceFile(t, os.Getenv("RCC_CONVERGENCE_GC_PROBE_RELEASE"))
+		}
+		defer func() { contentTransactionProbe = nil }()
+		report, err := Collect(context.Background(), GCPolicy{Pressure: true})
 		if err != nil {
 			t.Fatal(err)
 		}
 		receipt.Reclaimed = report.Reclaimed
-		writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_DONE"))
+		receipt.SkippedActive = report.SkippedActive
 	default:
 		t.Fatalf("unknown convergence operation %q", receipt.Operation)
 	}
@@ -321,6 +362,9 @@ func TestConvergenceProcessChild(t *testing.T) {
 		if err := os.WriteFile(status, content, 0o600); err != nil {
 			t.Fatal(err)
 		}
+	}
+	if receipt.Operation == "gc" {
+		writeConvergenceSignal(t, os.Getenv("RCC_CONVERGENCE_DONE"))
 	}
 }
 

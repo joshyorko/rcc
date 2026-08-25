@@ -13,6 +13,7 @@ import (
 )
 
 var contentLocks sync.Map
+var contentTransactionBeforeAcquire func()
 var contentTransactionProbe func()
 
 func withContentTransaction(ctx context.Context, root string, fn func(context.Context) error) error {
@@ -30,6 +31,9 @@ func withContentTransaction(ctx context.Context, root string, fn func(context.Co
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|unix.O_NOFOLLOW, 0o600)
 	if err != nil {
 		return fmt.Errorf("open content transaction lock: %w", err)
+	}
+	if contentTransactionBeforeAcquire != nil {
+		contentTransactionBeforeAcquire()
 	}
 	if err := unix.Flock(int(file.Fd()), unix.LOCK_EX); err != nil {
 		_ = file.Close()

@@ -13,6 +13,7 @@ import (
 )
 
 var contentLocks sync.Map
+var contentTransactionBeforeAcquire func()
 var contentTransactionProbe func()
 
 func withContentTransaction(ctx context.Context, root string, fn func(context.Context) error) error {
@@ -25,6 +26,9 @@ func withContentTransaction(ctx context.Context, root string, fn func(context.Co
 	defer lock.Unlock()
 	if err := os.MkdirAll(root, 0o700); err != nil {
 		return err
+	}
+	if contentTransactionBeforeAcquire != nil {
+		contentTransactionBeforeAcquire()
 	}
 	lease, err := pathlib.Locker(filepath.Join(root, ".lifecycle-content.lock"), -1, false)
 	if err != nil {
