@@ -288,3 +288,25 @@ func TestVerificationAndReceiptDoNotEchoCredentialBearingInputs(t *testing.T) {
 		t.Fatalf("receipt leaked credential: %s", data)
 	}
 }
+
+func TestPersistedReceiptRedactsProviderAndBuildDiagnostics(t *testing.T) {
+	root := t.TempDir()
+	store := NewReceiptStore(root)
+	receipt := (Policy{}).FailureReceipt(
+		"sha256:a", "linux/amd64", "builder", CodeInvalid,
+		"provider build failed: Authorization: Bearer provider-secret", time.Unix(1, 0),
+	)
+	if err := store.Put(receipt); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, "sha256_a.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(data, []byte("provider-secret")) || bytes.Contains(data, []byte("Authorization:")) {
+		t.Fatalf("persisted receipt leaked provider/build diagnostic: %s", data)
+	}
+	if !bytes.Contains(data, []byte("trust attachment could not be decoded")) {
+		t.Fatalf("persisted receipt lacks bounded diagnostic: %s", data)
+	}
+}
