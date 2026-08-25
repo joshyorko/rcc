@@ -284,7 +284,7 @@ func assertExecutionPdeathsig(command *exec.Cmd) error {
 		return errors.New("execution command has no SysProcAttr")
 	}
 	value := reflect.ValueOf(command.SysProcAttr)
-	if value.Kind() != reflect.Ptr || value.IsNil() {
+	if value.Kind() != reflect.Pointer || value.IsNil() {
 		return errors.New("execution command SysProcAttr is not a pointer")
 	}
 	field := value.Elem().FieldByName("Pdeathsig")
