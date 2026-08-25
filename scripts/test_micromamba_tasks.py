@@ -27,6 +27,7 @@ class MicromambaDownloadTests(unittest.TestCase):
     """Break caught: one transient HTTP failure aborts instead of retrying."""
     responses = [(22, b"HTTP 503"), (0, _archive_bytes())]
     calls = []
+    sleeps = []
 
     def run(argv, **kwargs):
       calls.append((argv, kwargs))
@@ -37,17 +38,19 @@ class MicromambaDownloadTests(unittest.TestCase):
     with tempfile.TemporaryDirectory() as directory:
       destination = Path(directory) / "micromamba.tar.bz2"
       tasks._download_micromamba_archive(
-          "https://example.test/micromamba", destination, run=run, sleep=lambda _: None,
+          "https://example.test/micromamba", destination, run=run, sleep=sleeps.append,
       )
       with tarfile.open(destination, "r:bz2") as archive:
         self.assertEqual(archive.extractfile("bin/micromamba").read(), b"micromamba")
 
     self.assertEqual(len(calls), 2)
+    self.assertEqual(sleeps, [10])
     self.assertIn("--fail", calls[0][0])
 
   def test_exhausted_http_failures_report_url_and_attempt_count(self):
     """Break caught: HTTP errors are accepted as archives or fail unclearly."""
     calls = []
+    sleeps = []
 
     def run(argv, **kwargs):
       calls.append((argv, kwargs))
@@ -61,14 +64,16 @@ class MicromambaDownloadTests(unittest.TestCase):
           r"failed after 3 attempts.*https://example\.test/micromamba.*curl: HTTP 500",
       ):
         tasks._download_micromamba_archive(
-            "https://example.test/micromamba", destination, run=run, sleep=lambda _: None,
+            "https://example.test/micromamba", destination, run=run, sleep=sleeps.append,
         )
 
     self.assertEqual(len(calls), 3)
+    self.assertEqual(sleeps, [10, 20])
 
   def test_malformed_success_payload_is_retried_then_reported_as_invalid_archive(self):
     """Break caught: an HTTP 200 text payload reaches extraction as a bzip2 error."""
     calls = []
+    sleeps = []
 
     def run(argv, **kwargs):
       calls.append((argv, kwargs))
@@ -82,10 +87,11 @@ class MicromambaDownloadTests(unittest.TestCase):
           r"failed after 3 attempts.*not a valid bzip2 tar archive",
       ):
         tasks._download_micromamba_archive(
-            "https://example.test/micromamba", destination, run=run, sleep=lambda _: None,
+            "https://example.test/micromamba", destination, run=run, sleep=sleeps.append,
         )
 
     self.assertEqual(len(calls), 3)
+    self.assertEqual(sleeps, [10, 20])
 
 
 if __name__ == "__main__":

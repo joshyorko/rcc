@@ -404,7 +404,7 @@ def _download_micromamba_archive(url, destination, *, run=None, sleep=None, atte
                 last_error = "downloaded payload is not a valid bzip2 tar archive"
 
         if attempt < attempts:
-            sleep(0.25 * attempt)
+            sleep(10 * attempt)
 
     raise RuntimeError(
         f"micromamba download failed after {attempts} attempts for {url}: {last_error}"
