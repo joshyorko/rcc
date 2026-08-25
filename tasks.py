@@ -2,6 +2,8 @@ import os
 import json
 import gzip
 import hashlib
+import ntpath
+import posixpath
 import re
 import shutil
 import shlex
@@ -12,6 +14,10 @@ import zipfile
 from pathlib import Path
 
 from invoke import task
+
+
+MICROMAMBA_MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
+MICROMAMBA_HASH_CHUNK_BYTES = 1024 * 1024
 
 
 def _binary_inventory_targets():
@@ -376,6 +382,137 @@ def get_official_micromamba_url(version, platform):
     return f"{base}/{conda_platform}/{version}"
 
 
+def _get_official_micromamba_fallback(version, platform):
+    """Return the immutable official release archive and its GitHub-reported digest."""
+    version = version.removeprefix("v")
+    release = "2.5.0-2"
+    assets = {
+        "linux64": (
+            "micromamba-linux-64.tar.bz2",
+            "cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6",
+        ),
+        "macos64": (
+            "micromamba-osx-64.tar.bz2",
+            "2d6ab968ba08c003e43642f55afded1f0fc4247387f04e340cdc6a0129d9c550",
+        ),
+        "macosarm64": (
+            "micromamba-osx-arm64.tar.bz2",
+            "74d1f250b1505cd4d78728bd8b0b7f0ffbaa660b18042f15f7b610c16102d201",
+        ),
+        "windows64": (
+            "micromamba-win-64.tar.bz2",
+            "8a53345b37016e4303d3ecf243ff620380971dbe24d71ea849ec1d6957d15883",
+        ),
+    }
+    if version != "2.5.0" or platform not in assets:
+        raise ValueError(
+            f"no integrity-bound micromamba fallback for version {version!r}, platform {platform!r}"
+        )
+    filename, digest = assets[platform]
+    url = (
+        "https://github.com/mamba-org/micromamba-releases/releases/download/"
+        f"{release}/{filename}"
+    )
+    return url, digest
+
+
+def _sha256_file(path, maximum_bytes):
+    """Hash a bounded file with fixed-size reads."""
+    size = path.stat().st_size
+    if size > maximum_bytes:
+        raise ValueError(f"archive size {size} exceeds maximum {maximum_bytes}")
+    digest = hashlib.sha256()
+    counted = 0
+    with path.open("rb") as stream:
+        while True:
+            chunk = stream.read(MICROMAMBA_HASH_CHUNK_BYTES)
+            if not chunk:
+                break
+            counted += len(chunk)
+            if counted > maximum_bytes:
+                raise ValueError(f"archive size {counted} exceeds maximum {maximum_bytes}")
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_micromamba_archive_members(tar, expected_member):
+    """Allow only safe directories/files and require one exact executable member."""
+    expected = []
+    for member in tar.getmembers():
+        portable_name = member.name.replace("\\", "/")
+        normalized = posixpath.normpath(portable_name)
+        drive, _ = ntpath.splitdrive(portable_name)
+        if drive:
+            raise ValueError(f"Unsafe archive drive-relative path: {member.name}")
+        if portable_name.startswith("/") or ntpath.isabs(portable_name):
+            raise ValueError(f"Unsafe archive absolute path: {member.name}")
+        if normalized == ".." or normalized.startswith("../"):
+            raise ValueError(f"Unsafe archive path traversal: {member.name}")
+        if not (member.isdir() or member.isreg()):
+            raise ValueError(f"Unsafe archive member type: {member.name}")
+        if member.name == expected_member:
+            expected.append(member)
+
+    if len(expected) != 1 or not expected[0].isreg():
+        raise ValueError(
+            f"archive expected executable member is missing or non-regular: {expected_member}"
+        )
+
+
+def _download_micromamba_archive(
+        url, destination, *, expected_sha256, fallback_url=None,
+        run=None, sleep=None, attempts=3):
+    """Download and validate a micromamba bzip2 tar archive with bounded retries."""
+    import tarfile
+    import time
+
+    run = run or subprocess.run
+    sleep = sleep or time.sleep
+    destination = Path(destination)
+    failures = []
+
+    for source_url in (url, fallback_url):
+        if source_url is None:
+            continue
+        last_error = "unknown download error"
+        for attempt in range(1, attempts + 1):
+            result = run(
+                ["curl", "--fail", "--silent", "--show-error", "--location",
+                 source_url, "--max-filesize", str(MICROMAMBA_MAX_ARCHIVE_BYTES),
+                 "-o", str(destination)],
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode:
+                last_error = (result.stderr or f"curl exited with status {result.returncode}").strip()
+            else:
+                try:
+                    actual_sha256 = _sha256_file(destination, MICROMAMBA_MAX_ARCHIVE_BYTES)
+                except (OSError, ValueError) as error:
+                    last_error = f"{error} for {source_url}"
+                else:
+                    if actual_sha256 != expected_sha256:
+                        last_error = (
+                            f"SHA-256 mismatch: expected {expected_sha256}, got {actual_sha256}"
+                        )
+                    else:
+                        try:
+                            with tarfile.open(destination, "r:bz2") as archive:
+                                archive.getmembers()
+                            return destination
+                        except (OSError, tarfile.TarError):
+                            last_error = "downloaded payload is not a valid bzip2 tar archive"
+
+            if attempt < attempts:
+                sleep(10 * attempt)
+        failures.append(f"{source_url}: {last_error}")
+
+    raise RuntimeError(
+        f"micromamba download failed after {attempts} attempts per source: "
+        + "; ".join(failures)
+    )
+
+
 @task
 def micromamba(c):
     """Download micromamba files from official conda-forge source"""
@@ -394,17 +531,6 @@ def micromamba(c):
         "windows64": "windows_amd64",
     }
 
-    def _validate_archive_members(tar):
-        for member in tar.getmembers():
-            member_path = member.name
-            if os.path.isabs(member_path):
-                raise ValueError(f"Unsafe absolute path in archive: {member_path}")
-            normalized = os.path.normpath(member_path)
-            if normalized.startswith("..") or os.path.isabs(normalized):
-                raise ValueError(f"Unsafe path traversal in archive: {member_path}")
-            if member.issym() or member.islnk():
-                raise ValueError(f"Unsafe link entry in archive: {member_path}")
-
     for platform, arch in platforms.items():
         output = f"blobs/assets/micromamba.{arch}"
         output_gz = output + ".gz"
@@ -413,6 +539,7 @@ def micromamba(c):
             continue
 
         url = get_official_micromamba_url(version, platform)
+        fallback_url, expected_sha256 = _get_official_micromamba_fallback(version, platform)
         print(f"Downloading from official source: {url}")
 
         # Create unique extraction directory
@@ -420,12 +547,19 @@ def micromamba(c):
 
         # Download the archive
         archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
-        c.run(f'curl -sL "{url}" -o "{archive_path}"')
+        _download_micromamba_archive(
+            url, archive_path,
+            expected_sha256=expected_sha256,
+            fallback_url=fallback_url,
+        )
 
         # Extract the binary from the archive
         # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
         with tarfile.open(archive_path, "r:bz2") as tar:
-            _validate_archive_members(tar)
+            expected_member = (
+                "Library/bin/micromamba.exe" if platform == "windows64" else "bin/micromamba"
+            )
+            _validate_micromamba_archive_members(tar, expected_member)
             tar.extractall(path=extract_dir)
 
         # Find and move the binary
