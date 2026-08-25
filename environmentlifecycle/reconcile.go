@@ -33,6 +33,8 @@ type ReconcileItem struct {
 	Repaired bool        `json:"repaired"`
 }
 
+var reconcileAfterValidationHook func(environmentartifact.Digest) error
+
 func classifyLease(lease Lease) LeaseStatus {
 	if lease.OwnerPID <= 0 || lease.OwnerStart == "" {
 		return LeaseAmbiguous
@@ -71,16 +73,24 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 	if err := validateProvisionalRecords(digest); err != nil {
 		return report, err
 	}
+	if reconcileAfterValidationHook != nil {
+		if err := reconcileAfterValidationHook(digest); err != nil {
+			return report, err
+		}
+	}
 	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
-		path := filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")
-		if _, statErr := os.Stat(path); statErr == nil {
+		components := recordComponents(digest, state)
+		_, readErr := readRegularNoFollow(recordRoot(), components, maxMaterializationRecordBytes)
+		if readErr == nil {
 			report.Provisional++
 			// These records are transactional intent, never readiness. Remove the
 			// journal entry after a crash; the ready record remains authoritative.
-			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+			if err := removeRegularNoFollow(recordRoot(), components); err != nil && !os.IsNotExist(err) {
 				return report, err
 			}
 			report.ProvisionalRemoved++
+		} else if !os.IsNotExist(readErr) {
+			return report, readErr
 		}
 	}
 	dir := filepath.Join(recordRoot(), digest.Hex(), "leases")

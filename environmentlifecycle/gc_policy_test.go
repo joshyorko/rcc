@@ -467,6 +467,73 @@ func TestReconcileRemovesAbsentOrphanProvisionalJournals(t *testing.T) {
 	}
 }
 
+func TestReconcileRejectsProvisionalParentSymlinkSwap(t *testing.T) {
+	home := t.TempDir()
+	previous := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previous)
+	})
+
+	digest := environmentartifact.DigestBytes([]byte("reconcile-parent-symlink-swap"))
+	id := materializationID(digest)
+	path := filepath.Join(common.HolotreeLocation(), id)
+	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
+		if err := writeMaterializationRecord(materializationRecord{
+			ArtifactDigest: digest, MaterializationID: id, Path: path,
+			State: state, VerifiedAt: time.Unix(1, 0),
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	external := t.TempDir()
+	externalContents := map[materializationState][]byte{
+		stateVerifiedContent: []byte("external verified-content sentinel"),
+		stateMaterializing:   []byte("external materializing sentinel"),
+	}
+	for state, content := range externalContents {
+		if err := os.WriteFile(filepath.Join(external, string(state)+".json"), content, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	recordDir := filepath.Join(recordRoot(), digest.Hex())
+	moved := recordDir + ".original"
+	reconcileAfterValidationHook = func(got environmentartifact.Digest) error {
+		if got != digest {
+			return errors.New("unexpected reconcile digest")
+		}
+		if err := os.Rename(recordDir, moved); err != nil {
+			return err
+		}
+		if err := os.Symlink(external, recordDir); err != nil {
+			return err
+		}
+		return nil
+	}
+	t.Cleanup(func() {
+		reconcileAfterValidationHook = nil
+		_ = os.Remove(recordDir)
+		_ = os.Rename(moved, recordDir)
+	})
+
+	if _, err := Reconcile(context.Background(), digest); err == nil {
+		t.Fatal("Reconcile followed swapped provisional parent")
+	}
+	for state, want := range externalContents {
+		got, err := os.ReadFile(filepath.Join(external, string(state)+".json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(got, want) {
+			t.Fatalf("external %s sentinel changed: %q", state, got)
+		}
+	}
+}
+
 func TestReconcileRemovesValidProvisionalJournals(t *testing.T) {
 	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
 		t.Run(string(state), func(t *testing.T) {
