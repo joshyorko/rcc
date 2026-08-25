@@ -997,6 +997,32 @@ type PrewarmItem struct {
 type PrewarmStatus string
 
 const (
+	defaultBackoff = 25 * time.Millisecond
+	maxBackoff     = time.Second
+)
+
+func normalizeBackoff(backoff time.Duration) time.Duration {
+	if backoff <= 0 {
+		return defaultBackoff
+	}
+	if backoff > maxBackoff {
+		return maxBackoff
+	}
+	return backoff
+}
+
+func waitBackoff(ctx context.Context, backoff time.Duration) error {
+	timer := time.NewTimer(normalizeBackoff(backoff))
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		return nil
+	}
+}
+
+const (
 	PrewarmNeeded          PrewarmStatus = "needed"
 	PrewarmReady           PrewarmStatus = "ready"
 	PrewarmCapacityLimited PrewarmStatus = "capacity-limited"
@@ -1043,9 +1069,7 @@ func (c *Filesystem) prewarm(ctx context.Context, request PrewarmRequest, build 
 		}
 		return items, nil
 	}
-	if request.Backoff <= 0 {
-		request.Backoff = 25 * time.Millisecond
-	}
+	request.Backoff = normalizeBackoff(request.Backoff)
 	if request.LeaseTTL <= 0 {
 		request.LeaseTTL = time.Minute
 	}
@@ -1239,12 +1263,8 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 				outcome = Claimed
 				break
 			}
-			timer := time.NewTimer(request.Backoff)
-			select {
-			case <-ctx.Done():
-				timer.Stop()
-				return ctx.Err()
-			case <-timer.C:
+			if err := waitBackoff(ctx, request.Backoff); err != nil {
+				return err
 			}
 		}
 		if outcome != Claimed {
