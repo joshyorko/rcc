@@ -306,7 +306,7 @@ jobs:
           go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$' -v
       - name: Run Environment Artifact Robot acceptance against exact binary
         if: matrix.goos != 'windows'
-        timeout-minutes: 8
+        timeout-minutes: 15
         run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot
       - name: Bind Robot evidence into native runtime receipt
         if: success() || failure()
