@@ -594,6 +594,105 @@ func TestImportArchiveRollsBackStagedObjectsAfterInjectedFailure(t *testing.T) {
 	_ = fixture
 }
 
+func TestImportArchiveRejectsIncompatibleRequirementsBeforeBulkObjectImport(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	archivePath := filepath.Join(t.TempDir(), "artifact.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: archivePath}); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	home := t.TempDir()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	previousCapabilities := collectWorkerCapabilities
+	collectWorkerCapabilities = func(_ context.Context, required environmentartifact.CompatibilityRequirements) (environmentartifact.WorkerCapabilities, error) {
+		return environmentartifact.WorkerCapabilities{
+			SchemaVersion:      environmentartifact.CompatibilitySchemaV1,
+			RelocationVersions: []string{required.RelocationVersion},
+			Python: environmentartifact.PythonCapabilities{
+				Implementations: []string{required.Python.Implementation}, Versions: []string{required.Python.Version}, ABIs: []string{required.Python.ABI},
+			},
+			OS: environmentartifact.OSCapabilities{
+				Family: required.OS.Family, Version: required.OS.MinimumVersion, KernelVersion: "0",
+				LibC: required.OS.LibC, LibCVersion: required.OS.LibCMinimum, NativeArchitecture: required.OS.NativeArchitecture,
+				Translation: "native", Runtime: required.OS.Runtime, Libraries: append([]string{}, required.OS.RequiredLibraries...),
+			},
+			CPU:        environmentartifact.CPUCapabilities{Architecture: required.CPU.Architecture, Features: append([]string{}, required.CPU.RequiredFeatures...)},
+			Filesystem: environmentartifact.FilesystemCapabilities{CaseSensitive: true, Symlinks: true, Junctions: true, LongPaths: true, MaxPath: 4096},
+		}, nil
+	}
+	t.Cleanup(func() { collectWorkerCapabilities = previousCapabilities })
+	puts := 0
+	var local *artifactprovider.Filesystem
+	var err error
+	_, err = ImportArchive(context.Background(), ImportArchiveRequest{Path: archivePath, PutObject: func(ctx context.Context, blob artifactprovider.Blob) error {
+		puts++
+		if local == nil {
+			var localErr error
+			local, localErr = artifactprovider.NewFilesystem(filepath.Join(home, "artifacts", "v1", "content"))
+			if localErr != nil {
+				return localErr
+			}
+		}
+		return local.PutObject(ctx, blob)
+	}})
+	if err == nil || !strings.Contains(err.Error(), "kernel-version") {
+		t.Fatalf("incompatible archive error = %v, want kernel-version before import", err)
+	}
+	if puts != 0 {
+		t.Fatalf("archive PutObject calls = %d, want zero", puts)
+	}
+	for _, path := range []string{
+		filepath.Join(home, "artifacts", "v1", "content"),
+		common.HololibCatalogLocation(), common.HolotreeLocation(),
+	} {
+		if _, statErr := os.Stat(path); !os.IsNotExist(statErr) {
+			t.Fatalf("incompatible archive created %s: %v", path, statErr)
+		}
+	}
+}
+
+func TestImportArchiveRejectsCorruptObjectAfterCompatiblePreflight(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	archivePath := filepath.Join(t.TempDir(), "artifact.rcca")
+	if _, err := ExportArchive(context.Background(), ExportArchiveRequest{ArtifactDigest: artifactDigest, Provider: remote, OutputPath: archivePath}); err != nil {
+		t.Fatal(err)
+	}
+	entries, err := environmentartifact.ReadArchiveFile(archivePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	index, err := environmentartifact.DecodeObjectIndex(entries[environmentartifact.ArchiveObjectIndex])
+	if err != nil || len(index.Entries) == 0 {
+		t.Fatalf("object index = %+v, %v", index, err)
+	}
+	objectName := environmentartifact.ArchiveObjectDirectory + index.Entries[0].StoredDigest.Hex()
+	entries[objectName] = bytes.Repeat([]byte("x"), len(entries[objectName]))
+	corruptPath := filepath.Join(t.TempDir(), "corrupt.rcca")
+	archiveFile, err := os.Create(corruptPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := environmentartifact.WriteArchive(archiveFile, entries); err != nil {
+		_ = archiveFile.Close()
+		t.Fatal(err)
+	}
+	if err := archiveFile.Close(); err != nil {
+		t.Fatal(err)
+	}
+	previousHome := common.Product.Home()
+	home := t.TempDir()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	if _, err := ImportArchive(context.Background(), ImportArchiveRequest{Path: corruptPath}); err == nil || !strings.Contains(err.Error(), "size or digest mismatch") {
+		t.Fatalf("corrupt archive error = %v, want object digest mismatch", err)
+	}
+	manifestPath := filepath.Join(home, "artifacts", "v1", "content", "manifests", "sha256", artifactDigest.Hex()[:2], artifactDigest.Hex()[2:4], artifactDigest.Hex())
+	if _, err := os.Stat(manifestPath); !os.IsNotExist(err) {
+		t.Fatalf("corrupt archive left manifest cache: %v", err)
+	}
+}
+
 func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
 	fixture := newPublishFixture(t)
 	inventory, err := environmentartifact.InventoryV12(environmentartifact.InventoryInput{CatalogPath: fixture.build.CatalogPath, LegacyBlueprint: fixture.build.LegacyBlueprint, ExpectedPlatform: fixture.build.Platform.RCCPlatform})

@@ -19,7 +19,8 @@ import (
 )
 
 // ImportArchiveRequest describes an offline carrier import. Import validates
-// the complete closure before writing any content to the local provider.
+// canonical metadata and compatibility before bulk content writes, then
+// streams and verifies each compatible object before storing it locally.
 type ImportArchiveRequest struct {
 	Path         string
 	PutObject    func(context.Context, artifactprovider.Blob) error
@@ -73,6 +74,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 			return environmentartifact.Manifest{}, fmt.Errorf("platform index selected artifact does not match archive manifest")
 		}
 	}
+	var specificationBytes []byte
 	for _, item := range []struct {
 		name string
 		desc environmentartifact.Descriptor
@@ -88,6 +90,12 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		if verifyErr := environmentartifact.VerifyDescriptor(item.desc, content); verifyErr != nil {
 			return environmentartifact.Manifest{}, fmt.Errorf("verify %s: %w", item.name, verifyErr)
 		}
+		if item.name == environmentartifact.ArchiveSpecificationDir+manifest.Specification.Digest.Hex() {
+			specificationBytes = content
+		}
+	}
+	if err := environmentartifact.ValidateSpecificationBytes(specificationBytes); err != nil {
+		return environmentartifact.Manifest{}, err
 	}
 	for _, entry := range objectIndex.Entries {
 		name := environmentartifact.ArchiveObjectDirectory + entry.StoredDigest.Hex()
@@ -114,6 +122,9 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		return environmentartifact.Manifest{}, err
 	}
 	if err := manifest.Platform.CompatibleWithCurrent(); err != nil {
+		return environmentartifact.Manifest{}, fmt.Errorf("reject incompatible environment archive: %w", err)
+	}
+	if _, err := preflightCompatibility(ctx, manifest); err != nil {
 		return environmentartifact.Manifest{}, fmt.Errorf("reject incompatible environment archive: %w", err)
 	}
 	local, err := artifactprovider.NewFilesystem(filepath.Join(common.Product.Home(), "artifacts", "v1", "content"))

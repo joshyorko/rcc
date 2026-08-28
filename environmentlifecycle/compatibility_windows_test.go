@@ -4,6 +4,8 @@ package environmentlifecycle
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"runtime"
 	"slices"
 	"testing"
@@ -37,6 +39,23 @@ func TestWindowsWorkerCapabilitiesAreCompleteAndIndependent(t *testing.T) {
 	}
 	if slices.Contains(worker.OS.Libraries, "rcc-impossible-system-library.dll") || slices.Contains(worker.CPU.Features, "rcc-impossible-cpu-feature") {
 		t.Fatal("Windows worker copied artifact requirements")
+	}
+}
+
+func TestProbeFilesystemCapabilitiesCreatesMissingProductHome(t *testing.T) {
+	previousHome := common.Product.Home()
+	home := filepath.Join(t.TempDir(), "missing-home")
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	if _, err := probeFilesystemCapabilities(); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(home)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !info.IsDir() {
+		t.Fatalf("compatibility home is not a directory: %v", info)
 	}
 }
 
