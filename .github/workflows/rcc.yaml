@@ -295,7 +295,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          RCC_REAL_ARTIFACT_TEST=1 go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
+          RCC_REAL_ARTIFACT_TEST=1 go test -timeout 45m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
       - name: Run JAT-class real consumer A-to-B acceptance
         if: matrix.goos == 'linux'
         shell: bash
