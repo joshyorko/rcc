@@ -16,6 +16,9 @@ var SupportedPlatforms = map[Platform]struct{}{
 }
 
 func (it Platform) Validate() error {
+	if it.RCCPlatform != it.OS+"_"+it.Arch {
+		return fmt.Errorf("platform catalog metadata is inconsistent with operating system and architecture")
+	}
 	if _, ok := SupportedPlatforms[it]; !ok {
 		return fmt.Errorf("unsupported artifact platform: %+v", it)
 	}
