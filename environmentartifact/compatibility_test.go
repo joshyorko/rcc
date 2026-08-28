@@ -84,6 +84,31 @@ func TestEvaluateCompatibilityReturnsStableMismatchBeforeUse(t *testing.T) {
 	}
 }
 
+func TestEvaluateCompatibilityAcceptsNewerBuilderOnSupportedOlderLinuxWorker(t *testing.T) {
+	requirements := testCompatibilityRequirements()
+	requirements.OS.MinimumVersion = "1"
+	requirements.OS.KernelMinimum = "3.15"
+	worker := testWorkerCapabilities()
+	worker.OS.Version = "1"
+	worker.OS.KernelVersion = "5.14.0-687.10.1.el9_8.0.1.x86_64"
+	if err := EvaluateCompatibility(requirements, worker); err != nil {
+		t.Fatalf("newer-builder artifact was rejected on supported older Linux worker: %v", err)
+	}
+}
+
+func TestEvaluateCompatibilityRejectsLinuxWorkerBelowKernelFloor(t *testing.T) {
+	requirements := testCompatibilityRequirements()
+	requirements.OS.MinimumVersion = "1"
+	requirements.OS.KernelMinimum = "3.15"
+	worker := testWorkerCapabilities()
+	worker.OS.Version = "1"
+	worker.OS.KernelVersion = "3.10"
+	var mismatch *CompatibilityError
+	if err := EvaluateCompatibility(requirements, worker); !errors.As(err, &mismatch) || mismatch.Code != "kernel-version" {
+		t.Fatalf("below-floor Linux worker error = %T %v", err, err)
+	}
+}
+
 func TestEvaluateCompatibilityRejectsPythonCPUFilesystemAndOverrideMismatch(t *testing.T) {
 	requirements := testCompatibilityRequirements()
 	for name, test := range map[string]struct {
