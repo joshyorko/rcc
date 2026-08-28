@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import tempfile
@@ -25,6 +26,14 @@ def log_to_console(message):
 def native_rcc_binary(platform_name=None):
     suffix = ".exe" if (platform_name or os.name) == "nt" else ""
     return str((Path(__file__).resolve().parents[2] / "build" / f"rcc{suffix}").resolve())
+
+
+def source_rcc_version():
+    source = Path(__file__).resolve().parents[2] / "common" / "version.go"
+    match = re.search(r"Version\s*=\s*`(v[0-9]+\.[0-9]+\.[0-9]+)`", source.read_text())
+    if not match:
+        raise AssertionError(f"could not read RCC version from {source}")
+    return match.group(1)
 
 
 def run_process_without_group(*command, **configuration):

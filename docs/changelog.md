@@ -1,6 +1,31 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.3 (date: 28.08.2026)
+
+### Bug Fixes
+
+- make Linux Environment Artifact compatibility portable across supported
+  kernels by recording the RCC-required Linux kernel floor instead of the
+  producer's exact `uname`, while retaining strict libc, shared-library, CPU,
+  filesystem, architecture, and Python ABI checks
+- preflight complete offline-archive compatibility before bulk CAS object
+  import, avoiding expensive writes for incompatible artifacts while
+  preserving canonical metadata, object digest, trust, and archive safety
+  verification
+- initialize a safe private filesystem capability probe for fresh RCC homes
+  before early archive preflight and reject symlinked probe homes
+- validate that Environment Artifact operating-system, architecture, and RCC
+  catalog platform metadata agree before acquisition
+
+### Acceptance
+
+- prove Linux amd64, Windows amd64, macOS amd64, and macOS arm64 native A-to-B
+  publication, acquisition, materialization, execution, and warm reuse on the
+  exact release candidate
+- retain the Linux JAT-class consumer and exact-binary Robot Framework
+  Environment Artifact acceptance gates
+
 ## v18.19.2 (date: 25.08.2026)
 
 ### Bug Fixes
