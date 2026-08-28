@@ -205,11 +205,13 @@ exec "$@"
 	if err != nil {
 		return nil, false, false, fmt.Errorf("%w: bwrap is unavailable", ErrUnenforcedBuildPolicy)
 	}
+	runtimeTool := ""
 	if policy.CPULimit > 0 || policy.MemoryBytes > 0 {
 		prlimit, err := exec.LookPath("prlimit")
 		if err != nil {
 			return nil, false, false, fmt.Errorf("%w: prlimit is unavailable", ErrUnenforcedBuildPolicy)
 		}
+		runtimeTool = prlimit
 		args := []string{}
 		if policy.CPULimit > 0 {
 			args = append(args, "--cpu="+strconv.Itoa(policy.CPULimit))
@@ -232,7 +234,8 @@ exec "$@"
 		"--json-status-fd", "3",
 		"--block-fd", "4",
 	}
-	for _, systemPath := range []string{"/usr/bin", "/usr/lib", "/bin", "/lib", "/lib64"} {
+	systemPaths := []string{"/usr/bin", "/usr/lib", "/bin", "/lib", "/lib64"}
+	for _, systemPath := range systemPaths {
 		if _, statErr := os.Lstat(systemPath); statErr != nil {
 			return nil, false, false, fmt.Errorf("%w: required runtime path %q is unavailable", ErrUnenforcedBuildPolicy, systemPath)
 		}
@@ -240,8 +243,16 @@ exec "$@"
 	}
 	for _, systemPath := range []string{"/usr/lib64", "/usr/libexec"} {
 		if _, statErr := os.Lstat(systemPath); statErr == nil {
+			systemPaths = append(systemPaths, systemPath)
 			mounts = append(mounts, "--ro-bind", systemPath, systemPath)
 		}
+	}
+	if runtimeTool != "" {
+		toolMount, mountErr := runtimeToolMount(runtimeTool, systemPaths)
+		if mountErr != nil {
+			return nil, false, false, fmt.Errorf("%w: runtime tool %q is unavailable inside confinement: %v", ErrUnenforcedBuildPolicy, runtimeTool, mountErr)
+		}
+		mounts = append(mounts, toolMount...)
 	}
 	for _, input := range readOnlyInputs {
 		resolved, resolveErr := filepath.Abs(input)
@@ -262,6 +273,29 @@ exec "$@"
 	}
 	runner = append([]string{bwrap, "--die-with-parent"}, append(mounts, append([]string{"--"}, runner...)...)...)
 	return runner, !policy.Network, true, nil
+}
+
+func runtimeToolMount(tool string, mountedRoots []string) ([]string, error) {
+	resolved, err := filepath.Abs(tool)
+	if err != nil {
+		return nil, err
+	}
+	resolved = mustRealPath(resolved)
+	info, err := os.Stat(resolved)
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, fmt.Errorf("not a regular executable")
+	}
+	directory := filepath.Dir(resolved)
+	for _, root := range mountedRoots {
+		root = mustRealPath(root)
+		if directory == root || pathWithin(directory, root) {
+			return nil, nil
+		}
+	}
+	return nil, fmt.Errorf("resolved directory %q is outside mounted runtime paths", directory)
 }
 
 func pathWithin(path, root string) bool {
