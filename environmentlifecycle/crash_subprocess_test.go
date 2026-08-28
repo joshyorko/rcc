@@ -2,9 +2,12 @@ package environmentlifecycle
 
 import (
 	"context"
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -13,7 +16,56 @@ import (
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
+const lifecycleSubprocessTimeout = 8 * time.Second
+
 func TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook(t *testing.T) {
+	remote, remoteRoot, digest := publishCrashArtifact(t)
+	expectations := map[CrashPoint]crashStateExpectation{
+		CrashBeforeVerified:      {provisional: 0, ready: false, repairable: true},
+		CrashAfterVerified:       {provisional: 1, ready: false, repairable: true},
+		CrashBeforeMaterializing: {provisional: 1, ready: false, repairable: true},
+		CrashAfterMaterializing:  {provisional: 2, ready: false, repairable: true},
+		CrashBeforeReady:         {provisional: 2, ready: false, repairable: true},
+		CrashAfterReady:          {provisional: 2, ready: true},
+		CrashBeforeLease:         {provisional: 2, ready: true},
+		CrashAfterLease:          {provisional: 2, ready: true, staleLease: true},
+		CrashBeforeRelease:       {provisional: 2, ready: true, staleLease: true},
+		CrashAfterRelease:        {provisional: 2, ready: true},
+		CrashBeforeGC:            {provisional: 2, ready: true},
+		CrashAfterGC:             {provisional: 0, ready: false, repairable: true},
+	}
+	for _, point := range CrashPoints() {
+		expectation := expectations[point]
+		t.Run(string(point), func(t *testing.T) {
+			home := t.TempDir()
+			ctx, cancel := context.WithTimeout(context.Background(), lifecycleSubprocessTimeout)
+			defer cancel()
+			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=TestLifecycleCrashChild", "--")
+			cmd.Env = append(os.Environ(),
+				"RCC_LIFECYCLE_CHILD=crash", "RCC_LIFECYCLE_HOME="+home,
+				"RCC_LIFECYCLE_DIGEST="+digest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot,
+				"RCC_LIFECYCLE_POINT="+string(point), "RCC_LIFECYCLE_PROOF="+filepath.Join(home, "hook-proof"))
+			assertSubprocessRunExit(t, cmd, ctx, 42)
+			proof, err := os.ReadFile(filepath.Join(home, "hook-proof"))
+			if err != nil || string(proof) != string(point) {
+				t.Fatalf("hook proof = %q, err=%v", proof, err)
+			}
+			common.Product.ForceHome(home)
+			common.SharedHolotree = false
+			assertCrashState(t, digest, remote, expectation)
+		})
+	}
+}
+
+type crashStateExpectation struct {
+	provisional int
+	ready       bool
+	repairable  bool
+	staleLease  bool
+}
+
+func publishCrashArtifact(t *testing.T) (*artifactprovider.Filesystem, string, environmentartifact.Digest) {
+	t.Helper()
 	fixture := newPublishFixture(t)
 	remoteRoot := t.TempDir()
 	remote, err := artifactprovider.NewFilesystem(remoteRoot)
@@ -24,29 +76,93 @@ func TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	digest := result.ArtifactDigest
-	for _, point := range CrashPoints() {
-		t.Run(string(point), func(t *testing.T) {
-			home := t.TempDir()
-			cmd := exec.Command(os.Args[0], "-test.run=TestLifecycleCrashChild", "--")
-			cmd.Env = append(os.Environ(),
-				"RCC_LIFECYCLE_CHILD=crash", "RCC_LIFECYCLE_HOME="+home,
-				"RCC_LIFECYCLE_DIGEST="+digest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot,
-				"RCC_LIFECYCLE_POINT="+string(point), "RCC_LIFECYCLE_PROOF="+filepath.Join(home, "hook-proof"))
-			if err := cmd.Run(); err == nil {
-				t.Fatalf("crash point %s did not terminate the subprocess", point)
-			}
-			proof, err := os.ReadFile(filepath.Join(home, "hook-proof"))
-			if err != nil || string(proof) != string(point) {
-				t.Fatalf("hook proof = %q, err=%v", proof, err)
-			}
-			common.Product.ForceHome(home)
-			common.SharedHolotree = false
-			if _, err := Reconcile(context.Background(), digest); err != nil {
-				t.Fatalf("restart reconciliation after %s: %v", point, err)
-			}
-		})
+	return remote, remoteRoot, result.ArtifactDigest
+}
+
+func assertSubprocessRunExit(t *testing.T, cmd *exec.Cmd, ctx context.Context, want int) {
+	t.Helper()
+	err := cmd.Run()
+	assertSubprocessError(t, err, ctx, want)
+}
+
+func assertSubprocessExit(t *testing.T, cmd *exec.Cmd, ctx context.Context, want int) {
+	t.Helper()
+	err := cmd.Wait()
+	assertSubprocessError(t, err, ctx, want)
+}
+
+func assertSubprocessError(t *testing.T, err error, ctx context.Context, want int) {
+	t.Helper()
+	if ctx.Err() != nil {
+		t.Fatalf("subprocess timed out: %v", ctx.Err())
 	}
+	if err == nil {
+		t.Fatalf("subprocess exited cleanly, want exit code %d", want)
+	}
+	var exitErr *exec.ExitError
+	if !errors.As(err, &exitErr) || exitErr.ExitCode() != want {
+		t.Fatalf("subprocess exit = %v, want exit code %d", err, want)
+	}
+}
+
+func startLifecycleSubprocess(t *testing.T, child string, env ...string) (*exec.Cmd, context.Context) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), lifecycleSubprocessTimeout)
+	cmd := exec.CommandContext(ctx, os.Args[0], "-test.run="+child, "--")
+	cmd.Env = append(os.Environ(), env...)
+	if err := cmd.Start(); err != nil {
+		cancel()
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		cancel()
+		if cmd.ProcessState == nil {
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+		}
+	})
+	return cmd, ctx
+}
+
+func assertSubprocessSuccess(t *testing.T, cmd *exec.Cmd, ctx context.Context, label string) {
+	t.Helper()
+	err := cmd.Wait()
+	if ctx.Err() != nil {
+		t.Fatalf("%s subprocess timed out: %v", label, ctx.Err())
+	}
+	if err != nil {
+		t.Fatalf("%s subprocess: %v", label, err)
+	}
+}
+
+func assertCrashState(t *testing.T, digest environmentartifact.Digest, remote artifactprovider.Provider, want crashStateExpectation) {
+	t.Helper()
+	reconciled, err := Reconcile(context.Background(), digest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if reconciled.Provisional != want.provisional || reconciled.ProvisionalRemoved != want.provisional {
+		t.Fatalf("provisional reconciliation = %+v, want count %d", reconciled, want.provisional)
+	}
+	wantStale := 0
+	if want.staleLease {
+		wantStale = 1
+	}
+	if reconciled.Stale != wantStale || reconciled.Active != 0 || reconciled.Ambiguous != 0 {
+		t.Fatalf("lease reconciliation = %+v, want stale=%d and no active/ambiguous leases", reconciled, wantStale)
+	}
+	if len(reconciled.Repaired) != wantStale {
+		t.Fatalf("reconciled lease repairs = %v, want %d", reconciled.Repaired, wantStale)
+	}
+	if want.ready {
+		assertVerifiedReady(t, digest)
+		return
+	}
+	if !want.repairable {
+		t.Fatalf("crash state is neither ready nor declared repairable")
+	}
+	assertRepairableState(t, digest)
+	assertProviderRepair(t, digest, remote)
 }
 
 func TestIndependentProcessLifecycleRacesUseBarriers(t *testing.T) {
@@ -73,14 +189,12 @@ func TestIndependentProcessLifecycleRacesUseBarriers(t *testing.T) {
 			}
 			barrier := filepath.Join(home, "barrier")
 			commands := make([]*exec.Cmd, 2)
+			contexts := make([]context.Context, 2)
 			for i, operation := range scenario {
 				ready := filepath.Join(home, "ready-"+string(rune('0'+i)))
-				cmd := exec.Command(os.Args[0], "-test.run=TestLifecycleRaceChild", "--")
-				cmd.Env = append(os.Environ(), "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION="+operation, "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+ready)
+				cmd, ctx := startLifecycleSubprocess(t, "TestLifecycleRaceChild", "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION="+operation, "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+ready)
 				commands[i] = cmd
-				if err := cmd.Start(); err != nil {
-					t.Fatal(err)
-				}
+				contexts[i] = ctx
 			}
 			for i := range commands {
 				waitForFile(t, filepath.Join(home, "ready-"+string(rune('0'+i))))
@@ -88,10 +202,8 @@ func TestIndependentProcessLifecycleRacesUseBarriers(t *testing.T) {
 			if err := os.WriteFile(barrier, []byte("go"), 0o600); err != nil {
 				t.Fatal(err)
 			}
-			for _, cmd := range commands {
-				if err := cmd.Wait(); err != nil {
-					t.Fatalf("%s race child: %v", scenario, err)
-				}
+			for i, cmd := range commands {
+				assertSubprocessSuccess(t, cmd, contexts[i], scenario[0]+"/"+scenario[1])
 			}
 		})
 	}
@@ -112,37 +224,157 @@ func TestAcquireAndContentGCRaceSharesGlobalContentTransaction(t *testing.T) {
 	barrier := filepath.Join(home, "barrier")
 	held := filepath.Join(home, "content-held")
 	release := filepath.Join(home, "content-release")
-	acquire := exec.Command(os.Args[0], "-test.run=TestLifecycleRaceChild", "--")
-	acquire.Env = append(os.Environ(), "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=acquire", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "acquire-ready"), "RCC_LIFECYCLE_CONTENT_HELD="+held, "RCC_LIFECYCLE_CONTENT_RELEASE="+release)
-	if err := acquire.Start(); err != nil {
-		t.Fatal(err)
-	}
+	acquire, acquireCtx := startLifecycleSubprocess(t, "TestLifecycleRaceChild", "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=acquire", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "acquire-ready"), "RCC_LIFECYCLE_CONTENT_HELD="+held, "RCC_LIFECYCLE_CONTENT_RELEASE="+release)
 	waitForFile(t, filepath.Join(home, "acquire-ready"))
 	if err := os.WriteFile(barrier, []byte("go"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	waitForFile(t, held)
 	done := filepath.Join(home, "gc-done")
-	gc := exec.Command(os.Args[0], "-test.run=TestLifecycleRaceChild", "--")
-	gc.Env = append(os.Environ(), "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=gc", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "gc-ready"), "RCC_LIFECYCLE_DONE="+done, "RCC_LIFECYCLE_PRESSURE=1")
-	if err := gc.Start(); err != nil {
-		t.Fatal(err)
-	}
+	gcAttempted := filepath.Join(home, "gc-attempted")
+	gc, gcCtx := startLifecycleSubprocess(t, "TestLifecycleRaceChild", "RCC_LIFECYCLE_CHILD=race", "RCC_LIFECYCLE_HOME="+home, "RCC_LIFECYCLE_DIGEST="+result.ArtifactDigest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot, "RCC_LIFECYCLE_OPERATION=gc", "RCC_LIFECYCLE_BARRIER="+barrier, "RCC_LIFECYCLE_READY="+filepath.Join(home, "gc-ready"), "RCC_LIFECYCLE_REACHED="+gcAttempted, "RCC_LIFECYCLE_DONE="+done, "RCC_LIFECYCLE_PRESSURE=1")
 	waitForFile(t, filepath.Join(home, "gc-ready"))
-	time.Sleep(100 * time.Millisecond)
+	waitForFile(t, gcAttempted)
 	if _, err := os.Stat(done); !os.IsNotExist(err) {
 		t.Fatalf("content GC completed while acquire held lock: %v", err)
 	}
 	if err := os.WriteFile(release, []byte("go"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if err := acquire.Wait(); err != nil {
-		t.Fatal(err)
-	}
-	if err := gc.Wait(); err != nil {
-		t.Fatal(err)
-	}
+	assertSubprocessSuccess(t, acquire, acquireCtx, "acquire")
+	assertSubprocessSuccess(t, gc, gcCtx, "gc")
 	waitForFile(t, done)
+}
+
+func TestSubprocessENOSPCFailureMatrixLeavesExplicitlyRepairableState(t *testing.T) {
+	cases := []struct {
+		name         string
+		mode         string
+		providerGone bool
+		repairable   bool
+		errorText    string
+	}{
+		{name: "provider-disappears", mode: "provider-disappears", providerGone: true, errorText: "resolve manifest"},
+		{name: "local-CAS-ENOSPC", mode: "local-CAS-ENOSPC", repairable: true, errorText: "local cache write object"},
+		{name: "catalog-import", mode: "catalog-import", repairable: true, errorText: "register consumer legacy catalog"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			remote, remoteRoot, digest := publishCrashArtifact(t)
+			home := t.TempDir()
+			failureReady := filepath.Join(home, "failure-ready")
+			failureBarrier := filepath.Join(home, "failure-barrier")
+			failureProof := filepath.Join(home, "failure-proof")
+			cmd, ctx := startLifecycleSubprocess(t, "TestLifecycleFailureChild",
+				"RCC_LIFECYCLE_CHILD=failure", "RCC_LIFECYCLE_HOME="+home,
+				"RCC_LIFECYCLE_DIGEST="+digest.Hex(), "RCC_LIFECYCLE_REMOTE="+remoteRoot,
+				"RCC_LIFECYCLE_FAILURE="+tc.mode, "RCC_LIFECYCLE_READY="+failureReady,
+				"RCC_LIFECYCLE_BARRIER="+failureBarrier, "RCC_LIFECYCLE_PROOF="+failureProof)
+			if tc.providerGone {
+				waitForFile(t, failureReady)
+				if err := os.RemoveAll(remoteRoot); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(failureBarrier, []byte("go"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			assertSubprocessExit(t, cmd, ctx, 43)
+			proof, err := os.ReadFile(failureProof)
+			if err != nil || !strings.Contains(string(proof), tc.errorText) {
+				t.Fatalf("failure proof = %q, err=%v, want %q", proof, err, tc.errorText)
+			}
+			common.Product.ForceHome(home)
+			common.SharedHolotree = false
+			reconciled, err := Reconcile(context.Background(), digest)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if reconciled.Provisional != 0 || reconciled.ProvisionalRemoved != 0 {
+				t.Fatalf("failure reconciliation = %+v, want no provisional state", reconciled)
+			}
+			assertRepairableState(t, digest)
+			if tc.repairable {
+				if tc.mode == "catalog-import" {
+					if err := os.RemoveAll(common.HololibCatalogLocation()); err != nil {
+						t.Fatal(err)
+					}
+					if err := os.MkdirAll(common.HololibCatalogLocation(), 0o700); err != nil {
+						t.Fatal(err)
+					}
+				}
+				if tc.mode == "local-CAS-ENOSPC" {
+					assertFreshAcquirerRepair(t, digest, remote)
+				} else {
+					assertProviderRepair(t, digest, remote)
+				}
+				return
+			}
+			if _, err := RepairFromProvider(context.Background(), digest, remote); !errors.Is(err, ErrProviderUnavailable) {
+				t.Fatalf("provider-disappearance repair error = %v, want ErrProviderUnavailable", err)
+			}
+		})
+	}
+}
+
+func assertFreshAcquirerRepair(t *testing.T, digest environmentartifact.Digest, remote artifactprovider.Provider) {
+	t.Helper()
+	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: remote})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ArtifactDigest != digest || result.Path == "" {
+		t.Fatalf("fresh acquirer repair result = %+v", result)
+	}
+	assertVerifiedReady(t, digest)
+}
+
+func assertRepairableState(t *testing.T, digest environmentartifact.Digest) {
+	t.Helper()
+	inspection, err := Inspect(context.Background(), digest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if inspection.Ready || inspection.State != "absent" || inspection.Corrupt || inspection.Lease.Active != 0 || inspection.Lease.Stale != 0 || inspection.Lease.Ambiguous != 0 {
+		t.Fatalf("incomplete lifecycle state = %+v", inspection)
+	}
+	if _, err := Verify(context.Background(), digest); !errors.Is(err, ErrMaterializationCorrupt) {
+		t.Fatalf("incomplete lifecycle verification error = %v, want ErrMaterializationCorrupt", err)
+	}
+}
+
+func assertProviderRepair(t *testing.T, digest environmentartifact.Digest, remote artifactprovider.Provider) {
+	t.Helper()
+	repaired, err := RepairFromProvider(context.Background(), digest, remote)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !repaired.Repaired || !repaired.Verification.Verified || repaired.Verification.State != string(stateReady) {
+		t.Fatalf("provider repair report = %+v", repaired)
+	}
+	assertVerifiedReady(t, digest)
+}
+
+func assertVerifiedReady(t *testing.T, digest environmentartifact.Digest) {
+	t.Helper()
+	inspection, err := Inspect(context.Background(), digest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !inspection.Ready || inspection.State != string(stateReady) || inspection.Corrupt || inspection.Lease.Active != 0 || inspection.Lease.Stale != 0 || inspection.Lease.Ambiguous != 0 {
+		t.Fatalf("verified-ready lifecycle state = %+v", inspection)
+	}
+	verification, err := Verify(context.Background(), digest)
+	if err != nil || !verification.Verified || verification.State != string(stateReady) {
+		t.Fatalf("ready verification = %+v, err=%v", verification, err)
+	}
+	warm, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: failOnTouchProvider{t: t}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if warm.CacheHit != CacheLocalMaterialization || warm.ArtifactDigest != digest {
+		t.Fatalf("warm ready acquisition = %+v", warm)
+	}
 }
 
 func TestLifecycleCrashChild(t *testing.T) {
@@ -197,6 +429,77 @@ func TestLifecycleCrashChild(t *testing.T) {
 	os.Exit(42)
 }
 
+func TestLifecycleFailureChild(t *testing.T) {
+	if os.Getenv("RCC_LIFECYCLE_CHILD") != "failure" {
+		return
+	}
+	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
+	common.SharedHolotree = false
+	digest, err := environmentartifact.ParseDigest("sha256:" + os.Getenv("RCC_LIFECYCLE_DIGEST"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	remote, err := artifactprovider.NewFilesystem(os.Getenv("RCC_LIFECYCLE_REMOTE"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if os.Getenv("RCC_LIFECYCLE_FAILURE") == "provider-disappears" {
+		if err := os.WriteFile(os.Getenv("RCC_LIFECYCLE_READY"), []byte("ready"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		waitForChildFile(t, os.Getenv("RCC_LIFECYCLE_BARRIER"))
+	}
+	var operationErr error
+	switch os.Getenv("RCC_LIFECYCLE_FAILURE") {
+	case "provider-disappears":
+		_, operationErr = NewAcquirer().Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: remote})
+	case "local-CAS-ENOSPC":
+		local, localErr := newLocalContentProvider()
+		if localErr != nil {
+			t.Fatal(localErr)
+		}
+		acquirer := NewAcquirer()
+		acquirer.localProviderFactory = func() (artifactprovider.Provider, error) {
+			return &localCacheENOSPCProvider{Provider: local, failPut: true}, nil
+		}
+		_, operationErr = acquirer.Acquire(context.Background(), AcquireRequest{ArtifactDigest: digest, Provider: remote})
+		if !errors.Is(operationErr, syscall.ENOSPC) {
+			t.Fatalf("local CAS failure = %v, want ENOSPC", operationErr)
+		}
+	case "catalog-import":
+		manifestBytes, resolveErr := remote.ResolveManifest(context.Background(), digest)
+		if resolveErr != nil {
+			t.Fatal(resolveErr)
+		}
+		manifest, decodeErr := environmentartifact.DecodeManifest(manifestBytes)
+		if decodeErr != nil {
+			t.Fatal(decodeErr)
+		}
+		if len(manifest.Catalogs) == 0 || manifest.Catalogs[0].LegacyName == "" {
+			t.Fatal("resolved manifest has no legacy catalog")
+		}
+		if err := os.MkdirAll(common.HololibCatalogLocation(), 0o700); err != nil {
+			t.Fatal(err)
+		}
+		blocked := filepath.Join(common.HololibCatalogLocation(), manifest.Catalogs[0].LegacyName+".info")
+		if err := os.Mkdir(blocked, 0o700); err != nil {
+			t.Fatal(err)
+		}
+		_, operationErr = acquireVerifiedContent(context.Background(), digest, remote)
+	default:
+		t.Fatal("unknown lifecycle failure")
+	}
+	if operationErr == nil {
+		t.Fatal("failure operation unexpectedly succeeded")
+	}
+	if proof := os.Getenv("RCC_LIFECYCLE_PROOF"); proof != "" {
+		if err := os.WriteFile(proof, []byte(operationErr.Error()), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	os.Exit(43)
+}
+
 func TestLifecycleRaceChild(t *testing.T) {
 	if os.Getenv("RCC_LIFECYCLE_CHILD") != "race" {
 		return
@@ -206,6 +509,8 @@ func TestLifecycleRaceChild(t *testing.T) {
 	defer func() { verifyMaterializedCompatibility = previousVerifier }()
 	common.Product.ForceHome(os.Getenv("RCC_LIFECYCLE_HOME"))
 	common.SharedHolotree = false
+	childContext, cancel := context.WithTimeout(context.Background(), lifecycleSubprocessTimeout)
+	defer cancel()
 	digest, err := environmentartifact.ParseDigest("sha256:" + os.Getenv("RCC_LIFECYCLE_DIGEST"))
 	if err != nil {
 		t.Fatal(err)
@@ -215,21 +520,22 @@ func TestLifecycleRaceChild(t *testing.T) {
 	}
 	if held := os.Getenv("RCC_LIFECYCLE_CONTENT_HELD"); held != "" {
 		contentTransactionProbe = func() {
-			_ = os.WriteFile(held, []byte("held"), 0o600)
-			for {
-				if _, err := os.Stat(os.Getenv("RCC_LIFECYCLE_CONTENT_RELEASE")); err == nil {
-					return
-				}
-				time.Sleep(time.Millisecond)
+			if err := os.WriteFile(held, []byte("held"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if err := waitForFileContext(childContext, os.Getenv("RCC_LIFECYCLE_CONTENT_RELEASE")); err != nil {
+				t.Fatal(err)
 			}
 		}
 		defer func() { contentTransactionProbe = nil }()
 	}
-	for {
-		if _, err := os.Stat(os.Getenv("RCC_LIFECYCLE_BARRIER")); err == nil {
-			break
+	if err := waitForFileContext(childContext, os.Getenv("RCC_LIFECYCLE_BARRIER")); err != nil {
+		t.Fatal(err)
+	}
+	if reached := os.Getenv("RCC_LIFECYCLE_REACHED"); reached != "" {
+		if err := os.WriteFile(reached, []byte("reached"), 0o600); err != nil {
+			t.Fatal(err)
 		}
-		time.Sleep(time.Millisecond)
 	}
 	remote, err := artifactprovider.NewFilesystem(os.Getenv("RCC_LIFECYCLE_REMOTE"))
 	if err != nil {
@@ -255,14 +561,33 @@ func TestLifecycleRaceChild(t *testing.T) {
 
 func waitForFile(t *testing.T, path string) {
 	t.Helper()
-	deadline := time.Now().Add(5 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), lifecycleSubprocessTimeout)
+	defer cancel()
+	if err := waitForFileContext(ctx, path); err != nil {
+		t.Fatalf("waiting for %s: %v", path, err)
+	}
+}
+
+func waitForChildFile(t *testing.T, path string) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), lifecycleSubprocessTimeout)
+	defer cancel()
+	if err := waitForFileContext(ctx, path); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func waitForFileContext(ctx context.Context, path string) error {
+	ticker := time.NewTicker(time.Millisecond)
+	defer ticker.Stop()
 	for {
 		if _, err := os.Stat(path); err == nil {
-			return
+			return nil
 		}
-		if time.Now().After(deadline) {
-			t.Fatalf("timed out waiting for %s", path)
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
 		}
-		time.Sleep(time.Millisecond)
 	}
 }
