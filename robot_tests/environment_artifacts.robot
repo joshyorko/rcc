@@ -101,6 +101,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Start With    ${artifact}    sha256:
     Should Be True    ${published}[objectCount] > 0
     Provider Should Contain Manifest    ${PROVIDER_ROOT}    ${artifact}
+    Published Linux Artifact Should Use Portable Kernel Floor    ${PROVIDER_ROOT}    ${artifact}
 
     Log To Console    phase=cold-acquire:start
     ${cold_result}=    Run Process Without Group

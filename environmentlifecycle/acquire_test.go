@@ -206,6 +206,50 @@ func TestAcquireRejectsCompatibilityMismatchBeforeObjectFetch(t *testing.T) {
 	}
 }
 
+func TestAcquireAcceptsArtifactBuiltOnNewerKernelOnSupportedOlderWorker(t *testing.T) {
+	_, remote, artifactDigest := publishedFixture(t)
+	manifest, manifestBytes := mutateManifest(t, remote, artifactDigest, func(compatibility *environmentartifact.CompatibilityRequirements) {
+		compatibility.OS.MinimumVersion = "1"
+		compatibility.OS.KernelMinimum = "3.15"
+	})
+	if err := remote.CommitManifest(context.Background(), manifestBytes); err != nil {
+		t.Fatal(err)
+	}
+	previous := collectWorkerCapabilities
+	collectWorkerCapabilities = func(_ context.Context, required environmentartifact.CompatibilityRequirements) (environmentartifact.WorkerCapabilities, error) {
+		return environmentartifact.WorkerCapabilities{
+			SchemaVersion:      environmentartifact.CompatibilitySchemaV1,
+			RelocationVersions: []string{required.RelocationVersion},
+			Python: environmentartifact.PythonCapabilities{
+				Implementations: []string{required.Python.Implementation}, Versions: []string{required.Python.Version}, ABIs: []string{required.Python.ABI},
+			},
+			OS: environmentartifact.OSCapabilities{
+				Family: required.OS.Family, Version: required.OS.MinimumVersion,
+				KernelVersion: "5.14.0-687.10.1.el9_8.0.1.x86_64", LibC: required.OS.LibC, LibCVersion: required.OS.LibCMinimum,
+				NativeArchitecture: required.OS.NativeArchitecture, Translation: "native", Runtime: required.OS.Runtime,
+				Libraries: append([]string{}, required.OS.RequiredLibraries...),
+			},
+			CPU: environmentartifact.CPUCapabilities{
+				Architecture: required.CPU.Architecture, Features: append([]string{}, required.CPU.RequiredFeatures...),
+			},
+			Filesystem: environmentartifact.FilesystemCapabilities{
+				CaseSensitive: true, Symlinks: true, Junctions: true, LongPaths: true, MaxPath: 4096,
+			},
+		}, nil
+	}
+	t.Cleanup(func() { collectWorkerCapabilities = previous })
+	common.Product.ForceHome(t.TempDir())
+	common.SharedHolotree = false
+
+	content, err := acquireVerifiedContent(context.Background(), manifest.ArtifactDigest, remote)
+	if err != nil {
+		t.Fatalf("artifact built on Linux 7.1.8 was rejected on supported Linux 5.14 worker: %v", err)
+	}
+	if content.manifest.ArtifactDigest != manifest.ArtifactDigest {
+		t.Fatalf("unexpected acquired content: %+v", content.manifest)
+	}
+}
+
 type capabilityRecordingProvider struct {
 	resolveCalls int
 }

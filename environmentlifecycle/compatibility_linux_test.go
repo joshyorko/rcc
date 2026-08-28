@@ -40,6 +40,20 @@ func TestBundledLibrarySymlinkIsNotReportedAsSystemRequirement(t *testing.T) {
 	}
 }
 
+func TestLinuxRequirementsUsePortableOSIdentityAndKernelFloor(t *testing.T) {
+	platform := environmentartifact.CurrentPlatform()
+	requirements, _, err := platformCompatibilityRequirements(t.TempDir(), platform)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if requirements.Family != "linux" || requirements.MinimumVersion != "1" {
+		t.Fatalf("Linux OS identity = %q/%q, want linux/1", requirements.Family, requirements.MinimumVersion)
+	}
+	if requirements.KernelMinimum != "3.15" {
+		t.Fatalf("Linux kernel floor = %q, want 3.15", requirements.KernelMinimum)
+	}
+}
+
 func TestLinuxWorkerCapabilitiesDoNotCopyArtifactRequirements(t *testing.T) {
 	required := testBuildCompatibility(environmentartifact.CurrentPlatform())
 	required.OS.RequiredLibraries = []string{"librcc-impossible.so"}

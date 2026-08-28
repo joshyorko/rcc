@@ -17,11 +17,17 @@ import (
 
 var glibcVersionPattern = regexp.MustCompile(`GLIBC_([0-9]+(?:\.[0-9]+)+)`)
 
+const (
+	// Linux has no single user-space product version shared by distributions.
+	// The compatibility contract uses the family identity here; libc and
+	// native-library requirements carry the user-space ABI constraints.
+	linuxOSCompatibilityVersion = "1"
+	// RCC's Linux artifact lifecycle uses renameat2 with RENAME_NOREPLACE for
+	// its atomic publication boundary. Both were added in Linux 3.15.
+	linuxKernelMinimum = "3.15"
+)
+
 func platformCompatibilityRequirements(root string, platform environmentartifact.Platform) (environmentartifact.OSRequirements, environmentartifact.CPURequirements, error) {
-	kernel, err := compatibilityCommand("uname", "-r")
-	if err != nil {
-		return environmentartifact.OSRequirements{}, environmentartifact.CPURequirements{}, err
-	}
 	libcOutput, err := compatibilityCommand("getconf", "GNU_LIBC_VERSION")
 	if err != nil {
 		return environmentartifact.OSRequirements{}, environmentartifact.CPURequirements{}, err
@@ -42,7 +48,7 @@ func platformCompatibilityRequirements(root string, platform environmentartifact
 		features = []string{"sse2"}
 	}
 	return environmentartifact.OSRequirements{
-		Family: "linux", MinimumVersion: numericRelease(kernel), KernelMinimum: numericRelease(kernel),
+		Family: "linux", MinimumVersion: linuxOSCompatibilityVersion, KernelMinimum: linuxKernelMinimum,
 		LibC: libcFields[0], LibCMinimum: requiredGLIBC, NativeArchitecture: platform.Arch,
 		TranslationPolicy: "native-only", Runtime: "linux", RequiredLibraries: libraries,
 	}, environmentartifact.CPURequirements{Architecture: platform.Arch, RequiredFeatures: features}, nil
@@ -138,7 +144,7 @@ func platformWorkerCapabilities(_ context.Context, _ environmentartifact.Compati
 		}
 	}
 	return environmentartifact.OSCapabilities{
-		Family: "linux", Version: numericRelease(kernel), KernelVersion: numericRelease(kernel),
+		Family: "linux", Version: linuxOSCompatibilityVersion, KernelVersion: numericRelease(kernel),
 		LibC: fields[0], LibCVersion: fields[1], NativeArchitecture: runtime.GOARCH,
 		Translation: "native", Runtime: "linux", Libraries: canonicalStrings(libraries),
 	}, environmentartifact.CPUCapabilities{Architecture: runtime.GOARCH, Features: canonicalStrings(features)}, nil
