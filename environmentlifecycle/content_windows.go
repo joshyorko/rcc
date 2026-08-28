@@ -4,12 +4,15 @@ package environmentlifecycle
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync/atomic"
+	"unsafe"
 
 	"github.com/joshyorko/rcc/environmentartifact"
 	"golang.org/x/sys/windows"
@@ -141,25 +144,305 @@ func readRegularNoFollow(rootPath string, components []string, limit int64) ([]b
 }
 
 func removeRegularNoFollow(rootPath string, components []string) error {
-	parent, name, err := windowsLifecycleDestination(rootPath, components, false)
+	if len(components) == 0 {
+		return fmt.Errorf("empty remove destination")
+	}
+	for _, component := range components {
+		if !safeWindowsLifecycleComponent(component) {
+			return fmt.Errorf("unsafe remove path component %q", component)
+		}
+	}
+	root, err := openWindowsDirectoryNoFollow(rootPath)
 	if os.IsNotExist(err) {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	path := filepath.Join(parent, name)
-	info, err := os.Lstat(path)
+	parentFile := os.NewFile(uintptr(root), rootPath)
+	if parentFile == nil {
+		_ = windows.CloseHandle(root)
+		return fmt.Errorf("open remove root handle")
+	}
+	defer func() { _ = parentFile.Close() }()
+	for _, component := range components[:len(components)-1] {
+		child, openErr := openWindowsRelativeHandle(windows.Handle(parentFile.Fd()), component)
+		if os.IsNotExist(openErr) {
+			return nil
+		}
+		if openErr != nil {
+			return openErr
+		}
+		childFile := os.NewFile(uintptr(child), component)
+		if childFile == nil {
+			_ = windows.CloseHandle(child)
+			return fmt.Errorf("open remove parent handle %q", component)
+		}
+		info, infoErr := windowsHandleInfo(windows.Handle(childFile.Fd()))
+		if infoErr != nil {
+			_ = childFile.Close()
+			return infoErr
+		}
+		if info.FileAttributes&windows.FILE_ATTRIBUTE_REPARSE_POINT != 0 || info.FileAttributes&windows.FILE_ATTRIBUTE_DIRECTORY == 0 {
+			_ = childFile.Close()
+			return fmt.Errorf("refuse unsafe remove parent %q", component)
+		}
+		if err := parentFile.Close(); err != nil {
+			_ = childFile.Close()
+			return err
+		}
+		parentFile = childFile
+	}
+	name := components[len(components)-1]
+	leaf, err := openWindowsRelativeHandle(windows.Handle(parentFile.Fd()), name)
 	if os.IsNotExist(err) {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+	leafFile := os.NewFile(uintptr(leaf), name)
+	if leafFile == nil {
+		_ = windows.CloseHandle(leaf)
+		return fmt.Errorf("open remove leaf handle")
+	}
+	info, err := windowsHandleInfo(windows.Handle(leafFile.Fd()))
+	if err != nil {
+		_ = leafFile.Close()
+		return err
+	}
+	if info.FileAttributes&windows.FILE_ATTRIBUTE_REPARSE_POINT != 0 || info.FileAttributes&windows.FILE_ATTRIBUTE_DIRECTORY != 0 {
+		_ = leafFile.Close()
 		return fmt.Errorf("refuse to remove non-regular state")
 	}
-	return os.Remove(path)
+	if err := deleteWindowsHandle(windows.Handle(leafFile.Fd())); err != nil {
+		_ = leafFile.Close()
+		return err
+	}
+	return leafFile.Close()
+}
+
+const windowsDeleteAccess = 0x00010000
+
+type windowsFileDispositionInformationEx struct {
+	Flags uint32
+}
+
+func removeMaterializationContext(ctx context.Context, path string) (int, error) {
+	if ctx == nil {
+		return 0, fmt.Errorf("nil materialization removal context")
+	}
+	if err := validateMaterializationPath(path, filepath.Base(path)); err != nil {
+		return 0, err
+	}
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
+	parent, err := openWindowsDirectoryNoFollow(filepath.Dir(path))
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	parentFile := os.NewFile(uintptr(parent), filepath.Dir(path))
+	if parentFile == nil {
+		_ = windows.CloseHandle(parent)
+		return 0, fmt.Errorf("open materialization parent handle")
+	}
+	defer func() { _ = parentFile.Close() }()
+	name := filepath.Base(path)
+	if !safeWindowsLifecycleComponent(name) {
+		return 0, fmt.Errorf("unsafe materialization root component %q", name)
+	}
+	root, err := openWindowsRelativeHandle(windows.Handle(parentFile.Fd()), name)
+	if os.IsNotExist(err) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("open materialization root without following reparses: %w", err)
+	}
+	rootFile := os.NewFile(uintptr(root), path)
+	if rootFile == nil {
+		_ = windows.CloseHandle(root)
+		return 0, fmt.Errorf("open materialization root handle")
+	}
+	info, err := windowsHandleInfo(windows.Handle(rootFile.Fd()))
+	if err != nil {
+		_ = rootFile.Close()
+		return 0, err
+	}
+	if info.FileAttributes&windows.FILE_ATTRIBUTE_REPARSE_POINT != 0 || info.FileAttributes&windows.FILE_ATTRIBUTE_DIRECTORY == 0 {
+		_ = rootFile.Close()
+		return 0, fmt.Errorf("refuse unsafe materialization root")
+	}
+	pathInfo, err := os.Lstat(path)
+	if err != nil {
+		_ = rootFile.Close()
+		return 0, err
+	}
+	openedInfo, err := rootFile.Stat()
+	if err != nil {
+		_ = rootFile.Close()
+		return 0, err
+	}
+	if !os.SameFile(pathInfo, openedInfo) {
+		_ = rootFile.Close()
+		return 0, fmt.Errorf("materialization root changed before removal")
+	}
+	removed, removeErr := removeWindowsMaterializationEntries(ctx, rootFile)
+	if removeErr != nil {
+		_ = rootFile.Close()
+		return removed, removeErr
+	}
+	if err := ctx.Err(); err != nil {
+		_ = rootFile.Close()
+		return removed, err
+	}
+	if err := deleteWindowsHandle(windows.Handle(rootFile.Fd())); err != nil {
+		_ = rootFile.Close()
+		return removed, fmt.Errorf("remove materialization root: %w", err)
+	}
+	removed++
+	if err := rootFile.Close(); err != nil {
+		return removed, err
+	}
+	return removed, nil
+}
+
+func removeWindowsMaterializationEntries(ctx context.Context, directory *os.File) (int, error) {
+	entries, err := directory.ReadDir(-1)
+	if err != nil {
+		return 0, err
+	}
+	sort.Slice(entries, func(i, j int) bool { return entries[i].Name() < entries[j].Name() })
+	removed := 0
+	for _, entry := range entries {
+		name := entry.Name()
+		if !safeWindowsLifecycleComponent(name) {
+			return removed, fmt.Errorf("unsafe materialization entry %q", name)
+		}
+		child, err := openWindowsRelativeHandle(windows.Handle(directory.Fd()), name)
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return removed, fmt.Errorf("open materialization entry %q without following reparses: %w", name, err)
+		}
+		childFile := os.NewFile(uintptr(child), name)
+		if childFile == nil {
+			_ = windows.CloseHandle(child)
+			return removed, fmt.Errorf("open materialization entry handle %q", name)
+		}
+		enumeratedInfo, err := entry.Info()
+		if err != nil {
+			_ = childFile.Close()
+			return removed, err
+		}
+		openedInfo, err := childFile.Stat()
+		if err != nil {
+			_ = childFile.Close()
+			return removed, err
+		}
+		if !os.SameFile(enumeratedInfo, openedInfo) {
+			_ = childFile.Close()
+			return removed, fmt.Errorf("materialization entry %q changed before removal", name)
+		}
+		info, err := windowsHandleInfo(windows.Handle(childFile.Fd()))
+		if err != nil {
+			_ = childFile.Close()
+			return removed, err
+		}
+		if info.FileAttributes&windows.FILE_ATTRIBUTE_REPARSE_POINT != 0 {
+			_ = childFile.Close()
+			return removed, fmt.Errorf("refuse reparse materialization entry %q", name)
+		}
+		if info.FileAttributes&windows.FILE_ATTRIBUTE_DIRECTORY != 0 {
+			childRemoved, childErr := removeWindowsMaterializationEntries(ctx, childFile)
+			removed += childRemoved
+			if childErr != nil {
+				_ = childFile.Close()
+				return removed, childErr
+			}
+		}
+		if err := ctx.Err(); err != nil {
+			_ = childFile.Close()
+			return removed, err
+		}
+		if err := deleteWindowsHandle(windows.Handle(childFile.Fd())); err != nil {
+			_ = childFile.Close()
+			return removed, fmt.Errorf("remove materialization entry %q: %w", name, err)
+		}
+		removed++
+		if err := childFile.Close(); err != nil {
+			return removed, err
+		}
+	}
+	return removed, nil
+}
+
+func openWindowsDirectoryNoFollow(path string) (windows.Handle, error) {
+	absolute, err := filepath.Abs(path)
+	if err != nil {
+		return windows.InvalidHandle, err
+	}
+	return openWindowsHandle(0, windowsNativePath(absolute), true)
+}
+
+func openWindowsRelativeHandle(parent windows.Handle, name string) (windows.Handle, error) {
+	if !safeWindowsLifecycleComponent(name) {
+		return windows.InvalidHandle, fmt.Errorf("unsafe Windows lifecycle component %q", name)
+	}
+	return openWindowsHandle(parent, name, false)
+}
+
+func openWindowsHandle(parent windows.Handle, name string, directoryOnly bool) (windows.Handle, error) {
+	objectName, err := windows.NewNTUnicodeString(name)
+	if err != nil {
+		return windows.InvalidHandle, err
+	}
+	attributes := &windows.OBJECT_ATTRIBUTES{
+		Length:        uint32(unsafe.Sizeof(windows.OBJECT_ATTRIBUTES{})),
+		RootDirectory: parent,
+		ObjectName:    objectName,
+		Attributes:    windows.OBJ_CASE_INSENSITIVE | windows.OBJ_DONT_REPARSE,
+	}
+	options := uint32(windows.FILE_OPEN_REPARSE_POINT | windows.FILE_SYNCHRONOUS_IO_NONALERT)
+	if directoryOnly {
+		options |= windows.FILE_DIRECTORY_FILE
+	}
+	var handle windows.Handle
+	var status windows.IO_STATUS_BLOCK
+	allocationSize := int64(0)
+	ntStatus := windows.NtCreateFile(&handle, windows.FILE_GENERIC_READ|windowsDeleteAccess, attributes, &status, &allocationSize, 0,
+		windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE|windows.FILE_SHARE_DELETE, windows.FILE_OPEN, options, 0, 0)
+	if ntStatus != nil {
+		if status, ok := ntStatus.(windows.NTStatus); ok {
+			return windows.InvalidHandle, status.Errno()
+		}
+		return windows.InvalidHandle, ntStatus
+	}
+	return handle, nil
+}
+
+func windowsNativePath(path string) string {
+	if strings.HasPrefix(path, `\\`) {
+		return `\??\UNC\` + strings.TrimPrefix(path, `\\`)
+	}
+	return `\??\` + path
+}
+
+func windowsHandleInfo(handle windows.Handle) (windows.ByHandleFileInformation, error) {
+	var info windows.ByHandleFileInformation
+	if err := windows.GetFileInformationByHandle(handle, &info); err != nil {
+		return info, err
+	}
+	return info, nil
+}
+
+func deleteWindowsHandle(handle windows.Handle) error {
+	info := windowsFileDispositionInformationEx{Flags: windows.FILE_DISPOSITION_DELETE | windows.FILE_DISPOSITION_POSIX_SEMANTICS}
+	return windows.SetFileInformationByHandle(handle, windows.FileDispositionInfoEx, (*byte)(unsafe.Pointer(&info)), uint32(unsafe.Sizeof(info)))
 }
 
 func executableNoFollow(rootPath string, components []string) (string, error) {
