@@ -157,6 +157,27 @@ def provider_should_contain_manifest(root, artifact_digest):
     assert path.is_file(), f"provider manifest is missing: {path}"
 
 
+def published_linux_artifact_should_use_portable_kernel_floor(
+    root, artifact_digest
+):
+    if platform.system().lower() != "linux":
+        return
+    algorithm, hex_digest = artifact_digest.split(":", 1)
+    manifest_path = (
+        Path(root)
+        / "manifests"
+        / algorithm
+        / hex_digest[:2]
+        / hex_digest[2:4]
+        / hex_digest
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    requirements = manifest["requirements"]["compatibility"]["os"]
+    assert requirements["family"] == "linux", requirements
+    assert requirements["minimumVersion"] == "1", requirements
+    assert requirements["kernelMinimum"] == "3.15", requirements
+
+
 def provider_should_be_unreachable(url):
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     try:
