@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
@@ -37,5 +38,40 @@ func TestValidateMaterializedCompatibilityChecksPythonABI(t *testing.T) {
 	required.Python.ABI += "-incompatible"
 	if err := validateMaterializedCompatibility(context.Background(), root, required); err == nil {
 		t.Fatal("incompatible materialized Python ABI accepted")
+	}
+}
+
+func TestProbeFilesystemCapabilitiesCreatesMissingProductHome(t *testing.T) {
+	previousHome := common.Product.Home()
+	home := filepath.Join(t.TempDir(), "missing-home")
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	if _, err := probeFilesystemCapabilities(); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(home)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !info.IsDir() || info.Mode().Perm() != 0o700 {
+		t.Fatalf("compatibility home = mode %o directory:%v, want 0700 directory", info.Mode().Perm(), info.IsDir())
+	}
+}
+
+func TestProbeFilesystemCapabilitiesRejectsSymlinkedProductHome(t *testing.T) {
+	parent := t.TempDir()
+	target := filepath.Join(parent, "target")
+	link := filepath.Join(parent, "home")
+	if err := os.Mkdir(target, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(target, link); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	previousHome := common.Product.Home()
+	common.Product.ForceHome(link)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	if _, err := probeFilesystemCapabilities(); err == nil {
+		t.Fatal("symlinked compatibility home was accepted")
 	}
 }

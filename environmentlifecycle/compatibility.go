@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -215,7 +216,21 @@ func currentWorkerCapabilities(ctx context.Context, required environmentartifact
 }
 
 func probeFilesystemCapabilities() (environmentartifact.FilesystemCapabilities, error) {
-	root, err := os.MkdirTemp(common.Product.Home(), ".compatibility-probe-")
+	home := common.Product.Home()
+	info, err := os.Lstat(home)
+	if errors.Is(err, os.ErrNotExist) {
+		if err := os.MkdirAll(home, 0o700); err != nil {
+			return environmentartifact.FilesystemCapabilities{}, fmt.Errorf("create compatibility probe home: %w", err)
+		}
+		info, err = os.Lstat(home)
+	}
+	if err != nil {
+		return environmentartifact.FilesystemCapabilities{}, fmt.Errorf("inspect compatibility probe home: %w", err)
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return environmentartifact.FilesystemCapabilities{}, fmt.Errorf("compatibility probe home is not a safe directory")
+	}
+	root, err := os.MkdirTemp(home, ".compatibility-probe-")
 	if err != nil {
 		return environmentartifact.FilesystemCapabilities{}, err
 	}
