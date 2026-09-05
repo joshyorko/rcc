@@ -133,3 +133,24 @@ func TestLeaseLoserCannotDeleteAnotherLeasesState(t *testing.T) {
 	}
 	_ = materializer.Release(context.Background(), second)
 }
+
+func TestLeaseReleaseRejectsChangedLeaseSnapshot(t *testing.T) {
+	materialization := acquiredMaterialization(t)
+	materializer := NewLocalMaterializer()
+	lease, err := materializer.Lease(context.Background(), materialization)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	changed := lease
+	changed.OwnerStart += "-changed"
+	if err := materializer.Release(context.Background(), changed); err == nil {
+		t.Fatal("release accepted a changed lease snapshot")
+	}
+	if stored, err := readLease(lease.ArtifactDigest, lease.ID); err != nil || !leasesEqual(stored, lease) {
+		t.Fatalf("stored lease after rejected release = %+v, %v", stored, err)
+	}
+	if err := materializer.Release(context.Background(), lease); err != nil {
+		t.Fatal(err)
+	}
+}
