@@ -38,6 +38,38 @@ func testKey() BuildKey {
 	return BuildKey{SpecificationDigest: "sha256:spec", Platform: "linux_amd64", BuilderCompatibility: "v12-gzip-sha256"}
 }
 
+func TestMachineContractGoldenShape(t *testing.T) {
+	contract := MachineContract{
+		SchemaVersion: MachineContractSchemaVersion,
+		Operation:     "claim",
+		Status:        string(Claimed),
+		Key:           testKey(),
+		Claim:         &Claim{Key: testKey(), Owner: "worker-1", Epoch: 3},
+	}
+	content, err := json.Marshal(contract)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const want = `{"schemaVersion":1,"operation":"claim","status":"claimed","key":{"specificationDigest":"sha256:spec","platform":"linux_amd64","builderCompatibility":"v12-gzip-sha256"},"claim":{"key":{"specificationDigest":"sha256:spec","platform":"linux_amd64","builderCompatibility":"v12-gzip-sha256"},"owner":"worker-1","epoch":3,"expiresAt":"0001-01-01T00:00:00Z","artifact":{"digest":"","verified":false}},"artifact":{"digest":"","verified":false}}`
+	if string(content) != want {
+		t.Fatalf("machine contract = %s, want %s", content, want)
+	}
+
+	var external struct {
+		SchemaVersion int             `json:"schemaVersion"`
+		Operation     string          `json:"operation"`
+		Status        string          `json:"status"`
+		Key           json.RawMessage `json:"key"`
+		Claim         json.RawMessage `json:"claim"`
+	}
+	if err := json.Unmarshal(content, &external); err != nil {
+		t.Fatal(err)
+	}
+	if external.SchemaVersion != 1 || external.Operation != "claim" || external.Status != "claimed" || len(external.Key) == 0 || len(external.Claim) == 0 {
+		t.Fatalf("external consumer could not read required contract fields: %+v", external)
+	}
+}
+
 func TestBackoffNormalizationUsesDefaultAndUpperBound(t *testing.T) {
 	if got := normalizeBackoff(0); got != defaultBackoff {
 		t.Fatalf("zero backoff = %s, want %s", got, defaultBackoff)
@@ -490,6 +522,18 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 	}
 	if artifact.Execution == nil || artifact.Execution.StagingRoot != staging || artifact.Execution.CPULimit != 2 || artifact.Execution.MemoryBytes != 64<<20 || !artifact.Execution.NetworkIsolated || !artifact.Execution.CredentialsExcluded {
 		t.Fatalf("execution receipt: %#v", artifact.Execution)
+	}
+}
+
+func TestRuntimeToolMountRejectsUnmappedToolDirectory(t *testing.T) {
+	toolDir := t.TempDir()
+	tool := filepath.Join(toolDir, "prlimit")
+	if err := os.WriteFile(tool, []byte("tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"}); err == nil || !strings.Contains(err.Error(), "outside mounted runtime paths") {
+		t.Fatalf("runtime tool validation error = %v", err)
 	}
 }
 
