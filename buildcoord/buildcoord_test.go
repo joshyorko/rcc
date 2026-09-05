@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"sync"
@@ -527,6 +528,35 @@ func TestRuntimeToolMountRejectsUnmappedToolDirectory(t *testing.T) {
 
 	if _, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"}); err == nil || !strings.Contains(err.Error(), "outside mounted runtime paths") {
 		t.Fatalf("runtime tool validation error = %v", err)
+	}
+}
+
+func TestRuntimeToolMountIncludesManagedEnvironmentRuntime(t *testing.T) {
+	environmentRoot := t.TempDir()
+	binDir := filepath.Join(environmentRoot, "bin")
+	libDir := filepath.Join(environmentRoot, "lib")
+	metaDir := filepath.Join(environmentRoot, "conda-meta")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(libDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(metaDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tool := filepath.Join(binDir, "prlimit")
+	if err := os.WriteFile(tool, []byte("tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	mounts, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"--ro-bind", binDir, binDir, "--ro-bind", libDir, libDir}
+	if !reflect.DeepEqual(mounts, want) {
+		t.Fatalf("runtime tool mounts = %#v, want %#v", mounts, want)
 	}
 }
 

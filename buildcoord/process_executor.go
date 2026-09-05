@@ -295,7 +295,22 @@ func runtimeToolMount(tool string, mountedRoots []string) ([]string, error) {
 			return nil, nil
 		}
 	}
+	if filepath.Base(directory) == "bin" {
+		environmentRoot := filepath.Dir(directory)
+		if !isDirectory(filepath.Join(environmentRoot, "conda-meta")) {
+			return nil, fmt.Errorf("resolved directory %q is outside mounted runtime paths", directory)
+		}
+		library := filepath.Join(environmentRoot, "lib")
+		if isDirectory(library) {
+			return []string{"--ro-bind", directory, directory, "--ro-bind", library, library}, nil
+		}
+	}
 	return nil, fmt.Errorf("resolved directory %q is outside mounted runtime paths", directory)
+}
+
+func isDirectory(path string) bool {
+	info, err := os.Lstat(path)
+	return err == nil && info.IsDir()
 }
 
 func pathWithin(path, root string) bool {
