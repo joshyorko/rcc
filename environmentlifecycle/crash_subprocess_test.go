@@ -529,13 +529,16 @@ func TestLifecycleRaceChild(t *testing.T) {
 		}
 		defer func() { contentTransactionProbe = nil }()
 	}
+	if reached := os.Getenv("RCC_LIFECYCLE_REACHED"); reached != "" {
+		contentTransactionBeforeAcquire = func() {
+			if err := os.WriteFile(reached, []byte("reached"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+		}
+		defer func() { contentTransactionBeforeAcquire = nil }()
+	}
 	if err := waitForFileContext(childContext, os.Getenv("RCC_LIFECYCLE_BARRIER")); err != nil {
 		t.Fatal(err)
-	}
-	if reached := os.Getenv("RCC_LIFECYCLE_REACHED"); reached != "" {
-		if err := os.WriteFile(reached, []byte("reached"), 0o600); err != nil {
-			t.Fatal(err)
-		}
 	}
 	remote, err := artifactprovider.NewFilesystem(os.Getenv("RCC_LIFECYCLE_REMOTE"))
 	if err != nil {
