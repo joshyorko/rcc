@@ -172,7 +172,7 @@ func TestArchiveEntriesRejectsCompressionBomb(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := w.Write(bytes.Repeat([]byte{'x'}, 2<<20)); err != nil {
+	if _, err := w.Write(bytes.Repeat([]byte{'x'}, 16<<20)); err != nil {
 		t.Fatal(err)
 	}
 	if err := zw.Close(); err != nil {
