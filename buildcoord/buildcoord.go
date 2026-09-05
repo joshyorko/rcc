@@ -1447,57 +1447,52 @@ func (c *Filesystem) lock(ctx context.Context, key BuildKey) (func() error, erro
 			return nil, ctx.Err()
 		default:
 		}
-		f, err := os.OpenFile(c.lockPath(key), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
-		if err == nil {
+		path := c.lockPath(key)
+		if info, statErr := os.Lstat(path); statErr == nil {
+			if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+				return nil, ErrUnsafeState
+			}
+		} else if !os.IsNotExist(statErr) {
+			return nil, statErr
+		}
+		f, err := openPlatformLock(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, fmt.Errorf("acquire build key lock: %w", err)
+		}
+		acquired, lockErr := acquirePlatformLock(f)
+		if lockErr != nil {
+			_ = f.Close()
+			return nil, fmt.Errorf("acquire build key lock: %w", lockErr)
+		}
+		if acquired {
 			tokenBytes := make([]byte, 16)
 			if _, randomErr := rand.Read(tokenBytes); randomErr != nil {
-				_ = f.Close()
-				_ = os.Remove(c.lockPath(key))
-				return nil, randomErr
+				return nil, errors.Join(randomErr, releasePlatformLock(f))
 			}
 			held := lockRecord{Owner: fmt.Sprint(os.Getpid()), Token: hex.EncodeToString(tokenBytes), AcquiredAt: c.Clock.Now()}
 			record, marshalErr := json.Marshal(held)
 			if marshalErr == nil {
-				_, marshalErr = f.Write(record)
+				if _, marshalErr = f.Seek(0, 0); marshalErr == nil {
+					marshalErr = f.Truncate(0)
+				}
+				if marshalErr == nil {
+					_, marshalErr = f.Write(record)
+				}
+				if marshalErr == nil {
+					marshalErr = f.Sync()
+				}
 			}
-			closeErr := f.Close()
 			if marshalErr != nil {
-				_ = os.Remove(c.lockPath(key))
-				return nil, marshalErr
+				return nil, errors.Join(marshalErr, releasePlatformLock(f))
 			}
-			if closeErr != nil {
-				_ = os.Remove(c.lockPath(key))
-				return nil, closeErr
-			}
-			return func() error {
-				current, readErr := c.readLock(key)
-				if readErr != nil || current.Token != held.Token {
-					return ErrStaleClaim
-				}
-				return os.Remove(c.lockPath(key))
-			}, nil
+			return func() error { return releasePlatformLock(f) }, nil
 		}
-		if os.IsExist(err) {
-			info, statErr := os.Lstat(c.lockPath(key))
-			if os.IsNotExist(statErr) {
-				// The holder released the lock after O_EXCL observed it.
-				// Retry instead of misclassifying normal lock turnover as unsafe state.
-				continue
-			}
-			if statErr != nil || info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
-				return nil, ErrUnsafeState
-			}
-			if record, readErr := c.readLock(key); readErr == nil {
-				if record.AcquiredAt.Add(c.lockWait).Before(c.Clock.Now()) {
-					if current, confirmErr := c.readLock(key); confirmErr == nil && current == record {
-						_ = os.Remove(c.lockPath(key))
-					}
-					continue
-				}
-			}
-		}
-		if !os.IsExist(err) || time.Now().After(deadline) {
-			return nil, fmt.Errorf("acquire build key lock: %w", err)
+		_ = f.Close()
+		if time.Now().After(deadline) {
+			return nil, fmt.Errorf("acquire build key lock: lock is busy")
 		}
 		timer := time.NewTimer(5 * time.Millisecond)
 		select {

@@ -1,11 +1,13 @@
 package buildcoord
 
 import (
+	"bufio"
 	"context"
 	"crypto/ed25519"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -289,7 +291,7 @@ func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
 	}
 }
 
-func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
+func TestFilesystemCoordinatorRecoversStaleLockFile(t *testing.T) {
 	clock := &fakeClock{now: time.Unix(100, 0)}
 	c := newFilesystem(t.TempDir(), clock)
 	key := testKey()
@@ -300,16 +302,7 @@ func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
 		t.Fatal(err)
 	}
 	if _, outcome, err := c.Claim(key, "new", time.Minute); err != nil || outcome != Claimed {
-		t.Fatalf("expired lock: %v %v", outcome, err)
-	}
-	if err := os.Remove(c.claimPath(key)); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(c.lockPath(key), []byte(`{"owner":"live","acquiredAt":"2100-01-01T00:00:00Z"}`), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if _, _, err := c.Claim(key, "blocked", time.Minute); err == nil {
-		t.Fatal("live lock stolen")
+		t.Fatalf("stale lock file: %v %v", outcome, err)
 	}
 }
 
@@ -722,7 +715,7 @@ func TestObsoleteLockReleaseDoesNotRemoveSuccessorLock(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() { _ = secondRelease() }()
-	if err := firstRelease(); !errors.Is(err, ErrStaleClaim) {
+	if err := firstRelease(); err != nil {
 		t.Fatalf("obsolete release: %v", err)
 	}
 	if _, err := os.Lstat(c.lockPath(testKey())); err != nil {
@@ -1034,5 +1027,141 @@ func TestHelperProcessClaimRace(t *testing.T) {
 	}
 	if passed != 1 {
 		t.Fatalf("expected one race winner, got %d", passed)
+	}
+}
+
+func TestActiveFilesystemLockCannotBeStolenAcrossProcesses(t *testing.T) {
+	if os.Getenv("BUILDCOORD_ACTIVE_LOCK_HELPER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		release, err := c.lock(context.Background(), testKey())
+		if err != nil {
+			os.Exit(2)
+		}
+		if _, err := fmt.Fprintln(os.Stdout, "ready"); err != nil {
+			os.Exit(3)
+		}
+		_, _ = io.ReadAll(os.Stdin)
+		if err := release(); err != nil {
+			os.Exit(4)
+		}
+		os.Exit(0)
+	}
+
+	root := t.TempDir()
+	cmd := exec.Command(os.Args[0], "-test.run", "^TestActiveFilesystemLockCannotBeStolenAcrossProcesses$")
+	cmd.Env = append(os.Environ(), "BUILDCOORD_ACTIVE_LOCK_HELPER=1", "BUILDCOORD_ROOT="+root)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		_ = stdin.Close()
+		_ = cmd.Wait()
+	}()
+	line, err := bufio.NewReader(stdout).ReadString('\n')
+	if err != nil || line != "ready\n" {
+		t.Fatalf("lock helper readiness = %q, err=%v", line, err)
+	}
+
+	c := newFilesystem(root, RealClock{})
+	c.lockWait = 20 * time.Millisecond
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	if _, _, err := c.ClaimContext(ctx, testKey(), "contender", time.Minute); err == nil {
+		t.Fatalf("active lock was stolen: %v", err)
+	}
+}
+
+func TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses(t *testing.T) {
+	if os.Getenv("BUILDCOORD_PREWARM_BUILDER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Owner: "builder"}, func(context.Context, Claim) (Artifact, error) {
+			if _, err := fmt.Fprintln(os.Stdout, "building"); err != nil {
+				return Artifact{}, err
+			}
+			_, _ = io.ReadAll(os.Stdin)
+			return Artifact{Digest: "sha256:cross-process", Verified: true}, nil
+		})
+		if err != nil {
+			os.Exit(2)
+		}
+		os.Exit(0)
+	}
+	if os.Getenv("BUILDCOORD_PREWARM_WAITER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Wait: true, Backoff: time.Millisecond, Owner: "waiter"}, func(context.Context, Claim) (Artifact, error) {
+			_, _ = fmt.Fprintln(os.Stdout, "built")
+			return Artifact{Digest: "sha256:waiter-built", Verified: true}, nil
+		})
+		if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
+			os.Exit(3)
+		}
+		if _, err := fmt.Fprintln(os.Stdout, "ready"); err != nil {
+			os.Exit(4)
+		}
+		os.Exit(0)
+	}
+
+	root := t.TempDir()
+	builder := exec.Command(os.Args[0], "-test.run", "^TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses$")
+	builder.Env = append(os.Environ(), "BUILDCOORD_PREWARM_BUILDER=1", "BUILDCOORD_ROOT="+root)
+	builderStdout, err := builder.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	builderStdin, err := builder.StdinPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := builder.Start(); err != nil {
+		t.Fatal(err)
+	}
+	builderReader := bufio.NewReader(builderStdout)
+	line, err := builderReader.ReadString('\n')
+	if err != nil || line != "building\n" {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatalf("builder readiness = %q, err=%v", line, err)
+	}
+
+	waiter := exec.Command(os.Args[0], "-test.run", "^TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses$")
+	waiter.Env = append(os.Environ(), "BUILDCOORD_PREWARM_WAITER=1", "BUILDCOORD_ROOT="+root)
+	waiterStdout, err := waiter.StdoutPipe()
+	if err != nil {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatal(err)
+	}
+	if err := waiter.Start(); err != nil {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatal(err)
+	}
+	if err := builderStdin.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := builder.Wait(); err != nil {
+		t.Fatalf("builder: %v", err)
+	}
+	line, err = bufio.NewReader(waiterStdout).ReadString('\n')
+	if err != nil || line != "ready\n" {
+		_ = waiter.Process.Kill()
+		_ = waiter.Wait()
+		t.Fatalf("waiter output = %q, err=%v", line, err)
+	}
+	if err := waiter.Wait(); err != nil {
+		t.Fatalf("waiter: %v", err)
+	}
+	c := newFilesystem(root, RealClock{})
+	artifact, ok, err := c.Committed(testKey())
+	if err != nil || !ok || artifact.Digest != "sha256:cross-process" {
+		t.Fatalf("cross-process committed artifact = %#v, %v, %v", artifact, ok, err)
 	}
 }
