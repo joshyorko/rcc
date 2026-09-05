@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -62,6 +63,64 @@ func TestGCPolicyKeepStateProtectsRetiredContent(t *testing.T) {
 	}
 	if !bytes.Equal(got, content) {
 		t.Fatalf("kept immutable content changed: %q", got)
+	}
+}
+
+func TestGCUsesConfiguredContentRootTransactionLock(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	previousShared := common.SharedHolotree
+	common.Product.ForceHome(home)
+	common.SharedHolotree = false
+	t.Cleanup(func() {
+		common.SharedHolotree = previousShared
+		common.Product.ForceHome(previousHome)
+	})
+
+	contentRoot := filepath.Join(home, "alternate-content")
+	entered := make(chan struct{})
+	release := make(chan struct{})
+	var probeCalls atomic.Int32
+	previousProbe := contentTransactionProbe
+	contentTransactionProbe = func() {
+		if probeCalls.Add(1) == 1 {
+			close(entered)
+			<-release
+		}
+	}
+	t.Cleanup(func() { contentTransactionProbe = previousProbe })
+
+	collectDone := make(chan error, 1)
+	go func() {
+		_, err := Collect(context.Background(), GCPolicy{ContentRoot: contentRoot})
+		collectDone <- err
+	}()
+	select {
+	case <-entered:
+	case <-time.After(time.Second):
+		t.Fatal("GC did not acquire its content transaction")
+	}
+
+	contenderEntered := make(chan struct{})
+	contenderDone := make(chan error, 1)
+	go func() {
+		contenderDone <- withContentTransaction(context.Background(), contentRoot, func(context.Context) error {
+			close(contenderEntered)
+			return nil
+		})
+	}()
+	select {
+	case <-contenderEntered:
+		t.Fatal("GC did not hold the configured content-root transaction lock")
+	case <-time.After(100 * time.Millisecond):
+	}
+
+	close(release)
+	if err := <-collectDone; err != nil {
+		t.Fatal(err)
+	}
+	if err := <-contenderDone; err != nil {
+		t.Fatal(err)
 	}
 }
 

@@ -55,7 +55,7 @@ func Collect(ctx context.Context, policy GCPolicy) (GCReport, error) {
 	if err := validateGCContentRoot(gcContentRoot(policy)); err != nil {
 		return report, err
 	}
-	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
+	err := withContentTransaction(ctx, gcContentRoot(policy), func(ctx context.Context) error {
 		var err error
 		report, err = collectLocked(ctx, policy)
 		return err
