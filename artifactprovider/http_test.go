@@ -248,6 +248,36 @@ func TestHTTPHealthAndCapabilitiesContract(t *testing.T) {
 	}
 }
 
+func TestHTTPHealthPreservesServerTelemetryAcrossFailureAndRecovery(t *testing.T) {
+	var healthCalls atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		if request.URL.Path != "/v1/health" {
+			http.NotFound(writer, request)
+			return
+		}
+		writer.Header().Set("Content-Type", "application/json")
+		if healthCalls.Add(1) == 1 {
+			_, _ = io.WriteString(writer, `{"ready":false,"storage":"unavailable","error":"temporary outage","requests":41,"errors":7}`)
+			return
+		}
+		_, _ = io.WriteString(writer, `{"ready":true,"storage":"ok","requests":42,"errors":8}`)
+	}))
+	defer server.Close()
+	client, err := NewHTTP(server.URL, server.Client())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	failed, err := client.Health(context.Background())
+	if err != nil || failed.Ready || failed.Requests != 41 || failed.Errors != 7 {
+		t.Fatalf("failed health=%+v err=%v", failed, err)
+	}
+	recovered, err := client.Health(context.Background())
+	if err != nil || !recovered.Ready || recovered.Requests != 42 || recovered.Errors != 8 {
+		t.Fatalf("recovered health=%+v err=%v", recovered, err)
+	}
+}
+
 type slowCapabilityProvider struct{ *Filesystem }
 
 func (p slowCapabilityProvider) Capabilities(ctx context.Context) (Capabilities, error) {
