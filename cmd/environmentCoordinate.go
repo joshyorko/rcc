@@ -59,6 +59,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return artifact, nil
 	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
+		if cmd.Name() == "prewarm" && result.Items == nil {
+			result.Items = []buildcoord.PrewarmItem{}
+		}
 		result.SchemaVersion = buildcoord.MachineContractSchemaVersion
 		result.Operation = cmd.Name()
 		if err != nil {

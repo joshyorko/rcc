@@ -56,6 +56,38 @@ func TestCoordinatePrewarmRequiresConcreteBuildCommandFlag(t *testing.T) {
 	}
 }
 
+func TestCoordinatePrewarmEmptyResultEmitsItemsArray(t *testing.T) {
+	public, _, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	command := newEnvironmentCoordinateCommand()
+	var output bytes.Buffer
+	command.SetOut(&output)
+	arguments := []string{
+		"prewarm", "--root", t.TempDir(), "--specification", "sha256:spec",
+		"--platform", "linux_amd64", "--builder", "v12-gzip-sha256",
+		"--owner", "prewarm", "--trust-key-id", "build-key",
+		"--trust-public-key", base64.RawStdEncoding.EncodeToString(public),
+		"--build-command", "/bin/true", "--json",
+	}
+	if err := runCobraCommand(command, arguments); err != nil {
+		t.Fatal(err)
+	}
+	var result struct {
+		SchemaVersion int             `json:"schemaVersion"`
+		Operation     string          `json:"operation"`
+		Status        string          `json:"status"`
+		Items         json.RawMessage `json:"items"`
+	}
+	if err := json.Unmarshal(output.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if result.SchemaVersion != buildcoord.MachineContractSchemaVersion || result.Operation != "prewarm" || result.Status != "ok" || string(result.Items) != "[]" {
+		t.Fatalf("empty prewarm contract = %s", output.String())
+	}
+}
+
 var cliTestDigest = "sha256:" + strings.Repeat("a", 64)
 
 type testEnvironmentBuilder struct{}

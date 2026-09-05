@@ -437,6 +437,39 @@ type MachineContract struct {
 	Error         string        `json:"error,omitempty"`
 }
 
+func (c MachineContract) MarshalJSON() ([]byte, error) {
+	type contract struct {
+		SchemaVersion int      `json:"schemaVersion"`
+		Operation     string   `json:"operation"`
+		Status        string   `json:"status"`
+		Key           BuildKey `json:"key"`
+		Claim         *Claim   `json:"claim,omitempty"`
+		Outcome       Outcome  `json:"outcome,omitempty"`
+		Artifact      Artifact `json:"artifact,omitempty"`
+		Items         any      `json:"items,omitempty"`
+		Error         string   `json:"error,omitempty"`
+	}
+	items := c.Items
+	var itemsValue any
+	if c.Operation == "prewarm" && items == nil {
+		items = []PrewarmItem{}
+	}
+	if c.Operation == "prewarm" || len(items) > 0 {
+		itemsValue = items
+	}
+	return json.Marshal(contract{
+		SchemaVersion: c.SchemaVersion,
+		Operation:     c.Operation,
+		Status:        c.Status,
+		Key:           c.Key,
+		Claim:         c.Claim,
+		Outcome:       c.Outcome,
+		Artifact:      c.Artifact,
+		Items:         itemsValue,
+		Error:         c.Error,
+	})
+}
+
 type Outcome string
 
 const (
