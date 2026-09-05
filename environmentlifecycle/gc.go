@@ -190,7 +190,7 @@ func durableProtectedDigests(policy GCPolicy) (map[environmentartifact.Digest]bo
 		roots++
 		protectRoot := root.State == "live" || leaseProtected
 		policyProtected := gcPolicyProtects(policy, digest)
-		if root.State == "live" && !leaseProtected && !policyProtected {
+		if root.State == "live" && !leaseProtected && !policyProtected && !policy.DryRun {
 			if _, readyErr := readReadyRecord(digest); os.IsNotExist(readyErr) {
 				if retireErr := retireReferenceRoot(digest, policy.Clock()); retireErr == nil {
 					root, _ = readReferenceRoot(digest)
@@ -273,10 +273,16 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 		for _, item := range candidates {
 			protectedBytes += item.size
 		}
+		if !policy.DryRun {
+			_ = clearGCRecovery()
+		}
 		return protectedBytes, 0, 0, nil
 	}
 	allow := policy.Pressure || (policy.MaxBytes > 0 && total > policy.MaxBytes)
 	if !allow {
+		if !policy.DryRun {
+			_ = clearGCRecovery()
+		}
 		return protectedBytes, 0, 0, nil
 	}
 	sort.Slice(candidates, func(i, j int) bool {
@@ -287,6 +293,15 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 	})
 	if policy.Clock == nil {
 		policy.Clock = time.Now
+	}
+	if !policy.DryRun {
+		pending := make([]environmentartifact.Digest, 0, len(candidates))
+		for _, item := range candidates {
+			pending = append(pending, item.digest)
+		}
+		if err := writeGCRecovery(root, pending); err != nil {
+			return protectedBytes, 0, 0, err
+		}
 	}
 	var reclaimableBytes, reclaimedBytes int64
 	for _, item := range candidates {
@@ -316,8 +331,66 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 		total -= item.size
 		reclaimedBytes += item.size
 		report.Items = append(report.Items, GCItem{Digest: item.digest.String(), Status: "reclaimed", Reason: "unreferenced-content"})
+		if err := removeGCRecoveryEntry(root, item.digest); err != nil {
+			return protectedBytes, reclaimableBytes, reclaimedBytes, err
+		}
+	}
+	if !policy.DryRun {
+		if err := clearGCRecovery(); err != nil {
+			return protectedBytes, reclaimableBytes, reclaimedBytes, err
+		}
 	}
 	return protectedBytes, reclaimableBytes, reclaimedBytes, nil
+}
+
+type gcRecovery struct {
+	ContentRoot string   `json:"contentRoot"`
+	Pending     []string `json:"pending"`
+}
+
+func writeGCRecovery(root string, digests []environmentartifact.Digest) error {
+	pending := make([]string, 0, len(digests))
+	for _, digest := range digests {
+		pending = append(pending, digest.String())
+	}
+	content, err := json.Marshal(gcRecovery{ContentRoot: root, Pending: pending})
+	if err != nil {
+		return err
+	}
+	return writeAtomicMutable(recordRoot(), []string{"gc-recovery.json"}, content)
+}
+
+func removeGCRecoveryEntry(root string, digest environmentartifact.Digest) error {
+	content, err := readRegularNoFollow(recordRoot(), []string{"gc-recovery.json"}, maxProtectionRecordBytes)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	var recovery gcRecovery
+	if err := json.Unmarshal(content, &recovery); err != nil {
+		return err
+	}
+	if recovery.ContentRoot != root {
+		return fmt.Errorf("GC recovery content root changed")
+	}
+	pending := recovery.Pending[:0]
+	for _, value := range recovery.Pending {
+		if value != digest.String() {
+			pending = append(pending, value)
+		}
+	}
+	recovery.Pending = pending
+	updated, err := json.Marshal(recovery)
+	if err != nil {
+		return err
+	}
+	return writeAtomicMutable(recordRoot(), []string{"gc-recovery.json"}, updated)
+}
+
+func clearGCRecovery() error {
+	return removeRegularNoFollow(recordRoot(), []string{"gc-recovery.json"})
 }
 
 func gcContentRoot(policy GCPolicy) string {
@@ -337,7 +410,7 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	if err != nil {
 		return report, err
 	}
-	reconcile, err := reconcileLocked(ctx, digest)
+	reconcile, err := reconcileLockedWithRepair(ctx, digest, !policy.DryRun)
 	if err != nil {
 		return report, err
 	}
@@ -357,7 +430,7 @@ func collectDigestLocked(ctx context.Context, policy GCPolicy, digest environmen
 	}
 	record, err := readReadyRecord(digest)
 	if err != nil {
-		if len(incomplete) > 0 {
+		if len(incomplete) > 0 && !policy.DryRun {
 			for _, path := range incomplete {
 				if err := ctx.Err(); err != nil {
 					return report, err

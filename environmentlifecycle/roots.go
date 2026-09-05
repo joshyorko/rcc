@@ -99,6 +99,14 @@ func validateGCContentRoot(path string) error {
 	if relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
 		return fmt.Errorf("refuse GC content root outside consumer home: %s", path)
 	}
+	providerRoot := filepath.Join(home, "artifacts", "v1", "provider")
+	providerRelative, err := filepath.Rel(providerRoot, root)
+	if err != nil {
+		return fmt.Errorf("validate GC content store role: %w", err)
+	}
+	if providerRelative == "." || (providerRelative != ".." && !strings.HasPrefix(providerRelative, ".."+string(filepath.Separator))) {
+		return fmt.Errorf("refuse consumer GC content root in provider store: %s", path)
+	}
 	if err := validateGCDirectory(home); err != nil {
 		return err
 	}

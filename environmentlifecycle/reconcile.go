@@ -69,6 +69,10 @@ func Reconcile(ctx context.Context, digest environmentartifact.Digest) (Reconcil
 }
 
 func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
+	return reconcileLockedWithRepair(ctx, digest, true)
+}
+
+func reconcileLockedWithRepair(ctx context.Context, digest environmentartifact.Digest, repair bool) (ReconcileReport, error) {
 	if err := ctx.Err(); err != nil {
 		return ReconcileReport{}, err
 	}
@@ -88,10 +92,12 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 			report.Provisional++
 			// These records are transactional intent, never readiness. Remove the
 			// journal entry after a crash; the ready record remains authoritative.
-			if err := removeRegularNoFollow(recordRoot(), components); err != nil && !os.IsNotExist(err) {
-				return report, err
+			if repair {
+				if err := removeRegularNoFollow(recordRoot(), components); err != nil && !os.IsNotExist(err) {
+					return report, err
+				}
+				report.ProvisionalRemoved++
 			}
-			report.ProvisionalRemoved++
 		} else if !os.IsNotExist(readErr) {
 			return report, readErr
 		}
@@ -124,11 +130,13 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseActive, Reason: "owner-identity-matches"})
 		case LeaseStale:
 			report.Stale++
-			if err := removeRegularNoFollow(recordRoot(), leaseComponents(digest, id)); err != nil && !os.IsNotExist(err) {
-				return report, err
+			if repair {
+				if err := removeRegularNoFollow(recordRoot(), leaseComponents(digest, id)); err != nil && !os.IsNotExist(err) {
+					return report, err
+				}
+				report.Repaired = append(report.Repaired, id)
 			}
-			report.Repaired = append(report.Repaired, id)
-			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseStale, Reason: "owner-missing-or-pid-reused", Repaired: true})
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseStale, Reason: "owner-missing-or-pid-reused", Repaired: repair})
 		case LeaseAmbiguous:
 			report.Ambiguous++
 			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "owner-identity-unavailable-or-ambiguous"})
