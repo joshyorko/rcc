@@ -2,6 +2,7 @@ package environmentlifecycle
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,6 +17,8 @@ const (
 	LeaseStale     LeaseStatus = "stale"
 	LeaseAmbiguous LeaseStatus = "ambiguous"
 )
+
+var ErrActiveLease = errors.New("active lifecycle lease")
 
 type ReconcileReport struct {
 	ArtifactDigest           environmentartifact.Digest
@@ -32,6 +35,8 @@ type ReconcileItem struct {
 	Reason   string      `json:"reason"`
 	Repaired bool        `json:"repaired"`
 }
+
+var reconcileAfterValidationHook func(environmentartifact.Digest) error
 
 func classifyLease(lease Lease) LeaseStatus {
 	if lease.OwnerPID <= 0 || lease.OwnerStart == "" {
@@ -68,16 +73,27 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 		return ReconcileReport{}, err
 	}
 	report := ReconcileReport{ArtifactDigest: digest}
+	if err := validateProvisionalRecords(digest); err != nil {
+		return report, err
+	}
+	if reconcileAfterValidationHook != nil {
+		if err := reconcileAfterValidationHook(digest); err != nil {
+			return report, err
+		}
+	}
 	for _, state := range []materializationState{stateVerifiedContent, stateMaterializing} {
-		path := filepath.Join(recordRoot(), digest.Hex(), string(state)+".json")
-		if _, statErr := os.Stat(path); statErr == nil {
+		components := recordComponents(digest, state)
+		_, readErr := readRegularNoFollow(recordRoot(), components, maxMaterializationRecordBytes)
+		if readErr == nil {
 			report.Provisional++
 			// These records are transactional intent, never readiness. Remove the
 			// journal entry after a crash; the ready record remains authoritative.
-			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+			if err := removeRegularNoFollow(recordRoot(), components); err != nil && !os.IsNotExist(err) {
 				return report, err
 			}
 			report.ProvisionalRemoved++
+		} else if !os.IsNotExist(readErr) {
+			return report, readErr
 		}
 	}
 	dir := filepath.Join(recordRoot(), digest.Hex(), "leases")
@@ -113,6 +129,45 @@ func reconcileLocked(ctx context.Context, digest environmentartifact.Digest) (Re
 			}
 			report.Repaired = append(report.Repaired, id)
 			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseStale, Reason: "owner-missing-or-pid-reused", Repaired: true})
+		case LeaseAmbiguous:
+			report.Ambiguous++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "owner-identity-unavailable-or-ambiguous"})
+		}
+	}
+	return report, nil
+}
+
+func leaseReportLocked(ctx context.Context, digest environmentartifact.Digest) (ReconcileReport, error) {
+	report := ReconcileReport{ArtifactDigest: digest}
+	dir := filepath.Join(recordRoot(), digest.Hex(), "leases")
+	entries, err := os.ReadDir(dir)
+	if os.IsNotExist(err) {
+		return report, nil
+	}
+	if err != nil {
+		return report, err
+	}
+	for _, entry := range entries {
+		if err := ctx.Err(); err != nil {
+			return report, err
+		}
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") {
+			continue
+		}
+		id := strings.TrimSuffix(entry.Name(), ".json")
+		lease, err := readLease(digest, id)
+		if err != nil {
+			report.Ambiguous++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "malformed-or-noncanonical-lease"})
+			continue
+		}
+		switch classifyLease(lease) {
+		case LeaseActive:
+			report.Active++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseActive, Reason: "owner-identity-matches"})
+		case LeaseStale:
+			report.Stale++
+			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseStale, Reason: "owner-missing-or-pid-reused"})
 		case LeaseAmbiguous:
 			report.Ambiguous++
 			report.Items = append(report.Items, ReconcileItem{ID: id, Status: LeaseAmbiguous, Reason: "owner-identity-unavailable-or-ambiguous"})

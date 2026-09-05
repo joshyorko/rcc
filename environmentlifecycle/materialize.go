@@ -202,7 +202,8 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		}
 		return r, nil
 	}
-	if _, err := reconcileLocked(ctx, request.ArtifactDigest); err != nil {
+	reconciled, err := reconcileLocked(ctx, request.ArtifactDigest)
+	if err != nil {
 		return AcquireResult{}, fmt.Errorf("reconcile lifecycle state: %w", err)
 	}
 	localProviderFactory := it.localProviderFactory
@@ -237,6 +238,9 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 		} else if errors.Is(err, errUnsafeExecutablePath) {
 			return AcquireResult{}, err
 		} else {
+			if reconciled.Active > 0 {
+				return AcquireResult{}, fmt.Errorf("%w: refuse rematerialization for %s", ErrActiveLease, request.ArtifactDigest)
+			}
 			var mismatch *environmentartifact.CompatibilityError
 			if errors.As(err, &mismatch) {
 				return AcquireResult{}, err
@@ -255,6 +259,9 @@ func (it *Acquirer) acquireLocked(ctx context.Context, request AcquireRequest) (
 	}
 	if !errors.Is(localErr, os.ErrNotExist) {
 		return AcquireResult{}, fmt.Errorf("local artifact cache fails verification: %w", localErr)
+	}
+	if reconciled.Active > 0 {
+		return AcquireResult{}, fmt.Errorf("%w: refuse rematerialization for %s", ErrActiveLease, request.ArtifactDigest)
 	}
 	if request.Provider == nil {
 		return AcquireResult{}, fmt.Errorf("artifact is not local and no provider was supplied")

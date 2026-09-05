@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 )
 
@@ -71,6 +73,34 @@ func retireReferenceRoot(digest environmentartifact.Digest, at time.Time) error 
 }
 
 func referenceRootExists(digest environmentartifact.Digest) bool {
-	_, err := os.Stat(filepath.Join(recordRoot(), digest.Hex(), "references.json"))
-	return err == nil
+	if err := validateGCDirectory(recordRoot()); err != nil {
+		return false
+	}
+	if err := validateGCDirectory(filepath.Join(recordRoot(), digest.Hex())); err != nil {
+		return false
+	}
+	info, err := os.Lstat(filepath.Join(recordRoot(), digest.Hex(), "references.json"))
+	return err == nil && info.Mode().IsRegular() && info.Mode()&os.ModeSymlink == 0
+}
+
+func validateGCContentRoot(path string) error {
+	home, err := filepath.Abs(common.Product.Home())
+	if err != nil {
+		return err
+	}
+	root, err := filepath.Abs(path)
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(filepath.Clean(home), filepath.Clean(root))
+	if err != nil {
+		return fmt.Errorf("prove GC content root is inside consumer home: %w", err)
+	}
+	if relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return fmt.Errorf("refuse GC content root outside consumer home: %s", path)
+	}
+	if err := validateGCDirectory(home); err != nil {
+		return err
+	}
+	return validateGCDirectory(root)
 }
