@@ -191,7 +191,7 @@ def rollback(root):
     upgraded = json.loads(execute("candidate-import", candidate, args, consumer).stdout)
     # Inspect completes the candidate's normal reconciliation of provisional
     # materialization journals before taking the stable rollback baseline.
-    inspected = json.loads(execute("candidate-inspect", candidate, ["env", "inspect", "--artifact", digest, "--json"], consumer).stdout)
+    inspected = json.loads(execute("candidate-inspect", candidate, ["env", "lifecycle", "inspect", "--artifact", digest, "--json"], consumer).stdout)
     require(inspected["ready"] is True and inspected["corrupt"] is False and inspected["digest"] == digest,
             "candidate is not ready for rollback")
     legacy_upgraded = tasks._legacy_closure_state(consumer, archive)
