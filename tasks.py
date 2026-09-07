@@ -1,4 +1,5 @@
 import os
+import base64
 import json
 import gzip
 import hashlib
@@ -1021,20 +1022,153 @@ def coordinationAcceptance(c):
     binary = Path("build/rcc").resolve()
     if not binary.is_file():
         raise RuntimeError(f"exact RCC binary is missing: {binary}")
-    c.run(f"{shlex.quote(str(binary))} env coordinate --help")
     receipt = Path("tmp/coordination-blackbox-v1.json").resolve()
+    fixture_source = Path("tmp/coordination-fixture.go")
+    fixture_source.write_text(
+        r'''package main
+
+import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"os"
+	"strings"
+
+	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/buildcoord"
+)
+
+func main() {
+	public, private, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil { panic(err) }
+	artifact := buildcoord.Artifact{
+		Digest: "sha256:" + strings.Repeat("a", 64), Verified: true,
+		ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "fixture",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Source: "coordination-cli",
+	}
+	signature, err := artifacttrust.Sign(buildcoord.ArtifactTrustDigest(artifact), "build-key", private)
+	if err != nil { panic(err) }
+	artifact.Signatures = []artifacttrust.Signature{signature}
+	if err := json.NewEncoder(os.Stdout).Encode(map[string]any{
+		"publicKey": base64.RawStdEncoding.EncodeToString(public),
+		"signature": signature.Signature,
+		"artifact": artifact,
+	}); err != nil { panic(err) }
+}
+'''
+    )
+    try:
+        go_env = os.environ.copy()
+        go_env.update(_contained_go_env())
+        fixture = json.loads(subprocess.check_output(
+            ["go", "run", str(fixture_source)], text=True, env=go_env
+        ))
+    finally:
+        fixture_source.unlink(missing_ok=True)
+
+    artifact = fixture["artifact"]
+    sentinel = "Bearer coordination-secret"
     env = os.environ.copy()
-    env["RCC_COORDINATION_RECEIPT"] = str(receipt)
-    c.run("GOARCH=amd64 CGO_ENABLED=0 go test ./buildcoord -run '^TestBlackBoxCoordinationContract$' -count=1", env=env)
-    payload = json.loads(receipt.read_text())
-    required = {"claim", "heartbeat", "verified-publish", "waiter-reuse", "stale-takeover",
-                "nondeterminism", "release", "provider-failure", "n-worker-prewarm",
-                "staging-capacity-generation"}
-    if set(payload.get("scenarios", {})) != required:
-        raise RuntimeError("coordination receipt is missing required scenario outcomes")
-    payload["commitSha"] = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    payload["binarySha256"] = hashlib.sha256(binary.read_bytes()).hexdigest()
-    receipt.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    env["RCC_PROVIDER_AUTHORIZATION"] = sentinel
+    with tempfile.TemporaryDirectory(prefix="coordination-cli-", dir="tmp") as state:
+        root = Path(state).resolve()
+
+        def common(specification, owner):
+            return [
+                "--root", str(root), "--specification", specification,
+                "--platform", "linux_amd64", "--builder", "v12-gzip-sha256",
+                "--owner", owner, "--ttl", "30s", "--trust-key-id", "build-key",
+                "--trust-public-key", fixture["publicKey"], "--json",
+            ]
+
+        def run_cli(arguments):
+            completed = subprocess.run(
+                [str(binary), "env", "coordinate", *arguments],
+                env=env, capture_output=True, text=True,
+            )
+            combined = completed.stdout + "\n" + completed.stderr
+            if sentinel in combined:
+                raise RuntimeError("coordination CLI leaked provider authorization")
+            if completed.returncode != 0:
+                raise RuntimeError(f"coordination CLI failed: {combined[-4000:]}")
+            try:
+                return json.loads(completed.stdout)
+            except json.JSONDecodeError as error:
+                raise RuntimeError(f"coordination CLI returned invalid JSON: {completed.stdout!r}") from error
+
+        scenarios = {}
+        artifact_spec = "sha256:" + "1" * 64
+        claimed = run_cli([
+            "claim", *common(artifact_spec, "worker-a"),
+            "--artifact-digest", artifact["digest"],
+            "--closure-digest", artifact["closureDigest"],
+            "--provider", artifact["provider"],
+            "--provider-authorization-env", "RCC_PROVIDER_AUTHORIZATION",
+            "--trust-signature", fixture["signature"],
+        ])
+        if claimed.get("status") != "claimed":
+            raise RuntimeError(f"exact CLI claim was not accepted: {claimed}")
+        scenarios["cli-claim"] = "published"
+
+        waited = run_cli(["wait", *common(artifact_spec, "waiter"), "--interval", "1ms"])
+        if waited.get("status") != "existing-artifact" or waited.get("artifact", {}).get("digest") != artifact["digest"]:
+            raise RuntimeError(f"exact CLI artifact-backed wait was not authoritative: {waited}")
+        scenarios["cli-wait"] = "artifact-backed"
+
+        lease_spec = "sha256:" + "2" * 64
+        lease_claim = run_cli(["claim", *common(lease_spec, "worker-b")])
+        claim = lease_claim.get("claim") or {}
+        epoch = claim.get("epoch")
+        if lease_claim.get("status") != "claimed" or not epoch:
+            raise RuntimeError(f"exact CLI lease claim was not accepted: {lease_claim}")
+        heartbeat = run_cli(["heartbeat", *common(lease_spec, "worker-b"), "--epoch", str(epoch)])
+        if heartbeat.get("status") != "ok":
+            raise RuntimeError(f"exact CLI heartbeat was not accepted: {heartbeat}")
+        scenarios["cli-heartbeat"] = "renewed"
+        released = run_cli(["release", *common(lease_spec, "worker-b"), "--epoch", str(epoch)])
+        if released.get("status") != "ok":
+            raise RuntimeError(f"exact CLI release was not accepted: {released}")
+        scenarios["cli-release"] = "released"
+
+        prewarm_a = "sha256:" + "3" * 64
+        prewarm_b = "sha256:" + "4" * 64
+        encoded_artifact = base64.b64encode(json.dumps(artifact, separators=(",", ":")).encode()).decode()
+        build_script = f"printf %s {shlex.quote(encoded_artifact)} | base64 -d"
+        prewarmed = run_cli([
+            "prewarm", *common(prewarm_a, "prewarm"),
+            "--key", prewarm_a, "--key", prewarm_b, "--capacity", "1",
+            "--build-command=/bin/sh", "--build-command=-c", f"--build-command={build_script}",
+        ])
+        statuses = [item.get("status") for item in prewarmed.get("items", [])]
+        if statuses != ["ready", "capacity-limited"] or prewarmed.get("status") != "capacity-limited":
+            raise RuntimeError(f"exact CLI prewarm status/evidence is incomplete: {prewarmed}")
+        scenarios["cli-prewarm"] = "ready-and-capacity-limited"
+
+        invalid = subprocess.run(
+            [str(binary), "cache", "serve", "--listen", "0.0.0.0", "--json"],
+            env={**env, "ROBOCORP_HOME": str(root / "home")},
+            capture_output=True, text=True,
+        )
+        invalid_output = invalid.stdout + "\n" + invalid.stderr
+        if invalid.returncode == 0 or sentinel in invalid_output:
+            raise RuntimeError("exact CLI accepted a non-loopback cache listener")
+        scenarios["cli-loopback-rejection"] = "rejected"
+
+        for path in root.rglob("*"):
+            if path.is_file() and sentinel.encode() in path.read_bytes():
+                raise RuntimeError(f"coordination state leaked provider authorization: {path}")
+
+    required = {"cli-claim", "cli-wait", "cli-heartbeat", "cli-release", "cli-prewarm", "cli-loopback-rejection"}
+    if set(scenarios) != required:
+        raise RuntimeError("coordination receipt is missing required exact-CLI outcomes")
+    payload = {
+        "schemaVersion": 1,
+        "scenarios": scenarios,
+        "commitSha": _exact_commit_sha(),
+        "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+    }
+    _write_json_atomic(receipt, payload)
     print(f"Coordination black-box receipt: {receipt}")
 
 

@@ -254,7 +254,14 @@ class ArtifactTaskTests(unittest.TestCase):
   def test_coordination_receipt_binds_source_and_binary(self):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn('payload["commitSha"]', source)
-    self.assertIn('payload["binarySha256"]', source)
+    self.assertIn('"binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest()', source)
+
+  def test_coordination_acceptance_uses_exact_binary_cli(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split("def coordinationAcceptance", 1)[1].split("def version", 1)[0]
+    self.assertIn("binary", block)
+    self.assertIn('"env", "coordinate"', block)
+    self.assertNotIn("TestBlackBoxCoordinationContract", block)
 
   def test_real_receipt_separates_exact_binary_cli_from_source_api(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()

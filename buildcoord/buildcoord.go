@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -128,6 +129,8 @@ type Artifact struct {
 	Execution             *ExecutionReceipt         `json:"execution,omitempty"`
 }
 
+var providerAuthorizationReferencePattern = regexp.MustCompile(`^(environment:[A-Za-z_][A-Za-z0-9_]*|(?:lifecycle|provider)-commit:sha256:[0-9a-f]{64})$`)
+
 // CompletionReceipt is the authoritative provider/lifecycle handoff. A
 // coordinator may only treat an artifact as a generic fallback result after
 // the provider has committed its manifest and verified every referenced
@@ -156,8 +159,9 @@ type ExecutionReceipt struct {
 }
 
 // ArtifactTrustDigest is the signature subject for a complete published
-// artifact. It binds the immutable artifact digest to its closure and provider
-// authorization, so changing either cannot pass a digest-only signature.
+// artifact. It binds the immutable artifact digest to its closure and safe
+// provider authorization reference, so changing either cannot pass a
+// digest-only signature. The reference never contains the runtime header.
 func ArtifactTrustDigest(artifact Artifact) string {
 	content, _ := json.Marshal(struct {
 		Digest                string `json:"digest"`
@@ -785,7 +789,7 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) (err er
 // VerifyArtifactProof validates complete closure metadata. Trust is established
 // by TrustVerifier's keyed artifacttrust policy, never by a caller hash.
 func VerifyArtifactProof(artifact Artifact) error {
-	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || artifact.ProviderAuthorization == "" {
+	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || !providerAuthorizationReferencePattern.MatchString(artifact.ProviderAuthorization) {
 		return ErrUnverifiedArtifact
 	}
 	return nil
@@ -1040,10 +1044,10 @@ type PrewarmRequest struct {
 	PreviousReady        bool
 }
 type PrewarmItem struct {
-	Key        BuildKey
-	Status     PrewarmStatus
-	Reason     string `json:"reason,omitempty"`
-	Generation string `json:"generation,omitempty"`
+	Key        BuildKey      `json:"key"`
+	Status     PrewarmStatus `json:"status"`
+	Reason     string        `json:"reason,omitempty"`
+	Generation string        `json:"generation,omitempty"`
 }
 type PrewarmStatus string
 

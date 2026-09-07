@@ -56,6 +56,30 @@ func TestCoordinatePrewarmRequiresConcreteBuildCommandFlag(t *testing.T) {
 	}
 }
 
+func TestCoordinateUsesEnvironmentOnlyProviderAuthorization(t *testing.T) {
+	command := newEnvironmentCoordinateCommand()
+	claim, _, err := command.Find([]string{"claim"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if claim.Flag("provider-authorization") != nil {
+		t.Fatal("coordinate claim still accepts a raw provider authorization value")
+	}
+	if claim.Flag("provider-authorization-env") == nil {
+		t.Fatal("coordinate claim has no environment-only provider authorization reference")
+	}
+}
+
+func TestPrewarmStatusDoesNotHideUnprocessedItems(t *testing.T) {
+	items := []buildcoord.PrewarmItem{
+		{Status: buildcoord.PrewarmReady},
+		{Status: buildcoord.PrewarmCapacityLimited},
+	}
+	if got := prewarmStatus(items); got != string(buildcoord.PrewarmCapacityLimited) {
+		t.Fatalf("prewarm status = %q, want capacity-limited", got)
+	}
+}
+
 func TestCoordinatePrewarmEmptyResultEmitsItemsArray(t *testing.T) {
 	public, _, err := ed25519.GenerateKey(nil)
 	if err != nil {

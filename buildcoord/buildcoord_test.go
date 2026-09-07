@@ -73,6 +73,16 @@ func TestMachineContractGoldenShape(t *testing.T) {
 	}
 }
 
+func TestPrewarmItemUsesStableMachineContractFields(t *testing.T) {
+	content, err := json.Marshal(PrewarmItem{Key: testKey(), Status: PrewarmCapacityLimited})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(content), `"key"`) || !strings.Contains(string(content), `"status"`) || strings.Contains(string(content), `"Key"`) || strings.Contains(string(content), `"Status"`) {
+		t.Fatalf("prewarm item fields are not stable JSON: %s", content)
+	}
+}
+
 func TestBackoffNormalizationUsesDefaultAndUpperBound(t *testing.T) {
 	if got := normalizeBackoff(0); got != defaultBackoff {
 		t.Fatalf("zero backoff = %s, want %s", got, defaultBackoff)
@@ -129,7 +139,7 @@ func TestTrustVerifierBindsClosureAndProviderToKeyedSignature(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "authorization-a"}
+	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION"}
 	signature, err := artifacttrust.Sign(ArtifactTrustDigest(artifact), "build-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -212,9 +222,33 @@ func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 		t.Fatalf("proof bypass: %v", err)
 	}
 	closure := "sha256:" + strings.Repeat("a", 64)
-	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: "opaque-provider-proof"}
+	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: "provider-commit:" + closure}
 	if err := c.Publish(claim, proof); err != nil {
 		t.Fatalf("proof publish: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofRejectsCredentialValue(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "Bearer provider-secret",
+	}
+	if err := VerifyArtifactProof(artifact); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("credential-bearing provider authorization accepted: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofAcceptsEnvironmentReference(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+	}
+	if err := VerifyArtifactProof(artifact); err != nil {
+		t.Fatalf("environment provider authorization reference rejected: %v", err)
 	}
 }
 
@@ -505,7 +539,7 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 		t.Fatal(err)
 	}
 	claim := Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}
-	content := `{"digest":"sha256:` + strings.Repeat("a", 64) + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"sha256:` + strings.Repeat("a", 64) + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	content := `{"digest":"sha256:` + strings.Repeat("a", 64) + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"environment:RCC_PROVIDER_AUTHORIZATION","completion":{"artifactDigest":"sha256:` + strings.Repeat("a", 64) + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
 	executor, err := NewCommandExecutor([]string{"/bin/sh", "-c", fmt.Sprintf("printf '%%s' %s", shellQuote(content))})
 	if err != nil {
 		t.Fatal(err)
@@ -585,7 +619,7 @@ func TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable(t *testing.T) 
 		t.Fatal(err)
 	}
 	digest := "sha256:" + strings.Repeat("a", 64)
-	content := `{"digest":"` + digest + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"` + digest + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	content := `{"digest":"` + digest + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"environment:RCC_PROVIDER_AUTHORIZATION","completion":{"artifactDigest":"` + digest + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
 	script := `set -eu
 if cat "$RCC_TEST_PRIVATE_FILE" >/dev/null 2>&1; then printf readable > "$RCC_BUILD_STAGING_ROOT/host-read"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-read"; fi
 if printf overwrite > "$RCC_TEST_PRIVATE_FILE" 2>/dev/null; then printf writable > "$RCC_BUILD_STAGING_ROOT/host-write"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-write"; fi
