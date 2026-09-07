@@ -154,10 +154,13 @@ def rollback(root):
     import tasks  # merged #222 validation, used with the original binaries
     proof = root / "rollback"
     proof.mkdir(exist_ok=True)
-    producer, consumer = proof / "producer", proof / "consumer"
-    fixture = proof / "robot.yaml"
+    producer = proof / "producer"
+    consumer = Path(tempfile.mkdtemp(prefix="consumer-", dir=proof))
+    project = proof / "project"
+    project.mkdir(exist_ok=True)
+    fixture = project / "robot.yaml"
     fixture.write_text("tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n")
-    (proof / "conda.yaml").write_text("channels:\n- conda-forge\ndependencies:\n- python=3.11.16\n")
+    (project / "conda.yaml").write_text("channels:\n- conda-forge\ndependencies:\n- python=3.11.16\n")
     candidate, old = root / "RCC-Binaries/rcc-linux64", root / "previous/rcc-linux64"
 
     def execute(label, binary, args, home):
@@ -166,34 +169,45 @@ def rollback(root):
         result = subprocess.run([str(binary), *map(str, args)], env=env, text=True, capture_output=True, timeout=600)
         save(proof / (label + ".json"), {"returncode": result.returncode, "stdout": result.stdout, "stderr": result.stderr})
         require(result.returncode == 0, f"{label} failed; see rollback/{label}.json")
+        print(label + ": passed", flush=True)
         return result
 
     # Only a disposable Python environment is provisioned; RCC is never built.
     provider = "local"
-    published = execute("fixture-publish", old, ["env", "publish", "--robot", fixture, "--provider", provider, "--json"], producer)
-    digest = json.loads(published.stdout)["artifactDigest"]
     archive = proof / "fixture.rcca"
-    execute("fixture-export", old, ["env", "export", "--artifact", digest, "--provider", provider, "--output", archive], producer)
+    if not archive.is_file():
+        published = execute("fixture-publish", old, ["env", "publish", "--robot", fixture, "--provider", provider, "--json"], producer)
+        digest = json.loads(published.stdout)["artifactDigest"]
+        execute("fixture-export", old, ["env", "export", "--artifact", digest, "--provider", provider, "--output", archive], producer)
+    with zipfile.ZipFile(archive) as carrier:
+        digest = json.loads(carrier.read("rcc-environment/manifest.json"))["artifactDigest"]
     tasks._install_archive_legacy_closure(consumer, archive)
-    execute("old-v12", old, ["holotree", "variables", proof / "conda.yaml", "--robot", fixture, "--json"], consumer)
+    execute("old-v12", old, ["holotree", "variables", project / "conda.yaml", "--robot", fixture, "--json"], consumer)
     legacy_before = tasks._legacy_closure_state(consumer, archive)
     archive_hash = sha(archive)
     state_root = consumer / "artifacts/v1"
     args = ["env", "acquire", "--archive", archive, "--trust-carrier", state_root / "trust",
             "--trust-carrier-type", "filesystem", "--permissive-local", "--json"]
     upgraded = json.loads(execute("candidate-import", candidate, args, consumer).stdout)
+    # Inspect completes the candidate's normal reconciliation of provisional
+    # materialization journals before taking the stable rollback baseline.
+    inspected = json.loads(execute("candidate-inspect", candidate, ["env", "inspect", "--artifact", digest, "--json"], consumer).stdout)
+    require(inspected["ready"] is True and inspected["corrupt"] is False and inspected["digest"] == digest,
+            "candidate is not ready for rollback")
     legacy_upgraded = tasks._legacy_closure_state(consumer, archive)
     tasks._validate_rebased_legacy_closure(legacy_before, legacy_upgraded, consumer)
     state_before = tasks._state_digests(state_root)
+    save(proof / "state-before.json", state_before)
     name = digest.replace(":", "_")
     audits = ("content/.audit", f"verification/{name}.history.jsonl")
     audit_before = {p: (state_root / p).read_bytes() for p in audits}
     result = execute("released-import", old, args, consumer)
     require(tasks._validate_archive_rollback(result, upgraded) == "imported", "N-1 archive import not proven")
     state_after = tasks._state_digests(state_root)
+    save(proof / "state-after.json", state_after)
     refreshed = {*audits, f"verification/{name}.json"}
-    require({k: v for k, v in state_before.items() if k not in refreshed} ==
-            {k: v for k, v in state_after.items() if k not in refreshed}, "rollback changed immutable artifact state")
+    changed = [k for k in sorted(set(state_before) | set(state_after)) if k not in refreshed and state_before.get(k) != state_after.get(k)]
+    require(not changed, "rollback changed immutable artifact state: " + repr(changed))
     require(all((state_root / p).read_bytes().startswith(original) for p, original in audit_before.items()), "rollback rewrote audit history")
     verification = json.loads((state_root / f"verification/{name}.json").read_text())
     require(verification.get("valid") is True and verification.get("artifactDigest") == digest
