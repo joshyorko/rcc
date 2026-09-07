@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -663,6 +664,15 @@ func validateGCDirectory(path string) error {
 	abs, err := filepath.Abs(path)
 	if err != nil {
 		return err
+	}
+	abs = filepath.Clean(abs)
+	if runtime.GOOS == "darwin" {
+		for _, alias := range []string{"/var", "/tmp", "/etc"} {
+			if abs == alias || strings.HasPrefix(abs, alias+"/") {
+				abs = "/private" + abs
+				break
+			}
+		}
 	}
 	current := filepath.VolumeName(abs) + string(filepath.Separator)
 	for _, component := range strings.Split(strings.TrimPrefix(filepath.Clean(abs), current), string(filepath.Separator)) {

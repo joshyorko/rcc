@@ -9,6 +9,8 @@
 - keep GC transactions locked to the configured content root and verify
   provider restart, authorization-env separation, carrier convergence, and
   source-bundle state exclusion in the acceptance coverage
+- canonicalize approved macOS filesystem aliases during GC validation while
+  continuing to reject user-created symlink traversal
 
 ## v18.19.3 (date: 28.08.2026)
 

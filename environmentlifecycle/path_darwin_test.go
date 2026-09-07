@@ -38,3 +38,23 @@ func TestDarwinSystemAliasPathsPreserveNoFollow(t *testing.T) {
 		t.Fatalf("lifecycle traversal mutated symlink destination: %v", err)
 	}
 }
+
+func TestDarwinGCValidationCanonicalizesSystemAlias(t *testing.T) {
+	root, err := os.MkdirTemp("/tmp", "rcc-gc-alias-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(root) })
+	if err := validateGCDirectory(filepath.Join(root, "home", "artifacts")); err != nil {
+		t.Fatalf("GC rejected system alias path: %v", err)
+	}
+
+	outside := t.TempDir()
+	redirect := filepath.Join(root, "redirect")
+	if err := os.Symlink(outside, redirect); err != nil {
+		t.Fatal(err)
+	}
+	if err := validateGCDirectory(filepath.Join(redirect, "artifacts")); err == nil {
+		t.Fatal("GC followed a user-created symlink beneath a system alias")
+	}
+}
