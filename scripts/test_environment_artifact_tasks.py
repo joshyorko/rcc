@@ -2,6 +2,7 @@ import json
 import gzip
 import hashlib
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -82,9 +83,34 @@ class ArtifactTaskTests(unittest.TestCase):
     for marker in ('--trust-carrier', '--trust-carrier-type', 'filesystem', '--permissive-local'):
       self.assertIn(marker, block)
 
-  def test_self_host_accepts_exact_pre_feature_env_command_rejection(self):
-    source = (ROOT / "tasks.py").read_text()
-    self.assertIn("'\"env\"' in old_error", source)
+  def test_archive_rollback_accepts_verified_same_identity_import(self):
+    receipt = {"artifactDigest": "sha256:" + "a" * 64, "materializationId": "consumer-space"}
+    result = subprocess.CompletedProcess([], 0, json.dumps(receipt), "")
+    self.assertEqual(tasks._validate_archive_rollback(result, receipt), "imported")
+
+  def test_archive_rollback_retains_pre_feature_cli_compatibility(self):
+    for error in ('unknown command "env" for "rcc"', 'unknown flag: --archive'):
+      with self.subTest(error=error):
+        result = subprocess.CompletedProcess([], 1, "", error)
+        self.assertEqual(tasks._validate_archive_rollback(result, {}), "unsupported")
+
+  def test_archive_rollback_rejects_unrelated_errors_and_wrong_identity(self):
+    receipt = {"artifactDigest": "sha256:" + "a" * 64, "materializationId": "consumer-space"}
+    attempts = [
+        subprocess.CompletedProcess([], 1, "", "artifact signature required"),
+        subprocess.CompletedProcess([], 1, "", "archive checksum mismatch"),
+        subprocess.CompletedProcess([], 1, "", 'unknown command "exec"'),
+        subprocess.CompletedProcess([], 1, json.dumps(receipt), "permission denied"),
+        subprocess.CompletedProcess([], 0, "not JSON", ""),
+        subprocess.CompletedProcess([], 0, "[]", ""),
+        subprocess.CompletedProcess([], 0, "{}", ""),
+        subprocess.CompletedProcess([], 0, json.dumps(dict(receipt, artifactDigest="sha256:" + "b" * 64)), ""),
+        subprocess.CompletedProcess([], 0, json.dumps(dict(receipt, materializationId="other-space")), ""),
+    ]
+    for result in attempts:
+      with self.subTest(result=result):
+        with self.assertRaises(RuntimeError):
+          tasks._validate_archive_rollback(result, receipt)
 
   def test_self_host_legacy_fixture_declares_artifacts_directory(self):
     source = (ROOT / "tasks.py").read_text()

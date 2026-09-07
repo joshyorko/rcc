@@ -149,6 +149,7 @@ jobs:
           name: release-candidate-evidence
           path: |
             tmp/self-host-v1.json
+            tmp/rcc-self-host-*/
             tmp/release-candidate-v1.json
             tmp/native-runtime-receipt.json
             tmp/coordination-blackbox-v1.json
