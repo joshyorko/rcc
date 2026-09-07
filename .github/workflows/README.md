@@ -4,6 +4,19 @@ This directory contains the CI/CD workflows for the RCC (Repeatable, Contained C
 
 ## Workflow Overview
 
+`recover-rcc-185.yml` is the manually dispatched publication recovery for the
+unpublished v18.19.5 tag. It pins source run 34149302701 and commit
+`d1aec7d0bb897a81274423c7a6bb747233f9c263`, checks the original artifact ZIP
+digests and native receipts, and uses the existing binaries for the corrected
+N-1 rollback gate. It does not build RCC or rerun the release suite. The small
+rollback fixture provisions Python only. After topology validation and draft
+asset readback, it publishes the existing tag and dispatches `rcc-daily` in
+the normal Homebrew workflow. Existing releases or changed tags fail closed;
+the recovery never moves a tag or overwrites a release.
+
+Run only from merged main: `gh workflow run recover-rcc-185.yml --ref main`.
+Focused checks: `python -m unittest discover -s .github/workflows/recovery -p test_recover_rcc_185.py`.
+
 | Workflow | Purpose | Trigger |
 |----------|---------|---------|
 | [rcc.yaml](#rccyaml) | Main CI/CD pipeline | Push to `main`, version tags, PRs |
