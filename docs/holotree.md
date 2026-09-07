@@ -5,8 +5,7 @@
 The public provider lifecycle is available through `rcc provider`:
 
 ```sh
-rcc provider add office --type http --url http://127.0.0.1:8080 \
-  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --json
+rcc provider add office --type http --url http://127.0.0.1:8080 --json
 rcc provider list --json
 rcc provider inspect office --json
 rcc provider test office --json
@@ -17,7 +16,10 @@ Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
 via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
 only the authorization environment variable name. Its runtime value must be a
 complete `Authorization` header such as `Bearer token`; the value is not stored
-or emitted. URLs are strict root-only URLs without userinfo, query, or fragment.
+or emitted. `--authorization-env` is client-side configuration: it tells RCC
+where to read the outgoing header and does not configure authentication inside
+`rcc cache serve`. Omit it for the unauthenticated local loopback example above.
+URLs are strict root-only URLs without userinfo, query, or fragment.
 HTTP is limited to explicit loopback hosts (`localhost`, `127.0.0.0/8`, or
 `::1`); remote endpoints require HTTPS. Redirects are not followed.
 
@@ -26,6 +28,76 @@ local materialization. Once an artifact is warm locally, acquire is independent
 of provider availability, authorization, and rebuilding. Provider references
 select transport; the immutable `sha256:` Artifact digest is the identity.
 For v18, legacy `rccremote` remains a compatibility-level-A protocol.
+
+### Hosting an Environment Artifact Provider
+
+Start the built-in provider with no configuration for a fresh local cache. It
+listens only on loopback and uses
+`$ROBOCORP_HOME/artifacts/v1/provider` (or RCC's platform default home) as its
+filesystem root:
+
+```sh
+rcc cache serve
+# cache provider started: url=http://127.0.0.1:<port> root=.../artifacts/v1/provider backend=filesystem
+```
+
+The default startup line is intended for interactive use. For automation, use
+`--json`; it writes the existing single startup object containing `url`, `root`,
+and `listen`:
+
+```sh
+rcc cache serve --json > provider-start.json
+rcc cache serve --root /srv/rcc/provider --listen 127.0.0.1:8787 \
+  --backend journal --max-bytes 107374182400 --json > provider-start.json
+```
+
+For remote clients, keep RCC loopback-only and put an authenticated TLS reverse
+proxy on the same host. The topology is:
+
+```text
+RCC client -- HTTPS + proxy authentication --> reverse proxy
+                                             -- HTTP 127.0.0.1:8787 --> rcc cache serve
+                                                                          |
+                                                                          v
+                                                               provider root on disk
+```
+
+The proxy terminates TLS and enforces authentication; `rcc cache serve` remains
+the local immutable provider and is never exposed on a non-loopback address.
+For example, an nginx site can use:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name artifacts.example.com;
+    ssl_certificate     /etc/letsencrypt/live/artifacts.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/artifacts.example.com/privkey.pem;
+
+    auth_basic "RCC artifacts";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    location / {
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+}
+```
+
+On every client process, set the complete `Authorization` header in the
+environment variable named by `--authorization-env`, then save that variable
+name in the profile. For example, the secret value stays in the client
+environment and is never passed as a CLI argument or stored by RCC:
+
+```sh
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="Bearer ${RCC_ARTIFACT_TOKEN}"
+rcc provider add office --type http --url https://artifacts.example.com \
+  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
+rcc provider test office --json
+```
+
+Configure clients with the HTTPS proxy URL and repeat this environment setup
+wherever the profile is consumed. Do not replace `rcc cache serve` with `rccremote`:
+`rccremote` retains its separate `/parts` and `/delta` protocol.
 
 Holotree is RCC's content-addressed storage system for Python environments. It is the
 innovation that transforms RCC from "a tool that creates Python environments" into

@@ -1,6 +1,15 @@
 # rcc change log
 ## Unreleased
 
+### Environment Artifacts
+
+- provide zero-configuration loopback `rcc cache serve` with the canonical
+  `$ROBOCORP_HOME/artifacts/v1/provider` root, human-readable startup output,
+  stable opt-in JSON, and explicit backend, listener, and policy overrides
+- keep GC transactions locked to the configured content root and verify
+  provider restart, authorization-env separation, carrier convergence, and
+  source-bundle state exclusion in the acceptance coverage
+
 ## v18.19.3 (date: 28.08.2026)
 
 ### Bug Fixes

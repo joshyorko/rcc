@@ -34,11 +34,11 @@ func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command 
 		Args:         cobra.NoArgs,
 		SilenceUsage: true,
 		RunE: func(command *cobra.Command, _ []string) error {
-			if !jsonOutput {
-				return fmt.Errorf("--json is required")
+			if root == "" {
+				root = defaultCacheProviderRoot()
 			}
-			if root == "" || (dependencies.serve == nil && dependencies.serveWithLimit == nil && dependencies.serveConfigured == nil) {
-				return fmt.Errorf("--root is required")
+			if dependencies.serve == nil && dependencies.serveWithLimit == nil && dependencies.serveConfigured == nil && dependencies.serveConfiguredWithOutput == nil {
+				return fmt.Errorf("cache provider serve implementation is unavailable")
 			}
 			ctx, stop := signal.NotifyContext(command.Context(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
@@ -48,6 +48,9 @@ func newCacheServeCommand(dependencies cacheCommandDependencies) *cobra.Command 
 			}
 			if backend != "filesystem" && backend != "journal" {
 				return fmt.Errorf("unsupported cache provider backend %q", backend)
+			}
+			if dependencies.serveConfiguredWithOutput != nil {
+				return dependencies.serveConfiguredWithOutput(ctx, root, listen, command.OutOrStdout(), backend, limits, jsonOutput)
 			}
 			if dependencies.serveConfigured != nil {
 				return dependencies.serveConfigured(ctx, root, listen, command.OutOrStdout(), backend, limits)
@@ -82,6 +85,10 @@ func serveArtifactCacheWithOptions(ctx context.Context, root, listen string, out
 }
 
 func serveArtifactCacheConfigured(ctx context.Context, root, listen string, output io.Writer, backend string, limits artifactprovider.Limits) error {
+	return serveArtifactCacheConfiguredOutput(ctx, root, listen, output, backend, limits, true)
+}
+
+func serveArtifactCacheConfiguredOutput(ctx context.Context, root, listen string, output io.Writer, backend string, limits artifactprovider.Limits, jsonOutput bool) error {
 	if err := validateLoopbackListen(listen); err != nil {
 		return err
 	}
@@ -94,7 +101,7 @@ func serveArtifactCacheConfigured(ctx context.Context, root, listen string, outp
 	case "filesystem":
 		provider, err = artifactprovider.NewFilesystem(absoluteRoot)
 	case "journal":
-		if err = os.MkdirAll(absoluteRoot, 0o700); err == nil {
+		if _, err = artifactprovider.NewFilesystem(absoluteRoot); err == nil {
 			provider, err = artifactprovider.NewJournal(filepath.Join(absoluteRoot, "provider.journal"))
 		}
 	default:
@@ -123,10 +130,16 @@ func serveArtifactCacheConfigured(ctx context.Context, root, listen string, outp
 	started := cacheServeResult{
 		URL: "http://" + listener.Addr().String(), Root: absoluteRoot, Listen: listener.Addr().String(),
 	}
-	if err := json.NewEncoder(output).Encode(started); err != nil {
+	var outputErr error
+	if jsonOutput {
+		outputErr = json.NewEncoder(output).Encode(started)
+	} else {
+		_, outputErr = fmt.Fprintf(output, "cache provider started: url=%s root=%s backend=%s\n", started.URL, started.Root, backend)
+	}
+	if outputErr != nil {
 		_ = server.Close()
 		<-serveErrors
-		return fmt.Errorf("write cache provider startup result: %w", err)
+		return fmt.Errorf("write cache provider startup result: %w", outputErr)
 	}
 	select {
 	case err := <-serveErrors:

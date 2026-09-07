@@ -65,9 +65,11 @@ def new_environment_artifact_fixture():
         "root": root,
         "aHome": root / "home-a",
         "bHome": root / "home-b",
-        "providerRoot": root / "provider",
+        "providerRoot": root / "home-a" / "artifacts" / "v1" / "provider",
         "serverStdout": root / "server.stdout",
         "serverStderr": root / "server.stderr",
+        "serverRestartStdout": root / "server-restart.stdout",
+        "serverRestartStderr": root / "server-restart.stderr",
         "proofFile": root / "python-proof.json",
     }
     values["aHome"].mkdir()
