@@ -219,6 +219,9 @@ func collectUnreferencedContent(ctx context.Context, policy GCPolicy, protected 
 	if err := validateGCContentRoot(root); err != nil {
 		return 0, 0, 0, err
 	}
+	if err := validateGCDirectory(root); err != nil {
+		return 0, 0, 0, err
+	}
 	objects := filepath.Join(root, "objects", "sha256")
 	if err := validateGCDirectory(objects); err != nil {
 		return 0, 0, 0, err
@@ -663,6 +666,9 @@ func removeMaterialization(path string) error {
 func validateGCDirectory(path string) error {
 	abs, err := filepath.Abs(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
 		return err
 	}
 	abs = filepath.Clean(abs)
