@@ -1,6 +1,18 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.5 (date: 07.09.2026)
+
+### Environment Artifacts
+
+- validate configured GC content roots before scanning or reclaiming artifact
+  content
+
+### Release Hardening
+
+- build the exact candidate binary before executing release-candidate receipt
+  gates
+
 ### Environment Artifacts
 
 - provide zero-configuration loopback `rcc cache serve` with the canonical
