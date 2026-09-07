@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -14,14 +15,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type coordinationResult struct {
-	Key      buildcoord.BuildKey      `json:"key"`
-	Claim    buildcoord.Claim         `json:"claim,omitempty"`
-	Outcome  buildcoord.Outcome       `json:"outcome,omitempty"`
-	Artifact buildcoord.Artifact      `json:"artifact,omitempty"`
-	Items    []buildcoord.PrewarmItem `json:"items,omitempty"`
-	Error    string                   `json:"error,omitempty"`
-}
+type coordinationResult = buildcoord.MachineContract
+
+var authorizationEnvPattern = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)
 
 func newEnvironmentCoordinateCommand() *cobra.Command {
 	var root, spec, platform, builder, resolution, trust, schema, owner string
@@ -32,7 +28,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	var network, independent, waitForClaim bool
 	var quarantineRoot string
 	var epoch uint64
-	var artifactDigest, closureDigest, provider, authorization string
+	var artifactDigest, closureDigest, provider, authorizationEnv string
 	var trustKeyID, trustPublicKey, trustSignature string
 	var jsonOut bool
 	var keys []string
@@ -58,7 +54,18 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return buildcoord.NewFilesystem(root, nil, verifier)
 	}
 	artifactFromFlags := func(source string) (buildcoord.Artifact, error) {
-		artifact := buildcoord.Artifact{Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest, Provider: provider, ProviderAuthorization: authorization, Source: source}
+		if !authorizationEnvPattern.MatchString(authorizationEnv) {
+			return buildcoord.Artifact{}, fmt.Errorf("provider authorization environment variable is required")
+		}
+		artifact := buildcoord.Artifact{
+			Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest,
+			Provider: provider, ProviderAuthorization: "environment:" + authorizationEnv,
+			Source: source,
+			Completion: &buildcoord.CompletionReceipt{
+				ArtifactDigest: artifactDigest, Provider: provider,
+				ManifestCommitted: true, ObjectsVerified: true, Lifecycle: source,
+			},
+		}
 		if trustKeyID == "" || trustSignature == "" {
 			return artifact, fmt.Errorf("trusted signature is required")
 		}
@@ -66,6 +73,22 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return artifact, nil
 	}
 	write := func(cmd *cobra.Command, result coordinationResult, err error) error {
+		if cmd.Name() == "prewarm" && result.Items == nil {
+			result.Items = []buildcoord.PrewarmItem{}
+		}
+		result.SchemaVersion = buildcoord.MachineContractSchemaVersion
+		result.Operation = cmd.Name()
+		if err != nil {
+			result.Status = "failed"
+		} else if result.Status == "" {
+			if result.Outcome != "" {
+				result.Status = string(result.Outcome)
+			} else if len(result.Items) > 0 {
+				result.Status = prewarmStatus(result.Items)
+			} else {
+				result.Status = "ok"
+			}
+		}
 		if err != nil {
 			result.Error = err.Error()
 		}
@@ -77,31 +100,46 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		}
 		return err
 	}
-	claimFromFlags := func() buildcoord.Claim { return buildcoord.Claim{Key: key(), Owner: owner, Epoch: epoch} }
+	claimFromFlags := func() *buildcoord.Claim {
+		return &buildcoord.Claim{Key: key(), Owner: owner, Epoch: epoch}
+	}
 	claim := &cobra.Command{Use: "claim", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
+		var artifact buildcoord.Artifact
+		var err error
+		if artifactDigest != "" {
+			artifact, err = artifactFromFlags("cli")
+			if err != nil {
+				return write(cmd, coordinationResult{Key: key()}, err)
+			}
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
 		}
 		cl, out, err := coordinator.ClaimContext(cmd.Context(), key(), owner, ttl)
 		if err == nil && artifactDigest != "" && out == buildcoord.Claimed {
-			artifact, artifactErr := artifactFromFlags("cli")
-			if artifactErr != nil {
-				err = artifactErr
-			} else {
-				err = coordinator.Publish(cl, artifact)
-			}
+			err = coordinator.Publish(cl, artifact)
 		}
-		return write(cmd, coordinationResult{Key: key(), Claim: cl, Outcome: out}, err)
+		return write(cmd, coordinationResult{Key: key(), Claim: &cl, Outcome: out}, err)
 	}}
 	heartbeat := &cobra.Command{Use: "heartbeat", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
 		}
-		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coordinator.Heartbeat(claimFromFlags(), ttl))
+		claim := claimFromFlags()
+		return write(cmd, coordinationResult{Key: key(), Claim: claim}, coordinator.Heartbeat(*claim, ttl))
 	}}
 	wait := &cobra.Command{Use: "wait", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
@@ -110,13 +148,20 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Outcome: out, Artifact: artifact}, err)
 	}}
 	release := &cobra.Command{Use: "release", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
 		}
-		return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, coordinator.Release(claimFromFlags()))
+		claim := claimFromFlags()
+		return write(cmd, coordinationResult{Key: key(), Claim: claim}, coordinator.Release(*claim))
 	}}
 	prewarm := &cobra.Command{Use: "prewarm", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
@@ -155,7 +200,7 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		c.Flags().StringVar(&artifactDigest, "artifact-digest", "", "Verified artifact digest")
 		c.Flags().StringVar(&closureDigest, "closure-digest", "", "Complete artifact closure digest")
 		c.Flags().StringVar(&provider, "provider", "", "Artifact provider identity")
-		c.Flags().StringVar(&authorization, "provider-authorization", "", "Provider authorization proof")
+		c.Flags().StringVar(&authorizationEnv, "provider-authorization-env", "", "Provider authorization environment-variable name")
 		c.Flags().StringVar(&trustKeyID, "trust-key-id", "", "Trusted artifact signing key ID")
 		c.Flags().StringVar(&trustPublicKey, "trust-public-key", "", "Trusted Ed25519 public key (base64)")
 		c.Flags().StringVar(&trustSignature, "trust-signature", "", "Artifact signature (base64)")
@@ -179,6 +224,31 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 	rootCmd := &cobra.Command{Use: "coordinate", Short: "Coordinate optional cold environment builds."}
 	rootCmd.AddCommand(claim, heartbeat, wait, release, prewarm)
 	return rootCmd
+}
+
+func prewarmStatus(items []buildcoord.PrewarmItem) string {
+	status := buildcoord.PrewarmReady
+	for _, item := range items {
+		switch item.Status {
+		case buildcoord.PrewarmReady:
+			continue
+		case buildcoord.PrewarmFailed:
+			return string(buildcoord.PrewarmFailed)
+		case buildcoord.PrewarmDegraded:
+			status = buildcoord.PrewarmDegraded
+		case buildcoord.PrewarmNeeded:
+			if status == buildcoord.PrewarmReady {
+				status = buildcoord.PrewarmNeeded
+			}
+		case buildcoord.PrewarmCapacityLimited:
+			if status == buildcoord.PrewarmReady {
+				status = buildcoord.PrewarmCapacityLimited
+			}
+		default:
+			return string(buildcoord.PrewarmFailed)
+		}
+	}
+	return string(status)
 }
 
 func decodePublicKey(value string) (ed25519.PublicKey, error) {

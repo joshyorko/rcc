@@ -2,6 +2,7 @@ package artifactprovider
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -33,6 +34,33 @@ func TestHTTPErrorDoesNotExposeResponseBody(t *testing.T) {
 	}
 	if received != secret {
 		t.Fatalf("Authorization = %q, want complete runtime header", received)
+	}
+}
+
+func TestHTTPPolicyRateLimitStatusIsExplicit(t *testing.T) {
+	provider := NewPolicy(&boundedMissingProvider{}, Limits{RequestsPerSecond: 1})
+	server := httptest.NewServer(NewHandler(provider))
+	defer server.Close()
+	client := &http.Client{Transport: &http.Transport{DisableKeepAlives: true}}
+	post := func() (int, error) {
+		response, err := client.Post(server.URL+"/v1/objects/missing", "application/json", strings.NewReader(`{"descriptors":[]}`))
+		if err != nil {
+			return 0, err
+		}
+		_, _ = io.Copy(io.Discard, response.Body)
+		_ = response.Body.Close()
+		return response.StatusCode, nil
+	}
+	first, err := post()
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := post()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first != http.StatusOK || second != http.StatusTooManyRequests {
+		t.Fatalf("rate-limit statuses = %d/%d, want 200/429", first, second)
 	}
 }
 

@@ -58,6 +58,12 @@ Goal: Create bundle using rcc robot bundle command
   Step    build/rcc robot bundle --controller citests -r robot_tests/testdata/robot_bundle/robot/robot.yaml -o tmp/rcc_created_bundle.py
   Must Exist    tmp/rcc_created_bundle.py
 
+Goal: Created source bundle omits provider and local state
+  Step    python3 -c "import json, zipfile; bundle = zipfile.ZipFile('tmp/rcc_created_bundle.py'); mode = json.loads(bundle.read('environment/bundle.json')); names = bundle.namelist(); state = sorted(name for name in names if name.startswith(('provider/', 'local/', 'artifacts/')) or name in ('environment/artifact.rcca', 'environment/platform-index.json')); print('sourceMode=' + mode['sourceMode']); print('unexpected-state-entries=' + repr(state))"
+  Use STDOUT
+  Must Have    sourceMode=source-only
+  Must Have    unexpected-state-entries=[]
+
 Goal: Run task from rcc created bundle
   Step    build/rcc robot run-from-bundle tmp/rcc_created_bundle.py --task test --controller citests
   Use STDOUT

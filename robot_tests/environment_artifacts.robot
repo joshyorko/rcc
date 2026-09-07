@@ -30,8 +30,6 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     library.Log To Console    phase=provider-server-start:start
     ${server}=    Start Process
     ...    ${RCC}    cache    serve
-    ...    --root    ${PROVIDER_ROOT}
-    ...    --listen    127.0.0.1:0
     ...    --json
     ...    alias=environment-provider
     ...    stdout=${SERVER_STDOUT}
@@ -103,6 +101,65 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Provider Should Contain Manifest    ${PROVIDER_ROOT}    ${artifact}
     Published Linux Artifact Should Use Portable Kernel Floor    ${PROVIDER_ROOT}    ${artifact}
 
+    Log To Console    phase=provider-restart:stop:start
+    ${stopped}=    Terminate Process    environment-provider
+    Should Be Equal As Integers    ${stopped.rc}    0
+    Provider Should Be Unreachable    ${provider_url}
+    Log To Console    phase=provider-restart:stop:complete
+    Log To Console    phase=provider-restart:start:start
+    ${restart_server_env}=    Environment Artifact Process Environment    ${A_HOME}    ${False}
+    ${restarted_server}=    Start Process
+    ...    ${RCC}    cache    serve    --json
+    ...    alias=environment-provider-restarted
+    ...    stdout=${SERVER_RESTART_STDOUT}
+    ...    stderr=${SERVER_RESTART_STDERR}
+    ...    env=${restart_server_env}
+    ${restarted_json}=    Wait For JSON File    ${SERVER_RESTART_STDOUT}
+    ${restarted_url}=    Set Variable    ${restarted_json}[url]
+    Should Be Equal    ${restarted_json}[root]    ${PROVIDER_ROOT}
+    Log To Console    phase=provider-restart:start:complete
+
+    Log To Console    phase=provider-restart-test:start
+    ${restart_profile_result}=    Run Process Without Group
+    ...    ${RCC}    provider    add    office
+    ...    --type    http
+    ...    --url    ${restarted_url}
+    ...    --authorization-env    RCC_TEST_PROVIDER_AUTHORIZATION
+    ...    --replace
+    ...    --json
+    ...    env=${B_ENV}
+    Should Be Equal As Integers    ${restart_profile_result.rc}    0
+    ${restart_profile}=    Parse JSON    ${restart_profile_result.stdout}
+    Should Be Equal    ${restart_profile}[url]    ${restarted_url}
+    ${restart_test_result}=    Run Process Without Group
+    ...    ${RCC}    provider    test    office    --json
+    ...    env=${B_ENV}
+    Should Be Equal As Integers    ${restart_test_result.rc}    0
+    Should Not Contain    ${restart_test_result.stdout}    Bearer robot-test
+    Should Not Contain    ${restart_test_result.stderr}    Bearer robot-test
+    ${restart_test}=    Parse JSON    ${restart_test_result.stdout}
+    Should Be Equal    ${restart_test}[reachable]    ${True}
+    Should Be Equal    ${restart_test}[compatible]    ${True}
+    Log To Console    phase=provider-restart-test:complete
+
+    Log To Console    phase=producer-restart-profile:start
+    ${restart_producer_profile_result}=    Run Process Without Group
+    ...    ${RCC}    provider    add    office
+    ...    --type    http
+    ...    --url    ${restarted_url}
+    ...    --authorization-env    RCC_TEST_PROVIDER_AUTHORIZATION
+    ...    --replace
+    ...    --json
+    ...    env=${A_ENV}
+    Should Be Equal As Integers    ${restart_producer_profile_result.rc}    0
+    Should Not Contain    ${restart_producer_profile_result.stdout}    Bearer robot-test
+    Should Not Contain    ${restart_producer_profile_result.stderr}    Bearer robot-test
+    ${restart_producer_profile}=    Parse JSON    ${restart_producer_profile_result.stdout}
+    Should Be Equal    ${restart_producer_profile}[name]    office
+    Should Be Equal    ${restart_producer_profile}[url]    ${restarted_url}
+    Should Be Equal    ${restart_producer_profile}[authorizationEnv]    RCC_TEST_PROVIDER_AUTHORIZATION
+    Log To Console    phase=producer-restart-profile:complete
+
     Log To Console    phase=cold-acquire:start
     ${cold_result}=    Run Process Without Group
     ...    ${RCC}    env    acquire
@@ -161,6 +218,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${source_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${source_bundle_result.rc}    0
+    Should Not Contain    ${source_bundle_result.stdout}    Bearer robot-test
+    Should Not Contain    ${source_bundle_result.stderr}    Bearer robot-test
     Log To Console    phase=source-bundle:complete
     ${source_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}source-run
     Create Directory    ${source_run_cwd}
@@ -170,8 +229,10 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --task    proof
     ...    cwd=${source_run_cwd}
     ...    env=${A_ENV}
-    Log    ${source_run_result.stderr}
     Should Be Equal As Integers    ${source_run_result.rc}    0
+    Should Not Contain    ${source_run_result.stdout}    Bearer robot-test
+    Should Not Contain    ${source_run_result.stderr}    Bearer robot-test
+    Log    ${source_run_result.stderr}
     Log To Console    phase=source-bundle-run:complete
 
     ${archive}=    Set Variable    ${FIXTURE_ROOT}${/}artifact.rcca
@@ -183,6 +244,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${archive}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${export_result.rc}    0
+    Should Not Contain    ${export_result.stdout}    Bearer robot-test
+    Should Not Contain    ${export_result.stderr}    Bearer robot-test
     Log To Console    phase=artifact-export:complete
     ${artifact_bundle}=    Set Variable    ${FIXTURE_ROOT}${/}source-artifact.py
     Log To Console    phase=artifact-bundle:start
@@ -193,6 +256,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${artifact_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${artifact_bundle_result.rc}    0
+    Should Not Contain    ${artifact_bundle_result.stdout}    Bearer robot-test
+    Should Not Contain    ${artifact_bundle_result.stderr}    Bearer robot-test
     Log To Console    phase=artifact-bundle:complete
     ${artifact_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}artifact-run
     Create Directory    ${artifact_run_cwd}
@@ -202,8 +267,10 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --task    proof
     ...    cwd=${artifact_run_cwd}
     ...    env=${B_ENV}
-    Log    ${artifact_run_result.stderr}
     Should Be Equal As Integers    ${artifact_run_result.rc}    0
+    Should Not Contain    ${artifact_run_result.stdout}    Bearer robot-test
+    Should Not Contain    ${artifact_run_result.stderr}    Bearer robot-test
+    Log    ${artifact_run_result.stderr}
     Log To Console    phase=artifact-bundle-run:complete
 
     ${platform_index}=    Set Variable    ${FIXTURE_ROOT}${/}platform-index.json
@@ -218,6 +285,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${indexed_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${indexed_bundle_result.rc}    0
+    Should Not Contain    ${indexed_bundle_result.stdout}    Bearer robot-test
+    Should Not Contain    ${indexed_bundle_result.stderr}    Bearer robot-test
     Log To Console    phase=indexed-bundle:complete
     ${indexed_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}indexed-run
     Create Directory    ${indexed_run_cwd}
@@ -227,8 +296,10 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --task    proof
     ...    cwd=${indexed_run_cwd}
     ...    env=${B_ENV}
-    Log    ${indexed_run_result.stderr}
     Should Be Equal As Integers    ${indexed_run_result.rc}    0
+    Should Not Contain    ${indexed_run_result.stdout}    Bearer robot-test
+    Should Not Contain    ${indexed_run_result.stderr}    Bearer robot-test
+    Log    ${indexed_run_result.stderr}
     Log To Console    phase=indexed-bundle-run:complete
 
     ${wrong_index}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform-index.json
@@ -243,6 +314,8 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    --output    ${wrong_bundle}
     ...    env=${A_ENV}
     Should Be Equal As Integers    ${wrong_bundle_result.rc}    0
+    Should Not Contain    ${wrong_bundle_result.stdout}    Bearer robot-test
+    Should Not Contain    ${wrong_bundle_result.stderr}    Bearer robot-test
     Log To Console    phase=wrong-platform-bundle:complete
     ${wrong_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-run
     Create Directory    ${wrong_run_cwd}
@@ -254,11 +327,13 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ...    env=${B_ENV}
     Should Not Be Equal As Integers    ${wrong_run_result.rc}    0
     Should Contain    ${wrong_run_result.stderr}    no exact environment artifact for platform
+    Should Not Contain    ${wrong_run_result.stdout}    Bearer robot-test
+    Should Not Contain    ${wrong_run_result.stderr}    Bearer robot-test
     Log To Console    phase=wrong-platform-run:complete
 
-    ${stopped}=    Terminate Process    environment-provider
+    ${stopped}=    Terminate Process    environment-provider-restarted
     Should Be Equal As Integers    ${stopped.rc}    0
-    Provider Should Be Unreachable    ${provider_url}
+    Provider Should Be Unreachable    ${restarted_url}
 
     Remove From Dictionary    ${B_ENV}    RCC_TEST_PROVIDER_AUTHORIZATION
 
@@ -312,6 +387,8 @@ Prepare Environment Artifact Acceptance
     Set Suite Variable    ${PROVIDER_ROOT}     ${fixture}[providerRoot]
     Set Suite Variable    ${SERVER_STDOUT}     ${fixture}[serverStdout]
     Set Suite Variable    ${SERVER_STDERR}     ${fixture}[serverStderr]
+    Set Suite Variable    ${SERVER_RESTART_STDOUT}    ${fixture}[serverRestartStdout]
+    Set Suite Variable    ${SERVER_RESTART_STDERR}    ${fixture}[serverRestartStderr]
     Set Suite Variable    ${PROOF_FILE}        ${fixture}[proofFile]
     ${a_env}=    Environment Artifact Process Environment    ${A_HOME}    ${False}
     ${b_env}=    Environment Artifact Process Environment    ${B_HOME}    ${True}

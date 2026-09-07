@@ -44,6 +44,8 @@ requested key.
 ```json
 {
   "schemaVersion": 1,
+  "operation": "claim",
+  "status": "claimed",
   "key": {
     "specificationDigest": "sha256:<environment-spec>",
     "platform": "linux_amd64",
@@ -52,26 +54,31 @@ requested key.
     "trustPolicy": "verified-v1",
     "artifactSchema": "environment-artifact-v1"
   },
-  "claim": {"owner": "worker-a", "epoch": 7, "heartbeat": "<RFC3339>", "expiry": "<RFC3339>"},
+  "claim": {"key": {"specificationDigest": "sha256:<environment-spec>", "platform": "linux_amd64", "builderCompatibility": "rcc-builder-v1"}, "owner": "worker-a", "epoch": 7, "expiresAt": "<RFC3339>"},
   "outcome": "claimed",
   "artifact": {"digest": "sha256:<artifact>", "verified": true}
 }
 ```
 
-`outcome` is one of `claimed`, `busy`, `waiting`, `ready`, `released`,
-`failed`, or `degraded`. A successful `ready` result is authoritative only
-when `artifact.verified` is true and its completion receipt says
-`manifestCommitted: true` and `objectsVerified: true`. A prewarm item has the
-following shape:
+`operation` is the command name. `status` is the stable command result: claim
+uses `claimed`, wait uses `existing-artifact` or `waiting`, heartbeat and
+release use `ok`, and prewarm reports the aggregate of its item statuses.
+`outcome` is present for claim/wait lifecycle outcomes and is one of
+`claimed`, `existing-artifact`, or `waiting`. A successful artifact-backed wait
+is authoritative only when `artifact.verified` is true and its completion
+receipt says `manifestCommitted: true` and `objectsVerified: true`. A prewarm
+item has the following shape:
 
 ```json
-{"key": "<build-key-sha256>", "status": "ready", "artifact": {"digest": "sha256:<artifact>", "verified": true}, "reason": "cache-hit"}
+{"key": {"specificationDigest": "sha256:<environment-spec>", "platform": "linux_amd64", "builderCompatibility": "rcc-builder-v1"}, "status": "ready", "reason": "cache-hit"}
 ```
 
-`reason` is diagnostic. It cannot authorize bytes, override epoch fencing, or
-turn a partial provider object into a cache hit. Providers must retain both
-artifact identities for a divergent equivalent key and set a nondeterminism
-policy outcome rather than silently selecting one.
+Prewarm statuses are `needed`, `ready`, `capacity-limited`, `failed`, and
+`degraded`. The top-level prewarm status cannot be `ready` while any requested
+item remains unprocessed. `reason` is diagnostic. It cannot authorize bytes,
+override epoch fencing, or turn a partial provider object into a cache hit.
+Providers must retain both artifact identities for a divergent equivalent key
+and set a nondeterminism policy outcome rather than silently selecting one.
 
 The contained `releaseCandidate` task writes `tmp/release-candidate-v1.json`.
 It records the exact 40-character source commit SHA and, when `build/rcc`

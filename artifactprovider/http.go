@@ -855,6 +855,8 @@ func (it *HTTP) NegotiateCapabilities(ctx context.Context, required Capabilities
 }
 
 func (it *HTTP) Health(ctx context.Context) (Health, error) {
+	// Requests and Errors are provider telemetry supplied by the server. HTTP
+	// probe attempts are client activity and must not overwrite those values.
 	var result Health
 	err := it.doJSON(ctx, http.MethodGet, "/v1/health", nil, &result)
 	return result, err

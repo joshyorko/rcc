@@ -99,7 +99,7 @@ jobs:
     env:
       RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       ROBOCORP_HOME: ${{ github.workspace }}/../rcc-release-candidate-home
-      RCC_SELF_HOST_EXPECTED_VERSION: v18.18.1
+      RCC_SELF_HOST_EXPECTED_VERSION: v18.19.3
       RCC_N1_BINARY: ${{ github.workspace }}/tmp/released-rcc/rcc
       RCC_N1_ARCHIVE: ${{ github.workspace }}/tmp/rcc-n1-environment.rcca
     steps:
@@ -122,9 +122,9 @@ jobs:
           rcc_path="${rcc_dir}/rcc"
           mkdir -p "$rcc_dir"
           curl --fail --show-error --location --retry 3 \
-            https://github.com/joshyorko/rcc/releases/download/v18.18.1/rcc-linux64 \
+            https://github.com/joshyorko/rcc/releases/download/v18.19.3/rcc-linux64 \
             --output "$rcc_path"
-          echo "ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf02f2c9bb4b4ef0bfcf  ${rcc_path}" | sha256sum --check -
+          echo "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428  ${rcc_path}" | sha256sum --check -
           chmod +x "$rcc_path"
           echo "$rcc_dir" >> "$GITHUB_PATH"
       - name: Install Linux sandbox dependency

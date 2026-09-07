@@ -1,14 +1,17 @@
 package buildcoord
 
 import (
+	"bufio"
 	"context"
 	"crypto/ed25519"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"strings"
 	"sync"
@@ -36,6 +39,48 @@ func (c *fakeClock) Advance(d time.Duration) { c.now = c.now.Add(d) }
 
 func testKey() BuildKey {
 	return BuildKey{SpecificationDigest: "sha256:spec", Platform: "linux_amd64", BuilderCompatibility: "v12-gzip-sha256"}
+}
+
+func TestMachineContractGoldenShape(t *testing.T) {
+	contract := MachineContract{
+		SchemaVersion: MachineContractSchemaVersion,
+		Operation:     "claim",
+		Status:        string(Claimed),
+		Key:           testKey(),
+		Claim:         &Claim{Key: testKey(), Owner: "worker-1", Epoch: 3},
+	}
+	content, err := json.Marshal(contract)
+	if err != nil {
+		t.Fatal(err)
+	}
+	const want = `{"schemaVersion":1,"operation":"claim","status":"claimed","key":{"specificationDigest":"sha256:spec","platform":"linux_amd64","builderCompatibility":"v12-gzip-sha256"},"claim":{"key":{"specificationDigest":"sha256:spec","platform":"linux_amd64","builderCompatibility":"v12-gzip-sha256"},"owner":"worker-1","epoch":3,"expiresAt":"0001-01-01T00:00:00Z","artifact":{"digest":"","verified":false}},"artifact":{"digest":"","verified":false}}`
+	if string(content) != want {
+		t.Fatalf("machine contract = %s, want %s", content, want)
+	}
+
+	var external struct {
+		SchemaVersion int             `json:"schemaVersion"`
+		Operation     string          `json:"operation"`
+		Status        string          `json:"status"`
+		Key           json.RawMessage `json:"key"`
+		Claim         json.RawMessage `json:"claim"`
+	}
+	if err := json.Unmarshal(content, &external); err != nil {
+		t.Fatal(err)
+	}
+	if external.SchemaVersion != 1 || external.Operation != "claim" || external.Status != "claimed" || len(external.Key) == 0 || len(external.Claim) == 0 {
+		t.Fatalf("external consumer could not read required contract fields: %+v", external)
+	}
+}
+
+func TestPrewarmItemUsesStableMachineContractFields(t *testing.T) {
+	content, err := json.Marshal(PrewarmItem{Key: testKey(), Status: PrewarmCapacityLimited})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(content), `"key"`) || !strings.Contains(string(content), `"status"`) || strings.Contains(string(content), `"Key"`) || strings.Contains(string(content), `"Status"`) {
+		t.Fatalf("prewarm item fields are not stable JSON: %s", content)
+	}
 }
 
 func TestBackoffNormalizationUsesDefaultAndUpperBound(t *testing.T) {
@@ -94,7 +139,7 @@ func TestTrustVerifierBindsClosureAndProviderToKeyedSignature(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "authorization-a"}
+	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Completion: &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider-a", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"}}
 	signature, err := artifacttrust.Sign(ArtifactTrustDigest(artifact), "build-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -177,9 +222,61 @@ func TestArtifactProofIsRequiredWhenConfigured(t *testing.T) {
 		t.Fatalf("proof bypass: %v", err)
 	}
 	closure := "sha256:" + strings.Repeat("a", 64)
-	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: "opaque-provider-proof"}
+	proof := Artifact{Digest: "sha256:one", Verified: true, ClosureDigest: closure, Provider: "local", ProviderAuthorization: "provider-commit:" + closure}
 	if err := c.Publish(claim, proof); err != nil {
 		t.Fatalf("proof publish: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofRejectsCredentialValue(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "Bearer provider-secret",
+	}
+	if err := VerifyArtifactProof(artifact); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("credential-bearing provider authorization accepted: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofAcceptsEnvironmentReference(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+		Completion:            &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"},
+	}
+	if err := VerifyArtifactProof(artifact); err != nil {
+		t.Fatalf("environment provider authorization reference rejected: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofRequiresAuthoritativeCompletion(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+	}
+	if err := VerifyArtifactProof(artifact); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("artifact without authoritative completion accepted: %v", err)
+	}
+}
+
+func TestArtifactTrustDigestBindsAuthoritativeCompletion(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+		Completion:            &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"},
+	}
+	first := ArtifactTrustDigest(artifact)
+	artifact.Completion.Lifecycle = "changed"
+	if first == ArtifactTrustDigest(artifact) {
+		t.Fatal("authoritative completion is not bound to the artifact signature subject")
 	}
 }
 
@@ -257,7 +354,7 @@ func TestBuildKeyAndHeartbeatValidateInputs(t *testing.T) {
 	}
 }
 
-func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
+func TestFilesystemCoordinatorRecoversStaleLockFile(t *testing.T) {
 	clock := &fakeClock{now: time.Unix(100, 0)}
 	c := newFilesystem(t.TempDir(), clock)
 	key := testKey()
@@ -268,16 +365,7 @@ func TestFilesystemCoordinatorRecoversOnlyExpiredLock(t *testing.T) {
 		t.Fatal(err)
 	}
 	if _, outcome, err := c.Claim(key, "new", time.Minute); err != nil || outcome != Claimed {
-		t.Fatalf("expired lock: %v %v", outcome, err)
-	}
-	if err := os.Remove(c.claimPath(key)); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(c.lockPath(key), []byte(`{"owner":"live","acquiredAt":"2100-01-01T00:00:00Z"}`), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	if _, _, err := c.Claim(key, "blocked", time.Minute); err == nil {
-		t.Fatal("live lock stolen")
+		t.Fatalf("stale lock file: %v %v", outcome, err)
 	}
 }
 
@@ -479,7 +567,7 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 		t.Fatal(err)
 	}
 	claim := Claim{Key: testKey(), Owner: "owner", Epoch: 1, Staging: staging}
-	content := `{"digest":"sha256:` + strings.Repeat("a", 64) + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"sha256:` + strings.Repeat("a", 64) + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	content := `{"digest":"sha256:` + strings.Repeat("a", 64) + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"environment:RCC_PROVIDER_AUTHORIZATION","completion":{"artifactDigest":"sha256:` + strings.Repeat("a", 64) + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
 	executor, err := NewCommandExecutor([]string{"/bin/sh", "-c", fmt.Sprintf("printf '%%s' %s", shellQuote(content))})
 	if err != nil {
 		t.Fatal(err)
@@ -490,6 +578,47 @@ func TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse(t *testing.T) {
 	}
 	if artifact.Execution == nil || artifact.Execution.StagingRoot != staging || artifact.Execution.CPULimit != 2 || artifact.Execution.MemoryBytes != 64<<20 || !artifact.Execution.NetworkIsolated || !artifact.Execution.CredentialsExcluded {
 		t.Fatalf("execution receipt: %#v", artifact.Execution)
+	}
+}
+
+func TestRuntimeToolMountRejectsUnmappedToolDirectory(t *testing.T) {
+	toolDir := t.TempDir()
+	tool := filepath.Join(toolDir, "prlimit")
+	if err := os.WriteFile(tool, []byte("tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"}); err == nil || !strings.Contains(err.Error(), "outside mounted runtime paths") {
+		t.Fatalf("runtime tool validation error = %v", err)
+	}
+}
+
+func TestRuntimeToolMountIncludesManagedEnvironmentRuntime(t *testing.T) {
+	environmentRoot := t.TempDir()
+	binDir := filepath.Join(environmentRoot, "bin")
+	libDir := filepath.Join(environmentRoot, "lib")
+	metaDir := filepath.Join(environmentRoot, "conda-meta")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(libDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(metaDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	tool := filepath.Join(binDir, "prlimit")
+	if err := os.WriteFile(tool, []byte("tool"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	mounts, err := runtimeToolMount(tool, []string{"/usr/bin", "/bin"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"--ro-bind", binDir, binDir, "--ro-bind", libDir, libDir}
+	if !reflect.DeepEqual(mounts, want) {
+		t.Fatalf("runtime tool mounts = %#v, want %#v", mounts, want)
 	}
 }
 
@@ -518,7 +647,7 @@ func TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable(t *testing.T) 
 		t.Fatal(err)
 	}
 	digest := "sha256:" + strings.Repeat("a", 64)
-	content := `{"digest":"` + digest + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"fixture-auth","completion":{"artifactDigest":"` + digest + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
+	content := `{"digest":"` + digest + `","verified":true,"closureDigest":"sha256:` + strings.Repeat("b", 64) + `","provider":"fixture","providerAuthorization":"environment:RCC_PROVIDER_AUTHORIZATION","completion":{"artifactDigest":"` + digest + `","provider":"fixture","manifestCommitted":true,"objectsVerified":true,"lifecycle":"fixture"}}`
 	script := `set -eu
 if cat "$RCC_TEST_PRIVATE_FILE" >/dev/null 2>&1; then printf readable > "$RCC_BUILD_STAGING_ROOT/host-read"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-read"; fi
 if printf overwrite > "$RCC_TEST_PRIVATE_FILE" 2>/dev/null; then printf writable > "$RCC_BUILD_STAGING_ROOT/host-write"; else printf denied > "$RCC_BUILD_STAGING_ROOT/host-write"; fi
@@ -678,7 +807,7 @@ func TestObsoleteLockReleaseDoesNotRemoveSuccessorLock(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() { _ = secondRelease() }()
-	if err := firstRelease(); !errors.Is(err, ErrStaleClaim) {
+	if err := firstRelease(); err != nil {
 		t.Fatalf("obsolete release: %v", err)
 	}
 	if _, err := os.Lstat(c.lockPath(testKey())); err != nil {
@@ -990,5 +1119,141 @@ func TestHelperProcessClaimRace(t *testing.T) {
 	}
 	if passed != 1 {
 		t.Fatalf("expected one race winner, got %d", passed)
+	}
+}
+
+func TestActiveFilesystemLockCannotBeStolenAcrossProcesses(t *testing.T) {
+	if os.Getenv("BUILDCOORD_ACTIVE_LOCK_HELPER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		release, err := c.lock(context.Background(), testKey())
+		if err != nil {
+			os.Exit(2)
+		}
+		if _, err := fmt.Fprintln(os.Stdout, "ready"); err != nil {
+			os.Exit(3)
+		}
+		_, _ = io.ReadAll(os.Stdin)
+		if err := release(); err != nil {
+			os.Exit(4)
+		}
+		os.Exit(0)
+	}
+
+	root := t.TempDir()
+	cmd := exec.Command(os.Args[0], "-test.run", "^TestActiveFilesystemLockCannotBeStolenAcrossProcesses$")
+	cmd.Env = append(os.Environ(), "BUILDCOORD_ACTIVE_LOCK_HELPER=1", "BUILDCOORD_ROOT="+root)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := cmd.Start(); err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		_ = stdin.Close()
+		_ = cmd.Wait()
+	}()
+	line, err := bufio.NewReader(stdout).ReadString('\n')
+	if err != nil || line != "ready\n" {
+		t.Fatalf("lock helper readiness = %q, err=%v", line, err)
+	}
+
+	c := newFilesystem(root, RealClock{})
+	c.lockWait = 20 * time.Millisecond
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+	if _, _, err := c.ClaimContext(ctx, testKey(), "contender", time.Minute); err == nil {
+		t.Fatalf("active lock was stolen: %v", err)
+	}
+}
+
+func TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses(t *testing.T) {
+	if os.Getenv("BUILDCOORD_PREWARM_BUILDER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		_, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Owner: "builder"}, func(context.Context, Claim) (Artifact, error) {
+			if _, err := fmt.Fprintln(os.Stdout, "building"); err != nil {
+				return Artifact{}, err
+			}
+			_, _ = io.ReadAll(os.Stdin)
+			return Artifact{Digest: "sha256:cross-process", Verified: true}, nil
+		})
+		if err != nil {
+			os.Exit(2)
+		}
+		os.Exit(0)
+	}
+	if os.Getenv("BUILDCOORD_PREWARM_WAITER") == "1" {
+		c := newFilesystem(os.Getenv("BUILDCOORD_ROOT"), RealClock{})
+		items, err := c.Prewarm(context.Background(), PrewarmRequest{Keys: []BuildKey{testKey()}, Capacity: 1, Wait: true, Backoff: time.Millisecond, Owner: "waiter"}, func(context.Context, Claim) (Artifact, error) {
+			_, _ = fmt.Fprintln(os.Stdout, "built")
+			return Artifact{Digest: "sha256:waiter-built", Verified: true}, nil
+		})
+		if err != nil || len(items) != 1 || items[0].Status != PrewarmReady {
+			os.Exit(3)
+		}
+		if _, err := fmt.Fprintln(os.Stdout, "ready"); err != nil {
+			os.Exit(4)
+		}
+		os.Exit(0)
+	}
+
+	root := t.TempDir()
+	builder := exec.Command(os.Args[0], "-test.run", "^TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses$")
+	builder.Env = append(os.Environ(), "BUILDCOORD_PREWARM_BUILDER=1", "BUILDCOORD_ROOT="+root)
+	builderStdout, err := builder.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	builderStdin, err := builder.StdinPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := builder.Start(); err != nil {
+		t.Fatal(err)
+	}
+	builderReader := bufio.NewReader(builderStdout)
+	line, err := builderReader.ReadString('\n')
+	if err != nil || line != "building\n" {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatalf("builder readiness = %q, err=%v", line, err)
+	}
+
+	waiter := exec.Command(os.Args[0], "-test.run", "^TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses$")
+	waiter.Env = append(os.Environ(), "BUILDCOORD_PREWARM_WAITER=1", "BUILDCOORD_ROOT="+root)
+	waiterStdout, err := waiter.StdoutPipe()
+	if err != nil {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatal(err)
+	}
+	if err := waiter.Start(); err != nil {
+		_ = builderStdin.Close()
+		_ = builder.Wait()
+		t.Fatal(err)
+	}
+	if err := builderStdin.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := builder.Wait(); err != nil {
+		t.Fatalf("builder: %v", err)
+	}
+	line, err = bufio.NewReader(waiterStdout).ReadString('\n')
+	if err != nil || line != "ready\n" {
+		_ = waiter.Process.Kill()
+		_ = waiter.Wait()
+		t.Fatalf("waiter output = %q, err=%v", line, err)
+	}
+	if err := waiter.Wait(); err != nil {
+		t.Fatalf("waiter: %v", err)
+	}
+	c := newFilesystem(root, RealClock{})
+	artifact, ok, err := c.Committed(testKey())
+	if err != nil || !ok || artifact.Digest != "sha256:cross-process" {
+		t.Fatalf("cross-process committed artifact = %#v, %v, %v", artifact, ok, err)
 	}
 }

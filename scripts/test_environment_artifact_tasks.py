@@ -254,7 +254,32 @@ class ArtifactTaskTests(unittest.TestCase):
   def test_coordination_receipt_binds_source_and_binary(self):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn('payload["commitSha"]', source)
-    self.assertIn('payload["binarySha256"]', source)
+    self.assertIn('"binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest()', source)
+
+  def test_coordination_acceptance_uses_exact_binary_cli(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split("def coordinationAcceptance", 1)[1].split("def version", 1)[0]
+    self.assertIn("binary", block)
+    self.assertIn('"env", "coordinate"', block)
+    self.assertNotIn("TestBlackBoxCoordinationContract", block)
+
+  def test_local_binary_matches_release_build_flags(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split("def local", 1)[1].split("def robot", 1)[0]
+    self.assertIn("go build -ldflags -s -o build/ ./cmd/...", block)
+
+  def test_self_host_preserves_release_binary_path(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split("def selfHost", 1)[1].split("def largeStream", 1)[0]
+    self.assertIn('Path("build") / "self-host" / "promoted" / "rcc"', block)
+    self.assertNotIn('_promote_self_host_generation(generation_a, Path("build/rcc"))', block)
+
+  def test_release_candidate_binds_coordination_to_release_binary(self):
+    source = (ROOT / "tasks.py").read_text()
+    block = source.split("def releaseCandidate", 1)[1].split("def coordinationAcceptance", 1)[0]
+    self.assertIn('source_binary = Path("build/rcc")', block)
+    self.assertIn('coordination_receipt.get("binarySha256")', block)
+    self.assertIn('hashlib.sha256(source_binary.read_bytes()).hexdigest()', block)
 
   def test_real_receipt_separates_exact_binary_cli_from_source_api(self):
     source = (ROOT / "environmentlifecycle" / "real_vertical_test.go").read_text()
@@ -531,7 +556,10 @@ class ArtifactTaskTests(unittest.TestCase):
     with tempfile.TemporaryDirectory() as directory:
       commit = tasks._exact_commit_sha()
       for name in tasks._PROMOTION_RECEIPT_FILES:
-        (Path(directory) / name).write_text(json.dumps({"commitSha": commit}))
+        payload = {"commitSha": commit}
+        if name == "coordination-blackbox-v1.json":
+          payload["binarySha256"] = hashlib.sha256(Path("build/rcc").read_bytes()).hexdigest()
+        (Path(directory) / name).write_text(json.dumps(payload))
       with ExitStack() as stack:
         stack.enter_context(mock.patch.dict(
             os.environ, {"RCC_RELEASE_CANDIDATE_RECEIPT_ROOT": directory}))

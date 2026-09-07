@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -128,6 +129,8 @@ type Artifact struct {
 	Execution             *ExecutionReceipt         `json:"execution,omitempty"`
 }
 
+var providerAuthorizationReferencePattern = regexp.MustCompile(`^(environment:[A-Za-z_][A-Za-z0-9_]*|(?:lifecycle|provider)-commit:sha256:[0-9a-f]{64})$`)
+
 // CompletionReceipt is the authoritative provider/lifecycle handoff. A
 // coordinator may only treat an artifact as a generic fallback result after
 // the provider has committed its manifest and verified every referenced
@@ -156,15 +159,17 @@ type ExecutionReceipt struct {
 }
 
 // ArtifactTrustDigest is the signature subject for a complete published
-// artifact. It binds the immutable artifact digest to its closure and provider
-// authorization, so changing either cannot pass a digest-only signature.
+// artifact. It binds the immutable artifact digest to its closure and safe
+// provider authorization reference, so changing either cannot pass a
+// digest-only signature. The reference never contains the runtime header.
 func ArtifactTrustDigest(artifact Artifact) string {
 	content, _ := json.Marshal(struct {
-		Digest                string `json:"digest"`
-		ClosureDigest         string `json:"closureDigest"`
-		Provider              string `json:"provider"`
-		ProviderAuthorization string `json:"providerAuthorization"`
-	}{artifact.Digest, artifact.ClosureDigest, artifact.Provider, artifact.ProviderAuthorization})
+		Digest                string             `json:"digest"`
+		ClosureDigest         string             `json:"closureDigest"`
+		Provider              string             `json:"provider"`
+		ProviderAuthorization string             `json:"providerAuthorization"`
+		Completion            *CompletionReceipt `json:"completion"`
+	}{artifact.Digest, artifact.ClosureDigest, artifact.Provider, artifact.ProviderAuthorization, artifact.Completion})
 	sum := sha256.Sum256(content)
 	return "sha256:" + hex.EncodeToString(sum[:])
 }
@@ -419,6 +424,57 @@ type Claim struct {
 	Artifact  Artifact  `json:"artifact,omitempty"`
 	Staging   string    `json:"-"`
 }
+
+const MachineContractSchemaVersion = 1
+
+// MachineContract is the stable, Actions-neutral JSON envelope for the
+// coordination CLI. Consumers must branch on schemaVersion, operation, and
+// status; the detailed coordination records remain optional extensions.
+type MachineContract struct {
+	SchemaVersion int           `json:"schemaVersion"`
+	Operation     string        `json:"operation"`
+	Status        string        `json:"status"`
+	Key           BuildKey      `json:"key"`
+	Claim         *Claim        `json:"claim,omitempty"`
+	Outcome       Outcome       `json:"outcome,omitempty"`
+	Artifact      Artifact      `json:"artifact,omitempty"`
+	Items         []PrewarmItem `json:"items,omitempty"`
+	Error         string        `json:"error,omitempty"`
+}
+
+func (c MachineContract) MarshalJSON() ([]byte, error) {
+	type contract struct {
+		SchemaVersion int      `json:"schemaVersion"`
+		Operation     string   `json:"operation"`
+		Status        string   `json:"status"`
+		Key           BuildKey `json:"key"`
+		Claim         *Claim   `json:"claim,omitempty"`
+		Outcome       Outcome  `json:"outcome,omitempty"`
+		Artifact      Artifact `json:"artifact,omitempty"`
+		Items         any      `json:"items,omitempty"`
+		Error         string   `json:"error,omitempty"`
+	}
+	items := c.Items
+	var itemsValue any
+	if c.Operation == "prewarm" && items == nil {
+		items = []PrewarmItem{}
+	}
+	if c.Operation == "prewarm" || len(items) > 0 {
+		itemsValue = items
+	}
+	return json.Marshal(contract{
+		SchemaVersion: c.SchemaVersion,
+		Operation:     c.Operation,
+		Status:        c.Status,
+		Key:           c.Key,
+		Claim:         c.Claim,
+		Outcome:       c.Outcome,
+		Artifact:      c.Artifact,
+		Items:         itemsValue,
+		Error:         c.Error,
+	})
+}
+
 type Outcome string
 
 const (
@@ -734,7 +790,7 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) (err er
 // VerifyArtifactProof validates complete closure metadata. Trust is established
 // by TrustVerifier's keyed artifacttrust policy, never by a caller hash.
 func VerifyArtifactProof(artifact Artifact) error {
-	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || artifact.ProviderAuthorization == "" {
+	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || !providerAuthorizationReferencePattern.MatchString(artifact.ProviderAuthorization) || ValidateAuthoritativeCompletion(artifact) != nil {
 		return ErrUnverifiedArtifact
 	}
 	return nil
@@ -989,10 +1045,10 @@ type PrewarmRequest struct {
 	PreviousReady        bool
 }
 type PrewarmItem struct {
-	Key        BuildKey
-	Status     PrewarmStatus
-	Reason     string `json:"reason,omitempty"`
-	Generation string `json:"generation,omitempty"`
+	Key        BuildKey      `json:"key"`
+	Status     PrewarmStatus `json:"status"`
+	Reason     string        `json:"reason,omitempty"`
+	Generation string        `json:"generation,omitempty"`
 }
 type PrewarmStatus string
 
@@ -1396,57 +1452,52 @@ func (c *Filesystem) lock(ctx context.Context, key BuildKey) (func() error, erro
 			return nil, ctx.Err()
 		default:
 		}
-		f, err := os.OpenFile(c.lockPath(key), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
-		if err == nil {
+		path := c.lockPath(key)
+		if info, statErr := os.Lstat(path); statErr == nil {
+			if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
+				return nil, ErrUnsafeState
+			}
+		} else if !os.IsNotExist(statErr) {
+			return nil, statErr
+		}
+		f, err := openPlatformLock(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, fmt.Errorf("acquire build key lock: %w", err)
+		}
+		acquired, lockErr := acquirePlatformLock(f)
+		if lockErr != nil {
+			_ = f.Close()
+			return nil, fmt.Errorf("acquire build key lock: %w", lockErr)
+		}
+		if acquired {
 			tokenBytes := make([]byte, 16)
 			if _, randomErr := rand.Read(tokenBytes); randomErr != nil {
-				_ = f.Close()
-				_ = os.Remove(c.lockPath(key))
-				return nil, randomErr
+				return nil, errors.Join(randomErr, releasePlatformLock(f))
 			}
 			held := lockRecord{Owner: fmt.Sprint(os.Getpid()), Token: hex.EncodeToString(tokenBytes), AcquiredAt: c.Clock.Now()}
 			record, marshalErr := json.Marshal(held)
 			if marshalErr == nil {
-				_, marshalErr = f.Write(record)
+				if _, marshalErr = f.Seek(0, 0); marshalErr == nil {
+					marshalErr = f.Truncate(0)
+				}
+				if marshalErr == nil {
+					_, marshalErr = f.Write(record)
+				}
+				if marshalErr == nil {
+					marshalErr = f.Sync()
+				}
 			}
-			closeErr := f.Close()
 			if marshalErr != nil {
-				_ = os.Remove(c.lockPath(key))
-				return nil, marshalErr
+				return nil, errors.Join(marshalErr, releasePlatformLock(f))
 			}
-			if closeErr != nil {
-				_ = os.Remove(c.lockPath(key))
-				return nil, closeErr
-			}
-			return func() error {
-				current, readErr := c.readLock(key)
-				if readErr != nil || current.Token != held.Token {
-					return ErrStaleClaim
-				}
-				return os.Remove(c.lockPath(key))
-			}, nil
+			return func() error { return releasePlatformLock(f) }, nil
 		}
-		if os.IsExist(err) {
-			info, statErr := os.Lstat(c.lockPath(key))
-			if os.IsNotExist(statErr) {
-				// The holder released the lock after O_EXCL observed it.
-				// Retry instead of misclassifying normal lock turnover as unsafe state.
-				continue
-			}
-			if statErr != nil || info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
-				return nil, ErrUnsafeState
-			}
-			if record, readErr := c.readLock(key); readErr == nil {
-				if record.AcquiredAt.Add(c.lockWait).Before(c.Clock.Now()) {
-					if current, confirmErr := c.readLock(key); confirmErr == nil && current == record {
-						_ = os.Remove(c.lockPath(key))
-					}
-					continue
-				}
-			}
-		}
-		if !os.IsExist(err) || time.Now().After(deadline) {
-			return nil, fmt.Errorf("acquire build key lock: %w", err)
+		_ = f.Close()
+		if time.Now().After(deadline) {
+			return nil, fmt.Errorf("acquire build key lock: lock is busy")
 		}
 		timer := time.NewTimer(5 * time.Millisecond)
 		select {

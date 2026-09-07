@@ -1,6 +1,25 @@
 # rcc change log
 ## Unreleased
 
+### Environment Artifacts
+
+- provide zero-configuration loopback `rcc cache serve` with the canonical
+  `$ROBOCORP_HOME/artifacts/v1/provider` root, human-readable startup output,
+  stable opt-in JSON, and explicit backend, listener, and policy overrides
+- keep GC transactions locked to the configured content root and verify
+  provider restart, authorization-env separation, carrier convergence, and
+  source-bundle state exclusion in the acceptance coverage
+- canonicalize approved macOS filesystem aliases during GC validation while
+  continuing to reject user-created symlink traversal
+- bind coordinated artifacts to an authoritative completion receipt and bind
+  coordination acceptance to the stripped release binary identity
+- validate coordination artifact claims before persisting a lease and fail
+  closed on unknown prewarm statuses
+- make coordination receipts exercise the built RCC CLI for claim, heartbeat,
+  artifact-backed wait, release, prewarm capacity, and loopback rejection;
+  persist only provider authorization environment-variable references and bind
+  the JSON contract to exact source and binary identities
+
 ## v18.19.3 (date: 28.08.2026)
 
 ### Bug Fixes

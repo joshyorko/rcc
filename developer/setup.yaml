@@ -11,3 +11,5 @@ dependencies:
   - go=1.26.5
   - golangci-lint=2.12.2
   - git=2.46.0
+  # The Linux runtime-policy tests invoke prlimit for CPU and address-space limits.
+  - util-linux

@@ -165,6 +165,16 @@ func (it *LocalMaterializer) Release(_ context.Context, lease Lease) error {
 	if lease.ID == "" || len(lease.ArtifactDigest.Hex()) != 64 {
 		return fmt.Errorf("invalid lease")
 	}
+	stored, readErr := readLease(lease.ArtifactDigest, lease.ID)
+	if os.IsNotExist(readErr) {
+		return nil
+	}
+	if readErr != nil {
+		return fmt.Errorf("read lease for release: %w", readErr)
+	}
+	if !leasesEqual(stored, lease) {
+		return fmt.Errorf("lease snapshot changed")
+	}
 	err = removeRegularNoFollow(recordRoot(), leaseComponents(lease.ArtifactDigest, lease.ID))
 	if err == nil {
 		err = crash(CrashAfterRelease)
