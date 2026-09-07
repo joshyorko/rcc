@@ -11,6 +11,8 @@
   source-bundle state exclusion in the acceptance coverage
 - canonicalize approved macOS filesystem aliases during GC validation while
   continuing to reject user-created symlink traversal
+- bind coordinated artifacts to an authoritative completion receipt and bind
+  coordination acceptance to the stripped release binary identity
 - make coordination receipts exercise the built RCC CLI for claim, heartbeat,
   artifact-backed wait, release, prewarm capacity, and loopback rejection;
   persist only provider authorization environment-variable references and bind
