@@ -13,6 +13,8 @@
   continuing to reject user-created symlink traversal
 - bind coordinated artifacts to an authoritative completion receipt and bind
   coordination acceptance to the stripped release binary identity
+- validate coordination artifact claims before persisting a lease and fail
+  closed on unknown prewarm statuses
 - make coordination receipts exercise the built RCC CLI for claim, heartbeat,
   artifact-backed wait, release, prewarm capacity, and loopback rejection;
   persist only provider authorization environment-variable references and bind
