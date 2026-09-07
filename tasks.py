@@ -801,6 +801,27 @@ def selfHostProbe(c):
     c.run("go test ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
 
 
+def _validate_archive_rollback(attempt, expected_receipt):
+    """Accept matching archive imports or the precise pre-feature CLI rejection."""
+    old_error = (attempt.stdout + "\n" + attempt.stderr).lower()
+    if attempt.returncode != 0:
+        unsupported = (
+            ("unknown flag" in old_error and "archive" in old_error)
+            or ("unknown command" in old_error and ('"env"' in old_error or "archive" in old_error))
+        )
+        if unsupported:
+            return "unsupported"
+        raise RuntimeError(f"released N-1 archive rollback failed (exit {attempt.returncode}); see released-archive-rollback-attempt.json")
+    try:
+        receipt = json.loads(attempt.stdout)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError("released N-1 archive rollback returned invalid JSON") from error
+    for key in ("artifactDigest", "materializationId"):
+        if not isinstance(receipt, dict) or not expected_receipt.get(key) or receipt.get(key) != expected_receipt[key]:
+            raise RuntimeError(f"released N-1 archive rollback {key} differs from candidate")
+    return "imported"
+
+
 @task
 def selfHost(c):
     """Exercise released-to-candidate and candidate-to-released self-hosting."""
@@ -908,7 +929,12 @@ def selfHost(c):
         _validate_rebased_legacy_closure(legacy_before, legacy_after_upgrade, home_a)
         if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
             raise RuntimeError("candidate archive upgrade changed canonical archive bytes")
-        old_command = [released, "env", "acquire", "--archive", str(archive), "--json"]
+        # Use the same explicit local fixture trust policy for both versions.
+        old_command = [released, *candidate_command[1:]]
+        artifact_root = home_a / "artifacts" / "v1"
+        verification_name = artifact_digest.replace(":", "_")
+        audit_paths = ("content/.audit", f"verification/{verification_name}.history.jsonl")
+        audit_before = {name: (artifact_root / name).read_bytes() for name in audit_paths}
         old_attempt = subprocess.run(old_command, env=candidate_env, capture_output=True, text=True)
         old_attempt_path = root / "released-archive-rollback-attempt.json"
         old_attempt_path.write_text(json.dumps({
@@ -920,13 +946,21 @@ def selfHost(c):
         artifact_evidence.append(old_attempt_path)
         commands.append({"step": "released-archive-rollback-attempt", "argv": old_command,
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(old_attempt_path)})
-        old_error = (old_attempt.stdout + "\n" + old_attempt.stderr).lower()
-        unsupported_archive_cli = old_attempt.returncode != 0 and (
-            ("unknown flag" in old_error and "archive" in old_error)
-            or ("unknown command" in old_error and ('"env"' in old_error or "archive" in old_error))
-        )
-        if not unsupported_archive_cli:
-            raise RuntimeError("released N-1 archive rollback was not the expected unsupported CLI error")
+        archive_rollback = _validate_archive_rollback(old_attempt, candidate_receipt)
+        artifact_after_archive = _state_digests(artifact_root)
+        # Supported import appends audit history and refreshes its verification receipt.
+        # Every other artifact file, including trust policy and materialization state,
+        # must remain byte-identical. Legacy consumption below must change nothing.
+        refreshed = {*audit_paths, f"verification/{verification_name}.json"} if archive_rollback == "imported" else set()
+        if {k: v for k, v in artifact_after_upgrade.items() if k not in refreshed} != {k: v for k, v in artifact_after_archive.items() if k not in refreshed}:
+            raise RuntimeError("N-1 archive rollback changed artifact content or materialization state")
+        for name, original in audit_before.items():
+            if not (artifact_root / name).read_bytes().startswith(original):
+                raise RuntimeError("N-1 archive rollback rewrote audit history")
+        if archive_rollback == "imported":
+            verification = json.loads((artifact_root / f"verification/{verification_name}.json").read_text())
+            if verification.get("valid") is not True or verification.get("artifactDigest") != artifact_digest or verification.get("policyMode") != "permissive-local":
+                raise RuntimeError("N-1 archive rollback did not persist a valid local trust receipt")
         legacy_command = [released, "task", "testrun", "--robot", str(fixture), "--task", "proof", "--no-outputs"]
         legacy = subprocess.run(legacy_command, check=True, env=candidate_env, capture_output=True, text=True)
         legacy_output = legacy.stdout + "\n" + legacy.stderr
@@ -944,15 +978,19 @@ def selfHost(c):
         _validate_rebased_legacy_closure(legacy_before, legacy_after_rollback, home_a)
         if legacy_after_rollback != legacy_after_upgrade:
             raise RuntimeError("N-1 legacy v12 consumption changed the rebased consumer closure")
-        if artifact_after_rollback != artifact_after_upgrade:
+        if artifact_after_rollback != artifact_after_archive:
             raise RuntimeError("N-1 artifact state was not stable after rollback consumption")
         rollback_receipt = root / "n1-rollback-state.json"
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
+            raise RuntimeError("N-1 archive rollback changed canonical archive bytes")
         rollback_receipt.write_text(json.dumps({"archiveSha256": archive_digest, "artifactDigest": artifact_digest,
+                                                "archiveRollback": archive_rollback,
                                                 "materializationId": candidate_receipt["materializationId"],
                                                 "legacyBefore": legacy_before,
                                                 "legacyAfterUpgrade": legacy_after_upgrade,
                                                 "legacyAfterRollback": legacy_after_rollback,
                                                 "artifactBefore": artifact_before,
+                                                "artifactAfterArchiveRollback": artifact_after_archive,
                                                 "artifactAfterRollback": artifact_after_rollback},
                                                indent=2, sort_keys=True) + "\n")
         artifact_evidence.append(rollback_receipt)
