@@ -80,6 +80,13 @@ func TestPrewarmStatusDoesNotHideUnprocessedItems(t *testing.T) {
 	}
 }
 
+func TestPrewarmStatusFailsClosedForUnknownItems(t *testing.T) {
+	items := []buildcoord.PrewarmItem{{Status: buildcoord.PrewarmStatus("future-status")}}
+	if got := prewarmStatus(items); got != string(buildcoord.PrewarmFailed) {
+		t.Fatalf("unknown prewarm status = %q, want failed", got)
+	}
+}
+
 func TestCoordinateRejectsMissingJSONBeforeMutation(t *testing.T) {
 	public, _, err := ed25519.GenerateKey(nil)
 	if err != nil {

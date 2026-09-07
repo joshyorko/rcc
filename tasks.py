@@ -1051,7 +1051,7 @@ func main() {
 		Digest: "sha256:" + strings.Repeat("a", 64), Verified: true,
 		ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "fixture",
 		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Source: "coordination-cli",
-		Completion: &buildcoord.CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "fixture", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "coordination-cli"},
+		Completion: &buildcoord.CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "fixture", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "cli"},
 	}
 	signature, err := artifacttrust.Sign(buildcoord.ArtifactTrustDigest(artifact), "build-key", private)
 	if err != nil { panic(err) }

@@ -57,7 +57,15 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		if !authorizationEnvPattern.MatchString(authorizationEnv) {
 			return buildcoord.Artifact{}, fmt.Errorf("provider authorization environment variable is required")
 		}
-		artifact := buildcoord.Artifact{Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest, Provider: provider, ProviderAuthorization: "environment:" + authorizationEnv, Source: source}
+		artifact := buildcoord.Artifact{
+			Digest: artifactDigest, Verified: true, ClosureDigest: closureDigest,
+			Provider: provider, ProviderAuthorization: "environment:" + authorizationEnv,
+			Source: source,
+			Completion: &buildcoord.CompletionReceipt{
+				ArtifactDigest: artifactDigest, Provider: provider,
+				ManifestCommitted: true, ObjectsVerified: true, Lifecycle: source,
+			},
+		}
 		if trustKeyID == "" || trustSignature == "" {
 			return artifact, fmt.Errorf("trusted signature is required")
 		}
@@ -99,18 +107,21 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		if !jsonOut {
 			return fmt.Errorf("--json is required")
 		}
+		var artifact buildcoord.Artifact
+		var err error
+		if artifactDigest != "" {
+			artifact, err = artifactFromFlags("cli")
+			if err != nil {
+				return write(cmd, coordinationResult{Key: key()}, err)
+			}
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
 		}
 		cl, out, err := coordinator.ClaimContext(cmd.Context(), key(), owner, ttl)
 		if err == nil && artifactDigest != "" && out == buildcoord.Claimed {
-			artifact, artifactErr := artifactFromFlags("cli")
-			if artifactErr != nil {
-				err = artifactErr
-			} else {
-				err = coordinator.Publish(cl, artifact)
-			}
+			err = coordinator.Publish(cl, artifact)
 		}
 		return write(cmd, coordinationResult{Key: key(), Claim: &cl, Outcome: out}, err)
 	}}
@@ -219,6 +230,8 @@ func prewarmStatus(items []buildcoord.PrewarmItem) string {
 	status := buildcoord.PrewarmReady
 	for _, item := range items {
 		switch item.Status {
+		case buildcoord.PrewarmReady:
+			continue
 		case buildcoord.PrewarmFailed:
 			return string(buildcoord.PrewarmFailed)
 		case buildcoord.PrewarmDegraded:
@@ -231,6 +244,8 @@ func prewarmStatus(items []buildcoord.PrewarmItem) string {
 			if status == buildcoord.PrewarmReady {
 				status = buildcoord.PrewarmCapacityLimited
 			}
+		default:
+			return string(buildcoord.PrewarmFailed)
 		}
 	}
 	return string(status)
