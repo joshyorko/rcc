@@ -570,6 +570,7 @@ class ArtifactTaskTests(unittest.TestCase):
 
     self.assertEqual(commands, [
         tasks._invoke_command("assets"),
+        "go build -ldflags -s -o build/ ./cmd/...",
         tasks._invoke_command("artifactFocused"),
         tasks._invoke_command("artifactRace"),
         tasks._invoke_command("artifactVertical"),

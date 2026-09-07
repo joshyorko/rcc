@@ -1000,9 +1000,12 @@ def releaseCandidate(c):
         "goVet",
         "coordinationAcceptance",
     )
-    commands = [_invoke_command("assets")]
+    candidate_build_command = "go build -ldflags -s -o build/ ./cmd/..."
+    commands = [_invoke_command("assets"), candidate_build_command]
     gates = {}
     c.run(commands[0])
+    Path("build").mkdir(exist_ok=True)
+    c.run(candidate_build_command, env=_contained_go_env())
     for task_name in task_names:
         command = _invoke_command(task_name)
         commands.append(command)
