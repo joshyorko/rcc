@@ -80,6 +80,31 @@ func TestPrewarmStatusDoesNotHideUnprocessedItems(t *testing.T) {
 	}
 }
 
+func TestCoordinateRejectsMissingJSONBeforeMutation(t *testing.T) {
+	public, _, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	root := t.TempDir()
+	command := newEnvironmentCoordinateCommand()
+	arguments := []string{
+		"claim", "--root", root, "--specification", "sha256:spec",
+		"--platform", "linux_amd64", "--builder", "v12-gzip-sha256",
+		"--owner", "worker", "--trust-key-id", "build-key",
+		"--trust-public-key", base64.RawStdEncoding.EncodeToString(public),
+	}
+	if err := runCobraCommand(command, arguments); err == nil {
+		t.Fatal("claim without --json unexpectedly succeeded")
+	}
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 0 {
+		t.Fatalf("claim without --json mutated coordinator state: %v", entries)
+	}
+}
+
 func TestCoordinatePrewarmEmptyResultEmitsItemsArray(t *testing.T) {
 	public, _, err := ed25519.GenerateKey(nil)
 	if err != nil {

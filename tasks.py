@@ -839,7 +839,7 @@ def selfHost(c):
 
     invoke(released, home_a, "selfHostBuild", "released")
     generation_a = Path("build/self-host/released/rcc")
-    promotion = _promote_self_host_generation(generation_a, Path("build/rcc"))
+    promotion = _promote_self_host_generation(generation_a, Path("build") / "self-host" / "promoted" / "rcc")
     candidate = Path(promotion["candidate"])
     candidate_info = _binary_metadata(candidate)
     invoke(str(candidate), home_a, "selfHostProbe")
@@ -1008,7 +1008,12 @@ def releaseCandidate(c):
         commands.append(command)
         c.run(command)
         gates[task_name] = "passed"
-    _validate_promotion_receipts(receipt_root, _exact_commit_sha())
+    candidate_sha = _exact_commit_sha()
+    _validate_promotion_receipts(receipt_root, candidate_sha)
+    source_binary = Path("build/rcc")
+    coordination_receipt = json.loads((receipt_root / "coordination-blackbox-v1.json").read_text())
+    if coordination_receipt.get("binarySha256") != hashlib.sha256(source_binary.read_bytes()).hexdigest():
+        raise RuntimeError("coordination receipt binary does not match the exact release binary")
     receipt = _write_release_candidate_receipt(
         receipt_root, source=Path("build/rcc"),
         commands=commands, gates=gates)
@@ -1046,6 +1051,7 @@ func main() {
 		Digest: "sha256:" + strings.Repeat("a", 64), Verified: true,
 		ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "fixture",
 		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Source: "coordination-cli",
+		Completion: &buildcoord.CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "fixture", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "coordination-cli"},
 	}
 	signature, err := artifacttrust.Sign(buildcoord.ArtifactTrustDigest(artifact), "build-key", private)
 	if err != nil { panic(err) }
@@ -1093,9 +1099,12 @@ func main() {
             if completed.returncode != 0:
                 raise RuntimeError(f"coordination CLI failed: {combined[-4000:]}")
             try:
-                return json.loads(completed.stdout)
+                payload = json.loads(completed.stdout)
             except json.JSONDecodeError as error:
                 raise RuntimeError(f"coordination CLI returned invalid JSON: {completed.stdout!r}") from error
+            if payload.get("schemaVersion") != 1 or payload.get("operation") != arguments[0] or not payload.get("status") or not isinstance(payload.get("key"), dict):
+                raise RuntimeError(f"coordination CLI returned incomplete machine contract: {payload}")
+            return payload
 
         scenarios = {}
         artifact_spec = "sha256:" + "1" * 64
@@ -1270,7 +1279,7 @@ def local(c, do_test=True):
     tooling(c)
     if do_test:
         test(c)
-    c.run("go build -o build/ ./cmd/...")
+    c.run("go build -ldflags -s -o build/ ./cmd/...")
 
 
 @task(pre=[robotsetup, assets, local])

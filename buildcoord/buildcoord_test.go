@@ -139,7 +139,7 @@ func TestTrustVerifierBindsClosureAndProviderToKeyedSignature(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION"}
+	artifact := Artifact{Digest: "sha256:" + strings.Repeat("a", 64), Verified: true, ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "provider-a", ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Completion: &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider-a", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"}}
 	signature, err := artifacttrust.Sign(ArtifactTrustDigest(artifact), "build-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -246,9 +246,37 @@ func TestVerifyArtifactProofAcceptsEnvironmentReference(t *testing.T) {
 		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
 		Provider:              "provider",
 		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+		Completion:            &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"},
 	}
 	if err := VerifyArtifactProof(artifact); err != nil {
 		t.Fatalf("environment provider authorization reference rejected: %v", err)
+	}
+}
+
+func TestVerifyArtifactProofRequiresAuthoritativeCompletion(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+	}
+	if err := VerifyArtifactProof(artifact); !errors.Is(err, ErrUnverifiedArtifact) {
+		t.Fatalf("artifact without authoritative completion accepted: %v", err)
+	}
+}
+
+func TestArtifactTrustDigestBindsAuthoritativeCompletion(t *testing.T) {
+	artifact := Artifact{
+		Digest:                "sha256:" + strings.Repeat("a", 64),
+		ClosureDigest:         "sha256:" + strings.Repeat("b", 64),
+		Provider:              "provider",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION",
+		Completion:            &CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "provider", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "fixture"},
+	}
+	first := ArtifactTrustDigest(artifact)
+	artifact.Completion.Lifecycle = "changed"
+	if first == ArtifactTrustDigest(artifact) {
+		t.Fatal("authoritative completion is not bound to the artifact signature subject")
 	}
 }
 

@@ -164,11 +164,12 @@ type ExecutionReceipt struct {
 // digest-only signature. The reference never contains the runtime header.
 func ArtifactTrustDigest(artifact Artifact) string {
 	content, _ := json.Marshal(struct {
-		Digest                string `json:"digest"`
-		ClosureDigest         string `json:"closureDigest"`
-		Provider              string `json:"provider"`
-		ProviderAuthorization string `json:"providerAuthorization"`
-	}{artifact.Digest, artifact.ClosureDigest, artifact.Provider, artifact.ProviderAuthorization})
+		Digest                string             `json:"digest"`
+		ClosureDigest         string             `json:"closureDigest"`
+		Provider              string             `json:"provider"`
+		ProviderAuthorization string             `json:"providerAuthorization"`
+		Completion            *CompletionReceipt `json:"completion"`
+	}{artifact.Digest, artifact.ClosureDigest, artifact.Provider, artifact.ProviderAuthorization, artifact.Completion})
 	sum := sha256.Sum256(content)
 	return "sha256:" + hex.EncodeToString(sum[:])
 }
@@ -789,7 +790,7 @@ func (c *Filesystem) PublishIndependent(key BuildKey, artifact Artifact) (err er
 // VerifyArtifactProof validates complete closure metadata. Trust is established
 // by TrustVerifier's keyed artifacttrust policy, never by a caller hash.
 func VerifyArtifactProof(artifact Artifact) error {
-	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || !providerAuthorizationReferencePattern.MatchString(artifact.ProviderAuthorization) {
+	if !isSHA256Digest(artifact.Digest) || !isSHA256Digest(artifact.ClosureDigest) || artifact.Provider == "" || !providerAuthorizationReferencePattern.MatchString(artifact.ProviderAuthorization) || ValidateAuthoritativeCompletion(artifact) != nil {
 		return ErrUnverifiedArtifact
 	}
 	return nil

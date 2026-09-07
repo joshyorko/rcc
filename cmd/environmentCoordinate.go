@@ -96,6 +96,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return &buildcoord.Claim{Key: key(), Owner: owner, Epoch: epoch}
 	}
 	claim := &cobra.Command{Use: "claim", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
@@ -112,6 +115,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Claim: &cl, Outcome: out}, err)
 	}}
 	heartbeat := &cobra.Command{Use: "heartbeat", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
@@ -120,6 +126,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Claim: claim}, coordinator.Heartbeat(*claim, ttl))
 	}}
 	wait := &cobra.Command{Use: "wait", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
@@ -128,6 +137,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Outcome: out, Artifact: artifact}, err)
 	}}
 	release := &cobra.Command{Use: "release", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key(), Claim: claimFromFlags()}, err)
@@ -136,6 +148,9 @@ func newEnvironmentCoordinateCommand() *cobra.Command {
 		return write(cmd, coordinationResult{Key: key(), Claim: claim}, coordinator.Release(*claim))
 	}}
 	prewarm := &cobra.Command{Use: "prewarm", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
+		if !jsonOut {
+			return fmt.Errorf("--json is required")
+		}
 		coordinator, err := coord()
 		if err != nil {
 			return write(cmd, coordinationResult{Key: key()}, err)
