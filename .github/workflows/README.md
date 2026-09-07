@@ -44,7 +44,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 - **Runner:** `ubuntu-latest`
 - **Condition:** Only runs on trusted version tag pushes
 - **Steps:**
-  - Download and checksum the pinned N-1 RCC v18.18.1 binary
+  - Download and checksum the pinned N-1 RCC v18.19.3 binary
   - Run `releaseCandidate` through `developer/toolkit.yaml`
   - Prove the real A/B artifact vertical, full Robot suite, binary inventory,
     race tests, and two-generation self-host
