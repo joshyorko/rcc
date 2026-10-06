@@ -332,7 +332,7 @@ func TestS3StorageSignerAndRedirectBoundary(t *testing.T) {
 		if r.Header.Get("Authorization") != "fixture-signature" {
 			t.Error("signer was not applied")
 		}
-		http.Redirect(w, r, target.URL, 307)
+		http.Redirect(w, r, target.URL, http.StatusTemporaryRedirect)
 	}))
 	defer origin.Close()
 	s, err := NewS3Storage(S3StorageOptions{Endpoint: origin.URL, Bucket: "rcc-fixture", PathStyle: true, AllowInsecureHTTP: true, Signer: StorageSignFunc(func(r *http.Request) error { r.Header.Set("Authorization", "fixture-signature"); return nil })})

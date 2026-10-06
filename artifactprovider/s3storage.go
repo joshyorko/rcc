@@ -205,7 +205,7 @@ func (s *S3Storage) metadata(r *http.Response, d environmentartifact.Digest) (St
 	}
 	return StoredObject{Digest: d, Size: size, Revision: StorageRevision(revisions[0])}, nil
 }
-func (s *S3Storage) HeadObject(ctx context.Context, d environmentartifact.Digest) (StoredObject, error) {
+func (s *S3Storage) HeadObject(ctx context.Context, d environmentartifact.Digest) (object StoredObject, resultErr error) {
 	key, err := s.objectKey(d)
 	if err != nil {
 		return StoredObject{}, err
@@ -218,12 +218,26 @@ func (s *S3Storage) HeadObject(ctx context.Context, d environmentartifact.Digest
 	if err != nil {
 		return StoredObject{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { resultErr = closeStorageResponseBody(resp.Body, resultErr) }()
 	if resp.StatusCode != 200 {
 		return StoredObject{}, storageStatus(resp.StatusCode)
 	}
 	return s.metadata(resp, d)
 }
+
+// closeStorageResponseBody surfaces response cleanup failures without exposing
+// potentially sensitive details from a backend's Close error.
+func closeStorageResponseBody(body io.ReadCloser, resultErr error) error {
+	if err := body.Close(); err != nil {
+		closeErr := errors.New("close S3 storage response body")
+		if resultErr == nil {
+			return closeErr
+		}
+		return errors.Join(resultErr, closeErr)
+	}
+	return resultErr
+}
+
 func (s *S3Storage) GetObject(ctx context.Context, d environmentartifact.Descriptor) (io.ReadCloser, error) {
 	return s.openObject(ctx, d, "")
 }
@@ -248,13 +262,12 @@ func (s *S3Storage) openObject(ctx context.Context, d environmentartifact.Descri
 		return nil, err
 	}
 	if resp.StatusCode != 200 {
-		resp.Body.Close()
-		return nil, storageStatus(resp.StatusCode)
+		return nil, closeStorageResponseBody(resp.Body, storageStatus(resp.StatusCode))
 	}
 	info, err := s.metadata(resp, d.Digest)
 	if err != nil || info.Size != d.Size || (revision != "" && info.Revision != revision) {
-		resp.Body.Close()
-		return nil, fmt.Errorf("object metadata disagrees with descriptor: %w", ErrStorageIntegrity)
+		integrityErr := fmt.Errorf("object metadata disagrees with descriptor: %w", ErrStorageIntegrity)
+		return nil, closeStorageResponseBody(resp.Body, integrityErr)
 	}
 	return &storageVerifiedReader{body: resp.Body, ctx: ctx, hash: sha256.New(), digest: d.Digest.Hex(), size: d.Size}, nil
 }

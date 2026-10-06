@@ -29,7 +29,7 @@ func (s *S3Storage) ResolveHead(ctx context.Context, name string) (NamedHead, er
 	return h, err
 }
 
-func (s *S3Storage) readHead(ctx context.Context, name string) (NamedHead, []byte, error) {
+func (s *S3Storage) readHead(ctx context.Context, name string) (head NamedHead, document []byte, resultErr error) {
 	if !validStorageName(name) {
 		return NamedHead{}, nil, fmt.Errorf("invalid head name: %w", ErrStorageIntegrity)
 	}
@@ -41,7 +41,7 @@ func (s *S3Storage) readHead(ctx context.Context, name string) (NamedHead, []byt
 	if err != nil {
 		return NamedHead{}, nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { resultErr = closeStorageResponseBody(resp.Body, resultErr) }()
 	if resp.StatusCode != 200 {
 		return NamedHead{}, nil, storageStatus(resp.StatusCode)
 	}
