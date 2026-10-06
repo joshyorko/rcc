@@ -351,6 +351,36 @@ type storageRoundTripFunc func(*http.Request) (*http.Response, error)
 
 func (f storageRoundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
 func storageDigest(body []byte) string                                           { sum := sha256.Sum256(body); return hex.EncodeToString(sum[:]) }
+
+type storageResponseCloseTestBody struct{ closeErr error }
+
+func (storageResponseCloseTestBody) Read([]byte) (int, error) { return 0, io.EOF }
+func (body storageResponseCloseTestBody) Close() error        { return body.closeErr }
+
+func TestCloseStorageResponseBody(t *testing.T) {
+	if err := closeStorageResponseBody(storageResponseCloseTestBody{}, nil); err != nil {
+		t.Fatalf("nil close error got %v", err)
+	}
+
+	originalErr := errors.New("original response error")
+	if err := closeStorageResponseBody(storageResponseCloseTestBody{}, originalErr); err != originalErr {
+		t.Fatalf("successful close changed original error: got %v, want original error", err)
+	}
+
+	closeErr := errors.New("secret backend close response")
+	if err := closeStorageResponseBody(storageResponseCloseTestBody{closeErr: closeErr}, nil); err == nil || errors.Is(err, closeErr) || strings.Contains(err.Error(), "secret backend close response") {
+		t.Fatalf("close-only error was not redacted: %v", err)
+	}
+
+	combinedErr := closeStorageResponseBody(storageResponseCloseTestBody{closeErr: closeErr}, originalErr)
+	if !errors.Is(combinedErr, originalErr) {
+		t.Fatalf("combined error lost original error: %v", combinedErr)
+	}
+	if errors.Is(combinedErr, closeErr) || strings.Contains(combinedErr.Error(), "secret backend close response") {
+		t.Fatalf("close error leaked backend details: %v", combinedErr)
+	}
+}
+
 func TestS3StorageReadRejectsTrailingAndTruncatedBytes(t *testing.T) {
 	for _, body := range []string{"payload-extra", "pay"} {
 		t.Run(body, func(t *testing.T) {
@@ -537,7 +567,9 @@ func TestS3StorageLostWriteResponseReconcilesOnce(t *testing.T) {
 						if err != nil {
 							return nil, err
 						}
-						resp.Body.Close()
+						if err := resp.Body.Close(); err != nil {
+							return nil, err
+						}
 						if mode == "unreadable" {
 							f.mu.Lock()
 							f.forceGet = 503
