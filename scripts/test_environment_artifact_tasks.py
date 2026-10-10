@@ -112,6 +112,153 @@ class ArtifactTaskTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
           tasks._validate_archive_rollback(result, receipt)
 
+  def _archive_rollback_fixture(self, root):
+    artifact_digest = "sha256:" + "a" * 64
+    materialization_id = "consumer-space"
+    materialization_path = str(root.parent / "holotree" / materialization_id)
+    digest_dir = root / "materializations" / artifact_digest.removeprefix("sha256:")
+    digest_dir.mkdir(parents=True)
+    identity = {
+        "artifactDigest": artifact_digest,
+        "legacyBlueprintKey": "blueprint-key",
+        "materializationId": materialization_id,
+        "path": materialization_path,
+    }
+    ready = dict(identity, state="ready", createdAt="2026-10-10T00:00:00Z", verifiedAt="2026-10-10T00:00:01Z")
+    (digest_dir / "ready.json").write_text(json.dumps(ready, separators=(",", ":")))
+    (digest_dir / "references.json").write_text(json.dumps({"manifest": artifact_digest, "protected": []}))
+    provisional_paths = []
+    for state in ("verified-content", "materializing"):
+      path = digest_dir / f"{state}.json"
+      record = dict(identity, state=state, createdAt=ready["createdAt"], verifiedAt=ready["verifiedAt"])
+      path.write_text(json.dumps(record, separators=(",", ":")))
+      provisional_paths.append(path)
+    content = root / "content" / "objects" / "content-object"
+    content.parent.mkdir(parents=True)
+    content.write_bytes(b"immutable artifact bytes")
+    trust = root / "trust" / "policy.json"
+    trust.parent.mkdir(parents=True)
+    trust.write_bytes(b"immutable trust policy")
+    receipt = {
+        "artifactDigest": artifact_digest,
+        "materializationId": materialization_id,
+        "path": materialization_path,
+    }
+    return receipt, digest_dir, provisional_paths, content, trust
+
+  def test_archive_rollback_allows_only_candidate_provisional_record_removal(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      for path in provisional_paths:
+        path.unlink()
+      after = tasks._state_digests(artifact_root)
+      tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_unrelated_state_changes(self):
+    mutations = ("content", "trust", "ready", "references", "unrelated-removal", "unknown-state")
+    for mutation in mutations:
+      with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, content, trust = self._archive_rollback_fixture(artifact_root)
+        before = tasks._state_digests(artifact_root)
+        provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+        for path in provisional_paths:
+          path.unlink()
+        if mutation == "content":
+          content.write_bytes(b"changed artifact bytes")
+        elif mutation == "trust":
+          trust.write_bytes(b"changed trust policy")
+        elif mutation == "ready":
+          ready = digest_dir / "ready.json"
+          ready.write_text(ready.read_text().replace("consumer-space", "other-space"))
+        elif mutation == "references":
+          references = digest_dir / "references.json"
+          payload = json.loads(references.read_text())
+          payload["protected"].append("sha256:other")
+          references.write_text(json.dumps(payload))
+        elif mutation == "unrelated-removal":
+          (artifact_root / "content" / "objects" / "content-object").unlink()
+        elif mutation == "unknown-state":
+          (digest_dir / "unknown-state.json").write_text("{}")
+        after = tasks._state_digests(artifact_root)
+        with self.assertRaises(RuntimeError):
+          tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_provisional_mutation_addition_and_symlink_replacement(self):
+    for mutation in ("changed-bytes", "added-record", "unknown-identity", "symlink-replacement"):
+      with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+        record_path = provisional_paths[0]
+        original_record = record_path.read_bytes()
+        if mutation == "unknown-identity":
+          payload = json.loads(original_record)
+          payload["materializationId"] = "other-space"
+          record_path.write_text(json.dumps(payload, separators=(",", ":")))
+          with self.assertRaises(RuntimeError):
+            tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+          continue
+        if mutation == "added-record":
+          record_path.unlink()
+        before = tasks._state_digests(artifact_root)
+        provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+        if mutation == "changed-bytes":
+          record_path.write_text(record_path.read_text().replace("consumer-space", "other-space"))
+        elif mutation == "added-record":
+          record_path.write_bytes(original_record)
+        elif mutation == "symlink-replacement":
+          record_path.unlink()
+          record_path.symlink_to(digest_dir / "ready.json")
+        after = tasks._state_digests(artifact_root)
+        with self.assertRaises(RuntimeError):
+          tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_preexisting_nonregular_provisional_records(self):
+    for replacement in ("symlink", "directory"):
+      with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+        provisional_paths[0].unlink()
+        if replacement == "symlink":
+          provisional_paths[0].symlink_to(digest_dir / "ready.json")
+        else:
+          provisional_paths[0].mkdir()
+        with self.assertRaisesRegex(RuntimeError, "not a regular file"):
+          tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+
+  def test_archive_rollback_only_allows_provisional_cleanup_after_supported_import(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      for path in provisional_paths:
+        path.unlink()
+      after = tasks._state_digests(artifact_root)
+      with self.assertRaisesRegex(RuntimeError, "unsupported N-1 attempt removed"):
+        tasks._validate_archive_rollback_state(before, after, artifact_root, "unsupported", provisional)
+
+  def test_archive_rollback_does_not_allow_new_provisional_records(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      provisional_paths[1].unlink()
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      provisional_paths[1].write_text("{}")
+      after = tasks._state_digests(artifact_root)
+      with self.assertRaises(RuntimeError):
+        tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
   def test_self_host_legacy_fixture_declares_artifacts_directory(self):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn('condaConfigFile: conda.yaml\\nartifactsDir: output\\n', source)
