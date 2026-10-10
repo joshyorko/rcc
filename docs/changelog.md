@@ -1,6 +1,7 @@
 # rcc change log
 ## Unreleased
 
+<a name="v18196"></a>
 ## v18.19.6 (date: 10.10.2026)
 
 ### Fixes

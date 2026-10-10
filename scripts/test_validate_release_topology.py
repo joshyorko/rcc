@@ -1,10 +1,14 @@
 import json
+import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).parent))
 import validate_release_topology as topology
@@ -78,6 +82,42 @@ class ReleaseTopologyTests(unittest.TestCase):
         self.assertIsNotNone(validator, "release identity topology validator is missing")
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertEqual(validator(workflow), [])
+
+    def test_generated_index_changelog_fragment_resolves_to_release_heading(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        generator = re.search(r"(?ms)^          python3 << 'PYEOF'\n(.*?)^          PYEOF\s*$", workflow)
+        self.assertIsNotNone(generator, "release index generator heredoc is missing")
+        version_source = (REPOSITORY_ROOT / "common/version.go").read_text()
+        version = re.search(r"(?m)^\s*Version = `([^`]+)`", version_source)
+        self.assertIsNotNone(version, "RCC version constant is missing")
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "rcc-builds").mkdir()
+            (root / "existing.json").write_text(json.dumps({"tested": [], "edge": []}))
+            env = dict(os.environ, VERSION=version.group(1), DATE="10.10.2026", REPO="joshyorko/rcc")
+            result = subprocess.run(
+                [sys.executable, "-c", textwrap.dedent(generator.group(1))],
+                cwd=root,
+                env=env,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            index = json.loads((root / "rcc-builds/index.json").read_text())
+
+        generated = urlsplit(index["tested"][0]["changelog"]).fragment
+        changelog = (REPOSITORY_ROOT / "docs/changelog.md").read_text()
+        anchor_before_heading = re.search(
+            rf'<a\s+name="([^"]+)"\s*></a>\s*\n## {re.escape(version.group(1))} \(date:',
+            changelog,
+        )
+        self.assertIsNotNone(anchor_before_heading, f"explicit changelog anchor for {version.group(1)} is missing")
+        self.assertEqual(
+            generated,
+            anchor_before_heading.group(1),
+            f"index fragment #{generated} does not resolve to the explicit release anchor #{anchor_before_heading.group(1)}",
+        )
 
     def test_release_identity_topology_rejects_merge_checkout_and_sha_drift(self):
         validator = getattr(topology, "validate_release_identity_topology", None)
