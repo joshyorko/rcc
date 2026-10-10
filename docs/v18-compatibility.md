@@ -10,7 +10,7 @@ local or remote contracts.
 | Providers | Named profiles are additive; credentials are referenced by environment-variable name and local operation does not require provider configuration. |
 | Legacy remote | `rccremote` remains a separate binary and protocol; `/parts`, `/delta`, `RCC_REMOTE_ORIGIN`, and `RCC_REMOTE_AUTHORIZATION` remain supported. |
 | Home boundary | No mandatory `ROBOCORP_HOME` migration is introduced. |
-| Runtime support | The proven artifact lifecycle is Linux-first; other platforms retain their existing v18 support, but are not implied to have v1 lifecycle parity. |
+| Runtime support | The same-platform, private-home Environment Artifact A→B lifecycle passed native jobs in release run [34149302701](https://github.com/joshyorko/rcc/actions/runs/34149302701), source `d1aec7d`, on Linux amd64, macOS amd64, macOS arm64, and Windows amd64. This historical evidence does not prove cross-platform artifact portability or complete ABI compatibility. |
 | Release assets | Each release retains `rcc` and `rccremote` for Linux amd64, macOS amd64, macOS arm64, and Windows amd64. |
 
 Environment Artifact identity does not include provider references, provider
@@ -37,13 +37,12 @@ versioned machine-readable CLI/JSON output; this release does not promise an
 arbitrary embeddable-Go-library API. That boundary does not reduce the
 Environment Artifacts program scope.
 
-Before v18.19.0 can be released, the RCC-owned acceptance criteria in #121,
-#122, #123, #124, #126, and #127 must be implemented and proven: full
-compatibility rejection,
-lease/crash/repair/GC, production providers and a second provider,
-deterministic offline carrier convergence, executable trust and revocation,
-and generic build coordination/prewarming. Internal `artifacttrust` or
-`buildcoord` seams alone do not satisfy those contracts.
+The #118/#120 program completion contract requires RCC-owned acceptance in
+#121, #122, #123, #124, #126, and #127 to pass with exact evidence before
+program closure. RCC v18.19.5 is published under the v18.19 compatibility
+contract above; publication status does not change the required acceptance
+criteria. Internal `artifacttrust` or `buildcoord` seams alone do not satisfy
+those contracts.
 
 #125 remains open as post-v18.19 materializer/storage performance research. Its
 comparative benchmark and optimization decision do not block this release.

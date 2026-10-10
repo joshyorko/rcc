@@ -14,11 +14,12 @@ rcc provider remove office --json
 
 Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
 via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
-only the authorization environment variable name. Its runtime value must be a
-complete `Authorization` header such as `Bearer token`; the value is not stored
-or emitted. `--authorization-env` is client-side configuration: it tells RCC
-where to read the outgoing header and does not configure authentication inside
-`rcc cache serve`. Omit it for the unauthenticated local loopback example above.
+only the authorization environment variable name. Its runtime value must be the
+complete `Authorization` header required by the endpoint; RCC neither assumes
+nor adds a scheme. The value is not stored or emitted. `--authorization-env` is
+client-side configuration: it tells RCC where to read the outgoing header and
+does not configure authentication inside `rcc cache serve`. Omit it for the
+unauthenticated local loopback example above.
 URLs are strict root-only URLs without userinfo, query, or fragment.
 HTTP is limited to explicit loopback hosts (`localhost`, `127.0.0.0/8`, or
 `::1`); remote endpoints require HTTPS. Redirects are not followed.
@@ -64,7 +65,10 @@ RCC client -- HTTPS + proxy authentication --> reverse proxy
 
 The proxy terminates TLS and enforces authentication; `rcc cache serve` remains
 the local immutable provider and is never exposed on a non-loopback address.
-For example, an nginx site can use:
+The nginx example below uses `auth_basic`, so its clients must supply an HTTP
+Basic `Authorization` value, `Basic <base64(username:password)>`, from their
+secret store. Other proxy configurations may require a different scheme chosen
+by the operator. For example, an nginx site can use:
 
 ```nginx
 server {
@@ -89,7 +93,10 @@ name in the profile. For example, the secret value stays in the client
 environment and is never passed as a CLI argument or stored by RCC:
 
 ```sh
-export RCC_PROVIDER_OFFICE_AUTHORIZATION="Bearer ${RCC_ARTIFACT_TOKEN}"
+# The secret store provides the complete Authorization header value. For the
+# nginx auth_basic example above this begins with "Basic "; another proxy may
+# use a different scheme.
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="${RCC_ARTIFACT_AUTHORIZATION}"
 rcc provider add office --type http --url https://artifacts.example.com \
   --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
 rcc provider test office --json
@@ -98,6 +105,67 @@ rcc provider test office --json
 Configure clients with the HTTPS proxy URL and repeat this environment setup
 wherever the profile is consumed. Do not replace `rcc cache serve` with `rccremote`:
 `rccremote` retains its separate `/parts` and `/delta` protocol.
+
+#### Artifact trust for local and remote providers
+
+Provider authentication protects HTTP transport. It does not sign an
+Environment Artifact or establish an artifact signer as trusted. `env acquire`
+defaults to `strict-remote`; it fails closed unless the detached trust set
+includes a valid signature, deployment-owned Ed25519 trust roots, and fresh
+revocation data. The HTTP provider URL does not imply that its artifact API
+serves the detached trust files. `env publish` writes generated provenance,
+SBOM, and revocation data to a local filesystem trust carrier by default; use
+an explicit `--trust-carrier` to select where that detached data is staged.
+
+For a controlled local development flow, publish and acquire with the same
+filesystem trust carrier and explicitly opt into unsigned local artifacts:
+
+```sh
+export ROBOCORP_HOME="$HOME/.rcc-provider-demo"
+rcc env publish --robot robot.yaml --provider office-local \
+  --trust-carrier "$ROBOCORP_HOME/artifacts/v1/trust" \
+  --trust-carrier-type filesystem --json
+# Copy the full artifactDigest from the publish result into this variable.
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office-local \
+  --trust-carrier "$ROBOCORP_HOME/artifacts/v1/trust" \
+  --trust-carrier-type filesystem --permissive-local --json
+```
+
+This unsigned example is for a controlled local development environment. Do
+not use `--permissive-local` for remote or production artifacts.
+
+For a remote deployment, sign at publish time using an Ed25519 private key
+controlled by the publisher. Deliver the resulting detached trust carrier
+through a trusted deployment channel, separately from the artifact provider.
+Consumers deploy the matching public-key trust roots and acquire under the
+default strict policy:
+
+```sh
+# Publisher: the private key remains in the publishing system's key store.
+rcc env publish --robot robot.yaml --provider office \
+  --trust-carrier /var/lib/rcc/artifact-trust --trust-carrier-type filesystem \
+  --signing-key /secure/path/rcc-ed25519-private.key \
+  --signing-key-id org-prod-2026 --json
+
+# Consumer: set the complete proxy Authorization header from its secret store.
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="${RCC_ARTIFACT_AUTHORIZATION}"
+rcc provider add office --type http --url https://artifacts.example.com \
+  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
+rcc provider test office --json
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
+  --trust-carrier /etc/rcc/artifact-trust --trust-carrier-type filesystem \
+  --trust-roots /etc/rcc/trust-roots.json --strict-remote --json
+```
+
+The trust-roots JSON maps signer IDs to base64-encoded Ed25519 public keys.
+The signer ID must match the publish `--signing-key-id`. The private key,
+public trust roots, detached carrier, and proxy Authorization credential have
+separate roles. Do not use a provider credential as an artifact signing key,
+and do not assume the HTTP artifact provider serves the trust carrier.
+The [README remote artifact guide](../README.md#signed-artifacts-for-remote-clients)
+shows the full client setup alongside the TLS/auth proxy configuration.
 
 Holotree is RCC's content-addressed storage system for Python environments. It is the
 innovation that transforms RCC from "a tool that creates Python environments" into
