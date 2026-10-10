@@ -3,6 +3,10 @@
 
 ### Fixes
 
+- accept padded and unpadded standard Base64 trust-root public keys in offline
+  `env trust verify`, matching runtime acquisition and execution while retaining
+  exact Ed25519 key sizes and strict signature verification
+
 - honor the parsed `--workers` limit when initializing the worker pool; retain
   the supported 2–96 range and CPU-scaled default while allowing queued
   startup work to complete
