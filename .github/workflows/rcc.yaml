@@ -44,7 +44,7 @@ jobs:
           fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.26.5"
+          go-version: "1.26.9"
       - name: Set up Python 3.10
         uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
@@ -99,7 +99,7 @@ jobs:
     env:
       RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       ROBOCORP_HOME: ${{ github.workspace }}/../rcc-release-candidate-home
-      RCC_SELF_HOST_EXPECTED_VERSION: v18.19.3
+      RCC_SELF_HOST_EXPECTED_VERSION: v18.19.5
       RCC_N1_BINARY: ${{ github.workspace }}/tmp/released-rcc/rcc
       RCC_N1_ARCHIVE: ${{ github.workspace }}/tmp/rcc-n1-environment.rcca
     steps:
@@ -122,9 +122,9 @@ jobs:
           rcc_path="${rcc_dir}/rcc"
           mkdir -p "$rcc_dir"
           curl --fail --show-error --location --retry 3 \
-            https://github.com/joshyorko/rcc/releases/download/v18.19.3/rcc-linux64 \
+            https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-linux64 \
             --output "$rcc_path"
-          echo "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428  ${rcc_path}" | sha256sum --check -
+          echo "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e  ${rcc_path}" | sha256sum --check -
           chmod +x "$rcc_path"
           echo "$rcc_dir" >> "$GITHUB_PATH"
       - name: Install Linux sandbox dependency
@@ -215,7 +215,7 @@ jobs:
           fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.26.5"
+          go-version: "1.26.9"
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
