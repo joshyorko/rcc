@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"crypto/ed25519"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/joshyorko/rcc/artifacttrust"
@@ -93,11 +92,11 @@ func newEnvironmentTrustCommand() *cobra.Command {
 		if keysFile != "" {
 			q.Keys = map[string]ed25519.PublicKey{}
 			for id, v := range encoded {
-				b, e := base64.RawStdEncoding.DecodeString(v)
-				if e != nil || len(b) != ed25519.PublicKeySize {
+				publicKey, err := decodePublicKey(v)
+				if err != nil {
 					return fmt.Errorf("invalid trust root")
 				}
-				q.Keys[id] = ed25519.PublicKey(b)
+				q.Keys[id] = publicKey
 			}
 		}
 		r := p.Verify(q)
