@@ -1,0 +1,313 @@
+{
+  "baseline_comparison_provenance": {
+    "baseline_raw_sha256": "caa3bfc291665d637ae15ed9281354d1fed9e8e2b659f2f465a34ee6a129dfaa",
+    "performance_comparison_valid": false,
+    "reason": "different RCC source/toolchain, separate publication, concurrent host load, and no repeated paired measurements",
+    "resolved_package_identities_equal": true
+  },
+  "binary_sha256": "039287e0863b198b352ae83621297ceca417af62516b9d0b5349b6397dd60428",
+  "cas_object_inventory": {
+    "all_indexed_object_sizes_match_provider": true,
+    "content_object_count": 5077,
+    "content_stored_bytes": 69488457,
+    "index_digest": "sha256:418862f1e74e86f7a415f911a6ae7d500e253e88d9a67c500a85f65c83e254fa",
+    "index_plus_metadata_bytes_match_publish_uploaded_bytes": true,
+    "manifest_digest": "sha256:4d6276272231341da76adeae4bbe6a0c732d04f3e350125e4e5c9d55eb4246a5",
+    "metadata_stored_bytes": 1998631,
+    "size_buckets": {
+      "4k_to_64k": 697,
+      "64k_and_over": 78,
+      "under_4k": 4302
+    },
+    "source": "published manifest objectIndex descriptors checked against dedicated filesystem provider immutable object files"
+  },
+  "cleared_env": [
+    "RCC_REMOTE_ORIGIN",
+    "CONDA_OFFLINE",
+    "MAMBA_OFFLINE",
+    "PIP_NO_INDEX",
+    "UV_NO_INDEX"
+  ],
+  "environment_overrides": {
+    "RCC_HOLOTREE_MODE": "private",
+    "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/performance/profile-680f/producer-home",
+    "TMPDIR": "/workspace/work/rcc-swarm/evidence/performance/profile-680f/tmp"
+  },
+  "finished_utc": "2026-10-10T22:17:20.198264+00:00",
+  "fixture_digest": "3485594108f512838aa8a5a2005fad7e1bf27e6c904b3c9e745e1c30f413f78b",
+  "fixture_files": {
+    "conda.yaml": "channels:\n  - conda-forge\ndependencies:\n  - python=3.11.17\n  - pyyaml=6.0.2\n",
+    "robot.yaml": "tasks:\n  proof:\n    command: [python, task.py]\ncondaConfigFile: conda.yaml\n",
+    "task.py": "import yaml\nprint(yaml.__version__)\n"
+  },
+  "go_toolchain": "go version go1.26.9 linux/amd64",
+  "host": {
+    "cpu_count": 5,
+    "filesystem": "overlayfs",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41"
+  },
+  "producer_home_cleanup": "Removed generated producer home after capturing 30 resolved package identities; dedicated provider, profile and receipts retained to reclaim disk.",
+  "profile_bytes": 48484,
+  "profile_sha256": "5710ec08b11529a63afa162b7d23ac9402079eb97122dd54d9e8eaf458f2f513",
+  "provider_server_returncode": 0,
+  "provider_url": "http://127.0.0.1:35039",
+  "publish_command": [
+    "/workspace/work/rcc-swarm/integration-release-pin/build/rcc",
+    "--pprof",
+    "/workspace/work/rcc-swarm/evidence/performance/profile-680f/publish.pprof",
+    "env",
+    "publish",
+    "--robot",
+    "/workspace/work/rcc-swarm/evidence/performance/profile-680f/fixture/robot.yaml",
+    "--provider",
+    "http://127.0.0.1:35039",
+    "--trust-carrier",
+    "/workspace/work/rcc-swarm/evidence/performance/profile-680f/trust",
+    "--trust-carrier-type",
+    "filesystem",
+    "--json"
+  ],
+  "publish_result": {
+    "artifactDigest": "sha256:4d6276272231341da76adeae4bbe6a0c732d04f3e350125e4e5c9d55eb4246a5",
+    "legacyBlueprintKey": "f9b35a68eec58385",
+    "objectCount": 5077,
+    "reusedBytes": 0,
+    "specificationDigest": "sha256:3b2e300c1c89a52a2d7daa96e25dc6b2ce1d185a08bbcfc925a2ca09a987f37f",
+    "uploadedBytes": 71487088
+  },
+  "publish_returncode": 0,
+  "resolved_packages": {
+    "packages": [
+      {
+        "build": "20_gnu",
+        "metadata_sha256": "1c980439a22136e5f2380ceae2497498f8f34c18b71670ddfe424a4ac09ceef7",
+        "name": "_openmp_mutex",
+        "package_sha256": "1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+        "version": "4.5"
+      },
+      {
+        "build": "hda65f42_10",
+        "metadata_sha256": "2d75c9b30906a6bae95b77955c65fe78af82f43781993a520e51440b783b627d",
+        "name": "bzip2",
+        "package_sha256": "1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96",
+        "version": "1.0.8"
+      },
+      {
+        "build": "hbd8a1cb_0",
+        "metadata_sha256": "6f764788d6bb83f4a05eab476b1e33416d30a3bd9d474df05e3d440b73fedf20",
+        "name": "ca-certificates",
+        "package_sha256": "0a0544cf95f64394fe4959286f5c71f5444ad58feb0602e53becb27448d24da6",
+        "version": "2026.7.22"
+      },
+      {
+        "build": "default_hbd61a6d_103",
+        "metadata_sha256": "c5e3b67d748d866e9259623a1cd038487ffc4e41678b312c295a0d1bbc1d1d4c",
+        "name": "ld_impl_linux-64",
+        "package_sha256": "901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28",
+        "version": "2.46.1"
+      },
+      {
+        "build": "hd2095e1_0",
+        "metadata_sha256": "0541b071af471bd0388b4d318216d9f07e198abd7a95470689d2e31d2276e1a9",
+        "name": "libexpat",
+        "package_sha256": "6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0",
+        "version": "2.8.5"
+      },
+      {
+        "build": "h81df57d_1",
+        "metadata_sha256": "929fbfd27e7fa5ae3a0974ce30a743d178601e642dc9121551ebe0650861c925",
+        "name": "libffi",
+        "package_sha256": "c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106",
+        "version": "3.7.0"
+      },
+      {
+        "build": "ha9f2e26_7",
+        "metadata_sha256": "ce91c7169c91437055d463face6acb47241514995d09d845a409827e44bdbc2e",
+        "name": "libgcc",
+        "package_sha256": "e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea",
+        "version": "16.2.0"
+      },
+      {
+        "build": "he0feb66_7",
+        "metadata_sha256": "94e95f1dc1b7e8d6b8b74bf9faf7163965465098984072708b549f962edfa178",
+        "name": "libgomp",
+        "package_sha256": "92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758",
+        "version": "16.2.0"
+      },
+      {
+        "build": "hb03c661_1",
+        "metadata_sha256": "bfc25b0863ce02383c68004c89e63cdabc0817c0a3dcd979e824b4b0409c3a50",
+        "name": "liblzma",
+        "package_sha256": "9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab",
+        "version": "5.8.3"
+      },
+      {
+        "build": "hb9d3cd8_1",
+        "metadata_sha256": "f0cff9514e3d29816c0da362759c3a0263dc2ad204cfbe61540a3a776ac1f773",
+        "name": "libnsl",
+        "package_sha256": "927fe72b054277cde6cb82597d0fcf6baf127dcbce2e0a9d8925a68f1265eef5",
+        "version": "2.0.1"
+      },
+      {
+        "build": "h0c77377_1_cpython",
+        "metadata_sha256": "ff0564cbeabd3923ce0b3e7931e6b96a002210f2d1eaa296659c8767e9e9f7fe",
+        "name": "libpython",
+        "package_sha256": "bad3de581c5b9f193a3b43d634a47df3e90e6fb89ff712b5f6903920640e4a07",
+        "version": "3.11.17"
+      },
+      {
+        "build": "h0737f62_101",
+        "metadata_sha256": "842acc9a4d23d603685e6fc35eaae01ce1139d00b800e573d0dd9998077c44e4",
+        "name": "libsqlite",
+        "package_sha256": "b4d5d4428bd1931eede11d2d69389c5b9d396a7f3c8df9d7c39c9efd80761eb3",
+        "version": "3.54.0"
+      },
+      {
+        "build": "h934c35e_7",
+        "metadata_sha256": "d9d918321631ca027de9ea88b38f82819950c1c8c290fe5641685a5b84ef80b3",
+        "name": "libstdcxx",
+        "package_sha256": "fa7018298629fc429971fffd6ecba3d27a7b02e4e890d6a93ea01ffebe8cb745",
+        "version": "16.2.0"
+      },
+      {
+        "build": "hcfc3c73_0",
+        "metadata_sha256": "e94d75104a2d882f2dfe4b4dc6178c40e821687096319fffd0b6ee66a965ffc5",
+        "name": "libuuid",
+        "package_sha256": "f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041",
+        "version": "2.42.4"
+      },
+      {
+        "build": "h280c20c_0",
+        "metadata_sha256": "178fae8019fc08b3ec39ed4ce9ea0aa4916ca162584f51948987a1316e9f3da1",
+        "name": "libxcrypt",
+        "package_sha256": "f7e9292dd219a6435bbb1223da9586c3e70d66d169c5a92f08db3f2127df04e9",
+        "version": "4.4.38"
+      },
+      {
+        "build": "h25fd6f3_3",
+        "metadata_sha256": "038646baef85b1e8913f712d5bcde5efa354754df2459aacb61d5a04ccfe7ec6",
+        "name": "libzlib",
+        "package_sha256": "eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736",
+        "version": "1.3.2"
+      },
+      {
+        "build": "hdb14827_1",
+        "metadata_sha256": "aa49d2469f37c9c9ad33ce819aa931c94af332fefd2400c5c70410ef43120cb8",
+        "name": "ncurses",
+        "package_sha256": "5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3",
+        "version": "6.6"
+      },
+      {
+        "build": "h781a0a9_0",
+        "metadata_sha256": "5e0c36513342763e600b6a76982270b175f0ca3488750f9b2f230f0e5dba5770",
+        "name": "openssl",
+        "package_sha256": "9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c",
+        "version": "3.6.5"
+      },
+      {
+        "build": "pyhc364b38_0",
+        "metadata_sha256": "17fc3bcd694491b1cb9c3a6cd43193715f937a40e37d9650bedc4f1115260423",
+        "name": "packaging",
+        "package_sha256": "c432626b16768b8dab228bfb706f7060c2d462a21c516d240f68f2f902b5a044",
+        "version": "26.3"
+      },
+      {
+        "build": "pyh8b19718_0",
+        "metadata_sha256": "34d06511f862d0e496d40b274eee70d12d5e4854cc349db089b98edea6b87336",
+        "name": "pip",
+        "package_sha256": "c205bae42eb11b364fe3663a817cbcbc20a8ef544c6b2ff6f391013487117259",
+        "version": "26.2.1"
+      },
+      {
+        "build": "h5f976f7_1_cpython",
+        "metadata_sha256": "b2d9ee781607abe9e10ba8ee64315fdefb6ec5d9fe69131b117d4da563454e08",
+        "name": "python",
+        "package_sha256": "524df25896667b5f7e391c2115495cac5e0077b97967981091af8afcc98fd312",
+        "version": "3.11.17"
+      },
+      {
+        "build": "9_cp311",
+        "metadata_sha256": "9d7fa17d3fff94d39643e3cb8a58724aa97934640457831fd083d92cc119e110",
+        "name": "python_abi",
+        "package_sha256": "bcfbad269758f4617035314fe379ee655bc2d9db5282e7a00d61450b7cefa3cf",
+        "version": "3.11"
+      },
+      {
+        "build": "py311h2dc5d0c_2",
+        "metadata_sha256": "b5feb3c5aea3ee3e0a820caebe3d2cb9636070fe39553d6717b1e13f3a336d10",
+        "name": "pyyaml",
+        "package_sha256": "d107ad62ed5c62764fba9400f2c423d89adf917d687c7f2e56c3bfed605fb5b3",
+        "version": "6.0.2"
+      },
+      {
+        "build": "hd6e31c0_1",
+        "metadata_sha256": "536126dd0ef061e3f83c4ecccbc2cf95b3b464c4c692eb88246c04ac1cbd9463",
+        "name": "readline",
+        "package_sha256": "01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d",
+        "version": "8.3"
+      },
+      {
+        "build": "pyh332efcf_0",
+        "metadata_sha256": "74fa02a012f7aa5ebb8dc3e7de8bc8f1b37519f673a0ac0756c6973d2157c4ca",
+        "name": "setuptools",
+        "package_sha256": "9e200ee5f9ff19a4d94e4b51c4856d53dec849f91032f345cf0c6bc3d51a7183",
+        "version": "84.0.0"
+      },
+      {
+        "build": "noxft_h1df4ec4_4",
+        "metadata_sha256": "09c2d63419e0a45a90fc56d0ca37ce42fe0933d0f2b87f5ea68816ad93a28745",
+        "name": "tk",
+        "package_sha256": "a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1",
+        "version": "8.6.13"
+      },
+      {
+        "build": "h151e31d_0",
+        "metadata_sha256": "280648e3ed68261ada6d9ddc7db7623c66dc84c50e8cadb17f26e9d9f662e253",
+        "name": "tzdata",
+        "package_sha256": "b928c30ddcb0e3f544c6eade8352737e6e610e263276b90232db6a578ef899d8",
+        "version": "2026c"
+      },
+      {
+        "build": "pyhd8ed1ab_0",
+        "metadata_sha256": "6b108dc5cad9316a32a4da058529e67d1907698d5bc8bdca13b12671883b14b6",
+        "name": "wheel",
+        "package_sha256": "ba64b29b6d418024cb565081a1799262cb2780d2534ff4c14f76aa858c4286cd",
+        "version": "0.48.0"
+      },
+      {
+        "build": "hebe6cf0_3",
+        "metadata_sha256": "4294f71dc8c052682af5e1926fabbee30fc1a1a7735e149e98ac2587a10dfcbe",
+        "name": "yaml",
+        "package_sha256": "d164dfa75ecd538f6fd68765defcc06aa875bc697b9b215362d79a2a73125dd0",
+        "version": "0.2.5"
+      },
+      {
+        "build": "hb78ec9c_7",
+        "metadata_sha256": "71dac7dbadf9c4a08b035a92fe17a50c1d17fa993fda06d43674e37004ce4710",
+        "name": "zstd",
+        "package_sha256": "47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60",
+        "version": "1.5.7"
+      }
+    ],
+    "status": "observed"
+  },
+  "rusage_scope": "RUSAGE_CHILDREN delta across publication; may include RCC-waited descendants; not comparable to pprof Go-process samples",
+  "server_command": [
+    "/workspace/work/rcc-swarm/integration-release-pin/build/rcc",
+    "cache",
+    "serve",
+    "--backend",
+    "filesystem",
+    "--root",
+    "/workspace/work/rcc-swarm/evidence/performance/profile-680f/provider",
+    "--listen",
+    "127.0.0.1:0",
+    "--json"
+  ],
+  "source_sha": "680f96638f0450dc79110dabd296e948713eb613",
+  "started_utc": "2026-10-10T22:16:47.476619+00:00",
+  "waited_children_cpu_system_seconds": 7.4525239999999995,
+  "waited_children_cpu_user_seconds": 24.558819,
+  "waited_children_max_rss_kib": 1424420,
+  "wall_seconds": 32.07681873999991
+}
