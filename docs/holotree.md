@@ -14,11 +14,12 @@ rcc provider remove office --json
 
 Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
 via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
-only the authorization environment variable name. Its runtime value must be a
-complete `Authorization` header such as `Bearer token`; the value is not stored
-or emitted. `--authorization-env` is client-side configuration: it tells RCC
-where to read the outgoing header and does not configure authentication inside
-`rcc cache serve`. Omit it for the unauthenticated local loopback example above.
+only the authorization environment variable name. Its runtime value must be the
+complete `Authorization` header required by the endpoint; RCC neither assumes
+nor adds a scheme. The value is not stored or emitted. `--authorization-env` is
+client-side configuration: it tells RCC where to read the outgoing header and
+does not configure authentication inside `rcc cache serve`. Omit it for the
+unauthenticated local loopback example above.
 URLs are strict root-only URLs without userinfo, query, or fragment.
 HTTP is limited to explicit loopback hosts (`localhost`, `127.0.0.0/8`, or
 `::1`); remote endpoints require HTTPS. Redirects are not followed.
@@ -64,7 +65,10 @@ RCC client -- HTTPS + proxy authentication --> reverse proxy
 
 The proxy terminates TLS and enforces authentication; `rcc cache serve` remains
 the local immutable provider and is never exposed on a non-loopback address.
-For example, an nginx site can use:
+The nginx example below uses `auth_basic`, so its clients must supply an HTTP
+Basic `Authorization` value, `Basic <base64(username:password)>`, from their
+secret store. Other proxy configurations may require a different scheme chosen
+by the operator. For example, an nginx site can use:
 
 ```nginx
 server {
@@ -89,7 +93,10 @@ name in the profile. For example, the secret value stays in the client
 environment and is never passed as a CLI argument or stored by RCC:
 
 ```sh
-export RCC_PROVIDER_OFFICE_AUTHORIZATION="Bearer ${RCC_ARTIFACT_TOKEN}"
+# The secret store provides the complete Authorization header value. For the
+# nginx auth_basic example above this begins with "Basic "; another proxy may
+# use a different scheme.
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="${RCC_ARTIFACT_AUTHORIZATION}"
 rcc provider add office --type http --url https://artifacts.example.com \
   --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
 rcc provider test office --json
