@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	defaultGoVersion  = "1.26.5"
+	defaultGoVersion  = "1.26.9"
 	defaultRccVersion = "v18.18.1"
 )
 
