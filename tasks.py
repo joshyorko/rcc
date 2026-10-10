@@ -8,6 +8,7 @@ import posixpath
 import re
 import shutil
 import shlex
+import stat
 import subprocess
 import sys
 import tempfile
@@ -45,6 +46,168 @@ def _state_digests(root):
         if path.is_file() and not path.is_symlink():
             state[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
     return state
+
+
+def _state_entries(root):
+    """Return every artifact-tree entry and type, including symlinks and empty directories."""
+    root = Path(root)
+    if not root.exists():
+        return {}
+    entries = {}
+    for path in root.rglob("*"):
+        info = path.lstat()
+        relative = str(path.relative_to(root))
+        if stat.S_ISDIR(info.st_mode):
+            entries[relative] = "directory"
+        elif stat.S_ISREG(info.st_mode):
+            entries[relative] = "file"
+        elif stat.S_ISLNK(info.st_mode):
+            entries[relative] = "symlink:" + os.readlink(path)
+        else:
+            entries[relative] = f"special:{info.st_mode}"
+    return entries
+
+
+_MATERIALIZATION_RECORD_FIELDS = {
+    "artifactDigest", "legacyBlueprintKey", "materializationId", "path",
+    "state", "createdAt", "verifiedAt",
+}
+
+
+def _read_regular_artifact_file(path, description):
+    """Read one regular artifact file without following a final-component symlink."""
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(path, flags)
+    except FileNotFoundError:
+        return None
+    except OSError as error:
+        raise RuntimeError(f"{description} is not a regular file: {path}") from error
+    if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+        os.close(descriptor)
+        raise RuntimeError(f"{description} is not a regular file: {path}")
+    with os.fdopen(descriptor, "rb") as stream:
+        return stream.read()
+
+
+def _decode_materialization_record(content, description, expected_state):
+    try:
+        record = json.loads(content)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(f"{description} is invalid JSON") from error
+    if not isinstance(record, dict) or set(record) != _MATERIALIZATION_RECORD_FIELDS:
+        raise RuntimeError(f"{description} has unknown or missing fields")
+    if any(not isinstance(record[field], str) or not record[field] for field in _MATERIALIZATION_RECORD_FIELDS):
+        raise RuntimeError(f"{description} has invalid identity or timestamp fields")
+    if record["state"] != expected_state:
+        raise RuntimeError(f"{description} has unexpected state {record['state']!r}")
+    return record
+
+
+def _capture_archive_rollback_provisional_records(artifact_root, candidate_receipt):
+    """Validate and snapshot this candidate's provisional records before N-1 import."""
+    if not isinstance(candidate_receipt, dict):
+        raise RuntimeError("candidate archive receipt is not an object")
+    artifact_digest = candidate_receipt.get("artifactDigest")
+    materialization_id = candidate_receipt.get("materializationId")
+    materialization_path = candidate_receipt.get("path")
+    if (not isinstance(artifact_digest, str)
+            or re.fullmatch(r"sha256:[0-9a-f]{64}", artifact_digest) is None
+            or not isinstance(materialization_id, str) or not materialization_id
+            or not isinstance(materialization_path, str) or not materialization_path):
+        raise RuntimeError("candidate archive receipt has invalid materialization identity")
+
+    digest_hex = artifact_digest.removeprefix("sha256:")
+    digest_dir = Path(artifact_root) / "materializations" / digest_hex
+    ready_relative = str(Path("materializations") / digest_hex / "ready.json")
+    ready_content = _read_regular_artifact_file(digest_dir / "ready.json", "authoritative ready record")
+    if ready_content is None:
+        raise RuntimeError("authoritative ready record is missing")
+    ready = _decode_materialization_record(ready_content, "authoritative ready record", "ready")
+    if (ready["artifactDigest"] != artifact_digest
+            or ready["materializationId"] != materialization_id
+            or ready["path"] != materialization_path):
+        raise RuntimeError("authoritative ready record differs from candidate receipt")
+
+    references_relative = str(Path("materializations") / digest_hex / "references.json")
+    references_content = _read_regular_artifact_file(digest_dir / "references.json", "authoritative references record")
+    if references_content is None:
+        raise RuntimeError("authoritative references record is missing")
+
+    paths = {}
+    for state in ("verified-content", "materializing"):
+        relative = str(Path("materializations") / digest_hex / f"{state}.json")
+        content = _read_regular_artifact_file(Path(artifact_root) / relative, "provisional materialization record")
+        paths[relative] = content
+        if content is None:
+            continue
+        record = _decode_materialization_record(content, f"provisional {state} record", state)
+        if any(record[field] != ready[field] for field in (
+                "artifactDigest", "legacyBlueprintKey", "materializationId", "path")):
+            raise RuntimeError(f"provisional {state} record differs from candidate and ready identity")
+
+    return {
+        "paths": paths,
+        "ready_path": ready_relative,
+        "ready_content": ready_content,
+        "references_path": references_relative,
+        "references_content": references_content,
+        "entries": _state_entries(artifact_root),
+    }
+
+
+def _validate_archive_rollback_state(before, after, artifact_root, rollback_status,
+                                     provisional_snapshot, mutable_paths=()):
+    """Allow only validated candidate intent-record cleanup during N-1 import."""
+    if rollback_status not in ("imported", "unsupported"):
+        raise RuntimeError(f"unknown N-1 archive rollback state: {rollback_status!r}")
+
+    def content_hash(content):
+        return hashlib.sha256(content).hexdigest()
+
+    ready_path = provisional_snapshot["ready_path"]
+    ready_hash = content_hash(provisional_snapshot["ready_content"])
+    if before.get(ready_path) != ready_hash or after.get(ready_path) != ready_hash:
+        raise RuntimeError("N-1 archive rollback changed authoritative ready state")
+    references_path = provisional_snapshot["references_path"]
+    references_hash = content_hash(provisional_snapshot["references_content"])
+    if before.get(references_path) != references_hash or after.get(references_path) != references_hash:
+        raise RuntimeError("N-1 archive rollback changed authoritative reference state")
+
+    allowed_removed = set()
+    for relative, original_content in provisional_snapshot["paths"].items():
+        original_hash = content_hash(original_content) if original_content is not None else None
+        if before.get(relative) != original_hash:
+            raise RuntimeError(f"pre-import provisional record snapshot differs: {relative}")
+        current_content = _read_regular_artifact_file(
+            Path(artifact_root) / relative, "post-import provisional materialization record"
+        )
+        if original_content is None:
+            if current_content is not None or relative in after:
+                raise RuntimeError(f"N-1 archive rollback added provisional state: {relative}")
+            continue
+        if current_content is None:
+            if rollback_status != "imported":
+                raise RuntimeError(f"unsupported N-1 attempt removed provisional state: {relative}")
+            if relative in after:
+                raise RuntimeError(f"provisional record disappeared after state snapshot: {relative}")
+            allowed_removed.add(relative)
+            continue
+        if current_content != original_content or after.get(relative) != original_hash:
+            raise RuntimeError(f"N-1 archive rollback mutated provisional state: {relative}")
+
+    expected_entries = dict(provisional_snapshot["entries"])
+    actual_entries = _state_entries(artifact_root)
+    for relative in allowed_removed:
+        expected_entries.pop(relative, None)
+    if expected_entries != actual_entries:
+        raise RuntimeError("N-1 archive rollback changed artifact entries outside candidate provisional cleanup")
+
+    ignored = set(mutable_paths) | allowed_removed
+    before_stable = {key: value for key, value in before.items() if key not in ignored}
+    after_stable = {key: value for key, value in after.items() if key not in ignored}
+    if before_stable != after_stable:
+        raise RuntimeError("N-1 archive rollback changed artifact content or materialization state")
 
 
 def _exact_commit_sha():
@@ -926,12 +1089,15 @@ def selfHost(c):
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(candidate_path)})
         legacy_after_upgrade = _legacy_closure_state(home_a, archive)
         artifact_after_upgrade = _state_digests(home_a / "artifacts" / "v1")
+        artifact_root = home_a / "artifacts" / "v1"
+        rollback_provisional = _capture_archive_rollback_provisional_records(
+            artifact_root, candidate_receipt
+        )
         _validate_rebased_legacy_closure(legacy_before, legacy_after_upgrade, home_a)
         if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
             raise RuntimeError("candidate archive upgrade changed canonical archive bytes")
         # Use the same explicit local fixture trust policy for both versions.
         old_command = [released, *candidate_command[1:]]
-        artifact_root = home_a / "artifacts" / "v1"
         verification_name = artifact_digest.replace(":", "_")
         audit_paths = ("content/.audit", f"verification/{verification_name}.history.jsonl")
         audit_before = {name: (artifact_root / name).read_bytes() for name in audit_paths}
@@ -948,12 +1114,13 @@ def selfHost(c):
                          "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(old_attempt_path)})
         archive_rollback = _validate_archive_rollback(old_attempt, candidate_receipt)
         artifact_after_archive = _state_digests(artifact_root)
-        # Supported import appends audit history and refreshes its verification receipt.
-        # Every other artifact file, including trust policy and materialization state,
-        # must remain byte-identical. Legacy consumption below must change nothing.
+        # Supported import appends audit history, refreshes its verification receipt,
+        # and reconciles only this candidate's two validated provisional records.
         refreshed = {*audit_paths, f"verification/{verification_name}.json"} if archive_rollback == "imported" else set()
-        if {k: v for k, v in artifact_after_upgrade.items() if k not in refreshed} != {k: v for k, v in artifact_after_archive.items() if k not in refreshed}:
-            raise RuntimeError("N-1 archive rollback changed artifact content or materialization state")
+        _validate_archive_rollback_state(
+            artifact_after_upgrade, artifact_after_archive, artifact_root,
+            archive_rollback, rollback_provisional, refreshed,
+        )
         for name, original in audit_before.items():
             if not (artifact_root / name).read_bytes().startswith(original):
                 raise RuntimeError("N-1 archive rollback rewrote audit history")
