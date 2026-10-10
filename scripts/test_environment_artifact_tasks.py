@@ -230,6 +230,49 @@ class ArtifactTaskTests(unittest.TestCase):
     for name, value in windows.items():
       self.assertEqual(environment[name], value)
 
+  def test_online_environment_artifact_environment_preserves_proxy_configuration(self):
+    proxy_names = (
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
+    )
+    configured = {name: f"http://{name.lower()}.example:8080" for name in proxy_names}
+    with mock.patch.dict(os.environ, configured, clear=True):
+      environment = artifact_robot_library.environment_artifact_process_environment("/tmp/online-home")
+    for name, value in configured.items():
+      self.assertEqual(environment[name], value)
+
+  def test_offline_environment_artifact_environment_overrides_all_proxy_casing(self):
+    proxy_names = (
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+    )
+    configured = {name: f"http://{name.lower()}.example:8080" for name in proxy_names}
+    configured.update({"NO_PROXY": "remote.example", "no_proxy": "remote.example"})
+    with mock.patch.dict(os.environ, configured, clear=True):
+      environment = artifact_robot_library.environment_artifact_process_environment("/tmp/offline-home", offline=True)
+    for name in proxy_names:
+      self.assertEqual(environment[name], "http://127.0.0.1:1")
+    self.assertEqual(environment["NO_PROXY"], "127.0.0.1,localhost")
+    self.assertEqual(environment["no_proxy"], "127.0.0.1,localhost")
+    for name, value in {
+        "CONDA_OFFLINE": "true",
+        "MAMBA_OFFLINE": "true",
+        "PIP_NO_INDEX": "1",
+        "UV_NO_INDEX": "1",
+        "RCC_NO_BUILD": "1",
+    }.items():
+      self.assertEqual(environment[name], value)
+
   def test_multi_platform_index_includes_the_native_runner_platform(self):
     manifest = {
         "artifactDigest": "sha256:" + "1" * 64,
