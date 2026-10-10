@@ -8,6 +8,11 @@
   Go 1.26.9 is available from Conda Forge, with the `go.mod` minimum selecting
   the official toolchain through Go's default automatic toolchain selection
 
+### Release Hardening
+
+- verify N-1 archive rollback against the latest published v18.19.5 binary,
+  pinned by its official asset checksum in the tag workflow
+
 ## v18.19.5 (date: 07.09.2026)
 
 ### Environment Artifacts
