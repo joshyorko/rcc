@@ -64,7 +64,9 @@ func init() {
 	failpipe = make(Failures)
 	errcount = make(Counters)
 	headcount = 0
-	AutoScale()
+	// Cobra has not parsed --workers yet. Keep early background work flowing
+	// with the minimum pool, then let initConfig grow it after parsing flags.
+	startWorkers(2)
 	go watcher(failpipe, errcount)
 }
 
@@ -83,6 +85,10 @@ func AutoScale() {
 	if limit < 2 {
 		limit = 2
 	}
+	startWorkers(limit)
+}
+
+func startWorkers(limit uint64) {
 	for headcount < limit {
 		go member(headcount)
 		headcount += 1
