@@ -1,6 +1,18 @@
 # rcc change log
 ## Unreleased
 
+## v18.19.6 (date: 10.10.2026)
+
+### Fixes
+
+- accept padded and unpadded standard Base64 trust-root public keys in offline
+  `env trust verify`, matching runtime acquisition and execution while retaining
+  exact Ed25519 key sizes and strict signature verification
+
+- honor the parsed `--workers` limit when initializing the worker pool; retain
+  the supported 2–96 range and CPU-scaled default while allowing queued
+  startup work to complete
+
 ### Security
 
 - use the Go 1.26.9 compiler for RCC builds and CI to include standard-library
@@ -12,6 +24,10 @@
 
 - verify N-1 archive rollback against the latest published v18.19.5 binary,
   pinned by its official asset checksum in the tag workflow
+
+- validate N-1 archive rollback against authoritative ready and reference
+  records while allowing successful imports to remove only matching
+  provisional intent records; preserve immutable content and trust state
 
 ## v18.19.5 (date: 07.09.2026)
 
