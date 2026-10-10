@@ -51,19 +51,22 @@ artifact commands:
 
 ```sh
 rcc provider add office --type http --url http://127.0.0.1:8080 \
-  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --json
+  --json
 rcc provider list --json
 rcc provider inspect office --json
 rcc provider test office --json
-rcc provider remove office --json
 rcc env publish --robot robot.yaml --provider office --json
-rcc env acquire --artifact sha256:<digest> --provider office --json
+# Copy the full artifactDigest value from the publish result into this variable.
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office --json
+rcc provider remove office --json
 ```
 
 `authorization-env` stores only the environment-variable name. When present,
-its value must be a complete HTTP `Authorization` header (for example,
-`Bearer token`); the secret is never persisted or printed. Provider URLs must
-be root-only with no userinfo, query, or fragment. HTTP is restricted to
+its value must be the complete HTTP `Authorization` header required by the
+provider; RCC does not add an authentication scheme. The secret is never
+persisted or printed. Provider URLs must be root-only with no userinfo, query,
+or fragment. HTTP is restricted to
 explicit loopback hosts (`localhost`, `127.0.0.0/8`, or `::1`); remote endpoints
 must use HTTPS. Redirects are rejected.
 The built-in `local` provider uses the local provider root; it is distinct from
@@ -91,8 +94,9 @@ In another terminal, configure a client profile and publish an environment:
 rcc provider add office-local --type http --url http://127.0.0.1:8080 --json
 rcc provider test office-local --json
 rcc env publish --robot robot.yaml --provider office-local --json
-# Copy the artifactDigest from the publish result.
-rcc env acquire --artifact sha256:<digest> --provider office-local --json
+# Copy the full artifactDigest value from the publish result into this variable.
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office-local --json
 ```
 
 To let RCC choose an available loopback port, run `rcc cache serve` and use
@@ -128,19 +132,26 @@ Authorization header:
 # Provider host
 rcc cache serve --listen 127.0.0.1:8787
 
-# Each client process; the value is supplied by the client's secret store.
-export RCC_PROVIDER_OFFICE_AUTHORIZATION="Bearer ${RCC_ARTIFACT_TOKEN}"
+# Each client process; this variable contains the complete header value from
+# the client's secret store. nginx auth_basic requires Basic credentials;
+# other proxy configurations may require a different scheme.
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="${RCC_ARTIFACT_AUTHORIZATION}"
 rcc provider add office --type http --url https://artifacts.example.com \
   --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
 rcc provider test office --json
 rcc env publish --robot robot.yaml --provider office --json
-rcc env acquire --artifact sha256:<digest> --provider office --json
+# Copy the full artifactDigest value from the publish result into this variable.
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office --json
 ```
 
 `--authorization-env` names a client-side environment variable containing the
 complete outgoing `Authorization` header. It does not configure server-side
 authentication. The [provider hosting guide](docs/holotree.md#hosting-an-environment-artifact-provider)
-includes a complete nginx TLS/auth example and deployment notes.
+includes a complete nginx TLS/auth example and deployment notes. For its
+`auth_basic` configuration, the secret store must provide a complete value
+such as `Basic <base64-encoded-username-and-password>`; other proxies use the
+scheme configured by their operator.
 
 ## Installing RCC from the command line
 
