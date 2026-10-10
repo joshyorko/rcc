@@ -20,6 +20,9 @@
 
 ### Release Hardening
 
+- verify N-1 archive rollback against the latest published v18.19.5 binary,
+  pinned by its official asset checksum in the tag workflow
+
 - validate N-1 archive rollback against authoritative ready and reference
   records while allowing successful imports to remove only matching
   provisional intent records; preserve immutable content and trust state
