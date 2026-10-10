@@ -1,6 +1,12 @@
 # rcc change log
 ## Unreleased
 
+### Fixes
+
+- honor the parsed `--workers` limit when initializing the worker pool; retain
+  the supported 2–96 range and CPU-scaled default while allowing queued
+  startup work to complete
+
 ### Security
 
 - use the Go 1.26.9 compiler for RCC builds and CI to include standard-library
