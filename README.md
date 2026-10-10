@@ -74,6 +74,74 @@ URLs remain supported. Provider names select transport only; the immutable
 `sha256:` Artifact digest remains the identity. The legacy `rccremote` protocol
 is classified as compatibility level A for v18.
 
+#### Host a local provider
+
+Run the provider in one terminal. RCC creates its default storage directory at
+`$ROBOCORP_HOME/artifacts/v1/provider` (or under its platform default home when
+that variable is unset); the server listens on loopback.
+For a fixed local URL, set an explicit loopback port:
+
+```sh
+rcc cache serve --listen 127.0.0.1:8080
+```
+
+In another terminal, configure a client profile and publish an environment:
+
+```sh
+rcc provider add office-local --type http --url http://127.0.0.1:8080 --json
+rcc provider test office-local --json
+rcc env publish --robot robot.yaml --provider office-local --json
+# Copy the artifactDigest from the publish result.
+rcc env acquire --artifact sha256:<digest> --provider office-local --json
+```
+
+To let RCC choose an available loopback port, run `rcc cache serve` and use
+the URL from its startup line. Add `--json` for a machine-readable startup
+receipt. See the [provider hosting guide](docs/holotree.md#hosting-an-environment-artifact-provider)
+for storage, backend, and lifecycle details.
+
+#### Host for remote clients
+
+Keep `rcc cache serve` on loopback and place a TLS reverse proxy, ingress, or
+tunnel in front of it. The edge terminates TLS and enforces authentication;
+the RCC server does not configure an authentication database and must not be
+bound directly to a public interface.
+
+```text
+Remote RCC client
+    | HTTPS + Authorization header
+    v
+TLS/auth reverse proxy (artifacts.example.com:443)
+    | HTTP to 127.0.0.1:8787
+    v
+rcc cache serve --listen 127.0.0.1:8787
+    |
+    v
+$ROBOCORP_HOME/artifacts/v1/provider
+```
+
+Start the server on the host, configure the reverse proxy to forward to
+`127.0.0.1:8787`, then configure each client with the HTTPS URL and its
+Authorization header:
+
+```sh
+# Provider host
+rcc cache serve --listen 127.0.0.1:8787
+
+# Each client process; the value is supplied by the client's secret store.
+export RCC_PROVIDER_OFFICE_AUTHORIZATION="Bearer ${RCC_ARTIFACT_TOKEN}"
+rcc provider add office --type http --url https://artifacts.example.com \
+  --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
+rcc provider test office --json
+rcc env publish --robot robot.yaml --provider office --json
+rcc env acquire --artifact sha256:<digest> --provider office --json
+```
+
+`--authorization-env` names a client-side environment variable containing the
+complete outgoing `Authorization` header. It does not configure server-side
+authentication. The [provider hosting guide](docs/holotree.md#hosting-an-environment-artifact-provider)
+includes a complete nginx TLS/auth example and deployment notes.
+
 ## Installing RCC from the command line
 
 > Links to changelog and different versions [available here](https://github.com/joshyorko/rcc/releases)
