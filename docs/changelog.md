@@ -14,6 +14,12 @@
   Go 1.26.9 is available from Conda Forge, with the `go.mod` minimum selecting
   the official toolchain through Go's default automatic toolchain selection
 
+### Release Hardening
+
+- validate N-1 archive rollback against authoritative ready and reference
+  records while allowing successful imports to remove only matching
+  provisional intent records; preserve immutable content and trust state
+
 ## v18.19.5 (date: 07.09.2026)
 
 ### Environment Artifacts
