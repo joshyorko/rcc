@@ -1,0 +1,23 @@
+File: compression-e2e
+Build ID: 3b6fd52876c355328c660d00ea8687963e17f601
+Type: cpu
+Time: 2026-10-11 20:18:58 UTC
+Duration: 1.74s, Total samples = 430ms (24.68%)
+Showing nodes accounting for 430ms, 100% of 430ms total
+Showing top 15 nodes out of 167
+      flat  flat%   sum%        cum   cum%
+     310ms 72.09% 72.09%      310ms 72.09%  internal/runtime/syscall/linux.Syscall6
+      10ms  2.33% 74.42%       20ms  4.65%  encoding/json.(*Decoder).readValue
+      10ms  2.33% 76.74%       10ms  2.33%  encoding/json.appendString[go.shape.string]
+      10ms  2.33% 79.07%       10ms  2.33%  encoding/json.isSpace
+      10ms  2.33% 81.40%       10ms  2.33%  fmt.(*buffer).write
+      10ms  2.33% 83.72%       60ms 13.95%  github.com/joshyorko/rcc/artifactprovider.openObjectDirectory
+      10ms  2.33% 86.05%       10ms  2.33%  internal/filepathlite.Clean
+      10ms  2.33% 88.37%       10ms  2.33%  runtime.(*semTable).rootFor
+      10ms  2.33% 90.70%       10ms  2.33%  runtime.concatstrings
+      10ms  2.33% 93.02%       10ms  2.33%  runtime.convTstring
+      10ms  2.33% 95.35%       10ms  2.33%  runtime.heapArenaOf
+      10ms  2.33% 97.67%       10ms  2.33%  runtime.memclrNoHeapPointers
+      10ms  2.33%   100%       10ms  2.33%  unicode/utf8.DecodeRuneInString
+         0     0%   100%       20ms  4.65%  encoding/json.(*Decoder).Decode
+         0     0%   100%       10ms  2.33%  encoding/json.(*Decoder).Token

@@ -1,0 +1,23 @@
+File: compression-e2e
+Build ID: 3b6fd52876c355328c660d00ea8687963e17f601
+Type: cpu
+Time: 2026-10-11 20:19:00 UTC
+Duration: 2.01s, Total samples = 490ms (24.42%)
+Showing nodes accounting for 490ms, 100% of 490ms total
+Showing top 15 nodes out of 169
+      flat  flat%   sum%        cum   cum%
+     320ms 65.31% 65.31%      320ms 65.31%  internal/runtime/syscall/linux.Syscall6
+      30ms  6.12% 71.43%       30ms  6.12%  runtime.typePointers.next
+      20ms  4.08% 75.51%       20ms  4.08%  runtime.memmove
+      10ms  2.04% 77.55%       20ms  4.08%  encoding/json.appendCompact
+      10ms  2.04% 79.59%       10ms  2.04%  encoding/json.stateEndValue
+      10ms  2.04% 81.63%       10ms  2.04%  encoding/json.stateInString
+      10ms  2.04% 83.67%       30ms  6.12%  github.com/joshyorko/rcc/artifactprovider.readVerifiedAt
+      10ms  2.04% 85.71%       10ms  2.04%  internal/runtime/atomic.(*Int32).Add
+      10ms  2.04% 87.76%       10ms  2.04%  internal/stringslite.IndexByte (inline)
+      10ms  2.04% 89.80%       10ms  2.04%  runtime.(*spanSet).push
+      10ms  2.04% 91.84%       10ms  2.04%  runtime.(*sweepLocked).sweep
+      10ms  2.04% 93.88%       10ms  2.04%  runtime.SetFinalizer.func2
+      10ms  2.04% 95.92%       10ms  2.04%  runtime.schedule
+      10ms  2.04% 97.96%       10ms  2.04%  strings.(*Builder).WriteString
+      10ms  2.04%   100%       10ms  2.04%  unicode/utf8.DecodeRune

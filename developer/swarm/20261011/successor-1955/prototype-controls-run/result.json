@@ -1,0 +1,25 @@
+{
+  "command": [
+    "strace",
+    "-f",
+    "-e",
+    "trace=chmod,fchmod,fchmodat,mkdir,mkdirat",
+    "-o",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-controls.trace",
+    "/workspace/rcc-successor-tools/directory-controls",
+    "/workspace/rcc-successor-lifecycle/prototype/controls"
+  ],
+  "returncode": 0,
+  "resource_stop": null,
+  "seconds": 0.2016048379999802,
+  "sampled_group_rss_max": 1703936,
+  "rss_scope": "sum of live process-group RSS; shared pages may double count and sampling misses peaks; not escaped-descendant quota proof",
+  "samples": [
+    {
+      "elapsed": 0.0013643309999906705,
+      "group_rss": 1703936,
+      "processes": 1,
+      "free": 31256395776
+    }
+  ]
+}

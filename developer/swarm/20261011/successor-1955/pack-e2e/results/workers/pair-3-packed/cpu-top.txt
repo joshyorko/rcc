@@ -1,0 +1,23 @@
+File: pack-e2e
+Build ID: b8fbb39140e502cad508ca506eb7540cbe9c031f
+Type: cpu
+Time: 2026-10-11 20:13:59 UTC
+Duration: 1.87s, Total samples = 520ms (27.85%)
+Showing nodes accounting for 520ms, 100% of 520ms total
+Showing top 15 nodes out of 176
+      flat  flat%   sum%        cum   cum%
+     390ms 75.00% 75.00%      390ms 75.00%  internal/runtime/syscall/linux.Syscall6
+      10ms  1.92% 76.92%       10ms  1.92%  bufio.(*Reader).ReadByte
+      10ms  1.92% 78.85%       10ms  1.92%  compress/flate.NewReader
+      10ms  1.92% 80.77%       10ms  1.92%  expandAVX512_26
+      10ms  1.92% 82.69%       10ms  1.92%  internal/abi.(*Type).IsDirectIface
+      10ms  1.92% 84.62%       10ms  1.92%  internal/strconv.atof64
+      10ms  1.92% 86.54%       10ms  1.92%  reflect.packEface
+      10ms  1.92% 88.46%       10ms  1.92%  regexp/syntax.(*Inst).MatchRunePos
+      10ms  1.92% 90.38%       10ms  1.92%  runtime.madvise
+      10ms  1.92% 92.31%       10ms  1.92%  runtime.mallocgcSmallNoscan
+      10ms  1.92% 94.23%       10ms  1.92%  runtime.mapassign_faststr
+      10ms  1.92% 96.15%       10ms  1.92%  runtime.osyield
+      10ms  1.92% 98.08%       10ms  1.92%  runtime.readUintptr
+      10ms  1.92%   100%       10ms  1.92%  runtime.typePointers.nextFast
+         0     0%   100%       10ms  1.92%  compress/flate.(*decompressor).Read

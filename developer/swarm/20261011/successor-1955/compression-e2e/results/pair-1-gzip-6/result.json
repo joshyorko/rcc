@@ -1,0 +1,186 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/compression-e2e",
+    "-mode=worker",
+    "-root",
+    "/workspace/rcc-successor-compression-2018/gzip-6",
+    "-python",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-arm",
+    "filesystem",
+    "-pair",
+    "1",
+    "-artifact-root",
+    "/workspace/rcc-successor-compression-2018/gzip-6/filesystem-provider",
+    "-pack-root",
+    "/workspace/rcc-successor-compression-2018/gzip-6/packed-sidecar",
+    "-artifact",
+    "sha256:1f79a4c30de0d8847cc8e31fa5a5e4c382faf184710d6f94b9a7aadcb32c1ff4",
+    "-index-sha",
+    "c45a7f66d27408c459237f69ea301b8b14f9f01f21b50bc3cb699704755191a0",
+    "-pack-sha",
+    "74196a7ba45181ac3bb30b195e7dfa520aa386409eccce85d1bfa8d72adb4873",
+    "-receipt",
+    "/workspace/rcc-successor-compression-2018/pair-1-gzip-6/worker.jsonl",
+    "-profile",
+    "/workspace/rcc-successor-compression-2018/pair-1-gzip-6/cpu.pprof"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 2.2719175279999035,
+  "sampled_tree_rss_max": 31080448,
+  "known_identities": {
+    "6985": "183362",
+    "6998": "183533",
+    "7004": "183554"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0016720950000035373,
+      "rss": 3473408,
+      "free": 31011631104,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 3473408,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 2085439
+    },
+    {
+      "elapsed": 0.2557439830000021,
+      "rss": 15466496,
+      "free": 31009816576,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 15466496,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2149229
+    },
+    {
+      "elapsed": 0.5560081799999352,
+      "rss": 15466496,
+      "free": 31007887360,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 15466496,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2217422
+    },
+    {
+      "elapsed": 0.8093099239999901,
+      "rss": 15728640,
+      "free": 31006076928,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 15728640,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2261575
+    },
+    {
+      "elapsed": 1.0999187959998835,
+      "rss": 16224256,
+      "free": 31003398144,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 16224256,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2278470
+    },
+    {
+      "elapsed": 1.4019508399999268,
+      "rss": 16224256,
+      "free": 31000207360,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 16224256,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2390129
+    },
+    {
+      "elapsed": 1.7331480989998909,
+      "rss": 29405184,
+      "free": 30996508672,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 16822272,
+          "state": "S"
+        },
+        {
+          "pid": 6998,
+          "ppid": 6985,
+          "pgid": 6985,
+          "start": "183533",
+          "rss": 12582912,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 2438033
+    },
+    {
+      "elapsed": 2.004351447999852,
+      "rss": 31080448,
+      "free": 30996516864,
+      "identities": [
+        {
+          "pid": 6985,
+          "ppid": 6984,
+          "pgid": 6985,
+          "start": "183362",
+          "rss": 17321984,
+          "state": "S"
+        },
+        {
+          "pid": 7004,
+          "ppid": 6985,
+          "pgid": 6985,
+          "start": "183554",
+          "rss": 13758464,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 2438033
+    }
+  ]
+}

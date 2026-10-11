@@ -1,0 +1,732 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/pack-e2e",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/pack-e2e/source/main.go"
+  ],
+  "returncode": 1,
+  "stop": null,
+  "seconds": 3.2464684879998913,
+  "sampled_tree_rss_max": 161026048,
+  "known_identities": {
+    "5274": "119836",
+    "5293": "119987",
+    "5298": "119988",
+    "5313": "120008",
+    "5309": "120006",
+    "5317": "120009",
+    "5321": "120032",
+    "5329": "120049",
+    "5325": "120045",
+    "5345": "120069",
+    "5341": "120068",
+    "5350": "120108"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0018008849999660015,
+      "rss": 7495680,
+      "free": 31256002560,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 7495680,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10296505499991326,
+      "rss": 23621632,
+      "free": 31255830528,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.2042003339997791,
+      "rss": 23621632,
+      "free": 31255830528,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.3055116249997809,
+      "rss": 23621632,
+      "free": 31255830528,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.4066951049999261,
+      "rss": 23621632,
+      "free": 31255830528,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5079034849998152,
+      "rss": 23621632,
+      "free": 31255830528,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6090718759999163,
+      "rss": 23621632,
+      "free": 31255728128,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.710257361999993,
+      "rss": 23621632,
+      "free": 31255728128,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.8114152509999712,
+      "rss": 23621632,
+      "free": 31255728128,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.9125414939999246,
+      "rss": 23621632,
+      "free": 31255728128,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 23621632,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.0136956929998178,
+      "rss": 24539136,
+      "free": 31255711744,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 24539136,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.114910798999972,
+      "rss": 25849856,
+      "free": 31255711744,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 25849856,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.2161897709997902,
+      "rss": 25849856,
+      "free": 31255711744,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 25849856,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.3173927379998531,
+      "rss": 25849856,
+      "free": 31255711744,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 25849856,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.4185472570000002,
+      "rss": 25849856,
+      "free": 31255711744,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 25849856,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.5198703389999082,
+      "rss": 58458112,
+      "free": 31255699456,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "R"
+        },
+        {
+          "pid": 5293,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "119987",
+          "rss": 20692992,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.6211272069999723,
+      "rss": 122748928,
+      "free": 31255691264,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5293,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "119987",
+          "rss": 44535808,
+          "state": "R"
+        },
+        {
+          "pid": 5298,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "119988",
+          "rss": 40448000,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.7235647249999602,
+      "rss": 78659584,
+      "free": 31253135360,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5309,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120006",
+          "rss": 24645632,
+          "state": "R"
+        },
+        {
+          "pid": 5313,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120008",
+          "rss": 16248832,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.8252662489999238,
+      "rss": 125321216,
+      "free": 31253012480,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5313,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120008",
+          "rss": 47972352,
+          "state": "S"
+        },
+        {
+          "pid": 5317,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120009",
+          "rss": 39583744,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.9264919999998256,
+      "rss": 152662016,
+      "free": 31253012480,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5313,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120008",
+          "rss": 59744256,
+          "state": "R"
+        },
+        {
+          "pid": 5317,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120009",
+          "rss": 55152640,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.02912913199998,
+      "rss": 144076800,
+      "free": 31251857408,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5313,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120008",
+          "rss": 73113600,
+          "state": "R"
+        },
+        {
+          "pid": 5321,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120032",
+          "rss": 33198080,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.1304811709999285,
+      "rss": 77049856,
+      "free": 31249342464,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5325,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120045",
+          "rss": 27947008,
+          "state": "S"
+        },
+        {
+          "pid": 5329,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120049",
+          "rss": 11337728,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.231849852999858,
+      "rss": 133611520,
+      "free": 31249342464,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5325,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120045",
+          "rss": 47669248,
+          "state": "S"
+        },
+        {
+          "pid": 5329,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120049",
+          "rss": 48177152,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.333232677999831,
+      "rss": 76914688,
+      "free": 31246467072,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5341,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120068",
+          "rss": 21561344,
+          "state": "R"
+        },
+        {
+          "pid": 5345,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120069",
+          "rss": 17588224,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.4367578809999486,
+      "rss": 130506752,
+      "free": 31246467072,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5341,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120068",
+          "rss": 49045504,
+          "state": "R"
+        },
+        {
+          "pid": 5345,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120069",
+          "rss": 43696128,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.5379639949999273,
+      "rss": 161026048,
+      "free": 31246467072,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5341,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120068",
+          "rss": 67899392,
+          "state": "R"
+        },
+        {
+          "pid": 5345,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120069",
+          "rss": 55361536,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.6391998939998302,
+      "rss": 123490304,
+      "free": 31245299712,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5341,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120068",
+          "rss": 85725184,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.7404385959998763,
+      "rss": 65339392,
+      "free": 31242792960,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5350,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120108",
+          "rss": 27574272,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.841606734999914,
+      "rss": 86519808,
+      "free": 31242792960,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5350,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120108",
+          "rss": 48754688,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 2.9427891149998686,
+      "rss": 105566208,
+      "free": 31242792960,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5350,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120108",
+          "rss": 67801088,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 3.0439965009998105,
+      "rss": 121556992,
+      "free": 31242792960,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5350,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120108",
+          "rss": 83791872,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 3.145280529999809,
+      "rss": 131780608,
+      "free": 31242792960,
+      "identities": [
+        {
+          "pid": 5274,
+          "ppid": 5271,
+          "pgid": 5274,
+          "start": "119836",
+          "rss": 37765120,
+          "state": "S"
+        },
+        {
+          "pid": 5350,
+          "ppid": 5274,
+          "pgid": 5274,
+          "start": "120108",
+          "rss": 94015488,
+          "state": "S"
+        }
+      ]
+    }
+  ]
+}

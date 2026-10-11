@@ -1,0 +1,23 @@
+File: compression-e2e
+Build ID: 3b6fd52876c355328c660d00ea8687963e17f601
+Type: cpu
+Time: 2026-10-11 20:19:05 UTC
+Duration: 1.72s, Total samples = 440ms (25.55%)
+Showing nodes accounting for 440ms, 100% of 440ms total
+Showing top 15 nodes out of 174
+      flat  flat%   sum%        cum   cum%
+     290ms 65.91% 65.91%      290ms 65.91%  internal/runtime/syscall/linux.Syscall6
+      30ms  6.82% 72.73%       30ms  6.82%  runtime.memmove
+      20ms  4.55% 77.27%       20ms  4.55%  regexp/syntax.(*Inst).MatchRunePos
+      20ms  4.55% 81.82%       20ms  4.55%  runtime.futex
+      10ms  2.27% 84.09%       10ms  2.27%  encoding/json.unquoteBytes
+      10ms  2.27% 86.36%       10ms  2.27%  internal/runtime/atomic.(*Uint32).CompareAndSwap
+      10ms  2.27% 88.64%       10ms  2.27%  io.MultiWriter
+      10ms  2.27% 90.91%       10ms  2.27%  reflect.Value.Addr
+      10ms  2.27% 93.18%       10ms  2.27%  runtime.(*mcentral).partialSwept
+      10ms  2.27% 95.45%       10ms  2.27%  runtime.(*mspan).writeHeapBitsSmall
+      10ms  2.27% 97.73%       10ms  2.27%  runtime.SetFinalizer
+      10ms  2.27%   100%       10ms  2.27%  runtime.memclrNoHeapPointers
+         0     0%   100%       10ms  2.27%  compress/flate.(*Writer).Write
+         0     0%   100%       10ms  2.27%  compress/flate.(*compressor).fillStore
+         0     0%   100%       10ms  2.27%  compress/flate.(*compressor).write

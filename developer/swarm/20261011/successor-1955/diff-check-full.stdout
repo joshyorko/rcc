@@ -1,0 +1,26 @@
+developer/swarm/20261011/successor-1955/pack-e2e/binary-metadata.txt:7: trailing whitespace.
++	dep	github.com/joshyorko/rcc	(devel)	
+developer/swarm/20261011/successor-1955/prototype.patch:4: space before tab in indent.
++ 	"math/rand"
+developer/swarm/20261011/successor-1955/prototype.patch:5: space before tab in indent.
++ 	"os"
+developer/swarm/20261011/successor-1955/prototype.patch:6: space before tab in indent.
++ 	"path/filepath"
+developer/swarm/20261011/successor-1955/prototype.patch:8: space before tab in indent.
++ 	"time"
+developer/swarm/20261011/successor-1955/prototype.patch:9: trailing whitespace.
++ 
+developer/swarm/20261011/successor-1955/prototype.patch:10: space before tab in indent.
++ 	"github.com/joshyorko/rcc/common"
+developer/swarm/20261011/successor-1955/prototype.patch:12: space before tab in indent.
++ 		return ensureCorrectMode(fullpath, stat, correct)
+developer/swarm/20261011/successor-1955/prototype.patch:13: space before tab in indent.
++ 	}
+developer/swarm/20261011/successor-1955/prototype.patch:14: space before tab in indent.
++ 	fail.On(err == nil, "Path %q exists, but is not a directory!", fullpath)
+developer/swarm/20261011/successor-1955/prototype.patch:33: space before tab in indent.
++ 	err = os.Mkdir(fullpath, correct)
+developer/swarm/20261011/successor-1955/prototype.patch:34: space before tab in indent.
++ 	fail.On(err != nil, "Failed to create directory %q, reason: %v", fullpath, err)
+developer/swarm/20261011/successor-1955/prototype.patch:35: space before tab in indent.
++ 	stat, err = os.Stat(fullpath)

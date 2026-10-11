@@ -1,0 +1,134 @@
+{
+  "ficlone_ioctl": "0x40049409",
+  "finished_unix_ns": 1791748259643941294,
+  "kernel": "6.18.44",
+  "payload_bytes": 65536,
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "policy": "one invocation only; refuses pre-existing receipt or probe names",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "roots": [
+    {
+      "all_checks_pass": false,
+      "clone_destination": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability/workspace-1955-clone.bin",
+      "fallback": {
+        "copy": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability/workspace-1955-copy.bin",
+        "copy_after_mutation": {
+          "identity": {
+            "device": 27,
+            "inode": 1052973,
+            "mode_octal": "0o600",
+            "size": 65536
+          },
+          "sha256": "a85ebe76235c9f14d526163d4569928efd97da952b09bf9a0ef0607071877f20"
+        },
+        "copy_before_mutation": {
+          "identity": {
+            "device": 27,
+            "inode": 1052973,
+            "mode_octal": "0o600",
+            "size": 65536
+          },
+          "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+        },
+        "copy_bytes_initially_equal": true,
+        "different_inode": true,
+        "source_after_copy_mutation": {
+          "identity": {
+            "device": 27,
+            "inode": 1052971,
+            "mode_octal": "0o640",
+            "size": 65536
+          },
+          "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+        },
+        "source_unchanged": true,
+        "symlink_path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability/workspace-1955-symlink",
+        "symlink_rejection": {
+          "errno": 22,
+          "errno_name": "EINVAL",
+          "error": "[Errno 22] source is not a regular file",
+          "rejected": true
+        }
+      },
+      "ficlone": {
+        "errno": 95,
+        "errno_name": "ENOTSUP",
+        "error": "[Errno 95] Operation not supported",
+        "supported": false
+      },
+      "root": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability",
+      "source": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability/workspace-1955-source.bin",
+      "source_before": {
+        "identity": {
+          "device": 27,
+          "inode": 1052971,
+          "mode_octal": "0o640",
+          "size": 65536
+        },
+        "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+      }
+    },
+    {
+      "all_checks_pass": false,
+      "clone_destination": "/tmp/rcc-successor-capability-1955/tmp-1955-clone.bin",
+      "fallback": {
+        "copy": "/tmp/rcc-successor-capability-1955/tmp-1955-copy.bin",
+        "copy_after_mutation": {
+          "identity": {
+            "device": 33,
+            "inode": 514,
+            "mode_octal": "0o600",
+            "size": 65536
+          },
+          "sha256": "a85ebe76235c9f14d526163d4569928efd97da952b09bf9a0ef0607071877f20"
+        },
+        "copy_before_mutation": {
+          "identity": {
+            "device": 33,
+            "inode": 514,
+            "mode_octal": "0o600",
+            "size": 65536
+          },
+          "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+        },
+        "copy_bytes_initially_equal": true,
+        "different_inode": true,
+        "source_after_copy_mutation": {
+          "identity": {
+            "device": 33,
+            "inode": 511,
+            "mode_octal": "0o640",
+            "size": 65536
+          },
+          "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+        },
+        "source_unchanged": true,
+        "symlink_path": "/tmp/rcc-successor-capability-1955/tmp-1955-symlink",
+        "symlink_rejection": {
+          "errno": 22,
+          "errno_name": "EINVAL",
+          "error": "[Errno 22] source is not a regular file",
+          "rejected": true
+        }
+      },
+      "ficlone": {
+        "errno": 95,
+        "errno_name": "ENOTSUP",
+        "error": "[Errno 95] Operation not supported",
+        "supported": false
+      },
+      "root": "/tmp/rcc-successor-capability-1955",
+      "source": "/tmp/rcc-successor-capability-1955/tmp-1955-source.bin",
+      "source_before": {
+        "identity": {
+          "device": 33,
+          "inode": 511,
+          "mode_octal": "0o640",
+          "size": 65536
+        },
+        "sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388"
+      }
+    }
+  ],
+  "started_unix_ns": 1791748259634353891
+}

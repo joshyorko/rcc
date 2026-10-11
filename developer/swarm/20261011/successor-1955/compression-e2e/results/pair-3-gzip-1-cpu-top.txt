@@ -1,0 +1,23 @@
+File: compression-e2e
+Build ID: 3b6fd52876c355328c660d00ea8687963e17f601
+Type: cpu
+Time: 2026-10-11 20:19:07 UTC
+Duration: 1.79s, Total samples = 440ms (24.59%)
+Showing nodes accounting for 440ms, 100% of 440ms total
+Showing top 15 nodes out of 148
+      flat  flat%   sum%        cum   cum%
+     310ms 70.45% 70.45%      310ms 70.45%  internal/runtime/syscall/linux.Syscall6
+      20ms  4.55% 75.00%       20ms  4.55%  runtime.memclrNoHeapPointers
+      10ms  2.27% 77.27%       10ms  2.27%  indexbytebody
+      10ms  2.27% 79.55%       10ms  2.27%  internal/runtime/maps.ctrlGroup.matchH2
+      10ms  2.27% 81.82%       10ms  2.27%  os.newFile
+      10ms  2.27% 84.09%       10ms  2.27%  reflect.(*rtype).Name
+      10ms  2.27% 86.36%       10ms  2.27%  runtime.(*pageBits).popcntRange
+      10ms  2.27% 88.64%       10ms  2.27%  runtime.futex
+      10ms  2.27% 90.91%       10ms  2.27%  runtime.memmove
+      10ms  2.27% 93.18%       10ms  2.27%  runtime.spanClass.sizeclass
+      10ms  2.27% 95.45%       10ms  2.27%  runtime.typePointers.next
+      10ms  2.27% 97.73%       10ms  2.27%  slices.insertionSortCmpFunc[go.shape.struct { encoding/json.v reflect.Value; encoding/json.ks string }]
+      10ms  2.27%   100%       10ms  2.27%  strings.ToLower
+         0     0%   100%       10ms  2.27%  compress/flate.(*dictDecoder).init (inline)
+         0     0%   100%       10ms  2.27%  compress/flate.NewReader

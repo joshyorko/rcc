@@ -1,0 +1,51 @@
+{
+  "1": {
+    "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "pack_bytes": 46058,
+    "samples": 3,
+    "cold_ms": [
+      1501.248,
+      1519.469,
+      1566.101
+    ],
+    "cold_median_ms": 1519.468568,
+    "warm_ms": [
+      237.955,
+      199.473,
+      220.515
+    ],
+    "warm_median_ms": 220.5146,
+    "acquire_median_ms": 1417.905061,
+    "warm_acquire_median_ms": 117.833983,
+    "execute_median_ms": 100.042139,
+    "warm_execute_median_ms": 95.268793
+  },
+  "6": {
+    "artifact": "sha256:1f79a4c30de0d8847cc8e31fa5a5e4c382faf184710d6f94b9a7aadcb32c1ff4",
+    "pack_bytes": 38746,
+    "samples": 3,
+    "cold_ms": [
+      1792.461,
+      1491.048,
+      1733.44
+    ],
+    "cold_median_ms": 1733.439531,
+    "warm_ms": [
+      210.779,
+      199.482,
+      209.832
+    ],
+    "warm_median_ms": 209.83179,
+    "acquire_median_ms": 1637.692476,
+    "warm_acquire_median_ms": 110.997176,
+    "execute_median_ms": 94.08807,
+    "warm_execute_median_ms": 97.744127
+  },
+  "stored_byte_reduction_percent": 15.875635068826266,
+  "paired_level1_minus_level6_cold_ms": [
+    -291.2126999999998,
+    28.4202479999999,
+    -167.338614
+  ],
+  "limitations": "Three tiny paired synthetic host-Python runs, OS caches uncontrolled/warm; no Actions or persistent worker acceptance; gzip construction cost not part of worker cold pipeline."
+}

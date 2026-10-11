@@ -1,0 +1,24 @@
+{
+  "command": [
+    "strace",
+    "-f",
+    "-e",
+    "trace=chmod,fchmod,fchmodat,mkdir,mkdirat",
+    "-o",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/import-baseline.trace",
+    "/workspace/rcc-successor-tools/import-isolated-probe"
+  ],
+  "returncode": 1,
+  "resource_stop": null,
+  "seconds": 0.20162468199998784,
+  "sampled_group_rss_max": 131072,
+  "rss_scope": "sum of live process-group RSS; shared pages may double count and sampling misses peaks; not escaped-descendant quota proof",
+  "samples": [
+    {
+      "elapsed": 0.00138963900002409,
+      "group_rss": 131072,
+      "processes": 1,
+      "free": 31273971712
+    }
+  ]
+}

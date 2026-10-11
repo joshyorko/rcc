@@ -1,0 +1,254 @@
+{
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "payload_source": "/workspace/rcc/blobs/assets/micromamba.linux_amd64.gz",
+  "linux_payload_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+  "payload_archive_sha256": "10692d7c8c48a2c0a30e94b601fc1dadf9891f795e6fafbac269791c6231cdb1",
+  "files": [
+    {
+      "path": "blobs/asset_test.go",
+      "bytes": 2168,
+      "sha256": "57e0b879cb62cc55a784498e3a6bb8d582662ed167ab39eaf8e04809c2d3facc"
+    },
+    {
+      "path": "blobs/assets/.gitignore",
+      "bytes": 36,
+      "sha256": "c84b36c1a91bbcfa455a2de3bf67236731349c201fe188be837412a5ed1b1b8b"
+    },
+    {
+      "path": "blobs/assets/depxtraction.py",
+      "bytes": 2836,
+      "sha256": "c98e9f4a75c141f0988a61aadcafaff2ffef5cad35224942a7499cd47d5d0dd9"
+    },
+    {
+      "path": "blobs/assets/extended.zip",
+      "bytes": 3410,
+      "sha256": "73b32dc2e6eac9922a202f395c5ac93bea6c5ee5219a3f0ef50f9628ec50e7af"
+    },
+    {
+      "path": "blobs/assets/externally_managed.txt",
+      "bytes": 1054,
+      "sha256": "065120c24ea9b035c4648c78e87d4410612ed4e397218a06bf82a2bf743e4d30"
+    },
+    {
+      "path": "blobs/assets/man/.gitignore",
+      "bytes": 6,
+      "sha256": "a41dcbdfa6856c6da8afa74cfe2a98a6234a827494f17cd91b15e5fd93d14ad7"
+    },
+    {
+      "path": "blobs/assets/man/LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "0d11304c49e51507076a4c4426041347a3936197793e2bca483028ab3b1d24b7"
+    },
+    {
+      "path": "blobs/assets/man/tutorial.txt",
+      "bytes": 2241,
+      "sha256": "13a56924f8caf5f75671e3aaae8a4af2799164dca28d18cdd8e9b7e9f5a57351"
+    },
+    {
+      "path": "blobs/assets/micromamba.linux_amd64.gz",
+      "bytes": 7108897,
+      "sha256": "10692d7c8c48a2c0a30e94b601fc1dadf9891f795e6fafbac269791c6231cdb1"
+    },
+    {
+      "path": "blobs/assets/micromamba_version.txt",
+      "bytes": 7,
+      "sha256": "af2e71d1a9783ed42afb476ffa6354e0693fb13007628a5d28e426756ca7f991"
+    },
+    {
+      "path": "blobs/assets/netdiag.yaml",
+      "bytes": 680,
+      "sha256": "18fcca87740649fcfa501c9bb66d7ecd515ba7a20acc41cf52c443f0fdc11462"
+    },
+    {
+      "path": "blobs/assets/python.zip",
+      "bytes": 951,
+      "sha256": "fe7de02708188eecc1f8fba060675cb80a02e4016e32022e4145523c5ecedbbc"
+    },
+    {
+      "path": "blobs/assets/robocorp_settings.yaml",
+      "bytes": 1442,
+      "sha256": "c2f44ba48ec2610ab4189ed2f5e2fcecb333de157927cbea91d8366a88edfd00"
+    },
+    {
+      "path": "blobs/assets/speedtest.yaml",
+      "bytes": 102,
+      "sha256": "7a6425649fde628c7fc7bb3dfb21d8dc37d8f6b8c16d9c524b9b7599a657e9c9"
+    },
+    {
+      "path": "blobs/assets/standard.zip",
+      "bytes": 979,
+      "sha256": "185e6d093d10546bc5aa61decd36d278a8fa92869130d211e30e9d4ad431e468"
+    },
+    {
+      "path": "blobs/assets/templates.yaml",
+      "bytes": 135,
+      "sha256": "42daa1de4770032e8899af70fef9dad033af9b71f43b8fbabf0bca6cd4e40680"
+    },
+    {
+      "path": "blobs/doc.go",
+      "bytes": 77,
+      "sha256": "3cf854cc323edf4536b0945b2394c11e38802c790edfe25285db04816a52b84b"
+    },
+    {
+      "path": "blobs/docs/.gitignore",
+      "bytes": 5,
+      "sha256": "8bf5a385c929e31553fda850fc06940106c8ba2a9ad2f7429fc642f8902918ff"
+    },
+    {
+      "path": "blobs/docs/BUILD.md",
+      "bytes": 805,
+      "sha256": "a50e4cf4484f9e9bd075509cf348414b729f9825a44cc14f72d56edebfbe29fd"
+    },
+    {
+      "path": "blobs/docs/README.md",
+      "bytes": 37064,
+      "sha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d"
+    },
+    {
+      "path": "blobs/docs/agent-boundaries.md",
+      "bytes": 2837,
+      "sha256": "fcc70d7b636485df678e11d8178ab9abd0806130682509e68692a5188be342e8"
+    },
+    {
+      "path": "blobs/docs/ai-ops-runbook.md",
+      "bytes": 1158,
+      "sha256": "4199e9838aee4e7600497c132ddc7568ef23b024e5aad55d4e813969cdae3898"
+    },
+    {
+      "path": "blobs/docs/change-classification.md",
+      "bytes": 928,
+      "sha256": "820362c0b9a35747ffa07a104013303c84b6f551300b2ea1f4e732fbb6b27a15"
+    },
+    {
+      "path": "blobs/docs/changelog.md",
+      "bytes": 116658,
+      "sha256": "e1d7bb7a3d320f2730155e3e1fd4d94c7d224a10a93e884a88f62a678bbce008"
+    },
+    {
+      "path": "blobs/docs/cloud-commands.md",
+      "bytes": 9487,
+      "sha256": "abf060c668851d3144f6a5b78a2f6c4eeb0815094d94d4243057348b856338cd"
+    },
+    {
+      "path": "blobs/docs/environment-artifact-compatibility.md",
+      "bytes": 2473,
+      "sha256": "320297e26afc9f2e3bbcb4f1fa8c39df3d96ced98b5364459bbbfb1b91fa2224"
+    },
+    {
+      "path": "blobs/docs/environment-artifact-trust.md",
+      "bytes": 3632,
+      "sha256": "ed2c9311c671e8a57036112e960d9296d0c5022dfbf3fb60f0d27f64ef41672b"
+    },
+    {
+      "path": "blobs/docs/environment-build-coordination.md",
+      "bytes": 8039,
+      "sha256": "11497f0d229bcf4c9f97c1c31f9e08f8f736d70809e59e94d5a33af390eef994"
+    },
+    {
+      "path": "blobs/docs/environment-caching.md",
+      "bytes": 8702,
+      "sha256": "f11228b45b22399f7f83e21a67af3a5dd5a8f7383fa830ab841c9fef754696c1"
+    },
+    {
+      "path": "blobs/docs/features.md",
+      "bytes": 2013,
+      "sha256": "820f64c36cb8dc898592a37d74504383e06add7b0821a2ac900c17885f1cbf3c"
+    },
+    {
+      "path": "blobs/docs/history.md",
+      "bytes": 16572,
+      "sha256": "a03071e7ee5666bef034426fa7f94b9dc735790404e9db78bbdbbbffb338c10a"
+    },
+    {
+      "path": "blobs/docs/holotree.md",
+      "bytes": 44150,
+      "sha256": "722f809054e4ad1d7d1a1e84b817c6312867a78f1182d48c94c7645e5bcbd30d"
+    },
+    {
+      "path": "blobs/docs/maintenance.md",
+      "bytes": 3920,
+      "sha256": "2adc953cab1f129ff5df2bf139b1db881755538dee3264fc939b07438cf48143"
+    },
+    {
+      "path": "blobs/docs/metrics.md",
+      "bytes": 1069,
+      "sha256": "9f4b9b820f1376664e6a7d8c6a8689adf7f0e196cb5f277d14a28e12118f5b3c"
+    },
+    {
+      "path": "blobs/docs/profile_configuration.md",
+      "bytes": 2346,
+      "sha256": "31ae93c2533f6b8882f20a0a61e25ba425a221b3b5f981892fa7dc7776d0d411"
+    },
+    {
+      "path": "blobs/docs/recipes.md",
+      "bytes": 40549,
+      "sha256": "271ff993b92c4ce1710ee0fdda4aa6398b19ad4735f3114396681c3bd649d4b4"
+    },
+    {
+      "path": "blobs/docs/release-process.md",
+      "bytes": 7417,
+      "sha256": "23899789d352c68fe7ce8e7e0920d702a3033299adcfe941d2bcc45b821f7b6f"
+    },
+    {
+      "path": "blobs/docs/review-rubric.md",
+      "bytes": 1187,
+      "sha256": "b3a1d1cfd00310bf9c6ea5a9dee57c57d251aafa939c606fe19859340bc940f4"
+    },
+    {
+      "path": "blobs/docs/roadmap.md",
+      "bytes": 8701,
+      "sha256": "14b42446fe633a31b3062921edf90b725360956d6b58cc79ec90229111a2d615"
+    },
+    {
+      "path": "blobs/docs/troubleshooting.md",
+      "bytes": 5862,
+      "sha256": "9197479def091ea2862f9915ca36213ce51582d75dfc7ac2020384fc04ab6ade"
+    },
+    {
+      "path": "blobs/docs/usecases.md",
+      "bytes": 1415,
+      "sha256": "cf6ac2024e199efa7a3ecd2d6948a002f5ce67e450e15fb39367ba4d73959f4e"
+    },
+    {
+      "path": "blobs/docs/v18-compatibility.md",
+      "bytes": 3512,
+      "sha256": "279b0ccde66546fd65a7fca3575b45c9116009204217478715676bd34c897d4e"
+    },
+    {
+      "path": "blobs/docs/venv.md",
+      "bytes": 4348,
+      "sha256": "2492f1125d8366d26681d04354f7b0fedd019964fc9b2c191210d63f28a12e78"
+    },
+    {
+      "path": "blobs/docs/vocabulary.md",
+      "bytes": 5114,
+      "sha256": "6e88e40700c766b964b8d68d98beee9d5d7ca87a36b3b8666d76b08455b7f168"
+    },
+    {
+      "path": "blobs/embedded.go",
+      "bytes": 864,
+      "sha256": "0eefbcfd3a2a6641e50ace58e9371552f2c17f389bc7858851c662f733bb52c8"
+    },
+    {
+      "path": "blobs/micromamba_darwin_amd64.go",
+      "bytes": 163,
+      "sha256": "b6a68f12115836e8a9bc9b8f88389570cc12a07536ade3c79c8448ba001f01f0"
+    },
+    {
+      "path": "blobs/micromamba_darwin_arm64.go",
+      "bytes": 163,
+      "sha256": "29dc6d618c20bc3af0d7fbbb20f972a0c6296be151d6a837e9b15cca765cf04a"
+    },
+    {
+      "path": "blobs/micromamba_linux.go",
+      "bytes": 161,
+      "sha256": "7fcd84aa7c7cfbc63453bdf83ae5a6260273e594e4bb837dd46748e047333c9f"
+    },
+    {
+      "path": "blobs/micromamba_windows.go",
+      "bytes": 165,
+      "sha256": "910e9251fe7772d1688e890256e462b06ab739e18244e0b49e9d4bc0891bf67a"
+    }
+  ],
+  "scope": "Linux diagnostic embeds; not shipping artifact equivalence."
+}

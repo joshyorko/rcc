@@ -1,0 +1,57 @@
+[
+  {
+    "name": "rcc-main",
+    "endpoint": "repos/joshyorko/rcc/commits/main",
+    "exit": 0
+  },
+  {
+    "name": "rcc125",
+    "endpoint": "repos/joshyorko/rcc/issues/125",
+    "exit": 0
+  },
+  {
+    "name": "rcc132",
+    "endpoint": "repos/joshyorko/rcc/issues/132",
+    "exit": 0
+  },
+  {
+    "name": "rcc185",
+    "endpoint": "repos/joshyorko/rcc/issues/185",
+    "exit": 0
+  },
+  {
+    "name": "rcc224",
+    "endpoint": "repos/joshyorko/rcc/pulls/224",
+    "exit": 0
+  },
+  {
+    "name": "rcc225",
+    "endpoint": "repos/joshyorko/rcc/pulls/225",
+    "exit": 0
+  },
+  {
+    "name": "actions133",
+    "endpoint": "repos/joshyorko/actions/issues/133",
+    "exit": 0
+  },
+  {
+    "name": "actions308",
+    "endpoint": "repos/joshyorko/actions/pulls/308",
+    "exit": 0
+  },
+  {
+    "name": "actions221",
+    "endpoint": "repos/joshyorko/actions/pulls/221",
+    "exit": 0
+  },
+  {
+    "name": "rcc-release-latest",
+    "endpoint": "repos/joshyorko/rcc/releases/latest",
+    "exit": 0
+  },
+  {
+    "name": "rcc-main-runs",
+    "endpoint": "repos/joshyorko/rcc/actions/runs?branch=main&per_page=12",
+    "exit": 0
+  }
+]

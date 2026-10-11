@@ -1,0 +1,23 @@
+File: pack-e2e
+Build ID: b8fbb39140e502cad508ca506eb7540cbe9c031f
+Type: cpu
+Time: 2026-10-11 20:13:51 UTC
+Duration: 1.72s, Total samples = 420ms (24.40%)
+Showing nodes accounting for 420ms, 100% of 420ms total
+Showing top 15 nodes out of 140
+      flat  flat%   sum%        cum   cum%
+     290ms 69.05% 69.05%      290ms 69.05%  internal/runtime/syscall/linux.Syscall6
+      20ms  4.76% 73.81%       20ms  4.76%  runtime.memclrNoHeapPointers
+      20ms  4.76% 78.57%       40ms  9.52%  runtime.scanObject
+      20ms  4.76% 83.33%       20ms  4.76%  runtime.typePointers.next
+      10ms  2.38% 85.71%       10ms  2.38%  encoding/json.(*scanner).eof
+      10ms  2.38% 88.10%       30ms  7.14%  encoding/json.Marshal
+      10ms  2.38% 90.48%       10ms  2.38%  encoding/json.Unmarshal
+      10ms  2.38% 92.86%       10ms  2.38%  encoding/json.appendString[go.shape.string]
+      10ms  2.38% 95.24%       10ms  2.38%  internal/bytealg.IndexByteString
+      10ms  2.38% 97.62%       10ms  2.38%  internal/runtime/atomic.(*Uint32).CompareAndSwap
+      10ms  2.38%   100%       10ms  2.38%  runtime.traceAcquire
+         0     0%   100%       10ms  2.38%  bufio.(*Reader).Read
+         0     0%   100%       10ms  2.38%  bufio.NewReader (inline)
+         0     0%   100%       10ms  2.38%  bufio.NewReaderSize (inline)
+         0     0%   100%       20ms  4.76%  compress/gzip.(*Reader).Reset

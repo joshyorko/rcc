@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/workspace/rcc-successor-experiments-2015",
+    "mode": "0o700",
+    "uid": 1000,
+    "gid": 1000
+  },
+  {
+    "path": "/workspace/rcc-successor-experiments-2015/pack",
+    "mode": "0o700",
+    "uid": 1000,
+    "gid": 1000
+  },
+  {
+    "path": "/workspace/rcc-successor-experiments-2015/coordinator-home",
+    "mode": "0o700",
+    "uid": 1000,
+    "gid": 1000
+  },
+  {
+    "path": "/workspace/rcc-successor-lifecycle/global-ht",
+    "mode": "0o750",
+    "uid": 1000,
+    "gid": 1000
+  }
+]

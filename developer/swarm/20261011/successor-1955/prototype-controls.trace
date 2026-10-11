@@ -1,0 +1,58 @@
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/journals", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/templates", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/bin", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/uvcache", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/pipcache", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/wheels", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/robots", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/pkgs", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/uv", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/uvpython", 0750) = 0
+4283  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4283  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4289  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4283  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4289  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4287  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4283  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4283  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=4283, si_uid=1000} ---
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/catalog", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/catalog", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/library", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/library", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/used", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/used", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/pids", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/rcc-home/hololib/pids", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/existing", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/badmode", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/link-target", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/filecase", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/shared", 0700) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/existing/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/existing/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/existing", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome/missing-home", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome/missing-home", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome/missing-home/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/nonhome/missing-home/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/filecase", 0750) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/filecase/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/filecase/child", 0750) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/badmode", 0777) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/shared", 0777) = 0
+4283  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/shared/child", 0777) = 0
+4283  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/prototype/controls/shared/child", 0777) = 0
+4289  +++ exited with 0 +++
+4288  +++ exited with 0 +++
+4290  +++ exited with 0 +++
+4287  +++ exited with 0 +++
+4286  +++ exited with 0 +++
+4284  +++ exited with 0 +++
+4285  +++ exited with 0 +++
+4283  +++ exited with 0 +++

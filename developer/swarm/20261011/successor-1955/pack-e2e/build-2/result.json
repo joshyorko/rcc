@@ -1,0 +1,180 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/pack-e2e",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/pack-e2e/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 0.7154370260000178,
+  "sampled_tree_rss_max": 232656896,
+  "known_identities": {
+    "5562": "127602",
+    "5580": "127609",
+    "5588": "127627"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0014465530000506988,
+      "rss": 7495680,
+      "free": 31240212480,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 7495680,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10280868000018017,
+      "rss": 64200704,
+      "free": 31240208384,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33771520,
+          "state": "S"
+        },
+        {
+          "pid": 5580,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127609",
+          "rss": 30429184,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20732751000014105,
+      "rss": 88956928,
+      "free": 31240208384,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33771520,
+          "state": "S"
+        },
+        {
+          "pid": 5580,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127609",
+          "rss": 55185408,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.3086407240000426,
+      "rss": 110149632,
+      "free": 31239413760,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33927168,
+          "state": "S"
+        },
+        {
+          "pid": 5588,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127627",
+          "rss": 76222464,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.4098380330001419,
+      "rss": 193175552,
+      "free": 31239413760,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33927168,
+          "state": "S"
+        },
+        {
+          "pid": 5588,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127627",
+          "rss": 159248384,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5111476370000219,
+      "rss": 232656896,
+      "free": 31239413760,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33927168,
+          "state": "S"
+        },
+        {
+          "pid": 5588,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127627",
+          "rss": 198729728,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6143162070000017,
+      "rss": 33927168,
+      "free": 31239413760,
+      "identities": [
+        {
+          "pid": 5562,
+          "ppid": 5559,
+          "pgid": 5562,
+          "start": "127602",
+          "rss": 33927168,
+          "state": "S"
+        },
+        {
+          "pid": 5588,
+          "ppid": 5562,
+          "pgid": 5562,
+          "start": "127627",
+          "rss": 0,
+          "state": "Z"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "roots": [
+    {
+      "copy_sha256_after_mutation": "a85ebe76235c9f14d526163d4569928efd97da952b09bf9a0ef0607071877f20",
+      "distinct_inode": true,
+      "ficlone_errno": "ENOTSUP",
+      "root": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/capability",
+      "source_sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388",
+      "verified": true
+    },
+    {
+      "copy_sha256_after_mutation": "a85ebe76235c9f14d526163d4569928efd97da952b09bf9a0ef0607071877f20",
+      "distinct_inode": true,
+      "ficlone_errno": "ENOTSUP",
+      "root": "/tmp/rcc-successor-capability-1955",
+      "source_sha256": "6fc179cfd193754e6109ad043f56d146c7e7d7c3623ffceae318266286f58388",
+      "verified": true
+    }
+  ],
+  "verification": "PASS"
+}

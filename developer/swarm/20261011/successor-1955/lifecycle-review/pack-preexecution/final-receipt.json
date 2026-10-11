@@ -1,0 +1,18 @@
+{
+  "source_sha256": "0f30a335f9a16ccba1640de8bdeb4beb9379a02560d409a9bd1459c4f9c0786a",
+  "disposition": "CONDITIONAL_GO_BUILD_ONLY_NO_GO_EXECUTION",
+  "review_scope": "read-only source admission; no build, preparation, worker, or E2E execution",
+  "blocking_findings": [
+    "packed-standard object-index cross-bind checks map lookup size but not membership; zero-sized unknown digest can compare as missing-key zero",
+    "scheduler does not postcheck immediate workerRoot; enclosing ancestors above configured root require external strict pre/post guard"
+  ],
+  "supervisor_control": {
+    "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+    "control_sha256": "14c72e5182a6507cdc5aabe3ae5705f09d70c77f5ee8bdf11cc3363c031d191d",
+    "result_sha256": "814c91ede3f4febf2b09ac1c067ceae2df88480dfbae30ca1bfd932b741bbe51",
+    "stop": "deadline",
+    "returncode": -15,
+    "final_observed_live_identities": []
+  },
+  "original_0700_failure_preserved": true
+}

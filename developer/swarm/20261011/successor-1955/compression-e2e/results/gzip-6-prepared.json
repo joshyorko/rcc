@@ -1,0 +1,15 @@
+{
+  "artifact": "sha256:1f79a4c30de0d8847cc8e31fa5a5e4c382faf184710d6f94b9a7aadcb32c1ff4",
+  "files": 513,
+  "fixture": "/workspace/rcc-successor-compression-2018/gzip-6/fixture.json",
+  "gzipLevel": 6,
+  "manifestSha256": "3c514443d2551c9244f85ca652e2dd102119253d084ca73566e2cf73c877d332",
+  "note": "preparation source only; no worker launch or execution from this lane",
+  "objectIndexSha256": "074aea0f71e06001eb9e4bf320d0c2ce5448c67afd16e3ada3b60404b1c5bbd6",
+  "packBytes": 38746,
+  "packIndexSha256": "c45a7f66d27408c459237f69ea301b8b14f9f01f21b50bc3cb699704755191a0",
+  "packRoot": "/workspace/rcc-successor-compression-2018/gzip-6/packed-sidecar",
+  "packSha256": "74196a7ba45181ac3bb30b195e7dfa520aa386409eccce85d1bfa8d72adb4873",
+  "providerRoot": "/workspace/rcc-successor-compression-2018/gzip-6/filesystem-provider",
+  "status": "PREPARED_ONLY"
+}

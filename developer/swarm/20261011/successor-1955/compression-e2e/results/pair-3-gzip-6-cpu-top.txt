@@ -1,0 +1,23 @@
+File: compression-e2e
+Build ID: 3b6fd52876c355328c660d00ea8687963e17f601
+Type: cpu
+Time: 2026-10-11 20:19:09 UTC
+Duration: 1.95s, Total samples = 470ms (24.12%)
+Showing nodes accounting for 470ms, 100% of 470ms total
+Showing top 15 nodes out of 136
+      flat  flat%   sum%        cum   cum%
+     320ms 68.09% 68.09%      320ms 68.09%  internal/runtime/syscall/linux.Syscall6
+      30ms  6.38% 74.47%       30ms  6.38%  runtime.typePointers.next
+      20ms  4.26% 78.72%       50ms 10.64%  runtime.scanObject
+      10ms  2.13% 80.85%       10ms  2.13%  compress/flate.(*decompressor).huffSym
+      10ms  2.13% 82.98%       10ms  2.13%  encoding/json.unquoteBytes
+      10ms  2.13% 85.11%       10ms  2.13%  memeqbody
+      10ms  2.13% 87.23%       10ms  2.13%  runtime.(*mspan).writeHeapBitsSmall
+      10ms  2.13% 89.36%       10ms  2.13%  runtime.extractHeapBitsSmall
+      10ms  2.13% 91.49%       10ms  2.13%  runtime.gcmarknewobject
+      10ms  2.13% 93.62%       10ms  2.13%  runtime.madvise
+      10ms  2.13% 95.74%       10ms  2.13%  runtime.nextFreeFast
+      10ms  2.13% 97.87%       10ms  2.13%  runtime.sellock
+      10ms  2.13%   100%      220ms 46.81%  syscall.Syscall
+         0     0%   100%       10ms  2.13%  compress/flate.(*decompressor).Read
+         0     0%   100%       10ms  2.13%  compress/flate.(*decompressor).huffmanBlock

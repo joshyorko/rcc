@@ -1,0 +1,23 @@
+File: pack-e2e
+Build ID: b8fbb39140e502cad508ca506eb7540cbe9c031f
+Type: cpu
+Time: 2026-10-11 20:13:56 UTC
+Duration: 1.81s, Total samples = 480ms (26.53%)
+Showing nodes accounting for 440ms, 91.67% of 480ms total
+Showing top 15 nodes out of 166
+      flat  flat%   sum%        cum   cum%
+     300ms 62.50% 62.50%      300ms 62.50%  internal/runtime/syscall/linux.Syscall6
+      10ms  2.08% 64.58%       10ms  2.08%  compress/flate.(*decompressor).huffSym
+      10ms  2.08% 66.67%       10ms  2.08%  compress/flate.(*huffmanBitWriter).indexTokens
+      10ms  2.08% 68.75%       10ms  2.08%  crypto/internal/fips140/sha256.blockSHANI
+      10ms  2.08% 70.83%       30ms  6.25%  encoding/json.(*Decoder).readValue
+      10ms  2.08% 72.92%       10ms  2.08%  encoding/json.stateInString
+      10ms  2.08% 75.00%       20ms  4.17%  encoding/json.structEncoder.encode
+      10ms  2.08% 77.08%      120ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.installLegacyImmutable
+      10ms  2.08% 79.17%       40ms  8.33%  github.com/joshyorko/rcc/environmentlifecycle.readProviderObject
+      10ms  2.08% 81.25%       10ms  2.08%  reflect.Value.Kind (inline)
+      10ms  2.08% 83.33%       10ms  2.08%  runtime.(*mLockProfile).store
+      10ms  2.08% 85.42%       10ms  2.08%  runtime.(*spanSet).push
+      10ms  2.08% 87.50%       10ms  2.08%  runtime.concatstrings
+      10ms  2.08% 89.58%       10ms  2.08%  runtime.mallocgcSmallScanNoHeader
+      10ms  2.08% 91.67%       10ms  2.08%  runtime.mallocgcTiny

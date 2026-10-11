@@ -1,0 +1,273 @@
+{
+  "command": [
+    "python3",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/supervisor-control.py"
+  ],
+  "returncode": -15,
+  "stop": "deadline",
+  "seconds": 1.0145419289999609,
+  "sampled_tree_rss_max": 25559040,
+  "known_identities": {
+    "5131": "113158",
+    "5132": "113159"
+  },
+  "final_observed_live_identities": [
+    {
+      "pid": 5132,
+      "ppid": 1,
+      "pgid": 5132,
+      "start": "113159",
+      "rss": 0,
+      "state": "R"
+    }
+  ],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Stdout/stderr are bounded by owned workload output plan and closed after wait.",
+  "launcher_sha256": "f1501d2221fe8fa2dcaed1f5a320bbc9d5abb9e00badf5b21e43c41eb0d606a5",
+  "samples": [
+    {
+      "elapsed": 0.0014569679999567597,
+      "rss": 1179648,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 1179648,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10259144799988462,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20372347599982277,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.30485963099999935,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.4059648410000136,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5070646109998052,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6082112509998296,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.7093721749999986,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.8105737599998974,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.911973461999878,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.013077039999871,
+      "rss": 25559040,
+      "free": 31256043520,
+      "identities": [
+        {
+          "pid": 5131,
+          "ppid": 5128,
+          "pgid": 5131,
+          "start": "113158",
+          "rss": 8650752,
+          "state": "S"
+        },
+        {
+          "pid": 5132,
+          "ppid": 5131,
+          "pgid": 5132,
+          "start": "113159",
+          "rss": 16908288,
+          "state": "S"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+go: downloading github.com/mitchellh/go-ps v1.0.0
+# command-line-arguments
+../rcc-continuation/developer/swarm/20261011/successor-1955/pack-e2e/source/main.go:400:10: cannot use out (variable of type struct{Implementation string "json:\"implementation\""; Version string "json:\"version\""; ABI string "json:\"abi\""}) as struct{Implementation string; Version string; ABI string} value in return statement
+../rcc-continuation/developer/swarm/20261011/successor-1955/pack-e2e/source/main.go:403:9: cannot use out (variable of type struct{Implementation string "json:\"implementation\""; Version string "json:\"version\""; ABI string "json:\"abi\""}) as struct{Implementation string; Version string; ABI string} value in return statement

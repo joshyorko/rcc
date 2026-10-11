@@ -1,0 +1,14 @@
+{
+  "artifact": "sha256:f5b34a80482d73d38928c05d93c2df799b6f9bec00ec94395b16e1963cf627a1",
+  "files": 513,
+  "fixture": "/workspace/rcc-successor-experiments-2015/pack/fixture.json",
+  "manifestSha256": "f018159d889f1bcb7534f8fc325388ff4ff70c9150b4b5716f286a1f347ef648",
+  "note": "preparation source only; no worker launch or execution from this lane",
+  "objectIndexSha256": "a860ea2b041713b5a948b8ef561fb82d488c288c311d8d997c49d1f76019c6b7",
+  "packBytes": 46058,
+  "packIndexSha256": "5519d8f53148205b89545de68ff11a69c6a038a24552b330815bc66364175541",
+  "packRoot": "/workspace/rcc-successor-experiments-2015/pack/packed-sidecar",
+  "packSha256": "16030f8a73bb92c37187d7df90dd9467e5490a153c03b08771f8299184f4719e",
+  "providerRoot": "/workspace/rcc-successor-experiments-2015/pack/filesystem-provider",
+  "status": "PREPARED_ONLY"
+}

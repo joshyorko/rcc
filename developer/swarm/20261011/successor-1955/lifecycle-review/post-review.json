@@ -1,0 +1,48 @@
+{
+  "verdict": "CONDITIONAL_SCOPED_GO_FOR_NEXT_OWNED_COMPARISON",
+  "scope": "Linux/amd64 overlay only; no production integration or general mode semantics",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "original_functions_sha256": "ba1e7697dcd2b1a239292def345391d0d5fcaf1d49f326dcc988728807f04dcc",
+  "prototype_overlay_sha256": "bdcebbd7598a7669bdb7c93cac220a708413d704f9c5a95b069191076624c270",
+  "prototype_patch_sha256": "cab5b473851f33e28532321cdb18216f12d2d9d9660e067c1e824f706658f81d",
+  "baseline": {
+    "build_exit": 0,
+    "probe_exit": 1,
+    "observed_home_mode": "0750",
+    "expected_home_mode": "0700",
+    "strace_confirms_fchmodat_home_to_0750": true
+  },
+  "prototype": {
+    "build_exit": 0,
+    "controls_exit": 0,
+    "directory_controls_passed": 12,
+    "home_mode": "0700",
+    "created_hololib_descendant_mode": "0750",
+    "enclosing_boundary_mode": "0700",
+    "shared_0777_control_passed": true
+  },
+  "retained_modes_now": {
+    "outer_root": "0700",
+    "baseline_boundary": "0700",
+    "baseline_home": "0750",
+    "prototype_boundary": "0700",
+    "prototype_home": "0700",
+    "redirected_global_ht": "0750"
+  },
+  "foreign_owner_control": "combined mode-0755 and foreign-UID rejection; UID-only branch not isolated",
+  "not_proven": [
+    "compatibility for existing configured home mode other than 0700",
+    "explicit existing leaf mode preservation",
+    "UID-only foreign-owner rejection",
+    "symlink-ancestor safety",
+    "race-free path confinement",
+    "non-Linux builds or behavior"
+  ],
+  "next_comparison_preconditions": [
+    "all owned input/fixture directories and enclosing guards preflight exactly 0700 with expected ownership",
+    "separate redirected global path retained at its admitted 0750 mode",
+    "strict post-run mode/ownership guard before recording comparison results",
+    "retain exact shared-mode controls and all original failures"
+  ],
+  "executed_by_this_review": []
+}

@@ -1,0 +1,20 @@
+{
+  "exit": 0,
+  "actual_files": 32,
+  "current_head": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+  "source_blobs": [
+    {
+      "path": "source-_rcc_runtime_adapter.py",
+      "git_blob": "5af4a1aa1113a117fc06947e947df6d5604eb7be"
+    },
+    {
+      "path": "source-test_source_staging_rcc_consumer.py",
+      "git_blob": "bf29b862a8efd04a553937c587a55bff20ff598a"
+    },
+    {
+      "path": "source-verify_dakota_rcc_acceptance.py",
+      "git_blob": "df113b7713afa9d64512fc242b8ae6cb96b7773e"
+    }
+  ],
+  "scope": "Raw source/API hash verification only; no native acceptance."
+}

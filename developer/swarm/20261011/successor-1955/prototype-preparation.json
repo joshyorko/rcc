@@ -1,0 +1,7 @@
+{
+  "original_sha256": "ba1e7697dcd2b1a239292def345391d0d5fcaf1d49f326dcc988728807f04dcc",
+  "prototype_sha256": "bdcebbd7598a7669bdb7c93cac220a708413d704f9c5a95b069191076624c270",
+  "platform": "linux/amd64 only",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "scope": "Isolated overlay; protect exact existing current-UID/primary-GID 0700 private HOME in parent recursion only. Direct leaves/shared behavior retained. Not race-hardened or production accepted."
+}

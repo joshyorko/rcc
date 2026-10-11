@@ -1,0 +1,152 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/compression-e2e",
+    "-mode=prepare",
+    "-root",
+    "/workspace/rcc-successor-compression-2018/gzip-1",
+    "-python",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-gzip-level",
+    "1"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 1.0224277770000754,
+  "sampled_tree_rss_max": 18423808,
+  "known_identities": {
+    "6907": "182885"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.002303965999999491,
+      "rss": 5705728,
+      "free": 31054319616,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 5705728,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 0
+    },
+    {
+      "elapsed": 0.10402015100021345,
+      "rss": 18423808,
+      "free": 31050985472,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 18423808,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 20863
+    },
+    {
+      "elapsed": 0.21901106300015272,
+      "rss": 16646144,
+      "free": 31046938624,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16646144,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 71138
+    },
+    {
+      "elapsed": 0.34804717900010473,
+      "rss": 16777216,
+      "free": 31045935104,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16777216,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 262571
+    },
+    {
+      "elapsed": 0.4801244590000806,
+      "rss": 16777216,
+      "free": 31044886528,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16777216,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 299183
+    },
+    {
+      "elapsed": 0.6093461580001076,
+      "rss": 16777216,
+      "free": 31043809280,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16777216,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 338003
+    },
+    {
+      "elapsed": 0.7437600330001715,
+      "rss": 16777216,
+      "free": 31042732032,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16777216,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 377365
+    },
+    {
+      "elapsed": 0.8832701390001603,
+      "rss": 16777216,
+      "free": 31041626112,
+      "identities": [
+        {
+          "pid": 6907,
+          "ppid": 6906,
+          "pgid": 6907,
+          "start": "182885",
+          "rss": 16777216,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 418857
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "source_file": "common/platform_linux.go",
+  "original_sha256": "ad41f69fc682b074a4472978b78c5915bb45257977d92c96e7aac2738c0a6938",
+  "replacement_sha256": "402a012b9d0e22d9c1aad77f3b375c7c5bdd93154f8f6ee1f754ad4662811d7d",
+  "delta": "Only redirect fixed /opt/robocorp/ht to owned scratch; no home-mode or storage changes.",
+  "scratch": "/workspace/rcc-successor-lifecycle",
+  "guard": "Existing RCC_HOME, enclosing boundary and scratch root must remain 0700; no chmod repairs."
+}

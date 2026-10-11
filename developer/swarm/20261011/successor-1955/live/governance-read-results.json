@@ -1,0 +1,20 @@
+[
+  {
+    "label": "environments",
+    "endpoint": "repos/joshyorko/rcc/environments",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "label": "main-protection",
+    "endpoint": "repos/joshyorko/rcc/branches/main/protection",
+    "exit": 1,
+    "stderr": "gh: Resource not accessible by integration (HTTP 403)\n"
+  },
+  {
+    "label": "dependabot",
+    "endpoint": "repos/joshyorko/rcc/dependabot/alerts?per_page=100",
+    "exit": 1,
+    "stderr": "gh: Resource not accessible by integration (HTTP 403)\n"
+  }
+]

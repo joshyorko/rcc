@@ -1,0 +1,13 @@
+{"elapsedNs":23151494,"name":"independent-buffers","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":239393,"name":"corrupt-index","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":22659359,"name":"corrupt-pack-whole-hash","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":24870650,"name":"per-frame-hash-after-open","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":22397943,"name":"truncated-pack","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":25335626,"name":"missing-pack","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":66228,"name":"symlink-root","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":20705657,"name":"symlink-pack-file","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":20820972,"name":"wrong-size-and-digest","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":22101681,"name":"out-of-range-index","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":26684776,"name":"duplicate-index-entry","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"elapsedNs":23333944,"name":"overlapping-index-entry","result":"expected rejection observed","status":"PASS","type":"negative-control"}
+{"count":12,"status":"PASS","type":"negative-controls-complete"}

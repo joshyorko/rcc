@@ -1,0 +1,68 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/directory-controls",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/directory_controls.go"
+  ],
+  "returncode": 0,
+  "resource_stop": null,
+  "seconds": 1.613522536000005,
+  "sampled_group_rss_max": 212275200,
+  "rss_scope": "sum of live process-group RSS; shared pages may double count and sampling misses peaks; not escaped-descendant quota proof",
+  "samples": [
+    {
+      "elapsed": 0.0014599019999650409,
+      "group_rss": 4927488,
+      "processes": 1,
+      "free": 31273840640
+    },
+    {
+      "elapsed": 0.20265665699992041,
+      "group_rss": 64167936,
+      "processes": 3,
+      "free": 31272886272
+    },
+    {
+      "elapsed": 0.40433194899992486,
+      "group_rss": 63692800,
+      "processes": 2,
+      "free": 31271051264
+    },
+    {
+      "elapsed": 0.6083411899999192,
+      "group_rss": 88420352,
+      "processes": 2,
+      "free": 31270563840
+    },
+    {
+      "elapsed": 0.8097883149999916,
+      "group_rss": 53338112,
+      "processes": 2,
+      "free": 31268569088
+    },
+    {
+      "elapsed": 1.0108284699999786,
+      "group_rss": 91742208,
+      "processes": 2,
+      "free": 31268569088
+    },
+    {
+      "elapsed": 1.2121727229999806,
+      "group_rss": 106045440,
+      "processes": 2,
+      "free": 31266414592
+    },
+    {
+      "elapsed": 1.4132869769999843,
+      "group_rss": 212275200,
+      "processes": 2,
+      "free": 31266414592
+    }
+  ]
+}

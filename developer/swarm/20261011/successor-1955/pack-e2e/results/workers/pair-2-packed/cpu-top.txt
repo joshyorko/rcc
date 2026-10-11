@@ -1,0 +1,23 @@
+File: pack-e2e
+Build ID: b8fbb39140e502cad508ca506eb7540cbe9c031f
+Type: cpu
+Time: 2026-10-11 20:13:54 UTC
+Duration: 1.62s, Total samples = 400ms (24.71%)
+Showing nodes accounting for 400ms, 100% of 400ms total
+Showing top 15 nodes out of 137
+      flat  flat%   sum%        cum   cum%
+     270ms 67.50% 67.50%      270ms 67.50%  internal/runtime/syscall/linux.Syscall6
+      10ms  2.50% 70.00%       10ms  2.50%  compress/flate.(*huffmanBitWriter).indexTokens
+      10ms  2.50% 72.50%       10ms  2.50%  encoding/json.(*decodeState).rescanLiteral
+      10ms  2.50% 75.00%       10ms  2.50%  encoding/json.unquoteBytes
+      10ms  2.50% 77.50%       10ms  2.50%  reflect.ValueOf
+      10ms  2.50% 80.00%       10ms  2.50%  regexp.(*Regexp).doOnePass
+      10ms  2.50% 82.50%       20ms  5.00%  runtime.convTstring
+      10ms  2.50% 85.00%       10ms  2.50%  runtime.exitsyscall
+      10ms  2.50% 87.50%       10ms  2.50%  runtime.madvise
+      10ms  2.50% 90.00%       10ms  2.50%  runtime.mallocgcSmallNoscan
+      10ms  2.50% 92.50%       20ms  5.00%  runtime.mallocgcSmallScanNoHeader
+      10ms  2.50% 95.00%       10ms  2.50%  runtime.nextFreeFast (inline)
+      10ms  2.50% 97.50%       10ms  2.50%  runtime.scanObject
+      10ms  2.50%   100%       10ms  2.50%  runtime.scanblock
+         0     0%   100%       10ms  2.50%  compress/flate.(*Writer).Write

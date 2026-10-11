@@ -1,0 +1,15 @@
+{
+  "exit": 0,
+  "counts": {
+    "materializations": 12,
+    "logical_files": 6156,
+    "mismatches": 0,
+    "active_leases": 0
+  },
+  "pack_arms": 6,
+  "pack_controls": 12,
+  "compression_arms": 6,
+  "original_baseline_failure_preserved": true,
+  "frozen_tracked_source_unchanged": true,
+  "scope": "Readback only: exact bindings, all actual materialized files, ready records, lease directories, mode/owners, raw native outcomes; no benchmark replay."
+}

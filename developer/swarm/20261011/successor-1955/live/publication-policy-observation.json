@@ -1,0 +1,10 @@
+{
+  "environment-list-read-exit": 0,
+  "environment-list-names": [
+    "copilot"
+  ],
+  "rcc-production-read-exit": 1,
+  "rcc-production-stderr": "gh: Not Found (HTTP 404)\n",
+  "required-environment-observed": false,
+  "policy-status": "Required rcc-production environment absent in actual current environment collection; direct lookup HTTP404. Earlier403 receipts historical preserved. Admin branch protection and dependency alerts still403. No configuration changes/publication/GO request."
+}

@@ -1,0 +1,38 @@
+{
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "classification": "private Linux/amd64 diagnostic executable with two explicit source overlays; never shipping executable",
+  "files": [
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/pack-e2e/source/main.go",
+      "bytes": 50627,
+      "sha256": "0f30a335f9a16ccba1640de8bdeb4beb9379a02560d409a9bd1459c4f9c0786a"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+      "bytes": 330,
+      "sha256": "83526d16674c51061d07d63ad3c63e9f31eac1b113106961ab0fcb410243a29b"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/functions_private_linux.go.txt",
+      "bytes": 9040,
+      "sha256": "bdcebbd7598a7669bdb7c93cac220a708413d704f9c5a95b069191076624c270"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/platform_linux_isolated.go.txt",
+      "bytes": 648,
+      "sha256": "402a012b9d0e22d9c1aad77f3b375c7c5bdd93154f8f6ee1f754ad4662811d7d"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/run_bounded_v3.py",
+      "bytes": 4877,
+      "sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6"
+    },
+    {
+      "path": "/workspace/rcc-successor-tools/pack-e2e",
+      "bytes": 13157035,
+      "sha256": "157201fdf3c2d41325f6b28758f8fff7cde6dc982b2c15f1fc06bafc3c6dd71b"
+    }
+  ],
+  "build_result": "pack-e2e/build-2/result.json",
+  "first_build": "pack-e2e/build-1/result.json retained compile failure; no workload launched"
+}

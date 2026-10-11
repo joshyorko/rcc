@@ -1,0 +1,33 @@
+{
+  "review": "read-only checkpoint consistency review",
+  "disposition": "NO_MATERIAL_INACCURACIES_FOUND",
+  "execution_or_benchmark": false,
+  "inputs": [
+    "report.md",
+    "restart.md",
+    "execution-ledger.json",
+    "dependency-graph.json",
+    "coordinator-verification.json",
+    "pack-e2e/independent-runtime-review.json",
+    "compression-e2e/independent-runtime-review.json",
+    "recoverable-failure-record.json"
+  ],
+  "bindings_verified": {
+    "pack_source_sha256": "c1dd426967511e436bc408ad168704685e04359d6be2064e5ddb250d8c1f4b42",
+    "pack_binary_sha256": "e2c0cca73d176c90f585011855286c92057345ce7448868afdb02e84fb272979",
+    "compression_source_sha256": "2d1ae24dd6aa2a4c7347b7aa30fb27256c990cd3ff2cae8d8f46b303e19d2dc0",
+    "compression_binary_sha256": "89463c7df9b75ea717dcad45ca6041822b3f797e7154b86c08562f56b80dc7a2",
+    "shipping_source": "7945f956b428359928908a9f42e36417b113dafd",
+    "shipping_linux_binary_sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21"
+  },
+  "checks": {
+    "raw_measurement_claims_match_reviews": true,
+    "source_and_binary_tuples_separate_from_shipping": true,
+    "preserved_failures_and_no_go_states_retained": true,
+    "publication_policy_hold_and_blockers_retained": true,
+    "six_direction_capability_claims_are_scoped_not_universal": true,
+    "ownership_and_authority_boundaries_retained": true,
+    "tool_transcript_only_failures_separated_from_raw_receipts": true
+  },
+  "manifest_status": "top-level manifest.json not present in successor directory at review time; coordinator staging remains pending"
+}

@@ -1,0 +1,13 @@
+# Final source delta review
+
+Verified exact current hashes:
+- pack harness: `c1dd426967511e436bc408ad168704685e04359d6be2064e5ddb250d8c1f4b42`
+- compression variant: `e07757d7200d4460f86871650bab62ba036c6d637021c767610a1af7876998a2`
+
+**Conditional GO** for the pack harness's bounded private fixture only after the coordinator's external whole-root guard pre/post checks are attached to the actual run receipts: enclosing paths and RCC homes strict owner/mode 0700, with the separately admitted global diversion held at 0750. The pack source now explicitly checks standard-index digest membership and postchecks each `workerRoot` (recorded and fail-closed). The constructor crossbind uses the standard index and enforces count, encoding, media and sizes. No new dedicated negative proves the missing-digest membership branch; record that coverage gap and avoid broad adversarial-acceptance claims. Existing control set has 12 controls, including malformed range, duplicate, and overlap.
+
+The compression variant adds `-gzip-level` 1..9 prepare plumbing and records it in fixture/prepared receipts. It is a snapshot based on prior 10d source, not the c1dd pack harness. Its `runSchedule` still hardcodes filesystem and packed arms and runs the pack negative controls. For the coordinator's stated filesystem-only compression comparison, use only direct `-mode=worker -arm=filesystem` invocations with independently prepared levels and identical logical workload, under the external strict guards. Do not call `-mode=run` and label it filesystem-only. External guards are required because the compression copy does not include the c1dd workerRoot postguard or map-membership source edits; the filesystem arm does not exercise the packed-provider constructor.
+
+The prior supervisor control remains only a sampled deadline-cleanup control: expected `-15` on the deliberate deadline and no final observed live identities; no hard RSS/disk quota or full harness run is claimed. No source/build/runtime action was performed by this reviewer. Bind any successful new build to the exact source hash and do not promote the private diagnostics to Actions qualification, portability, persistent-worker reuse, full-cold, or default/winner evidence. Preserve the original 0700 failure.
+
+Documentation receipt: canonical RCC guidance unchanged; durable learning recorded in this review; evidence is the verified source hashes, direct source delta inspection, and retained supervisor control; stale guidance none; remaining uncertainty includes the untested digest-membership negative and absence of runtime evidence for the exact c1dd source.

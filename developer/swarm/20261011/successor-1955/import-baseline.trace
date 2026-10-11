@@ -1,0 +1,32 @@
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/journals", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/templates", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/bin", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/uvcache", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/pipcache", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/wheels", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/robots", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/pkgs", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/uv", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/uvpython", 0750) = 0
+3949  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=3949, si_uid=1000} ---
+3949  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=3949, si_uid=1000} ---
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/global-ht", 0750) = 0
+3953  --- SIGURG {si_signo=SIGURG, si_code=SI_TKILL, si_pid=3949, si_uid=1000} ---
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib", 0750) = 0
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/catalog", 0750) = 0
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/catalog", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/library", 0750) = 0
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/library", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/used", 0750) = 0
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/used", 0750) = 0
+3949  mkdirat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/pids", 0750) = 0
+3949  fchmodat(AT_FDCWD, "/workspace/rcc-successor-lifecycle/baseline/rcc-home/hololib/pids", 0750) = 0
+3953  +++ exited with 1 +++
+3952  +++ exited with 1 +++
+3951  +++ exited with 1 +++
+3950  +++ exited with 1 +++
+3954  +++ exited with 1 +++
+3955  +++ exited with 1 +++
+3949  +++ exited with 1 +++

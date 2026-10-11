@@ -1,0 +1,19 @@
+{
+  "review": "private-pack-e2e-source-admission",
+  "source_path": "successor-1955/pack-e2e/source/main.go",
+  "source_sha256_last_observed": "cba73f064d6753f3a5e9978cb9ffe939fbc0835ad300f0f7c28bf4fd783ea150",
+  "frozen_rcc_head": "7945f956b428359928908a9f42e36417b113dafd",
+  "frozen_execute_sha256": "2c03a4f3d3d215d6dd7cac08bdaf52299c894663c07af163c157f4da843e7a66",
+  "disposition": "NO_GO_FOR_NEW_FIXTURE_UNTIL_GUARDS_AND_RECEIPT_GAPS_FIXED",
+  "scope": "read-only source review only; no builds, tests, runtime, or mutations",
+  "findings": [
+    "strict 0700 pre/post all-root/enclosing guards and owner checks absent",
+    "fresh consumer CAS emptiness is not asserted before each cold acquisition",
+    "packed-vs-standard index binding omits media type and wrong-media rejection",
+    "packed provider construction/full hash runs outside CPU/acquire timing boundary",
+    "lease Lstat treats all errors as released; accept only ENOENT",
+    "worker/scheduler receipt and log persistence errors can be discarded; early failures can lack receipts",
+    "synthetic minima are permissive fixture metadata; real Python probing, acquisition compatibility preflight, materialized compatibility check, and ExecuteWithStreams are present"
+  ],
+  "original_0700_failure_preserved": true
+}

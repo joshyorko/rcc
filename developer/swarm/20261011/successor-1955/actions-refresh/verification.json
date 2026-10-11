@@ -1,0 +1,197 @@
+{
+  "generated_utc": "2026-10-11T19:51:50Z",
+  "repository": "joshyorko/actions",
+  "baseline_checkpoint": "2f6570c99d5ba98f26ceb7b74d6da69fb84f99e8",
+  "verdict": "READONLY_REFRESH_COMPLETE; 396925_PUBLIC_AND_ANCESTOR; NO_NEWER_RCC_RUNTIME_QUALIFIED",
+  "pr308": {
+    "head": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+    "tree": "a80600809d373038ca76e445ba0b7b79bb7eeaa6",
+    "base": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+    "checks": {
+      "total": 26,
+      "success": 25,
+      "failure": 1,
+      "failed_job": "114544417671"
+    }
+  },
+  "pr221": {
+    "head": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+    "tree": "afe2679cc93bf27fa5021c7698ee7ad3ee21a1b9",
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "checks": {
+      "total": 35,
+      "success": 34,
+      "skipped": 1,
+      "failure": 0
+    }
+  },
+  "source396": {
+    "sha": "396925cb3d6527af1768b7f5333f9653c005fc55",
+    "tree": "84f850f0d4e08b21afcd8220413ce94322370acf",
+    "compare_to_head": "merge-base; head 30 ahead, 0 behind"
+  },
+  "runtime_admission": "NO QUALIFIED CURRENT3, RELEASED5, OR 7276 RAW RUNTIME ACCEPTANCE",
+  "mutations": [],
+  "files": [
+    {
+      "path": "commit-e2.json",
+      "bytes": 226938,
+      "sha256": "fe8b2d67ef1e31157a0f5514eb88197e75e9eabdd397c6df039e7f8a619a7c86"
+    },
+    {
+      "path": "commit396-summary.json",
+      "bytes": 28311,
+      "sha256": "93c7df0d84bcd161d7e6ebf8b3063f9206b3ababe91f8cfbf91d495e16b029a3"
+    },
+    {
+      "path": "commit396.json",
+      "bytes": 33791,
+      "sha256": "48ced8717fbbb2013e655dcca03811eba300c87dcec85ec64cf39b7b15b0cb87"
+    },
+    {
+      "path": "commit396.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "compare396-to-308.json",
+      "bytes": 343019,
+      "sha256": "9f52c0447e4d99e8df34cde468cf125be82823edd2cf8e9e63c383f0022f8f2b"
+    },
+    {
+      "path": "fresh-comments-101.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "fresh-comments-133.json",
+      "bytes": 7298,
+      "sha256": "91c20ac4b691301e5e46feb4ec751d585d3a19c6845d05c178817b443f867ff6"
+    },
+    {
+      "path": "fresh-comments-134.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "fresh-comments-139.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "fresh-comments-143.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "fresh-comments-221.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "fresh-comments-308.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "head308-commit.json",
+      "bytes": 4363,
+      "sha256": "20a39eea05f00fa9ea3076f6b72a144aac32a34f03beb65a6fefb7ec441242f1"
+    },
+    {
+      "path": "issue101.json",
+      "bytes": 45829,
+      "sha256": "c7dcbed8553b254cda88ab44cf63f9db60c845d4da393ca8a7d9e50850f2acc8"
+    },
+    {
+      "path": "issue133.json",
+      "bytes": 18321,
+      "sha256": "b475d0fb11c3a965336b64fe314f1dee2b539adf9104b0d42336f8ab7b7be8e1"
+    },
+    {
+      "path": "issue134.json",
+      "bytes": 17421,
+      "sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398"
+    },
+    {
+      "path": "issue139.json",
+      "bytes": 21147,
+      "sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c"
+    },
+    {
+      "path": "issue143.json",
+      "bytes": 22229,
+      "sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8"
+    },
+    {
+      "path": "pr221-check-runs.json",
+      "bytes": 124583,
+      "sha256": "c41edbeb98af53ff936892d425140008a4144d6738cf6b628c65c9bddb6a5f13"
+    },
+    {
+      "path": "pr221-combined-status.json",
+      "bytes": 4492,
+      "sha256": "0f4893ed5264270285900048eb16c6a37157d1f1a0d73e7917192dab97b02873"
+    },
+    {
+      "path": "pr221.json",
+      "bytes": 41378,
+      "sha256": "ce5bc6a413b31904979a3e2b44d8d378636fbe26018b6f45fa3b09c60f92939e"
+    },
+    {
+      "path": "pr308-check-runs.json",
+      "bytes": 93708,
+      "sha256": "919466791319aaaffd62550550f580934f5d9867fd1eb1842c9e2faf062d897a"
+    },
+    {
+      "path": "pr308-combined-status.json",
+      "bytes": 4492,
+      "sha256": "dc113725e3c1483bc53cd8f5a1bb85b3b96e05dc03795886a0d49fa66a894265"
+    },
+    {
+      "path": "pr308-commits.json",
+      "bytes": 75432,
+      "sha256": "14a7854c814daa4c1ca9410aecbb88c51667f5ebdbd9ce09d46ca48ac031e770"
+    },
+    {
+      "path": "pr308-files-summary.json",
+      "bytes": 126629,
+      "sha256": "7e2d2e188e2c9d07a165be24a979c945266324e9c6b9ead7ff20c95bb5041beb"
+    },
+    {
+      "path": "pr308-files.json",
+      "bytes": 130465,
+      "sha256": "db87f535d4a9ecb817fe9cf435bee0fc3b3da0eb605b4289481d3cfd2e6d098f"
+    },
+    {
+      "path": "pr308.json",
+      "bytes": 30795,
+      "sha256": "6331340e2b4c9ccf2717ee91a34906bf2460284203178e7063608dd9af4cab90"
+    },
+    {
+      "path": "rcc125-comments.json",
+      "bytes": 66156,
+      "sha256": "3f1cc0f672f89d234dfd5a5345510cbf779b0f2fc0ba96e8a1de7ca926e5d259"
+    },
+    {
+      "path": "report.md",
+      "bytes": 7431,
+      "sha256": "ce00863ca105878530cc45b0610b961279c7b095107496f23e37820113534def"
+    },
+    {
+      "path": "source-_rcc_runtime_adapter.py",
+      "bytes": 36123,
+      "sha256": "c1884571a572277beef50e359f8b5e71abf593e1ebdee4bea2e47290c8da81f2"
+    },
+    {
+      "path": "source-test_source_staging_rcc_consumer.py",
+      "bytes": 52201,
+      "sha256": "a30f9e585b8dc422dcf853ac27a2da2c11f84065e58ba501b0a4c32d4f472728"
+    },
+    {
+      "path": "source-verify_dakota_rcc_acceptance.py",
+      "bytes": 81503,
+      "sha256": "8f21502f64fed9ee5d26eb6a080a625ee575954e1f659c1f51ee1ea31bda57c7"
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/compression-e2e",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/compression-e2e/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 0.8109265020000294,
+  "sampled_tree_rss_max": 235663360,
+  "known_identities": {
+    "6724": "164903",
+    "6743": "164910",
+    "6751": "164933"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0014551960000517283,
+      "rss": 7364608,
+      "free": 31068393472,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 7364608,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10261917700017875,
+      "rss": 63926272,
+      "free": 31068389376,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35241984,
+          "state": "S"
+        },
+        {
+          "pid": 6743,
+          "ppid": 6724,
+          "pgid": 6724,
+          "start": "164910",
+          "rss": 28684288,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20379036500003167,
+      "rss": 83918848,
+      "free": 31068389376,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35241984,
+          "state": "S"
+        },
+        {
+          "pid": 6743,
+          "ppid": 6724,
+          "pgid": 6724,
+          "start": "164910",
+          "rss": 48676864,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.30493015000001833,
+      "rss": 35373056,
+      "free": 31068385280,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35373056,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.40612913800009665,
+      "rss": 132050944,
+      "free": 31067553792,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35373056,
+          "state": "S"
+        },
+        {
+          "pid": 6751,
+          "ppid": 6724,
+          "pgid": 6724,
+          "start": "164933",
+          "rss": 96677888,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.507436756000061,
+      "rss": 211877888,
+      "free": 31067553792,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35373056,
+          "state": "S"
+        },
+        {
+          "pid": 6751,
+          "ppid": 6724,
+          "pgid": 6724,
+          "start": "164933",
+          "rss": 176504832,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6086647860001904,
+      "rss": 235663360,
+      "free": 31067553792,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35373056,
+          "state": "S"
+        },
+        {
+          "pid": 6751,
+          "ppid": 6724,
+          "pgid": 6724,
+          "start": "164933",
+          "rss": 200290304,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.7098046060000343,
+      "rss": 35373056,
+      "free": 31067549696,
+      "identities": [
+        {
+          "pid": 6724,
+          "ppid": 6721,
+          "pgid": 6724,
+          "start": "164903",
+          "rss": 35373056,
+          "state": "R"
+        }
+      ]
+    }
+  ]
+}

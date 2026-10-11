@@ -1,0 +1,47 @@
+{
+  "scope": "Facts from actual tool calls. Explicitly marks missing file-captured raw outputs instead of inventing them; all recorded native failed results preserved.",
+  "events": [
+    {
+      "event": "toolchain-default-cache",
+      "result": "failed before owned cache configured",
+      "receipt": "tool transcript only; no raw stdout file was captured",
+      "recovery": "own GOPATH/module/cache; officialGo1.26.9 succeeded"
+    },
+    {
+      "event": "embed-preparation-first-attempt",
+      "result": "genericPython lackedInvoke after verifiedLinuxgzipcopy",
+      "receipt": "tool transcript only for first failure; later embed-preparation.json binds corrected exact inputs",
+      "recovery": "existing contained Python+Invoke; no recopy of changed/unverified bytes"
+    },
+    {
+      "event": "unlaunched-relative-path-commands",
+      "result": "two path lookups failed before targetoperation launched",
+      "receipt": "tool transcript only",
+      "recovery": "explicit discovered absolute paths"
+    },
+    {
+      "event": "capability-time-and-aggregate",
+      "result": "missing/usr/bin/time127; probeaggregate2 duenestedrecord lookup",
+      "receipt": "capability/probe.time,capability/probe-receipt.json and independent verify_receipt output",
+      "recovery": "read-only originalnestedchecks verification, no timedrerun"
+    },
+    {
+      "event": "pack-build-1",
+      "result": "native build1 failed anonymousstruct tag identity; no harness executed",
+      "receipt": "pack-e2e/build-1/result.json/stdout/stderr",
+      "recovery": "namedtype and laterexplicit source bindings; build1 sourcehashnotbound, do not rebind"
+    },
+    {
+      "event": "supervisor-control-v2",
+      "result": "intentional deadline exit1; transientobservedliveidentity subsequentlyzombie",
+      "receipt": "supervisor-control-run/result.json",
+      "recovery": "v3settle/control separate intentionaldeadline nofinalobservedlive identities"
+    },
+    {
+      "event": "original-component-homeguard",
+      "result": "historical4649outerinvocationFAILED1 private0700\u21920750",
+      "receipt": "immutableparent continuation1710 referencedrawreceipts",
+      "recovery": "never rerun/repair/reclassify; newbaselineactualsyscall+isolatedprototype separate"
+    }
+  ]
+}

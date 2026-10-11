@@ -1,0 +1,23 @@
+File: pack-e2e
+Build ID: b8fbb39140e502cad508ca506eb7540cbe9c031f
+Type: cpu
+Time: 2026-10-11 20:13:52 UTC
+Duration: 1.75s, Total samples = 450ms (25.75%)
+Showing nodes accounting for 440ms, 97.78% of 450ms total
+Showing top 15 nodes out of 165
+      flat  flat%   sum%        cum   cum%
+     290ms 64.44% 64.44%      290ms 64.44%  internal/runtime/syscall/linux.Syscall6
+      20ms  4.44% 68.89%       20ms  4.44%  runtime.memclrNoHeapPointers
+      10ms  2.22% 71.11%       10ms  2.22%  compress/flate.(*dictDecoder).writeByte
+      10ms  2.22% 73.33%       50ms 11.11%  encoding/json.(*Decoder).Decode
+      10ms  2.22% 75.56%       20ms  4.44%  encoding/json.(*Decoder).readValue
+      10ms  2.22% 77.78%       10ms  2.22%  encoding/json.indirect
+      10ms  2.22% 80.00%       10ms  2.22%  encoding/json.stateInString
+      10ms  2.22% 82.22%       10ms  2.22%  hash/crc32.simpleUpdate
+      10ms  2.22% 84.44%       10ms  2.22%  internal/filepathlite.Clean
+      10ms  2.22% 86.67%       10ms  2.22%  runtime.(*mspan).markBitsForIndex
+      10ms  2.22% 88.89%       10ms  2.22%  runtime.concatstrings
+      10ms  2.22% 91.11%       10ms  2.22%  runtime.mallocgcTiny
+      10ms  2.22% 93.33%       10ms  2.22%  runtime.newArenaMayUnlock
+      10ms  2.22% 95.56%       10ms  2.22%  runtime.scanObject
+      10ms  2.22% 97.78%       10ms  2.22%  runtime.scanblock

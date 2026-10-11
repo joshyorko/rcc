@@ -1,0 +1,53 @@
+{
+  "exit": 0,
+  "manifests": [
+    {
+      "manifest": "developer/swarm/20261011/continuation-1306/manifest.json",
+      "verified_entries": 145,
+      "sha256": "1165aeccbf8485ea970b7e6cfb46b32eadffdc674c342e3c4916f189da284b16"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1332/manifest.json",
+      "verified_entries": 40,
+      "sha256": "9c8c5ba547384833e5fe480f975485a7455d42391580aeba37163becd52da6ee"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1406/manifest.json",
+      "verified_entries": 146,
+      "sha256": "0bb5ef986467ed0f060025b78b2d0d30a84fc8826465b72c0af896a1d58cae17"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1436/manifest.json",
+      "verified_entries": 71,
+      "sha256": "35915d536023dbf8f50fd377ca1460f514ac972a48ed9634f5c49d4bc6144ced"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1520/manifest.json",
+      "verified_entries": 300,
+      "sha256": "8b848ddbc32cc9c8ca95c298f911b48ae63231d4812e7440028d2ae76cce8066"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1605/manifest.json",
+      "verified_entries": 383,
+      "sha256": "21225b8bf9990585cc62a80bfcb9bfd1d406720d3d4a320453f5171ecb3dc10e"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1640/manifest.json",
+      "verified_entries": 432,
+      "sha256": "c613dbb288bb46a30c16c912208d10cf5efe38c5032b49fb23b277de9747cdba"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1710/manifest.json",
+      "verified_entries": 352,
+      "sha256": "98663d712511f1fc3a9cd33a633b8ec38046a5dbd424e2f33dfa5b4998fb521d"
+    },
+    {
+      "manifest": "developer/swarm/20261011/continuation-1740/manifest.json",
+      "verified_entries": 187,
+      "sha256": "1421de420c51f6ceccf38a930acf7bf5a97ed4874b1c64541b0f6a02b9de6057"
+    }
+  ],
+  "unique_preserved_evidence_files": 2056,
+  "unique_bytes": 109328029,
+  "scope": "Actual checked-out bytes from fetched immutable Git object; current1740 raw remote files separately verified. No historical execution replay."
+}

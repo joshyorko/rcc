@@ -1,0 +1,17 @@
+{
+  "full_diff_check_exit": 2,
+  "full_check_scope": "all staged new evidence; retained raw patch context and go version -m output trigger whitespace checks",
+  "source_documentation_diff_check_exit": 0,
+  "excluded_exact_raw_files": [
+    "prototype.patch",
+    "pack-e2e/binary-metadata.txt",
+    "diff-check-full.stdout"
+  ],
+  "reason": "Preserve exact patch grammar/context and exact tool output bytes rather than rewriting receipts. All other new source/docs/scripts pass check.",
+  "archive_explicit_package_query": {
+    "exit": 1,
+    "stderr": "pattern ./developer/swarm/20261011/successor-1955/...: directory prefix developer/swarm/20261011/successor-1955 does not contain main module or its selected dependencies\n",
+    "interpretation": "Archive has nested go.mod boundary; explicit parent-module query cannot include it. Probes use explicit named files built from frozen RCC cwd, as recorded."
+  },
+  "transient_exec_transport": "manifest staging command failed to create process; retry pwd0, no environment replacement"
+}
