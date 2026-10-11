@@ -63,11 +63,13 @@ class ReleaseTopologyTests(unittest.TestCase):
         for runner in ("ubuntu-latest", "windows-latest", "macos-latest", "macos-15-intel"):
             self.assertIn(f'"{runner}"', workflow)
 
-    def test_repository_workflow_marks_rc_tags_as_prereleases(self):
+    def test_repository_workflow_has_no_tag_triggered_publisher(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
+        self.assertNotIn('      - "v*"', workflow)
+        self.assertNotIn("  release:\n", workflow)
+        self.assertNotIn("gh release create", workflow)
 
-    def test_candidate_identity_resolves_pr_head_main_push_and_tag_push(self):
+    def test_candidate_identity_resolves_pr_main_push_and_manual_dispatch_but_rejects_tags(self):
         resolver = getattr(topology, "resolve_candidate_sha", None)
         self.assertIsNotNone(resolver, "release candidate SHA resolver is missing")
         merge_sha = "1" * 40
@@ -75,7 +77,9 @@ class ReleaseTopologyTests(unittest.TestCase):
         self.assertEqual(resolver("pull_request", merge_sha, head_sha), head_sha)
         self.assertNotEqual(resolver("pull_request", merge_sha, head_sha), merge_sha)
         self.assertEqual(resolver("push", "3" * 40), "3" * 40)
-        self.assertEqual(resolver("tag", "4" * 40), "4" * 40)
+        self.assertEqual(resolver("workflow_dispatch", "4" * 40), "4" * 40)
+        with self.assertRaisesRegex(ValueError, "unsupported.*tag"):
+            resolver("tag", "5" * 40)
 
     def test_repository_workflow_closes_release_identity_topology(self):
         validator = getattr(topology, "validate_release_identity_topology", None)
@@ -83,15 +87,25 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertEqual(validator(workflow), [])
 
-    def test_release_candidate_is_label_opt_in_and_publication_stays_tag_only(self):
+    def test_repository_two_phase_release_paths_are_fail_closed(self):
+        validator = getattr(topology, "validate_two_phase_release_topology", None)
+        self.assertIsNotNone(validator, "two-phase release topology validator is missing")
+        rcc = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        tag = (REPOSITORY_ROOT / ".github/workflows/create-release-tag.yml").read_text()
+        publisher = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        self.assertEqual(validator(rcc, tag, publisher), [])
+        self.assertTrue(validator(rcc, tag.replace("contents: read", "contents: write"), publisher))
+        self.assertTrue(validator(rcc, tag, publisher.replace("name: rcc-production", "name: unprotected")))
+        self.assertTrue(validator(rcc, tag, publisher.replace("if: github.ref == 'refs/heads/main'", "if: true")))
+
+    def test_release_candidate_is_label_or_manual_opt_in_and_never_tag_triggered(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertEqual(topology.validate_release_candidate_event_policy(workflow), [])
 
         mutations = (
             ("contains(github.event.pull_request.labels.*.name, 'release-candidate')", "github.event_name == 'pull_request'"),
             ("      - labeled\n", ""),
-            ("(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))", "(github.event_name == 'push' || github.event_name == 'pull_request')"),
-            ("if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')", "if: github.event_name == 'push' || github.event_name == 'pull_request'"),
+            ("(github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')", "(github.event_name == 'push')"),
         )
         for old, replacement in mutations:
             with self.subTest(mutation=old):
@@ -160,7 +174,7 @@ class ReleaseTopologyTests(unittest.TestCase):
 
     def test_generated_index_changelog_fragment_resolves_to_release_heading(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        generator = re.search(r"(?ms)^          python3 << 'PYEOF'\n(.*?)^          PYEOF\s*$", workflow)
+        generator = re.search(r"(?ms)^          python3 - <<'PY'\n(.*?)^          PY\s*$", workflow)
         self.assertIsNotNone(generator, "release index generator heredoc is missing")
         version_source = (REPOSITORY_ROOT / "common/version.go").read_text()
         version = re.search(r"(?m)^\s*Version = `([^`]+)`", version_source)
@@ -168,7 +182,7 @@ class ReleaseTopologyTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "rcc-builds").mkdir()
+            (root / "downloaded-assets").mkdir()
             (root / "existing.json").write_text(json.dumps({"tested": [], "edge": []}))
             env = dict(os.environ, VERSION=version.group(1), DATE="10.10.2026", REPO="joshyorko/rcc")
             result = subprocess.run(
@@ -179,7 +193,7 @@ class ReleaseTopologyTests(unittest.TestCase):
                 capture_output=True,
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            index = json.loads((root / "rcc-builds/index.json").read_text())
+            index = json.loads((root / "downloaded-assets/index.json").read_text())
 
         generated = urlsplit(index["tested"][0]["changelog"]).fragment
         changelog = (REPOSITORY_ROOT / "docs/changelog.md").read_text()
@@ -198,21 +212,22 @@ class ReleaseTopologyTests(unittest.TestCase):
         validator = getattr(topology, "validate_release_identity_topology", None)
         self.assertIsNotNone(validator, "release identity topology validator is missing")
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        candidate = "${{ github.event.pull_request.head.sha || github.sha }}"
+        candidate = "${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}"
         for old, replacement in (
             (candidate, "${{ github.sha }}"),
             (f"ref: {candidate}", "ref: refs/pull/119/merge"),
             (f"RCC_SOURCE_SHA: {candidate}", "RCC_SOURCE_SHA: ${{ github.sha }}"),
-            (f"target_commitish: {candidate}", "target_commitish: ${{ github.sha }}"),
+            ("- robot\n", "- build\n"),
         ):
             mutated = workflow.replace(old, replacement, 1)
             self.assertTrue(validator(mutated), (old, replacement))
 
-    def test_manual_stable_tag_path_requires_current_main_identity(self):
+    def test_legacy_tag_workflow_is_read_only_deprecation(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/create-release-tag.yml").read_text()
-        self.assertIn('target_sha="$(git rev-parse HEAD)"', workflow)
-        self.assertIn('main_sha="$(git rev-parse refs/remotes/origin/main)"', workflow)
-        self.assertIn('if [[ "$target_sha" != "$main_sha" ]]', workflow)
+        self.assertIn("contents: read", workflow)
+        self.assertNotIn("contents: write", workflow)
+        self.assertNotIn("git push", workflow)
+        self.assertNotIn("refs/tags/", workflow)
 
     def test_rejects_any_runtime_root_beneath_checkout(self):
         for variable in ("ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"):
@@ -226,10 +241,13 @@ class ReleaseTopologyTests(unittest.TestCase):
         errors = validate(root, REPOSITORY_ROOT / ".github/workflows/rcc.yaml", index)
         self.assertFalse(any("runtime root" in error for error in errors), errors)
 
-    def test_repository_release_waits_for_native_robot_matrix(self):
+    def test_preparation_artifact_waits_for_all_four_native_platforms(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        release_job = workflow.split("\n  release:\n", 1)[1]
-        self.assertRegex(release_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
+        prep_job = workflow.split("\n  assemble-release-preparation:\n", 1)[1]
+        self.assertRegex(prep_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
+        for platform in ("linux-amd64", "macos-amd64", "macos-arm64", "windows-amd64"):
+            self.assertIn(f"platform: {platform}", workflow)
+        self.assertIn("name: rcc-release-preparation", prep_job)
 
     def test_release_job_validates_downloaded_assets_without_build_tree(self):
         root, workflow, index = self.fixture()

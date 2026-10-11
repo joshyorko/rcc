@@ -17,19 +17,20 @@ INDEX_ASSETS = {
 }
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
-CANDIDATE_SHA_EXPRESSION = "${{ github.event.pull_request.head.sha || github.sha }}"
-RELEASE_IDENTITY_JOBS = ("build", "release-candidate", "robot", "release")
+CANDIDATE_SHA_EXPRESSION = "${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}"
+RELEASE_IDENTITY_JOBS = ("build", "release-candidate", "robot")
 RELEASE_CANDIDATE_LABEL = "release-candidate"
 RELEASE_CANDIDATE_PULL_REQUEST_TYPES = {"opened", "synchronize", "reopened", "labeled"}
-TAG_ONLY_RELEASE_CONDITION = "github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
 RELEASE_CANDIDATE_CONDITION = (
-    "(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || "
+    "(github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || "
     "(github.event_name == 'pull_request' && "
     f"contains(github.event.pull_request.labels.*.name, '{RELEASE_CANDIDATE_LABEL}'))"
 )
 
 
 def resolve_candidate_sha(event_name, github_sha, pull_request_head_sha=None):
+    if event_name not in {"push", "pull_request", "workflow_dispatch"}:
+        raise ValueError(f"unsupported release candidate event: {event_name}")
     candidate = pull_request_head_sha if event_name == "pull_request" else github_sha
     if not isinstance(candidate, str) or re.fullmatch(r"[0-9a-f]{40}", candidate) is None:
         raise ValueError(f"invalid candidate SHA for {event_name}: {candidate!r}")
@@ -67,12 +68,17 @@ def validate_release_candidate_event_policy(workflow_text):
             condition = " ".join(parts)
             break
     if condition != RELEASE_CANDIDATE_CONDITION:
-        errors.append("release-candidate job must run for version tags and explicit release-candidate PR labels")
+        errors.append("release-candidate job must run for main-only preparation and explicit release-candidate PR labels")
 
     release = _workflow_job(workflow_text, "release")
-    condition = re.search(r"(?m)^    if:\s*(.*?)\s*$", release)
-    if not condition or condition.group(1) != TAG_ONLY_RELEASE_CONDITION:
-        errors.append("release publication must remain limited to version-tag pushes")
+    if release:
+        errors.append("Rcc workflow must not contain a tag-triggered release publisher")
+    trigger = workflow_text.split("\njobs:", 1)[0]
+    if re.search(r"(?m)^\s+tags:", trigger):
+        errors.append("Rcc workflow must not run release automation from tag pushes")
+    for marker in ("softprops/action-gh-release", "gh release create", "gh release edit", "github.rest.repos.createRelease"):
+        if marker in workflow_text:
+            errors.append(f"Rcc workflow contains an automatic publication operation: {marker}")
     return errors
 
 
@@ -95,12 +101,53 @@ def validate_release_identity_topology(workflow_text):
         errors.append("robot native source SHA is not the intended candidate SHA")
     if '_validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])' not in native:
         errors.append("robot native receipt is not validated against the intended candidate SHA")
-    release = _workflow_job(workflow_text, "release")
-    if f"target_commitish: {CANDIDATE_SHA_EXPRESSION}" not in release:
-        errors.append("release target is not the intended candidate SHA")
-    for marker in ('git rev-parse "${TAG}^{commit}"', '"$tag_sha" != "$RCC_CANDIDATE_SHA"'):
-        if marker not in release:
-            errors.append(f"release tag target assertion is missing: {marker}")
+    preparation = _workflow_job(workflow_text, "assemble-release-preparation")
+    for marker in ("needs:", "- build", "- release-candidate", "- robot", "rcc-release-preparation"):
+        if marker not in preparation:
+            errors.append(f"release preparation does not bind every gate/artifact: {marker}")
+    if "github.event_name == 'workflow_dispatch'" not in preparation or "github.ref == 'refs/heads/main'" not in preparation:
+        errors.append("release preparation must be limited to manual dispatch from main")
+    return errors
+
+
+def validate_two_phase_release_topology(rcc_workflow, tag_workflow, publisher_workflow):
+    errors = validate_release_identity_topology(rcc_workflow)
+    if not tag_workflow or "contents: read" not in tag_workflow:
+        errors.append("legacy tag workflow must be read-only")
+    for marker in ("git push", "contents: write", "gh release", "refs/tags/"):
+        if marker in tag_workflow:
+            errors.append(f"legacy tag workflow can still mutate release state: {marker}")
+    if "workflow_dispatch" not in publisher_workflow:
+        errors.append("publisher must require an explicit workflow_dispatch")
+    for input_name in ("preparation_run_id", "source_sha", "expected_version", "asset_manifest_sha256"):
+        if input_name not in publisher_workflow:
+            errors.append(f"publisher is missing required reviewed input: {input_name}")
+    for marker in (
+        "if: github.ref == 'refs/heads/main'",
+        "name: rcc-production",
+        "actions: read",
+        "contents: write",
+        "RCC_RELEASE_POLICY_AUDIT_TOKEN",
+        "secrets.HOMEBREW_TOOLS_PAT",
+        "verify-environment",
+        "verify-run",
+        "fetch-artifact",
+        "verify-release-absent",
+        "validate-bundle",
+        "validate-source",
+        "git merge-base --is-ancestor",
+        "refs/tags/${RCC_RELEASE_VERSION}",
+        "gh release create",
+        "github-token: ${{ secrets.HOMEBREW_TOOLS_PAT }}",
+    ):
+        if marker not in publisher_workflow:
+            errors.append(f"publisher lacks fail-closed preparation or publication guard: {marker}")
+    if "recreate_existing_tag" in publisher_workflow or "git push" in publisher_workflow or "gh release edit" in publisher_workflow:
+        errors.append("publisher must not delete, recreate, or edit an existing tag/release")
+    ordered = ("verify-environment", "verify-run", "validate-source", "verify-release-absent", "validate-bundle", "Create the new version tag")
+    positions = [publisher_workflow.find(marker) for marker in ordered]
+    if any(position < 0 for position in positions) or positions != sorted(positions):
+        errors.append("publisher must complete all identity/protection/artifact checks before creating the tag")
     return errors
 
 
@@ -173,12 +220,20 @@ def main():
     parser.add_argument("--build-root", type=Path)
     parser.add_argument("--asset-root", type=Path)
     parser.add_argument("--workflow", type=Path)
+    parser.add_argument("--tag-workflow", type=Path)
+    parser.add_argument("--publication-workflow", type=Path)
     parser.add_argument("--index", type=Path)
     args = parser.parse_args()
     root = args.root or (args.build_root.parent if args.build_root else None)
     if root is None and args.asset_root is None:
         parser.error("a repository root, --build-root, or --asset-root is required")
     errors = validate(root, args.workflow, args.index, args.asset_root)
+    if args.workflow and args.tag_workflow and args.publication_workflow:
+        errors.extend(validate_two_phase_release_topology(
+            Path(args.workflow).read_text(),
+            Path(args.tag_workflow).read_text(),
+            Path(args.publication_workflow).read_text(),
+        ))
     for error in errors:
         print(error)
     return 1 if errors else 0
