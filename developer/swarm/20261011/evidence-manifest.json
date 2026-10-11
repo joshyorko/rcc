@@ -1,8 +1,13 @@
 {
-  "preparedAtUtc": "2026-10-11T01:58:35.864099+00:00",
+  "preparedAtUtc": "2026-10-11T02:21:53.919973+00:00",
   "sourceCandidate": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
-  "scope": "Curated public reports and source-bound root verification receipts. Complete raw logs/XML/archives remain in cloud evidence or referenced hosted artifacts; no private homes, credentials or presigned URLs are published. Historical receipts retain their original source.",
+  "scope": "Curated public source-bound reports; raw archives/XML/logs remain preserved locally or in hosted artifacts. No private homes or credentials. Historical source bindings retained.",
   "files": [
+    {
+      "path": "README.md",
+      "bytes": 5388,
+      "sha256": "27242f5f0d68ea33ae21e74aa088f0613aef21df605b6234551240ed7f7909ca"
+    },
     {
       "path": "evidence/architecture-118-abi-20261011/report.md",
       "bytes": 23267,
@@ -129,6 +134,16 @@
       "sha256": "3b590d7a1d7917a82e8696b12521fdf36aa101c4b59d0482fbdd044701231232"
     },
     {
+      "path": "evidence/hosted-native/pr233-current-324524f/root-native-progress-verification.json",
+      "bytes": 1598,
+      "sha256": "69776b371357d9365be3a906046c79843f02253b886ef2426fe2819625a8f48d"
+    },
+    {
+      "path": "evidence/hosted-native/pr233-current-324524f/root-native-uv-log-verification.json",
+      "bytes": 859,
+      "sha256": "3b119fc90535b663389a66e5ef67d5a03851eb9f735ae754772663f0e2814799"
+    },
+    {
       "path": "evidence/hosted-rc-gate/root-independent-workflow-review.json",
       "bytes": 1157,
       "sha256": "991aa8f8cebdd411eeff13df01ea5862c14d43fa29a49d71efd7e89a28f50489"
@@ -139,11 +154,39 @@
       "sha256": "8c469eac802f8986894dfef9714c6696a54a08ba44fc6916b3c2064bcf46e04b"
     },
     {
+      "path": "evidence/issue181-scale-20261011/report.md",
+      "bytes": 5449,
+      "sha256": "e7f6d0ba9a8b25f2e01580f4e363837673e1d8dc21fe0609df954b0eae0f4cda"
+    },
+    {
+      "path": "evidence/issue181-scale-20261011/root-independent-verification.json",
+      "bytes": 1535,
+      "sha256": "54a368a60a293b8ab9b8ce5f90a86395f3bafd0514c18294c2bc392bcd62f8e3"
+    },
+    {
+      "path": "evidence/issue181-scale-20261011/root-publication-verification.json",
+      "bytes": 334,
+      "sha256": "74b9e4ed4986f07b0d73590cf4f61bd95029836dee05e9b612c6da2e92fc4fe3"
+    },
+    {
+      "path": "evidence/issue181-scale-20261011/verification.log",
+      "bytes": 1690,
+      "sha256": "5f036d39f7840489933dcfb86181c603463217e6ed21a5023e5841fddd66b7a2"
+    },
+    {
       "path": "evidence/resume-acceptance/security-triage.json",
       "bytes": 12406,
       "sha256": "1041b7f102f22f5cea4db86acbdef876fbea93278ec97d352be2977074ece128"
+    },
+    {
+      "path": "inventory.md",
+      "bytes": 12891,
+      "sha256": "60b6c422fc78424b4a8bafc63d221f425b812a2b8442b3e49c85daee3c154752"
+    },
+    {
+      "path": "restart-prompt.md",
+      "bytes": 6682,
+      "sha256": "de19cf1f94de55f4d092f8d0be76f15e3309c6c6c37538afb0367c2fd66e6c98"
     }
-  ],
-  "missing": [],
-  "updatedAtUtc": "2026-10-11T02:07:11.806581+00:00"
+  ]
 }

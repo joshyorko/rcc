@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-11T02:19:06.167251+00:00",
+  "source": "a87a67dd65a5415372d2df28c7403047cf4a490a",
+  "tree": "76a02d87b2e20543e9b7991fe0db04b9ad2e20f1",
+  "base": "07db6221a3540d227f2106eccf69fe0e7c11fee0",
+  "onlyTestFile": [
+    "anywork/worker_test.go"
+  ],
+  "toolchainSha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "results": [
+    {
+      "command": [
+        "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+        "version"
+      ],
+      "exit": 0,
+      "output": "go version go1.26.9 linux/amd64\n",
+      "logSha256": "34113d5d84bc5406ab3bfd0028c381611cad764f40baa15e43cffd89485c0aee"
+    },
+    {
+      "command": [
+        "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+        "test",
+        "./anywork",
+        "-count=1",
+        "-cover"
+      ],
+      "exit": 0,
+      "output": "ok  \tgithub.com/joshyorko/rcc/anywork\t0.006s\tcoverage: 91.2% of statements\n",
+      "logSha256": "55929f9da4205fb456e9f2f86564d5d77350ffd7e8e6e47951f0f97ecbcb5227"
+    },
+    {
+      "command": [
+        "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+        "test",
+        "-race",
+        "./anywork",
+        "-count=1"
+      ],
+      "exit": 0,
+      "output": "ok  \tgithub.com/joshyorko/rcc/anywork\t3.033s\n",
+      "logSha256": "7d4211c5ccde51c39417780a96aea03e200d97b2d786b788d77d722551883e7c"
+    }
+  ],
+  "review": "All-worker panic capacity oracle accepted. Sync eventual-drain evidence accepted; internal wait entry timing explicitly unproven. Issue181 remains open."
+}

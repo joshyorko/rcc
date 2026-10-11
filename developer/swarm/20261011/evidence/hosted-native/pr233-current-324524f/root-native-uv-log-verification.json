@@ -1,0 +1,29 @@
+{
+  "source": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "logs": [
+    {
+      "log": "linux-amd64-native-job.log",
+      "sha256": "5e33d7f2beed3c19462a969fe7cb073349d13ec611fea57de691c89c9fd32d69",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4
+    },
+    {
+      "log": "macos-amd64-native-job.log",
+      "sha256": "47d04e6071e1e39a1c315f4bf9583a94f9a37e7dbbc384548d4ce7b97bc28b3f",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4
+    },
+    {
+      "log": "macos-arm64-native-job.log",
+      "sha256": "bdf7509f489b8437c4594c88ef04db8e44e0b96cbbe127369c8c4a75352ad589",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4
+    },
+    {
+      "log": "windows-native-job.log",
+      "sha256": "c1708d3b4a4f7f4d74dd22954e505a5dbb7a32a0b7b5e7a86905ed4e88a3d7fe",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4
+    }
+  ]
+}

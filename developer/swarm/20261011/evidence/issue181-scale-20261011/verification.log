@@ -1,0 +1,23 @@
+BASELINE (before test edits, exact base 07db6221a3540d227f2106eccf69fe0e7c11fee0)
+$ /home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/go/bin/go test ./anywork -count=1 -cover (environment: GOCACHE=/workspace/work/rcc-swarm/evidence/resume-acceptance/release-proposal/gocache GOTOOLCHAIN=auto CC=/usr/bin/gcc CGO_ENABLED=1)
+ok  	github.com/joshyorko/rcc/anywork	0.005s	coverage: 83.8% of statements
+exit=0
+
+FINAL EXACT-HEAD CHECKS (commit a87a67dd65a5415372d2df28c7403047cf4a490a)
+Toolchain executable: /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go
+Toolchain version: go version go1.26.9 linux/amd64
+GOROOT: /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64
+Environment: PATH=/home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin:$PATH GOROOT=/home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64 GOCACHE=/workspace/work/rcc-swarm/evidence/resume-acceptance/release-proposal/gocache GOTOOLCHAIN=auto CC=/usr/bin/gcc CGO_ENABLED=1
+
+$ /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go test ./anywork -count=1 -coverprofile=/tmp/rcc181-scale.cover
+ok  	github.com/joshyorko/rcc/anywork	0.006s	coverage: 91.2% of statements
+exit=0
+$ /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go test -race ./anywork -count=1
+ok  	github.com/joshyorko/rcc/anywork	3.030s
+exit=0
+$ /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go test ./anywork -count=20 -shuffle=on
+ok  	github.com/joshyorko/rcc/anywork	0.060s
+exit=0
+
+DCO commit: a87a67dd65a5415372d2df28c7403047cf4a490a
+Tree: 76a02d87b2e20543e9b7991fe0db04b9ad2e20f1
