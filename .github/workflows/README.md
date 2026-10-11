@@ -4,23 +4,16 @@ This directory contains the CI/CD workflows for the RCC (Repeatable, Contained C
 
 ## Workflow Overview
 
-`recover-rcc-185.yml` is the manually dispatched publication recovery for the
-unpublished v18.19.5 tag. It pins source run 34149302701 and commit
-`d1aec7d0bb897a81274423c7a6bb747233f9c263`, checks the original artifact ZIP
-digests and native receipts, and uses the existing binaries for the corrected
-N-1 rollback gate. It does not build RCC or rerun the release suite. The small
-rollback fixture provisions Python only. After topology validation and draft
-asset readback, it publishes the existing tag and dispatches `rcc-daily` in
-the normal Homebrew workflow. Existing releases or changed tags fail closed;
-the recovery never moves a tag or overwrites a release.
-
-Run only from merged main: `gh workflow run recover-rcc-185.yml --ref main`.
-Focused checks: `python -m unittest discover -s .github/workflows/recovery -p test_recover_rcc_185.py`.
+`recover-rcc-185.yml` is a retired, read-only manual hold. It exits without
+creating a tag or release and without dispatching Homebrew. The historical
+recovery script and evidence remain in the repository for audit; they are not
+an executable publication route. Do not dispatch this workflow as a release
+operation.
 
 | Workflow | Purpose | Trigger |
 |----------|---------|---------|
-| [rcc.yaml](#rccyaml) | Main CI/CD pipeline | Push to `main`, version tags, PRs |
-| [create-release-tag.yml](#create-release-tagyml) | Trigger release process | Manual |
+| [rcc.yaml](#rccyaml) | Main CI and manual release preparation | Push to `main`, PRs, manual |
+| [create-release-tag.yml](#create-release-tagyml) | Read-only migration hold | Manual |
 | [codeql-analysis.yml](#codeql-analysisyml) | Security scanning | Push/PR to `master`, weekly |
 | [dagger.yaml](#daggeryaml) | Dagger-based testing | Manual |
 | [copilot-setup-steps.yml](#copilot-setup-stepsyml) | Copilot environment setup | Manual, push/PR to this file |
@@ -32,11 +25,11 @@ Focused checks: `python -m unittest discover -s .github/workflows/recovery -p te
 
 **Main CI/CD Pipeline**
 
-The primary workflow for building, testing, and releasing RCC across multiple platforms.
+The primary workflow for building and testing RCC across multiple platforms and
+for preparing an immutable release-review artifact.
 
 ### Triggers
 - **Push** to `main` branch
-- **Version tags** matching `v*` pattern
 - **Pull requests** to `main` branch; the release-candidate gate is opt-in through
   the `release-candidate` label. Adding the label runs it, and later PR commits
   rerun it while the label remains. This is the full release acceptance suite,
@@ -58,8 +51,8 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 #### 2. Release Candidate Verification (`release-candidate`)
 - **Runner:** `ubuntu-latest`
-- **Condition:** Runs for version-tag pushes and pull requests labeled
-  `release-candidate`. The PR gate checks out the exact PR head and does not
+- **Condition:** Runs for manual preparation from `main` and pull requests
+  labeled `release-candidate`. It checks out the exact source and does not
   publish a release or use publication credentials.
 - **Steps:**
   - Download and checksum the pinned N-1 RCC v18.19.5 binary
@@ -77,13 +70,12 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
   - Run Robot Framework acceptance tests
   - Upload test reports as artifacts
 
-#### 4. Release (`release`)
-- **Condition:** Runs after successful tag-push build and release-candidate verification
-- **Publication:** Version-tag pushes only; labeling a PR never publishes.
-- **Steps:**
-  - Download built RCC binaries
-  - Generate `index.json` with version metadata
-  - Publish GitHub Release with all platform binaries
+#### 4. Assemble Release Preparation (`assemble-release-preparation`)
+- **Condition:** Manual dispatch from `main` after build, candidate, and native
+  gates succeed
+- **Output:** An immutable artifact with eight binaries, `index.json`, manifest,
+  checksums, provenance, and source-bound test receipts. This job does not
+  create a tag or publish a release.
 
 ### Required Secrets
 - `HOMEBREW_TOOLS_PAT` - required before publication so the release can dispatch
@@ -93,28 +85,12 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 ## create-release-tag.yml
 
-**Release Trigger Workflow**
+**Read-only migration hold**
 
-A manual workflow that extracts the version from source code, validates it, and creates the release tag that starts the main release pipeline.
-
-### Triggers
-- **Manual dispatch only** (`workflow_dispatch`)
-
-### How It Works
-1. Checks out the repository with full Git history
-2. Extracts version from `common/version.go`
-3. Validates the version string
-4. Creates and pushes the matching `v*` release tag with the release PAT
-5. The tag push triggers `rcc.yaml`, which publishes the release and then dispatches the `rcc-daily` Homebrew tap update
-
-### Permissions
-- `contents: write` - For creating the release tag
-
-### Usage
-1. Navigate to Actions > "Create Release Tag"
-2. Click "Run workflow"
-3. The workflow will read the version, create the tag, and the tag push will trigger a release
-4. If the tag was already created but the release workflow needs to run again, rerun with `recreate_existing_tag=true`; it recreates the existing tag at its current commit after safety checks
+This legacy manual entry exits with a migration message. It has read-only
+permissions and cannot create, move, or recreate a tag. Use the separately
+reviewed preparation and protected publication procedure in
+[`docs/release-process.md`](../docs/release-process.md).
 
 ---
 
@@ -239,33 +215,9 @@ mv codex-pr-review.txt codex-pr-review.yml
 
 ## Release Process
 
-The recommended release process uses these workflows:
-
-```
-┌─────────────────────────┐
-│  Update version in      │
-│  common/version.go      │
-│  and docs/changelog.md  │
-└───────────┬─────────────┘
-            │
-            ▼
-┌─────────────────────────┐
-│  Run "Create Release    │
-│  Tag" workflow manually │
-└───────────┬─────────────┘
-            │
-            ▼
-┌─────────────────────────┐
-│  Tag push triggers      │
-│  rcc.yaml release path  │
-│  - Build all platforms  │
-│  - Run release candidate│
-│    and self-host gates  │
-│  - Validate 8 binaries  │
-│    plus index.json      │
-│  - Create draft release │
-└─────────────────────────┘
-```
+Follow [`docs/release-process.md`](../docs/release-process.md) for exact-source
+preparation, artifact review, and the separate protected publication gate.
+Neither a tag push nor the legacy manual hold publishes a release.
 
 ## Environment Requirements
 
@@ -288,10 +240,10 @@ The recommended release process uses these workflows:
 - Review test reports in workflow artifacts
 - Run tests locally: `python3 -m robot -L DEBUG -d tmp/output robot_tests`
 
-### Release not triggering
-- Verify version tag matches `v*` pattern
-- Check that `create-release-tag.yml` created and pushed the expected tag
-- Check that `rcc.yaml` started from the tag push
+### Release preparation or publication blocked
+- Confirm the selected main SHA, source version, and changelog heading match.
+- Review the preparation artifact and its full native, consumer, and
+  self-host receipts before considering the protected publication workflow.
 
 ## Contributing
 
