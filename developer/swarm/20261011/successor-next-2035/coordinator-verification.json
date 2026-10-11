@@ -1,0 +1,17 @@
+{
+  "exit": 0,
+  "counts": {
+    "materializations": 7,
+    "logical_files": 3591,
+    "payload_requests": 36,
+    "payload_verifications": 18432,
+    "mismatches": 0,
+    "active_leases": 0
+  },
+  "source_sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+  "binary_sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce",
+  "failed_compile_source_preserved": true,
+  "original_baseline_failure_preserved": true,
+  "frozen_tracked_source_unchanged": true,
+  "scope": "Readback only of exact source/build/provider/materialization bytes, accepted child responses, supervision and guard receipts; no workload replay. Sampling cannot prove absence of unobserved escaped processes."
+}

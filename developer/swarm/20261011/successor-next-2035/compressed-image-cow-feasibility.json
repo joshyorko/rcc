@@ -1,0 +1,32 @@
+{
+  "lane": "RCC #125 compressed-image/COW feasibility",
+  "disposition": "NO_SOURCE_ONLY_GENUINE_COW_PROTOTYPE_FEASIBLE_ON_INSPECTED_HOST",
+  "scope": "frozen public acquisition/materializer API and recorded host tools/capabilities only",
+  "source_or_production_edits": false,
+  "build_or_execution": false,
+  "namespace_or_mount_test": false,
+  "api_findings": {
+    "new_acquirer": "hardwires LocalMaterializer; injector fields are private",
+    "materializer_interface": "public interface, accepted by Execute/ExecuteWithStreams, not configurable through public NewAcquirer",
+    "default_materialization": "portable HTFS catalog is rebased then restored to regular Holotree target; compatibility verified and ready record written",
+    "execution": "lease-bound, resolves executable and cwd from ready materialization"
+  },
+  "host_barriers": {
+    "fuse": "kernel registered but /dev/fuse absent per retained capability receipt",
+    "loop": "no /dev/loop device for inspected loop-mount route per retained capability receipt",
+    "userspace_tools": "recorded host tool inspection found bwrap only among compressed-image/COW candidates; no SquashFS/EROFS image utilities",
+    "tested": false
+  },
+  "existing_archive_path": "WriteArchive uses ZIP Store entries; ImportArchive validates and streams gzip objects into ordinary local CAS before NewAcquirer/Execute; legacy ZipLibrary RestoreTo gunzips and eagerly restores regular files",
+  "existing_archive_path_classification": "archive transport/import or eager extraction only; not a mounted image or COW",
+  "rejected_substitute": "archive compression plus eager extraction is not a mounted image or COW",
+  "next_feasible_independent_work": "read-only attribution of retained CPU profiles to local CAS/open/stat/import/HTFS restore/compatibility costs; no replay",
+  "measurement_admission_controls": [
+    "artifact/index/image cryptographic identity and bounded canonical paths",
+    "no-symlink safe-root traversal; reject corrupt/truncated/missing/wrong-descriptor inputs",
+    "logical file hashes and relocation parity",
+    "immutable lower and independent writable upper",
+    "strict owner/mode boundaries and mounted-view compatibility verification",
+    "execution lease tied to mount lifetime; crash cleanup and stale mount/upper absence"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "command": [
+    "/usr/bin/bwrap",
+    "--unshare-user",
+    "--unshare-pid",
+    "--unshare-net",
+    "--ro-bind",
+    "/",
+    "/",
+    "--proc",
+    "/proc",
+    "--dev",
+    "/dev",
+    "--tmpfs",
+    "/tmp",
+    "--die-with-parent",
+    "/usr/bin/true"
+  ],
+  "returncode": 1,
+  "stop": null,
+  "seconds": 0.10287984100023095,
+  "sampled_tree_rss_max": 786432,
+  "known_identities": {
+    "9540": "281969"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.001711552000415395,
+      "rss": 786432,
+      "free": 30930554880,
+      "identities": [
+        {
+          "pid": 9540,
+          "ppid": 9537,
+          "pgid": 9540,
+          "start": "281969",
+          "rss": 786432,
+          "state": "R"
+        }
+      ]
+    }
+  ]
+}

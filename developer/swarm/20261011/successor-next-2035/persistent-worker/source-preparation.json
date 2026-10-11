@@ -1,0 +1,27 @@
+{
+  "kind": "private-source-preparation",
+  "status": "ready-for-independent-source-review",
+  "source": "persistent-worker/source/main.go",
+  "sourceSha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+  "readme": "persistent-worker/README.md",
+  "readmeSha256": "a43fc11617b16e02203408fe326487e1b82ddf9f93da0374d902193925327906",
+  "checks": [
+    "gofmt completed with the frozen Go 1.26.9 toolchain binary",
+    "source SHA-256 recorded after formatting",
+    "unused sort import removed following preserved compile failure receipt",
+    "control exit assertion and diagnostic text consistently expect exit 73"
+  ],
+  "notPerformed": [
+    "no build or compile",
+    "no native execution",
+    "no benchmark or timed wave",
+    "no production changes"
+  ],
+  "workerContract": {
+    "mode": "worker|control",
+    "arm": "fresh|resident",
+    "tasks": 6,
+    "workerContextSeconds": 25,
+    "controlExitCode": 73
+  }
+}

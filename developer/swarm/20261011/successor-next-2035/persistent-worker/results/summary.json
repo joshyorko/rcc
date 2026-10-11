@@ -1,0 +1,36 @@
+{
+  "source_sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+  "binary_sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce",
+  "arms": {
+    "fresh": {
+      "samples": 3,
+      "batch_ms": [
+        821.469849,
+        643.63676,
+        627.534271
+      ],
+      "median_batch_ms": 643.63676,
+      "median_acquire_ms": 1691.964995,
+      "median_setup_acquire_batch_ms": 2338.636311,
+      "median_child_cpu_ms": 601.454
+    },
+    "resident": {
+      "samples": 3,
+      "batch_ms": [
+        134.098918,
+        195.316018,
+        126.506141
+      ],
+      "median_batch_ms": 134.098918,
+      "median_acquire_ms": 1668.897177,
+      "median_setup_acquire_batch_ms": 1796.746079,
+      "median_child_cpu_ms": 126.287
+    }
+  },
+  "paired_fresh_minus_resident_batch_ms": [
+    687.370931,
+    448.320742,
+    501.02813
+  ],
+  "limitations": "Three synthetic warm-OS-cache pairs, host Python wrapper; no long-lived worker daemon, Actions workflow, solver, actual customer workload, production change or release qualification. CPU/profile/IO scope must be read from source; Go profile excludes child Python."
+}

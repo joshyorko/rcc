@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-10-11T20:55:10.433238+00:00",
+  "python_source_compile": 0,
+  "gofmt_changed_source": 0,
+  "staged_diff_check": {
+    "exit": 0,
+    "excluded_exact_raw_tool_output": [
+      "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-1-resident-cpu-top.txt",
+      "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-2-resident-cpu-top.txt"
+    ]
+  },
+  "bounded_builds": {
+    "build1": "FAILED1 unused import exactsource preserved",
+    "build2": "PASS0"
+  },
+  "native_control": {
+    "nonzero73": "PASS0"
+  },
+  "new_measured_arms": 6,
+  "timed_wave_replay": false,
+  "coordinator_readback": "coordinator-verification.json",
+  "independent_readback": "persistent-worker/independent-runtime-review.json",
+  "source_mutation": "none in frozen tracked source",
+  "check_scope": "Only new private diagnostic/source/docs/evidence; no production implementation/default/format change. No benchmark rerun.",
+  "staged_full_diff_check": {
+    "exit": 2,
+    "stdout": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-1-resident-cpu-top.txt:5: trailing whitespace.\n+Duration: 134ms, Total samples = 0 \ndeveloper/swarm/20261011/successor-next-2035/persistent-worker/results/pair-2-resident-cpu-top.txt:5: trailing whitespace.\n+Duration: 195.33ms, Total samples = 0 \n",
+    "reason": "Exact retained Go pprof output has trailing spaces on two zero-sample Total samples lines; raw evidence is preserved."
+  },
+  "stage_policy": "Explicit list of new files excluding __pycache__, then nonempty manifest admission. Earlier broad pathspec added no files; corrected before commit and caught these raw output warnings."
+}

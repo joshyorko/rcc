@@ -1,0 +1,60 @@
+{
+  "review_type": "independent read-only raw runtime verification",
+  "reviewer_reran_benchmark": false,
+  "source_sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+  "binary_sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce",
+  "binding_and_build": "PASS: source, binary, toolchain, overlay and bounded launcher hashes match build-binding.json; build-2 returncode 0",
+  "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+  "fixture": {
+    "gzip_level": 1,
+    "manifest_entries_per_materialization": 513,
+    "payload_entries_per_request": 512,
+    "materializations_checked": 7,
+    "file_hash_checks": 3591,
+    "runtime_request_payload_checks": 18432,
+    "request_aggregate_sha256": "cacb33eadcd7c2abb40d6930a6943327b54223af3b51833c5f67a13b6521dce8",
+    "all_materialized_tree_file_sets_match_fixture": true,
+    "producer_provider_fixture_closure_matches_retained_snapshot": true,
+    "closure_snapshot_regular_file_rows": 1038
+  },
+  "control": {
+    "first": true,
+    "status": "PASS",
+    "exit_code": 73,
+    "lease_released": true
+  },
+  "arms": {
+    "fresh": {
+      "execute_calls_per_sample": 6,
+      "requests_per_sample": 6,
+      "distinct_pids_per_sample": [6, 6, 6],
+      "distinct_lease_ids_per_sample": [6, 6, 6],
+      "batch_ms": [821.469849, 643.636760, 627.534271],
+      "median_batch_ms": 643.636760,
+      "median_setup_acquire_batch_ms": 2338.636311
+    },
+    "resident": {
+      "execute_calls_per_sample": 1,
+      "requests_per_sample": 6,
+      "distinct_pids_per_sample": [1, 1, 1],
+      "distinct_lease_ids_per_sample": [1, 1, 1],
+      "batch_ms": [134.098918, 195.316018, 126.506141],
+      "median_batch_ms": 134.098918,
+      "median_setup_acquire_batch_ms": 1796.746079
+    }
+  },
+  "supervision_and_cleanup": {
+    "invocations_including_control": 7,
+    "all_returncode_zero": true,
+    "all_stop_reasons_null": true,
+    "all_final_observed_live_identity_sets_empty": true,
+    "remaining_lease_files": 0,
+    "unique_worker_request_lease_ids": 21,
+    "pre_post_guard_records_per_invocation": 8,
+    "pre_post_guard_tuples_identical": true,
+    "private_roots_and_homes_mode_0700_owner_group_current_euid_egid": true,
+    "shared_global_ht_mode_0750_owner_group_current_euid_egid": true,
+    "sampled_runner_scope": "Does not prove absence of sub-100ms or otherwise unobserved escaped children; sampled bounds are not hard quotas."
+  },
+  "interpretation": "Finite synthetic warm-OS-cache Python batch only. Not an Actions acceptance result, long-lived worker/daemon result, customer workload, shipping-candidate result, or release qualification. Original timed-wave failure and cached-work NO-GO remain preserved."
+}

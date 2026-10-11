@@ -1,0 +1,147 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/persistent-worker",
+    "-mode=worker",
+    "-outer=/workspace/rcc-successor-persistent-2040",
+    "-provider-root=/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+    "-fixture=/workspace/rcc-successor-compression-2018/gzip-1/fixture.json",
+    "-artifact=sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "-receipt=/workspace/rcc-successor-persistent-2040/pair-2-resident/worker.jsonl",
+    "-arm=resident",
+    "-tasks=6",
+    "-profile=/workspace/rcc-successor-persistent-2040/pair-2-resident/cpu.pprof"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 2.075289795000117,
+  "sampled_tree_rss_max": 27787264,
+  "known_identities": {
+    "10620": "358198",
+    "10630": "358368"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.002035772999988694,
+      "rss": 3624960,
+      "free": 30871355392,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 3624960,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 1669063
+    },
+    {
+      "elapsed": 0.2680243900003916,
+      "rss": 15241216,
+      "free": 30869680128,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15241216,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 1876959
+    },
+    {
+      "elapsed": 0.5399412770002527,
+      "rss": 15241216,
+      "free": 30867832832,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15241216,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 1945977
+    },
+    {
+      "elapsed": 0.8233353660002649,
+      "rss": 15241216,
+      "free": 30866108416,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15241216,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 2016459
+    },
+    {
+      "elapsed": 1.1155467339999632,
+      "rss": 15695872,
+      "free": 30863921152,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15695872,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2045011
+    },
+    {
+      "elapsed": 1.4282989850003105,
+      "rss": 15695872,
+      "free": 30860623872,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15695872,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 2066278
+    },
+    {
+      "elapsed": 1.7703226470002846,
+      "rss": 27787264,
+      "free": 30856290304,
+      "identities": [
+        {
+          "pid": 10620,
+          "ppid": 10619,
+          "pgid": 10620,
+          "start": "358198",
+          "rss": 15204352,
+          "state": "S"
+        },
+        {
+          "pid": 10630,
+          "ppid": 10620,
+          "pgid": 10620,
+          "start": "358368",
+          "rss": 12582912,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 2223433
+    }
+  ]
+}

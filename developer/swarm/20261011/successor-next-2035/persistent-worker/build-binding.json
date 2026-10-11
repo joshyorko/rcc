@@ -1,0 +1,44 @@
+{
+  "source_sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+  "binary_sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce",
+  "base_source": "7945f956b428359928908a9f42e36417b113dafd",
+  "classification": "private modified diagnostic; owned global-path redirect and private-home parent overlays; not shipping binary",
+  "build_result": "persistent-worker/build-2/result.json",
+  "files": [
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-next-2035/persistent-worker/source/main.go",
+      "bytes": 20828,
+      "sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c"
+    },
+    {
+      "path": "/workspace/rcc-successor-tools/persistent-worker",
+      "bytes": 12905041,
+      "sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce"
+    },
+    {
+      "path": "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+      "bytes": 15456232,
+      "sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+      "bytes": 330,
+      "sha256": "83526d16674c51061d07d63ad3c63e9f31eac1b113106961ab0fcb410243a29b"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/functions_private_linux.go.txt",
+      "bytes": 9040,
+      "sha256": "bdcebbd7598a7669bdb7c93cac220a708413d704f9c5a95b069191076624c270"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/platform_linux_isolated.go.txt",
+      "bytes": 648,
+      "sha256": "402a012b9d0e22d9c1aad77f3b375c7c5bdd93154f8f6ee1f754ad4662811d7d"
+    },
+    {
+      "path": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/run_bounded_v3.py",
+      "bytes": 4877,
+      "sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6"
+    }
+  ]
+}

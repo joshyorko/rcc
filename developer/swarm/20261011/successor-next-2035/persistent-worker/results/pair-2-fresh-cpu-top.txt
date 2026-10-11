@@ -1,0 +1,23 @@
+File: persistent-worker
+Build ID: 09da338cab4c745aa0330985e872bdb3bb9fd188
+Type: cpu
+Time: 2026-10-11 20:48:12 UTC
+Duration: 644.02ms, Total samples = 30ms ( 4.66%)
+Showing nodes accounting for 30ms, 100% of 30ms total
+Showing top 15 nodes out of 30
+      flat  flat%   sum%        cum   cum%
+      10ms 33.33% 33.33%       10ms 33.33%  encoding/json.stateInString
+      10ms 33.33% 66.67%       10ms 33.33%  runtime.memclrNoHeapPointers
+      10ms 33.33%   100%       10ms 33.33%  runtime.typePointers.next
+         0     0%   100%       10ms 33.33%  encoding/json.(*encodeState).marshal
+         0     0%   100%       10ms 33.33%  encoding/json.(*encodeState).reflectValue
+         0     0%   100%       10ms 33.33%  encoding/json.Marshal
+         0     0%   100%       10ms 33.33%  encoding/json.addrMarshalerEncoder
+         0     0%   100%       10ms 33.33%  encoding/json.appendCompact
+         0     0%   100%       10ms 33.33%  encoding/json.arrayEncoder.encode
+         0     0%   100%       10ms 33.33%  encoding/json.condAddrEncoder.encode
+         0     0%   100%       10ms 33.33%  encoding/json.sliceEncoder.encode
+         0     0%   100%       10ms 33.33%  encoding/json.structEncoder.encode
+         0     0%   100%       10ms 33.33%  github.com/joshyorko/rcc/environmentlifecycle.(*LocalMaterializer).ExecutionHandle
+         0     0%   100%       10ms 33.33%  github.com/joshyorko/rcc/environmentlifecycle.(*LocalMaterializer).Release
+         0     0%   100%       20ms 66.67%  github.com/joshyorko/rcc/environmentlifecycle.ExecuteWithStreams

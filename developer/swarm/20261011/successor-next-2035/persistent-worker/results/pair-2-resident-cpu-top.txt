@@ -1,0 +1,7 @@
+File: persistent-worker
+Build ID: 09da338cab4c745aa0330985e872bdb3bb9fd188
+Type: cpu
+Time: 2026-10-11 20:48:10 UTC
+Duration: 195.33ms, Total samples = 0 
+Showing nodes accounting for 0, 0% of 0 total
+      flat  flat%   sum%        cum   cum%

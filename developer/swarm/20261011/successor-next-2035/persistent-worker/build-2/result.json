@@ -1,0 +1,249 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/persistent-worker",
+    "/workspace/rcc-continuation/developer/swarm/20261011/successor-next-2035/persistent-worker/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 1.021116861000337,
+  "sampled_tree_rss_max": 241745920,
+  "known_identities": {
+    "10481": "354398",
+    "10500": "354408",
+    "10508": "354421"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0030762569999751577,
+      "rss": 11968512,
+      "free": 30930403328,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 11968512,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10558858500007773,
+      "rss": 50274304,
+      "free": 30930399232,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35209216,
+          "state": "S"
+        },
+        {
+          "pid": 10500,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354408",
+          "rss": 15065088,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20686621200002264,
+      "rss": 76640256,
+      "free": 30930399232,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35209216,
+          "state": "S"
+        },
+        {
+          "pid": 10500,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354408",
+          "rss": 41431040,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.3081469440003275,
+      "rss": 91095040,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 55623680,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.40937508300021364,
+      "rss": 115736576,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 80265216,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5107927760000166,
+      "rss": 141860864,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 106389504,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6151027400001112,
+      "rss": 178679808,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 143208448,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.716890806000265,
+      "rss": 205910016,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 170438656,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.818333461000293,
+      "rss": 226410496,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 190939136,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.919955050000226,
+      "rss": 241745920,
+      "free": 30930071552,
+      "identities": [
+        {
+          "pid": 10481,
+          "ppid": 10478,
+          "pgid": 10481,
+          "start": "354398",
+          "rss": 35471360,
+          "state": "S"
+        },
+        {
+          "pid": 10508,
+          "ppid": 10481,
+          "pgid": 10481,
+          "start": "354421",
+          "rss": 206274560,
+          "state": "R"
+        }
+      ]
+    }
+  ]
+}

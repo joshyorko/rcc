@@ -1,0 +1,23 @@
+File: persistent-worker
+Build ID: 09da338cab4c745aa0330985e872bdb3bb9fd188
+Type: cpu
+Time: 2026-10-11 20:48:05 UTC
+Duration: 821.85ms, Total samples = 40ms ( 4.87%)
+Showing nodes accounting for 40ms, 100% of 40ms total
+Showing top 15 nodes out of 37
+      flat  flat%   sum%        cum   cum%
+      10ms 25.00% 25.00%       10ms 25.00%  encoding/json.checkValid
+      10ms 25.00% 50.00%       10ms 25.00%  runtime.futex
+      10ms 25.00% 75.00%       10ms 25.00%  runtime.madvise
+      10ms 25.00%   100%       10ms 25.00%  runtime.tgkill
+         0     0%   100%       10ms 25.00%  encoding/json.Unmarshal
+         0     0%   100%       10ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.(*LocalMaterializer).Lease
+         0     0%   100%       10ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.ExecuteWithStreams
+         0     0%   100%       10ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.executeWithSignalsAndStreams
+         0     0%   100%       10ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.executeWithSignalsAndStreamsInDirectory
+         0     0%   100%       10ms 25.00%  github.com/joshyorko/rcc/environmentlifecycle.readReferenceRoot
+         0     0%   100%       10ms 25.00%  main.main
+         0     0%   100%       10ms 25.00%  main.runWorker
+         0     0%   100%       10ms 25.00%  runtime.(*pageAlloc).scavenge
+         0     0%   100%       10ms 25.00%  runtime.(*pageAlloc).scavenge.func1
+         0     0%   100%       10ms 25.00%  runtime.(*pageAlloc).scavengeOne

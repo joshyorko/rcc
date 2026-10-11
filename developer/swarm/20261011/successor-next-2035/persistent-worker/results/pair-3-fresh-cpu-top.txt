@@ -1,0 +1,23 @@
+File: persistent-worker
+Build ID: 09da338cab4c745aa0330985e872bdb3bb9fd188
+Type: cpu
+Time: 2026-10-11 20:48:15 UTC
+Duration: 628.06ms, Total samples = 20ms ( 3.18%)
+Showing nodes accounting for 20ms, 100% of 20ms total
+Showing top 15 nodes out of 31
+      flat  flat%   sum%        cum   cum%
+      10ms 50.00% 50.00%       10ms 50.00%  strings.ToLower
+      10ms 50.00%   100%       10ms 50.00%  sync.runtime_procPin
+         0     0%   100%       10ms 50.00%  encoding/json.(*Decoder).Decode
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).array
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).literalStore
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).object
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).unmarshal
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).value
+         0     0%   100%       10ms 50.00%  encoding/json.(*encodeState).marshal
+         0     0%   100%       10ms 50.00%  encoding/json.(*encodeState).reflectValue
+         0     0%   100%       10ms 50.00%  encoding/json.Marshal
+         0     0%   100%       10ms 50.00%  encoding/json.addrMarshalerEncoder
+         0     0%   100%       10ms 50.00%  encoding/json.appendCompact
+         0     0%   100%       10ms 50.00%  encoding/json.arrayEncoder.encode
+         0     0%   100%       10ms 50.00%  encoding/json.condAddrEncoder.encode

@@ -1,0 +1,29 @@
+{
+  "reports": [
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-1-fresh-cpu.pprof",
+      "exit": 0
+    },
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-1-resident-cpu.pprof",
+      "exit": 0
+    },
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-2-fresh-cpu.pprof",
+      "exit": 0
+    },
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-2-resident-cpu.pprof",
+      "exit": 0
+    },
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-3-fresh-cpu.pprof",
+      "exit": 0
+    },
+    {
+      "profile": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-3-resident-cpu.pprof",
+      "exit": 0
+    }
+  ],
+  "scope": "report only; no native benchmark replay; Go profile excludes Python child CPU"
+}
