@@ -122,6 +122,10 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
 |-----------|---------|
 | `cmd/` | CLI commands (Cobra entrypoints & implementations) |
 | `operations/` | Higher-level behaviors (auth, bundles, diagnostics, etc.) |
+| `conda/` | Python environment creation, activation, and package installation |
+| `htfs/` | Holotree filesystem storage and environment materialization |
+| `remotree/` | Remote cache protocol, service, and synchronization |
+| `settings/` | RCC settings, endpoint, and provider-profile configuration |
 | `common/`, `pathlib/`, `shell/` | Shared libraries/utilities |
 | `assets/` | *Source* assets that get embedded into the binary |
 | `blobs/` | Generated/embedded assets (**do not edit by hand**—the build will overwrite your tears) |
