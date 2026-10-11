@@ -1,0 +1,208 @@
+{
+  "compiled_metadata": {
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "linux",
+    "executable_bytes": 3886851,
+    "executable_sha256": "a25beb9e343e6d616e86dcdbd28a820bd1f5a6d53286637fe5c4debb8b433f06",
+    "version": "go1.26.9"
+  },
+  "execution_directory": "/workspace/work/rcc-swarm/evidence/continuation-20261011/go-gzip-component-executed",
+  "execution_inputs": {
+    "main.go": "8cf145da16bc5dede55389b5c50a9f47de71ce8b9d119704b71c6ab77f8ec1e1",
+    "plan.json": "e162b7b1694f62cc1386bdaee889a39ef6da9e49f66cb37ac68631ec103fcc3f",
+    "run.sh": "eea7ba978c60004d405a72992bd2a8fa5e2ce9b5937f84bafb2e121247d7b4f7",
+    "supervise.py": "cbcc32f2c18aab617153493cf66d1da07773e3443b84010ee0aeb6b4d37d1812",
+    "test_supervise.py": "40e55a2c29029efc3b59fd44ef59839aead41e9653533e2dab809048a7464fd9"
+  },
+  "guard_caps_and_observed": {
+    "build_owned_ram_temp_peak_allocated_bytes": 92696576,
+    "build_sampled_process_tree_rss_peak_bytes": 337932288,
+    "elapsed_seconds": 47.22665427600077,
+    "evidence_bytes_limit": 1048576,
+    "executable_bytes_limit": 8388608,
+    "failure": null,
+    "final_evidence_allocated_bytes": 286720,
+    "final_free_bytes": 2697576448,
+    "final_ram_temp_allocated_bytes": 44720128,
+    "free_bytes_floor_including_margin": 2688548864,
+    "longest_phase_seconds": 2.767250914,
+    "minimum_free_bytes_observed": 2697576448,
+    "owned_ram_temp_bytes_limit": 268435456,
+    "phase_seconds_limit": 30,
+    "rss_bytes_limit": 536870912,
+    "runtime_owned_ram_temp_peak_allocated_bytes": 44720128,
+    "runtime_sampled_process_tree_rss_peak_bytes": 165658624,
+    "total_seconds_limit": 120
+  },
+  "numeric_outcomes": {
+    "build_exit_code": 0,
+    "calls_by_phase": {
+      "gzip-bestspeed-decode": 100,
+      "gzip-bestspeed-encode": 100,
+      "legacy-gzip-decode": 100
+    },
+    "canonical_frame_receipts": 20,
+    "compiled_metadata_exit_code": 0,
+    "go_version_exit_code": 0,
+    "index_receipts_before_after_equal": true,
+    "manifest_receipts_before_after_equal": true,
+    "outer_exit_code": 0,
+    "phase_events": {
+      "completions": 15,
+      "starts": 15,
+      "total": 30
+    },
+    "runtime_exit_code": 0,
+    "runtime_result_status": "PASS",
+    "runtime_sample_count": 300,
+    "selected_logical_bytes": 102457064,
+    "selected_objects": 20,
+    "selected_stored_bytes": 45517701,
+    "source_receipts_before_after_equal": true,
+    "untimed_calls": {
+      "canonical_bestspeed_encode": 20,
+      "canonical_bestspeed_roundtrip_decode": 20,
+      "encode_roundtrip_decode": 100,
+      "frame_preparation_encode": 100
+    }
+  },
+  "outer_invocation": {
+    "command": "RCC125_GO_GZIP_ADMISSION=root-admitted-go-gzip-component-v1 /bin/bash ./run.sh",
+    "exec_command_session_id": 35090,
+    "final_tool_result": {
+      "exit_code": 0,
+      "output": "{\"build_exit_code\": 0, \"failure\": null, \"runtime_exit_code\": 0, \"status\": \"PASS\"}\n",
+      "wall_time_seconds": 15.7715
+    },
+    "invocation_count": 1,
+    "retry_performed": false,
+    "working_directory": "/workspace/work/rcc-swarm/evidence/continuation-20261011/go-gzip-component-executed"
+  },
+  "per_object_median_ns_across_100_calls": {
+    "gzip-bestspeed-decode": {
+      "process_cpu_ns": 14208000,
+      "wall_ns": 13847684
+    },
+    "gzip-bestspeed-encode": {
+      "process_cpu_ns": 20827000,
+      "wall_ns": 19876786
+    },
+    "legacy-gzip-decode": {
+      "process_cpu_ns": 13919000,
+      "wall_ns": 13477152
+    }
+  },
+  "phase_repetition_totals": {
+    "gzip-bestspeed-decode": {
+      "median_process_cpu_ns": 809427000,
+      "median_wall_ns": 728972031,
+      "process_cpu_ns": [
+        809427000,
+        799577000,
+        762781000,
+        861241000,
+        841681000
+      ],
+      "wall_ns": [
+        728972031,
+        692926878,
+        684687738,
+        737353101,
+        731821505
+      ]
+    },
+    "gzip-bestspeed-encode": {
+      "median_process_cpu_ns": 1074101000,
+      "median_wall_ns": 1028486304,
+      "process_cpu_ns": [
+        1013859000,
+        1118114000,
+        1067941000,
+        1090248000,
+        1074101000
+      ],
+      "wall_ns": [
+        989072457,
+        1033444611,
+        1027928935,
+        1032054620,
+        1028486304
+      ]
+    },
+    "legacy-gzip-decode": {
+      "median_process_cpu_ns": 804924000,
+      "median_wall_ns": 715257281,
+      "process_cpu_ns": [
+        804924000,
+        801063000,
+        777111000,
+        816598000,
+        926576000
+      ],
+      "wall_ns": [
+        730209107,
+        705457135,
+        706560342,
+        715257281,
+        766592142
+      ]
+    }
+  },
+  "read_only_parser_erratum": {
+    "corrected_command_exit_code": 0,
+    "correction": "summarized samples from recorded wall_ns and process_cpu_ns fields.",
+    "execution_retried": false,
+    "failure": "post-run summary parser requested nonexistent sample field wall_seconds and raised KeyError; this was read-only and did not alter execution evidence.",
+    "first_command_exit_code": 1
+  },
+  "receipt_hashes": {
+    "executable_sha256": "a25beb9e343e6d616e86dcdbd28a820bd1f5a6d53286637fe5c4debb8b433f06",
+    "go_binary_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+    "index_sha256_before_after": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "launch.json": "be5c4ed98e893780aa6f469c8e7be4c04abacb6d08ffd4ede58c9e6f458c653f",
+    "manifest_sha256_before_after": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "phase-events.jsonl": "711dff4c7a132a05415055abbf2b1fdbd38d30e2dce2d03f81ef25191a02bd3d",
+    "plan_sha256": "e162b7b1694f62cc1386bdaee889a39ef6da9e49f66cb37ac68631ec103fcc3f",
+    "results.json": "4a8e7954b26265c131d35d3365a3c665643a06b6579c52b33fdc2ffd1ef06ade",
+    "run.log": "5c486cfb5bf9821ed2852165fb07cc12729f13594ea5b7425910f6559fdb6cc4",
+    "runner_sha256": "8cf145da16bc5dede55389b5c50a9f47de71ce8b9d119704b71c6ab77f8ec1e1"
+  },
+  "schema_version": 1,
+  "scope_and_limitations": [
+    "Sequential, memory-backed Go standard-library gzip analogue, not direct RCC LiftFile or materialization measurement.",
+    "Process CPU includes Go runtime, allocation/GC and measurement overhead; not pure codec instruction time.",
+    "No RCC or Actions performance qualification; no default, format, or production-source change.",
+    "Corpus provenance remains historical Actions a709 stable RCC3; main727 identifies source context, not fixture producer."
+  ],
+  "status": "PASS",
+  "task": "one admitted Go 1.26.9 memory-backed standard-library gzip component invocation",
+  "weighted_logical_throughput_MiB_s_by_repetition": {
+    "gzip-bestspeed-decode": [
+      134.039,
+      141.012,
+      142.708,
+      132.515,
+      133.517
+    ],
+    "gzip-bestspeed-encode": [
+      98.79,
+      94.549,
+      95.056,
+      94.676,
+      95.004
+    ],
+    "legacy-gzip-decode": [
+      133.812,
+      138.507,
+      138.291,
+      136.609,
+      127.461
+    ]
+  },
+  "weighted_logical_throughput_median_MiB_s": {
+    "gzip-bestspeed-decode": 134.039,
+    "gzip-bestspeed-encode": 95.004,
+    "legacy-gzip-decode": 136.609
+  }
+}

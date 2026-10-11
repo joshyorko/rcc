@@ -1,0 +1,342 @@
+{
+  "at": "2026-10-11T14:25:22.614599+00:00",
+  "pr": {
+    "headRefOid": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "isDraft": true,
+    "mergeable": "MERGEABLE",
+    "reviewDecision": "",
+    "reviews": [],
+    "state": "OPEN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:19Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487609/job/114484873251",
+        "name": "Analyze (go)",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "CodeQL"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:17Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487535/job/114484872745",
+        "name": "coverage",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Coverage gate"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:05Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487594/job/114484872954",
+        "name": "golangci-lint",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Lint"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:46:09Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487603/job/114484873060",
+        "name": "metrics",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "PR metrics"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487544/job/114484872895",
+        "name": "report",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Quality report"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114484872811",
+        "name": "Build RCC",
+        "startedAt": "2026-10-11T13:46:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T14:14:30Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114484873035",
+        "name": "Release Candidate Verification",
+        "startedAt": "2026-10-11T13:46:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:55:46Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114485081855",
+        "name": "Native Runtime (linux-amd64)",
+        "startedAt": "2026-10-11T13:47:09Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T14:05:29Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114485081806",
+        "name": "Native Runtime (macos-amd64)",
+        "startedAt": "2026-10-11T13:47:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:55:10Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114485081871",
+        "name": "Native Runtime (macos-arm64)",
+        "startedAt": "2026-10-11T13:47:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T14:05:22Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114485081819",
+        "name": "Native Runtime (windows-amd64)",
+        "startedAt": "2026-10-11T13:47:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T14:14:30Z",
+        "conclusion": "SKIPPED",
+        "detailsUrl": "https://github.com/joshyorko/rcc/actions/runs/38144487557/job/114490497956",
+        "name": "Assemble Release Preparation",
+        "startedAt": "2026-10-11T14:14:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Rcc"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-11T13:47:12Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/joshyorko/rcc/runs/114485091368",
+        "name": "CodeQL",
+        "startedAt": "2026-10-11T13:47:10Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ]
+  },
+  "main": {
+    "ref": "refs/heads/main",
+    "node_id": "REF_kwDOPqaJu69yZWZzL2hlYWRzL21haW4",
+    "url": "https://api.github.com/repos/joshyorko/rcc/git/refs/heads/main",
+    "object": {
+      "sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "type": "commit",
+      "url": "https://api.github.com/repos/joshyorko/rcc/git/commits/727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    }
+  },
+  "jobLogSha256": "796b5cfdd43d80d693442c83ceddd45b6179f47a610963a336637809311fb6fd",
+  "independentNativeReview": {
+    "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+    "worktreeClean": true,
+    "version": "v18.19.6",
+    "checks": [
+      {
+        "platform": "linux_amd64",
+        "zipPath": "/dev/shm/rcc-c6-native-review-root/c6-linux-native-review.zip",
+        "zipBytes": 13386044,
+        "zipSha256": "d480e63fa8f0208462a24f253df73fa5cd921196e0752a2ba9c1ecb2a8cd188f",
+        "reportedApiDigestMatch": true,
+        "binaryPath": "/dev/shm/rcc-c6-native-review-root/rcc-linux64",
+        "binaryBytes": 22392994,
+        "binarySha256": "5865bcf12594166d74c5f2de818deacf066fad83aefad8ab184c3897a1d49f9c",
+        "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+        "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+        "version": "v18.19.6",
+        "goVersion": "go1.26.9",
+        "goos": "linux",
+        "goarch": "amd64",
+        "vcsModified": false,
+        "runtimeReceiptPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/linux-native-runtime-receipt.json",
+        "runtimeReceiptSha256": "93d22b1b4994a4c1cbceb73842689c05992843226ab5e3cf05209b13a4e64e4b",
+        "coldProviderImport": "sqlite3",
+        "warmLocalMaterializationAfterProviderDeath": true,
+        "incompatibleCpuArtifactRejected": true,
+        "mismatchProviderObjectGets": 0,
+        "robot": {
+          "xml": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/linux-output.xml",
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "platformChecks": {
+          "caseCollision": "case-sensitive-filesystem",
+          "executableSymlink": "pass",
+          "filesystemType": "ext2/ext3",
+          "glibcMuslMismatch": "pass",
+          "libc": "glibc",
+          "machine": "x86_64",
+          "runnerOS": "linux"
+        },
+        "jatClassConsumer": {
+          "receipt": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/linux-jat-class-consumer-receipt.json",
+          "receiptSha256": "ecadc1cedd9cc0e3b68c5a3c6b79625d3fb7212b530b9567ba4a47c939affb4d",
+          "objectCount": 10121,
+          "coldImport": "sqlite3",
+          "warmLocalMaterialization": true,
+          "mismatchRejected": true,
+          "mismatchProviderObjectGets": 0
+        }
+      },
+      {
+        "platform": "darwin_arm64",
+        "zipPath": "/dev/shm/rcc-c6-native-review-root/c6-arm-native-review.zip",
+        "zipBytes": 12497746,
+        "zipSha256": "95aaf70a6776dd46a08244312a3001f1f0143fdbd2b7525b250408bfa1cf04d6",
+        "reportedApiDigestMatch": true,
+        "binaryPath": "/dev/shm/rcc-c6-native-review-root/rcc-macosarm64",
+        "binaryBytes": 20969810,
+        "binarySha256": "67d5daf790a3b69d07d90ef28df17234deb90b7502513f67555df385cc86857e",
+        "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+        "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+        "version": "v18.19.6",
+        "goVersion": "go1.26.9",
+        "goos": "darwin",
+        "goarch": "arm64",
+        "vcsModified": false,
+        "runtimeReceiptPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/arm-native-runtime-receipt.json",
+        "runtimeReceiptSha256": "1c9ef6bb40b413b2af1f3c07d147748340112c8d5ec12c73929af6d2d1fb4641",
+        "coldProviderImport": "sqlite3",
+        "warmLocalMaterializationAfterProviderDeath": true,
+        "incompatibleCpuArtifactRejected": true,
+        "mismatchProviderObjectGets": 0,
+        "robot": {
+          "xml": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/arm-output.xml",
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "platformChecks": {
+          "caseCollision": "case-insensitive-filesystem",
+          "codeSigning": "verified",
+          "executableSymlink": "pass",
+          "machine": "arm64",
+          "machoDependencies": "pass",
+          "machoRPath": "pass",
+          "nativeOnlyOnRosetta": "skipped:native-runner",
+          "quarantineXattr": "absent",
+          "rosetta": "native",
+          "runnerOS": "darwin",
+          "translationAllowed": "pass"
+        }
+      },
+      {
+        "platform": "windows_amd64",
+        "zipPath": "/dev/shm/rcc-c6-native-review-root/c6-windows-native-review.zip",
+        "zipBytes": 10850365,
+        "zipSha256": "034e9cf86f903796330efd8a69c45d07f8c6d740c81b40230747b629c2d7a19b",
+        "apiDigestMatchFromRootGithubVerification": true,
+        "binaryPath": "/dev/shm/rcc-c6-native-review-root/rcc-windows64.exe",
+        "binaryBytes": 20117504,
+        "binarySha256": "3bef852bda27208ee37931e84480a0ba0667b50b044c41ecafd96fbb568602ce",
+        "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+        "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+        "version": "v18.19.6",
+        "goVersion": "go1.26.9",
+        "goos": "windows",
+        "goarch": "amd64",
+        "vcsModified": false,
+        "nativeReceiptPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/windows-native-runtime-receipt.json",
+        "nativeReceiptSha256": "46a17d402a992560614b69f2b1b1a11d89a392cb9ed2e66e36bae0ceb5411188",
+        "coldSQLiteImport": true,
+        "coldLeaseReleased": true,
+        "warmLocalMaterializationAfterProviderDeath": true,
+        "incompatibleCpuRejected": true,
+        "mismatchProviderObjectGets": 0,
+        "robot": {
+          "xml": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/windows-output.xml",
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "platformChecks": {
+          "caseCollision": "case-insensitive-filesystem",
+          "executableSymlink": "pass",
+          "fileLock": "pass",
+          "junction": "pass",
+          "longPath": "pass",
+          "machine": "AMD64",
+          "pathNormalization": "pass",
+          "runnerOS": "win32"
+        }
+      },
+      {
+        "platform": "darwin_amd64",
+        "zipPath": "/dev/shm/rcc-c6-native-review-root/c6-intel-native-review.zip",
+        "zipBytes": 13072634,
+        "zipSha256": "2aaf3a32b6dd3bda44f2c355671baedb13ba064d603efaf36a76b37dfb010543",
+        "apiDigestMatchFromRootGithubVerification": true,
+        "binaryPath": "/dev/shm/rcc-c6-native-review-root/rcc-macos64",
+        "binaryBytes": 22228928,
+        "binarySha256": "905d6d8db75586a175b10dab441507b3f68dc7b0e36beac621a8eb425d9566f7",
+        "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+        "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+        "version": "v18.19.6",
+        "goVersion": "go1.26.9",
+        "goos": "darwin",
+        "goarch": "amd64",
+        "vcsModified": false,
+        "nativeReceiptPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/intel-native-runtime-receipt.json",
+        "nativeReceiptSha256": "f4aeb9174713572ef4009ffb3a185191733a86cd3d12c4776ff9da17cb7efa70",
+        "coldSQLiteImport": true,
+        "coldLeaseReleased": true,
+        "warmLocalMaterializationAfterProviderDeath": true,
+        "incompatibleCpuRejected": true,
+        "mismatchProviderObjectGets": 0,
+        "robot": {
+          "xml": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-c6-native-bytes/intel-output.xml",
+          "tests": 1,
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "platformChecks": {
+          "caseCollision": "case-insensitive-filesystem",
+          "codeSigning": "unsigned-or-unverified",
+          "executableSymlink": "pass",
+          "machine": "x86_64",
+          "machoDependencies": "pass",
+          "machoRPath": "pass",
+          "nativeOnlyOnRosetta": "skipped:native-runner",
+          "quarantineXattr": "absent",
+          "rosetta": "native",
+          "runnerOS": "darwin",
+          "translationAllowed": "pass"
+        }
+      }
+    ],
+    "scopeLimit": "All four native runtime payloads were checked from retained ZIP/binary bytes and source-bound receipts. No binary was executed in this environment. Full release-candidate gate remains unverified."
+  },
+  "engineeringDisposition": "ACCEPT_TWO_PHASE_WORKFLOW_CORRECTION_ONLY",
+  "hostedGateEvidence": "Successful actual job plus exact source fail-closed task loop and pipeline exit enforcement; raw numeric/per-gate receipt bundle not downloaded due 156MB size. No release qualification or publication claim.",
+  "publicationHold": true
+}

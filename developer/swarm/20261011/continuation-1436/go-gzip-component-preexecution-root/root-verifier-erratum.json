@@ -1,0 +1,6 @@
+{
+  "firstExitCode": 1,
+  "firstScriptSha256": "7c10acf97a528e705b13cdae050c4cfdcecdf763ec13e83fdcaaf63405df4ff2",
+  "reason": "Root verifier incorrectly assumed cyclic phase order for repetitions3 and4. Actual frozen Go runner explicitly uses orders012/120/201/021/210. Corrected independent verifier to exact executed source schedule; no benchmark mutation or retry.",
+  "correctedScriptSha256": "23aa93d4b71402318ac339e048e3935988f646c22499175735105ce97b39e61d"
+}

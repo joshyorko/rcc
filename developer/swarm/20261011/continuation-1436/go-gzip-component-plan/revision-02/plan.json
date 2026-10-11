@@ -1,0 +1,341 @@
+{
+  "build": {
+    "command": [
+      "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+      "build",
+      "-p",
+      "1",
+      "-o",
+      "./rcc-gzip-go",
+      "./main.go"
+    ],
+    "dependencies": "Go standard library only; no dependency resolution/install/network. Build argv and numeric exit captured by external Python supervisor.",
+    "environment": {
+      "CGO_ENABLED": "0",
+      "GO111MODULE": "off",
+      "GOCACHE": "<own /dev/shm temp>/gocache",
+      "GOMAXPROCS": "2",
+      "GOMEMLIMIT": "320MiB",
+      "GOPROXY": "off",
+      "GOTMPDIR": "<own /dev/shm temp>/gotmp",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off"
+    },
+    "go_binary_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9"
+  },
+  "execution_admission": "Root must review exact revision-02 plan, Go source, Python supervisor and launcher hashes, then separately admit the one compile+runtime invocation.",
+  "implementation_scope": {
+    "go_toolchain": {
+      "goroot": "/workspace/work/rcc-swarm/tools/go1.26.9",
+      "goroot_source_sha256": {
+        "compress/flate/deflate.go": "4da50a0ab834a5e152ae337f9fea35f3527e29ea415e629dfe84749dfec07388",
+        "compress/flate/inflate.go": "28b241ba6b66cc14ac93cc17a49756cd78daaade60afb47d7cd6aed2489dc5cb",
+        "compress/gzip/gunzip.go": "5886344b7fd61358d430872ab735653b16a314c87dab1f0bde4d8d9db0381ec4",
+        "compress/gzip/gzip.go": "9f5cef3dff42000c6df57de93429c10121c20afdda99b0c883fa60f94617a497"
+      },
+      "path": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+      "version": "go1.26.9 linux/amd64"
+    },
+    "measured_analogue": "Use the same Go standard-library compress/gzip API/version and operation boundaries in standalone memory-backed code. This excludes RCC package dispatch, file opens/writes/renames/permissions, path/hash logic, and does not claim direct LiftFile or gzDelegateOpen package timing.",
+    "rcc_reader": "htfs/delegates.go gzDelegateOpen lines 11-33: os.Open, gzip.NewReader, then caller reads; hololib.Open in htfs/library.go delegates with Compress().",
+    "rcc_source_sha256": {
+      "htfs/delegates.go": "bc492a868c5274a5212a386562ef50121d7a14d5a2ff2c270bac2115f7f387b9",
+      "htfs/functions.go": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+      "htfs/library.go": "29a9771414b8ebbd31b687838ba62cccf4718f1e7f029e16720397ae9784e86d",
+      "htfs/virtual.go": "703fc0c1dc4e3741b58a10ef178a257ef4aeeb98b83437306a98d9de0679c766"
+    },
+    "rcc_writer": "htfs/functions.go LiftFile lines 223-257: os.Open source; os.Create part file; gzip.NewWriterLevel(sink, gzip.BestSpeed); io.Copy; writer.Close; sink.Close; rename; MakeSharedFile."
+  },
+  "interpretation": {
+    "attribution": "The measured corpus was historically produced by Actions a709 with stable RCC3; main727 only identifies the current source implementation. No producer attribution or end-to-end performance claim.",
+    "codec_cpu": "Per-process CPU includes Go runtime, allocation/GC, supervisor RSS polling goroutine and getrusage overhead; it is not pure deflate instruction time.",
+    "reader_writer": "Memory-backed standard-library analogue deliberately excludes file open/write/rename/permissions and RCC package dispatch."
+  },
+  "limitations": [
+    "No timed execution until explicit root admission.",
+    "Standalone stdlib analogue only, not direct RCC package or filesystem LiftFile timing.",
+    "Process CPU samples include Go runtime and GC/allocation overhead; report that scope.",
+    "One Go process, sequential object/phase loop.",
+    "Process CPU intervals include Go runtime, allocations/GC, the in-process 100ms RSS watcher, and getrusage overhead; this is not pure codec CPU."
+  ],
+  "limits": {
+    "OS_cache": "Warm/uncontrolled; no eviction or cache-dropping.",
+    "buffer_policy": "one object and one encoded frame resident at a time; no 20-object bulk payload retention",
+    "executable_path": "./rcc-gzip-go on workspace executable filesystem; max logical size 8 MiB.",
+    "maximum_executable_bytes": 8388608,
+    "maximum_owned_evidence_allocated_bytes": 1048576,
+    "maximum_owned_ram_temp_bytes": 268435456,
+    "maximum_phase_runtime_seconds": 30,
+    "maximum_sampled_process_RSS_bytes": 536870912,
+    "maximum_total_runtime_seconds": 120,
+    "minimum_free_bytes": 2684354560,
+    "minimum_free_plus_4MiB_bytes": 2688548864,
+    "owned_ram_temp_path": "Unique /dev/shm/rcc125-go-gzip-r2-*; GOCACHE and GOTMPDIR only; no executable run from /dev/shm; no shared home build-cache mutation.",
+    "resource_sampling_interval_seconds": 0.1
+  },
+  "non_goals": [
+    "No zstd dependency or install.",
+    "No RCC package/binary build or runtime execution.",
+    "No disk-backed LiftFile benchmark, provider HTTP, materialization, Actions, concurrency, or end-to-end claim.",
+    "No production format/default/source changes.",
+    "No timed execution until explicit root admission."
+  ],
+  "phases": [
+    {
+      "name": "legacy-gzip-decode",
+      "operation": "gzip.NewReader(bytes.NewReader(originalStored)); io.ReadAll; Close. Timing includes reader creation, decompression and logical output allocation; excludes provider file read and SHA verification."
+    },
+    {
+      "name": "gzip-bestspeed-encode",
+      "operation": "gzip.NewWriterLevel(&bytes.Buffer, gzip.BestSpeed); Write(logical); Close. Timing includes writer setup, compression, buffer output and close; excludes input source read/decompression and output SHA/size/roundtrip checks."
+    },
+    {
+      "name": "gzip-bestspeed-decode",
+      "operation": "Prepare canonical BestSpeed frame outside timer, verify size/SHA against untimed canonical preparation; timed gzip.NewReader(bytes.NewReader(frame)); io.ReadAll; Close. Timing includes reader setup, decompression and output allocation."
+    }
+  ],
+  "preflight_resource_observation": {
+    "available_bytes_workspace": 2703867904,
+    "available_bytes_workspace_revision_02": 2712780800,
+    "compilation": "Revision 02 uses an external supervisor for build and run, own /dev/shm scratch/cache capped at 256 MiB and a workspace executable capped at 8 MiB. No compile has been attempted. Current workspace available=2,703,867,904 B, only 15,319,040 B above floor+4MiB; this remains root-admission gated. /dev/shm is noexec and is used only for compiler/cache temporary data; executable is linked into the workspace.",
+    "existing_go_build_cache_bytes": 3152858677,
+    "headroom_above_floor_bytes": 19512344,
+    "headroom_above_floor_bytes_revision_02": 28426240,
+    "headroom_above_floor_plus_4MiB_bytes_revision_02": 24231936,
+    "headroom_above_floor_plus_margin_bytes": 15319040
+  },
+  "schedule": {
+    "calls_per_phase": 100,
+    "calls_total": 300,
+    "no_inner_repeats": true,
+    "object_order": "digest sorted; rotate by repetition+phase index",
+    "one_call_per_object_per_phase_per_repetition": true,
+    "phase_orders": [
+      [
+        "legacy-gzip-decode",
+        "gzip-bestspeed-encode",
+        "gzip-bestspeed-decode"
+      ],
+      [
+        "gzip-bestspeed-encode",
+        "gzip-bestspeed-decode",
+        "legacy-gzip-decode"
+      ],
+      [
+        "gzip-bestspeed-decode",
+        "legacy-gzip-decode",
+        "gzip-bestspeed-encode"
+      ],
+      [
+        "legacy-gzip-decode",
+        "gzip-bestspeed-decode",
+        "gzip-bestspeed-encode"
+      ],
+      [
+        "gzip-bestspeed-decode",
+        "gzip-bestspeed-encode",
+        "legacy-gzip-decode"
+      ]
+    ],
+    "repetitions": 5
+  },
+  "schema_version": 1,
+  "scope": "Standalone Go 1.26.9 standard-library gzip BestSpeed codec components on the exact 20 >1 MiB logical object corpus used by the prior external CPython measurement. No RCC binary/package execution; no producer filesystem path or persistent artifact format change.",
+  "source": {
+    "corpus_count": 5537,
+    "corpus_logical_bytes": 170590205,
+    "corpus_stored_bytes": 69466848,
+    "fixture_provenance": "Historical Actions a709 stable RCC3 fixture; main727 is source context only, not fixture producer.",
+    "index_bytes": 1491800,
+    "index_encoding": "gzip",
+    "index_legacy_digest_algorithm": "sha256",
+    "index_media_type": "application/vnd.rcc.environment.object-index.v1+json",
+    "index_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "manifest_bytes": 2175,
+    "manifest_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "objects": [
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "5ede1e96ce191fbcf740817d511f72beda30ee3783dca395023067b1184fe80b",
+        "logicalSize": 7252896,
+        "storedDigest": "sha256:09324aa549f414cccf1bd9eedcfbb7136daaf45a1be3f4ed62e3f699a25a14a7",
+        "storedSize": 2924731
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9f9fc1f5ab856181716b7dff697daf16aa5b0f47f7add572c491ac31a10ef8f4",
+        "logicalSize": 1228008,
+        "storedDigest": "sha256:0ca3adc8c7eb5b65c6e6d72b34aa7725bf7a58a7c041831a64b01c1e5e2db76c",
+        "storedSize": 566453
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7432dd221132c301970e9f526a9654b10cbd53bb92b1f0cb3d6d899877ff8c53",
+        "logicalSize": 1581720,
+        "storedDigest": "sha256:13926031d2c807cccaaa42d34f323fdaf6940ab11e127a3846b9ddc52565968a",
+        "storedSize": 909604
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "a812cd8dcd4ae107c42d9fc374a4b910bdfc0ddde19aebfe3e3f02cca93fd100",
+        "logicalSize": 2966864,
+        "storedDigest": "sha256:2b0413b30607801a45c5cde979d575ac32ff976d50794964825b680724fe7d14",
+        "storedSize": 1035796
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "aa9bb0d7b261b8266ababd9e19f5bf2f505d9a84ba360ce16502297e8a033765",
+        "logicalSize": 2650176,
+        "storedDigest": "sha256:331ba32e2544ca2148166cc1c9f28c2905f9cb554697080bb28130c014b46e3e",
+        "storedSize": 875725
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "0d91512e2f1cd19642df9ecc9e5939b06504ed5e8e3989f1d349df4a902ae89d",
+        "logicalSize": 1237448,
+        "storedDigest": "sha256:37cfbb69d19b1d3692d3f9aea58050a86e53eade59de90a34af997d5f1f717dd",
+        "storedSize": 582916
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "f62ea9da9ed6289bfe868cd6845968a2c854d1427f8548d52cae02a42b4f0356",
+        "logicalSize": 1232695,
+        "storedDigest": "sha256:3c1f1c1c504d8ef3169d46f806b1003c3f46abd82c37c3a1463d7adb8d1a94f0",
+        "storedSize": 1229362
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "34324e0835be6e103844d7c416bec42834cf803d3ba8d9519df15ced19914dfe",
+        "logicalSize": 1674616,
+        "storedDigest": "sha256:515204a424242c2e8d890930ede119f1063e7240195716878035323e6b7e7597",
+        "storedSize": 809275
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7b7a760153f880c29f49bef084aad6968de3cc3ad6303c7398f5e697662c41cc",
+        "logicalSize": 1101623,
+        "storedDigest": "sha256:5cb68dc2020ea6187f2714fd73778706abea7dfa89a330f60b68fee23f511695",
+        "storedSize": 153332
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9b0cd0068df0f7d98b1ec5874845b034d1f5b2adc724508f6857d9dc18c77178",
+        "logicalSize": 1990448,
+        "storedDigest": "sha256:5f6ae849002fdcd40b1847935c7d9d2e81564d1e8feb81d23b0f58e424975353",
+        "storedSize": 983075
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "e6ed1ed462080e0bea796247125c1a8624fb3134be3646c51c8942f38505e53b",
+        "logicalSize": 25317208,
+        "storedDigest": "sha256:658f6161539f18c3380de032cc5f80bb0683ec168e48a28d03f8d90c1446cd6c",
+        "storedSize": 11038953
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "67694582bb07ec2852df4d092b44dded578f3d1b38134967385c495f18c79c6e",
+        "logicalSize": 1636392,
+        "storedDigest": "sha256:6a1d4b5dd3e37140a6e84033225f5905fc793d43f873951f3cd60d9a35ff923d",
+        "storedSize": 778021
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "36c57dc318a720cff9acde104f633fd4b8eef0f5a4cba0dbbc3869cd026aec41",
+        "logicalSize": 1309928,
+        "storedDigest": "sha256:7a7ac3b31e6f79fbe52bb09eeddabb8cc9332749d2edd0f7c9f9aa0fdf1bea79",
+        "storedSize": 535030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "5a7331d26863a2e958df6239ad0b6a6dbaa1eb6f3f42ae7af3fca609f6a605c3",
+        "logicalSize": 1792280,
+        "storedDigest": "sha256:84d0b711cdd37ef491dadfac6a642a433938550589d732c2f4d80b65d5c5fd5f",
+        "storedSize": 1021730
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "67129e428f47e2f67c33cb2e85a92a6d2ff0014d587407cf7a8e5dba0c68c6ce",
+        "logicalSize": 1536216,
+        "storedDigest": "sha256:8ecf53c83c1dbab92619df5252aa29684179de970f264be3d249c219898ffd8a",
+        "storedSize": 679607
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc",
+        "logicalSize": 2110226,
+        "storedDigest": "sha256:a4590863da27ae4bdbad404cb8de0f7e41e2795597b871fa29358f698bb34a64",
+        "storedSize": 2086645
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "74519a830fae91abc48662768dbd326692e919b37655c798b1c9da71a344f809",
+        "logicalSize": 25371784,
+        "storedDigest": "sha256:ace7d606afed2338c4964483d32160437a14ff7026d3c9e6b22b9273a5bd11f8",
+        "storedSize": 11097301
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "b0e2bad8c117a3ad7d344d7924272d12b8e363956efb91b5074e43d4e201a08d",
+        "logicalSize": 1198840,
+        "storedDigest": "sha256:cba6ead1cd51a63ea37f871d84d9f3d139f01d57e7135d3e1038113dbc732d56",
+        "storedSize": 563030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "1e5d23fa66915204b9b67202a46993844d81cda56f6ad52cead2def37617ee29",
+        "logicalSize": 14434376,
+        "storedDigest": "sha256:e0b720793da12f48d75c7de57152cd7ea1e0261ae574498dc3b65a310ade802c",
+        "storedSize": 5322030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "579a71f6f44e9f8c66ad15a6d04faf770f6bbd72c6d9bf6259516742ce394ef1",
+        "logicalSize": 4833320,
+        "storedDigest": "sha256:f16d644f333731a74d7694e163289dd23d43b3853834712b7410210c8c5752dd",
+        "storedSize": 2325085
+      }
+    ],
+    "prior_external_python_results_sha256": "9546441ea67af3e5ac7122db2a08a305b9e7f19e5336278b655b4048861adf58",
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "repository": "/workspace/work/rcc-swarm/final-main-727",
+    "selected_count": 20,
+    "selected_logical_bytes": 102457064,
+    "selected_stored_bytes": 45517701,
+    "selection": "exact 20 logicalSize>1048576 objects from immutable prior measurement plan, storedDigest lexicographic order"
+  },
+  "status": "FROZEN_REVISION_02_ROOT_ADMISSION_REQUIRED",
+  "supervision": {
+    "launcher": "supervise.py uses integer os.statvfs availability; samples `ps -eo pid=,ppid=,rss=` process tree every 100ms for both official Go build and compiled runtime; fails closed on ps/known process visibility errors; enforces free-space floor+4MiB, RSS <=512MiB, own /dev/shm allocated <=256MiB, executable <=8MiB, evidence allocated <=1MiB, 120s overall build+runtime watchdog and 30s per marked runtime phase; records exact build/run numeric subprocess exit codes; kills only its process group on guard failure and records actual reaped status.",
+    "phase_watch": "Go runner writes phase.json and append-only phase-events.jsonl on each phase start/completion; Python supervisor checks every100ms, preserves all 30 marker events, and enforces 30s per 20-object phase.",
+    "process_rss_scope": "Supervisor Python plus Go build/runtime process group and descendants, sampled ps tree every100ms; fail closed on missing supervisor/live child, and continue tracking the child process group after its leader exits."
+  },
+  "validation": {
+    "analysis": "Retain raw 300 sample rows with per-object, repetition, phase, wall ns, process CPU ns, input/output bytes, frame SHA+size. Report repetition sums/medians and total timed wall+CPU divided by total logical bytes (byte weighted), sizes and scope boundaries.",
+    "per_sample": "Reload and validate object outside timer, then verify exact logical SHA+size of timed decode result or encoded frame and roundtrip outside timer. Encode output frame SHA+size must equal canonical frame. For decode-BestSpeed, recreate the frame untimed and match canonical SHA+size before timing.",
+    "untimed_preflight": "For each stored object verify indexed stored size+SHA, gzip decode, logical size+SHA; make one canonical BestSpeed frame per object and record size+SHA and roundtrip validation. Record index/manifest exact bytes+hash. Before/after repeat stored object/index/manifest hash+size+mode+mtime census; atime excluded/recorded as read side effect."
+  }
+}

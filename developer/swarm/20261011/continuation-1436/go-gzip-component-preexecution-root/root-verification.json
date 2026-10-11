@@ -1,0 +1,50 @@
+{
+  "status": "ROOT_ACTUAL_20_OBJECTS_300_ROWS_30_EVENTS_BINARY_SOURCE_AND_RESOURCE_VERIFIED",
+  "rawResultsSha256": "4a8e7954b26265c131d35d3365a3c665643a06b6579c52b33fdc2ffd1ef06ade",
+  "actualStoredAndLogicalObjects": 20,
+  "canonicalFramesExactlyEqualActualOriginalStoredFrames": 20,
+  "timedRowsVerified": 300,
+  "phaseEventsVerified": 30,
+  "metadataExitCode": 0,
+  "summary": {
+    "legacy-gzip-decode": {
+      "five20objectCodecWallSeconds": [
+        0.730209107,
+        0.705457135,
+        0.706560342,
+        0.715257281,
+        0.766592142
+      ],
+      "medianCodecWallSeconds": 0.715257281,
+      "medianProcessCPUSeconds": 0.804924,
+      "medianWeightedLogicalMiBPerSecond": 136.60912383105318
+    },
+    "gzip-bestspeed-encode": {
+      "five20objectCodecWallSeconds": [
+        0.989072457,
+        1.033444611,
+        1.027928935,
+        1.03205462,
+        1.028486304
+      ],
+      "medianCodecWallSeconds": 1.028486304,
+      "medianProcessCPUSeconds": 1.074101,
+      "medianWeightedLogicalMiBPerSecond": 95.00434774014394
+    },
+    "gzip-bestspeed-decode": {
+      "five20objectCodecWallSeconds": [
+        0.728972031,
+        0.692926878,
+        0.684687738,
+        0.737353101,
+        0.731821505
+      ],
+      "medianCodecWallSeconds": 0.728972031,
+      "medianProcessCPUSeconds": 0.809427,
+      "medianWeightedLogicalMiBPerSecond": 134.0389840981312
+    }
+  },
+  "scope": "Independent actual original bytes verify all canonical frame digests; Go frames were not regenerated. Memory-backed stdlib analogue, not direct RCC LiftFile/whole-pipeline or Actions and no comparative winner. CPU includes GC/observer; RSS sampled, not absolute peak.",
+  "outerToolExit": "Worker completion separately preserved; root did not execute benchmark",
+  "sourceUnchanged": true
+}

@@ -1,0 +1,183 @@
+{
+  "snapshot_utc": "2026-10-11T14:19:31Z",
+  "repository": "joshyorko/rcc",
+  "pull_request": {
+    "number": 237,
+    "state": "open",
+    "draft": true,
+    "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "base": "main",
+    "base_sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "mergeable": true,
+    "review_submissions": 0,
+    "inline_review_threads": 0,
+    "review_comments": 0
+  },
+  "exact_head_checks": {
+    "required_contexts": [
+      {
+        "name": "Rcc",
+        "run_id": 38144487557,
+        "job_id": 114484873035,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "PR metrics",
+        "run_id": 38144487603,
+        "job_id": 114484873060,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "run_id": 38144487594,
+        "job_id": 114484872954,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "CodeQL",
+        "run_id": 38144487609,
+        "job_id": 114484873251,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Coverage gate",
+        "run_id": 38144487535,
+        "job_id": 114484872745,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Quality report",
+        "run_id": 38144487544,
+        "job_id": 114484872895,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "full_rc_run": {
+      "run_id": 38144487557,
+      "build_job_id": 114484872811,
+      "build_conclusion": "success",
+      "gate_job_id": 114484873035,
+      "gate_conclusion": "success",
+      "gate_job_started": "2026-10-11T13:46:04Z",
+      "gate_job_completed": "2026-10-11T14:14:30Z",
+      "native_jobs": [
+        {
+          "name": "Native Runtime (macos-amd64)",
+          "job_id": 114485081806,
+          "conclusion": "success"
+        },
+        {
+          "name": "Native Runtime (windows-amd64)",
+          "job_id": 114485081819,
+          "conclusion": "success"
+        },
+        {
+          "name": "Native Runtime (linux-amd64)",
+          "job_id": 114485081855,
+          "conclusion": "success"
+        },
+        {
+          "name": "Native Runtime (macos-arm64)",
+          "job_id": 114485081871,
+          "conclusion": "success"
+        }
+      ],
+      "assembly_job": {
+        "name": "Assemble Release Preparation",
+        "job_id": 114490497956,
+        "conclusion": "skipped",
+        "interpretation": "expected on pull_request event; not a required push context"
+      }
+    }
+  },
+  "decoded_full_rc_log": {
+    "path": "full-rc-job-114484873035.log",
+    "redacted_lines": [
+      "token: ***",
+      "http.https://github.com/.extraheader AUTHORIZATION: basic ***"
+    ],
+    "note": "Removed the two GitHub-masked credential-header lines; remaining decoded job log preserved.",
+    "observations": [
+      "Exact candidate SHA is checked out and exported in RCC_CANDIDATE_SHA.",
+      "Release Candidate Verification job concluded success; contained gate step concluded success.",
+      "Robot result: 172 tests, 171 passed, 0 failed, 1 skipped.",
+      "The log prints source for release-candidate-exit.json fields gateExitCode and teeExitCode, but does not print their values. Those raw numeric fields are only in artifact 11704667560; not downloaded in this worker lane.",
+      "The exact aggregate job succeeded, but raw 11-gate receipt and numeric wrapper values have not been verified in this lane."
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 11705200538,
+      "name": "macos-amd64-native-runtime-receipt",
+      "size_bytes": 13072634,
+      "sha256": "sha256:2aaf3a32b6dd3bda44f2c355671baedb13ba064d603efaf36a76b37dfb010543",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704891101,
+      "name": "windows-amd64-native-runtime-receipt",
+      "size_bytes": 10850365,
+      "sha256": "sha256:034e9cf86f903796330efd8a69c45d07f8c6d740c81b40230747b629c2d7a19b",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704667560,
+      "name": "release-candidate-evidence",
+      "size_bytes": 156413114,
+      "sha256": "sha256:520feb70d985f877c0be455c9810ed28191d80377b5151da38b25aa5d86a6b25",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704650153,
+      "name": "RCC-Binaries",
+      "size_bytes": 64502657,
+      "sha256": "sha256:6f850f0dc37e979ab14241b20137712d793d185f3f5c31b3231f12831753e227",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704606044,
+      "name": "linux-amd64-native-runtime-receipt",
+      "size_bytes": 13386044,
+      "sha256": "sha256:d480e63fa8f0208462a24f253df73fa5cd921196e0752a2ba9c1ecb2a8cd188f",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704535491,
+      "name": "native-runtime-binaries",
+      "size_bytes": 49100741,
+      "sha256": "sha256:feb021126a30ca4bb9f44195ea0810816fde8df7488dabff72efc6771f38541e",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    },
+    {
+      "id": 11704306572,
+      "name": "macos-arm64-native-runtime-receipt",
+      "size_bytes": 12497746,
+      "sha256": "sha256:95aaf70a6776dd46a08244312a3001f1f0143fdbd2b7525b250408bfa1cf04d6",
+      "expired": false,
+      "head_sha": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+    }
+  ],
+  "artifact_handling": "Metadata only. No artifact ZIPs or binaries downloaded.",
+  "public_repository_state": {
+    "main_sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "tags_count": 33,
+    "latest_tag": "v18.19.5",
+    "releases_count": 27,
+    "latest_release": "v18.19.5",
+    "latest_release_published_at": "2026-09-07T19:02:08Z",
+    "milestones_count": 0
+  },
+  "constraints": "Read-only status verification. No PR/issue/source writes, retries, merges, tags, or releases."
+}

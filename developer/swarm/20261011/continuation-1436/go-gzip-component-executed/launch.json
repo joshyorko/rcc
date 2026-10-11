@@ -1,0 +1,356 @@
+{
+  "admission_token_seen": true,
+  "build_command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "build",
+    "-p",
+    "1",
+    "-o",
+    "./rcc-gzip-go",
+    "./main.go"
+  ],
+  "build_environment": {
+    "CGO_ENABLED": "0",
+    "GO111MODULE": "off",
+    "GOARCH": "amd64",
+    "GOCACHE": "/dev/shm/rcc125-go-gzip-r2-qxhvu9ig/gocache",
+    "GOFLAGS": "",
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "320MiB",
+    "GOOS": "linux",
+    "GOPROXY": "off",
+    "GOTMPDIR": "/dev/shm/rcc125-go-gzip-r2-qxhvu9ig/gotmp",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off"
+  },
+  "build_evidence_peak_allocated_bytes": 94208,
+  "build_exit_code": 0,
+  "build_failure": null,
+  "build_last_process_tree_pids": [
+    16120,
+    16921
+  ],
+  "build_minimum_free_bytes": 2697768960,
+  "build_owned_ram_temp_peak_allocated_bytes": 92696576,
+  "build_pid": 16128,
+  "build_sampled_process_tree_rss_peak_bytes": 337932288,
+  "compiled_go_version_verified": true,
+  "compiled_metadata": [
+    "build CGO_ENABLED=0",
+    "build GOARCH=amd64",
+    "build GOOS=linux"
+  ],
+  "compiled_metadata_output": "./rcc-gzip-go: go1.26.9\n\tpath\tcommand-line-arguments\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tDefaultGODEBUG=asynctimerchan=1,containermaxprocs=0,cryptocustomrand=1,decoratemappings=0,gotestjsonbuildtext=1,gotypesalias=0,httpcookiemaxnum=0,httplaxcontentlength=1,httpmuxgo121=1,httpservecontentkeepheaders=1,httpservecontentmaxranges=1,multipathtcp=0,netedns0=0,panicnil=1,randseednop=0,rsa1024min=0,tls10server=1,tls3des=1,tlsmlkem=0,tlsrsakex=1,tlssecpmlkem=0,tlssha1=1,tlsunsafeekm=1,updatemaxprocs=0,urlmaxqueryparams=0,urlstrictcolons=0,winreadlinkvolume=0,winsymlink=0,x509keypairleaf=0,x509negativeserial=1,x509rsacrt=0,x509sha256skid=0,x509usepolicies=0\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n",
+  "elapsed_seconds": 47.22665427600077,
+  "evidence_limit_allocated_bytes": 1048576,
+  "executable_limit_bytes": 8388608,
+  "executable_sha256": "a25beb9e343e6d616e86dcdbd28a820bd1f5a6d53286637fe5c4debb8b433f06",
+  "executable_size_bytes": 3886851,
+  "failure": null,
+  "final_evidence_allocated_bytes": 286720,
+  "final_free_bytes": 2697576448,
+  "final_ram_temp_allocated_bytes": 44720128,
+  "finished_utc_ns": 1791728876627374854,
+  "fixture_preflight": {
+    "index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_size": 1491800,
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "manifest_size": 2175
+  },
+  "free_floor_bytes": 2688548864,
+  "go_binary_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "go_stdlib_source_sha256": {
+    "src/compress/flate/deflate.go": "4da50a0ab834a5e152ae337f9fea35f3527e29ea415e629dfe84749dfec07388",
+    "src/compress/flate/inflate.go": "28b241ba6b66cc14ac93cc17a49756cd78daaade60afb47d7cd6aed2489dc5cb",
+    "src/compress/gzip/gunzip.go": "5886344b7fd61358d430872ab735653b16a314c87dab1f0bde4d8d9db0381ec4",
+    "src/compress/gzip/gzip.go": "9f5cef3dff42000c6df57de93429c10121c20afdda99b0c883fa60f94617a497"
+  },
+  "go_stdlib_source_sha256_after": {
+    "src/compress/flate/deflate.go": "4da50a0ab834a5e152ae337f9fea35f3527e29ea415e629dfe84749dfec07388",
+    "src/compress/flate/inflate.go": "28b241ba6b66cc14ac93cc17a49756cd78daaade60afb47d7cd6aed2489dc5cb",
+    "src/compress/gzip/gunzip.go": "5886344b7fd61358d430872ab735653b16a314c87dab1f0bde4d8d9db0381ec4",
+    "src/compress/gzip/gzip.go": "9f5cef3dff42000c6df57de93429c10121c20afdda99b0c883fa60f94617a497"
+  },
+  "go_version_command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "version"
+  ],
+  "go_version_exit_code": 0,
+  "go_version_stderr": "",
+  "go_version_stdout": "go version go1.26.9 linux/amd64",
+  "input_hashes_after": {
+    "main.go": "8cf145da16bc5dede55389b5c50a9f47de71ce8b9d119704b71c6ab77f8ec1e1",
+    "plan.json": "e162b7b1694f62cc1386bdaee889a39ef6da9e49f66cb37ac68631ec103fcc3f",
+    "run.sh": "eea7ba978c60004d405a72992bd2a8fa5e2ce9b5937f84bafb2e121247d7b4f7",
+    "supervise.py": "cbcc32f2c18aab617153493cf66d1da07773e3443b84010ee0aeb6b4d37d1812",
+    "test_supervise.py": "40e55a2c29029efc3b59fd44ef59839aead41e9653533e2dab809048a7464fd9"
+  },
+  "input_hashes_before": {
+    "main.go": "8cf145da16bc5dede55389b5c50a9f47de71ce8b9d119704b71c6ab77f8ec1e1",
+    "plan.json": "e162b7b1694f62cc1386bdaee889a39ef6da9e49f66cb37ac68631ec103fcc3f",
+    "run.sh": "eea7ba978c60004d405a72992bd2a8fa5e2ce9b5937f84bafb2e121247d7b4f7",
+    "supervise.py": "cbcc32f2c18aab617153493cf66d1da07773e3443b84010ee0aeb6b4d37d1812",
+    "test_supervise.py": "40e55a2c29029efc3b59fd44ef59839aead41e9653533e2dab809048a7464fd9"
+  },
+  "metadata_command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "version",
+    "-m",
+    "./rcc-gzip-go"
+  ],
+  "metadata_evidence_peak_allocated_bytes": 94208,
+  "metadata_exit_code": 0,
+  "metadata_failure": null,
+  "metadata_last_process_tree_pids": [
+    16120,
+    16922,
+    16923
+  ],
+  "metadata_minimum_free_bytes": 2697768960,
+  "metadata_owned_ram_temp_peak_allocated_bytes": 44720128,
+  "metadata_pid": 16922,
+  "metadata_sampled_process_tree_rss_peak_bytes": 16510976,
+  "owned_ram_temp": "/dev/shm/rcc125-go-gzip-r2-qxhvu9ig",
+  "phase_events": [
+    {
+      "marker_unix_nano": 1791728841548058774,
+      "phase": "legacy-gzip-decode",
+      "repetition": 0,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 1629992825,
+      "marker_unix_nano": 1791728843178051599,
+      "phase": "legacy-gzip-decode",
+      "repetition": 0,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728843178239785,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 0,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2594198066,
+      "marker_unix_nano": 1791728845772437851,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 0,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728845772583122,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 0,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2767250914,
+      "marker_unix_nano": 1791728848539834036,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 0,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728848539986878,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 1,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2685832221,
+      "marker_unix_nano": 1791728851225819099,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 1,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728851225977890,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 1,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2641291106,
+      "marker_unix_nano": 1791728853867268996,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 1,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728853867423420,
+      "phase": "legacy-gzip-decode",
+      "repetition": 1,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 1628074224,
+      "marker_unix_nano": 1791728855495497644,
+      "phase": "legacy-gzip-decode",
+      "repetition": 1,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728855495642504,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 2,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2642734403,
+      "marker_unix_nano": 1791728858138376907,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 2,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728858138539174,
+      "phase": "legacy-gzip-decode",
+      "repetition": 2,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 1604927931,
+      "marker_unix_nano": 1791728859743467105,
+      "phase": "legacy-gzip-decode",
+      "repetition": 2,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728859743644414,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 2,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2573807320,
+      "marker_unix_nano": 1791728862317451734,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 2,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728862317603975,
+      "phase": "legacy-gzip-decode",
+      "repetition": 3,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 1577278241,
+      "marker_unix_nano": 1791728863894882216,
+      "phase": "legacy-gzip-decode",
+      "repetition": 3,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728863895192526,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 3,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2751579391,
+      "marker_unix_nano": 1791728866646771917,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 3,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728866646939752,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 3,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2676052228,
+      "marker_unix_nano": 1791728869322991980,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 3,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728869323167396,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 4,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2749817026,
+      "marker_unix_nano": 1791728872072984422,
+      "phase": "gzip-bestspeed-decode",
+      "repetition": 4,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728872073278518,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 4,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 2635499409,
+      "marker_unix_nano": 1791728874708777927,
+      "phase": "gzip-bestspeed-encode",
+      "repetition": 4,
+      "state": "phase_done"
+    },
+    {
+      "marker_unix_nano": 1791728874709203262,
+      "phase": "legacy-gzip-decode",
+      "repetition": 4,
+      "state": "phase_start"
+    },
+    {
+      "duration_ns": 1716535033,
+      "marker_unix_nano": 1791728876425738295,
+      "phase": "legacy-gzip-decode",
+      "repetition": 4,
+      "state": "phase_done"
+    }
+  ],
+  "phase_timeout_seconds": 30,
+  "ram_temp_limit_allocated_bytes": 268435456,
+  "rcc_source_sha256_after": {
+    "htfs/delegates.go": "bc492a868c5274a5212a386562ef50121d7a14d5a2ff2c270bac2115f7f387b9",
+    "htfs/functions.go": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+    "htfs/library.go": "29a9771414b8ebbd31b687838ba62cccf4718f1e7f029e16720397ae9784e86d",
+    "htfs/virtual.go": "703fc0c1dc4e3741b58a10ef178a257ef4aeeb98b83437306a98d9de0679c766"
+  },
+  "rcc_source_sha256_before": {
+    "htfs/delegates.go": "bc492a868c5274a5212a386562ef50121d7a14d5a2ff2c270bac2115f7f387b9",
+    "htfs/functions.go": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+    "htfs/library.go": "29a9771414b8ebbd31b687838ba62cccf4718f1e7f029e16720397ae9784e86d",
+    "htfs/virtual.go": "703fc0c1dc4e3741b58a10ef178a257ef4aeeb98b83437306a98d9de0679c766"
+  },
+  "retry_performed": false,
+  "rss_limit_bytes": 536870912,
+  "runtime_command": [
+    "./rcc-gzip-go",
+    "--plan",
+    "./plan.json",
+    "--phase-marker",
+    "./phase.json",
+    "--output",
+    "./results.json"
+  ],
+  "runtime_evidence_peak_allocated_bytes": 286720,
+  "runtime_exit_code": 0,
+  "runtime_failure": null,
+  "runtime_last_process_tree_pids": [
+    16120,
+    17295
+  ],
+  "runtime_minimum_free_bytes": 2697576448,
+  "runtime_owned_ram_temp_peak_allocated_bytes": 44720128,
+  "runtime_pid": 16927,
+  "runtime_result_status": "PASS",
+  "runtime_results_present": true,
+  "runtime_results_sha256": "4a8e7954b26265c131d35d3365a3c665643a06b6579c52b33fdc2ffd1ef06ade",
+  "runtime_sample_count": 300,
+  "runtime_sampled_process_tree_rss_peak_bytes": 165658624,
+  "sample_interval_seconds": 0.1,
+  "single_invocation": true,
+  "started_utc_ns": 1791728829413477572,
+  "status": "PASS",
+  "total_timeout_seconds": 120
+}

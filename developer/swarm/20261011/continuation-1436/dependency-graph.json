@@ -1,0 +1,138 @@
+{
+  "timestamp": "2026-10-11T14:34:33.977736+00:00",
+  "source_checkpoint": "17841dd6859b0382f339075d5e7e345dbb2c9891",
+  "nodes": [
+    {
+      "issue": 98,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 118,
+      "status": "open",
+      "lane": "architecture"
+    },
+    {
+      "issue": 125,
+      "status": "open",
+      "lane": "research"
+    },
+    {
+      "issue": 131,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 132,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 133,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 135,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 181,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 182,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 185,
+      "status": "open",
+      "lane": "governance hold"
+    }
+  ],
+  "edges": [
+    {
+      "from": "118",
+      "to": "124",
+      "state": "identity foundation accepted/closed"
+    },
+    {
+      "from": "118",
+      "to": "208",
+      "state": "serving accepted/closed; broader platform contract remains"
+    },
+    {
+      "from": "125",
+      "to": "229",
+      "state": "benchmark harness merged; source-bound observations retained"
+    },
+    {
+      "from": "125",
+      "to": "64",
+      "state": "historical closed/unmerged claims not accepted current gains"
+    },
+    {
+      "from": "125",
+      "to": "Actions221",
+      "state": "Owner repair for newerRCC authorized, exact3 gates still present. Root actual d5a/c103/6181 stable3 public3case ZIP/nine source pins accepted scoped only; current221/controller/newerRCC qualification pending."
+    },
+    {
+      "from": "Actions133",
+      "to": "Actions134/139/143",
+      "state": "same-subject Runtime/adapter/conformance contracts"
+    },
+    {
+      "from": "133",
+      "to": "PR236",
+      "state": "accepted source review +6greenchecks+4native receipts; actualbinarybytes transferblocked;unmergeddraft"
+    },
+    {
+      "from": "181",
+      "to": "PR235",
+      "state": "accepted source review +6greenchecks+4native receipts; actualbinarybytes transferblocked;unmergeddraft"
+    },
+    {
+      "from": "two-phase-release",
+      "to": "release-qualification",
+      "state": "MERGED237/7945f956 samec6tree; actualreadonlyprepare38147141244 running for exactNEWsource; no receipt reattribution/no publication"
+    },
+    {
+      "from": "release-qualification",
+      "to": "operator-GO",
+      "state": "explicit PUBLICATION HOLD; no tag/no publication"
+    },
+    {
+      "from": "125",
+      "to": "release-qualification",
+      "state": "not a mandatory technical gate"
+    },
+    {
+      "from": "PR237",
+      "to": "release-qualification",
+      "state": "MERGED237/7945f956 samec6tree; actualreadonlyprepare38147141244 running for exactNEWsource; no receipt reattribution/no publication"
+    },
+    {
+      "from": "182",
+      "to": "journal-test-checkpoint36a8443",
+      "state": "36a8443focusedGo9exit0/82.5rootverified;pushedsource; fullrepo/hostedpending;PRdeferredreleaseCIpriority"
+    },
+    {
+      "from": "125",
+      "to": "compression/pack/COWcomponent",
+      "state": "measuredcomponents/scopedcapability;nooptimizationwinnerorE2Erecommendation"
+    },
+    {
+      "from": "125",
+      "to": "large-byte-coverage-codec",
+      "state": "500 raw external codec samples on20objects/65.524% stored bytes root verified; whole wrapper FAILED inferredouter1 notcaptured; no timed retry or E2E winner."
+    },
+    {
+      "from": "125",
+      "to": "Go-gzip-component",
+      "state": "ONE actual300 Go9 stdlibcodec calls/20objects/30events outer/build/runtime0; root actualbytes/metadata/schedule verified0, allcanonicalframes equaloriginalstored20. No directRCC/Actions/pairedgain/defaultwinner."
+    }
+  ]
+}

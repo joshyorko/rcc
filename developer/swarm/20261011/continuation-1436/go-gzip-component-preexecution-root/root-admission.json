@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-11T14:26:52.494939+00:00",
+  "disposition": "ADMIT_SINGLE_GUARDED_GO_STDLIB_ANALOGUE",
+  "inputSha256": {
+    "plan.json": "e162b7b1694f62cc1386bdaee889a39ef6da9e49f66cb37ac68631ec103fcc3f",
+    "main.go": "8cf145da16bc5dede55389b5c50a9f47de71ce8b9d119704b71c6ab77f8ec1e1",
+    "supervise.py": "cbcc32f2c18aab617153493cf66d1da07773e3443b84010ee0aeb6b4d37d1812",
+    "run.sh": "eea7ba978c60004d405a72992bd2a8fa5e2ce9b5937f84bafb2e121247d7b4f7",
+    "test_supervise.py": "40e55a2c29029efc3b59fd44ef59839aead41e9653533e2dab809048a7464fd9"
+  },
+  "executionDirectory": "/workspace/work/rcc-swarm/evidence/continuation-20261011/go-gzip-component-executed",
+  "sourceStatus": "FROZEN_REVISION_05_ROOT_ADMISSION_REQUIRED",
+  "freeBytesBefore": 2701754368,
+  "numericStaticTests": {
+    "tests": 5,
+    "exit": 0
+  },
+  "earlierRevisions": "01-04 preserved unexecuted; root caught status mismatch before any Go execution",
+  "scope": "20 existing immutable large objects, 300 codec-only calls; not direct RCC materialization, not Actions, no zstd or default change",
+  "limits": {
+    "rssBytes": 536870912,
+    "ramScratchBytes": 268435456,
+    "executableBytes": 8388608,
+    "evidenceBytes": 1048576,
+    "floorBytes": 2688548864,
+    "totalSeconds": 120,
+    "phaseSeconds": 30
+  },
+  "retryAuthorized": false
+}

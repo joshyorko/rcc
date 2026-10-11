@@ -1,0 +1,17 @@
+{
+  "assetName": "rcc-windows64.exe",
+  "binarySha256": "3bef852bda27208ee37931e84480a0ba0667b50b044c41ecafd96fbb568602ce",
+  "binarySize": 20117504,
+  "goBuildInfo": {
+    "goVersion": "go1.26.9",
+    "goarch": "amd64",
+    "goos": "windows",
+    "vcsModified": false,
+    "vcsRevision": "c6c7a01239635e07f28517e2fc84230e0ab42509"
+  },
+  "nativeReceiptSha256": "46a17d402a992560614b69f2b1b1a11d89a392cb9ed2e66e36bae0ceb5411188",
+  "platform": "windows_amd64",
+  "schemaVersion": 1,
+  "sourceSha": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "version": "v18.19.6"
+}

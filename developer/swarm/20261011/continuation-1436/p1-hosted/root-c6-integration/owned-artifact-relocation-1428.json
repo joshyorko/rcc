@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-11T14:26:32.304217+00:00",
+  "source": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/release-ci-failure/rcc-237-release-candidate-evidence.zip",
+  "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/source83-failed-release-candidate-evidence-root-extracted-copy.zip",
+  "sha256": "4f8c3f700751e0f31452159ca1aad6989c95639d1e23f7a056e105aa9ade5270",
+  "bytes": 13208397,
+  "durableExactRawCommit": "04d6df1182f2a323ddad23f577b449301e3c9a33",
+  "noEvidenceDiscarded": true,
+  "onlyRootOwnedDuplicateMoved": true,
+  "freeBytesAfter": 2701762560
+}

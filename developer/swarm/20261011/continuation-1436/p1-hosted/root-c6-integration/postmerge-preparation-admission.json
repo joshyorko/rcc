@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-11T14:28:07.047372+00:00",
+  "pr": {
+    "headRefOid": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "mergeCommit": {
+      "oid": "7945f956b428359928908a9f42e36417b113dafd"
+    },
+    "mergedAt": "2026-10-11T14:25:33Z",
+    "state": "MERGED"
+  },
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "treeExactlyEqualsTestedPR": true,
+  "preparation": {
+    "id": 38147141244,
+    "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+    "event": "workflow_dispatch",
+    "status": "in_progress",
+    "conclusion": null,
+    "html_url": "https://github.com/joshyorko/rcc/actions/runs/38147141244",
+    "created_at": "2026-10-11T14:25:49Z"
+  },
+  "publicationHold": true,
+  "noTagNoPublisherDispatch": true,
+  "preparedAssetsVerified": 0
+}
