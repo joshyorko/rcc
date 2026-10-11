@@ -315,13 +315,13 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_native_matrix_uses_exact_binary_and_test_produced_receipt(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
-    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
+    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  assemble-release-preparation:\n", 1)[0]
     self.assertIn("needs: build", native_job)
     self.assertIn("actions/download-artifact", native_job)
     self.assertIn("RCC_REAL_BINARY", native_job)
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
-    self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
+    self.assertIn("RCC_SOURCE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("TestRealJATClassRCCAtoBVertical", native_job)
     self.assertIn("RCC_REAL_JAT_CLASS_TEST=1", native_job)
@@ -751,10 +751,14 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("HOMEBREW_TOOLS_PAT", guide)
 
   def test_release_validates_homebrew_handoff_before_publication(self):
-    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    workflow = (ROOT / ".github" / "workflows" / "publish-release.yml").read_text()
     self.assertLess(
-        workflow.index("- name: Validate Homebrew Update Token"),
-        workflow.index("- name: Publish Release"),
+        workflow.index("- name: Validate separately configured Homebrew dispatcher access"),
+        workflow.index("- name: Create the new version tag without replacement"),
+    )
+    self.assertLess(
+        workflow.index("- name: Create the new version tag without replacement"),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
     )
 
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):

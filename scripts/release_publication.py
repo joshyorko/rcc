@@ -116,7 +116,9 @@ def read_go_build_info(path, go_binary="go"):
     except (OSError, subprocess.CalledProcessError) as error:
         raise ReleaseGateError(f"cannot inspect Go build metadata for {path}: {error}") from error
     lines = output.splitlines()
-    _require(bool(lines) and EXPECTED_GO_VERSION in lines[0], f"binary Go compiler version is not {EXPECTED_GO_VERSION}: {path.name}")
+    version_tokens = lines[0].split() if lines else []
+    _require(EXPECTED_GO_VERSION in version_tokens,
+             f"binary Go compiler version is not exactly {EXPECTED_GO_VERSION}: {path.name}")
     settings = {}
     for line in lines[1:]:
         fields = line.strip().split(None, 1)
@@ -125,6 +127,10 @@ def read_go_build_info(path, go_binary="go"):
             if separator:
                 settings[key] = value
     return settings
+
+
+def _is_zero_exit_code(value):
+    return type(value) is int and value == 0
 
 
 def validate_asset_build_info(assets_dir, source_sha, go_binary="go"):
@@ -349,7 +355,8 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
     _require(len(exit_receipts) == 1, "release-candidate gate receipt is missing or ambiguous")
     gate = _read_json(exit_receipts[0])
     _require(gate.get("sourceSha") == expected_source_sha, "release-candidate source SHA mismatch")
-    _require(gate.get("gateExitCode") == 0 and gate.get("teeExitCode") == 0, "release-candidate gate or tee did not exit zero")
+    _require(_is_zero_exit_code(gate.get("gateExitCode")) and _is_zero_exit_code(gate.get("teeExitCode")),
+             "release-candidate gate or tee did not have numeric zero exit status")
 
     native_root = evidence_dir / "native"
     receipts = list(native_root.rglob("native-runtime-receipt.json"))
@@ -532,8 +539,9 @@ def assemble_prepared_bundle(asset_root, release_candidate_root, native_root, ou
     exit_receipts = list((evidence / "release-candidate").rglob("release-candidate-exit.json"))
     _require(len(exit_receipts) == 1, "release-candidate exit receipt is missing or ambiguous")
     gate = _read_json(exit_receipts[0])
-    _require(gate.get("sourceSha") == source_sha and gate.get("gateExitCode") == 0 and gate.get("teeExitCode") == 0,
-             "release-candidate gate did not pass for the requested source")
+    _require(gate.get("sourceSha") == source_sha and _is_zero_exit_code(gate.get("gateExitCode"))
+             and _is_zero_exit_code(gate.get("teeExitCode")),
+             "release-candidate gate did not pass with numeric zero exit status for the requested source")
 
     records = {}
     for name in ASSET_NAMES:

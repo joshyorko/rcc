@@ -22,6 +22,7 @@ from release_publication import (
     validate_prepared_bundle,
     validate_asset_build_info,
     validate_actual_binary_metadata,
+    read_go_build_info,
     validate_source_checkout,
     download_preparation_artifact,
     verify_downstream_workflow,
@@ -208,6 +209,18 @@ class ReleasePublicationTests(unittest.TestCase):
             with self.assertRaisesRegex(ReleaseGateError, "size mismatch|checksum mismatch"):
                 validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
 
+    def test_rejects_boolean_or_float_zero_exit_receipts(self):
+        for field, value in (("gateExitCode", True), ("teeExitCode", 0.0)):
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                digest = self.fixture(root)
+                receipt_path = root / "evidence" / "release-candidate" / "release-candidate-exit.json"
+                receipt = json.loads(receipt_path.read_text())
+                receipt[field] = value
+                receipt_path.write_text(json.dumps(receipt))
+                with self.assertRaisesRegex(ReleaseGateError, "numeric zero exit status"):
+                    validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+
     def test_bundle_validation_independently_rejects_wrong_index_version_and_release_path(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -264,6 +277,10 @@ print("\\tbuild\\tvcs.modified=false")
             go.chmod(0o755)
             metadata = validate_asset_build_info(assets, SOURCE, str(go))
             self.assertEqual(set(metadata), set(ASSET_TARGETS))
+            go.write_text(go.read_text().replace("go1.26.9", "go1.26.90"))
+            with self.assertRaisesRegex(ReleaseGateError, "not exactly go1.26.9"):
+                read_go_build_info(assets / "rcc-linux64", str(go))
+            go.write_text(go.read_text().replace("go1.26.90", "go1.26.9"))
             go.write_text(go.read_text().replace("{'a' * 40}", "'b' * 40"))
             with self.assertRaisesRegex(ReleaseGateError, "source revision mismatch"):
                 validate_asset_build_info(assets, SOURCE, str(go))
