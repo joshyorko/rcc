@@ -19,6 +19,14 @@ TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.
 RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
 CANDIDATE_SHA_EXPRESSION = "${{ github.event.pull_request.head.sha || github.sha }}"
 RELEASE_IDENTITY_JOBS = ("build", "release-candidate", "robot", "release")
+RELEASE_CANDIDATE_LABEL = "release-candidate"
+RELEASE_CANDIDATE_PULL_REQUEST_TYPES = {"opened", "synchronize", "reopened", "labeled"}
+TAG_ONLY_RELEASE_CONDITION = "github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
+RELEASE_CANDIDATE_CONDITION = (
+    "(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || "
+    "(github.event_name == 'pull_request' && "
+    f"contains(github.event.pull_request.labels.*.name, '{RELEASE_CANDIDATE_LABEL}'))"
+)
 
 
 def resolve_candidate_sha(event_name, github_sha, pull_request_head_sha=None):
@@ -33,8 +41,43 @@ def _workflow_job(workflow_text, name):
     return match.group(1) if match else ""
 
 
-def validate_release_identity_topology(workflow_text):
+def _workflow_pull_request_event(workflow_text):
+    match = re.search(r"(?ms)^  pull_request:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|^permissions:|\Z)", workflow_text)
+    return match.group(1) if match else ""
+
+
+def validate_release_candidate_event_policy(workflow_text):
     errors = []
+    pull_request = _workflow_pull_request_event(workflow_text)
+    types = set(re.findall(r"(?m)^\s+-\s+([a-z_]+)\s*$", pull_request.split("paths-ignore:", 1)[0]))
+    missing_types = RELEASE_CANDIDATE_PULL_REQUEST_TYPES - types
+    if missing_types:
+        errors.append(f"pull_request event types missing release-candidate rerun events: {sorted(missing_types)}")
+
+    candidate = _workflow_job(workflow_text, "release-candidate")
+    condition_lines = candidate.splitlines()
+    condition = ""
+    for index, line in enumerate(condition_lines):
+        if line == "    if: >-":
+            parts = []
+            for expression_line in condition_lines[index + 1:]:
+                if not expression_line.startswith("      "):
+                    break
+                parts.append(expression_line.strip())
+            condition = " ".join(parts)
+            break
+    if condition != RELEASE_CANDIDATE_CONDITION:
+        errors.append("release-candidate job must run for version tags and explicit release-candidate PR labels")
+
+    release = _workflow_job(workflow_text, "release")
+    condition = re.search(r"(?m)^    if:\s*(.*?)\s*$", release)
+    if not condition or condition.group(1) != TAG_ONLY_RELEASE_CONDITION:
+        errors.append("release publication must remain limited to version-tag pushes")
+    return errors
+
+
+def validate_release_identity_topology(workflow_text):
+    errors = validate_release_candidate_event_policy(workflow_text)
     for name in RELEASE_IDENTITY_JOBS:
         job = _workflow_job(workflow_text, name)
         if not job:
