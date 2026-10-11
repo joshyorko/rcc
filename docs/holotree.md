@@ -13,22 +13,55 @@ rcc provider remove office --json
 ```
 
 Use a named profile with `rcc env publish`, `rcc env acquire`, or `rcc env exec`
-via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile stores
-only the authorization environment variable name. Its runtime value must be the
-complete `Authorization` header required by the endpoint; RCC neither assumes
-nor adds a scheme. The value is not stored or emitted. `--authorization-env` is
-client-side configuration: it tells RCC where to read the outgoing header and
-does not configure authentication inside `rcc cache serve`. Omit it for the
-unauthenticated local loopback example above.
-URLs are strict root-only URLs without userinfo, query, or fragment.
-HTTP is limited to explicit loopback hosts (`localhost`, `127.0.0.0/8`, or
-`::1`); remote endpoints require HTTPS. Redirects are not followed.
+via `--provider office`. Direct HTTP(S) URLs remain accepted. A profile selects
+the artifact transport and its client-side authorization settings; it does not
+automatically identify the detached trust carrier. Automatic carrier inference
+currently uses a direct HTTP(S) `--provider` URL; it does not resolve a named
+profile alias. When acquiring through a named profile, always select the trust
+carrier explicitly, even when the carrier is served from the same endpoint.
+For example, when the trust endpoint serves the detached files:
+
+```sh
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
+  --trust-carrier https://trust.example.com/rcc/artifacts \
+  --trust-carrier-type http --trust-roots /etc/rcc/trust-roots.json \
+  --strict-remote --json
+```
+
+Choose the carrier location that actually serves the detached trust files; the
+artifact provider URL does not imply that its API serves those files. A profile's
+authorization applies to artifact transport; an HTTP trust-carrier endpoint is
+accessed separately and does not inherit that authorization. See the open
+[#118](https://github.com/joshyorko/rcc/issues/118) provider-profile trust
+integration request for work to connect those settings.
+
+A profile stores only the authorization environment variable name. Its runtime
+value must be the complete `Authorization` header required by the endpoint; RCC
+neither assumes nor adds a scheme. The value is not stored or emitted.
+`--authorization-env` is client-side configuration: it tells RCC where to read
+the outgoing header and does not configure authentication inside `rcc cache
+serve`. Omit it for the unauthenticated local loopback example above.
+Artifact provider URLs are strict root-only URLs without userinfo, query, or
+fragment. HTTP is limited to explicit loopback hosts (`localhost`,
+`127.0.0.0/8`, or `::1`); remote endpoints require HTTPS. Redirects are not
+followed. These restrictions apply to artifact provider URLs; HTTP trust-carrier
+URLs may include a path prefix, as in the example above.
 
 The built-in `local` provider root is separate from the RCC cache and from each
-local materialization. Once an artifact is warm locally, acquire is independent
-of provider availability, authorization, and rebuilding. Provider references
-select transport; the immutable `sha256:` Artifact digest is the identity.
-For v18, legacy `rccremote` remains a compatibility-level-A protocol.
+local materialization. Provider references select artifact transport; the
+immutable `sha256:` Artifact digest is the identity. Warm artifact bytes can be
+reused without fetching them again, but that does not make trust verification
+independent of the trust carrier. Acquisition still needs the metadata,
+revocation data, and policy inputs required by the selected verification mode.
+If the artifact provider is unavailable, keep the needed trust carrier locally
+available and pass it explicitly to retain the same verification inputs. A
+successful acquire that omits both the provider and carrier may use a different
+local verification path; do not treat it as proof that the same policy and
+trust evidence remain available during an outage. For v18, legacy `rccremote`
+remains a compatibility-level-A protocol. The remote deployment example below
+keeps a filesystem trust carrier on the client while using a named profile for
+artifact transport.
 
 ### Hosting an Environment Artifact Provider
 
