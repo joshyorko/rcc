@@ -1,0 +1,208 @@
+//go:build linux
+
+// Private finite diagnostic overlay. Cooperative descendants must remain in
+// the child's process group; this is not an OS sandbox or production change.
+package environmentlifecycle
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
+	"golang.org/x/sys/unix"
+)
+
+type executionSupervisor struct{ group int }
+
+func newExecutionSupervisor() (*executionSupervisor, error) {
+	// Adopt orphaned descendants so the owned finite diagnostic can reap them.
+	if err := unix.Prctl(unix.PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0); err != nil {
+		return nil, fmt.Errorf("private subreaper unavailable: %w", err)
+	}
+	return &executionSupervisor{}, nil
+}
+
+func (s *executionSupervisor) prepare(command *exec.Cmd) error {
+	if command.SysProcAttr == nil {
+		command.SysProcAttr = &syscall.SysProcAttr{}
+	}
+	command.SysProcAttr.Pdeathsig = syscall.SIGKILL
+	command.SysProcAttr.Setpgid = true
+	// CommandContext also has its own cancellation goroutine. Route both
+	// cancellation paths through the same group, avoiding the parent-only race.
+	command.Cancel = func() error { return s.terminate(command.Process) }
+	return nil
+}
+
+func (s *executionSupervisor) attach(process *os.Process) error {
+	s.group = process.Pid // retain the prepared group even if attach validation fails
+	group, err := syscall.Getpgid(process.Pid)
+	if err != nil {
+		return err
+	}
+	if group != process.Pid {
+		return errors.New("private child group identity mismatch")
+	}
+	s.group = group
+	return nil
+}
+
+func (s *executionSupervisor) terminate(process *os.Process) error {
+	if process == nil {
+		return os.ErrProcessDone
+	}
+	// os.Process uses its process handle; close drains adopted descendants
+	// after the leader is waited, before the execution lease is released.
+	return process.Kill()
+}
+
+func (s *executionSupervisor) close() error {
+	if s.group == 0 {
+		return nil
+	}
+	// execute.go defers this close before Release: all cooperative group
+	// members must disappear, including adopted zombies, before that barrier.
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		for {
+			var status syscall.WaitStatus
+			pid, err := syscall.Wait4(-s.group, &status, syscall.WNOHANG, nil)
+			if errors.Is(err, syscall.ECHILD) || pid == 0 {
+				break
+			}
+			if errors.Is(err, syscall.EINTR) {
+				continue
+			}
+			if err != nil {
+				return err
+			}
+		}
+		members, err := privateGroupMembers(s.group)
+		if err != nil {
+			return err
+		}
+		if len(members) == 0 {
+			return nil
+		}
+		if err := privateKillOwnedMembers(members); err != nil {
+			return err
+		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("private group not reaped: %v", members)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+type privateGroupProcess struct {
+	pid    int
+	parent int
+	start  string
+}
+
+func privateGroupMembers(group int) ([]privateGroupProcess, error) {
+	entries, err := os.ReadDir("/proc")
+	if err != nil {
+		return nil, err
+	}
+	var members []privateGroupProcess
+	for _, entry := range entries {
+		pid, err := strconv.Atoi(entry.Name())
+		if err != nil {
+			continue
+		}
+		b, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+		if errors.Is(err, os.ErrNotExist) || errors.Is(err, syscall.ESRCH) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		text := string(b)
+		end := strings.LastIndexByte(text, ')')
+		if end < 0 {
+			return nil, errors.New("private census stat malformed")
+		}
+		fields := strings.Fields(text[end+1:])
+		if len(fields) < 20 {
+			return nil, errors.New("private census fields missing")
+		}
+		pgid, err := strconv.Atoi(fields[2])
+		if err != nil {
+			return nil, err
+		}
+		if pgid == group {
+			parent, err := strconv.Atoi(fields[1])
+			if err != nil {
+				return nil, err
+			}
+			members = append(members, privateGroupProcess{pid, parent, fields[19]})
+		}
+	}
+	return members, nil
+}
+
+// Open exact process handles before signaling. Never signal a numeric PGID
+// after the leader has been reaped: its numeric ID may already be reused.
+func privateKillOwnedMembers(members []privateGroupProcess) error {
+	owned := map[int]bool{os.Getpid(): true}
+	for {
+		changed := false
+		for _, m := range members {
+			if owned[m.parent] && !owned[m.pid] {
+				owned[m.pid] = true
+				changed = true
+			}
+		}
+		if !changed {
+			break
+		}
+	}
+	handles := []int{}
+	defer func() {
+		for _, fd := range handles {
+			_ = unix.Close(fd)
+		}
+	}()
+	for _, m := range members {
+		if !owned[m.pid] {
+			return fmt.Errorf("private group member not an adopted descendant: %d", m.pid)
+		}
+		fd, err := unix.PidfdOpen(m.pid, 0)
+		if errors.Is(err, syscall.ESRCH) {
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("private pidfd open: %w", err)
+		}
+		handles = append(handles, fd)
+		b, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", m.pid))
+		if errors.Is(err, os.ErrNotExist) || errors.Is(err, syscall.ESRCH) {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		text := string(b)
+		end := strings.LastIndexByte(text, ')')
+		if end < 0 {
+			return errors.New("private identity malformed")
+		}
+		f := strings.Fields(text[end+1:])
+		if len(f) < 20 {
+			return errors.New("private identity missing")
+		}
+		if f[19] != m.start {
+			return errors.New("private identity changed before pidfd signal")
+		}
+		if err = unix.PidfdSendSignal(fd, syscall.SIGKILL, nil, 0); err != nil && !errors.Is(err, syscall.ESRCH) {
+			return err
+		}
+	}
+	return nil
+}

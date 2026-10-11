@@ -1,0 +1,12 @@
+File: representative-worker-group
+Build ID: 90e1c8ab16a1cc2ef1423b0d2f3ca7b18f082f04
+Type: cpu
+Time: 2026-10-11 21:37:22 UTC
+Duration: 3.04s, Total samples = 10ms ( 0.33%)
+Showing nodes accounting for 10ms, 100% of 10ms total
+      flat  flat%   sum%        cum   cum%
+      10ms   100%   100%       10ms   100%  runtime.checkTimersNoP
+         0     0%   100%       10ms   100%  runtime.findRunnable
+         0     0%   100%       10ms   100%  runtime.mcall
+         0     0%   100%       10ms   100%  runtime.park_m
+         0     0%   100%       10ms   100%  runtime.schedule

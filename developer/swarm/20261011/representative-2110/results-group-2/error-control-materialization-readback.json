@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "files": 513,
+  "mismatches": 0,
+  "materialization": "c2fd1aa_b35c539_3f05801f",
+  "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+  "path": "/workspace/rcc-representative-2110/group-2-error-control/home/holotree/c2fd1aa_b35c539_3f05801f"
+}

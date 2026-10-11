@@ -1,0 +1,105 @@
+{
+  "kind": "representative-workload-native-admission",
+  "status": "GO",
+  "scope": "private finite process-group supervisor diagnostic; controls passed; bounded representative workload measurement permitted after controller controls-complete gate",
+  "allowed_phases": [
+    "controls",
+    "measure"
+  ],
+  "prohibited_phases": [
+    "measure"
+  ],
+  "campaign": {
+    "results_directory": "results-group",
+    "owned_work_prefix": "group-",
+    "preserve_prior_failure_receipts": true,
+    "supersedes": "direct-child-negative-2; this is a separately bound group-supervisor diagnostic",
+    "phase_gate": "Controller measurement phase still requires final controls-complete PASS in results-group/controller.jsonl; controller stops on first control or measurement failure."
+  },
+  "expected_control_sequence": [
+    "error-control",
+    "cancel-control"
+  ],
+  "expected_behavior": {
+    "error_control": "PASS: poison error followed by same-process clean-state probe; worker state restored and lease released",
+    "cancel_control": "PASS only if process-group supervisor cancellation leaves both exact recorded PID/start identities absent before outer fallback cleanup, with no fallback signals; worker reports cancellation observed and lease released",
+    "fallback": "Controller must retain exact PID/start observations and prove absence before and after its pidfd fallback; any fallback signal, surviving identity, failed guard, or failed control stops the campaign before measure"
+  },
+  "build_result": "build-3/result.json",
+  "build_returncode": 0,
+  "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+  "driver_sha256": "c57146b2b8393eff16244335710f409bcd06733ea3234dd39df888914b309c6e",
+  "controller_sha256": "debb41547fe8e4f81ed31213abfd970b10b54d95f5b7e5342ff23ae1913036f4",
+  "build_binding_sha256": "3c1dab692071ac581ac15445c0f82fd00ca0e19dad411d5e4064de2a0678b475",
+  "build_binding_file_count": 535,
+  "build_binding_verified_bytes": 62111968,
+  "build_binding_mismatches": 0,
+  "binary_sha256": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+  "baseline_overlay_sha256": "f86f20472d265cae82a65d7b687a5d2b4c1814a33ad2464a7e35e59b0dbf0397",
+  "group_supervisor_source_sha256": "27f147811ed979bfe3dbb90ebbb501ddc9dbd40c2e9fdfcb6267b9fadadbc0cc",
+  "controller_umask_required": "0077",
+  "source": {
+    "rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "archive_sha256": "d2f95073bae448013db63b2f2f1d14d7abdc48146c07bf91de705cf442159278",
+    "input_inventory_sha256": "eed5eaee70ce32893daf906ee96c16b077a5159dcdfcb47b34a0c6a344526de1"
+  },
+  "fixture": {
+    "identity": "gzip-1 retained fixture",
+    "artifact_digest": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "fixture_json_sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "prepared_json_sha256": "8f7777814ff36804d62c6a8e815355c254cc7205f40421650a55ca60b57b4957",
+    "retained_provider_verification_sha256": "df44c082c34757fc72e1d07599118a0dae4eccf82c442beaad63678a279af278",
+    "provider_archive_sha256": "890dee8105a4b95a2380bd3ddf5ed8bd4c207221d38958bd26c37c440027df41",
+    "provider_file_count": 519
+  },
+  "review": {
+    "controller_binding_and_fixture_readback_source_review": "PASS",
+    "measurement_authorized": false,
+    "scope_limit": "Finite private diagnostic for trusted cooperative tasks. Not an OS sandbox, persistent worker, shipping RCC, or Actions acceptance. Group members that escape the process group are outside this prototype guarantee.",
+    "materialization_readback": "Controller verifies exact expected file set and each fixture file regular/no-follow, byte length and SHA-256 before recording an accepted sample.",
+    "strict_guard_review": "Controller requires owned exact-mode 0700 outer/input/output/work/home/task/provider fixture roots and 0750 global holotree before and after each invocation; umask 0077 is checked."
+  },
+  "limits": [
+    "A successful error control must precede cancellation control; either failure stops before any measurement.",
+    "The cancellation control only passes when both exact readiness PID/start identities are absent before controller fallback and no fallback signal was needed; zombies and controller cleanup cannot convert a supervisor failure into PASS.",
+    "The supervisor uses process-group membership and subreaper cleanup for trusted cooperative child processes; escaped or hostile descendants are not contained.",
+    "No shipping RCC, Actions, persistent-worker, OS-sandbox, or broad release qualification is claimed.",
+    "Controls passed and were independently checked from retained raw receipts. Measurement is authorized only through the controller measure phase, which verifies final controls-complete PASS and uses the frozen 535-file build binding."
+  ],
+  "build_binding_verification": {
+    "files_checked": 535,
+    "bytes_hashed": 62111968,
+    "size_or_sha_mismatches": 0
+  },
+  "control_review": {
+    "status": "PASS",
+    "controller_jsonl_sha256": "f9341724d01f8ec4c32908034f8a2d5c76352a6aeb27ea1f16e80aafd5367bbf",
+    "readiness_fallback_sha256": "44088781d5a5e20b1ce5e32bc64bf75eef6ae946035ae45e4c3649b37c66092c",
+    "error_control_worker_sha256": "792914066e358f17fd62322ff098e0fd8d47d2327a2fc385fab37db3e7b1d948",
+    "cancel_control_worker_sha256": "faf608103965f8fb465b43c734b49bf1e4d8eff953f0ed6c9ffee071a1771957",
+    "error_control": {
+      "returncode": 0,
+      "poison_then_probe": [
+        "ERROR",
+        "PASS"
+      ],
+      "same_pid_and_lease": true,
+      "clean_state": true,
+      "leases_released": true,
+      "materialization_files": 513,
+      "materialization_mismatches": 0
+    },
+    "cancel_control": {
+      "returncode": 0,
+      "cancel_observed": true,
+      "exact_recorded_pid_start_pairs": 2,
+      "identities_absent_before_fallback": true,
+      "identities_absent_after_fallback": true,
+      "fallback_signals_sent": 0,
+      "leases_released": true,
+      "materialization_files": 513,
+      "materialization_mismatches": 0
+    },
+    "strict_guards": "Both controls retained owned 0700 outer/input/results/work/home/task/provider fixture roots and 0750 global holotree before and after; no lease JSON remained under either home."
+  }
+}

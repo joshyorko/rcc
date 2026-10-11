@@ -1,0 +1,382 @@
+{
+  "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "pr221": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+  "pr308": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+  "issue101_updated": "2026-10-11T19:25:51Z",
+  "issue133_updated": "2026-10-11T20:32:56Z",
+  "latest133": "https://github.com/joshyorko/actions/issues/133#issuecomment-6113444599",
+  "timestamp": "2026-10-11T21:52:49.114917+00:00",
+  "checks221": [
+    {
+      "name": "publish (3.12)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482815/job/114525527854"
+    },
+    {
+      "name": "copilot-setup-steps",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157607013/job/114523699881"
+    },
+    {
+      "name": "publish",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482829/job/114523524151"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, macos-15, rcc-macosarm64, 57d2fe4fb0dc54f2bd09ed0d1c3f3ace28d85a1370dc1984...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345576"
+    },
+    {
+      "name": "Build Action Server binary without credentials (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482798/job/114523345507"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, ubuntu-22.04, rcc-linux64, ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf0...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345429"
+    },
+    {
+      "name": "build-wheels (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482815/job/114523345424"
+    },
+    {
+      "name": "build-wheels (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482815/job/114523345379"
+    },
+    {
+      "name": "Build Action Server binary without credentials (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482798/job/114523345370"
+    },
+    {
+      "name": "build-wheels (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482815/job/114523345357"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, windows-2022, rcc-windows64.exe, 705e2a4ec70a8bc3881f042a2eae222ed07e39a83...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345342"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, windows-2022, rcc-windows64.exe, 523a6be8ad92235fbe0a4e4732699f2cd66f9...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345340"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, ubuntu-22.04, rcc-linux64, 7e588c01751ca2ae15ba13ef67f2f4b7567697a5a83...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345332"
+    },
+    {
+      "name": "build-sdist (ubuntu-py3.12)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482815/job/114523345265"
+    },
+    {
+      "name": "build (ubuntu-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482795/job/114523345244"
+    },
+    {
+      "name": "lighthouse",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482855/job/114523345225"
+    },
+    {
+      "name": "build (macos-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482795/job/114523345213"
+    },
+    {
+      "name": "build (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482832/job/114523345207"
+    },
+    {
+      "name": "build (windows-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482796/job/114523345200"
+    },
+    {
+      "name": "build (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482832/job/114523345193"
+    },
+    {
+      "name": "build (windows-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482795/job/114523345180"
+    },
+    {
+      "name": "build (macos-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482796/job/114523345179"
+    },
+    {
+      "name": "build (ubuntu-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482800/job/114523345174"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, macos-15, rcc-macosarm64, 778402ccdb7c10e10fbdad7baa7c27b44563c1a90a95...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482820/job/114523345170"
+    },
+    {
+      "name": "build (windows-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482800/job/114523345151"
+    },
+    {
+      "name": "build (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482832/job/114523345136"
+    },
+    {
+      "name": "candidate-wheel",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482795/job/114523345121"
+    },
+    {
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482843/job/114523345062"
+    },
+    {
+      "name": "Build Action Server binary without credentials (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482798/job/114523345059"
+    },
+    {
+      "name": "build (macos-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482800/job/114523345021"
+    },
+    {
+      "name": "copilot-setup-steps",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482797/job/114523345020"
+    },
+    {
+      "name": "build (ubuntu-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482796/job/114523345012"
+    },
+    {
+      "name": "coverage",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482792/job/114523344999"
+    },
+    {
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482829/job/114523344947"
+    },
+    {
+      "name": "action-server-frontend-tests",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38157482750/job/114523344891"
+    }
+  ],
+  "checks308": [
+    {
+      "name": "publish (3.12)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596561/job/114545623145"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, windows-2022, rcc-windows64.exe, 523a6be8ad92235fbe0a4e4732699f2cd66f9...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417958"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, windows-2022, rcc-windows64.exe, 705e2a4ec70a8bc3881f042a2eae222ed07e39a83...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417936"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, macos-15, rcc-macosarm64, 778402ccdb7c10e10fbdad7baa7c27b44563c1a90a95...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417934"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, macos-15, rcc-macosarm64, 57d2fe4fb0dc54f2bd09ed0d1c3f3ace28d85a1370dc1984...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417913"
+    },
+    {
+      "name": "toolkit (n-1, 18.18.1, ubuntu-22.04, rcc-linux64, ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf0...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417844"
+    },
+    {
+      "name": "build-wheels (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596561/job/114544417810"
+    },
+    {
+      "name": "build-wheels (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596561/job/114544417747"
+    },
+    {
+      "name": "build-wheels (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596561/job/114544417732"
+    },
+    {
+      "name": "audit",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596650/job/114544417710"
+    },
+    {
+      "name": "toolkit (primary, 18.19.3, ubuntu-22.04, rcc-linux64, 7e588c01751ca2ae15ba13ef67f2f4b7567697a5a83...",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596618/job/114544417695"
+    },
+    {
+      "name": "build (windows-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417671"
+    },
+    {
+      "name": "copilot-setup-steps",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596563/job/114544417653"
+    },
+    {
+      "name": "build (macos-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417640"
+    },
+    {
+      "name": "build (windows-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596587/job/114544417573"
+    },
+    {
+      "name": "build-sdist (ubuntu-py3.12)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596561/job/114544417570"
+    },
+    {
+      "name": "build (macos-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596587/job/114544417452"
+    },
+    {
+      "name": "build (ubuntu-py3.12-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417419"
+    },
+    {
+      "name": "build (ubuntu-py3.10-devmode)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596587/job/114544417389"
+    },
+    {
+      "name": "Build Action Server binary without credentials (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596537/job/114544417274"
+    },
+    {
+      "name": "candidate-wheel",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596587/job/114544417231"
+    },
+    {
+      "name": "Build Action Server binary without credentials (ubuntu-22.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596537/job/114544417224"
+    },
+    {
+      "name": "Build Action Server binary without credentials (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596537/job/114544417121"
+    },
+    {
+      "name": "coverage",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164596541/job/114544417106"
+    },
+    {
+      "name": "copilot-setup-steps",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164592224/job/114544404995"
+    },
+    {
+      "name": "build",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/joshyorko/actions/actions/runs/38164592207/job/114544404898"
+    }
+  ],
+  "same_heads_as_exact_source_refresh": true,
+  "new_current_baseline_3_runtime_admission": "none in latest existing133comments",
+  "ordered_chain": "18.19.3 then released18.19.5 then exact727; stop first failure"
+}

@@ -1,0 +1,453 @@
+//go:build linux
+
+// Private, finite RCC streamed-execution diagnostic. Production is unchanged.
+package main
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"runtime/pprof"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/joshyorko/rcc/artifactprovider"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/environmentartifact"
+	"github.com/joshyorko/rcc/environmentlifecycle"
+	"golang.org/x/sys/unix"
+)
+
+type receipt struct {
+	Type             string           `json:"type"`
+	Mode             string           `json:"mode"`
+	Arm              string           `json:"arm"`
+	Status           string           `json:"status"`
+	Artifact         string           `json:"artifact"`
+	Materialization  string           `json:"materialization,omitempty"`
+	SourceSHA        string           `json:"sourceClosureSha256,omitempty"`
+	ProviderSetupNS  int64            `json:"providerSetupNs,omitempty"`
+	AcquireNS        int64            `json:"acquireNs,omitempty"`
+	BatchNS          int64            `json:"batchNs,omitempty"`
+	ExecuteCalls     int              `json:"executeCalls"`
+	Rows             []map[string]any `json:"rows,omitempty"`
+	LeasesReleased   bool             `json:"leasesReleased"`
+	ChildCPUUserNS   int64            `json:"childCpuUserNs,omitempty"`
+	ChildCPUSystemNS int64            `json:"childCpuSystemNs,omitempty"`
+	CancelObserved   bool             `json:"cancelObserved,omitempty"`
+	Error            string           `json:"error,omitempty"`
+}
+
+type durableOutput struct {
+	file    *os.File
+	buffer  bytes.Buffer
+	pending bytes.Buffer
+	cancel  context.CancelFunc
+}
+
+func (w *durableOutput) Write(b []byte) (int, error) {
+	n, e := w.file.Write(b)
+	if e != nil {
+		return n, e
+	}
+	if e = w.file.Sync(); e != nil {
+		return n, e
+	}
+	w.buffer.Write(b[:n])
+	w.pending.Write(b[:n])
+	for {
+		data := w.pending.Bytes()
+		end := bytes.IndexByte(data, '\n')
+		if end < 0 {
+			break
+		}
+		line := append([]byte(nil), data[:end]...)
+		w.pending.Next(end + 1)
+		var row map[string]any
+		if json.Unmarshal(line, &row) == nil && row["control"] == "cancel-ready" && w.cancel != nil {
+			w.cancel()
+		}
+	}
+	return n, nil
+}
+
+func main() {
+	mode := flag.String("mode", "worker", "worker, error-control or cancel-control")
+	arm := flag.String("arm", "", "fresh or resident")
+	outer := flag.String("outer", "", "owned 0700 boundary")
+	input := flag.String("inputs", "", "frozen repository snapshot")
+	tasks := flag.String("task-root", "", "new owned 0700 per-invocation tasks root")
+	driver := flag.String("driver", "", "exact task_driver.py")
+	provider := flag.String("provider", "", "retained gzip-1 provider")
+	artifact := flag.String("artifact", "", "exact artifact")
+	out := flag.String("receipt", "", "new JSONL receipt")
+	raw := flag.String("responses", "", "new raw stdout JSONL")
+	profile := flag.String("profile", "", "new CPU profile")
+	flag.Parse()
+	if e := run(*mode, *arm, *outer, *input, *tasks, *driver, *provider, *artifact, *out, *raw, *profile); e != nil {
+		fmt.Fprintln(os.Stderr, e)
+		os.Exit(1)
+	}
+}
+
+func run(mode, arm, outer, input, tasks, driver, provider, artifact, out, raw, profilePath string) (retErr error) {
+	r := receipt{Type: "representative-workload", Mode: mode, Arm: arm, Status: "RUNNING", Artifact: artifact}
+	receipts, e := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if e != nil {
+		return e
+	}
+	defer receipts.Close()
+	emit := func() error {
+		if e := json.NewEncoder(receipts).Encode(r); e != nil {
+			return e
+		}
+		return receipts.Sync()
+	}
+	defer func() {
+		if retErr != nil {
+			r.Status = "FAILED"
+			r.Error = retErr.Error()
+			if e := emit(); e != nil {
+				retErr = fmt.Errorf("%v; receipt:%w", retErr, e)
+			}
+		}
+	}()
+	if mode != "worker" && mode != "error-control" && mode != "cancel-control" {
+		return errors.New("unsupported mode")
+	}
+	if mode == "worker" && arm != "fresh" && arm != "resident" {
+		return errors.New("unsupported arm")
+	}
+	for _, path := range []string{outer, input, tasks, common.Product.Home()} {
+		if e := guard(path); e != nil {
+			return e
+		}
+	}
+	if _, e := os.Lstat(filepath.Join(common.Product.Home(), "artifacts/v1/content")); !errors.Is(e, os.ErrNotExist) {
+		return errors.New("consumer CAS must be fresh")
+	}
+	sourceHash, e := hashTrees(input, driver, provider)
+	if e != nil {
+		return e
+	}
+	r.SourceSHA = sourceHash
+	if e = emit(); e != nil {
+		return e
+	}
+	d, e := environmentartifact.ParseDigest(artifact)
+	if e != nil {
+		return e
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
+	defer cancel()
+	stage := time.Now()
+	p, e := artifactprovider.NewFilesystem(provider)
+	r.ProviderSetupNS = time.Since(stage).Nanoseconds()
+	if e != nil {
+		return e
+	}
+	stage = time.Now()
+	acquired, e := environmentlifecycle.NewAcquirer().Acquire(ctx, environmentlifecycle.AcquireRequest{ArtifactDigest: d, Provider: p})
+	r.AcquireNS = time.Since(stage).Nanoseconds()
+	if e != nil {
+		return e
+	}
+	if acquired.ArtifactDigest != d || acquired.CacheHit != environmentlifecycle.CacheProvider {
+		return errors.New("cold artifact/provenance mismatch")
+	}
+	r.Materialization = acquired.MaterializationID
+	mat := environmentlifecycle.Materialization{ArtifactDigest: d, ID: acquired.MaterializationID, Path: acquired.Path, CacheHit: acquired.CacheHit, Verification: acquired.Verification, TrustPolicy: acquired.TrustPolicy, TrustRequest: acquired.TrustRequest, TrustCarrier: acquired.TrustCarrier}
+	leaseDir := filepath.Join(common.Product.Home(), "artifacts/v1/materializations", d.Hex(), "leases")
+	output, e := os.OpenFile(raw, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if e != nil {
+		return e
+	}
+	defer output.Close()
+	writer := &durableOutput{file: output}
+	var profile *os.File
+	active := false
+	if mode == "worker" {
+		profile, e = os.OpenFile(profilePath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		if e != nil {
+			return e
+		}
+		if e = pprof.StartCPUProfile(profile); e != nil {
+			profile.Close()
+			return e
+		}
+		active = true
+		defer func() {
+			if active {
+				pprof.StopCPUProfile()
+				profile.Close()
+			}
+		}()
+	}
+	cpu0, e := childUsage()
+	if e != nil {
+		return e
+	}
+	jobs := []string{"agentdocs", "topology", "agentdocs", "topology", "agentdocs", "topology"}
+	if mode == "error-control" {
+		jobs = []string{"poison-error", "probe"}
+	}
+	if mode == "cancel-control" {
+		jobs = []string{"cancel"}
+	}
+	requests := make([]map[string]any, len(jobs))
+	for i, job := range jobs {
+		requests[i] = map[string]any{"sequence": i + 1, "job": job}
+	}
+	call := func(requests []map[string]any) error {
+		var stdin, stderr bytes.Buffer
+		for _, request := range requests {
+			if e := json.NewEncoder(&stdin).Encode(request); e != nil {
+				return e
+			}
+		}
+		executionCtx := ctx
+		cancelCall := func() {}
+		if mode == "cancel-control" {
+			executionCtx, cancelCall = context.WithCancel(ctx)
+			writer.cancel = cancelCall
+		}
+		defer cancelCall()
+		startIndex := len(r.Rows)
+		byteIndex := writer.buffer.Len()
+		stage := time.Now()
+		driverMode := "worker"
+		if mode != "worker" {
+			driverMode = "control"
+		}
+		handle, child, executeErr := environmentlifecycle.ExecuteWithStreams(executionCtx, environmentlifecycle.NewLocalMaterializer(), mat, []string{"python", "-B", driver, driverMode, input, tasks, leaseDir, artifact, strconv.Itoa(requests[0]["sequence"].(int))}, &stdin, writer, &stderr)
+		r.BatchNS += time.Since(stage).Nanoseconds()
+		r.ExecuteCalls++
+		rows, parseErr := decodeRows(writer.buffer.Bytes()[byteIndex:])
+		r.Rows = append(r.Rows, rows...)
+		if handle.LeaseID == "" {
+			return fmt.Errorf("no execution lease: %v", executeErr)
+		}
+		if _, e := os.Lstat(filepath.Join(leaseDir, handle.LeaseID+".json")); !errors.Is(e, os.ErrNotExist) {
+			return fmt.Errorf("execution lease remains:%v", e)
+		}
+		if mode == "cancel-control" {
+			if !errors.Is(executionCtx.Err(), context.Canceled) || executeErr == nil || len(r.Rows)-startIndex != 1 || r.Rows[startIndex]["control"] != "cancel-ready" {
+				return fmt.Errorf("cancellation readiness/outcome mismatch: %v", executeErr)
+			}
+			row := r.Rows[startIndex]
+			if row["leaseId"] != handle.LeaseID {
+				return errors.New("cancel lease identity mismatch")
+			}
+			for _, keys := range [][2]string{{"pid", "start"}, {"childPid", "childStart"}} {
+				pid, ok := row[keys[0]].(float64)
+				start, ok2 := row[keys[1]].(string)
+				if !ok || !ok2 || pid <= 0 || start == "" {
+					return errors.New("cancel PID identity missing")
+				}
+				deadline := time.Now().Add(2 * time.Second)
+				for identityLive(int(pid), start) && time.Now().Before(deadline) {
+					time.Sleep(20 * time.Millisecond)
+				}
+				if identityLive(int(pid), start) {
+					return fmt.Errorf("cancelled identity remains live:%.0f/%s", pid, start)
+				}
+			}
+			r.CancelObserved = true
+			return nil
+		}
+		if executeErr != nil {
+			return fmt.Errorf("execute:%w stderr:%s", executeErr, stderr.String())
+		}
+		if parseErr != nil {
+			return parseErr
+		}
+		if child.ExitCode != 0 {
+			return fmt.Errorf("child exit:%d stderr:%s", child.ExitCode, stderr.String())
+		}
+		if len(rows) != len(requests) {
+			return errors.New("response count mismatch")
+		}
+		for i, row := range rows {
+			if row["sequence"] != float64(requests[i]["sequence"].(int)) || row["job"] != requests[i]["job"] || row["leaseId"] != handle.LeaseID {
+				return errors.New("response order/job/lease mismatch")
+			}
+			expectedStatus := "PASS"
+			if requests[i]["job"] == "poison-error" {
+				expectedStatus = "ERROR"
+			}
+			if row["status"] != expectedStatus || row["cleanState"] != true {
+				return fmt.Errorf("workload/isolation failure:%v", row)
+			}
+			if mode == "worker" {
+				count := float64(5)
+				if row["job"] == "topology" {
+					count = 25
+				}
+				if row["testsRun"] != count || row["failures"] != float64(0) || row["errors"] != float64(0) || row["skips"] != float64(0) {
+					return errors.New("test cases failed/missing/skipped")
+				}
+			}
+		}
+		return nil
+	}
+	if mode == "worker" && arm == "fresh" {
+		for _, request := range requests {
+			if e = call([]map[string]any{request}); e != nil {
+				return e
+			}
+		}
+	} else {
+		if e = call(requests); e != nil {
+			return e
+		}
+	}
+	if active {
+		pprof.StopCPUProfile()
+		active = false
+		if e = profile.Sync(); e != nil {
+			return e
+		}
+		if e = profile.Close(); e != nil {
+			return e
+		}
+	}
+	cpu1, e := childUsage()
+	if e != nil {
+		return e
+	}
+	r.ChildCPUUserNS = cpu1[0] - cpu0[0]
+	r.ChildCPUSystemNS = cpu1[1] - cpu0[1]
+	if mode == "worker" {
+		pids := map[any]bool{}
+		leases := map[any]bool{}
+		for _, row := range r.Rows {
+			pids[row["pid"]] = true
+			leases[row["leaseId"]] = true
+		}
+		expected := 1
+		if arm == "fresh" {
+			expected = 6
+		}
+		if len(pids) != expected || len(leases) != expected || r.ExecuteCalls != expected {
+			return errors.New("PID/lease cardinality mismatch")
+		}
+	}
+	remaining, e := filepath.Glob(filepath.Join(leaseDir, "*.json"))
+	if e != nil || len(remaining) != 0 {
+		return errors.New("remaining leases")
+	}
+	for _, path := range []string{outer, input, tasks, common.Product.Home()} {
+		if e = guard(path); e != nil {
+			return e
+		}
+	}
+	after, e := hashTrees(input, driver, provider)
+	if e != nil {
+		return e
+	}
+	if after != sourceHash {
+		return errors.New("input/provider bytes or modes changed")
+	}
+	r.Status = "PASS"
+	r.LeasesReleased = true
+	return emit()
+}
+
+func guard(path string) error {
+	s, e := os.Lstat(path)
+	if e != nil {
+		return e
+	}
+	owner, ok := s.Sys().(*syscall.Stat_t)
+	if !s.IsDir() || s.Mode().Perm() != 0700 || !ok || owner.Uid != uint32(os.Geteuid()) || owner.Gid != uint32(os.Getegid()) {
+		return fmt.Errorf("private guard:%s %v", path, s.Mode())
+	}
+	return nil
+}
+func decodeRows(b []byte) ([]map[string]any, error) {
+	var rows []map[string]any
+	for _, line := range bytes.Split(b, []byte{'\n'}) {
+		if len(line) == 0 {
+			continue
+		}
+		var row map[string]any
+		if e := json.Unmarshal(line, &row); e != nil {
+			return rows, e
+		}
+		rows = append(rows, row)
+	}
+	return rows, nil
+}
+func childUsage() ([2]int64, error) {
+	var r unix.Rusage
+	e := unix.Getrusage(unix.RUSAGE_CHILDREN, &r)
+	return [2]int64{(r.Utime.Sec*1e6 + r.Utime.Usec) * 1000, (r.Stime.Sec*1e6 + r.Stime.Usec) * 1000}, e
+}
+func identityLive(pid int, start string) bool {
+	b, e := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+	if errors.Is(e, os.ErrNotExist) {
+		return false
+	}
+	if e != nil {
+		return true
+	}
+	text := string(b)
+	end := strings.LastIndexByte(text, ')')
+	if end < 0 {
+		return true
+	}
+	f := strings.Fields(text[end+1:])
+	if len(f) < 20 {
+		return true
+	}
+	return f[19] == start && f[0] != "Z"
+}
+func hashTrees(paths ...string) (string, error) {
+	h := sha256.New()
+	for _, root := range paths {
+		e := filepath.WalkDir(root, func(path string, d os.DirEntry, walkErr error) error {
+			if walkErr != nil {
+				return walkErr
+			}
+			s, e := os.Lstat(path)
+			if e != nil {
+				return e
+			}
+			rel, e := filepath.Rel(root, path)
+			if e != nil {
+				return e
+			}
+			fmt.Fprintf(h, "%s\x00%o\x00", filepath.Join(filepath.Base(root), rel), s.Mode().Perm())
+			if s.Mode().IsRegular() {
+				f, e := os.Open(path)
+				if e != nil {
+					return e
+				}
+				_, e = io.Copy(h, f)
+				closeErr := f.Close()
+				if e != nil {
+					return e
+				}
+				return closeErr
+			}
+			if !s.IsDir() {
+				return fmt.Errorf("nonregular source:%s", path)
+			}
+			return nil
+		})
+		if e != nil {
+			return "", e
+		}
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
+}

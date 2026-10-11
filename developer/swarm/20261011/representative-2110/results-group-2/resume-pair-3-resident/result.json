@@ -1,0 +1,159 @@
+{
+  "final_output_bytes": 0,
+  "final_scratch_logical_bytes": 14687807,
+  "final_scratch_vanished_entries": 0,
+  "command": [
+    "/workspace/rcc-successor-tools/representative-worker-group",
+    "-mode=worker",
+    "-arm=resident",
+    "-outer=/workspace/rcc-representative-2110",
+    "-inputs=/workspace/rcc-representative-2110/inputs",
+    "-task-root=/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/tasks",
+    "-driver=/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py",
+    "-provider=/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+    "-artifact=sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "-receipt=/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/worker.jsonl",
+    "-responses=/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/responses.jsonl",
+    "-profile=/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/cpu.pprof"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 5.404119423999873,
+  "sampled_tree_rss_max": 54820864,
+  "known_identities": {
+    "16323": "733260",
+    "16339": "733428",
+    "16345": "733528"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "samples": [
+    {
+      "elapsed": 0.001852139999755309,
+      "rss": 3629056,
+      "free": 30509625344,
+      "identities": [
+        {
+          "pid": 16323,
+          "ppid": 16322,
+          "pgid": 16323,
+          "sid": 16323,
+          "start": "733260",
+          "rss": 3629056,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 14275338,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 0.9211750340000435,
+      "rss": 15204352,
+      "free": 30503010304,
+      "identities": [
+        {
+          "pid": 16323,
+          "ppid": 16322,
+          "pgid": 16323,
+          "sid": 16323,
+          "start": "733260",
+          "rss": 15204352,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 14485099,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 1.8828579179998997,
+      "rss": 37421056,
+      "free": 30494502912,
+      "identities": [
+        {
+          "pid": 16323,
+          "ppid": 16322,
+          "pgid": 16323,
+          "sid": 16323,
+          "start": "733260",
+          "rss": 15675392,
+          "state": "S"
+        },
+        {
+          "pid": 16339,
+          "ppid": 16323,
+          "pgid": 16339,
+          "sid": 16323,
+          "start": "733428",
+          "rss": 21745664,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14697124,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 2.7823703780004507,
+      "rss": 54820864,
+      "free": 30492938240,
+      "identities": [
+        {
+          "pid": 16323,
+          "ppid": 16322,
+          "pgid": 16323,
+          "sid": 16323,
+          "start": "733260",
+          "rss": 15675392,
+          "state": "S"
+        },
+        {
+          "pid": 16339,
+          "ppid": 16323,
+          "pgid": 16339,
+          "sid": 16323,
+          "start": "733428",
+          "rss": 25284608,
+          "state": "S"
+        },
+        {
+          "pid": 16345,
+          "ppid": 16339,
+          "pgid": 16339,
+          "sid": 16323,
+          "start": "733528",
+          "rss": 13860864,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14698273,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 3.714934466000159,
+      "rss": 41353216,
+      "free": 30494474240,
+      "identities": [
+        {
+          "pid": 16323,
+          "ppid": 16322,
+          "pgid": 16323,
+          "sid": 16323,
+          "start": "733260",
+          "rss": 15675392,
+          "state": "S"
+        },
+        {
+          "pid": 16339,
+          "ppid": 16323,
+          "pgid": 16339,
+          "sid": 16323,
+          "start": "733428",
+          "rss": 25677824,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14705540,
+      "scratch_vanished_entries": 0
+    }
+  ]
+}

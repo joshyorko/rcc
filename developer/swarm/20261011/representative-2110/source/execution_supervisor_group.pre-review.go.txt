@@ -1,0 +1,139 @@
+//go:build linux
+
+// Private finite diagnostic overlay. Cooperative descendants must remain in
+// the child's process group; this is not an OS sandbox or production change.
+package environmentlifecycle
+
+import (
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
+	"golang.org/x/sys/unix"
+)
+
+type executionSupervisor struct{ group int }
+
+func newExecutionSupervisor() (*executionSupervisor, error) {
+	// Adopt orphaned descendants so the owned finite diagnostic can reap them.
+	if err := unix.Prctl(unix.PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0); err != nil {
+		return nil, fmt.Errorf("private subreaper unavailable: %w", err)
+	}
+	return &executionSupervisor{}, nil
+}
+
+func (s *executionSupervisor) prepare(command *exec.Cmd) error {
+	if command.SysProcAttr == nil {
+		command.SysProcAttr = &syscall.SysProcAttr{}
+	}
+	command.SysProcAttr.Pdeathsig = syscall.SIGKILL
+	command.SysProcAttr.Setpgid = true
+	// CommandContext also has its own cancellation goroutine. Route both
+	// cancellation paths through the same group, avoiding the parent-only race.
+	command.Cancel = func() error { return s.terminate(command.Process) }
+	return nil
+}
+
+func (s *executionSupervisor) attach(process *os.Process) error {
+	group, err := syscall.Getpgid(process.Pid)
+	if err != nil {
+		return err
+	}
+	if group != process.Pid {
+		return errors.New("private child group identity mismatch")
+	}
+	s.group = group
+	return nil
+}
+
+func (s *executionSupervisor) terminate(process *os.Process) error {
+	if process == nil {
+		return os.ErrProcessDone
+	}
+	err := syscall.Kill(-process.Pid, syscall.SIGKILL)
+	if errors.Is(err, syscall.ESRCH) {
+		return os.ErrProcessDone
+	}
+	return err
+}
+
+func (s *executionSupervisor) close() error {
+	if s.group == 0 {
+		return nil
+	}
+	// execute.go defers this close before Release: all cooperative group
+	// members must disappear, including adopted zombies, before that barrier.
+	if err := syscall.Kill(-s.group, syscall.SIGKILL); err != nil && !errors.Is(err, syscall.ESRCH) {
+		return err
+	}
+	deadline := time.Now().Add(2 * time.Second)
+	for {
+		for {
+			var status syscall.WaitStatus
+			pid, err := syscall.Wait4(-s.group, &status, syscall.WNOHANG, nil)
+			if errors.Is(err, syscall.ECHILD) || pid == 0 {
+				break
+			}
+			if errors.Is(err, syscall.EINTR) {
+				continue
+			}
+			if err != nil {
+				return err
+			}
+		}
+		members, err := privateGroupMembers(s.group)
+		if err != nil {
+			return err
+		}
+		if len(members) == 0 {
+			return nil
+		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("private group not reaped: %v", members)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
+func privateGroupMembers(group int) ([]int, error) {
+	entries, err := os.ReadDir("/proc")
+	if err != nil {
+		return nil, err
+	}
+	var members []int
+	for _, entry := range entries {
+		pid, err := strconv.Atoi(entry.Name())
+		if err != nil {
+			continue
+		}
+		b, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+		if errors.Is(err, os.ErrNotExist) || errors.Is(err, syscall.ESRCH) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		text := string(b)
+		end := strings.LastIndexByte(text, ')')
+		if end < 0 {
+			return nil, errors.New("private census stat malformed")
+		}
+		fields := strings.Fields(text[end+1:])
+		if len(fields) < 3 {
+			return nil, errors.New("private census fields missing")
+		}
+		pgid, err := strconv.Atoi(fields[2])
+		if err != nil {
+			return nil, err
+		}
+		if pgid == group {
+			members = append(members, pid)
+		}
+	}
+	return members, nil
+}

@@ -1,0 +1,76 @@
+{
+  "kind": "representative-workload-design",
+  "status": "source-only-preparation",
+  "frozen_rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+  "source_archive": {
+    "format": "git archive tar",
+    "bytes": 5519360,
+    "tracked_paths": 681,
+    "logical_file_bytes": 4927749,
+    "sha256": "70654af0d400a8e04cbacaa72a7f3af65315a7a8f92f9f40d110c59c217cc204",
+    "contains_git_directory": false
+  },
+  "selected_workloads": [
+    {
+      "name": "agentdocs",
+      "test_file": "scripts/test_validate_agent_docs.py",
+      "test_count": 5,
+      "additional_call": "scripts/validate_agent_docs.py::validate on exact snapshot",
+      "test_sha256": "e00bb13de65092a17d4aadb8097e695783e9610a34e871af7447bc611b9b91e2"
+    },
+    {
+      "name": "topology",
+      "test_file": "scripts/test_validate_release_topology.py",
+      "test_count": 25,
+      "test_sha256": "96832b6730b7f284cab9ce0c59587af567a89c9bc7a7b049295e4529346743c6",
+      "scope": "local workflow/source validators and synthetic fixtures; no network or publisher"
+    }
+  ],
+  "six_task_order": [
+    "agentdocs",
+    "topology",
+    "agentdocs",
+    "topology",
+    "agentdocs",
+    "topology"
+  ],
+  "per_arm_counts": {
+    "unit_test_cases": 90,
+    "whole_tree_agentdocs_validate_calls": 3
+  },
+  "arms": {
+    "fresh": "six public ExecuteWithStreams calls, one task per short-lived child",
+    "resident": "one bounded ExecuteWithStreams call serving the same six JSONL tasks"
+  },
+  "driver": {
+    "path": "representative-2110/source/task_driver.py",
+    "sha256": "c57146b2b8393eff16244335710f409bcd06733ea3234dd39df888914b309c6e",
+    "syntax_parse_only": true,
+    "positional_arguments": "mode INPUT_ROOT TASK_ROOT LEASE_DIR ARTIFACT START_SEQUENCE; integer 1..6; control mode requires 1",
+    "sequence_policy": "worker starts at START_SEQUENCE, then requires strictly increasing exact sequence through 6 and validates alternating workload parity; control starts at 1"
+  },
+  "alternate_task": {
+    "path": "robot_tests/environment_artifacts/task.py",
+    "test_sha256": "3a650619130ba1b7abf1711db5337474bf3507826d582a5e8a82f53535c723d1",
+    "reason_not_selected": "host Python 3.12.14 has PyYAML 6.0.3 but _sqlite3 has no __file__; task dereferences __file__. Repository conda spec pins Python 3.11/PyYAML 6.0.2; matching materialized dependency availability not established read-only."
+  },
+  "controls": [
+    "poison-error then clean-state probe",
+    "cancel after same-process-group child readiness; outer process-group cleanup and lease absence required"
+  ],
+  "limitations": [
+    "trusted cooperative process-state isolation, not OS security sandbox",
+    "no test execution or native benchmark in this lane",
+    "Linux ExecuteWithStreams supervisor kills direct child only; outer runner must account for descendants",
+    "warm host cache and synthetic local fixture validators do not qualify RCC end-to-end or Actions"
+  ],
+  "not_performed": [
+    "Go build",
+    "RCC Acquire",
+    "ExecuteWithStreams invocation",
+    "unit suite execution",
+    "benchmark",
+    "production change"
+  ],
+  "lease_directory_mode": "Observed 0700 under admitted prototype umask 0077; frozen Unix installer requests 0750, masked by umask; strict observed mode check; private task/home remain 0700"
+}

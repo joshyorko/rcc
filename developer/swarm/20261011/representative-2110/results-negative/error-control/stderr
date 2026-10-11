@@ -1,0 +1,12 @@
+child exit:1 stderr:Traceback (most recent call last):
+  File "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py", line 459, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py", line 388, in main
+    owned_dir(LEASE_DIR, mode=0o750)
+  File "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py", line 32, in owned_dir
+    fail(f"directory mode/type mismatch: {path} mode={oct(stat.S_IMODE(st.st_mode))}")
+  File "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py", line 26, in fail
+    raise RuntimeError(message)
+RuntimeError: directory mode/type mismatch: /workspace/rcc-representative-2110/direct-child-negative-error-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/leases mode=0o700
+

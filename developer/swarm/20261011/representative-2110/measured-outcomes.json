@@ -1,0 +1,38 @@
+{
+  "scope": "Arithmetic only from accepted receipts; no replay",
+  "corrected_v4_pairs": 2,
+  "fresh_controller_median_ms": 7084.673893499712,
+  "resident_controller_median_ms": 5662.51771799989,
+  "fresh_batch_median_ms": 4083.1142710000004,
+  "resident_batch_median_ms": 2751.2729005,
+  "per_pair": [
+    {
+      "pair": 1,
+      "runner": "v3",
+      "fresh_batch_ms": 4102.078102,
+      "resident_batch_ms": 3041.904435,
+      "fresh_controller_ms": 6111.079445999167,
+      "resident_controller_ms": 5399.077381000097
+    },
+    {
+      "pair": 2,
+      "runner": "v4",
+      "fresh_batch_ms": 4041.052558,
+      "resident_batch_ms": 2660.44193,
+      "fresh_controller_ms": 7320.565897999586,
+      "resident_controller_ms": 5750.417942999775
+    },
+    {
+      "pair": 3,
+      "runner": "v4",
+      "fresh_batch_ms": 4125.175984,
+      "resident_batch_ms": 2842.103871,
+      "fresh_controller_ms": 6848.781888999838,
+      "resident_controller_ms": 5574.617493000005
+    }
+  ],
+  "retained_pair1_not_replayed": true,
+  "discarded_arm_not_included": true,
+  "profile_scope": "Go Execute-phase after Acquire only, not Python or Acquire CPU; child CPU separately recorded; profile overhead included native/fullcontroller",
+  "corrected_v4_controller_reduction_percent": 20.073699889061515
+}

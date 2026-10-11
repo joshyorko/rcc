@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-10-11T21:56:09.966442+00:00",
+  "parent": "af32f876377911d1995706e290a424f0f0e4f417",
+  "parent_entries": 3353,
+  "parent_tree_sha256": "e9413e27188f886031bbbdaccdfdf98b289f0d9b3b3730595595fabf36edaa8c",
+  "agent_guidance_validation": "python3 scripts/validate_agent_docs.py exit0,2skills",
+  "gofmt_diff": "Selected Go1.26.9 gofmt -d private main.go/groupoverlay: empty,exit0",
+  "production_worktrees": "rcc andrcc-frozen gitstatusshort empty",
+  "artifact_hygiene": "no symlinks/pyc/__pycache in newprefix",
+  "fullGoRobotqualification": "NOTRUN; noproductionchange; representativepublicAPI build/control/workload evidence only",
+  "scope": "Read-only structural/source/parent checks; no benchmark replay"
+}

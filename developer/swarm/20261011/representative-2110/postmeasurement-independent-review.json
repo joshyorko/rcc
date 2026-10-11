@@ -1,0 +1,93 @@
+{
+  "status": "PASS_ACCEPTED_MEASUREMENT_RAW_REVIEW",
+  "native_execution_by_reviewer": false,
+  "accepted_labels": [
+    "pair-1-fresh",
+    "pair-1-resident",
+    "resume-pair-2-resident",
+    "resume-pair-2-fresh",
+    "resume-pair-3-fresh",
+    "resume-pair-3-resident"
+  ],
+  "accepted_cases": 540,
+  "pair1_replayed": false,
+  "discarded_original_pair2_resident_included": false,
+  "runner_cohorts": {
+    "pair1": "v3",
+    "pairs2and3": "v4"
+  },
+  "summary_pooled_across_cohorts": "descriptive_only",
+  "maintained_test_ids": {
+    "agentdocs": 5,
+    "topology": 25,
+    "per_task_exact_ast_id_set_match": true,
+    "all_pass": true
+  },
+  "fresh_vs_resident": {
+    "fresh_unique_pids_and_leases_per_arm": 6,
+    "resident_unique_pids_and_leases_per_arm": 1
+  },
+  "outer_results": {
+    "all_returncode_zero": true,
+    "all_stop_null": true,
+    "all_no_final_live_identities": true,
+    "strict_pre_post_guards_match": true
+  },
+  "leases_and_temp": {
+    "lease_json_remaining": 0,
+    "task_temp_dirs_removed": true,
+    "task_logs_retained": true
+  },
+  "materialization": {
+    "accepted_arms": 6,
+    "files_per_arm": 513,
+    "direct_file_checks": 3078,
+    "pathset_type_size_sha256_matches": true,
+    "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d"
+  },
+  "discarded_pair2_resident": {
+    "status": "REJECTED_OUTER_SAMPLE",
+    "outer_result_absent": true,
+    "included_in_accepted_rows": false
+  },
+  "v4_only_arithmetic": {
+    "fresh_batch_median_ms": 4083.1142710000004,
+    "resident_batch_median_ms": 2751.2729005,
+    "fresh_controller_median_ms": 7084.673893499712,
+    "resident_controller_median_ms": 5662.51771799989,
+    "controller_reduction_percent": 20.073699889061515,
+    "paired_controller_deltas_ms": [
+      1570.1479549998112,
+      1274.1643959998328
+    ],
+    "claim_scope": "Two-pair finite-fixture descriptive observation only; controller elapsed includes wrapper/controller/readback overhead."
+  },
+  "build_binding": {
+    "sha256": "8520ff57e69141722509db163b082895652c60ce47e31dab34b9e8d93613964c",
+    "files": 535,
+    "bytes": 62116681,
+    "mismatches": 0
+  },
+  "source_hashes": {
+    "controller": "38304141264d61e875bdd5bd6225dc3ba637b09c780cea48554cfc17a497f48e",
+    "sampler_v4": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+    "binary": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+    "driver": "8fc5926c98731e75c7f01df4d4a55640db67bd23dab7cf0fe7241ee7b4f22f7e"
+  },
+  "integrity_readback": {
+    "materializations": 17,
+    "file_checks": 8721,
+    "mismatches": 0,
+    "inputs": 681,
+    "provider_files": 519,
+    "leases": 0,
+    "source": "final-integrity-readback.json",
+    "sha256": "d2db9a07c52b389dd2a15f1c6e8ada409205a6b939cc9fe8662557460c321a68"
+  },
+  "report_sha256": "65bfa5a66dcb211139ec76c1b75901f354a5a333b8ee62fe52714715e471bfc2",
+  "raw_sha256": {
+    "controller_jsonl": "642f31fe433aa0498dd2772db921e4ba6875076213bef4fca3254893a2030888",
+    "summary": "9f62f5ab5744d758b8b1bd61b10052164a94339bbdb4cf655879e824e7c657d4",
+    "measured_outcomes": "dcc2f5aca6640576e9dfe84eec3fc8d1b635db73b68d6acb332870fff8e4a175"
+  }
+}

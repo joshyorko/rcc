@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/run_bounded_v3.py", line 40, in <module>
+    scratch=sum(x.lstat().st_size for x in a.scratch_root.rglob('*') if x.is_file() and not x.is_symlink())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/run_bounded_v3.py", line 40, in <genexpr>
+    scratch=sum(x.lstat().st_size for x in a.scratch_root.rglob('*') if x.is_file() and not x.is_symlink())
+                ^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 847, in lstat
+    return self.stat(follow_symlinks=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/rcc-representative-2110/group-2-pair-2-resident/tasks/task-04/tmp/tmpqxzbckga/private/.rcc-self-host-homes-123/home-b/artifacts/v1/metadata.json'

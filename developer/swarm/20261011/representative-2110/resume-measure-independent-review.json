@@ -1,0 +1,28 @@
+{
+  "review_status": "HOLD_FOR_FINAL_SAMPLER_CONTROLS",
+  "pair1_raw_review": "PASS",
+  "pair1_replayed": false,
+  "pair2_resident": "REJECTED_OUTER_SAMPLE",
+  "pair2_resident_replayed": false,
+  "sampler_control_receipts_reviewed": false,
+  "resume_measure_admission_issued": false,
+  "resume_measure_only_allowed_phase": "resume-measure",
+  "bindings": {
+    "controller_sha256": "38304141264d61e875bdd5bd6225dc3ba637b09c780cea48554cfc17a497f48e",
+    "sampler_v4_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+    "build_binding_sha256": "8520ff57e69141722509db163b082895652c60ce47e31dab34b9e8d93613964c",
+    "build_binding_files": 535,
+    "build_binding_bytes": 62116681,
+    "build_binding_mismatches": 0,
+    "build_returncode": 0,
+    "binary_sha256": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+    "driver_sha256": "8fc5926c98731e75c7f01df4d4a55640db67bd23dab7cf0fe7241ee7b4f22f7e"
+  },
+  "pair1": {
+    "fresh": {"status":"PASS","tasks":6,"cases":90,"unique_pids":6,"unique_leases":6,"outer_returncode":0,"outer_stop":null,"live_identities":0,"materialized_files":513,"materialization_mismatches":0},
+    "resident": {"status":"PASS","tasks":6,"cases":90,"unique_pids":1,"unique_leases":1,"outer_returncode":0,"outer_stop":null,"live_identities":0,"materialized_files":513,"materialization_mismatches":0}
+  },
+  "pair2_resident": {"worker_status":"PASS","cases":90,"leases_released":true,"outer_result":"ABSENT","accepted":false,"failure":"v3 scratch lstat ENOENT while topology temporary paths were concurrently removed"},
+  "resume_schedule": [[2,"resident"],[2,"fresh"],[3,"fresh"],[3,"resident"]],
+  "scope": "Bounded private diagnostic only; pooled outer metrics descriptive across v3/v4 cohorts; no Actions, production, persistent-worker, or OS-sandbox claim."
+}

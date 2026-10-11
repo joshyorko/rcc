@@ -1,0 +1,227 @@
+{
+  "final_output_bytes": 0,
+  "final_scratch_logical_bytes": 14098563,
+  "final_scratch_vanished_entries": 0,
+  "command": [
+    "/workspace/rcc-successor-tools/representative-worker-group",
+    "-mode=worker",
+    "-arm=fresh",
+    "-outer=/workspace/rcc-representative-2110",
+    "-inputs=/workspace/rcc-representative-2110/inputs",
+    "-task-root=/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/tasks",
+    "-driver=/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py",
+    "-provider=/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+    "-artifact=sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "-receipt=/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/worker.jsonl",
+    "-responses=/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/responses.jsonl",
+    "-profile=/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/cpu.pprof"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 6.681901275999735,
+  "sampled_tree_rss_max": 50454528,
+  "known_identities": {
+    "16275": "732568",
+    "16298": "732720",
+    "16304": "732828",
+    "16299": "732764",
+    "16307": "732905",
+    "16314": "732998",
+    "16315": "733041",
+    "16317": "733078"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "samples": [
+    {
+      "elapsed": 0.0022875729991937988,
+      "rss": 6701056,
+      "free": 30524837888,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 6701056,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 13797723,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 0.8378745820000404,
+      "rss": 15360000,
+      "free": 30518325248,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 15360000,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 14042365,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 1.8133225530000345,
+      "rss": 38191104,
+      "free": 30509723648,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 15482880,
+          "state": "S"
+        },
+        {
+          "pid": 16298,
+          "ppid": 16275,
+          "pgid": 16298,
+          "sid": 16275,
+          "start": "732720",
+          "rss": 22708224,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14109138,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 2.657081602999824,
+      "rss": 49692672,
+      "free": 30508392448,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 15482880,
+          "state": "S"
+        },
+        {
+          "pid": 16299,
+          "ppid": 16275,
+          "pgid": 16299,
+          "sid": 16275,
+          "start": "732764",
+          "rss": 22315008,
+          "state": "S"
+        },
+        {
+          "pid": 16304,
+          "ppid": 16299,
+          "pgid": 16299,
+          "sid": 16275,
+          "start": "732828",
+          "rss": 11894784,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14107807,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 3.5077976749998925,
+      "rss": 32239616,
+      "free": 30509711360,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 15585280,
+          "state": "S"
+        },
+        {
+          "pid": 16307,
+          "ppid": 16275,
+          "pgid": 16307,
+          "sid": 16275,
+          "start": "732905",
+          "rss": 16654336,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14128587,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 4.31830647499919,
+      "rss": 29872128,
+      "free": 30509703168,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 16109568,
+          "state": "S"
+        },
+        {
+          "pid": 16314,
+          "ppid": 16275,
+          "pgid": 16314,
+          "sid": 16275,
+          "start": "732998",
+          "rss": 13762560,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14116258,
+      "scratch_vanished_entries": 0
+    },
+    {
+      "elapsed": 5.141799174999505,
+      "rss": 50454528,
+      "free": 30508388352,
+      "identities": [
+        {
+          "pid": 16275,
+          "ppid": 16273,
+          "pgid": 16275,
+          "sid": 16275,
+          "start": "732568",
+          "rss": 16764928,
+          "state": "S"
+        },
+        {
+          "pid": 16315,
+          "ppid": 16275,
+          "pgid": 16315,
+          "sid": 16275,
+          "start": "733041",
+          "rss": 22319104,
+          "state": "S"
+        },
+        {
+          "pid": 16317,
+          "ppid": 16315,
+          "pgid": 16315,
+          "sid": 16275,
+          "start": "733078",
+          "rss": 11370496,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 14117381,
+      "scratch_vanished_entries": 0
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "TestResult_init_signature": "(self, stream=None, descriptions=None, verbosity=None)",
+  "TextTestRunner_makeResult_source": "    def _makeResult(self):\n        try:\n            return self.resultclass(self.stream, self.descriptions,\n                                    self.verbosity, durations=self.durations)\n        except TypeError:\n            # didn't accept the durations argument\n            return self.resultclass(self.stream, self.descriptions,\n                                    self.verbosity)\n",
+  "stdlib_file": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/runner.py",
+  "stdlib_sha256": "76d9beb9c21d0d367a1b040a921ad43f90b7971fcc8cacfccd6f9760bedf1ce2",
+  "scope": "root API source introspection, no taskdriverimport/test/workloadexecution"
+}

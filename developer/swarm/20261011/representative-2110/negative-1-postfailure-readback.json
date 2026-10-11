@@ -1,0 +1,11 @@
+{
+  "status": "REJECTED_SETUP",
+  "first_failure": "lease mode guard750 expected / actual700 underumask077",
+  "error_control_tasks": 0,
+  "cancel_control_not_run": true,
+  "timed_tasks": 0,
+  "remaining_leases": 0,
+  "home_mode": "0o700",
+  "native_result": "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/results-negative/error-control/result.json",
+  "source_driver_sha256": "7271b67e95d5c3471b57471571689ce4bddc4c27569724166ca42d617ec6e042"
+}

@@ -1,0 +1,296 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/group-prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/representative-worker-group",
+    "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 1.2213116289995014,
+  "sampled_tree_rss_max": 247312384,
+  "known_identities": {
+    "14937": "587375",
+    "14955": "587384",
+    "14959": "587436",
+    "14967": "587444"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0017002469994622516,
+      "rss": 7553024,
+      "free": 30723874816,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 7553024,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10319437799989828,
+      "rss": 49401856,
+      "free": 30723842048,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33087488,
+          "state": "S"
+        },
+        {
+          "pid": 14955,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587384",
+          "rss": 16314368,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20467912099957175,
+      "rss": 83697664,
+      "free": 30723842048,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33087488,
+          "state": "S"
+        },
+        {
+          "pid": 14955,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587384",
+          "rss": 50610176,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.3082167209995532,
+      "rss": 94830592,
+      "free": 30723842048,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33087488,
+          "state": "S"
+        },
+        {
+          "pid": 14955,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587384",
+          "rss": 61743104,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.4095833040000798,
+      "rss": 109961216,
+      "free": 30723842048,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33087488,
+          "state": "S"
+        },
+        {
+          "pid": 14955,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587384",
+          "rss": 76873728,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5109921449993635,
+      "rss": 120578048,
+      "free": 30723842048,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33087488,
+          "state": "S"
+        },
+        {
+          "pid": 14955,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587384",
+          "rss": 87490560,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6125737610000215,
+      "rss": 41922560,
+      "free": 30721245184,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14959,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587436",
+          "rss": 8536064,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.7139837229997283,
+      "rss": 92315648,
+      "free": 30720962560,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14967,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587444",
+          "rss": 58929152,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.8154694879995077,
+      "rss": 177201152,
+      "free": 30720962560,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14967,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587444",
+          "rss": 143814656,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.9169072519998736,
+      "rss": 221028352,
+      "free": 30720962560,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14967,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587444",
+          "rss": 187641856,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.0183487509993938,
+      "rss": 236429312,
+      "free": 30720962560,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14967,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587444",
+          "rss": 203042816,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.1198185220000596,
+      "rss": 247312384,
+      "free": 30720962560,
+      "identities": [
+        {
+          "pid": 14937,
+          "ppid": 14933,
+          "pgid": 14937,
+          "start": "587375",
+          "rss": 33386496,
+          "state": "S"
+        },
+        {
+          "pid": 14967,
+          "ppid": 14937,
+          "pgid": 14937,
+          "start": "587444",
+          "rss": 213925888,
+          "state": "S"
+        }
+      ]
+    }
+  ]
+}

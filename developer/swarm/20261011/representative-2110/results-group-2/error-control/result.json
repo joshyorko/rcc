@@ -1,0 +1,116 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/representative-worker-group",
+    "-mode=error-control",
+    "-arm=",
+    "-outer=/workspace/rcc-representative-2110",
+    "-inputs=/workspace/rcc-representative-2110/inputs",
+    "-task-root=/workspace/rcc-representative-2110/group-2-error-control/tasks",
+    "-driver=/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/task_driver.py",
+    "-provider=/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+    "-artifact=sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "-receipt=/workspace/rcc-representative-2110/group-2-error-control/worker.jsonl",
+    "-responses=/workspace/rcc-representative-2110/group-2-error-control/responses.jsonl"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 2.3826895160000277,
+  "sampled_tree_rss_max": 39370752,
+  "known_identities": {
+    "15443": "637025",
+    "15455": "637198"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0021648219999406138,
+      "rss": 4366336,
+      "free": 30662307840,
+      "identities": [
+        {
+          "pid": 15443,
+          "ppid": 15442,
+          "pgid": 15443,
+          "start": "637025",
+          "rss": 4366336,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 8517488
+    },
+    {
+      "elapsed": 0.4462679990001561,
+      "rss": 15917056,
+      "free": 30659284992,
+      "identities": [
+        {
+          "pid": 15443,
+          "ppid": 15442,
+          "pgid": 15443,
+          "start": "637025",
+          "rss": 15917056,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 8635905
+    },
+    {
+      "elapsed": 0.9073938530000305,
+      "rss": 14995456,
+      "free": 30656446464,
+      "identities": [
+        {
+          "pid": 15443,
+          "ppid": 15442,
+          "pgid": 15443,
+          "start": "637025",
+          "rss": 14995456,
+          "state": "D"
+        }
+      ],
+      "scratch_logical_bytes": 8681171
+    },
+    {
+      "elapsed": 1.4384006029995362,
+      "rss": 14995456,
+      "free": 30650982400,
+      "identities": [
+        {
+          "pid": 15443,
+          "ppid": 15442,
+          "pgid": 15443,
+          "start": "637025",
+          "rss": 14995456,
+          "state": "S"
+        }
+      ],
+      "scratch_logical_bytes": 8883592
+    },
+    {
+      "elapsed": 1.9497795990000668,
+      "rss": 39370752,
+      "free": 30647189504,
+      "identities": [
+        {
+          "pid": 15443,
+          "ppid": 15442,
+          "pgid": 15443,
+          "start": "637025",
+          "rss": 17625088,
+          "state": "S"
+        },
+        {
+          "pid": 15455,
+          "ppid": 15443,
+          "pgid": 15455,
+          "start": "637198",
+          "rss": 21745664,
+          "state": "R"
+        }
+      ],
+      "scratch_logical_bytes": 8844809
+    }
+  ]
+}

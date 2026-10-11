@@ -1,0 +1,788 @@
+{
+  "status": "PASS",
+  "scope": "Read-only postexecution hashes/census and exact-byte log collection; no workload replay",
+  "input_files": 681,
+  "binding_files": 535,
+  "provider_files": 519,
+  "materializations": [
+    {
+      "work": "direct-child-negative-2-cancel-control",
+      "ready": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "direct-child-negative-2-error-control",
+      "ready": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "direct-child-negative-error-control",
+      "ready": "/workspace/rcc-representative-2110/direct-child-negative-error-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-cancel-control",
+      "ready": "/workspace/rcc-representative-2110/group-2-cancel-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-cancel-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-error-control",
+      "ready": "/workspace/rcc-representative-2110/group-2-error-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-pair-1-fresh",
+      "ready": "/workspace/rcc-representative-2110/group-2-pair-1-fresh/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-fresh/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-pair-1-resident",
+      "ready": "/workspace/rcc-representative-2110/group-2-pair-1-resident/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-resident/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-pair-2-resident",
+      "ready": "/workspace/rcc-representative-2110/group-2-pair-2-resident/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-pair-2-resident/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-resume-pair-2-fresh",
+      "ready": "/workspace/rcc-representative-2110/group-2-resume-pair-2-fresh/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-fresh/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-resume-pair-2-resident",
+      "ready": "/workspace/rcc-representative-2110/group-2-resume-pair-2-resident/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-resident/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-resume-pair-3-fresh",
+      "ready": "/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-resume-pair-3-resident",
+      "ready": "/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-smoke-fresh",
+      "ready": "/workspace/rcc-representative-2110/group-2-smoke-fresh/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-fresh/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-2-smoke-resident",
+      "ready": "/workspace/rcc-representative-2110/group-2-smoke-resident/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-resident/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-cancel-control",
+      "ready": "/workspace/rcc-representative-2110/group-cancel-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-cancel-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-error-control",
+      "ready": "/workspace/rcc-representative-2110/group-error-control/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    },
+    {
+      "work": "group-pair-1-fresh",
+      "ready": "/workspace/rcc-representative-2110/group-pair-1-fresh/home/artifacts/v1/materializations/0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d/ready.json",
+      "path": "/workspace/rcc-representative-2110/group-pair-1-fresh/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0
+    }
+  ],
+  "materialized_file_checks": 8721,
+  "materialized_mismatches": 0,
+  "guards": [
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-error-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-error-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/direct-child-negative-error-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-cancel-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-cancel-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-cancel-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-error-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-error-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-error-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-fresh",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-fresh/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-fresh/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-resident",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-resident/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-1-resident/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-2-resident",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-2-resident/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-pair-2-resident/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-fresh",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-fresh/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-fresh/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-resident",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-resident/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-2-resident/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-fresh/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-resident",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-resume-pair-3-resident/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-fresh",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-fresh/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-fresh/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-resident",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-resident/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-2-smoke-resident/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-cancel-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-cancel-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-cancel-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-error-control",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-error-control/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-error-control/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-pair-1-fresh",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-pair-1-fresh/home",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/group-pair-1-fresh/tasks",
+      "mode": "0700",
+      "uid": 1000,
+      "gid": 1000
+    }
+  ],
+  "remaining_leases": 0,
+  "remaining_task_tempdirs": 0,
+  "live_worker_executables": [],
+  "accepted": [
+    {
+      "label": "pair-1-fresh",
+      "cases": 90,
+      "tasks": 6
+    },
+    {
+      "label": "pair-1-resident",
+      "cases": 90,
+      "tasks": 6
+    },
+    {
+      "label": "resume-pair-2-resident",
+      "cases": 90,
+      "tasks": 6
+    },
+    {
+      "label": "resume-pair-2-fresh",
+      "cases": 90,
+      "tasks": 6
+    },
+    {
+      "label": "resume-pair-3-fresh",
+      "cases": 90,
+      "tasks": 6
+    },
+    {
+      "label": "resume-pair-3-resident",
+      "cases": 90,
+      "tasks": 6
+    }
+  ],
+  "accepted_test_cases": 540,
+  "expected_test_ids": {
+    "agentdocs": [
+      "ValidateAgentDocsTests.test_current_guidance_is_valid",
+      "ValidateAgentDocsTests.test_missing_required_files_are_stable_errors",
+      "ValidateAgentDocsTests.test_missing_skill_during_traversal_is_an_error",
+      "ValidateAgentDocsTests.test_reports_invalid_frontmatter_and_missing_receipt_fields",
+      "ValidateAgentDocsTests.test_reports_unlisted_skill_and_broken_link"
+    ],
+    "topology": [
+      "ReleaseTopologyTests.test_accepts_historical_darwin_asset_name",
+      "ReleaseTopologyTests.test_accepts_historical_entry_without_macosarm64",
+      "ReleaseTopologyTests.test_candidate_identity_resolves_pr_main_push_and_manual_dispatch_but_rejects_tags",
+      "ReleaseTopologyTests.test_generated_index_changelog_fragment_resolves_to_release_heading",
+      "ReleaseTopologyTests.test_legacy_tag_workflow_is_read_only_deprecation",
+      "ReleaseTopologyTests.test_preparation_artifact_waits_for_all_four_native_platforms",
+      "ReleaseTopologyTests.test_rejects_any_runtime_root_beneath_checkout",
+      "ReleaseTopologyTests.test_rejects_darwin_index_and_extra_asset",
+      "ReleaseTopologyTests.test_rejects_extra_workflow_asset",
+      "ReleaseTopologyTests.test_rejects_index_urls_for_the_wrong_product_or_platform",
+      "ReleaseTopologyTests.test_rejects_wrong_index_version_host_path_and_architecture_mapping",
+      "ReleaseTopologyTests.test_release_candidate_is_label_or_manual_opt_in_and_never_tag_triggered",
+      "ReleaseTopologyTests.test_release_candidate_stages_only_validated_self_host_metadata",
+      "ReleaseTopologyTests.test_release_identity_topology_rejects_merge_checkout_and_sha_drift",
+      "ReleaseTopologyTests.test_release_job_rejects_symlinked_asset",
+      "ReleaseTopologyTests.test_release_job_rejects_unexpected_asset_directory",
+      "ReleaseTopologyTests.test_release_job_validates_downloaded_assets_without_build_tree",
+      "ReleaseTopologyTests.test_repository_release_runtime_roots_are_outside_checkout",
+      "ReleaseTopologyTests.test_repository_two_phase_release_paths_are_fail_closed",
+      "ReleaseTopologyTests.test_repository_workflow_closes_release_identity_topology",
+      "ReleaseTopologyTests.test_repository_workflow_has_no_tag_triggered_publisher",
+      "ReleaseTopologyTests.test_repository_workflow_runs_all_release_platforms_natively",
+      "ReleaseTopologyTests.test_repository_workflow_stages_exact_current_assets",
+      "ReleaseTopologyTests.test_requires_macosarm64_index_asset",
+      "ReleaseTopologyTests.test_valid_fixture"
+    ]
+  },
+  "task_logs": [
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-03.log",
+      "bytes": 26,
+      "sha256": "cc7d990205ddef049ddcf1d90c0d7dd582b9fbd690eb08ac17f93cf233d87130"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-01.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-04.log",
+      "bytes": 27,
+      "sha256": "ebb38663b4de33f783103be6f9aca463e2a6f23bf795c762145b522a35e6e222"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-06.log",
+      "bytes": 27,
+      "sha256": "83bbcdf862ebb7adf3b1b13f3d2db579650df4587dd35a1161fca30d85bc4fce"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-fresh/task-02.log",
+      "bytes": 27,
+      "sha256": "377e1c1044ce06918c36c1a545f725a5ef64c23d92be651383993bbc5fd00043"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-03.log",
+      "bytes": 26,
+      "sha256": "b8676622e3220934756bff3456d6b8429e491d1f53f60737ad8aaf5896957f34"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-01.log",
+      "bytes": 26,
+      "sha256": "34a3c8c250c94a77f13d58e32055d5c9d620c7c9d894ae60d93f99ffc576bfae"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-04.log",
+      "bytes": 27,
+      "sha256": "f61964197d028835eae4185a4c8c0d8144685bfaf3f661f4f3fdbc51f0ac51f3"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-06.log",
+      "bytes": 27,
+      "sha256": "30729a36409b3a584b05ab78b5ff3d7e3753d576aef9e754633f128f023c5329"
+    },
+    {
+      "path": "task-logs/group-2-pair-1-resident/task-02.log",
+      "bytes": 27,
+      "sha256": "70c9b7ed9f872480b400bde09c00141b792ab43eae6f168bb6574296767aaca3"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-03.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-01.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-04.log",
+      "bytes": 27,
+      "sha256": "350148ff3f59fc0fb0d714c0d3b02815623bf59ed363be2b15be76278f82e649"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-06.log",
+      "bytes": 27,
+      "sha256": "fecd4b312432e585966e1feb482ea603ca3ea7d182ca54e93653725cebf7b152"
+    },
+    {
+      "path": "task-logs/group-2-pair-2-resident/task-02.log",
+      "bytes": 27,
+      "sha256": "434b452500822aafc95bd1e8af12429d3c3c265831f94096d1a61f06a57452c0"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-03.log",
+      "bytes": 26,
+      "sha256": "157b7c8c87b22e7b130750fc85e2c45bb6e74d6b1077a8d4ca43e05b0c6f6b08"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-01.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-04.log",
+      "bytes": 27,
+      "sha256": "64477c8adeb0d2b89820c80e4710219092cbb18f577df48be25bd162f65adff3"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-06.log",
+      "bytes": 27,
+      "sha256": "7588cf32b37ce6030c4169f3beb86636ecc1ddf87fab24867fe546dc875d9a71"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-fresh/task-02.log",
+      "bytes": 27,
+      "sha256": "83bbcdf862ebb7adf3b1b13f3d2db579650df4587dd35a1161fca30d85bc4fce"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-03.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-01.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-05.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-04.log",
+      "bytes": 27,
+      "sha256": "aab5a8cfb5e14f37e9e44fedc8d003441c9c6d35941aebbb62c67c9b8e241ef8"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-06.log",
+      "bytes": 27,
+      "sha256": "ee54da1e9cf9586893d3183a28961abe616b297ef61d615e136865c875d49fe1"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-2-resident/task-02.log",
+      "bytes": 27,
+      "sha256": "8ba5efa8960a95f5855fca7ebbeabdabad26af8198123df1f54db86f159619eb"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-03.log",
+      "bytes": 26,
+      "sha256": "34a3c8c250c94a77f13d58e32055d5c9d620c7c9d894ae60d93f99ffc576bfae"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-01.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-04.log",
+      "bytes": 27,
+      "sha256": "899c4f6845fab11481d80410422c99e62c6945af76c34fb02ab8201e46c57231"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-06.log",
+      "bytes": 27,
+      "sha256": "4c86bc285c8abb4c02c8563ad2a5c8f950c49ee32cd80805c1e87d8ce7d53ce7"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-fresh/task-02.log",
+      "bytes": 27,
+      "sha256": "157f5f4bb04626f029a6e439fa17b78bc1490748ec73beee83bdf15726d99be6"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-03.log",
+      "bytes": 26,
+      "sha256": "d95680056b83b1bccc23237b7d861ab6c0361daa8bbdca09cf2a9d581052836b"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-01.log",
+      "bytes": 26,
+      "sha256": "58279031da286b31f77d46c42c62b95b45f6619e6b15dbd387c43a2700ca6f93"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-04.log",
+      "bytes": 27,
+      "sha256": "e3b80709bfa77ea0c9316895882588a8566a8b2fb0f449907a65363ed85b36bb"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-06.log",
+      "bytes": 27,
+      "sha256": "8ba5efa8960a95f5855fca7ebbeabdabad26af8198123df1f54db86f159619eb"
+    },
+    {
+      "path": "task-logs/group-2-resume-pair-3-resident/task-02.log",
+      "bytes": 27,
+      "sha256": "44b19a43666287c24d1925364ddb3fce6f5de75ae756fcf46096eed8f31ada99"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-03.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-01.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-05.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-04.log",
+      "bytes": 27,
+      "sha256": "b3192ea03eda2574029c483251bb43762118b04eb4511550c35d3d5b7a64e0fc"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-06.log",
+      "bytes": 27,
+      "sha256": "7588cf32b37ce6030c4169f3beb86636ecc1ddf87fab24867fe546dc875d9a71"
+    },
+    {
+      "path": "task-logs/group-2-smoke-fresh/task-02.log",
+      "bytes": 27,
+      "sha256": "03f9cfe192363931178263c232f56e90fa177388e8c18497097d7c1ab524726e"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-03.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-01.log",
+      "bytes": 26,
+      "sha256": "84ec216816d2e0696b887721b94db3ad7ca2d494c72cecc270f7f49a2715db26"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-05.log",
+      "bytes": 26,
+      "sha256": "4b7ee5b7c4d4d473b85990f1d92b0b25bb13e5b34590133861739c3074af2018"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-04.log",
+      "bytes": 27,
+      "sha256": "ee54da1e9cf9586893d3183a28961abe616b297ef61d615e136865c875d49fe1"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-06.log",
+      "bytes": 27,
+      "sha256": "7588cf32b37ce6030c4169f3beb86636ecc1ddf87fab24867fe546dc875d9a71"
+    },
+    {
+      "path": "task-logs/group-2-smoke-resident/task-02.log",
+      "bytes": 27,
+      "sha256": "f0201d0daab76330777d5969d457a7b8afca9aaf7c2f49d25c90f4382d6af802"
+    },
+    {
+      "path": "task-logs/group-pair-1-fresh/task-01.log",
+      "bytes": 95,
+      "sha256": "9a78c954ce628d344560dbafe32803a54f350fc157f3f486e2b41eccdc368b95"
+    }
+  ],
+  "historical_failed_home_mode": "0750 preserved"
+}

@@ -1,0 +1,20 @@
+File: representative-worker-group
+Build ID: 90e1c8ab16a1cc2ef1423b0d2f3ca7b18f082f04
+Type: cpu
+Time: 2026-10-11 21:50:34 UTC
+Duration: 4.13s, Total samples = 20ms ( 0.48%)
+Showing nodes accounting for 20ms, 100% of 20ms total
+Showing top 12 nodes out of 25
+      flat  flat%   sum%        cum   cum%
+      10ms 50.00% 50.00%       10ms 50.00%  gcWriteBarrier
+      10ms 50.00%   100%       10ms 50.00%  strings.ToLower
+         0     0%   100%       20ms   100%  encoding/json.(*Decoder).Decode
+         0     0%   100%       10ms 50.00%  encoding/json.(*Decoder).readValue
+         0     0%   100%       10ms 50.00%  encoding/json.(*Decoder).refill
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).array
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).literalStore
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).object
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).unmarshal
+         0     0%   100%       10ms 50.00%  encoding/json.(*decodeState).value
+         0     0%   100%       10ms 50.00%  github.com/joshyorko/rcc/environmentartifact.(*Digest).UnmarshalJSON
+         0     0%   100%       10ms 50.00%  github.com/joshyorko/rcc/environmentartifact.ParseDigest

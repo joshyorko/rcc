@@ -1,0 +1,23 @@
+{
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "python_realpath": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "uname": [
+    "Linux",
+    "25e52deb199d",
+    "6.18.44",
+    "#1 SMP Sat Sep 26 20:02:31 UTC 2026",
+    "x86_64"
+  ],
+  "uid": 1000,
+  "gid": 1000,
+  "umask": "0077",
+  "go_toolchain": "officialGo1.26.9",
+  "native_context_seconds": 25,
+  "outer_deadline_seconds": 30,
+  "build_deadline_seconds": 60,
+  "resource_scope": "sampled2GiBtreeRSS/128MiBlogicalscratch/8MiBoutput/2.5GiBfreefloor, nohardquota or absolutepeak claim",
+  "runtime": "retainedartifact bin/python shell wrapper delegates selected hostPython3.12.14; stdlibdeveloperCIworkload, notfullcontained toolkit or consumerpackagequalification",
+  "isolation": "ownedprivate dirs + cooperative processstate reset + finiteLinuxsubreaper/groupdrain; not OS securitysandbox",
+  "cache": "OS cache uncontrolled/warm; freshRCCconsumerCAS per arm, project modules reconstructed each task, stdlib caches reusable resident"
+}

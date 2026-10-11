@@ -1,0 +1,29 @@
+{
+  "status": "PASS_READBACK_ONLY_NOT_FAILED_CONTROL_ACCEPTANCE",
+  "rows": [
+    {
+      "work": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control",
+      "materialization": "/workspace/rcc-representative-2110/direct-child-negative-2-cancel-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0,
+      "remaining_leases": 0,
+      "home_mode": "0o700"
+    },
+    {
+      "work": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control",
+      "materialization": "/workspace/rcc-representative-2110/direct-child-negative-2-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0,
+      "remaining_leases": 0,
+      "home_mode": "0o700"
+    },
+    {
+      "work": "/workspace/rcc-representative-2110/direct-child-negative-error-control",
+      "materialization": "/workspace/rcc-representative-2110/direct-child-negative-error-control/home/holotree/c2fd1aa_b35c539_3f05801f",
+      "files": 513,
+      "mismatches": 0,
+      "remaining_leases": 0,
+      "home_mode": "0o700"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "status": "PASS_CONTROLS_NOT_PERFORMANCE",
+  "sampler_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "positive": {
+    "native_seconds": 1.53560227700018,
+    "vanished_entries_caught": 2,
+    "stdout": {
+      "rounds": 373,
+      "temporary_files_written_deleted": 47744
+    },
+    "exit": 0,
+    "final_live": []
+  },
+  "negative": {
+    "expected_permission_failure": "sampler-error:PermissionError:[Errno 13] Permission denied: '/workspace/rcc-sampler-probes-2145/negative/denied-link'",
+    "child_returncode": -15,
+    "native_seconds": 0.005293590999826847,
+    "final_live": [],
+    "ownedblockedmode_restored": "0o700"
+  },
+  "scope": "Actual ownedconcurrentcreate/delete plus failclosedEACCES+wait; noRCCtests or benchmarkreplay"
+}

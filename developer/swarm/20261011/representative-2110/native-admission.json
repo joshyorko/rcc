@@ -1,0 +1,134 @@
+{
+  "kind": "representative-workload-native-admission",
+  "status": "GO",
+  "scope": "bounded private representative workload resume measurement only; retain pair 1, discard failed pair-2-resident observer sample, and run remaining pair-2/pair-3 labels under the v4 sampler",
+  "allowed_phases": [
+    "resume-measure"
+  ],
+  "prohibited_phases": [
+    "controls",
+    "measure"
+  ],
+  "campaign": {
+    "results_directory": "results-group-2",
+    "preserve_prior_failure_receipts": true,
+    "retained_accepted_pair": "pair-1-fresh and pair-1-resident; validate existing receipts, do not rerun",
+    "discarded_arm": "pair-2-resident from v3 outer sampler; retain but never accept or include in statistics",
+    "remaining_labels": [
+      "resume-pair-2-resident",
+      "resume-pair-2-fresh",
+      "resume-pair-3-fresh",
+      "resume-pair-3-resident"
+    ],
+    "phase_gate": "Only resume-measure is admitted. Controller must validate prior pair-1 accepted receipts, require the failed pair-2-resident invocation at the end of the existing log, and continue only with the four remaining labels."
+  },
+  "expected_control_sequence": [
+    "resume-admission",
+    "schedule:pair-2-resident",
+    "schedule:pair-2-fresh",
+    "schedule:pair-3-fresh",
+    "schedule:pair-3-resident",
+    "complete"
+  ],
+  "build_result": "build-3/result.json",
+  "build_returncode": 0,
+  "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+  "driver_sha256": "8fc5926c98731e75c7f01df4d4a55640db67bd23dab7cf0fe7241ee7b4f22f7e",
+  "controller_sha256": "38304141264d61e875bdd5bd6225dc3ba637b09c780cea48554cfc17a497f48e",
+  "sampler_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "sampler_source_review_sha256": "7c37bbfe4783c4d111e508fa2747e1a2cc12812c6dc6c3878baf24298d6aee72",
+  "sampler_probe_review_sha256": "0c73c6c78ab57f840c9fce8034e764e33fe3ed40765ced9e876cd47b3340b0ac",
+  "sampler_probe_admission_sha256": "c0d902ac2589fe7f9d6a0ae77b00b903eae5786aa45826b0861330e34798a65a",
+  "build_binding_sha256": "8520ff57e69141722509db163b082895652c60ce47e31dab34b9e8d93613964c",
+  "build_binding_file_count": 535,
+  "build_binding_verified_bytes": 62116681,
+  "build_binding_mismatches": 0,
+  "binary_sha256": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+  "group_supervisor_source_sha256": "27f147811ed979bfe3dbb90ebbb501ddc9dbd40c2e9fdfcb6267b9fadadbc0cc",
+  "group_overlay_sha256": "f86f20472d265cae82a65d7b687a5d2b4c1814a33ad2464a7e35e59b0dbf0397",
+  "controller_umask_required": "0077",
+  "source": {
+    "rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "archive_sha256": "d2f95073bae448013db63b2f2f1d14d7abdc48146c07bf91de705cf442159278",
+    "input_inventory_sha256": "eed5eaee70ce32893daf906ee96c16b077a5159dcdfcb47b34a0c6a344526de1",
+    "source_closure_sha256": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56"
+  },
+  "fixture": {
+    "identity": "gzip-1 retained fixture",
+    "artifact_digest": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "fixture_json_sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "prepared_json_sha256": "8f7777814ff36804d62c6a8e815355c254cc7205f40421650a55ca60b57b4957",
+    "retained_provider_verification_sha256": "df44c082c34757fc72e1d07599118a0dae4eccf82c442beaad63678a279af278",
+    "provider_archive_sha256": "890dee8105a4b95a2380bd3ddf5ed8bd4c207221d38958bd26c37c440027df41",
+    "provider_file_count": 519
+  },
+  "retained_pair1_review": {
+    "status": "PASS",
+    "controller_log_sha256": "029b2fa8fa9fc142fe0104aa8b205eee13cc1fdbfd9c56ad2e7117dba9931170",
+    "fresh_worker_sha256": "a0f258db02ebfc81da3a3ef009b4beeab4fae137dbc09bc80a9a9a9bed7b9742",
+    "fresh_outer_sha256": "a94de373503a85ca9f304404bb266fd617e1b42d28ec06dc6302789ef6fe1d05",
+    "resident_worker_sha256": "fddd1818ab46e516f94193f3ea19960cdd853dda378f014803f69e100c5d5f1c",
+    "resident_outer_sha256": "adcbc5306894e9f178cf8927d4dac2a67e273eb7ee0ffdd4a937b08aa6956fd4",
+    "fresh": {
+      "tasks": 6,
+      "cases": 90,
+      "unique_pids": 6,
+      "unique_leases": 6,
+      "outer_returncode": 0,
+      "outer_stop": null,
+      "live_identities": 0,
+      "materialized_files": 513,
+      "mismatches": 0
+    },
+    "resident": {
+      "tasks": 6,
+      "cases": 90,
+      "unique_pids": 1,
+      "unique_leases": 1,
+      "outer_returncode": 0,
+      "outer_stop": null,
+      "live_identities": 0,
+      "materialized_files": 513,
+      "mismatches": 0
+    },
+    "accepted_jsonl_matches_raw_worker": true,
+    "strict_pre_post_guards_match": true,
+    "lease_files_remaining": 0
+  },
+  "discarded_pair2_resident_review": {
+    "status": "REJECTED_OUTER_SAMPLE",
+    "readback_sha256": "3281b594b54cb30b5aafff27fcb019f259e4f87240fbf5c8fa95c311861fec55",
+    "worker_sha256": "e01ad4c3b35a3703f73622c07298a65687e9fd11538e9bb5540ee60c2640beda",
+    "worker_status": "PASS",
+    "worker_cases": 90,
+    "worker_leases_released": true,
+    "outer_result": "ABSENT",
+    "reason": "v3 scratch inspection saw ENOENT while actual topology temp files were concurrently deleted",
+    "include_in_timing_statistics": false
+  },
+  "sampler_probe_review": {
+    "status": "PASS_CONTROLS_NOT_PERFORMANCE",
+    "positive": {
+      "files_written_deleted": 47744,
+      "vanished_entries_caught": 2,
+      "returncode": 0,
+      "final_live_identities": []
+    },
+    "negative": {
+      "expected_error": "PermissionError EACCES",
+      "returned_nonzero": true,
+      "child_returncode": -15,
+      "final_live_identities": [],
+      "owned_blocked_mode_restored": "0700"
+    },
+    "scope": "No RCC or benchmark rerun; verifies concurrent ENOENT handling and fail-closed non-ENOENT error cleanup only."
+  },
+  "review_limits": [
+    "This admission allows only resume-measure; it does not permit a complete measure restart or replay of pair 1.",
+    "Discard pair-2-resident and preserve its raw worker PASS/outer sampler failure; it is not an accepted outer sample.",
+    "Report observer cohorts per pair: pair 1 uses v3 and pairs 2-3 use v4. Pooled outer metrics are descriptive only; do not treat them as a homogeneous sampler cohort.",
+    "Do not use prior smoke elapsed fields as measurement samples.",
+    "The v4 observer is sampled, not a hard resource quota or hostile-code containment boundary; descendants creating another session can evade its session census.",
+    "No shipping RCC, Actions, persistent-worker, OS-sandbox, or broad release qualification is claimed."
+  ]
+}

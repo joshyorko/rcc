@@ -1,0 +1,50 @@
+{
+  "kind": "representative-workload-native-admission",
+  "status": "HOLD",
+  "scope": "diagnostic controls only; no workload timing",
+  "allowed_phases": ["controls"],
+  "prohibited_phases": ["measure"],
+  "expected_control_sequence": ["error-control", "cancel-control"],
+  "expected_behavior": {
+    "error_control": "PASS: poison error is followed by a same-process clean-state probe; lease remains stable and process state is restored",
+    "cancel_control": "EXPECTED FAILURE under the original direct-child-only supervisor: cancel-ready evidence is retained, Go reports the live descendant before outer fallback cleanup, and the controller stops before timing",
+    "fallback": "Controller uses the recorded PID/start identities with pidfd-bound signaling, then verifies each exact identity is absent or zombie before postguards"
+  },
+  "build_result": "build-2/result.json",
+  "build_returncode": 0,
+  "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+  "driver_sha256": "7271b67e95d5c3471b57471571689ce4bddc4c27569724166ca42d617ec6e042",
+  "controller_sha256": "c83a828728c7bac684746170e5a13267182dd4e92f268d3c57079fcd35591298",
+  "build_binding_sha256": "61ecd8a25de435dc3f79df2289001919344f2385c449c8aa0de604a0da221198",
+  "build_binding_file_count": 534,
+  "build_binding_verified_bytes": 62089265,
+  "binary_sha256": "46fe8bd6833ccc7c8f9fa8d51f1f69a45183de296d4611700d7044dc63632dba",
+  "baseline_overlay_sha256": "83526d16674c51061d07d63ad3c63e9f31eac1b113106961ab0fcb410243a29b",
+  "source": {
+    "rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "archive_sha256": "70654af0d400a8e04cbacaa72a7f3af65315a7a8f92f9f40d110c59c217cc204",
+    "input_inventory_sha256": "eed5eaee70ce32893daf906ee96c16b077a5159dcdfcb47b34a0c6a344526de1"
+  },
+  "fixture": {
+    "identity": "gzip-1 retained fixture",
+    "artifact_digest": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "fixture_json_sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "prepared_json_sha256": "8f7777814ff36804d62c6a8e815355c254cc7205f40421650a55ca60b57b4957",
+    "retained_provider_verification_sha256": "df44c082c34757fc72e1d07599118a0dae4eccf82c442beaad63678a279af278",
+    "provider_archive_sha256": "890dee8105a4b95a2380bd3ddf5ed8bd4c207221d38958bd26c37c440027df41",
+    "provider_file_count": 519
+  },
+  "limits": [
+    "This admission permits only the non-timed control phase. The expected cancellation failure is a diagnostic NO-GO for the original supervisor and must be retained as a failure.",
+    "The controller must stop on the expected cancellation failure; no fresh/resident workload arm, timing sample, or performance claim is authorized by this file.",
+    "The subsequent private process-group supervisor overlay is a separate source/build/admission and requires independent review plus passing controls before any timed workload.",
+    "This is a private finite diagnostic for trusted cooperative tasks; it does not qualify shipping RCC, Actions, an OS sandbox, or a persistent worker."
+  ],
+  "reviewed_control_fallback": "controller.py readiness_cleanup reads only raw cancel-ready rows, checks PID/start, opens pidfd, rechecks identity before signaling, then requires the exact identity to be absent or zombie; outer ownership/mode postguards follow.",
+  "build_binding_verification": {
+    "files_checked": 534,
+    "bytes_hashed": 62089265,
+    "size_or_sha_mismatches": 0
+  },
+  "hold_reason": "The first controls invocation failed before the poison/probe control because task_driver expected lease directory mode 0750 while actual RCC lease directory mode is 0700 under the pinned umask. No cancel control, workload task, or timing phase ran. Preserve the failed receipt; rebind the corrected 0700 guard and require a fresh independent controls-only admission."
+}

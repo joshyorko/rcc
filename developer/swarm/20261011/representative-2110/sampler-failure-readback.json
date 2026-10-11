@@ -1,0 +1,13 @@
+{
+  "status": "REJECTED_OUTER_SAMPLE",
+  "failure": "v3scratch lstat ENOENT concurrent actualtopologytemporarycleanup",
+  "retained_pair": 1,
+  "discarded_arm": "pair-2-resident",
+  "discarded_worker_status": "PASS",
+  "discarded_test_cases": 90,
+  "discarded_outer_result": "ABSENT_sampler_aborted",
+  "live_worker_executables": [],
+  "remaining_leases": 0,
+  "new_sampler_sha256": "a23d47e29e89189649fea75558f9ef4e065bde2abb321c32dfccb46642081c3a",
+  "repair": "catchonlydisappearedfile during sampledwalk; otherobserverexceptions setfailure and terminate/wait sampledownedchildren; no acceptedarm replay"
+}

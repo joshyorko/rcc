@@ -1,0 +1,11 @@
+{
+  "status": "NO_GO_UNACCEPTED",
+  "driver_sha256": "c57146b2b8393eff16244335710f409bcd06733ea3234dd39df888914b309c6e",
+  "first_arm": "pair-1-fresh",
+  "first_failure": "unittest.TextTestRunner passes(stream,descriptions,verbosity); ReceiptResult constructor accepted onlyself",
+  "test_cases_run": 0,
+  "restored_state": true,
+  "input_bytes_unchanged": true,
+  "resident_and_remaining_arms_not_run": true,
+  "repair": "constructor matchesstandard unittest.TestResult callback; newsourcebinding; fullbotharmuntimedsmoke before newtimingwave"
+}

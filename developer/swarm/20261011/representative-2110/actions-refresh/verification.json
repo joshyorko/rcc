@@ -1,0 +1,40 @@
+{
+  "generated_date_utc": "2026-10-11",
+  "repository": "joshyorko/actions",
+  "read_only": true,
+  "issue_state": {
+    "101": {"state": "open", "updated_at": "2026-10-11T19:25:51Z", "comments": 174, "newest_comment_at": "2026-10-11T05:09:50Z"},
+    "133": {"state": "open", "updated_at": "2026-10-11T20:32:56Z", "comments": 8, "newest_comment_at": "2026-10-11T20:32:56Z"},
+    "134": {"state": "open", "updated_at": "2026-10-11T01:44:42Z", "comments": 5, "newest_comment_at": "2026-10-11T01:44:42Z"},
+    "139": {"state": "open", "updated_at": "2026-09-07T14:43:49Z", "comments": 0},
+    "143": {"state": "open", "updated_at": "2026-09-07T14:43:25Z", "comments": 0}
+  },
+  "pull_requests": {
+    "221": {"state": "open", "draft": true, "head_ref": "integration/community-release-20261008", "head_sha": "e2c81adce7858d5a952991ba9a8b7f72e902038a", "head_tree": "afe2679cc93bf27fa5021c7698ee7ad3ee21a1b9", "base_ref": "community", "base_sha": "a70993fafc99a9f94041485542d5a720797ca394", "check_runs": {"total": 35, "success": 34, "skipped": 1, "failure": 0}, "legacy_combined_status": "pending_no_status_contexts"},
+    "308": {"state": "open", "draft": true, "head_ref": "fix/rcc-candidate-wheel-identities-20261010", "head_sha": "8d49d0865ad5ad27b2d4e325ec135212080625e8", "head_tree": "a80600809d373038ca76e445ba0b7b79bb7eeaa6", "base_sha": "e2c81adce7858d5a952991ba9a8b7f72e902038a", "check_runs": {"total": 26, "success": 25, "skipped": 0, "failure": 1}, "failed_job": "114544417671", "failed_check": "build (windows-py3.12-devmode)", "legacy_combined_status": "pending_no_status_contexts"}
+  },
+  "source_396925": {"public": true, "merge_base_of_308": true, "current_head_ahead_by": 30, "current_head_behind_by": 0},
+  "current_source_provenance": {
+    "adapter_blob": "5af4a1aa1113a117fc06947e947df6d5604eb7be",
+    "controller_blob": "df113b7713afa9d64512fc242b8ae6cb96b7773e",
+    "controller_tests_blob": "5bd6d59f49c2f12f2920a8bfc4d5347c65af0d4e",
+    "fixture_tests_blob": "bf29b862a8efd04a553937c587a55bff20ff598a",
+    "adapter_tests_blob": "9626a5dac2a84d01317b86f655907fe1c8874dd8"
+  },
+  "source_bound_public_runtime_receipts": {
+    "present": 3,
+    "all_rcc_version": "v18.19.3",
+    "all_rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "all_child_status": "failed",
+    "all_child_exit_code": -1,
+    "artifact_verification_valid": true,
+    "successful_current3_receipt": false,
+    "released5_actual_receipt": false,
+    "candidate727_actual_receipt": false
+  },
+  "ordered_3_to_released5_to_727_runtime_admitted": false,
+  "production_rcc_pin": "v18.19.3",
+  "shipping_rcc_tuple_separate": {"source": "7945f956b428359928908a9f42e36417b113dafd", "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21"},
+  "mutations": [],
+  "workflows_or_native_tests_run": []
+}

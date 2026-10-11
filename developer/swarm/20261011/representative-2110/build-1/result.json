@@ -1,0 +1,180 @@
+{
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/prototype-overlay.json",
+    "-o",
+    "/workspace/rcc-successor-tools/representative-worker",
+    "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 0.7130894720003198,
+  "sampled_tree_rss_max": 234803200,
+  "known_identities": {
+    "13475": "485702",
+    "13493": "485710",
+    "13501": "485717"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups, misses sub100ms/unobserved escaped children; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+  "samples": [
+    {
+      "elapsed": 0.0015827629995328607,
+      "rss": 7684096,
+      "free": 30792998912,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 7684096,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10294681599953037,
+      "rss": 60596224,
+      "free": 30792994816,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34295808,
+          "state": "S"
+        },
+        {
+          "pid": 13493,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485710",
+          "rss": 26300416,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.20452217399997608,
+      "rss": 108666880,
+      "free": 30792716288,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34426880,
+          "state": "S"
+        },
+        {
+          "pid": 13501,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485717",
+          "rss": 74240000,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.3078335709997191,
+      "rss": 191635456,
+      "free": 30792716288,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34426880,
+          "state": "S"
+        },
+        {
+          "pid": 13501,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485717",
+          "rss": 157208576,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.40913955199994234,
+      "rss": 221024256,
+      "free": 30792716288,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34426880,
+          "state": "S"
+        },
+        {
+          "pid": 13501,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485717",
+          "rss": 186597376,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5104232599996976,
+      "rss": 234803200,
+      "free": 30792716288,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34426880,
+          "state": "S"
+        },
+        {
+          "pid": 13501,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485717",
+          "rss": 200376320,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6117335179997099,
+      "rss": 34426880,
+      "free": 30792716288,
+      "identities": [
+        {
+          "pid": 13475,
+          "ppid": 13472,
+          "pgid": 13475,
+          "start": "485702",
+          "rss": 34426880,
+          "state": "S"
+        },
+        {
+          "pid": 13501,
+          "ppid": 13475,
+          "pgid": 13475,
+          "start": "485717",
+          "rss": 0,
+          "state": "Z"
+        }
+      ]
+    }
+  ]
+}

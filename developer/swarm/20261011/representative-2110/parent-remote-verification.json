@@ -1,0 +1,115 @@
+{
+  "sha": "af32f876377911d1995706e290a424f0f0e4f417",
+  "parent": "e70fe5531145836b79a386d48250e094d22e2c2c",
+  "exit": 0,
+  "all_parent_entries_preserved": 3338,
+  "remote_raw_files": 15,
+  "remote_raw_bytes": 91072,
+  "seconds": 0.6377524620002077,
+  "files": [
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/coordination-receipt.json",
+      "bytes": 274,
+      "sha256": "6cd4224a75906702c1e02298beaa0c5076d791857b02ec129a94965fb1f4831f",
+      "git_mode": "100644",
+      "git_blob": "d90830bced98804fc33caa42b5e5d9081f4647ef"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/dependency-graph.json",
+      "bytes": 5505,
+      "sha256": "a310ee52aa8ceaa8d7393cdde782ba80658339c255e56b54344bf91890d3e541",
+      "git_mode": "100644",
+      "git_blob": "dde278c5390911c29bf8458c63c14dba7fad6452"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/execution-ledger.json",
+      "bytes": 9686,
+      "sha256": "95daa59accce53504081d05b49c922a8ced165211e0d45e0c5ec1b7215d550c9",
+      "git_mode": "100644",
+      "git_blob": "8872f7925824690cac129355affa5727313dcbe0"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/outer-timing-derived.json",
+      "bytes": 1570,
+      "sha256": "55876b784c0fe3fb514f51b1937809bb25af7541980c09fc18a521a34b2bed94",
+      "git_mode": "100644",
+      "git_blob": "549921bf1634e385a7fd6bd938836550640df611"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/outer-timing-independent-review.json",
+      "bytes": 1999,
+      "sha256": "ae59e5033193de9326d462aeeeaa1f4e9134622a80e005a28724f2d3109b13b7",
+      "git_mode": "100644",
+      "git_blob": "edaf92a36ed515f2f54bbfa60cc84eb0c133e1dd"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/outer-timing-independent-review.md",
+      "bytes": 1807,
+      "sha256": "6bc69f4924ff671cc9c22fe4e04edc2d0a354cac8199d58c28213c6b27ae6730",
+      "git_mode": "100644",
+      "git_blob": "ef706a530b188f7f698b1d0e9e73da926775c87c"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/rcc125-comment.md",
+      "bytes": 2342,
+      "sha256": "4f642a26358341a2e4e46bd8c91dbc4166eca7740ad054201b3d947b9df16fb5",
+      "git_mode": "100644",
+      "git_blob": "d53103a42c2b9589000e47f040f4ae49849636ce"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/rcc125-readback.json",
+      "bytes": 5672,
+      "sha256": "56f706fb167c2c5ec6667ed410a40837dcd3c51119a320a9884d97c7e9a30740",
+      "git_mode": "100644",
+      "git_blob": "88f301bccd82e1ff8c90cbde3bee305fbb4cee3b"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/rcc125-request.json",
+      "bytes": 2360,
+      "sha256": "f6b4d3e0edff5dc72d00dc32da36ba112ae96a31c0c1428ed623e4dd5bce872a",
+      "git_mode": "100644",
+      "git_blob": "f4fe9b98ed1ea36b79136643542e6ead6099ea68"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/rcc125-response.json",
+      "bytes": 5672,
+      "sha256": "56f706fb167c2c5ec6667ed410a40837dcd3c51119a320a9884d97c7e9a30740",
+      "git_mode": "100644",
+      "git_blob": "88f301bccd82e1ff8c90cbde3bee305fbb4cee3b"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/rcc125-stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/remote-checkpoint-e70fe553.json",
+      "bytes": 39666,
+      "sha256": "534acfced365a72e3377700709dc50c06787e67111ae31002b6697baf84066c4",
+      "git_mode": "100644",
+      "git_blob": "6d4853310d809fc0b1dfb474e346bba254793309"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/report.md",
+      "bytes": 5347,
+      "sha256": "f5c4bfee7472d6caf7b2368cc62d82d9e35c0fe43ba48218d2f0eafd1ce4c54f",
+      "git_mode": "100644",
+      "git_blob": "d5be35a270436ceed111e18ade486b7565eb25d9"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/restart.md",
+      "bytes": 4735,
+      "sha256": "eb290153275a5c3cb840148a572df493d231718ac92d6014814e3ecf19667bde",
+      "git_mode": "100644",
+      "git_blob": "2925884a9f4696f289d31edb39dc078688a8111c"
+    },
+    {
+      "path": "developer/swarm/20261011/successor-final-2059/manifest.json",
+      "bytes": 4437,
+      "sha256": "df703146cc11483c388e6d31e98c76ec7a0d4e921cdc027538d6d65b8e66fdba"
+    }
+  ],
+  "scope": "Read-only exact remote/local Git bytes including symlink Git payloads; no workload replay."
+}

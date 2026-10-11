@@ -1,0 +1,18 @@
+{
+  "status": "GO_ROOT_BOUND_CONTROLLED_SAMPLER_ONLY",
+  "authority": "userauthorizedprivateprototypes; independentlysource-reviewed7c37bbfe sampler-source-review-2.md; noRCC/timing/admissionclaims",
+  "sampler_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "source_review_sha256": "7c37bbfe4783c4d111e508fa2747e1a2cc12812c6dc6c3878baf24298d6aee72",
+  "positive_command": [
+    "python3",
+    "/workspace/rcc-continuation/developer/swarm/20261011/representative-2110/sampler-probes/delete_fixture.py",
+    "/workspace/rcc-sampler-probes-2145/positive"
+  ],
+  "negative_command": [
+    "python3",
+    "-c",
+    "import time;time.sleep(5)"
+  ],
+  "source_sha256": "dbf31c7af45f52f38c3db8e9712af7958db2282df655ee3d7371ebd41b68f5ef",
+  "limits": "v4sampledlimits/runtime5sec, ownedproberoot700, negativecaseexpectedEACCESfail+childwait"
+}

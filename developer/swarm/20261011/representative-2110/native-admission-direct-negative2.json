@@ -1,0 +1,57 @@
+{
+  "kind": "representative-workload-native-admission",
+  "status": "GO",
+  "scope": "negative-2 diagnostic controls only; no workload timing",
+  "allowed_phases": ["controls"],
+  "prohibited_phases": ["measure"],
+  "campaign": {
+    "results_directory": "results-negative-2",
+    "owned_work_prefix": "direct-child-negative-2-",
+    "supersedes_failed_setup_attempt": "results-negative/error-control",
+    "preserve_prior_failure_receipts": true
+  },
+  "expected_control_sequence": ["error-control", "cancel-control"],
+  "expected_behavior": {
+    "error_control": "PASS: poison error is followed by a same-process clean-state probe; lease remains stable and process state is restored",
+    "cancel_control": "EXPECTED FAILURE under the original direct-child-only supervisor: cancel-ready evidence is retained, the Go worker detects the still-live grandchild before outer fallback cleanup, and the controller stops before any timing phase",
+    "fallback": "After the bounded runner exits, the controller reads only recorded cancel-ready PID/start pairs, binds each via pidfd, rechecks identity before signaling, then requires the exact identity to be absent or zombie before postguards"
+  },
+  "build_result": "build-2/result.json",
+  "build_returncode": 0,
+  "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+  "driver_sha256": "c57146b2b8393eff16244335710f409bcd06733ea3234dd39df888914b309c6e",
+  "controller_sha256": "ce66c8aa412cfadd86457d47168624445f85f2b1eb7cd6ef7e33eb21a7812303",
+  "build_binding_sha256": "17454099720471745e81605c82876e4ae0f87e18dfcb7f79abca4a5ee600131c",
+  "build_binding_file_count": 534,
+  "build_binding_verified_bytes": 62092004,
+  "build_binding_mismatches": 0,
+  "binary_sha256": "46fe8bd6833ccc7c8f9fa8d51f1f69a45183de296d4611700d7044dc63632dba",
+  "baseline_overlay_sha256": "83526d16674c51061d07d63ad3c63e9f31eac1b113106961ab0fcb410243a29b",
+  "controller_umask_required": "0077",
+  "source": {
+    "rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "archive_sha256": "70654af0d400a8e04cbacaa72a7f3af65315a7a8f92f9f40d110c59c217cc204",
+    "input_inventory_sha256": "eed5eaee70ce32893daf906ee96c16b077a5159dcdfcb47b34a0c6a344526de1"
+  },
+  "fixture": {
+    "identity": "gzip-1 retained fixture",
+    "artifact_digest": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "fixture_json_sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "prepared_json_sha256": "8f7777814ff36804d62c6a8e815355c254cc7205f40421650a55ca60b57b4957",
+    "retained_provider_verification_sha256": "df44c082c34757fc72e1d07599118a0dae4eccf82c442beaad63678a279af278",
+    "provider_archive_sha256": "890dee8105a4b95a2380bd3ddf5ed8bd4c207221d38958bd26c37c440027df41",
+    "provider_file_count": 519
+  },
+  "limits": [
+    "This admission permits only the newly owned results-negative-2 controls phase. It does not authorize a workload arm, benchmark, or timing sample.",
+    "The expected cancellation failure is diagnostic evidence for the original direct-child-only supervisor and must remain a failure, even after exact-PID fallback cleanup succeeds.",
+    "Controller assertions must stop after that failure before creating a schedule or entering measure. If error-control fails, stop before cancellation as well.",
+    "The subsequent private process-group supervisor overlay is a separate source/build/admission and requires independent review plus passing controls before any timed workload.",
+    "This is a private finite diagnostic for trusted cooperative tasks; it does not qualify shipping RCC, Actions, an OS sandbox, or a persistent worker."
+  ],
+  "build_binding_verification": {
+    "files_checked": 534,
+    "bytes_hashed": 62092004,
+    "size_or_sha_mismatches": 0
+  }
+}

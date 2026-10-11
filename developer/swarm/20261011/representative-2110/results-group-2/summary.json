@@ -1,0 +1,91 @@
+{
+  "arms": {
+    "fresh": {
+      "samples": 3,
+      "batch_ms": [
+        4102.078102,
+        4041.052558,
+        4125.175984
+      ],
+      "median_batch_ms": 4102.078102,
+      "median_setup_acquire_batch_ms": 5651.700312,
+      "native_ms": [
+        5940.283750000162,
+        7146.206559999882,
+        6681.901275999735
+      ],
+      "median_native_ms": 6681.901275999735,
+      "controller_ms": [
+        6111.079445999167,
+        7320.565897999586,
+        6848.781888999838
+      ],
+      "median_controller_ms": 6848.781888999838,
+      "median_waited_child_cpu_ms": 4050.18
+    },
+    "resident": {
+      "samples": 3,
+      "batch_ms": [
+        3041.904435,
+        2660.44193,
+        2842.103871
+      ],
+      "median_batch_ms": 2842.103871,
+      "median_setup_acquire_batch_ms": 4463.765657,
+      "native_ms": [
+        5224.989172999813,
+        5571.607092999329,
+        5404.119423999873
+      ],
+      "median_native_ms": 5404.119423999873,
+      "controller_ms": [
+        5399.077381000097,
+        5750.417942999775,
+        5574.617493000005
+      ],
+      "median_controller_ms": 5574.617493000005,
+      "median_waited_child_cpu_ms": 2823.937
+    }
+  },
+  "paired_fresh_minus_resident_batch_ms": [
+    1060.173667,
+    1380.610628,
+    1283.072113
+  ],
+  "paired_fresh_minus_resident_controller_ms": [
+    712.0020649990693,
+    1570.1479549998112,
+    1274.1643959998328
+  ],
+  "source_cohorts": {
+    "pair1": "retainedv3fullouterPASSnoarmreplay",
+    "pairs2and3": "isolatedv4ENOENTracerepair; worker/driver/fixtureunchanged",
+    "pooled_outer_metrics": "descriptive only across observerversions; use per-pair/correctedcohort for claims"
+  },
+  "per_pair": [
+    {
+      "pair": 1,
+      "runner": "v3",
+      "fresh_batch_ms": 4102.078102,
+      "resident_batch_ms": 3041.904435,
+      "fresh_controller_ms": 6111.079445999167,
+      "resident_controller_ms": 5399.077381000097
+    },
+    {
+      "pair": 2,
+      "runner": "v4",
+      "fresh_batch_ms": 4041.052558,
+      "resident_batch_ms": 2660.44193,
+      "fresh_controller_ms": 7320.565897999586,
+      "resident_controller_ms": 5750.417942999775
+    },
+    {
+      "pair": 3,
+      "runner": "v4",
+      "fresh_batch_ms": 4125.175984,
+      "resident_batch_ms": 2842.103871,
+      "fresh_controller_ms": 6848.781888999838,
+      "resident_controller_ms": 5574.617493000005
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+File: representative-worker-group
+Build ID: 90e1c8ab16a1cc2ef1423b0d2f3ca7b18f082f04
+Type: cpu
+Time: 2026-10-11 21:50:21 UTC
+Duration: 2.66s, Total samples = 10ms ( 0.38%)
+Showing nodes accounting for 10ms, 100% of 10ms total
+Showing top 12 nodes out of 20
+      flat  flat%   sum%        cum   cum%
+      10ms   100%   100%       10ms   100%  runtime.makeslice
+         0     0%   100%       10ms   100%  encoding/hex.DecodeString
+         0     0%   100%       10ms   100%  encoding/json.(*Decoder).Decode
+         0     0%   100%       10ms   100%  encoding/json.(*decodeState).array
+         0     0%   100%       10ms   100%  encoding/json.(*decodeState).literalStore
+         0     0%   100%       10ms   100%  encoding/json.(*decodeState).object
+         0     0%   100%       10ms   100%  encoding/json.(*decodeState).unmarshal
+         0     0%   100%       10ms   100%  encoding/json.(*decodeState).value
+         0     0%   100%       10ms   100%  github.com/joshyorko/rcc/environmentartifact.(*Digest).UnmarshalJSON
+         0     0%   100%       10ms   100%  github.com/joshyorko/rcc/environmentartifact.ParseDigest
+         0     0%   100%       10ms   100%  github.com/joshyorko/rcc/environmentlifecycle.(*LocalMaterializer).Release
+         0     0%   100%       10ms   100%  github.com/joshyorko/rcc/environmentlifecycle.ExecuteWithStreams

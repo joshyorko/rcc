@@ -1,0 +1,50 @@
+{
+  "acceptance_status": "FAIL",
+  "action_server_mode": "source",
+  "actions_core": "1.0.2",
+  "actions_http_helper": "1.0.2",
+  "artifact_digest": "sha256:08b68517c15b32634a2e19afc19bb99a09435047135a801c20b2cdaed1dd9462",
+  "authenticated_http_status": 200,
+  "candidate_wheels": {
+    "actions-core": {
+      "filename": "actions_core-1.0.2-py3-none-any.whl",
+      "sha256": "9d527edf540978172178894546add75f117f240786aec804cb75c308615a7e80"
+    },
+    "actions-http-helper": {
+      "filename": "actions_http_helper-1.0.2-py3-none-any.whl",
+      "sha256": "ca7ef1d4b15dff983855107e56a6d07bde5454770d0ac8ef0e2bdb6bf3e146e0"
+    }
+  },
+  "cells": {
+    "artifact_verification": "PASS",
+    "authenticated_action": "PASS",
+    "process_cleanup": "PASS",
+    "sqlite_run": "PASS",
+    "unauthenticated_rejection": "PASS",
+    "wrapper_exit": "FAIL"
+  },
+  "provider": "rcc-cache-serve-loopback",
+  "provider_process_reaped": true,
+  "rcc": {
+    "sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "version": "v18.19.3"
+  },
+  "rcc_receipt": {
+    "artifactDigest": "sha256:08b68517c15b32634a2e19afc19bb99a09435047135a801c20b2cdaed1dd9462",
+    "exitCode": -1,
+    "leaseId": "be79a81ed4458fdf68af163fddda15ed",
+    "reason": "child exited non-zero",
+    "status": "failed",
+    "verification": {
+      "valid": true
+    }
+  },
+  "run_id": "run-000-90b1446c-c1c7-4a35-9385-8695f5cb36fc",
+  "runtime_mode": "candidate-wheel",
+  "runtime_process_exit_code": 0,
+  "schema_version": 1,
+  "server_integration": "ManagedParameters",
+  "source_sha": "7cf11c8bbad67a5dbfa9387ce82d8ca35f5c8c4e",
+  "sqlite_status": "passed",
+  "unauthenticated_http_status": 403
+}

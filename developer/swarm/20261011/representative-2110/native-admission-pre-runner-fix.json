@@ -1,0 +1,107 @@
+{
+  "kind": "representative-workload-native-admission",
+  "status": "GO",
+  "scope": "private finite process-group diagnostic; controls and untimed smoke passed, bounded paired representative workload measurement permitted through controller phase gate",
+  "allowed_phases": [
+    "controls",
+    "measure"
+  ],
+  "prohibited_phases": [],
+  "campaign": {
+    "results_directory": "results-group-2",
+    "owned_work_prefix": "group-2-",
+    "preserve_prior_failure_receipts": true,
+    "supersedes": "failed first timed attempt in results-group/pair-1-fresh; preserved as a pre-test driver-constructor failure, not benchmark evidence",
+    "phase_gate": "Only append controls-complete PASS after error control, cancellation control, fresh smoke (6 tasks/90 cases), and resident smoke (6 tasks/90 cases) all pass. The controller measure phase remains prohibited under this admission."
+  },
+  "expected_control_sequence": [
+    "error-control",
+    "cancel-control",
+    "smoke-fresh",
+    "smoke-resident"
+  ],
+  "expected_behavior": {
+    "error_control": "PASS: expected poison failure followed by clean same-process probe, same lease and source closure, with restoration and lease release",
+    "cancel_control": "PASS only if both recorded PID/start identities are absent before fallback, no fallback signals are sent, cancellation is observed, and lease is released",
+    "smoke_fresh": "PASS: six tasks alternate agentdocs/topology for 90 expected cases, each in a fresh process and lease",
+    "smoke_resident": "PASS: identical six-task/90-case payload in one process and lease",
+    "smoke_scope": "Smoke samples may carry elapsed fields in raw receipts but are diagnostic only and must not be used as paired timing evidence or a performance claim"
+  },
+  "build_result": "build-3/result.json",
+  "build_returncode": 0,
+  "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+  "driver_sha256": "8fc5926c98731e75c7f01df4d4a55640db67bd23dab7cf0fe7241ee7b4f22f7e",
+  "controller_sha256": "1bcc1c0f0b2e403fcd9e7bcb45ecab954a5149cf14c9e36ac849daf7cf785884",
+  "build_binding_sha256": "f6c8d9c9f02fce3b712b7785f9871ebd3b5fe707ad643750ca9c8d7acf7ec9a1",
+  "build_binding_file_count": 535,
+  "build_binding_verified_bytes": 62112544,
+  "build_binding_mismatches": 0,
+  "binary_sha256": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+  "group_supervisor_source_sha256": "27f147811ed979bfe3dbb90ebbb501ddc9dbd40c2e9fdfcb6267b9fadadbc0cc",
+  "group_overlay_sha256": "f86f20472d265cae82a65d7b687a5d2b4c1814a33ad2464a7e35e59b0dbf0397",
+  "controller_umask_required": "0077",
+  "source": {
+    "rcc_commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "archive_sha256": "d2f95073bae448013db63b2f2f1d14d7abdc48146c07bf91de705cf442159278",
+    "input_inventory_sha256": "eed5eaee70ce32893daf906ee96c16b077a5159dcdfcb47b34a0c6a344526de1"
+  },
+  "fixture": {
+    "identity": "gzip-1 retained fixture",
+    "artifact_digest": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "fixture_json_sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "prepared_json_sha256": "8f7777814ff36804d62c6a8e815355c254cc7205f40421650a55ca60b57b4957",
+    "retained_provider_verification_sha256": "df44c082c34757fc72e1d07599118a0dae4eccf82c442beaad63678a279af278",
+    "provider_archive_sha256": "890dee8105a4b95a2380bd3ddf5ed8bd4c207221d38958bd26c37c440027df41",
+    "provider_file_count": 519
+  },
+  "review": {
+    "binding": "Independent readback verified all 535 build-binding file entries by size and SHA-256; no mismatches; build-3 returned 0 and is bound to the exact worker binary and overlay.",
+    "source_fix": "ReceiptResult.__init__(stream=None, descriptions=None, verbosity=None) matches the actual unittest.TestResult/TextTestRunner resultClass call signature.",
+    "measurement_authorized": true,
+    "smoke_timing": "Controller run() also records elapsed fields for smoke invocations. They are not paired schedule measurements and must be excluded from performance analysis.",
+    "scope_limit": "Private finite diagnostic for trusted cooperative process groups; not OS sandbox, persistent worker, shipping RCC, Actions acceptance, or broad release qualification.",
+    "measurement_gate": "Controller measure phase requires the final controls-complete PASS in results-group-2/controller.jsonl; no reuse of prior failed or timed campaign evidence.",
+    "control_evidence": {
+      "controller_jsonl_sha256": "7cce448c634dc4f87ca5db531c6f019d203726d7936076a45fdbcb4f78df4946",
+      "readiness_fallback_sha256": "1201dbd5a58dd091d1d5960376389f0410f9a0f1b8846974a791075aa2aa915a",
+      "controls_complete": true,
+      "controls_order": [
+        "error-control",
+        "cancel-control",
+        "smoke-fresh",
+        "smoke-resident"
+      ],
+      "workload_smoke_cases": 180,
+      "fresh_tasks": 6,
+      "fresh_tests": 90,
+      "fresh_unique_pids": 6,
+      "fresh_unique_leases": 6,
+      "resident_tasks": 6,
+      "resident_tests": 90,
+      "resident_unique_pids": 1,
+      "resident_unique_leases": 1,
+      "test_id_counts": "All 5 agentdocs and 25 topology test IDs per corresponding task unique within task, all PASS; source bytes unchanged per task.",
+      "source_closure_sha256": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56",
+      "materialization_each_run": {
+        "files": 513,
+        "mismatches": 0,
+        "same_artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d"
+      },
+      "guards": "All four invocations rc0, no stop/live identities, strict pre/post owned mode guards 0700 and global 0750.",
+      "cleanup": "Two cancel PID/start identities absent before and after fallback; zero fallback signals. All homes reported released leases and had no lease JSON. Task directories retained logs only; temporary task dirs were cleaned.",
+      "smoke_elapsed": "Raw elapsed fields exist for smoke invocations but are not comparison samples and are excluded from any performance inference."
+    }
+  },
+  "limits": [
+    "Prior first timed attempt remains a failed setup/test-driver execution with zero test cases; do not treat it as a benchmark sample or include it in comparisons.",
+    "Smoke-control elapsed fields are diagnostic only and cannot support a performance claim.",
+    "The finite process-group prototype only addresses cooperative descendants that remain in the process group; it is not a containment boundary.",
+    "No shipping RCC, Actions, persistent-worker, OS-sandbox, or broad release qualification is claimed.",
+    "The only measurement authorized is the newly scheduled bounded counterbalanced paired workload via the controller measure phase after its controls-complete gate; previous failed attempt and smoke-control elapsed fields are not measurement samples."
+  ],
+  "build_binding_verification": {
+    "files_checked": 535,
+    "bytes_hashed": 62112544,
+    "size_or_sha_mismatches": 0
+  }
+}

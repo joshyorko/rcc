@@ -1,0 +1,77 @@
+{
+  "scope": "Arithmetic from retained accepted sampler receipts only; no new native execution; sampled bounds nothardquotas",
+  "arms": [
+    {
+      "label": "pair-1-fresh",
+      "sampler": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+      "native_seconds": 5.940283750000162,
+      "sample_count": 9,
+      "sampled_tree_rss_max": 49934336,
+      "sampled_scratch_logical_max": 11193088,
+      "sampled_free_min": 30584877056,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    },
+    {
+      "label": "pair-1-resident",
+      "sampler": "7f59d956b2f602060be81b59f29fba32941d35f763276a7d6a81989d6f3d55c6",
+      "native_seconds": 5.224989172999813,
+      "sample_count": 7,
+      "sampled_tree_rss_max": 48476160,
+      "sampled_scratch_logical_max": 11774188,
+      "sampled_free_min": 30569414656,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    },
+    {
+      "label": "resume-pair-2-resident",
+      "sampler": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+      "native_seconds": 5.571607092999329,
+      "sample_count": 6,
+      "sampled_tree_rss_max": 53506048,
+      "sampled_scratch_logical_max": 12956159,
+      "sampled_free_min": 30538821632,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    },
+    {
+      "label": "resume-pair-2-fresh",
+      "sampler": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+      "native_seconds": 7.146206559999882,
+      "sample_count": 8,
+      "sampled_tree_rss_max": 49131520,
+      "sampled_scratch_logical_max": 13544673,
+      "sampled_free_min": 30523609088,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    },
+    {
+      "label": "resume-pair-3-fresh",
+      "sampler": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+      "native_seconds": 6.681901275999735,
+      "sample_count": 7,
+      "sampled_tree_rss_max": 50454528,
+      "sampled_scratch_logical_max": 14128587,
+      "sampled_free_min": 30508388352,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    },
+    {
+      "label": "resume-pair-3-resident",
+      "sampler": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+      "native_seconds": 5.404119423999873,
+      "sample_count": 5,
+      "sampled_tree_rss_max": 54820864,
+      "sampled_scratch_logical_max": 14705540,
+      "sampled_free_min": 30492938240,
+      "returncode": 0,
+      "stop": null,
+      "final_observed_live_identities": []
+    }
+  ]
+}

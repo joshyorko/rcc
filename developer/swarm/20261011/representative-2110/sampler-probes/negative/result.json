@@ -1,0 +1,38 @@
+{
+  "final_output_bytes": 0,
+  "final_scratch_logical_bytes": null,
+  "final_scratch_vanished_entries": 0,
+  "command": [
+    "python3",
+    "-c",
+    "import time;time.sleep(5)"
+  ],
+  "returncode": -15,
+  "stop": "sampler-error:PermissionError:[Errno 13] Permission denied: '/workspace/rcc-sampler-probes-2145/negative/denied-link'",
+  "seconds": 0.005293590999826847,
+  "sampled_tree_rss_max": 1572864,
+  "known_identities": {
+    "16087": "708155"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "samples": [
+    {
+      "elapsed": 0.0017833580004662508,
+      "rss": 1572864,
+      "free": 30555361280,
+      "identities": [
+        {
+          "pid": 16087,
+          "ppid": 16084,
+          "pgid": 16087,
+          "sid": 16087,
+          "start": "708155",
+          "rss": 1572864,
+          "state": "R"
+        }
+      ]
+    }
+  ]
+}

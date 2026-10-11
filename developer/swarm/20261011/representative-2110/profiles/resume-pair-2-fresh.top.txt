@@ -1,0 +1,20 @@
+File: representative-worker-group
+Build ID: 90e1c8ab16a1cc2ef1423b0d2f3ca7b18f082f04
+Type: cpu
+Time: 2026-10-11 21:50:26 UTC
+Duration: 4.04s, Total samples = 20ms ( 0.49%)
+Showing nodes accounting for 20ms, 100% of 20ms total
+Showing top 12 nodes out of 22
+      flat  flat%   sum%        cum   cum%
+      10ms 50.00% 50.00%       10ms 50.00%  encoding/json.(*Decoder).readValue
+      10ms 50.00%   100%       10ms 50.00%  encoding/json.appendCompact
+         0     0%   100%       10ms 50.00%  encoding/json.(*Decoder).Decode
+         0     0%   100%       10ms 50.00%  encoding/json.(*encodeState).marshal
+         0     0%   100%       10ms 50.00%  encoding/json.(*encodeState).reflectValue
+         0     0%   100%       10ms 50.00%  encoding/json.Marshal
+         0     0%   100%       10ms 50.00%  encoding/json.addrMarshalerEncoder
+         0     0%   100%       10ms 50.00%  encoding/json.arrayEncoder.encode
+         0     0%   100%       10ms 50.00%  encoding/json.condAddrEncoder.encode
+         0     0%   100%       10ms 50.00%  encoding/json.sliceEncoder.encode
+         0     0%   100%       10ms 50.00%  encoding/json.structEncoder.encode
+         0     0%   100%       10ms 50.00%  github.com/joshyorko/rcc/environmentlifecycle.(*LocalMaterializer).Lease
