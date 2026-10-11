@@ -1,0 +1,93 @@
+{
+  "rows": [
+    {
+      "name": "rccremote-linux64",
+      "path": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64",
+      "binarySha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+      "size": 9351330,
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64"
+      ],
+      "exit": 0,
+      "wallSeconds": 1.255,
+      "sampledPeakRssBytes": 17780736,
+      "sampledCpuSeconds": 0.11,
+      "stdoutBytes": 610312,
+      "stderrBytes": 0,
+      "aggregateCapturedBytes": 3052013,
+      "killReason": null,
+      "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+      "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "name": "rccremote-macos64",
+      "path": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macos64/assets/rccremote-macos64",
+      "binarySha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+      "size": 9543040,
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macos64/assets/rccremote-macos64"
+      ],
+      "exit": 0,
+      "wallSeconds": 0.903,
+      "sampledPeakRssBytes": 18046976,
+      "sampledCpuSeconds": 0.12,
+      "stdoutBytes": 610312,
+      "stderrBytes": 0,
+      "aggregateCapturedBytes": 3662325,
+      "killReason": null,
+      "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+      "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "name": "rccremote-macosarm64",
+      "path": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64",
+      "binarySha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+      "size": 8886578,
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64"
+      ],
+      "exit": 0,
+      "wallSeconds": 1.08,
+      "sampledPeakRssBytes": 18354176,
+      "sampledCpuSeconds": 0.1,
+      "stdoutBytes": 610312,
+      "stderrBytes": 0,
+      "aggregateCapturedBytes": 4272637,
+      "killReason": null,
+      "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+      "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "name": "rccremote-windows64.exe",
+      "path": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe",
+      "binarySha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+      "size": 9672192,
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe"
+      ],
+      "exit": 0,
+      "wallSeconds": 0.938,
+      "sampledPeakRssBytes": 18456576,
+      "sampledCpuSeconds": 0.1,
+      "stdoutBytes": 610312,
+      "stderrBytes": 0,
+      "aggregateCapturedBytes": 4882949,
+      "killReason": null,
+      "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+      "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    }
+  ],
+  "aggregateElapsedSeconds": 4.233
+}

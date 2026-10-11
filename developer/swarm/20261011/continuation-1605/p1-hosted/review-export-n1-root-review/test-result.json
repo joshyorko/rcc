@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-11T15:52:43.827937+00:00",
+  "source": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+  "numericExit": 0,
+  "fixture": "temporarynonexecutedhash-onlybuild/rcc, removedinfinally",
+  "command": "toolkitPython3.10 -m unittest discover -s scripts -p test_*.py"
+}

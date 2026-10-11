@@ -1,0 +1,2 @@
+Direct import via importlib failed before controls: ModuleNotFoundError: No module named validate_release_topology. Numeric exit 1. Corrected scripts sys.path; no application runtime started.
+Initial source read used nonexistent robot_tests/tasks.py and release-readonly-export.yml; corrected immutable tasks.py read was used.

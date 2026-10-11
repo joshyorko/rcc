@@ -1,0 +1,73 @@
+{
+  "admission": "Root explicitly admitted one additive attempt 02 after attempt01 failed its 64MiB scratch guard. Run one focused four-regression race command only; no automatic retry.",
+  "command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "test",
+    "-race",
+    "-p",
+    "2",
+    "./anywork",
+    "-count=1",
+    "-run",
+    "^(TestAutoScaleGrowsToConfiguredWorkerCount|TestScaleMatchesConcurrentWorkerCapacity|TestSyncDrainsTasksQueuedWhilePriorWorkIsHeld|TestWorkerPoolSurvivesPanicsFromEveryWorker)$"
+  ],
+  "compiler": {
+    "CC": "/usr/bin/gcc",
+    "CGO_ENABLED": "1",
+    "version": "gcc (Debian 14.2.0-19) 14.2.0"
+  },
+  "environment": {
+    "CC": "/usr/bin/gcc",
+    "CGO_ENABLED": "1",
+    "GOARCH": "amd64",
+    "GOCACHE": "/dev/shm/rcc181-235-go-cache-083fe2e8657a",
+    "GOFLAGS": "",
+    "GOOS": "linux",
+    "GOPROXY": "off",
+    "GOROOT": "/workspace/work/rcc-swarm/tools/go1.26.9",
+    "GOTMPDIR": "<owned attempt02 directory under evidence on workspace>",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off"
+  },
+  "go_binary_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "go_version": "go1.26.9 linux/amd64",
+  "limits": {
+    "GOCACHE_allocated_bytes": 268435456,
+    "GOTMPDIR_allocated_bytes": 201326592,
+    "max_log_bytes": 4194304,
+    "one_command_timeout_seconds": 120,
+    "parallel_build_packages": 2,
+    "process_tree_sampled_RSS_bytes": 536870912,
+    "sample_interval_seconds": 0.25,
+    "workspace_free_floor_bytes": 2688548864
+  },
+  "parents": [
+    "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+    "7945f956b428359928908a9f42e36417b113dafd"
+  ],
+  "post_run_requirement": "After Go process group is confirmed empty, inventory all GOTMPDIR contents and move the whole owned temp tree to existing /dev/shm noexec storage; verify paths, content SHA, file size/mode/mtime and directory mode/mtime. Do this before strict-consumer runtime starts.",
+  "previous_attempt": {
+    "cache_provenance": "Owned by the same previous attempt using this exact toolchain and unchanged source head; pre-existing, no other cache touched.",
+    "failed_temp_inventory_sha256": "8344d28918d70bf05820c3c53908b1fe0477eed689c751338dd10c4414442dd3",
+    "failed_temp_ram_preserved_at": "/dev/shm/rcc181-235-failed-gotmp-083fe2e8657a",
+    "failed_temp_verified_tree_sha256": "451559c521fc5eee27f0f46c06f831afda05ae5249855136420d109d20a49fec",
+    "failed_temp_workspace_allocated_bytes": 68059136,
+    "result_sha256": "51f46064429bd85023d2ece4fa031d1fb24c0e1151914d1876d8821ec093964d",
+    "reused_cache_allocated_bytes_before_attempt02": 64884736,
+    "reused_cache_path": "/dev/shm/rcc181-235-go-cache-083fe2e8657a",
+    "runner_sha256": "f0610eeef67148aafdf247a3fd512274ea951bdf40c3aa0cfe3555ce7703eadb",
+    "status": "FAILED_GOTMPDIR_CAP; no test result; no retry was automatic"
+  },
+  "runner_sha256": "add4e5664d9afd0864bf1cd40c435a60d105faceafb8a6c36cdaba09a3b2d0a6",
+  "scope": "Fresh focused race gate for four added #181 tests on fa464a23. Prior failed attempt remains preserved and is not converted to a pass. No source or GitHub mutations.",
+  "source_head": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "source_tree": "70724fb92fec2d3b7fb257d646dd9d76fc7b0c52",
+  "status": "FROZEN_ADMITTED_ATTEMPT_02",
+  "test_names": [
+    "TestAutoScaleGrowsToConfiguredWorkerCount",
+    "TestScaleMatchesConcurrentWorkerCapacity",
+    "TestSyncDrainsTasksQueuedWhilePriorWorkIsHeld",
+    "TestWorkerPoolSurvivesPanicsFromEveryWorker"
+  ],
+  "test_patch_sha256_base727_to_checkpoint_e536_and_current": "fa3e8abdccd07383f60e54be21e5ea69d52874b6306b666f0304320e03d17dc3"
+}

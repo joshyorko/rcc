@@ -1,0 +1,71 @@
+{
+  "cache_path": "/dev/shm/rcc181-235-go-cache-083fe2e8657a",
+  "command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "test",
+    "-race",
+    "./anywork",
+    "-count=1",
+    "-run",
+    "^(TestAutoScaleGrowsToConfiguredWorkerCount|TestScaleMatchesConcurrentWorkerCapacity|TestSyncDrainsTasksQueuedWhilePriorWorkIsHeld|TestWorkerPoolSurvivesPanicsFromEveryWorker)$"
+  ],
+  "elapsed_seconds": 9.053845679000005,
+  "environment": {
+    "CC": "/usr/bin/gcc",
+    "CGO_ENABLED": "1",
+    "GOARCH": "amd64",
+    "GOCACHE": "/dev/shm/rcc181-235-go-cache-083fe2e8657a",
+    "GOFLAGS": "",
+    "GOOS": "linux",
+    "GOPROXY": "off",
+    "GOROOT": "/workspace/work/rcc-swarm/tools/go1.26.9",
+    "GOTMPDIR": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-235-current-focused-tests/gotmp-083fe2e8657a",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off"
+  },
+  "failure": "own GOTMPDIR cap breached: 68059136",
+  "finished_utc_ns": 1791732293228348416,
+  "gcc_path": "/usr/bin/gcc",
+  "gcc_version_first_line": "gcc (Debian 14.2.0-19) 14.2.0",
+  "go_path": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+  "go_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "go_version": "go version go1.26.9 linux/amd64",
+  "gocache_allocated_final_bytes": 64884736,
+  "gocache_allocated_peak_bytes": 64884736,
+  "head": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "limits": {
+    "gocache_allocated_bytes": 268435456,
+    "scratch_allocated_bytes": 67108864,
+    "timeout_seconds": 120,
+    "tree_rss_bytes": 536870912,
+    "workspace_free_floor_bytes": 2688548864
+  },
+  "log_bytes": 0,
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "numeric_exit_code": -15,
+  "parents": [
+    "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+    "7945f956b428359928908a9f42e36417b113dafd"
+  ],
+  "patch_sha256_base_to_checkpoint": "fa3e8abdccd07383f60e54be21e5ea69d52874b6306b666f0304320e03d17dc3",
+  "patch_sha256_base_to_head": "fa3e8abdccd07383f60e54be21e5ea69d52874b6306b666f0304320e03d17dc3",
+  "pid": 23346,
+  "process_tree_last_pids": [
+    23328,
+    23346,
+    25080,
+    25081
+  ],
+  "process_tree_sampled_rss_peak_bytes": 261578752,
+  "retry_performed": false,
+  "sample_interval_seconds": 0.25,
+  "scratch_allocated_final_bytes": 68059136,
+  "scratch_allocated_peak_bytes": 68059136,
+  "scratch_path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-235-current-focused-tests/gotmp-083fe2e8657a",
+  "start_utc_ns": 1791732284162013428,
+  "status": "FAIL",
+  "tree": "70724fb92fec2d3b7fb257d646dd9d76fc7b0c52",
+  "workspace_free_bytes_final": 2989080576,
+  "workspace_free_bytes_min": 2989080576,
+  "workspace_free_bytes_pre": 3057139712
+}

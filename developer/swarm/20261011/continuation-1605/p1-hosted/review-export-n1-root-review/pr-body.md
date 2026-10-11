@@ -1,0 +1,5 @@
+The read-only receipt export of preparation 38147141244 failed because its verifier required the legacy catalog to be byte-identical before and after import. The frozen producer explicitly derives a consumer-local catalog during import while preserving v12 object bytes, then requires the complete post-import closure to remain unchanged through rollback consumption.
+
+Align the exported-receipt check with that contract: validate nonempty closure records, preserve object identities and bytes, allow only the initial catalog digest/size rebase at the same path, and require exact post-import rollback equality. This does not rebuild or change frozen release source 7945f956, the canonical publication input, or the operator publication hold.
+
+Validation: root independently reviewed the producer and patch; 144 script tests passed (exit 0, temporary nonexecuted hash-only fixture removed). Independent Sol review passed the regression plus 12 positive/negative in-memory controls and diff checks. The original failed export is preserved. Actual 7945 receipt readback remains an acceptance gate after hosted checks and integration; no release tag or publication is authorized.

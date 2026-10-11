@@ -1,0 +1,95 @@
+{
+  "currentMarginAboveGuardBytes": 359710720,
+  "currentWorkspaceAvailableBytes": 3048259584,
+  "executionStarted": false,
+  "guardBytes": 2688548864,
+  "guardMeaning": "Constant minimum free-space floor = 2.5 GiB plus 4 MiB safety margin; must hold continuously, with at least one live owned-process/total-disk check every 0.25 seconds.",
+  "helperIdentity": {
+    "binaryBytes": 6357257,
+    "binaryPath": "/workspace/work/rcc-swarm/evidence/candidate-09796/strict-trust/gocache/f7/f77bb2bfc95e2f794c72ae07492ff454da999b914d9a28eaee1e1707594635b6-d/refresh-revocations",
+    "binarySha256": "f77bb2bfc95e2f794c72ae07492ff454da999b914d9a28eaee1e1707594635b6",
+    "goBuildMetadata": [
+      "/workspace/work/rcc-swarm/evidence/candidate-09796/strict-trust/gocache/f7/f77bb2bfc95e2f794c72ae07492ff454da999b914d9a28eaee1e1707594635b6-d/refresh-revocations: go1.26.9",
+      "\tpath\tcommand-line-arguments",
+      "\tdep\tgithub.com/joshyorko/rcc\t(devel)\t",
+      "\tbuild\t-buildmode=exe",
+      "\tbuild\t-compiler=gc",
+      "\tbuild\tCGO_ENABLED=1",
+      "\tbuild\tCGO_CFLAGS=",
+      "\tbuild\tCGO_CPPFLAGS=",
+      "\tbuild\tCGO_CXXFLAGS=",
+      "\tbuild\tCGO_LDFLAGS=",
+      "\tbuild\tGOARCH=amd64",
+      "\tbuild\tGOOS=linux",
+      "\tbuild\tGOAMD64=v1"
+    ],
+    "sideEffectsForFutureRun": "One explicit output file plus POST/PUT/GET against only the explicitly supplied loopback scratch URL; no source checkout, provider-runtime fixture write, credential access, or command execution of RCC.",
+    "sourceBehavior": "Creates an unsigned, empty NewRevocationBundleAt fixture timestamp, writes only the explicitly supplied output path, PUTs bytes to the supplied HTTP carrier, reads back and verifies exact bytes/digest/empty contents, then emits a JSON receipt. The planned call is restricted to a new owned scratch provider root. No key/signing operation or write to the historical provider/carrier.",
+    "sourceBytes": 1833,
+    "sourcePath": "/workspace/work/rcc-swarm/evidence/candidate-09796/strict-trust/refresh-revocations.go",
+    "sourceSha256": "a8f3726ebd44ab5112a266cb29c2b4248e4c849f43ce3d07d7f35083cd665834"
+  },
+  "historicalAllocationEvidence": {
+    "archive": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/strict-main-e3-consumer-home.tar.gz",
+    "archiveBytes": 208771570,
+    "archiveSha256": "18c086500ca1d6c023c43ec3f9953c413f7bcf2064d74a7bf678d023edf61d48",
+    "combinedConservativeHomeAllocationEstimateBytes": 425025536,
+    "entries": 32330,
+    "estimateCaveat": "Conservative allocation estimate, not measured historical du/blocks. It omits filesystem metadata/journal and any copy-on-write overhead, so actual requirement could be higher. Archive had zero hardlink members; compressed archive byte size is not restored-home allocation evidence.",
+    "headerOnlyInspection": "Read gzip tar headers only with Python tarfile; no member extraction and no foreign-home reads.",
+    "historicalReceiptHasAllocatedBlockOrHardlinkCount": false,
+    "logicalRegularBytes": 311320180,
+    "memberTypes": {
+      "directories": 15612,
+      "hardlinks": 0,
+      "other": 0,
+      "regularFiles": 15562,
+      "symlinks": 1156
+    },
+    "one4KiBBlockPerDirectorySymlinkHardlinkEstimateBytes": 68681728,
+    "priorReceiptCounts": "Preservation receipt reports 32,330 entries; 15,562 regular files; 1,156 symlinks; hash/type/mode membership verification, but no allocated blocks or hardlink counts.",
+    "regularFiles4KiBBlockRoundedUpperEstimateBytes": 356343808,
+    "sourceManifest": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/strict-main-e3-consumer-home-preservation.json"
+  },
+  "liveRuntimeGuardForAnyFutureAdmission": {
+    "maximumOwnedProcessRSSBytes": 536870912,
+    "maximumPerPhaseSeconds": 120,
+    "maximumTotalWallSeconds": 600,
+    "minimumFreeBytes": 2688548864,
+    "minimumOwnedProcessSamplingIntervalSeconds": 0.25,
+    "numericCommandOutputCapBytes": 4194304,
+    "requiredActions": "On every 0.25s sample enforce total workspace free >= guard, aggregate owned-process RSS <= limit, owned scratch <= limit; on breach record SIGTERM numeric exit, verify no owned descendants remain (process-tree snapshot and /proc references), then stop. Do not cleanup evidence or any non-owned process.",
+    "scratchBudgetBytes": 330000000
+  },
+  "noAction": "PLAN ONLY. Await explicit root admission; do not create homes, keys, snapshots, providers, copy/execute the candidate, alter the original frozen plan, or change Actions.",
+  "originalPlanPreserved": true,
+  "outputRetention": "Future receipt should use compact per-object digest,size records, preserve raw command outputs within the predeclared 4 MiB cap, and hash provider fixture before/after. Any actual 5,049 CAS objects must be individually rehashed by the root verifier; no oversized verbose duplicate inventory.",
+  "planOnly": true,
+  "requiredMinimumCapacityForProposedFreshHomeAndAssetBytes": {
+    "components": {
+      "boundedReceiptsCapBytes": 4194304,
+      "conservativeHistoricalHomeAllocationEstimate": 425025536,
+      "shippingBinaryBytes": 22392994
+    },
+    "currentFreeDeficitBytes": 91902114,
+    "decision": "Does not fit current free space or 330,000,000-byte scratch cap. Do not start the run. A different approved resource strategy/capacity is needed.",
+    "preflightFreeRequiredBytes": 3140161698,
+    "sumBytes": 451612834
+  },
+  "reviewedAtUtc": "2026-10-11",
+  "scratchLimitBytes": 330000000,
+  "sourceIdentity": {
+    "commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "relevantBlobIds": {
+      "artifactprovider/filesystem_unix.go": "38f26ab0b8e2753705840a693339fe5ed7b17caf",
+      "artifacttrust/carrier.go": "cb7d4791884f19656134882f0edd844236aab86b",
+      "artifacttrust/trust.go": "ece7d7401417b999841d7e9bbd2ad7374169226e",
+      "cmd/environmentAcquire.go": "845cefee2fbb53b953592152c740a9f35447dc16",
+      "cmd/environmentTrust.go": "961ce470c33cba45dfed730511cc21131f441e8a",
+      "cmd/environmentTrustPolicy.go": "e447e1517102af872f56a465be6f4ee3572620e9"
+    },
+    "strictPolicy": "Read-only inspection confirms StrictRemote still fail-closed and default fresh revocation age is 24h; this test uses only a fresh unsigned empty fixture snapshot, not publisher/revocation authority evidence.",
+    "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1"
+  },
+  "status": "RESOURCE_BOUND_BLOCKED_NOT_ADMITTED"
+}

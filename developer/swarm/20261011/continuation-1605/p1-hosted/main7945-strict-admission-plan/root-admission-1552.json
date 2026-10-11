@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-11T15:49:52.977111+00:00",
+  "status": "ROOT_ADMITTED_ONE_BOUNDED_RUN",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "originalPlansUnchanged": true,
+  "freeAtAdmission": 3234684928,
+  "continuousFreeGuard": 2688548864,
+  "scratchAllocatedCapExcludingBinaryAndRaw": 469762048,
+  "binaryBytes": 22392994,
+  "rawCapPrewrite": 4194304,
+  "separateSafetyReserve": 8388608,
+  "maximumReserved": 504737954,
+  "marginAboveReservation": 41398110,
+  "pollSeconds": 0.25,
+  "aggregateRSSCap": 536870912,
+  "eachPhaseSeconds": 120,
+  "totalSeconds": 600,
+  "execution": "OWN workspace only, no RAM native execution",
+  "ownership": "identity_118_124 only new main7945-strict-consumer home/service/state; GET-only original provider immutable",
+  "stop": "Any live guard breach numeric owned process stop and independent quiescence, no retry without separate admission",
+  "rootHelperReview": "Read source a8f3726e/current7945 trust policy: strictRemote failClosed true/default24h/unsigned fresh empty fixture allowed; helper only explicitly new tiny carrier, no original PUT/private key/signing",
+  "preservation": "Root independently verifies actual state then moves intact owned consumer to existing RAM with all per-file hash/mode/mtime/link receipts; restore ALL temporary historical324 root files before handoff; no deletion before verification"
+}

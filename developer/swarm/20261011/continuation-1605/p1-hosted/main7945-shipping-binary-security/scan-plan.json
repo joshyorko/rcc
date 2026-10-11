@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+  "scannerPath": "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+  "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "scannerVersionOutput": "Scanner: govulncheck@v1.1.4\nDB: https://vuln.go.dev\nDB updated: 2026-10-08 22:31:09 +0000 UTC\n\nNo vulnerabilities found.\n",
+  "scannerVersionExit": 0,
+  "mode": "binary",
+  "json": true,
+  "commandArgs": [
+    "-mode=binary",
+    "-json"
+  ],
+  "database": "https://vuln.go.dev (default)",
+  "noSourceOrGoBuild": true,
+  "targetExecution": false,
+  "limits": {
+    "perBinaryWallSeconds": 120,
+    "aggregateWallSeconds": 600,
+    "sampledRssBytes": 536870912,
+    "aggregateOutputBytes": 2097152
+  }
+}

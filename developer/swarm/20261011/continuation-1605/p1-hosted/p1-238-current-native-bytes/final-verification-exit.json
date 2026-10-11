@@ -1,0 +1,66 @@
+{
+  "allVerifierExitsZero": true,
+  "report": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/final-independent-verification.json",
+  "reportSha256": "9cabdfe8f25ee86261aef14133f7eee5c03987a26518914e8a3b9cb6632a45fe",
+  "runId": 38150188705,
+  "schemaVersion": 1,
+  "sourceSha": "86cabfb8e4fac2e16048571b727bc60f2c800dba",
+  "verifierRuns": [
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/verify_native_bundle_238_final.py",
+        "linux_amd64",
+        "/dev/shm/rcc-p1-238-current-native-root/pr238-38150188705-linux-amd64-native-runtime-receipt.zip",
+        "11706494255",
+        "c7aa524bb45951fb3ea2ed8c075de1552e05f203c3d25634edc1ece06e81827f"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-verifier.log",
+      "logSha256": "8bdac876af5550f6a06411c6e71c7ae088d744345e8ec0218d52ce550aa2cb92",
+      "platform": "linux_amd64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/verify_native_bundle_238_final.py",
+        "darwin_arm64",
+        "/dev/shm/rcc-p1-238-current-native-root/pr238-38150188705-macos-arm64-native-runtime-receipt.zip",
+        "11706619102",
+        "53717cd314456468b3cf22af6c758592d1d42fe7cbca12af851bcd931fa967c9"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-verifier.log",
+      "logSha256": "2d83a6e633a2af29fa703274e89e1189b71efe253849de20b6e76661739ee3fc",
+      "platform": "darwin_arm64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/verify_native_bundle_238_final.py",
+        "darwin_amd64",
+        "/dev/shm/rcc-p1-238-current-native-root/pr238-38150188705-macos-amd64-native-runtime-receipt.zip",
+        "11706776700",
+        "edb18d8c3288d4f5c71be202bf491a2abf6292ccb83f074ae781cdee8cfbf598"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-verifier.log",
+      "logSha256": "8c43ecef1f506749842830052b90de072c38e426022bce01a34ead018e16b8aa",
+      "platform": "darwin_amd64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/verify_native_bundle_238_final.py",
+        "windows_amd64",
+        "/dev/shm/rcc-p1-238-current-native-root/pr238-38150188705-windows-amd64-native-runtime-receipt.zip",
+        "11706786360",
+        "9142e881cffd0e38fc8c375b0544e40d013e8aeb3091e2e1a7acab0c22b5af4f"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-verifier.log",
+      "logSha256": "de1c928245a52f5c1b4e4afe5129f15dedd93ef8f8206cf7c40ad9dc415c75f6",
+      "platform": "windows_amd64"
+    }
+  ]
+}

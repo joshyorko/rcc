@@ -1,0 +1,15 @@
+{
+  "directories": 130,
+  "directory_mode_mtime_identical": true,
+  "entry_count": 750,
+  "executed_from_ram": false,
+  "files_and_symlinks": 620,
+  "files_hash_size_mode_mtime_target_identical": true,
+  "filesystem_allocation_block_count_differs_for_files": 0,
+  "filesystem_directory_size_or_allocation_differs": 130,
+  "original_workspace_allocated_bytes": 68059136,
+  "path_set_identical": true,
+  "preserved_dev_shm_allocated_bytes": 67526656,
+  "preserved_tree": "/dev/shm/rcc181-235-failed-gotmp-083fe2e8657a",
+  "source_inventory_sha256": "8344d28918d70bf05820c3c53908b1fe0477eed689c751338dd10c4414442dd3"
+}

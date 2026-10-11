@@ -1,0 +1,1 @@
+Initial inline metadata-fetch Python command exited1 with SyntaxError: opening parenthesis not closed; parse failed before any request or write. Corrected bounded metadata fetch exited0. No scanner/build/runtime was invoked.

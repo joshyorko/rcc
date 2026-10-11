@@ -1,0 +1,74 @@
+[
+  {
+    "path": "AGENTS.md",
+    "file": "rcc-source/AGENTS.md",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 4311,
+    "git_blob_sha1": "469d7d53342860ed7c9df7742934ca9b2004449b",
+    "sha256": "efcf4ead8762c47b6366aeb13ccdc96800399fb989e327ecbb70ac5b0c6021cd"
+  },
+  {
+    "path": "docs/agent-boundaries.md",
+    "file": "rcc-source/docs/agent-boundaries.md",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 2837,
+    "git_blob_sha1": "be75c396f5ec6efd24daa9b963d5de4142928076",
+    "sha256": "fcc70d7b636485df678e11d8178ab9abd0806130682509e68692a5188be342e8"
+  },
+  {
+    "path": "go.mod",
+    "file": "rcc-source/go.mod",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 1689,
+    "git_blob_sha1": "45d55a4487431d47ab10d200e465c44f4c11f3c3",
+    "sha256": "eae3d866a96c296d0cdcb4e9729b4f872abf54dab331993cf717a971ac5b46d0"
+  },
+  {
+    "path": "go.sum",
+    "file": "rcc-source/go.sum",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 56257,
+    "git_blob_sha1": "abfe86fcead2a8876b0bda0b50cf6da7fc22e145",
+    "sha256": "a3c5da16de56297fd887a186b6e8fcbe33ceefd4726ded0936b858e63659f7b4"
+  },
+  {
+    "path": "cmd/rcc/main.go",
+    "file": "rcc-source/cmd/rcc/main.go",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 4064,
+    "git_blob_sha1": "9140529fd2a19ba4ce269ec70137b1f7b9401e43",
+    "sha256": "aea6d63bba957580e25870af367a18053946efdcb2c1597cd6f967ff617fb119"
+  },
+  {
+    "path": "cmd/rccremote/main.go",
+    "file": "rcc-source/cmd/rccremote/main.go",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 3335,
+    "git_blob_sha1": "267906792b3143ec5b7a8fc64d82bca181819f44",
+    "sha256": "712777bcf9aa34650a98c2ac8810e1c2a05dbc5fe898712c62b548a4efd7224b"
+  },
+  {
+    "path": "cmd/root.go",
+    "file": "rcc-source/cmd/root.go",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 7561,
+    "git_blob_sha1": "f1e4fc16badd4a33afd0e2df1222a29ae9168dcd",
+    "sha256": "e8444945dc26e79dc60250e2515d0ac2ad585d5f92cfae48bccd8d3c19c202d3"
+  },
+  {
+    "path": "xviper/wrapper.go",
+    "file": "rcc-source/xviper/wrapper.go",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 3900,
+    "git_blob_sha1": "8e6746c40998571f1d1d91afb1ea4df7d4f68e16",
+    "sha256": "5d78fbc58be5ed483ece3ea769e92686cd6e2214d51647336abb419855e92c02"
+  },
+  {
+    "path": "tasks.py",
+    "file": "rcc-source/tasks.py",
+    "revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "bytes": 66889,
+    "git_blob_sha1": "e66a27de591b621d4c344b51c609bbddb793bb94",
+    "sha256": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7"
+  }
+]

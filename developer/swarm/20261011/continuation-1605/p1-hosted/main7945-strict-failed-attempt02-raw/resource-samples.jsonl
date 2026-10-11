@@ -1,0 +1,5 @@
+{"elapsed":0.341,"freeBytes":3211026432,"scratchAllocatedBytes":12288,"rawBytes":119062,"ownedAggregateRssBytes":17297408,"ownedProcesses":[[37961,17297408,37961]]}
+{"elapsed":1.374,"freeBytes":3210485760,"scratchAllocatedBytes":12288,"rawBytes":654611,"ownedAggregateRssBytes":16445440,"ownedProcesses":[[37961,16445440,37961]]}
+{"elapsed":1.976,"freeBytes":3210162176,"scratchAllocatedBytes":12288,"rawBytes":976938,"ownedAggregateRssBytes":16969728,"ownedProcesses":[[37961,16969728,37961]]}
+{"elapsed":1.99,"freeBytes":3208716288,"scratchAllocatedBytes":1458176,"rawBytes":977355,"ownedAggregateRssBytes":16433152,"ownedProcesses":[[37961,16433152,37961]]}
+{"elapsed":2.91,"freeBytes":3208609792,"scratchAllocatedBytes":1560576,"rawBytes":977790,"ownedAggregateRssBytes":36130816,"ownedProcesses":[[37961,16457728,37961],[37966,19673088,37966]]}

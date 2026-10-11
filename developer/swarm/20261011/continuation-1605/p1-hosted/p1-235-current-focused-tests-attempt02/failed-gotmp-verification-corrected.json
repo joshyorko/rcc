@@ -1,0 +1,1878 @@
+{
+  "before_inventory_sha256": "8344d28918d70bf05820c3c53908b1fe0477eed689c751338dd10c4414442dd3",
+  "changed_file_metadata": {
+    "go-build847020672/b001/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b001/_testmain.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b001/anywork.test": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b001/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b001/importcfg.link": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b002/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b002/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b002/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b002/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b002/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b003/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b003/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b003/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b003/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b003/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/asm.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b004/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/abi_test.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/stub.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b005/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b006/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b006/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b006/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b006/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b006/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b008/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b008/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b008/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b008/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b008/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/asm.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/asm_GOARCH.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/asm_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/ints.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/memclr_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/memmove_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/preempt_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/race_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/rt0_linux_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/secret_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/sys_linux_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/test_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/time_linux_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b009/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/compare_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/count_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/equal_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/index_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/indexbyte_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b010/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/cpu.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/cpu_x86.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b011/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b012/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b012/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b012/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b012/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b012/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/chacha8_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b013/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b014/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b014/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b014/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b014/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b014/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b015/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b015/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b015/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b015/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b015/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b016/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b016/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b016/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b016/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b016/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b017/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b017/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b017/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b017/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b017/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b018/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b018/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b018/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b018/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b018/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/atomic_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b019/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b020/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b020/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b020/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b020/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b020/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/asm_linux_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b021/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b022/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b022/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b022/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b022/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b022/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b023/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b023/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b023/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b023/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b023/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b024/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b024/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b024/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b024/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b024/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b025/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b025/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b025/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b025/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b025/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/expand_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/filter_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/scan_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b026/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/empty.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b027/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b028/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b028/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b028/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b028/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b028/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b029/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b029/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b029/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b029/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b029/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b030/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b030/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b030/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b030/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b030/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b031/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b031/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b031/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b031/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b031/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b032/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b032/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b032/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b032/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b032/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b033/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b033/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b033/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b033/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b033/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b034/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b034/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b034/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b034/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b034/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b035/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b035/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b035/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b035/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b035/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b036/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b036/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b036/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b036/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b036/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b037/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b037/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b037/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b037/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b037/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b038/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b038/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b038/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b038/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b038/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b039/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b039/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b039/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b039/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b039/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b040/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b040/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b040/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b040/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b040/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b041/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b041/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b041/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b041/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b041/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/race.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b042/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b043/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b043/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b043/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b043/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b043/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b044/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b044/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b044/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b044/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b044/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b045/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b045/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b045/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b045/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b045/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b046/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b046/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b046/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b046/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b046/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b047/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b047/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b047/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b047/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b047/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b048/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b048/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b048/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b048/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b048/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b049/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b049/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b049/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b049/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b049/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b050/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b050/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b050/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b050/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b050/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b051/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b051/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b051/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b051/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b051/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/asm_linux_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b052/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b053/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b053/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b053/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b053/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b053/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b054/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b054/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b054/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b054/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b054/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b055/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b055/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b055/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b055/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b055/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b056/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b056/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b056/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b056/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b056/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/asm_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b057/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/dim_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/exp_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/floor_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/hypot_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/log_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b058/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b059/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b059/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b059/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b059/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b059/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b060/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b060/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b060/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b060/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b060/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b061/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b061/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b061/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b061/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b061/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b062/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b062/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b062/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b062/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b062/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b063/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b063/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b063/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b063/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b063/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b064/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b064/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b064/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b064/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b064/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b065/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b065/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b065/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b065/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b065/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b066/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b066/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b066/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b066/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b066/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b067/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b067/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b067/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b067/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b067/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b068/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b068/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b068/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b068/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b068/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b069/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b069/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b069/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b069/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b069/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b070/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b070/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b070/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b070/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b070/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b071/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b071/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b071/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b071/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b071/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b072/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b072/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b072/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b072/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b072/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/debug.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b073/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b074/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b074/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b074/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b074/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b074/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b075/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b075/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b076/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b076/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b077/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b077/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b078/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b078/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b079/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b079/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b080/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b080/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b081/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b081/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/aes_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/ctr_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b082/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b083/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b083/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b084/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b084/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b085/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b085/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b086/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b086/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b087/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b087/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b088/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b088/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b088/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b088/sha256block_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b088/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b089/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b089/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b090/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b090/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b091/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b091/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b092/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b092/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b092/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b092/sha3_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b092/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b093/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b093/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b093/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b093/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b093/xor_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b094/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b094/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b095/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b095/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b095/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b095/sha512block_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b095/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b096/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b096/gcm_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b096/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b096/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b096/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b097/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b097/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b098/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b098/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b099/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b099/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b100/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b100/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b101/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b101/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b102/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b102/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b103/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b103/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b104/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b104/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b104/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b104/sig_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b104/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b105/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b105/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b106/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b106/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b107/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b107/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b108/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b108/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b109/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b109/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b110/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b110/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b111/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b111/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b112/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b112/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b113/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b113/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b114/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b114/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b115/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b115/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b116/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b116/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b116/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b116/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b116/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b117/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b117/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b117/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b117/sig.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b117/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b118/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b118/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b119/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b119/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b120/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b120/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b121/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b121/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b122/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b122/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b123/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b123/crc32_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b123/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b123/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b123/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b124/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b124/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_export.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_export.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_gotypes.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_import.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_main.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_cgo_main.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_x001.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/_x002.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/race.cgo1.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b125/race.cgo2.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b126/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b126/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_export.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_export.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_gotypes.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_import.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_main.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_cgo_main.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x001.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x002.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x003.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x004.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x005.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x006.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x007.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x008.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x009.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x010.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x011.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x012.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x013.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x014.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/_x015.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/abi_GOARCH.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/asm_amd64.o": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/cgo.cgo1.go": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/cgo.cgo2.c": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/go_asm.h": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b127/symabis": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b128/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b128/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b128/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b128/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b128/vet.stdout": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b129/_pkg_.a": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b129/importcfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b129/vet.cfg": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b129/vet.out": [
+      "allocated_bytes"
+    ],
+    "go-build847020672/b129/vet.stdout": [
+      "allocated_bytes"
+    ]
+  },
+  "destination_allocated_bytes": 67526656,
+  "directory_count": 130,
+  "directory_mode_mtime_match": true,
+  "entry_count_after": 750,
+  "entry_count_before": 750,
+  "execute_from_ram": false,
+  "file_or_symlink_count": 620,
+  "file_or_symlink_hash_size_mode_mtime_target_match": true,
+  "filesystem_specific_directory_size_or_block_counts_ignored": true,
+  "original_allocated_bytes": 68059136,
+  "path_set_identical": true,
+  "preserved_ram_path": "/dev/shm/rcc181-235-failed-gotmp-083fe2e8657a",
+  "source_path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-235-current-focused-tests/gotmp-083fe2e8657a"
+}

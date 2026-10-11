@@ -1,0 +1,94 @@
+{
+  "method": "AST isolated auditedread-onlyfunction no scanner/run/sourcewrite",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "actual8": [
+    {
+      "target": "rcc-linux64",
+      "actualBinarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "staticHeaderMetadata": {
+        "format": "ELF64-little",
+        "section_count": 16,
+        "SHT_SYMTAB_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 1088
+      }
+    },
+    {
+      "target": "rcc-macos64",
+      "actualBinarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "staticHeaderMetadata": {
+        "format": "MachO64-little",
+        "nlist_symbol_count": 141,
+        "runtime_main_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 6420
+      }
+    },
+    {
+      "target": "rcc-macosarm64",
+      "actualBinarySha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "staticHeaderMetadata": {
+        "format": "MachO64-little",
+        "nlist_symbol_count": 144,
+        "runtime_main_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 6356
+      }
+    },
+    {
+      "target": "rcc-windows64.exe",
+      "actualBinarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "staticHeaderMetadata": {
+        "format": "PE",
+        "symbol_table_pointer": 20116992,
+        "COFF_symbol_count": 0,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 88
+      }
+    },
+    {
+      "target": "rccremote-linux64",
+      "actualBinarySha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+      "staticHeaderMetadata": {
+        "format": "ELF64-little",
+        "section_count": 16,
+        "SHT_SYMTAB_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 1088
+      }
+    },
+    {
+      "target": "rccremote-macos64",
+      "actualBinarySha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+      "staticHeaderMetadata": {
+        "format": "MachO64-little",
+        "nlist_symbol_count": 109,
+        "runtime_main_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 5600
+      }
+    },
+    {
+      "target": "rccremote-macosarm64",
+      "actualBinarySha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+      "staticHeaderMetadata": {
+        "format": "MachO64-little",
+        "nlist_symbol_count": 112,
+        "runtime_main_present": false,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 5536
+      }
+    },
+    {
+      "target": "rccremote-windows64.exe",
+      "actualBinarySha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+      "staticHeaderMetadata": {
+        "format": "PE",
+        "symbol_table_pointer": 9671680,
+        "COFF_symbol_count": 0,
+        "scanner_ErrNoSymbols_condition": true,
+        "metadata_bytes_read": 88
+      }
+    }
+  ]
+}

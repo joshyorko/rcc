@@ -1,0 +1,20 @@
+{
+  "accepted_existing_pack_subset_objects": 4649,
+  "accepted_existing_pack_subset_stored_bytes": 4484936,
+  "created_utc": "2026-10-11T15:54:19Z",
+  "current_status": "proposal_only_not_admitted",
+  "experiment_runs": 0,
+  "future_repetitions_per_arm": 5,
+  "go_compiles": 0,
+  "proposal_bytes": 8822,
+  "proposal_sha256": "ac96640aa321483942f80a148244f303b832c8730d811090f1556d06cd7069d9",
+  "resource_caps_proposed": {
+    "per_pass_seconds": 30,
+    "process_tree_rss_bytes": 2147483648,
+    "ram_scratch_bytes": 1073741824,
+    "total_seconds": 180,
+    "workspace_bytes": 33554432
+  },
+  "source_commit": "7945f956b428359928908a9f42e36417b113dafd",
+  "source_or_github_writes": 0
+}

@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "commitSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "platform": "darwin_arm64",
+  "producerHome": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/002/producer-home",
+  "consumerHome": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/012/consumer-home",
+  "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+  "binary": {
+    "path": "/Users/runner/work/rcc/rcc/build/rcc",
+    "sha256": "ceafac7295bd5dc8cc95a1d9070c8d596ea27bf8843de8f2b5fd50daa4bb6e58",
+    "version": "v18.19.6",
+    "runtimeGOOS": "darwin",
+    "runtimeGOARCH": "arm64",
+    "expectedGOOS": "darwin",
+    "expectedGOARCH": "arm64"
+  },
+  "exactBinaryCLI": {
+    "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+    "objectCount": 5007,
+    "producerHome": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/002/producer-home",
+    "consumerHome": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/004/consumer-home",
+    "cold": {
+      "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+      "materializationId": "d027bb0_5a1fac3_342d07bd",
+      "path": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/004/consumer-home/holotree/d027bb0_5a1fac3_342d07bd",
+      "cacheHit": "provider",
+      "exitCode": 0,
+      "leaseId": "fdbe4a3769fbea56494ed9dd08215d4d",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": false,
+      "nativeImport": "sqlite3",
+      "nativeExtension": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/004/consumer-home/holotree/d027bb0_5a1fac3_342d07bd/lib/python3.11/lib-dynload/_sqlite3.cpython-311-darwin.so",
+      "sqliteVersion": "3.54.0",
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311-darwin"
+          },
+          "os": {
+            "family": "darwin",
+            "minimumVersion": "26.6.2",
+            "kernelMinimum": "25.6.0",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "arm64",
+            "translationPolicy": "native-only",
+            "runtime": "darwin",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "requiredFeatures": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 219
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "darwin",
+            "version": "26.6.2",
+            "kernelVersion": "25.6.0",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "arm64",
+            "translation": "native",
+            "runtime": "darwin",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "features": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": true,
+            "maxPath": 1024
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "warm": {
+      "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+      "materializationId": "d027bb0_5a1fac3_342d07bd",
+      "path": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/004/consumer-home/holotree/d027bb0_5a1fac3_342d07bd",
+      "cacheHit": "local-materialization",
+      "exitCode": 0,
+      "leaseId": "942f27de7c22ae7be0197d2e74655c34",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": true,
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311-darwin"
+          },
+          "os": {
+            "family": "darwin",
+            "minimumVersion": "26.6.2",
+            "kernelMinimum": "25.6.0",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "arm64",
+            "translationPolicy": "native-only",
+            "runtime": "darwin",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "requiredFeatures": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 219
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "darwin",
+            "version": "26.6.2",
+            "kernelVersion": "25.6.0",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "arm64",
+            "translation": "native",
+            "runtime": "darwin",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "features": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": true,
+            "maxPath": 1024
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "mismatch": {
+      "rejected": true,
+      "artifactDigest": "sha256:b715daeb30c60369150a6bfff8aac60d4caeb23737491d999d306608e524ad8e",
+      "providerObjectGets": 0,
+      "error": "Error: reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has \nError: [rcc v18.19.6] reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has \n[rcc] exit status will be: 1!"
+    },
+    "platformChecks": {
+      "caseCollision": "case-insensitive-filesystem",
+      "codeSigning": "verified",
+      "executableSymlink": "pass",
+      "machine": "arm64",
+      "machoDependencies": "pass",
+      "machoRPath": "pass",
+      "nativeOnlyOnRosetta": "skipped:native-runner",
+      "quarantineXattr": "absent",
+      "rosetta": "native",
+      "runnerOS": "darwin",
+      "translationAllowed": "pass"
+    }
+  },
+  "sourceAPI": {
+    "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+    "cold": {
+      "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+      "materializationId": "d027bb0_b35c539_342d07bd",
+      "path": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/012/consumer-home/holotree/d027bb0_b35c539_342d07bd",
+      "cacheHit": "provider",
+      "exitCode": 0,
+      "leaseId": "c7d2c925156a2e176aa0433765776a0f",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": false,
+      "nativeImport": "sqlite3",
+      "nativeExtension": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/012/consumer-home/holotree/d027bb0_b35c539_342d07bd/lib/python3.11/lib-dynload/_sqlite3.cpython-311-darwin.so",
+      "sqliteVersion": "3.54.0",
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311-darwin"
+          },
+          "os": {
+            "family": "darwin",
+            "minimumVersion": "26.6.2",
+            "kernelMinimum": "25.6.0",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "arm64",
+            "translationPolicy": "native-only",
+            "runtime": "darwin",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "requiredFeatures": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 219
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "darwin",
+            "version": "26.6.2",
+            "kernelVersion": "25.6.0",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "arm64",
+            "translation": "native",
+            "runtime": "darwin",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "features": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": true,
+            "maxPath": 1024
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "warm": {
+      "artifactDigest": "sha256:ab33a8daed22ff1c3c602a43e886e68190e2cf82db0a1adc8580e609ef1b37ad",
+      "materializationId": "d027bb0_b35c539_342d07bd",
+      "path": "/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/TestRealCurrentRCCAtoBVertical943823939/012/consumer-home/holotree/d027bb0_b35c539_342d07bd",
+      "cacheHit": "local-materialization",
+      "exitCode": -1,
+      "leaseReleased": false,
+      "providerDeadWarmReuse": true,
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311-darwin"
+          },
+          "os": {
+            "family": "darwin",
+            "minimumVersion": "26.6.2",
+            "kernelMinimum": "25.6.0",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "arm64",
+            "translationPolicy": "native-only",
+            "runtime": "darwin",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "requiredFeatures": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 219
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "darwin",
+            "version": "26.6.2",
+            "kernelVersion": "25.6.0",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "arm64",
+            "translation": "native",
+            "runtime": "darwin",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "arm64",
+            "features": []
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": false,
+            "longPaths": true,
+            "maxPath": 1024
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "mismatch": {
+      "rejected": true,
+      "artifactDigest": "sha256:b715daeb30c60369150a6bfff8aac60d4caeb23737491d999d306608e524ad8e",
+      "providerObjectGets": 0,
+      "error": "reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has "
+    }
+  },
+  "robotExactBinary": {
+    "artifactDigest": "sha256:198e93def0113c662573d3231cacdbbfb26d5b7225491a35741f086e2901e2bd",
+    "binary": "/Users/runner/work/rcc/rcc/build/rcc",
+    "binarySha256": "ceafac7295bd5dc8cc95a1d9070c8d596ea27bf8843de8f2b5fd50daa4bb6e58",
+    "binaryVersion": "v18.19.6",
+    "cold": {
+      "artifactDigest": "sha256:198e93def0113c662573d3231cacdbbfb26d5b7225491a35741f086e2901e2bd",
+      "cacheHit": "provider",
+      "materializationId": "d027bb0_5a1fac3_6701f286",
+      "path": "/Users/runner/work/rcc/rcc/tmp/environment-artifacts-bh_lc69l/home-b/holotree/d027bb0_5a1fac3_6701f286"
+    },
+    "execute": {
+      "artifactDigest": "sha256:198e93def0113c662573d3231cacdbbfb26d5b7225491a35741f086e2901e2bd",
+      "cacheHit": "local-materialization",
+      "exitCode": 0,
+      "leaseId": "3f18c31069664b0156b23542e325bc2c",
+      "leaseReleased": true,
+      "materializationId": "d027bb0_5a1fac3_6701f286",
+      "path": "/Users/runner/work/rcc/rcc/tmp/environment-artifacts-bh_lc69l/home-b/holotree/d027bb0_5a1fac3_6701f286"
+    },
+    "native": {
+      "extension": "/Users/runner/work/rcc/rcc/tmp/environment-artifacts-bh_lc69l/home-b/holotree/d027bb0_5a1fac3_6701f286/lib/python3.11/lib-dynload/_sqlite3.cpython-311-darwin.so",
+      "import": "sqlite3",
+      "sqliteVersion": "3.54.0"
+    },
+    "source": "robot_tests/environment_artifacts.robot",
+    "warm": {
+      "artifactDigest": "sha256:198e93def0113c662573d3231cacdbbfb26d5b7225491a35741f086e2901e2bd",
+      "cacheHit": "local-materialization",
+      "materializationId": "d027bb0_5a1fac3_6701f286",
+      "path": "/Users/runner/work/rcc/rcc/tmp/environment-artifacts-bh_lc69l/home-b/holotree/d027bb0_5a1fac3_6701f286",
+      "providerDeadWarmReuse": true
+    }
+  }
+}

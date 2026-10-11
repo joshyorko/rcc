@@ -1,0 +1,56 @@
+{
+  "available_paths": {
+    "bpftrace": null,
+    "erofsfuse": null,
+    "fuse-overlayfs": null,
+    "fusermount3": "/usr/bin/fusermount3",
+    "losetup": "/usr/sbin/losetup",
+    "mkfs.erofs": null,
+    "mksquashfs": null,
+    "perf": null,
+    "squashfuse": null,
+    "strace": "/usr/bin/strace"
+  },
+  "existing_admission_floor_bytes": 2688548864,
+  "experiment_runs": 0,
+  "host": {
+    "architecture": "x86_64",
+    "dev_fuse_exists": true,
+    "dev_fuse_readable": true,
+    "dev_fuse_writable": true,
+    "dev_loop_control_exists": false,
+    "effective_caps": {
+      "CapEff": "0000000000000000",
+      "CapPrm": "0000000000000000"
+    },
+    "kernel": "6.18.44",
+    "proc_filesystems_matching": [
+      "fuseblk",
+      "nodev\tfuse",
+      "nodev\tfusectl",
+      "nodev\toverlay",
+      "erofs"
+    ],
+    "tmp_fs": "tmpfs (findmnt)",
+    "workspace_fs": "overlay (findmnt)"
+  },
+  "input_sha256": {
+    "coverage.json": "4781afad90ab452aa40bdced81538a28f46adf28c713c361930d2ea307a46d1d",
+    "go300-comment.json": "5d9deb5b71fba8b4700088de14746e79b295ec0f8f1d8962a0568727b2d236cb",
+    "issue125-snapshot.json": "508c8a53f7f70ba02e50bcde906de6de9db99a520fe099665cf15ec8ea633819",
+    "main-branch-snapshot.json": "cde26fcfb5abed8011cbccff4990b2e6eeabb2f39cb9e03a969903cef8eff8cb",
+    "matrix.md": "2caa6a4f32dfc3aad7f83099485702758528751728b986c51c109a6c32d2c74e",
+    "six-way-scope-comment.json": "051d415890ce9a7390d76d5cc2f3a573c9229afb0beef5ae3ffe39567197fc6c"
+  },
+  "margin_above_floor_bytes": 9519104,
+  "mount_attempts": 0,
+  "observed_utc": "2026-10-11T15:14:35Z",
+  "source_edits": 0,
+  "tool_sha256": {
+    "/usr/bin/fusermount3": "831d0f946edd0e8806e27d1501d9925e472063bd109e730caa874e31676a64e4",
+    "/usr/bin/mount": "2f36342bd2fef42343c4fa4a2a396a7f56c7c8f4ddcbd31c43205c62e152e6d4",
+    "/usr/bin/strace": "69f88291a4e47f258b8e32b089c919a247509f063ef3d6afe5389939051102b3",
+    "/usr/sbin/mount.fuse": "b50eef156cb951da5664f95eb3c04140cb93044c54d3b474df296c8f2d93af49"
+  },
+  "workspace_free_bytes": 2698067968
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "verdict": "accepted-no-blocker-in-exact-patch",
+  "commit": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+  "parent": "ba2c904a7d3f75e6e5fdb3ae8b3f0d29ffeb764e",
+  "tree": "a40d30733b5a80abcfa05d3220403afa653d5665",
+  "changedFiles": [
+    "scripts/release_publication.py",
+    "scripts/test_release_publication.py"
+  ],
+  "sources": [
+    {
+      "commit": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+      "path": "scripts/release_publication.py",
+      "bytes": 93388,
+      "sha256": "d53417cc68809c34cc7b86adb45964bb6e3f2048d0e86f42666f161ca90aafe7",
+      "gitBlob": "c57906706cb4a93e9e7d755dadbf09be87785e2c"
+    },
+    {
+      "commit": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+      "path": "scripts/test_release_publication.py",
+      "bytes": 53256,
+      "sha256": "46c598faa3b50aa11288b9e292a07f8d00d71e75dc50ea4ddaac4470c9644ba9",
+      "gitBlob": "b836cb0b42c2046b8226312275026d8d128037eb"
+    },
+    {
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "path": "tasks.py",
+      "bytes": 66889,
+      "sha256": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7",
+      "gitBlob": "e66a27de591b621d4c344b51c609bbddb793bb94"
+    }
+  ],
+  "controls": [
+    {
+      "case": "derived-catalog-rebase",
+      "result": "accepted"
+    },
+    {
+      "case": "object-sha256",
+      "result": "rejected",
+      "message": "review N-1 archive upgrade changed the legacy v12 object closure"
+    },
+    {
+      "case": "object-path",
+      "result": "rejected",
+      "message": "review N-1 archive upgrade changed the legacy v12 object closure"
+    },
+    {
+      "case": "object-size",
+      "result": "rejected",
+      "message": "review N-1 archive upgrade changed the legacy v12 object closure"
+    },
+    {
+      "case": "removed-object",
+      "result": "rejected",
+      "message": "review N-1 legacy after upgrade snapshot has no object records"
+    },
+    {
+      "case": "rollback-catalog-mutation",
+      "result": "rejected",
+      "message": "review N-1 rollback changed the legacy v12 closure after import"
+    },
+    {
+      "case": "catalog-path-change",
+      "result": "rejected",
+      "message": "review N-1 archive upgrade changed the consumer catalog path"
+    },
+    {
+      "case": "boolean-size",
+      "result": "rejected",
+      "message": "review N-1 legacy before snapshot has an invalid object record"
+    },
+    {
+      "case": "unknown-member",
+      "result": "rejected",
+      "message": "review N-1 legacy before snapshot has unknown or missing members"
+    },
+    {
+      "case": "uppercase-digest",
+      "result": "rejected",
+      "message": "review N-1 legacy before snapshot has an invalid object record"
+    },
+    {
+      "case": "missing-catalog",
+      "result": "rejected",
+      "message": "review N-1 legacy before snapshot has unknown or missing members"
+    },
+    {
+      "case": "missing-snapshot",
+      "result": "rejected",
+      "message": "review N-1 legacy before snapshot is invalid"
+    }
+  ],
+  "focusedUnittest": {
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "scripts.test_release_publication.ReleasePublicationTests.test_review_n1_accepts_derived_catalog_rebase_and_rejects_closure_mutations"
+    ],
+    "exit": 0,
+    "tests": 1
+  },
+  "diffCheckExit": 0,
+  "exit": 0,
+  "limitations": [
+    "Actual 7945 successful hosted export not observed. Initial export 38152186269 remains FAILED.",
+    "Catalog content root validation relies on unchanged source-bound producer; bounded sidecar carries hashes, not catalog bytes.",
+    "No full suite, target binaries, scanner, build, extraction, tag/publication or Actions runtime executed."
+  ]
+}

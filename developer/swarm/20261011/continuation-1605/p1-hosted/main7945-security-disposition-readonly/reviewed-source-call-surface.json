@@ -1,0 +1,19 @@
+{
+  "scope": "exact7945 RCC tracked Go sources; direct references only, not transitive callgraph",
+  "command": [
+    "git",
+    "grep",
+    "-n",
+    "-E",
+    "golang.org/x/text|NeuterAccents|precis\\.|norm\\.",
+    "7945f956b428359928908a9f42e36417b113dafd",
+    "--",
+    "*.go"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "",
+  "known_counterevidence": "prior4target source-mode callgraph0 on unchanged shipping-input projection",
+  "reviewed_dependency_edge": "afero.NeuterAccents ->transform.Chain(norm.NFD,runes.Remove,norm.NFC); no current RCC caller established",
+  "version_tag_source_limit": "selected upstream dependency blobs are tag/commit-bound; entire modulezip checksum was not independently recomputed here"
+}

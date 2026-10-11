@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-11T15:17:24.454723+00:00",
+  "sourceAttribution": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff historical root-verified accepted full11 source; never reattributed to7945",
+  "rootOwnership": "Existing completed root-hosted-acceptance ZIP, separately extracted N1 and root binary duplicates; raw independent324 receipt and API/proof unchanged",
+  "temporaryIntactRelocationNotDiscard": true,
+  "restoreAfterConsumerCleanupBeforeHandoff": true,
+  "noRamExecution": true,
+  "noNewMountOrInfrastructure": true,
+  "records": [
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/release-candidate-evidence-324524ff.zip",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/release-candidate-evidence-324524ff.zip",
+      "sha256": "d5080fa142c65458b5081dbb997a838c18a689eb9c1b1ab6bec79c567ba80b89",
+      "bytes": 156395512,
+      "mode": 384,
+      "mtime_ns": 1791685630435417879
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/n1-release-candidate-324524ff.rcca",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/n1-release-candidate-324524ff.rcca",
+      "sha256": "9ed01cbfe2463f0f064ab10efaf61e8e48a9c96767e7b6aa0629e4e8295bcb85",
+      "bytes": 72591172,
+      "mode": 384,
+      "mtime_ns": 1791685698301378336
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-rcc",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-rcc",
+      "sha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+      "bytes": 22417570,
+      "mode": 448,
+      "mtime_ns": 1791685725980681171
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rcc",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-self-host-released-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685726893392739
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-promoted-rcc",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-self-host-promoted-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685727019885717
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rcc",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-self-host-candidate-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685727149395074
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rccremote",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-self-host-released-rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "bytes": 13345575,
+      "mode": 448,
+      "mtime_ns": 1791685727240765464
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rccremote",
+      "retainedActualBytes": "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging/build-self-host-candidate-rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "bytes": 13345575,
+      "mode": 448,
+      "mtime_ns": 1791685727298739062
+    }
+  ],
+  "bytesPreserved": 364475253,
+  "freeBytesAfter": 3061592064
+}

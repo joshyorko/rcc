@@ -1,0 +1,32 @@
+{
+  "baseline_is_separate": true,
+  "correction_file": "correction-1531.md",
+  "correction_sha256": "f57644dac22f7613b645321cb15dc9a6715c71d8da53cf618942fd861df7e05c",
+  "created_utc": "2026-10-11T15:32:29Z",
+  "frozen_sha256": {
+    "go300-comment.json": "5d9deb5b71fba8b4700088de14746e79b295ec0f8f1d8962a0568727b2d236cb",
+    "issue125-snapshot.json": "508c8a53f7f70ba02e50bcde906de6de9db99a520fe099665cf15ec8ea633819",
+    "main-branch-snapshot.json": "cde26fcfb5abed8011cbccff4990b2e6eeabb2f39cb9e03a969903cef8eff8cb",
+    "observations.json": "08545d5165f64f4ad1035d72aa4b9ae2ac679e479b39fc5b093ae987cd4e3d1d",
+    "report.md": "c2749fb3a853083f155a214bf742e72ab43347e52d0033c232ab6e937c96408b",
+    "six-way-scope-comment.json": "051d415890ce9a7390d76d5cc2f3a573c9229afb0beef5ae3ffe39567197fc6c"
+  },
+  "mount_attempts": 0,
+  "new_runtime_experiments": 0,
+  "no_optimization_selected": true,
+  "six_research_directions": [
+    "compression",
+    "small-object packfiles",
+    "prewarm/persistent worker reuse",
+    "reflink/clonefile",
+    "lazy/FUSE",
+    "compressed image plus COW"
+  ],
+  "source_or_github_writes": 0,
+  "source_receipt_sha256": {
+    "checkpoint-1520/restart.md": "4815c09f2009e21dc8f6ed37edfde18886dfa116f6a5be93ea2d5f8a62ec83ac",
+    "execution-ledger.json": "98b8ab303fd5a60cd0a6d5dded97320bc97b83441e942a1e755461f475ff6965",
+    "p1-hosted/main7945-consumer-resource-admission/accepted324-temporary-staging.json": "a5f4db6e5f52d8929557c05430d144118bced4c4a501a7e91c164aff0c286e27"
+  },
+  "status": "additive correction only; original evidence frozen"
+}

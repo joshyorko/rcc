@@ -1,0 +1,11 @@
+{"event":"phase-start","phase":"preflight","elapsed":0.0}
+{"event":"phase-end","phase":"preflight","durationSeconds":0.081,"elapsed":0.084,"freeBytes":3233554432,"reservedBytes":504737954,"binarySha256":"5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21","binaryBytes":22392994}
+{"event":"phase-start","phase":"identity-and-fixture-baselines","elapsed":0.085}
+{"event":"phase-end","phase":"identity-and-fixture-baselines","durationSeconds":1.889,"elapsed":1.976,"providerFiles":5053,"providerTreeSha256":"69b297d1ab2fcdfbf65360401a311510c34658692ddec7ffc6b4689dcb0d4c9d"}
+{"event":"phase-start","phase":"copy-trust-fixture","elapsed":1.976}
+{"event":"phase-end","phase":"copy-trust-fixture","durationSeconds":0.008,"elapsed":1.987}
+{"event":"phase-start","phase":"refresh-unsigned-empty-revocation-fixture","elapsed":1.987}
+{"event":"phase-start","phase":"revocation-import-server","elapsed":1.99}
+{"event":"phase-end","phase":"revocation-import-server","durationSeconds":0.92,"elapsed":2.914,"url":"http://127.0.0.1:45621","processPid":37966}
+{"event":"phase-start","phase":"revocation-helper","elapsed":2.914}
+{"event":"phase-end","phase":"revocation-helper","durationSeconds":0.109,"elapsed":3.028,"numericExit":0}

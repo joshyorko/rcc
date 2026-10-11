@@ -1,0 +1,238 @@
+[
+  {
+    "file": "govuln-v1.1.4-tag.json",
+    "url": "https://api.github.com/repos/golang/vuln/git/ref/tags/v1.1.4",
+    "status": 200,
+    "at": "2026-10-11T15:30:41.594927+00:00",
+    "bytes": 323,
+    "sha256": "35089bd256fa98a0699b95b5f4520bfd8ecd33cd7e9ff2c2742fa3253bb1e2c4"
+  },
+  {
+    "file": "govuln-v1.1.4-tree.json",
+    "url": "https://api.github.com/repos/golang/vuln/git/trees/d1f380186385b4f64e00313f31743df8e4b89a77?recursive=1",
+    "status": 200,
+    "at": "2026-10-11T15:31:15.784872+00:00",
+    "bytes": 113285,
+    "sha256": "e865918179ea7ffaed42d8e30ff8f4a5ee32b2ad5f313398e9353ac24fd9aa52"
+  },
+  {
+    "file": "scanner-source/internal/vulncheck/binary.go",
+    "source_path": "internal/vulncheck/binary.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/vulncheck/binary.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.322478+00:00",
+    "bytes": 7531,
+    "sha256": "7e5be5475cabd7870de581bf603650be8fbcf69e8f9f4160a8874a228b6de6b0",
+    "git_blob_sha1": "d78af3ffcf89fae5506047d3c85da586e4d8a089",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/vulncheck/emit.go",
+    "source_path": "internal/vulncheck/emit.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/vulncheck/emit.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.353753+00:00",
+    "bytes": 5312,
+    "sha256": "ee426f7ad45acfd393935438445ec6646b0d7bff713f101559f651650c3ccd92",
+    "git_blob_sha1": "fc9b2d7ac8eaafbdc8c76acd38afd298e1608f81",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/vulncheck/source.go",
+    "source_path": "internal/vulncheck/source.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/vulncheck/source.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.326791+00:00",
+    "bytes": 8753,
+    "sha256": "418eed2f4fd0b19d2b41aa62b8558d70730dc52cc2715b7d724c09693f9d228d",
+    "git_blob_sha1": "348c3b96ad7e22b6f0667ee61fcd45b41ad7066f",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/vulncheck/doc.go",
+    "source_path": "internal/vulncheck/doc.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/vulncheck/doc.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.338808+00:00",
+    "bytes": 2089,
+    "sha256": "a600568cb12d4ed570823a7c7e803f2e5d74bc26f25830e2ccaf60fed1dfa545",
+    "git_blob_sha1": "e56cdfbcc1802836663b28bc3dadc733ba272236",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/scan/binary.go",
+    "source_path": "internal/scan/binary.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/scan/binary.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.601164+00:00",
+    "bytes": 2814,
+    "sha256": "7e6fd51621b22c5413c788de4f5b0b1dae8602297c622f69b1507ccae001e80b",
+    "git_blob_sha1": "5cc8f6ba804e0e9ba4ac69ef35b48fa06998ee42",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/scan/run.go",
+    "source_path": "internal/scan/run.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/scan/run.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.600789+00:00",
+    "bytes": 4173,
+    "sha256": "0c57548180408f132ed9ed46b979028d2e670a589df5dc8b7530c58d0399e297",
+    "git_blob_sha1": "f29b9d31dda6b56740701ab2caca645c2bf239f1",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/scan/source.go",
+    "source_path": "internal/scan/source.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/scan/source.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.662762+00:00",
+    "bytes": 1566,
+    "sha256": "b566bcaa5e2b704bf3190fcf20924da3acfb3cb29657d28563a6b7eb9100bfc2",
+    "git_blob_sha1": "e9232112a9bc7ce17f994eb4f8578348629ad51e",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/buildinfo/buildinfo.go",
+    "source_path": "internal/buildinfo/buildinfo.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/buildinfo/buildinfo.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.663389+00:00",
+    "bytes": 6066,
+    "sha256": "8227728e99fe5c8b7ffc5dcf6dc7ae50ed857fd386423523d73e8681bac38d05",
+    "git_blob_sha1": "f29dffa213587c995bf34c14e05e71465c7fb9b4",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/buildinfo/additions_scan.go",
+    "source_path": "internal/buildinfo/additions_scan.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/buildinfo/additions_scan.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.852841+00:00",
+    "bytes": 4127,
+    "sha256": "204a5b1f1a4d717026d925819b5ac466f0fce521fc277818d2061ad804eea02a",
+    "git_blob_sha1": "ddbdea083e2dc851bed8cb756c387db496f14574",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/govulncheck/jsonhandler.go",
+    "source_path": "internal/govulncheck/jsonhandler.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/govulncheck/jsonhandler.go",
+    "status": 200,
+    "at": "2026-10-11T15:31:37.939970+00:00",
+    "bytes": 1337,
+    "sha256": "565459f6ba533bba880b3fdd8b1c4c6534afc7abecc95961eed6c376a805b151",
+    "git_blob_sha1": "b1586e09a8e167b91df7d53e86b6ed59b5d41e7e",
+    "commit": "d1f380186385b4f64e00313f31743df8e4b89a77"
+  },
+  {
+    "file": "scanner-source/internal/vulncheck/witness.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/vulncheck/witness.go",
+    "status": 200,
+    "at": "2026-10-11T15:34:02.239274+00:00",
+    "bytes": 12786,
+    "sha256": "dfca52ee3fcf91ebc2fb43b3bae807bea31bfa4e8e4ae67ca72a2d5170ca33f2",
+    "git_blob_sha1": "7bc185819818a287df829fec4ea1cf789489bc37"
+  },
+  {
+    "file": "afero-v1.15.0-tag.json",
+    "url": "https://api.github.com/repos/spf13/afero/git/ref/tags/v1.15.0",
+    "status": 200,
+    "at": "2026-10-11T15:34:02.343341+00:00",
+    "bytes": 327,
+    "sha256": "9593a1e054ccfd28e044c9a57fea2c05e22addee431ed9eb8c103d6086adb9b0",
+    "git_blob_sha1": null
+  },
+  {
+    "file": "viper-v1.21.0-tag.json",
+    "url": "https://api.github.com/repos/spf13/viper/git/ref/tags/v1.21.0",
+    "status": 200,
+    "at": "2026-10-11T15:34:02.383743+00:00",
+    "bytes": 327,
+    "sha256": "ba057224f5698c422c13e9423fcacaa1552b20bef572aa85eb09e4e3bee4c238",
+    "git_blob_sha1": null
+  },
+  {
+    "file": "afero-v1.15.0-tag-object.json",
+    "url": "https://api.github.com/repos/spf13/afero/git/tags/18d690e34969d06817fa791ccf69194ebd4a5e8d",
+    "status": 200,
+    "at": "2026-10-11T15:35:01.675811+00:00",
+    "bytes": 2530,
+    "sha256": "5b6e27e365b8b8f6c7af4db29a325c8ecdf89b4637eda70fbc6ad61b1bcc9513",
+    "git_blob_sha1": null
+  },
+  {
+    "file": "viper-v1.21.0-tag-object.json",
+    "url": "https://api.github.com/repos/spf13/viper/git/tags/9d332ad291ae43150db75ef817217898eb14149c",
+    "status": 200,
+    "at": "2026-10-11T15:35:01.699135+00:00",
+    "bytes": 2530,
+    "sha256": "8cdf8655905e967c2b692cec504ebf87a77d96b6425c070e1a0ea6543cee227f",
+    "git_blob_sha1": null
+  },
+  {
+    "file": "scanner-source/internal/buildinfo/additions_buildinfo.go",
+    "url": "https://raw.githubusercontent.com/golang/vuln/d1f380186385b4f64e00313f31743df8e4b89a77/internal/buildinfo/additions_buildinfo.go",
+    "status": 200,
+    "at": "2026-10-11T15:35:01.562927+00:00",
+    "bytes": 6932,
+    "sha256": "927442c212916e9da5e9891961400c7ad89840a2487913c76bf57a30de79f09e",
+    "git_blob_sha1": "49869ce36ca640372abf1082242c049c592076aa"
+  },
+  {
+    "file": "afero-v1.15.0-tree.json",
+    "url": "https://api.github.com/repos/spf13/afero/git/trees/399bb34ad9fd8a252ad1d8bfaef96279b66dc774?recursive=1",
+    "status": 200,
+    "at": "2026-10-11T15:35:42.556295+00:00",
+    "bytes": 20525,
+    "sha256": "c7a918d924f49169b588816f8a1b43ab2c236490034825797519c6dd09df6a54"
+  },
+  {
+    "file": "viper-v1.21.0-tree.json",
+    "url": "https://api.github.com/repos/spf13/viper/git/trees/394040caccbdf5821fa6839386a35f0fb1b1ee9e?recursive=1",
+    "status": 200,
+    "at": "2026-10-11T15:35:42.532260+00:00",
+    "bytes": 16242,
+    "sha256": "797e07cd8b2eb796b16f4bbe28b069ebae087a77fa370732d2c239e147eb6157"
+  },
+  {
+    "file": "dependency-source/afero/util.go",
+    "url": "https://raw.githubusercontent.com/spf13/afero/399bb34ad9fd8a252ad1d8bfaef96279b66dc774/util.go",
+    "status": 200,
+    "at": "2026-10-11T15:36:05.882610+00:00",
+    "bytes": 7333,
+    "sha256": "45568913d2c775803c35d64f1b5653505b01ebce5739232d45573c9ec3cd8c1f",
+    "git_blob_sha1": "231768838822425bf7faeb14406a77c081d1d31c",
+    "commit": "399bb34ad9fd8a252ad1d8bfaef96279b66dc774"
+  },
+  {
+    "file": "dependency-source/afero/afero.go",
+    "url": "https://raw.githubusercontent.com/spf13/afero/399bb34ad9fd8a252ad1d8bfaef96279b66dc774/afero.go",
+    "status": 200,
+    "at": "2026-10-11T15:36:05.877201+00:00",
+    "bytes": 3355,
+    "sha256": "ca7d80bad2d46ea36146f885fcb20e7d1193be1bc0cf51f9e37cb0cda8ed5e05",
+    "git_blob_sha1": "39f65852099d1d0470a6e3a82f8bc239d3a910c2",
+    "commit": "399bb34ad9fd8a252ad1d8bfaef96279b66dc774"
+  },
+  {
+    "file": "dependency-source/afero/os.go",
+    "url": "https://raw.githubusercontent.com/spf13/afero/399bb34ad9fd8a252ad1d8bfaef96279b66dc774/os.go",
+    "status": 200,
+    "at": "2026-10-11T15:36:05.902853+00:00",
+    "bytes": 2927,
+    "sha256": "2923b1d46c4f17259829e47484ad259e1bdb1427b74f4791cf0b7efba2df697d",
+    "git_blob_sha1": "f1366321ec5ce35769024724d93058166c6291f9",
+    "commit": "399bb34ad9fd8a252ad1d8bfaef96279b66dc774"
+  },
+  {
+    "file": "dependency-source/viper/viper.go",
+    "url": "https://raw.githubusercontent.com/spf13/viper/394040caccbdf5821fa6839386a35f0fb1b1ee9e/viper.go",
+    "status": 200,
+    "at": "2026-10-11T15:36:05.921684+00:00",
+    "bytes": 58007,
+    "sha256": "7be920e8bdc1cb17989e15a474ce3553ce40ab400401cbb390fb9a56cf0ff2c4",
+    "git_blob_sha1": "34a94798b8d433dd24739d9ab755707a3dd7f4fc",
+    "commit": "394040caccbdf5821fa6839386a35f0fb1b1ee9e"
+  }
+]

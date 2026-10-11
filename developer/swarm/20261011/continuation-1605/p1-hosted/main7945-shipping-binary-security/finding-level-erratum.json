@@ -1,0 +1,5180 @@
+{
+  "scope": "Additive correction derived by decoding all concatenated JSON objects in all eight preserved complete streams; no scanner was rerun. Original report, manifest, and raw outputs are unmodified.",
+  "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+  "scannerSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "originalArtifacts": {
+    "reportPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/report.md",
+    "reportSha256": "3bc4f217799413606a0fdeec04e8d744d615afa0d3f0a988af321b4bc971b7b1",
+    "manifestPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/final-scan-summary.json",
+    "manifestSha256": "1735104fa8fa3ea4dc704bba527f2d51038a8c926fa41c9bda9cb27b2a032dde"
+  },
+  "aggregateFindingCountsByOSV": {
+    "GO-2026-5970": 208,
+    "GO-2026-6629": 104
+  },
+  "aggregateTraceDetailCounts": {
+    "module_symbol": 16,
+    "package_symbol": 16,
+    "function_symbol": 280
+  },
+  "perOSVTraceDetailCounts": {
+    "GO-2026-5970": {
+      "module_symbol": 8,
+      "package_symbol": 8,
+      "function_symbol": 192
+    },
+    "GO-2026-6629": {
+      "module_symbol": 8,
+      "package_symbol": 8,
+      "function_symbol": 88
+    }
+  },
+  "perBinary": [
+    {
+      "asset": "rcc-linux64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.stdout.jsonl",
+      "rawJsonSha256": "5dc01b4cfb9308bdabd8bb3f510a6af0a9e72a20cfb1afbb4311062bea3f77e3",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rcc-macos64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.stdout.jsonl",
+      "rawJsonSha256": "02fbfc120b7c4134905cd5fe2cac70a4bc4167cb79d8ea9daf889ba238b32fb8",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rcc-macosarm64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.stdout.jsonl",
+      "rawJsonSha256": "d09d8b449b4198495f6be18f8cdf086f7b002525b13553cba1fff02fe17c7119",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rcc-windows64.exe",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.stdout.jsonl",
+      "rawJsonSha256": "8b2b1bd93a3a2c7bfa8238026236e56ba95bad22fbe74868e7808af61678afd9",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rccremote-linux64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64-successor.stdout.jsonl",
+      "rawJsonSha256": "09b522a2bf076ed543e17385967bb04d1d43a9d26eefa141d3be5d7337bcf2e1",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": null,
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rccremote-macos64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64-successor.stdout.jsonl",
+      "rawJsonSha256": "320cfbe60b5a0c27607ee1a2925cd296d16154ae05f2ed4af71e4d1eb133c8eb",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rccremote-macosarm64",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64-successor.stdout.jsonl",
+      "rawJsonSha256": "0324c07667469451e55d19c9d8aa47f98d33ba57cc1e5ab17f8a8a5722ca9263",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    },
+    {
+      "asset": "rccremote-windows64.exe",
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe-successor.stdout.jsonl",
+      "rawJsonSha256": "1fb2861c8c6a48ca2b6f9c02bc1373e192369c799cbf385fbe2ff0c76cf59bde",
+      "scannerExit": 0,
+      "dbLastModified": "2026-10-08T22:31:09Z",
+      "scanMode": "binary",
+      "scanLevel": "symbol",
+      "findingCount": 39,
+      "findingCountsByOSV": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceFrameCount": 39,
+      "traceShapesByFinding": {
+        "('module', 'version')": 2,
+        "('module', 'package', 'version')": 2,
+        "('function', 'module', 'package', 'receiver', 'version')": 35
+      },
+      "allFindingsExactlyOneFrame": true,
+      "dependencyModuleOnlyFindings": 2,
+      "dependencyPackageFindings": 2,
+      "dependencyFunctionFindings": 35,
+      "RccCallerOrModuleFrames": 0,
+      "vulnerableDependencyModule": "v0.28.0",
+      "findingDetails": [
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "module",
+              "package",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-6629",
+          "fixedVersion": "v0.41.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        },
+        {
+          "osv": "GO-2026-5970",
+          "fixedVersion": "v0.39.0",
+          "traceFrames": 1,
+          "frameKeys": [
+            [
+              "function",
+              "module",
+              "package",
+              "receiver",
+              "version"
+            ]
+          ],
+          "allFramesInVulnerableModule": true,
+          "containsRccModuleOrCallerField": false
+        }
+      ]
+    }
+  ],
+  "interpretation": {
+    "eachFindingFrameIsVulnerableDependencySymbolEvidence": true,
+    "allFindingFramesUseVulnerableModule": true,
+    "allFindingsOneFrame": true,
+    "RccCallerOrModuleFrameCount": 0,
+    "meaning": "Actual frame fields vary: module/version (module-only symbol detail), module/package/version, and module/package/function/receiver/version. These are singleton vulnerable-dependency frames. A function field names the matched x/text symbol; it is not an RCC caller. No frame names the RCC module or caller position, and no finding contains a multi-frame path. This establishes binary symbol/reference presence but not RCC entrypoint reachability or exploitability."
+  },
+  "parser": "Python json.JSONDecoder.raw_decode loop consumed each concatenated JSON object to EOF for every stream; source sizes and SHA256 are listed per binary.",
+  "preservedResourceFailure": "The first run\u2019s initial 2 MiB aggregate-cap incident remains in summary.json: four complete streams are retained; the fifth first attempt was killed before writing output. The four separately authorized successor streams are retained and completed under 1 MiB per-file / 8 MiB combined limits.",
+  "integrityMismatches": []
+}

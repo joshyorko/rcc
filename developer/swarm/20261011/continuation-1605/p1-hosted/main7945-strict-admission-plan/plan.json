@@ -1,0 +1,154 @@
+{
+  "status": "PLAN_ONLY_WAITING_ROOT_ADMISSION",
+  "executionStarted": false,
+  "createdAtUtc": "2026-10-11T15:32:00Z",
+  "purpose": "One fresh, bounded Linux amd64 strict signed consumer proof for the exact shipping RCC 18.19.6 asset: offline strict trust verification, cold provider acquire, then providerless cached execution of native SQLite with a released process lease.",
+  "source": {
+    "commit": "7945f956b428359928908a9f42e36417b113dafd",
+    "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+    "version": "v18.19.6",
+    "releaseAssetRun": 38147141244,
+    "releaseAssetZipSha256": "f39e6347088725e1f126e344ab8b3c1a849e04ee11aa9e77507b0389aa2f2c9f",
+    "releaseAssetBytes": 22398033,
+    "actualBinarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+    "actualBinaryBytes": 22392994,
+    "actualBinarySourcePath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-linux64/assets/rcc-linux64",
+    "copyToOwnedWorkspaceBeforeExecution": true,
+    "executeFromTmpfs": false,
+    "assetReceipt": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/root-main7945-assets/rcc-linux64-byte-verification.json",
+    "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c"
+  },
+  "fixture": {
+    "providerRoot": "/workspace/work/rcc-swarm/evidence/provider-runtime-1791665359/provider",
+    "providerRootBytes": 73201082,
+    "providerRootFiles": 5053,
+    "providerRootUse": "Read-only serving of artifact CAS; run GET-only consumer commands, verify a full before/after tree hash, and stop if startup would create or mutate any fixture content. The provider root's required objects/sha256, manifests/sha256 and tmp directories already exist. Do not clone the 73 MB provider root under this cap.",
+    "signedTrustCarrier": "/workspace/work/rcc-swarm/evidence/provider-runtime-1791665359/trust-signed",
+    "signedTrustCarrierBytes": 1414304,
+    "paddedPublicRoots": "/workspace/work/rcc-swarm/evidence/provider-runtime-1791665359/trust-roots.json",
+    "paddedPublicRootsBytes": 65,
+    "paddedPublicRootsSha256": "aae748c9408f911d7a94f9010e68b12249aa95c80b954fffc3082b5537404d64",
+    "paddedRootContract": "One org-prod-2026 Ed25519 public key; padded standard Base64, 32 decoded bytes. Public test root only. Its original file stays unchanged. No key value or private signing key is copied into receipts.",
+    "privateSigningKey": "Previously generated one-off fixture key was removed after artifact signing. No re-signing or key recovery is needed or allowed for this existing signed artifact.",
+    "artifactDigest": "sha256:0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e",
+    "providerManifestSha256": "7de114da7f10af7c6a25bc091ad177d0e002e15a1d15f678034fe1904a106b45",
+    "providerObjectIndexDigest": "sha256:f76f278d2bf645899f0be8c849c8ac26024c7baa2d3b77ba0f68f10acd3c7204",
+    "builder": "rcc-holotree-v12",
+    "fixtureBuilderRccVersion": "v18.19.5",
+    "signatureSha256": "5e709b2285ba3a07b2af9bdc3535efa82cf759ba978465bf6d5f94f51b2e73f8",
+    "provenanceSha256": "e832acd8fb00627cc444434c0afaeac41ea84d61e664815f15d5c85531965fea",
+    "sbomSha256": "336c5edc7495367c14026d0120452d53aff2b2e39a69f7381466dfb2dec214c8",
+    "provenanceSource": "/workspace/work/rcc-swarm/evidence/provider-runtime-1791665359/runtime-validation.md",
+    "fixtureScope": "Previously signed v18.19.5 artifact is only a stable acceptance input; acceptance output is bound only to the 7945f956 shipping binary. This is not a new signature, publisher attestation, or cross-version release claim.",
+    "strictConsumerReceiptAvailability": "No 727-labeled strict-consumer receipt/helper was found under the final-main-727 evidence. Reuse the existing provider-runtime signed input and previously proven strict-consumer invocation pattern; do not rebind the older 680f/097 proof as this result."
+  },
+  "revocationPlan": {
+    "generator": "Existing read-only helper /workspace/work/rcc-swarm/evidence/candidate-09796/strict-trust/gocache/f7/f77bb2bfc95e2f794c72ae07492ff454da999b914d9a28eaee1e1707594635b6-d/refresh-revocations; binary SHA-256 f77bb2bfc95e2f794c72ae07492ff454da999b914d9a28eaee1e1707594635b6, 6357257 bytes. Its source imports artifacttrust.NewRevocationBundleAt and PutAttachment. Helper source file is preserved at sibling refresh-revocations.go.",
+    "currentSourceEquivalence": "Read-only Git object comparison between 7945f956 and 09796bf found identical blob IDs for artifacttrust/trust.go ece7d7401417b999841d7e9bbd2ad7374169226e, artifacttrust/carrier.go cb7d4791884f19656134882f0edd844236aab86b, cmd/environmentTrustPolicy.go e447e1517102af872f56a465be6f4ee3572620e9, cmd/environmentAcquire.go 845cefee2fbb53b953592152c740a9f35447dc16, cmd/environmentTrust.go 961ce470c33cba45dfed730511cc21131f441e8a, and artifactprovider/filesystem_unix.go 38f26ab0b8e2753705840a693339fe5ed7b17caf. Current 7945 trust code still declares 24-hour DefaultRevocationMaxAge and fresh empty snapshots are accepted when the fetched timestamp is within that default; strict remote continues FailClosedRevocations=true. The 7945 RCC binary itself performs all verification and consumer operations.",
+    "freshSnapshot": "Generate a new empty unsigned fixture snapshot at execution time with NewRevocationBundleAt(artifactDigest, nil, time.Now().UTC(), \"fixture-refresh\"); import/read it back using the helper through HTTP into a NEW tiny owned scratch provider root; copy only the validated bytes to the NEW owned filesystem trust-carrier copy. Never PUT to provider-runtime-1791665359/provider or alter the original trust carrier.",
+    "signedStatus": "Unsigned empty fixture freshness state; no signed/publisher revocation claim. It supplements the existing signed artifact signature and does not weaken strict-remote policy or sign/re-sign any artifact."
+  },
+  "ownedRunRoot": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer",
+  "plannedCommands": [
+    {
+      "phase": "preflight-and-asset-copy",
+      "actions": [
+        "Wait for parent root admission and for concurrent compile/measurement jobs to be idle.",
+        "Require workspace free space >= 3061592064 bytes initially or >= 2684354560 bytes after reserving the exact planned allocation; preserve a hard floor of 2.5 GiB free throughout.",
+        "Create only ownedRunRoot; copy the exact actual binary from actualBinarySourcePath to ownedRunRoot/rcc-linux64, then SHA-256 and stat it before any execution. Require hash/size/source metadata equal this plan.",
+        "Capture source commit/tree from immutable Git objects, actual binary before-hash, provider-root complete file/directory hash manifest, trust-carrier file hashes, and padded-roots hash. Do not modify or checkout source."
+      ]
+    },
+    {
+      "phase": "fresh-fixture-revocation",
+      "actions": [
+        "Copy trust-signed and trust-roots.json to ownedRunRoot/trust-carrier and ownedRunRoot/trust-roots.json, verifying every copied file against the original hashes.",
+        "Start the copied 7945 binary's cache serve only against ownedRunRoot/revocation-import-root on 127.0.0.1:0. Run the existing helper against that scratch URL to create a new timestamped empty snapshot, HTTP PUT it, and verify exact HTTP readback. Stop this scratch importer and require numeric exit 0 and closed port.",
+        "Copy the validated fresh-revocations.json bytes to ownedRunRoot/trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/revocations.json. Confirm signature/provenance/SBOM bytes remain byte-identical to the originals."
+      ]
+    },
+    {
+      "phase": "offline-strict-trust-verify",
+      "commandTemplate": "ROBOCORP_HOME=$OUT/offline-home RCC_HOLOTREE_MODE=private $BIN env trust verify --artifact sha256:0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e --platform linux_amd64 --builder rcc-holotree-v12 --provenance $OUT/trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/provenance.json --sbom $OUT/trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/sbom.json --signatures $OUT/trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/signature.json --revocations $OUT/fresh-revocations.json --trust-roots $OUT/trust-roots.json --strict-remote --json",
+      "requiredExit": 0,
+      "requiredReceipt": "valid=true, code=valid, policyMode=strict-remote, artifactDigest exact, keyID=org-prod-2026, fresh revocation snapshot/fetchedAt present and no more than the unchanged default 24 hours old."
+    },
+    {
+      "phase": "strict-cold-acquire-from-read-only-fixture-provider",
+      "actions": [
+        "Start copied 7945 binary cache serve against the EXISTING provider-runtime-1791665359/provider root on 127.0.0.1:0 with an owned server home. The consumer only performs GETs. Require the exact root tree to remain unchanged; any delta fails the no-mutation guard.",
+        "Run env acquire with --artifact sha256:0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e, --provider <ephemeral loopback URL>, --trust-carrier $OUT/trust-carrier --trust-carrier-type filesystem --trust-roots $OUT/trust-roots.json --strict-remote --json, under a new empty consumer-home.",
+        "Set RCC_NO_BUILD=1, CONDA_OFFLINE=true, MAMBA_OFFLINE=true, PIP_NO_INDEX=1, UV_NO_INDEX=1; set upper/lower HTTP(S)/ALL proxy variables to 127.0.0.1:1 and NO_PROXY/no_proxy to 127.0.0.1,localhost. This blocks package-index/build access while allowing only the loopback artifact provider."
+      ],
+      "requiredExit": 0,
+      "requiredReceipt": "cacheHit=provider; compatible; strict-remote verification valid; exact artifact digest and same revocation snapshot as offline verify."
+    },
+    {
+      "phase": "providerless-native-sqlite-exec-and-lease-release",
+      "actions": [
+        "Stop the artifact provider process, record numeric process exit 0, and prove its loopback port is closed before executing the consumer.",
+        "Run copied binary env exec with --artifact exact digest, local filesystem --trust-carrier $OUT/trust-carrier, --trust-carrier-type filesystem, --trust-roots $OUT/trust-roots.json, --strict-remote --json -- python -c 'import sqlite3; print(\"sqlite3\", sqlite3.sqlite_version)' and intentionally OMIT --provider. Use the consumer-home from cold acquire and package-offline/proxy-blocked env.",
+        "Require cacheHit=local-materialization, valid strict-remote verification, status=completed, child exitCode=0, non-empty leaseId, SQLite version output, and no active lease JSON under artifacts/v1/materializations/<artifact-hex>/leases after process completion."
+      ],
+      "requiredExit": 0
+    },
+    {
+      "phase": "independent-integrity-and-final-immutability",
+      "actions": [
+        "Independently compare provider/consumer manifest bytes; verify manifest declares the exact artifact digest and object-index digest; rehash all 5045 indexed objects against storedDigest and storedSize.",
+        "Rehash every file in consumer CAS (expected 5049 files) against its content-addressed path; require all hashes match and count equals live reference protection count.",
+        "Record ready state, exact artifact/materialization binding, live references with 5049 protected digests, persisted strict trust record and offline/online verification identity.",
+        "Rehash actual binary before/after, padded roots before/after, original signed trust carrier before/after, and original provider root before/after. Record exact numeric exits for all commands, server shutdown/port probes, per-command wall/CPU/RSS when /usr/bin/time supports it; timings are observations only and not performance claims.",
+        "Write one root-reviewable verifier JSON with CAS per-file hashes and a concise acceptance receipt; keep total raw receipts <= 2097152 bytes."
+      ]
+    }
+  ],
+  "resourceBudget": {
+    "freeSpaceReceipt": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-consumer-resource-admission/accepted324-temporary-staging.json",
+    "freeBytesAtReceipt": 3061592064,
+    "hardFreeSpaceFloorBytes": 2684354560,
+    "availableAboveFloorBytesAtReceipt": 377237504,
+    "exactSameArtifactPriorConsumerHomeBytes": 311320180,
+    "exactSameArtifactPriorConsumerHomeFiles": 15562,
+    "exactTrustCarrierCopyBytes": 1414304,
+    "publicRootsBytes": 65,
+    "receiptCapBytes": 2097152,
+    "smallOwnedServiceAndSnapshotReserveBytes": 5242880,
+    "actualWorkspaceBinaryBytes": 22392994,
+    "plannedNewWorkspaceMaxBytes": 320074818,
+    "plannedTotalNewFilesystemBytesIncludingBinaryAndReceiptCap": 342467812,
+    "freeBytesRemainingAboveFloorAtAdmissionReceipt": 34769692,
+    "sizingBasis": "311320180-byte exact consumer-home manifest recorded for the same 0fd0a3df artifact in prior preserved strict consumer evidence; 1414304-byte original trust-carrier tree; 65-byte public roots; 5 MiB service/snapshot reserve; 2 MiB raw receipt cap; 22392994-byte actual shipping binary. The provider CAS is read-only input and is not duplicated. Enforce the disk-floor guard before each copy/stage and abort before consumer acquire if actual usage exceeds cap.",
+    "goCache": "No Go compile or new Go cache is needed: use existing previously compiled 6357257-byte refresh helper without modifying it; 7945 source API blob identities listed above are byte-identical to helper's source lineage. If helper execution is rejected or unavailable, stop and seek root re-admission rather than compiling or expanding scope."
+  },
+  "preservationAndCleanup": {
+    "preserve": [
+      "Small raw stdout/stderr, command metadata, numeric exit files, provider lifecycle/port-probe receipts, trust roots public key hash/size metadata (never key bytes in summary), trust attachment hash receipts, source/binary identity and per-object CAS hash manifest.",
+      "This plan and all root-review receipts under the plan namespace.",
+      "All original provider-runtime-1791665359 fixture files unchanged.",
+      "Root's temporary 324 source/N1 staging and original locations unchanged; root restores them after consumer cleanup and verifies them before handoff."
+    ],
+    "cleanupTargetsOnlyAfterRootIndependentVerificationAndExplicitCleanupAuthorization": [
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/consumer-home",
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/offline-home",
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/server-home",
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/revocation-import-root",
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/trust-carrier",
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/rcc-linux64"
+    ],
+    "neverModifyOrDelete": [
+      "/workspace/work/rcc-swarm/evidence/provider-runtime-1791665359",
+      "/workspace/work/rcc-swarm/evidence/final-pin-gate",
+      "/workspace/work/rcc-swarm/evidence/candidate-09796",
+      "/dev/shm/rcc-preserved-root-artifacts/accepted324-temporary-qualified-consumer-staging",
+      "any shared source worktree, other owned home, Go cache or Actions state"
+    ],
+    "archivePolicy": "Do not create an additional large home archive under this disk cap. After root verifies exact per-file hashes and public state, preserve the concise receipts and ask root before deleting only the owned new consumer/runtime directories."
+  },
+  "claimsAndLimits": [
+    "One actual v18.19.6 shipping Linux amd64 binary and one pre-signed v18.19.5 fixture artifact only.",
+    "The fresh empty revocation snapshot is an unsigned test fixture freshness input, not a signed revocation authority claim.",
+    "Does not prove macOS or Windows, broad ABI-family coverage, publisher key custody, publisher-signed revocation lifecycle, real Actions integration, general offline behavior for uncached content, performance improvements, release approval, or issue closure.",
+    "A 727-specific strict-consumer receipt/helper was absent from searched final-main-727 evidence. No historical result is rebound; this proposed run is new and must be source/binary bound to 7945f956 and the SHA above."
+  ]
+}

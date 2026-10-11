@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-11T15:41:17.835238+00:00",
+  "source": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "runnerSha256": "add4e5664d9afd0864bf1cd40c435a60d105faceafb8a6c36cdaba09a3b2d0a6",
+  "originalWrapperStatus": "FAIL deadline120s/outer1 remains unchanged",
+  "actualGoRaceChildExit": 0,
+  "actualFourTestRegex": "^(TestAutoScaleGrowsToConfiguredWorkerCount|TestScaleMatchesConcurrentWorkerCapacity|TestSyncDrainsTasksQueuedWhilePriorWorkIsHeld|TestWorkerPoolSurvivesPanicsFromEveryWorker)$",
+  "actualGoRaceLogSha256": "e91b909f0aeacc5fd6fc9c2a10d5203b34b3b3f08bed4fee980a28490515f257",
+  "actualPackageDurationSeconds": 2.019,
+  "actualOriginalPGID": 26615,
+  "activeOriginalPGIDProcesses": [],
+  "readOnlyObserverProbe": {
+    "supervisorPid": 36181,
+    "sampledPids": [
+      36181,
+      36183
+    ],
+    "observerPidsAlreadyGoneAfterRun": [
+      36183
+    ],
+    "remainingObserverPids": [],
+    "goTestRerun": false
+  },
+  "cause": "process_rss begins with supervisor, then recursively adds its synchronous ps child; main alive gate removes supervisor only and counts already-exited observer PID without refreshing. This prevents normal termination despite Go child0 and no target-group survivors.",
+  "disposition": "Accept independently inspected actual focused Go race result and independently empty owned PGID; do not call original supervisor PASS. Fresh hosted Go/full6contexts/all4native also passed exactfa464. No test rerun needed for this resource-observer artifact defect."
+}

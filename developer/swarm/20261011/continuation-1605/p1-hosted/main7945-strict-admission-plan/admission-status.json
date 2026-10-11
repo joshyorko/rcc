@@ -1,0 +1,18 @@
+{
+  "awaiting": "Explicit root resource/capacity admission before any execution.",
+  "conservativeHistoricalHomeAllocationEstimateBytes": 425025536,
+  "currentFreeDeficitBytes": 91902114,
+  "currentWorkspaceAvailableBytes": 3048259584,
+  "evidenceFiles": [
+    "resource-source-addendum.json",
+    "resource-source-addendum.md"
+  ],
+  "executionStarted": false,
+  "guardBytes": 2688548864,
+  "marginAboveGuardBytes": 359710720,
+  "originalPlanModified": false,
+  "planOnly": true,
+  "preflightFreeRequiredBytes": 3140161698,
+  "scratchLimitBytes": 330000000,
+  "status": "RESOURCE_BOUND_BLOCKED_NOT_ADMITTED"
+}

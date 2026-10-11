@@ -1,0 +1,9 @@
+# Shipping-binary vulnerability scan: source 7945
+
+The eight staged `rcc` and `rccremote` platform executables for source commit `7945f956b428359928908a9f42e36417b113dafd` were scanned with Govulncheck v1.1.4 in binary/symbol mode. All eight scanner invocations exited 0 and report the same two vulnerability IDs against embedded `golang.org/x/text v0.28.0`: 26 matching records for GO-2026-5970 (fixed in v0.39.0) and 13 for GO-2026-6629 (fixed in v0.41.0). The symbol-mode JSON traces identify only the module and version, so this establishes matching binary symbol references but does not establish caller reachability or exploitability. Treat the findings as requiring explicit security disposition; this is not a clean scan.
+
+All eight targets report Go 1.26.9, exact VCS revision 7945f956b428359928908a9f42e36417b113dafd, and `vcs.modified=false` in official Go build metadata. The scanner was `/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9`, SHA256 `119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3`; its VDB timestamp was 2026-10-08T22:31:09Z. No target was executed and no source or compiler cache was used.
+
+Raw JSON and stderr files for each target are listed with hashes and exact exit codes in `final-scan-summary.json`. Total captured scanner output is 4,882,949 bytes. The initial runner captured the first four streams, then killed the fifth before output after an aggregate-output cap check (the check occurred after writes); this incident and those streams are preserved in `summary.json` and the `01`–`04` files. Per root authorization, only the remaining four were scanned in a successor runner with live pre-write limits (1 MiB per file, 8 MiB total); all four completed and combined raw output remained below that successor limit.
+
+This binary scan does not clear the inaccessible Dependabot alert inventory, replace the historical untraced package/module scan, or establish source-level exploitability.

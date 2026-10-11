@@ -1,0 +1,388 @@
+{
+  "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+  "scanner": {
+    "path": "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+    "sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+    "mode": "0o700",
+    "version": "govulncheck v1.1.4",
+    "goBuildToolPath": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "goBuildToolVersion": "go version go1.26.9 linux/amd64",
+    "database": "https://vuln.go.dev",
+    "databaseLastModified": "2026-10-08T22:31:09Z"
+  },
+  "mode": "govulncheck binary symbol mode (-mode=binary -json; scanLevel=symbol)",
+  "vulnerabilities": {
+    "GO-2026-5970": {
+      "findingRecordsPerBinary": 26,
+      "module": "golang.org/x/text",
+      "embeddedVersion": "v0.28.0",
+      "fixedVersion": "v0.39.0"
+    },
+    "GO-2026-6629": {
+      "findingRecordsPerBinary": 13,
+      "module": "golang.org/x/text",
+      "embeddedVersion": "v0.28.0",
+      "fixedVersion": "v0.41.0"
+    }
+  },
+  "interpretation": "All eight binaries contain symbol references matching the two current vulnerability records. JSON traces identify only golang.org/x/text and its version, not package/function paths or a caller path. Treat this as symbol-level binary evidence requiring security disposition; it does not by itself establish application entrypoint reachability or exploitability.",
+  "runs": [
+    {
+      "asset": "rcc-linux64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-linux64/assets/rcc-linux64",
+      "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "binaryBytes": 22392994,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-linux64/assets/rcc-linux64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rcc",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-linux64/assets/rcc-linux64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 1.105,
+      "sampledPeakRssBytes": 18804736,
+      "sampledCpuSeconds": 0.1,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.stdout.jsonl",
+      "rawJsonBytes": 610400,
+      "rawJsonSha256": "5dc01b4cfb9308bdabd8bb3f510a6af0a9e72a20cfb1afbb4311062bea3f77e3",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "1833a8e48b2e4f92737eecf8a2a2ed07553cc1a4ee9c135fa6108876b73016cd",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rcc-macos64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macos64/assets/rcc-macos64",
+      "binarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "binaryBytes": 22228928,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macos64/assets/rcc-macos64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rcc",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macos64/assets/rcc-macos64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 1.004,
+      "sampledPeakRssBytes": 18350080,
+      "sampledCpuSeconds": 0.09,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.stdout.jsonl",
+      "rawJsonBytes": 610400,
+      "rawJsonSha256": "02fbfc120b7c4134905cd5fe2cac70a4bc4167cb79d8ea9daf889ba238b32fb8",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "5e7031c6d0952ec9699446f64e37fc3f6d0a26956fd3372a21ff71449e00f8f9",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rcc-macosarm64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macosarm64/assets/rcc-macosarm64",
+      "binarySha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "binaryBytes": 20969810,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macosarm64/assets/rcc-macosarm64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rcc",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macosarm64/assets/rcc-macosarm64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 0.904,
+      "sampledPeakRssBytes": 18366464,
+      "sampledCpuSeconds": 0.08,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.stdout.jsonl",
+      "rawJsonBytes": 610400,
+      "rawJsonSha256": "d09d8b449b4198495f6be18f8cdf086f7b002525b13553cba1fff02fe17c7119",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "5cac6645923f815463879d1afc90f991ee83db311ae6f5fb919e6d43069df42a",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rcc-windows64.exe",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-windows64.exe/assets/rcc-windows64.exe",
+      "binarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "binaryBytes": 20117504,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-windows64.exe/assets/rcc-windows64.exe: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rcc",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-windows64.exe/assets/rcc-windows64.exe"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 0.904,
+      "sampledPeakRssBytes": 18231296,
+      "sampledCpuSeconds": 0.09,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.stdout.jsonl",
+      "rawJsonBytes": 610501,
+      "rawJsonSha256": "8b2b1bd93a3a2c7bfa8238026236e56ba95bad22fbe74868e7808af61678afd9",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.go-version-m.txt",
+      "goVersionMetadataLogSha256": "398b00250e97c7829cbbc80655086d73389d1d920c8cb112c06c238eaf3b77fb",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rccremote-linux64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64",
+      "binarySha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+      "binaryBytes": 9351330,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 1.255,
+      "sampledPeakRssBytes": 17780736,
+      "sampledCpuSeconds": 0.11,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64-successor.stdout.jsonl",
+      "rawJsonBytes": 610312,
+      "rawJsonSha256": "09b522a2bf076ed543e17385967bb04d1d43a9d26eefa141d3be5d7337bcf2e1",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64-successor.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": null,
+      "scanMode": null,
+      "databaseLastModified": null,
+      "xTextVersion": null,
+      "findingRecordCounts": {},
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "8164b0d7eed62f5a026ce0a6f69a9dbe783a8f082c2e796572a7b65b816e2df8",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rccremote-macos64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macos64/assets/rccremote-macos64",
+      "binarySha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+      "binaryBytes": 9543040,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macos64/assets/rccremote-macos64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macos64/assets/rccremote-macos64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 0.903,
+      "sampledPeakRssBytes": 18046976,
+      "sampledCpuSeconds": 0.12,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64-successor.stdout.jsonl",
+      "rawJsonBytes": 610312,
+      "rawJsonSha256": "320cfbe60b5a0c27607ee1a2925cd296d16154ae05f2ed4af71e4d1eb133c8eb",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64-successor.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "75cf5e90bf8afaebd759dc9f6b02d504766e9d1fcd35f39950da6daf0bae6786",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rccremote-macosarm64",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64",
+      "binarySha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+      "binaryBytes": 8886578,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 1.08,
+      "sampledPeakRssBytes": 18354176,
+      "sampledCpuSeconds": 0.1,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64-successor.stdout.jsonl",
+      "rawJsonBytes": 610312,
+      "rawJsonSha256": "0324c07667469451e55d19c9d8aa47f98d33ba57cc1e5ab17f8a8a5722ca9263",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64-successor.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64.go-version-m.txt",
+      "goVersionMetadataLogSha256": "47abbbc481916013f4c0c3dd1fab3db487582a51466c4b811c5c2f5512880eda",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    },
+    {
+      "asset": "rccremote-windows64.exe",
+      "binaryPath": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe",
+      "binarySha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+      "binaryBytes": 9672192,
+      "goVersion": "go1.26.9",
+      "moduleBuildInfo": [
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe: go1.26.9",
+        "\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote",
+        "\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011142533-7945f956b428\t",
+        "\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA="
+      ],
+      "scanCommand": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-mode=binary",
+        "-json",
+        "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe"
+      ],
+      "scannerExit": 0,
+      "wallSeconds": 0.938,
+      "sampledPeakRssBytes": 18456576,
+      "sampledCpuSeconds": 0.1,
+      "rawJsonPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe-successor.stdout.jsonl",
+      "rawJsonBytes": 610312,
+      "rawJsonSha256": "1fb2861c8c6a48ca2b6f9c02bc1373e192369c799cbf385fbe2ff0c76cf59bde",
+      "stderrPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe-successor.stderr.txt",
+      "stderrBytes": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scanLevel": "symbol",
+      "scanMode": "binary",
+      "databaseLastModified": "2026-10-08T22:31:09Z",
+      "xTextVersion": "v0.28.0",
+      "findingRecordCounts": {
+        "GO-2026-5970": 26,
+        "GO-2026-6629": 13
+      },
+      "traceShape": [],
+      "goVersionMetadataLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe.go-version-m.txt",
+      "goVersionMetadataLogSha256": "2c6a1e277e409e5f11fdf9f46b305c3a583d0e8d01756c4e4f81398f471246d7",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd",
+      "vcsModified": "false"
+    }
+  ],
+  "runAccounting": {
+    "allEightScanCommandsExitedZero": true,
+    "scannerOutputTotalBytes": 4882949,
+    "initialCapIncident": "The first bounded runner wrote the first four complete raw streams (2,441,701 bytes) and killed the fifth process before its first output after checking the 2 MiB aggregate cap post-write. No retry was made for those four. Root authorized an additive successor for only the remaining four with pre-write 1 MiB per-file and 8 MiB total caps.",
+    "successorAggregateBytes": 4882949,
+    "successorAllFourCompleted": true,
+    "successorLimits": {
+      "perFileBytes": 1048576,
+      "aggregateBytes": 8388608,
+      "perCommandSeconds": 120,
+      "aggregateSeconds": 600,
+      "sampledRssBytes": 536870912
+    }
+  },
+  "limitations": [
+    "Govulncheck binary-mode symbol matching is not source call-graph analysis; traces here expose only module/version.",
+    "No target executable was run.",
+    "This scan does not clear Dependabot alerts or the separate historical untraced GO-2026-5970/GO-2026-6629 package/module inventory.",
+    "Vulnerability data is the official remote database snapshot last modified 2026-10-08; later updates are outside this result."
+  ],
+  "traceFields": [
+    "module",
+    "version"
+  ]
+}

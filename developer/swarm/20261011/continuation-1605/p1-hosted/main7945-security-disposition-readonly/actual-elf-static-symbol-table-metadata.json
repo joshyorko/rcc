@@ -1,0 +1,19 @@
+{
+  "scope": "read-only ELF headers/section types, no target execution or vulnerability scanner",
+  "files": [
+    {
+      "file": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-linux64/assets/rcc-linux64",
+      "format": "ELF64little",
+      "section_count": 16,
+      "SHT_SYMTAB_present": false,
+      "section_headers_only_bytes_read": 1088
+    },
+    {
+      "file": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64",
+      "format": "ELF64little",
+      "section_count": 16,
+      "SHT_SYMTAB_present": false,
+      "section_headers_only_bytes_read": 1088
+    }
+  ]
+}

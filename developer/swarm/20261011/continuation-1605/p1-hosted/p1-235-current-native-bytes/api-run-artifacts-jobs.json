@@ -1,0 +1,72 @@
+{
+  "runId": 38148812198,
+  "sourceSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "jobs": [
+    {
+      "id": 114497996098,
+      "name": "Native Runtime (windows-amd64)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114497996160,
+      "name": "Native Runtime (linux-amd64)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114497996164,
+      "name": "Native Runtime (macos-arm64)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 114497996262,
+      "name": "Native Runtime (macos-amd64)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "platform": "windows_amd64",
+      "artifactId": 11706528113,
+      "name": "windows-amd64-native-runtime-receipt",
+      "bytes": 10849798,
+      "digest": "sha256:2a49f4b51c314e6b96950e58d386f8043e730eedfec83508c496cc8d354c01ce",
+      "expired": false,
+      "runId": 38148812198,
+      "sourceSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812"
+    },
+    {
+      "platform": "darwin_arm64",
+      "artifactId": 11706037477,
+      "name": "macos-arm64-native-runtime-receipt",
+      "bytes": 12498073,
+      "digest": "sha256:07efb6630460fe61a94bc5cc708e5c3b0077f7d5f887137fbb754179185cb7b2",
+      "expired": false,
+      "runId": 38148812198,
+      "sourceSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812"
+    },
+    {
+      "platform": "darwin_amd64",
+      "artifactId": 11705997666,
+      "name": "macos-amd64-native-runtime-receipt",
+      "bytes": 13072873,
+      "digest": "sha256:cfb290cf3a2434574bd190d3c00da0115c871e11bcfc0c5598b095beb20f84ac",
+      "expired": false,
+      "runId": 38148812198,
+      "sourceSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812"
+    },
+    {
+      "platform": "linux_amd64",
+      "artifactId": 11705982458,
+      "name": "linux-amd64-native-runtime-receipt",
+      "bytes": 13385941,
+      "digest": "sha256:6ba70fa24f3118f7776fa2be6ad6ad88d5f6aaca57ce5b2591237c9a80f485ac",
+      "expired": false,
+      "runId": 38148812198,
+      "sourceSha": "fa464a23ce5bc8c2b903bfc62d53b71205379812"
+    }
+  ]
+}

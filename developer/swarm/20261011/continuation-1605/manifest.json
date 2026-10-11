@@ -1,0 +1,1922 @@
+{
+  "parent": "1f04f2251960c1e0eeaa97d009c5d6756db12b74",
+  "timestamp": "2026-10-11T16:03:59.483191+00:00",
+  "preservation": "ALL1554priorentries unchanged including original119",
+  "entries": [
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests/command-result.json",
+      "bytes": 2749,
+      "sha256": "51f46064429bd85023d2ece4fa031d1fb24c0e1151914d1876d8821ec093964d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests/go-test.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests/guarded_test.py",
+      "bytes": 11850,
+      "sha256": "f0610eeef67148aafdf247a3fd512274ea951bdf40c3aa0cfe3555ce7703eadb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests/report.md",
+      "bytes": 3163,
+      "sha256": "1dc4d6e6defa9a89bd76a49788d53d176d08d4107fa8ad48f333275fad5a5fe5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/attempt02-gotmp-before-move.json",
+      "bytes": 248,
+      "sha256": "4077894aa22e609a08ad45f52f385a7438cffc87bef9f7ee3877749d082d93e2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/attempt02-gotmp-preservation.json",
+      "bytes": 293,
+      "sha256": "5e38ee4f00fce8d0b3ea3f5b64170b9f3901b31ef6ab16e410aacc7ec90b894a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/command-result.json",
+      "bytes": 3012,
+      "sha256": "423e7d390f65be80b9a27f5fa0bb53cb0dc51850f67bf63693a5742b04219f5f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/failed-gotmp-after-move.json",
+      "bytes": 226,
+      "sha256": "3ae766299642b669181cf99e6e2658aa11d482cd2a0d9aef8197a0db7ffd344a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/failed-gotmp-before-move.json",
+      "bytes": 194619,
+      "sha256": "8344d28918d70bf05820c3c53908b1fe0477eed689c751338dd10c4414442dd3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/failed-gotmp-verification-corrected.json",
+      "bytes": 45652,
+      "sha256": "f0ead49343b9550ecd58f2f7e829e9033239f7de3eb54308cb30b97441e5cf66"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/failed-gotmp-verification-final.json",
+      "bytes": 616,
+      "sha256": "451559c521fc5eee27f0f46c06f831afda05ae5249855136420d109d20a49fec"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/go-test.log",
+      "bytes": 45,
+      "sha256": "e91b909f0aeacc5fd6fc9c2a10d5203b34b3b3f08bed4fee980a28490515f257"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/guarded_test.py",
+      "bytes": 12721,
+      "sha256": "add4e5664d9afd0864bf1cd40c435a60d105faceafb8a6c36cdaba09a3b2d0a6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/plan.json",
+      "bytes": 3640,
+      "sha256": "4e96fe193b608dcdeb55e61312dc5ba8baa54143f6ada90aee20517e2ac607bd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-focused-tests-attempt02/report.md",
+      "bytes": 4136,
+      "sha256": "ad061c09a43e43d0caaa5ad8603de6885262cc1059ba7ada1cde6499afcffce1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/api-run-artifacts-jobs.json",
+      "bytes": 2151,
+      "sha256": "b29f75f6f5fd6a339c81a02e1e54f3fc3ddaedc46809e90cedf5140e0b966b57"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2247,
+      "sha256": "88407042c669ccd77c6dfd6d49e4def25da3799b5e01942f2fb17a3292b8801f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-byte-verification.json",
+      "bytes": 2295,
+      "sha256": "4f06303b2e34c77cfcff82d87ec8984221aa92401f247631859c0e2c8351c135"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "5586d35b283aba7b9d23e8b0a2410be66f2202f0a9029908ed20c9c15865c21a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15456,
+      "sha256": "3f30eae19e05c09b1ff349370b0b01ba3f52208c825f9b6a38c3c1de3c68a602"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "54d1cbd479a9430ec52d44201cb2f8441f4cbdb90fd93b3dce68fe9e91d1910b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_amd64-output.xml",
+      "bytes": 128880,
+      "sha256": "9afe8e015f9b323802eb8524aa82a2573509e2f209fdde9b0bf8e21a33143b41"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2252,
+      "sha256": "aac4ac51bf3083422c5eb27501dd29dd517ab6c04a95f879d3cd1ffe0429a4f5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-byte-verification.json",
+      "bytes": 2301,
+      "sha256": "24ce0dd18b371d9f59bcdb4349c537aec379ae621e74401bef2a34d9568e11ff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "c57cf649deeea5b530d772e3c6aee060592f65b513c8bb8456eacf3c8e1a2a52"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "7dfad1d6b5cf5c9923d0a4cf0d89d97be08dbd8cc72b3174df5db03df2305ed5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "c6dd05f93e39f8e2a58a79e16138ccf256d526756ce03c11ec5268c9eac7f557"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "e568405c2a5729d9553dacdb7c375334ac45dfb06a1ea86fe4b2e4132f4bda71"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/final-independent-verification.json",
+      "bytes": 8734,
+      "sha256": "1eef28a8af320554d52a25ca1e6607315dd2d6e6fabe3188da0007f6111b1d01"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/final-verification-exit.json",
+      "bytes": 3554,
+      "sha256": "072fef843d35624db4d396633b353fccd965ef864a26a75c58f0b8bae8a16902"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2258,
+      "sha256": "9badac8169a4df6d1e202de191b1c8e1b7d6eed0714089a2329e11e6af906fba"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-byte-verification.json",
+      "bytes": 2306,
+      "sha256": "e28c4bd88d1dd87f5cf46a81c9f84a98057e8125fbcae7175bf34a240f5f66df"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "5586d35b283aba7b9d23e8b0a2410be66f2202f0a9029908ed20c9c15865c21a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15456,
+      "sha256": "3f30eae19e05c09b1ff349370b0b01ba3f52208c825f9b6a38c3c1de3c68a602"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "54d1cbd479a9430ec52d44201cb2f8441f4cbdb90fd93b3dce68fe9e91d1910b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-output.xml",
+      "bytes": 128880,
+      "sha256": "9afe8e015f9b323802eb8524aa82a2573509e2f209fdde9b0bf8e21a33143b41"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_amd64-verifier.log",
+      "bytes": 2028,
+      "sha256": "d96093c22cdf0ba87f22c6347b3a41929d2dcc3ba3cab9ab3d54c7fb6cb959c9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2263,
+      "sha256": "bc0ef0f39cac0e4bb13cc1d99d1685cf2c40f7a6ee57ff0a63669e2886e50fc1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-byte-verification.json",
+      "bytes": 2312,
+      "sha256": "c38e7c5ecf1d4c0e2fc8a3175e87b0150e09b37248a9bcf63fb7cfcb8da82dff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "c57cf649deeea5b530d772e3c6aee060592f65b513c8bb8456eacf3c8e1a2a52"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "7dfad1d6b5cf5c9923d0a4cf0d89d97be08dbd8cc72b3174df5db03df2305ed5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "c6dd05f93e39f8e2a58a79e16138ccf256d526756ce03c11ec5268c9eac7f557"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "e568405c2a5729d9553dacdb7c375334ac45dfb06a1ea86fe4b2e4132f4bda71"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/darwin_arm64-verifier.log",
+      "bytes": 2034,
+      "sha256": "f946228d16c089ea923c883bbee9e507c7897715d236874ad674dc443200591f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2256,
+      "sha256": "77aa9322fa998287ee3df7023b68ae8e836648a8b64e3848ff86770f91f99f56"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-byte-verification.json",
+      "bytes": 2472,
+      "sha256": "ca0d20df4c62e35a910347ffb0fbaf6f75a39bef1deeee0aceed39d134daa614"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108992,
+      "sha256": "ea8b54a1b338825300c450a467081a22adff664e374255f7527272e1c0d7262d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "c9fe24cc45193afc3ec3451a03aa62b6e40f8342c0b5cf3024bd342faba72574"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110621,
+      "sha256": "b4e2294de2a16dc169a04f4f92bbb25cf4c95626a3e3cf01bdf3387ded28b787"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "20edbeeeac5c64a42c3ddfbabf3676ee0f7b231b232431cdc5ae7e9312b417b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "7bd25e0d563bf13f290d59b7149a93ccca3067195e05cc5fb03126681b3d3286"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/linux_amd64-verifier.log",
+      "bytes": 2166,
+      "sha256": "de02e985eabf1c555f68ee86aedc37d656a32e42e5fe1696ca76739efcf71309"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/verify_native_bundle_235_final.py",
+      "bytes": 3799,
+      "sha256": "bea44595a151ae4fd213dbcbe1f3e93ce05030c4f48b1e9fb91f64c7d5a04f2d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2363,
+      "sha256": "29aa92c29efa9389b8413912e58112989c38d00a031697089e0ff3dea9d2f8b1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-byte-verification.json",
+      "bytes": 2322,
+      "sha256": "35f66f84082a184e7e568057e46d29d0d03e4ec5f52d367dfd21ef99f90523f8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "32183a448349efc70d16af6e54c509403c4f2ca38842477712f441d5028ca96f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15997,
+      "sha256": "7a707c4e9893fe5befecc3655d211f39b2ee09663be23b44946513ededb22cd1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "269048daf39943d69738b8d549455dfa1973c03c23ac191e09e7fa7ffdcccffb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "e40c6b94cdce9e4c3fab7b09c4cb8eb0f0b66adee2834159fc88f22e54bf4e5b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/finalcheck/windows_amd64-verifier.log",
+      "bytes": 2044,
+      "sha256": "c0569a5c29a693ee3ac95f0c52de2699608c0ff539a4aa6f28cf314f986fdab0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2245,
+      "sha256": "6a8f9b198d8b2ab4ce10cfa7a7fdb233c409cf00a9f10dfa16fd445c85b0606a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-byte-verification.json",
+      "bytes": 2461,
+      "sha256": "e017615c50f35ccded3bff160bf4f169e619a7846a4a7aeaea50c9a78f567134"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108992,
+      "sha256": "ea8b54a1b338825300c450a467081a22adff664e374255f7527272e1c0d7262d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "c9fe24cc45193afc3ec3451a03aa62b6e40f8342c0b5cf3024bd342faba72574"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110621,
+      "sha256": "b4e2294de2a16dc169a04f4f92bbb25cf4c95626a3e3cf01bdf3387ded28b787"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "20edbeeeac5c64a42c3ddfbabf3676ee0f7b231b232431cdc5ae7e9312b417b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "7bd25e0d563bf13f290d59b7149a93ccca3067195e05cc5fb03126681b3d3286"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/verify_final_235_native.py",
+      "bytes": 8513,
+      "sha256": "ffbac42d1ba02c58a8ae54ff5a12af408699bdb828419d279ae682ba05921c77"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/verify_native_bundle_235.py",
+      "bytes": 3783,
+      "sha256": "bbe01e6bf9b35ce04e1e95b061e4ea3ed24ae5174c6601c832051cd8f545fc2e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2352,
+      "sha256": "522181bf2e53e852a6d91d38125308fd36c49facf4e62dc41c7548084ea55938"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-byte-verification.json",
+      "bytes": 2311,
+      "sha256": "7be48f26bbb4c5c4a383dc1d8ccd493f55ab1b796f12734c9f3a876cc291ea31"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "32183a448349efc70d16af6e54c509403c4f2ca38842477712f441d5028ca96f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15997,
+      "sha256": "7a707c4e9893fe5befecc3655d211f39b2ee09663be23b44946513ededb22cd1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "269048daf39943d69738b8d549455dfa1973c03c23ac191e09e7fa7ffdcccffb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-current-native-bytes/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "e40c6b94cdce9e4c3fab7b09c4cb8eb0f0b66adee2834159fc88f22e54bf4e5b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2251,
+      "sha256": "fe84a532bef3ba29f32d21f2405f5f2ef2709cd95e44554f8a5787277f6dcbc9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-byte-verification.json",
+      "bytes": 2299,
+      "sha256": "94203dbfa28fe67b40a2a6274d7a97f645cf1c5f9c612751783d8720dea8247f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "5586d35b283aba7b9d23e8b0a2410be66f2202f0a9029908ed20c9c15865c21a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15456,
+      "sha256": "3f30eae19e05c09b1ff349370b0b01ba3f52208c825f9b6a38c3c1de3c68a602"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "54d1cbd479a9430ec52d44201cb2f8441f4cbdb90fd93b3dce68fe9e91d1910b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-output.xml",
+      "bytes": 128880,
+      "sha256": "9afe8e015f9b323802eb8524aa82a2573509e2f209fdde9b0bf8e21a33143b41"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_amd64-verify.log",
+      "bytes": 2021,
+      "sha256": "643a13e3a4358e6d193a083facc511a3b13fcf0b85d45d7060cfeefb31f41a82"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2256,
+      "sha256": "2e5d60f774795929af2a0d8126aab2311beadbb4557f8b14e00ecb5244fc5bbf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-byte-verification.json",
+      "bytes": 2305,
+      "sha256": "dd6645420eda5ae5d102539752d68a18c249adc5b6c003fc8a0fc307329a9417"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "c57cf649deeea5b530d772e3c6aee060592f65b513c8bb8456eacf3c8e1a2a52"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "7dfad1d6b5cf5c9923d0a4cf0d89d97be08dbd8cc72b3174df5db03df2305ed5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "c6dd05f93e39f8e2a58a79e16138ccf256d526756ce03c11ec5268c9eac7f557"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "e568405c2a5729d9553dacdb7c375334ac45dfb06a1ea86fe4b2e4132f4bda71"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/darwin_arm64-verify.log",
+      "bytes": 2027,
+      "sha256": "4b6d45392f48efdd5d21244c9269bff3c50e321afeaaf211e84725efa865ff3a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2249,
+      "sha256": "dfa039d9e4a7785b00a9e24b5fffd0bbaa496244151ce9c661d10069e33af903"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-byte-verification.json",
+      "bytes": 2465,
+      "sha256": "5b17c04683a720a30fd63536cec419a9159cdffff4b9650775a94106f0478d75"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108992,
+      "sha256": "ea8b54a1b338825300c450a467081a22adff664e374255f7527272e1c0d7262d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "c9fe24cc45193afc3ec3451a03aa62b6e40f8342c0b5cf3024bd342faba72574"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110621,
+      "sha256": "b4e2294de2a16dc169a04f4f92bbb25cf4c95626a3e3cf01bdf3387ded28b787"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "20edbeeeac5c64a42c3ddfbabf3676ee0f7b231b232431cdc5ae7e9312b417b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "7bd25e0d563bf13f290d59b7149a93ccca3067195e05cc5fb03126681b3d3286"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/linux_amd64-verify.log",
+      "bytes": 2159,
+      "sha256": "d83e7ce174ae0caa08e4a8f432b3e8080feb5125ce230823bd06b4743a24afd3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/root-all4-verification.json",
+      "bytes": 10583,
+      "sha256": "1db37657955148f1783a2bb163729a8fbc475a13a89ee24d03e15bdc69a1dda5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/verify_native_bundle.py",
+      "bytes": 3822,
+      "sha256": "0a36b6e176c90654f87b049e9bfdadfb54e6182fe823017242ad27f96765cec5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2356,
+      "sha256": "a8b63401faafae0ed5faaaa55f9b19bef901e7477fde232eae857d4627e384ea"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-byte-verification.json",
+      "bytes": 2315,
+      "sha256": "7b07ad09443b68889acdca3e55961b611d615b47360a16b73d586c1fa45ab62b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "32183a448349efc70d16af6e54c509403c4f2ca38842477712f441d5028ca96f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15997,
+      "sha256": "7a707c4e9893fe5befecc3655d211f39b2ee09663be23b44946513ededb22cd1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "269048daf39943d69738b8d549455dfa1973c03c23ac191e09e7fa7ffdcccffb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "e40c6b94cdce9e4c3fab7b09c4cb8eb0f0b66adee2834159fc88f22e54bf4e5b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-root-native-review/windows_amd64-verify.log",
+      "bytes": 2037,
+      "sha256": "f66980b1f4b5911f7e4a31f1c14707e2a8a030d0f6a3375a573d8899c9289324"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-supervisor-independent-review/ps-after.txt",
+      "bytes": 6573,
+      "sha256": "6af639ed0cece0229e3f9e89cd345b68fd8c92318ee4a8db0c5842da89c4924a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-235-supervisor-independent-review/verification.json",
+      "bytes": 1498,
+      "sha256": "88ca7ce8bf67f7edd5365ca4bc524ef9e68d353d9075a96bc251c106a9b6a6ee"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/api-run-artifacts-jobs.json",
+      "bytes": 2151,
+      "sha256": "ddbb6f3b60004767d881aed50ec51154bd02a77140d59718eccefc44e5bb42d9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2247,
+      "sha256": "b44eefee49486132a5dc1c709391111c21a9c1dcd456f68bfeb68d6d4d22d8cb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-byte-verification.json",
+      "bytes": 2295,
+      "sha256": "f269ba87e13f8a429ad4d8acef9479f38f9eba79b88cc1e84c704f618e7667c9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "e93e7e79eb94c5e0adc7ad8c112dc7b4010a2cb768391b4d09d60ac2dd549563"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15466,
+      "sha256": "458f0b83f1fe2560a8b3e8670587fa60102981b0d2b2311ffe3a3c48c9dd9fe9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "2ca2a4daeabb1eaeb6c021d52cc4eacfa78bf5b19e1f63550059775a5dd9bebe"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_amd64-output.xml",
+      "bytes": 128881,
+      "sha256": "281c28b23ae369328da84117cf79b6282b65c511c4d9ccc250305f650a5e1325"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2252,
+      "sha256": "2e7885fec4ab54899880f36edfc3c1216569f75fa866ecd56de278d1c2abce55"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-byte-verification.json",
+      "bytes": 2301,
+      "sha256": "79a729aa5c503f57272a1b4c8bcbd4162affd8d11fa547216d8370f6f6a5f1a5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "4da67cf4c9277b297c30ea8f1accf9d2bfae771bf2bd27ae528ada1b67655518"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "f35bd66cf58d5c357bae2c1f4db59a9e6b7f4eca2aad4bba9fb53b01c79aef36"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "81241eb1fab217c2e7a5f0c3c5363da0efd727a0d1323ee4b598308121cbc508"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "237897e3363a3e6a7af78e4f1fae00a4be49805de4fa16fd0882eb5a97163e58"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/final-independent-verification.json",
+      "bytes": 8734,
+      "sha256": "9cabdfe8f25ee86261aef14133f7eee5c03987a26518914e8a3b9cb6632a45fe"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/final-verification-exit.json",
+      "bytes": 3554,
+      "sha256": "0b66cce23031a0403e7cd2685244ec92600c64f2390ff58fd8ebc4bcb359021d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2258,
+      "sha256": "828fc627f96f4cf13a055e2acd5fa6b64eec644c676480c43a0b6f641eb10f6f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-byte-verification.json",
+      "bytes": 2306,
+      "sha256": "8e6359766dc10dc625dda18203145d84087e2e008d8bf4cc1cfec6d0a2542622"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "e93e7e79eb94c5e0adc7ad8c112dc7b4010a2cb768391b4d09d60ac2dd549563"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15466,
+      "sha256": "458f0b83f1fe2560a8b3e8670587fa60102981b0d2b2311ffe3a3c48c9dd9fe9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "2ca2a4daeabb1eaeb6c021d52cc4eacfa78bf5b19e1f63550059775a5dd9bebe"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-output.xml",
+      "bytes": 128881,
+      "sha256": "281c28b23ae369328da84117cf79b6282b65c511c4d9ccc250305f650a5e1325"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_amd64-verifier.log",
+      "bytes": 2028,
+      "sha256": "8c43ecef1f506749842830052b90de072c38e426022bce01a34ead018e16b8aa"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2263,
+      "sha256": "2e794c2d166892782a635d83e746171aec3568070dfa455d1064e92c993b34c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-byte-verification.json",
+      "bytes": 2312,
+      "sha256": "713370b327704580d2cfd3d46558ba02fd89fc2293f81da7d42eb7718f7b44ed"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "4da67cf4c9277b297c30ea8f1accf9d2bfae771bf2bd27ae528ada1b67655518"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "f35bd66cf58d5c357bae2c1f4db59a9e6b7f4eca2aad4bba9fb53b01c79aef36"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "81241eb1fab217c2e7a5f0c3c5363da0efd727a0d1323ee4b598308121cbc508"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "237897e3363a3e6a7af78e4f1fae00a4be49805de4fa16fd0882eb5a97163e58"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/darwin_arm64-verifier.log",
+      "bytes": 2034,
+      "sha256": "2d83a6e633a2af29fa703274e89e1189b71efe253849de20b6e76661739ee3fc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2256,
+      "sha256": "b86290b6438aec343ef342510770d3d3977a2910af6d9d00612a246d88ca77d8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-byte-verification.json",
+      "bytes": 2472,
+      "sha256": "b025f7baeb93f986503b300884e76330682e85178fe9c005f5969e12276de395"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108536,
+      "sha256": "89d7c970fefbd095c6703369fa13ac509eab5390166ea04e34c65fa86ac45e70"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "4f92095374f8f5fd23dae5fde9e1b0c0fb9aa13bdba003574960ca35279e632c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110155,
+      "sha256": "d8e6c2be7543ded9de4c8f6c1e5ffd7165b61850277a8d10d32b453d1fc851a2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "b57ef43dd3c1ec9e008628d8d2aa248a34b65b81fd23a51db0c3de1a78d7de45"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "023d15c1d7300541d2dbb021e224f0bcc5d1814941693b7908ea452f394f6680"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/linux_amd64-verifier.log",
+      "bytes": 2166,
+      "sha256": "8bdac876af5550f6a06411c6e71c7ae088d744345e8ec0218d52ce550aa2cb92"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/verify_native_bundle_238_final.py",
+      "bytes": 3799,
+      "sha256": "12660db28f97f2f639da34967953f3501bd2c36110a51eb827097810ca0eaa27"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2363,
+      "sha256": "a31778600a820d3d55343efac5850c84bf783e2940f7277481dde1e12be82946"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-byte-verification.json",
+      "bytes": 2322,
+      "sha256": "0eb9fb7b6b7f0e049bc4671d2fb955dc47af6b4ca6eb6ac7f71eb1f0b3f5115c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "22f3a2987eb7f2f7e29d4387ab6d060ca267ca19f399a97e7b8a8484c093237c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15987,
+      "sha256": "7af8d7c004a2cf47218af6dad971fbb5b2574400842ed7bbaa2ed1b8b1230758"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "07cfbb918f25bf9f02745c3a33df4a4236326ad1bbb6f00da895012ba1c024bb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "f19c685c8b4a1c1ebffa793dd1fa1cf83a148d1306f0816de30c8bbb9db94ce2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/finalcheck/windows_amd64-verifier.log",
+      "bytes": 2044,
+      "sha256": "de1c928245a52f5c1b4e4afe5129f15dedd93ef8f8206cf7c40ad9dc415c75f6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2245,
+      "sha256": "2b718e8cfe353caa9640c68af0ff8941b66cb33f17bc9a0931818cecafb080f8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-byte-verification.json",
+      "bytes": 2461,
+      "sha256": "b4efb1ca629408c5b95e5e379664fbafd18351f3e072275bb20b6ad274c1af95"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108536,
+      "sha256": "89d7c970fefbd095c6703369fa13ac509eab5390166ea04e34c65fa86ac45e70"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "4f92095374f8f5fd23dae5fde9e1b0c0fb9aa13bdba003574960ca35279e632c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110155,
+      "sha256": "d8e6c2be7543ded9de4c8f6c1e5ffd7165b61850277a8d10d32b453d1fc851a2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "b57ef43dd3c1ec9e008628d8d2aa248a34b65b81fd23a51db0c3de1a78d7de45"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "023d15c1d7300541d2dbb021e224f0bcc5d1814941693b7908ea452f394f6680"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/verify_final_238_native.py",
+      "bytes": 7364,
+      "sha256": "9cc0c9a6f65ee48d0c2108db845f9c00720ba41511fb00a0d416681d7cd4e953"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/verify_native_bundle_238.py",
+      "bytes": 3783,
+      "sha256": "110fd8785edb261a4d5d67e61676e4db94bf2962b20c054852d5e55ab7dc9e35"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2352,
+      "sha256": "0de2fa56f7d5ee7f192be364099a4299b7fafb37547cf62c64724a12fc8e64bf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-byte-verification.json",
+      "bytes": 2311,
+      "sha256": "65856716fd7cff6292356723c25410dde91008ce6d1509322b20c4fd5bb7eda0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "22f3a2987eb7f2f7e29d4387ab6d060ca267ca19f399a97e7b8a8484c093237c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15987,
+      "sha256": "7af8d7c004a2cf47218af6dad971fbb5b2574400842ed7bbaa2ed1b8b1230758"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "07cfbb918f25bf9f02745c3a33df4a4236326ad1bbb6f00da895012ba1c024bb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-current-native-bytes/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "f19c685c8b4a1c1ebffa793dd1fa1cf83a148d1306f0816de30c8bbb9db94ce2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-actual-go-metadata.txt",
+      "bytes": 2251,
+      "sha256": "cfb4c3ffb0085b9cec8eab354328165645962bae3746c2efe2f7d0901977fb01"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-byte-verification.json",
+      "bytes": 2299,
+      "sha256": "b35d72a3d4c4bd83cb9e119fd1368db3b8fe87c2bb055f5747476bc2c71a8264"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-native-binary-review.json",
+      "bytes": 560,
+      "sha256": "e93e7e79eb94c5e0adc7ad8c112dc7b4010a2cb768391b4d09d60ac2dd549563"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-native-runtime-receipt.json",
+      "bytes": 15466,
+      "sha256": "458f0b83f1fe2560a8b3e8670587fa60102981b0d2b2311ffe3a3c48c9dd9fe9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "2ca2a4daeabb1eaeb6c021d52cc4eacfa78bf5b19e1f63550059775a5dd9bebe"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-output.xml",
+      "bytes": 128881,
+      "sha256": "281c28b23ae369328da84117cf79b6282b65c511c4d9ccc250305f650a5e1325"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_amd64-verify.log",
+      "bytes": 2021,
+      "sha256": "5e5e66f69822c8197b46621e7b9cc9ec47fd2438665ad1f5a1337f59f719cd50"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-actual-go-metadata.txt",
+      "bytes": 2256,
+      "sha256": "82914dfcb9df9ed38ab09c7181ddf7dfd8d1959712fa073a91e740b92896844f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-byte-verification.json",
+      "bytes": 2305,
+      "sha256": "caeb7dcf8ef3113e9bd63d2c693cfce7f0b3f61859ca05cc7d85355e93d4ebd6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-native-binary-review.json",
+      "bytes": 563,
+      "sha256": "4da67cf4c9277b297c30ea8f1accf9d2bfae771bf2bd27ae528ada1b67655518"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-native-runtime-receipt.json",
+      "bytes": 15441,
+      "sha256": "f35bd66cf58d5c357bae2c1f4db59a9e6b7f4eca2aad4bba9fb53b01c79aef36"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "81241eb1fab217c2e7a5f0c3c5363da0efd727a0d1323ee4b598308121cbc508"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-output.xml",
+      "bytes": 128974,
+      "sha256": "237897e3363a3e6a7af78e4f1fae00a4be49805de4fa16fd0882eb5a97163e58"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/darwin_arm64-verify.log",
+      "bytes": 2027,
+      "sha256": "5da14b1c66e8ffb4f73ef94670d5ce73282d7ab31774076eadcacf5744bacba8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/final-pr.json",
+      "bytes": 3781,
+      "sha256": "b2ad57f340ea58dd0d42ee7f08de71157949e5a54b226415259fec4be4b242ab"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-actual-go-metadata.txt",
+      "bytes": 2249,
+      "sha256": "561407df6893fd0fa14393226affd6a9cd09315c99e71bc40b15b4a8d6cc2af2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-byte-verification.json",
+      "bytes": 2465,
+      "sha256": "3419e6374f3b768ec4d873392fa414be8a7e81e596fa961734d63ce302797cea"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-jat-class-consumer-receipt.json",
+      "bytes": 108536,
+      "sha256": "89d7c970fefbd095c6703369fa13ac509eab5390166ea04e34c65fa86ac45e70"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-native-binary-review.json",
+      "bytes": 558,
+      "sha256": "4f92095374f8f5fd23dae5fde9e1b0c0fb9aa13bdba003574960ca35279e632c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-native-runtime-receipt.json",
+      "bytes": 110155,
+      "sha256": "d8e6c2be7543ded9de4c8f6c1e5ffd7165b61850277a8d10d32b453d1fc851a2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "b57ef43dd3c1ec9e008628d8d2aa248a34b65b81fd23a51db0c3de1a78d7de45"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-output.xml",
+      "bytes": 128497,
+      "sha256": "023d15c1d7300541d2dbb021e224f0bcc5d1814941693b7908ea452f394f6680"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/linux_amd64-verify.log",
+      "bytes": 2159,
+      "sha256": "a7e39748744b9451d7fa2f719073a89cdb8263f80d1d78dc115e26a001a237af"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/root-all4-verification.json",
+      "bytes": 10583,
+      "sha256": "3aa544077faa769b3ee8e466275c64da7f240f91d21851956db53473622d96bc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/verify_native_bundle.py",
+      "bytes": 3822,
+      "sha256": "817ad07954106e52d0fc66f9c50c8187d1e9bd7bb14d9bd8013f841e102939ea"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-actual-go-metadata.txt",
+      "bytes": 2356,
+      "sha256": "b2cb3aafa16541960aaf14734acdecc92d703d971d6744d3cb598aa175cf6d17"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-byte-verification.json",
+      "bytes": 2315,
+      "sha256": "86dc5a60ba4cd904ad5abeb71fb9f6f5e141c044820c994feb6425108abfd021"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-native-binary-review.json",
+      "bytes": 585,
+      "sha256": "22f3a2987eb7f2f7e29d4387ab6d060ca267ca19f399a97e7b8a8484c093237c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-native-runtime-receipt.json",
+      "bytes": 15987,
+      "sha256": "7af8d7c004a2cf47218af6dad971fbb5b2574400842ed7bbaa2ed1b8b1230758"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-native-runtime-robot-evidence.json",
+      "bytes": 1641,
+      "sha256": "07cfbb918f25bf9f02745c3a33df4a4236326ad1bbb6f00da895012ba1c024bb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-native-runtime-robot-phases.log",
+      "bytes": 1606,
+      "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-output.xml",
+      "bytes": 135832,
+      "sha256": "f19c685c8b4a1c1ebffa793dd1fa1cf83a148d1306f0816de30c8bbb9db94ce2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/p1-238-root-native-review/windows_amd64-verify.log",
+      "bytes": 2037,
+      "sha256": "c040922b363404103cb3375e10d09669177f6f083833b2104228e6d4a050bde4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.go-version-m.txt",
+      "bytes": 2250,
+      "sha256": "1833a8e48b2e4f92737eecf8a2a2ed07553cc1a4ee9c135fa6108876b73016cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/01-rcc-linux64.stdout.jsonl",
+      "bytes": 610400,
+      "sha256": "5dc01b4cfb9308bdabd8bb3f510a6af0a9e72a20cfb1afbb4311062bea3f77e3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.go-version-m.txt",
+      "bytes": 2251,
+      "sha256": "5e7031c6d0952ec9699446f64e37fc3f6d0a26956fd3372a21ff71449e00f8f9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/02-rcc-macos64.stdout.jsonl",
+      "bytes": 610400,
+      "sha256": "02fbfc120b7c4134905cd5fe2cac70a4bc4167cb79d8ea9daf889ba238b32fb8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.go-version-m.txt",
+      "bytes": 2259,
+      "sha256": "5cac6645923f815463879d1afc90f991ee83db311ae6f5fb919e6d43069df42a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/03-rcc-macosarm64.stdout.jsonl",
+      "bytes": 610400,
+      "sha256": "d09d8b449b4198495f6be18f8cdf086f7b002525b13553cba1fff02fe17c7119"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.go-version-m.txt",
+      "bytes": 2361,
+      "sha256": "398b00250e97c7829cbbc80655086d73389d1d920c8cb112c06c238eaf3b77fb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/04-rcc-windows64.exe.stdout.jsonl",
+      "bytes": 610501,
+      "sha256": "8b2b1bd93a3a2c7bfa8238026236e56ba95bad22fbe74868e7808af61678afd9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64-successor.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64-successor.stdout.jsonl",
+      "bytes": 610312,
+      "sha256": "09b522a2bf076ed543e17385967bb04d1d43a9d26eefa141d3be5d7337bcf2e1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64.go-version-m.txt",
+      "bytes": 2184,
+      "sha256": "8164b0d7eed62f5a026ce0a6f69a9dbe783a8f082c2e796572a7b65b816e2df8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/05-rccremote-linux64.stdout.jsonl",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64-successor.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64-successor.stdout.jsonl",
+      "bytes": 610312,
+      "sha256": "320cfbe60b5a0c27607ee1a2925cd296d16154ae05f2ed4af71e4d1eb133c8eb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/06-rccremote-macos64.go-version-m.txt",
+      "bytes": 2175,
+      "sha256": "75cf5e90bf8afaebd759dc9f6b02d504766e9d1fcd35f39950da6daf0bae6786"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64-successor.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64-successor.stdout.jsonl",
+      "bytes": 610312,
+      "sha256": "0324c07667469451e55d19c9d8aa47f98d33ba57cc1e5ab17f8a8a5722ca9263"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/07-rccremote-macosarm64.go-version-m.txt",
+      "bytes": 2183,
+      "sha256": "47abbbc481916013f4c0c3dd1fab3db487582a51466c4b811c5c2f5512880eda"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe-successor.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe-successor.stdout.jsonl",
+      "bytes": 610312,
+      "sha256": "1fb2861c8c6a48ca2b6f9c02bc1373e192369c799cbf385fbe2ff0c76cf59bde"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/08-rccremote-windows64.exe.go-version-m.txt",
+      "bytes": 2188,
+      "sha256": "2c6a1e277e409e5f11fdf9f46b305c3a583d0e8d01756c4e4f81398f471246d7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/final-scan-summary.json",
+      "bytes": 20689,
+      "sha256": "1735104fa8fa3ea4dc704bba527f2d51038a8c926fa41c9bda9cb27b2a032dde"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/finding-level-erratum.json",
+      "bytes": 135884,
+      "sha256": "5a270f037f368e3f23f29ed5fa4658ccd6360e367541748482c41816be85174b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/finding-level-erratum.md",
+      "bytes": 1309,
+      "sha256": "dd75c33998c03a33b0886b6d45cd90cd2d0c761e229da56961aa10505473eae9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/progress.json",
+      "bytes": 3290,
+      "sha256": "a8367ae02ebe0c1759b630f1174b4e7dffad605e7391658e29b8a643d4e7755e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/report.md",
+      "bytes": 1951,
+      "sha256": "3bc4f217799413606a0fdeec04e8d744d615afa0d3f0a988af321b4bc971b7b1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/scan-plan.json",
+      "bytes": 759,
+      "sha256": "9d93d5c116c9f82051f68c36b7dfecd550e1374170a334b3330019e02f30dc2f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/successor-progress.json",
+      "bytes": 3745,
+      "sha256": "49df03eae6a01bbc5b8327092390afa21fcbfb7ff6320c47c02b261999a0b0b3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/successor-summary.json",
+      "bytes": 4345,
+      "sha256": "14fa256fc426565cd40052bd2f73e8368ace66d67d79c689bedef79fe788755e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-shipping-binary-security/summary.json",
+      "bytes": 4280,
+      "sha256": "d3bb6c6f18d4d25638e4197ac225434031e0deb4354e9d49cc9df7697db65f21"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/actual-elf-static-symbol-table-metadata.json",
+      "bytes": 640,
+      "sha256": "6e6b3d9151a3a2e0e391215656ca7b2dbe3a664d416ec636f91dd6d5fa071452"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/afero-v1.15.0-tag-object.json",
+      "bytes": 2530,
+      "sha256": "5b6e27e365b8b8f6c7af4db29a325c8ecdf89b4637eda70fbc6ad61b1bcc9513"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/afero-v1.15.0-tag.json",
+      "bytes": 327,
+      "sha256": "9593a1e054ccfd28e044c9a57fea2c05e22addee431ed9eb8c103d6086adb9b0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/afero-v1.15.0-tree.json",
+      "bytes": 20525,
+      "sha256": "c7a918d924f49169b588816f8a1b43ab2c236490034825797519c6dd09df6a54"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/completion-manifest.json",
+      "bytes": 9252,
+      "sha256": "2052cc452f12d73c70144d4e562a03aa421eda68690365ec9f8b78b1bf73a466"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/dependency-source/afero/afero.go",
+      "bytes": 3355,
+      "sha256": "ca7d80bad2d46ea36146f885fcb20e7d1193be1bc0cf51f9e37cb0cda8ed5e05"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/dependency-source/afero/os.go",
+      "bytes": 2927,
+      "sha256": "2923b1d46c4f17259829e47484ad259e1bdb1427b74f4791cf0b7efba2df697d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/dependency-source/afero/util.go",
+      "bytes": 7333,
+      "sha256": "45568913d2c775803c35d64f1b5653505b01ebce5739232d45573c9ec3cd8c1f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/dependency-source/viper/viper.go",
+      "bytes": 58007,
+      "sha256": "7be920e8bdc1cb17989e15a474ce3553ce40ab400401cbb390fb9a56cf0ff2c4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/derivation-first-failure.txt",
+      "bytes": 336,
+      "sha256": "1a8e31965685f49a0551059c95ea9719a63dcf2f9e57f808912f75029fa11742"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/derivation-receipt.json",
+      "bytes": 510,
+      "sha256": "44321c9006e5aeaf2c3dd80956ea05d44671c492f187f5a52100a2252fc4d130"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/fetch-provenance.json",
+      "bytes": 10669,
+      "sha256": "5fa8e54d78900fcc1c5524e0b47736ded9958444c78f71966ef557c381f87440"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/govuln-v1.1.4-tag.json",
+      "bytes": 323,
+      "sha256": "35089bd256fa98a0699b95b5f4520bfd8ecd33cd7e9ff2c2742fa3253bb1e2c4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/govuln-v1.1.4-tree.json",
+      "bytes": 113285,
+      "sha256": "e865918179ea7ffaed42d8e30ff8f4a5ee32b2ad5f313398e9353ac24fd9aa52"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/raw-findings-preserved.json",
+      "bytes": 127382,
+      "sha256": "0d09cac26630524e7c3f9e1d8e09c61325df81d5ba3fcc4133d832faea7e9e9e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/AGENTS.md",
+      "bytes": 4311,
+      "sha256": "efcf4ead8762c47b6366aeb13ccdc96800399fb989e327ecbb70ac5b0c6021cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/cmd/rcc/main.go",
+      "bytes": 4064,
+      "sha256": "aea6d63bba957580e25870af367a18053946efdcb2c1597cd6f967ff617fb119"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/cmd/rccremote/main.go",
+      "bytes": 3335,
+      "sha256": "712777bcf9aa34650a98c2ac8810e1c2a05dbc5fe898712c62b548a4efd7224b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/cmd/root.go",
+      "bytes": 7561,
+      "sha256": "e8444945dc26e79dc60250e2515d0ac2ad585d5f92cfae48bccd8d3c19c202d3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/docs/agent-boundaries.md",
+      "bytes": 2837,
+      "sha256": "fcc70d7b636485df678e11d8178ab9abd0806130682509e68692a5188be342e8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/go.mod",
+      "bytes": 1689,
+      "sha256": "eae3d866a96c296d0cdcb4e9729b4f872abf54dab331993cf717a971ac5b46d0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/go.sum",
+      "bytes": 56257,
+      "sha256": "a3c5da16de56297fd887a186b6e8fcbe33ceefd4726ded0936b858e63659f7b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/tasks.py",
+      "bytes": 66889,
+      "sha256": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source/xviper/wrapper.go",
+      "bytes": 3900,
+      "sha256": "5d78fbc58be5ed483ece3ea769e92686cd6e2214d51647336abb419855e92c02"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/rcc-source-provenance.json",
+      "bytes": 2732,
+      "sha256": "114f7fd30634df6af72a5fb6d9b6c960641cde3b3feceb0ab101c7172e223fb7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/report.md",
+      "bytes": 14239,
+      "sha256": "080f46c016d601f4606d364cdd3e7398b1fcab057986012bd27500dda9d6faf4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/reviewed-source-call-surface.json",
+      "bytes": 731,
+      "sha256": "c526408f5a0fe519b87b0a51e0d17d97bea7a4d30cf266624b58ec992bc79df2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/buildinfo/additions_buildinfo.go",
+      "bytes": 6932,
+      "sha256": "927442c212916e9da5e9891961400c7ad89840a2487913c76bf57a30de79f09e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/buildinfo/additions_scan.go",
+      "bytes": 4127,
+      "sha256": "204a5b1f1a4d717026d925819b5ac466f0fce521fc277818d2061ad804eea02a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/buildinfo/buildinfo.go",
+      "bytes": 6066,
+      "sha256": "8227728e99fe5c8b7ffc5dcf6dc7ae50ed857fd386423523d73e8681bac38d05"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/govulncheck/jsonhandler.go",
+      "bytes": 1337,
+      "sha256": "565459f6ba533bba880b3fdd8b1c4c6534afc7abecc95961eed6c376a805b151"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/scan/binary.go",
+      "bytes": 2814,
+      "sha256": "7e6fd51621b22c5413c788de4f5b0b1dae8602297c622f69b1507ccae001e80b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/scan/run.go",
+      "bytes": 4173,
+      "sha256": "0c57548180408f132ed9ed46b979028d2e670a589df5dc8b7530c58d0399e297"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/scan/source.go",
+      "bytes": 1566,
+      "sha256": "b566bcaa5e2b704bf3190fcf20924da3acfb3cb29657d28563a6b7eb9100bfc2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/vulncheck/binary.go",
+      "bytes": 7531,
+      "sha256": "7e5be5475cabd7870de581bf603650be8fbcf69e8f9f4160a8874a228b6de6b0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/vulncheck/doc.go",
+      "bytes": 2089,
+      "sha256": "a600568cb12d4ed570823a7c7e803f2e5d74bc26f25830e2ccaf60fed1dfa545"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/vulncheck/emit.go",
+      "bytes": 5312,
+      "sha256": "ee426f7ad45acfd393935438445ec6646b0d7bff713f101559f651650c3ccd92"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/vulncheck/source.go",
+      "bytes": 8753,
+      "sha256": "418eed2f4fd0b19d2b41aa62b8558d70730dc52cc2715b7d724c09693f9d228d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/scanner-source/internal/vulncheck/witness.go",
+      "bytes": 12786,
+      "sha256": "dfca52ee3fcf91ebc2fb43b3bae807bea31bfa4e8e4ae67ca72a2d5170ca33f2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/source-bound-proof.json",
+      "bytes": 16505,
+      "sha256": "237951595e8b7fa9a5c9bacac8e0e392be8bd8ba0869a22570d678dd19fc6798"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/source-fetch-setup-failure.txt",
+      "bytes": 225,
+      "sha256": "df06843f6a5723d8206bf3ab444f1e40cdf31b96ba4ba16566575c743fb0fde3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/static-evidence-first-revision-sha256.txt",
+      "bytes": 111,
+      "sha256": "688d05a9f5cd3f828a36e7db3933458dceffedfd36cf2ddd433b464815ba80d0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/static_evidence.initial.py",
+      "bytes": 14755,
+      "sha256": "6f6dc63a81d515ff79dd6ae96760600d238ad6f645158e42af99c1e058107b76"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/static_evidence.py",
+      "bytes": 16077,
+      "sha256": "1abd019974201713275848dca59abef67f76f8e6e38db5d5e4c3890879a63f8b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/supplied-advisories.json",
+      "bytes": 2422,
+      "sha256": "14b3624d53f14c04c9e987ff9d82be3144296753553784b95404535631c20850"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/triage-finding-v0.json",
+      "bytes": 764105,
+      "sha256": "62a1d5d9154439db3e52b1787fc6fb480c3267603df4bbf518f41c8de0640ea1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/viper-v1.21.0-tag-object.json",
+      "bytes": 2530,
+      "sha256": "8cdf8655905e967c2b692cec504ebf87a77d96b6425c070e1a0ea6543cee227f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/viper-v1.21.0-tag.json",
+      "bytes": 327,
+      "sha256": "ba057224f5698c422c13e9423fcacaa1552b20bef572aa85eb09e4e3bee4c238"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-security-disposition-readonly/viper-v1.21.0-tree.json",
+      "bytes": 16242,
+      "sha256": "797e07cd8b2eb796b16f4bbe28b069ebae087a77fa370732d2c239e147eb6157"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/root-main7945-security-review/actual-binary-headers.json",
+      "bytes": 3143,
+      "sha256": "8cc26308ef2dc6806113b9ea14bd44dc9598476549a666479f21889296d45a0c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/root-main7945-security-review/verification.json",
+      "bytes": 2621,
+      "sha256": "662ab38380305798963c9c3342471f0d37a6e0bec7581c906ab74d0f741db573"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/binary.json",
+      "bytes": 324,
+      "sha256": "207ec5723899fb30a9a32d3f52e9766061500c28486924ab961d5d33b022624d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/events.jsonl",
+      "bytes": 1233,
+      "sha256": "33005724a46e203fc9b3f16e8096c9d9e4dcee7e8960b1d14bb9b7251cf40dcc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/executed-wrapper.py",
+      "bytes": 24757,
+      "sha256": "6de799b1efa29438ce057c78f66f72f6215473d582761722efe783d5275d309e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/failure-quiescence.json",
+      "bytes": 49,
+      "sha256": "f9887db8254f3ec7fc28e51a5d37b87797eb7bdddb40be3aa8ffdc36a72cdaee"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/fresh-revocations.json",
+      "bytes": 237,
+      "sha256": "8bbb2e4450e6f72a5d23ec1deab39f41208314a72cf6a7000090b8b0f242e869"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/provider-before.json",
+      "bytes": 179,
+      "sha256": "3c460039c698262b8c65d5d5fa80ecb8a83cd46c627630d3325f0d6e0aa5d011"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/provider-before.tsv",
+      "bytes": 973839,
+      "sha256": "69b297d1ab2fcdfbf65360401a311510c34658692ddec7ffc6b4689dcb0d4c9d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/resource-samples.jsonl",
+      "bytes": 850,
+      "sha256": "aca166f612f07aafd3f5f83ad263c13307783e9d602f6bd4c85eebf367a1cc67"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-helper.result.json",
+      "bytes": 480,
+      "sha256": "610e0b20c36079edf72486590b2b03275b9e7df8bebacd34596329b5e353a6af"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-helper.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-helper.stdout",
+      "bytes": 216,
+      "sha256": "e70bd71ae7803961aa7e9779d7dba39a45d28b3439a5fe03ab9552c877d3e0bc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-import-server.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-import-server.stdout",
+      "bytes": 195,
+      "sha256": "825c5f391e90f47d57dd9709edde7f575ca8e5a3f7f65d1e4dbb1d07679e6423"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/revocation-import-server.stop.json",
+      "bytes": 60,
+      "sha256": "e1388186fbedc78d16c1fd2f581697b3f5c8581a68286099e77b63eac16e5738"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/run-status.json",
+      "bytes": 229,
+      "sha256": "7c09fb15ec52e81486afb478b2912b64b7c543558218cb039b9071d662aad3d1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/source.json",
+      "bytes": 283,
+      "sha256": "908a76e7be79b4f8f6f787f4012fc825fc0e58c4754b7adcc3c3b5d5512cb620"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-failed-attempt02-raw/trust-inputs-before.json",
+      "bytes": 1077,
+      "sha256": "5d02b227a7dfa468f68f178b5f4145080a5d897d328158283134442b5d698a37"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-consumer-resource-admission/accepted324-additional-staging.json",
+      "bytes": 8656,
+      "sha256": "6f3ad6ab6f62e91c54cb2f97cf5053cff3a1f5875b85b8dcf4513eec4ed6cf2f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-consumer-resource-admission/accepted324-temporary-staging.json",
+      "bytes": 4195,
+      "sha256": "a5f4db6e5f52d8929557c05430d144118bced4c4a501a7e91c164aff0c286e27"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-consumer-resource-admission/failed-attempt02-intact-preservation.json",
+      "bytes": 11542,
+      "sha256": "5ea817f3a71e19b78cc14864b63adda6e51ac6f51fe5b246809450ea6ee3ef89"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-consumer-resource-admission/failed-attempt02-root-review.json",
+      "bytes": 771,
+      "sha256": "a08f8cca11ebf9e81980975f5fafa42407a2fab67948c7d086b62557d5bff5f2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/checks235.json",
+      "bytes": 44607,
+      "sha256": "35d56f7404b3b359142af516d178aa8f9e53743ba373a91478cbd886e24c9913"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/export-artifacts.json",
+      "bytes": 32,
+      "sha256": "244563f989470892c537c9a4622920af0d228ee4528f7d00c64a06d6cd95856c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/export-job-log.json",
+      "bytes": 47501,
+      "sha256": "2b67004ef0b70f533cfcc5ef973a07b19019182a791b83be614715e36ae6f976"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/export.json",
+      "bytes": 11654,
+      "sha256": "6afdafdee207ba1db723dd1a30dffa4592e0c1e0b42f081dfc4b3b898877b256"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/pr235.json",
+      "bytes": 17296,
+      "sha256": "b1a173c72dcc4e7d1e4a6b75fd4753a525a7e20a088e9473ce79cd852d4b1f21"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1548/reviews235.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/actions133-comments.json",
+      "bytes": 25171,
+      "sha256": "0090f66ced76c1f2ad999cda6cfc3afe0415c52512d401a097100a5222f6d771"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/issue-125-checkpoint-body.md",
+      "bytes": 2158,
+      "sha256": "153c0fe9bf9f064bcce905072e6ae2d1bbe4a8e923dc4cab1a681149155814f4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/issue-125-comment-result.json",
+      "bytes": 5490,
+      "sha256": "11dcf33e911126568c68de12672e4aa1c1897bd840bae47665a62cdc9d1d0e99"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/issue-181-checkpoint-body.md",
+      "bytes": 986,
+      "sha256": "d37dfefe87711f53131b30137c9c683fa2b351774bdfc58248b580bcdff589cf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/issue-181-comment-result.json",
+      "bytes": 4316,
+      "sha256": "c87a7a0fc379ba53c0de56f719805e91b70d8733793692c0154c751311dfc0c4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/issues.json",
+      "bytes": 183999,
+      "sha256": "935a28d6c1a02cea5ccdf8a269d14a7fd1a2354049e02b69be0fd88ff86943cc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/main.json",
+      "bytes": 324,
+      "sha256": "378430f2f733bd7a12b90fdf17f890c3c6ff606e9e569641dedd5ea8dffb9624"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/milestones.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/prs.json",
+      "bytes": 35944,
+      "sha256": "5491aae829f783bd90eacc43758153feb41348b12c1a8112e994ed0039f9c6d1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/rcc125-comments.json",
+      "bytes": 40863,
+      "sha256": "6491191bbbc5a217fb3bdcfb55bcf277fafb86a056402adade4f99ab07978b3e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/releases.json",
+      "bytes": 395835,
+      "sha256": "d77500045095e68221d7e4ecb3b46e5bd4471b24249b82ca90eb80b583ac731a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1555/tags.json",
+      "bytes": 13397,
+      "sha256": "1cd345d360358087816ba6a48b42aedb5bd29a036c3e90b80cd8eeb7c1280580"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1605/pr239.json",
+      "bytes": 16275,
+      "sha256": "404a2e1b7b6db64fa3ddcd0bee98294fca1b723ef284537f51e41d42c34c7211"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/live-1605/runs239.json",
+      "bytes": 72136,
+      "sha256": "912f997bca98f4348e317e76130f2b53c15bb79893c04f7b3a91e08ab18c9b6e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/full-script-tests.stderr",
+      "bytes": 244,
+      "sha256": "086dc6b3ff9a7dd18111c4d3ae488cd1579a58e97b88e66dbe62c4338db6c225"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/full-script-tests.stdout",
+      "bytes": 109,
+      "sha256": "36f23d5aa583cbfe8b2afec8804282e0dea7d493b4469eff818e8f67f59d4f1d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/pr-body.md",
+      "bytes": 1177,
+      "sha256": "40c23b9897904251799127f6ec93cacd3498c1d407de070f03719a51b85576ce"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/pr-create.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/pr-create.stdout",
+      "bytes": 42,
+      "sha256": "f7554623fa82bbd8041ae506380d17e4361283a538c0cc5090ba8cfbbea316c4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-root-review/test-result.json",
+      "bytes": 275,
+      "sha256": "8945c4a4482a5e8f8788153d2505d4be8d4c48e2920317dd3e8118f971961aad"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-independent-review/focused-unittest.log",
+      "bytes": 98,
+      "sha256": "d10ffbd9f0faa72cd6837063279524e199b59fbc3d035051302a1e8dbc4b36ad"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-independent-review/initial-setup-failure.log",
+      "bytes": 327,
+      "sha256": "ba9dfb9872a4403603d9d011cb46527c6eecb3facef8b1015422eaf0e1763226"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-independent-review/proof.json",
+      "bytes": 3704,
+      "sha256": "51e1607974cb1eed7259038db2ae3ea6faa6f32be25f19ac965367b53868e56f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/review-export-n1-independent-review/report.md",
+      "bytes": 2249,
+      "sha256": "4e6ce6b069fe15392a5cd1e34a46ac8720aefcb6206b68723db5a465c89f0f26"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/plan.json",
+      "bytes": 16495,
+      "sha256": "79a0dda5efb03753794ba8f053d7073ae00c9327edb4e6094b3e5e31420f7d31"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/plan.md",
+      "bytes": 4319,
+      "sha256": "3c5dfbd18e94e6d2cb762ea8d8325521ddf1c8d67fc693119fcd01833dc9d222"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/resource-source-addendum.json",
+      "bytes": 6437,
+      "sha256": "e9867164a7ccf93a39b20e676ab83fb5ccd337433331bd205b91237edae78fed"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/resource-source-addendum.md",
+      "bytes": 3858,
+      "sha256": "14ef525f2724dc1db9c89c759cb167031c1da5352bd8430a40ee19440baade3b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/admission-status.json",
+      "bytes": 611,
+      "sha256": "076b914d2b16ed126cfa3fee58bcfb9a0a7b3e57836c2c07843971b30aa558f6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/p1-hosted/main7945-strict-admission-plan/root-admission-1552.json",
+      "bytes": 1372,
+      "sha256": "be34836c12fe09aa2eb5dcef0de3bc27f5465fe4c19e0b6b2f4571af582d7b51"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/correction-1531.md",
+      "bytes": 8894,
+      "sha256": "f57644dac22f7613b645321cb15dc9a6715c71d8da53cf618942fd861df7e05c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/correction-receipt.json",
+      "bytes": 1584,
+      "sha256": "bdb02a66b9dfaa6a0366e31effeb3ac181572d966120ec0541ca9439df52f40f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/go300-comment.json",
+      "bytes": 2838,
+      "sha256": "5d9deb5b71fba8b4700088de14746e79b295ec0f8f1d8962a0568727b2d236cb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/issue125-snapshot.json",
+      "bytes": 47255,
+      "sha256": "508c8a53f7f70ba02e50bcde906de6de9db99a520fe099665cf15ec8ea633819"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/main-branch-snapshot.json",
+      "bytes": 89,
+      "sha256": "cde26fcfb5abed8011cbccff4990b2e6eeabb2f39cb9e03a969903cef8eff8cb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/observations.json",
+      "bytes": 2047,
+      "sha256": "08545d5165f64f4ad1035d72aa4b9ae2ac679e479b39fc5b093ae987cd4e3d1d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/report.md",
+      "bytes": 10519,
+      "sha256": "c2749fb3a853083f155a214bf742e72ab43347e52d0033c232ab6e937c96408b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/six-way-next-readiness-1515/six-way-scope-comment.json",
+      "bytes": 1705,
+      "sha256": "051d415890ce9a7390d76d5cc2f3a573c9229afb0beef5ae3ffe39567197fc6c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/next-native-paired-1555/admission.md",
+      "bytes": 8822,
+      "sha256": "ac96640aa321483942f80a148244f303b832c8730d811090f1556d06cd7069d9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/performance-admission/next-native-paired-1555/receipt.json",
+      "bytes": 689,
+      "sha256": "a02f5563d795422dc091846f433801344c81f3c782472e2745cac1599d268679"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/execution-ledger.json",
+      "bytes": 25356,
+      "sha256": "015c5bf03bfdae614d87a402c37dd66083bd11048034082977e91ce5b79b0987"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/dependency-graph.json",
+      "bytes": 5234,
+      "sha256": "0b47a15562441c11cf3ff34e2c8f9d9952637cbfc098071cd1da4216d8e654ee"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/checkpoint-1520/remote-verification.json",
+      "bytes": 317,
+      "sha256": "d78ce5a9f726e83f8a2786add33fbbb6ff595ec27b8b302868d502896f8eda97"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/exporter239-source459/scripts/release_publication.py",
+      "bytes": 93388,
+      "sha256": "d53417cc68809c34cc7b86adb45964bb6e3f2048d0e86f42666f161ca90aafe7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/exporter239-source459/scripts/test_release_publication.py",
+      "bytes": 53256,
+      "sha256": "46c598faa3b50aa11288b9e292a07f8d00d71e75dc50ea4ddaac4470c9644ba9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1605/restart.md",
+      "bytes": 13543,
+      "sha256": "4e8ba06f153fce80a4c546faefbfae4611ff6aec1d2df34957674fcafca1a7a6"
+    }
+  ]
+}

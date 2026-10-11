@@ -1,0 +1,274 @@
+{
+  "frozen_at": "2026-10-11T15:49:15.829790+00:00",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "source_method": "immutableGitobjects; no checkout or source writes",
+  "final_derivation_command": "python3 work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-security-disposition-readonly/static_evidence.py",
+  "observed_numeric_derivation_exit": 0,
+  "scanners_executed": 0,
+  "targets_executed": 0,
+  "source_builds": 0,
+  "source_GitHub_Actions_mutations": 0,
+  "preserved_setup_failures": [
+    "source-fetch-setup-failure.txt",
+    "derivation-first-failure.txt",
+    "static_evidence.initial.py",
+    "static-evidence-first-revision-sha256.txt"
+  ],
+  "disposition": "all312messages preserved;2advisoryIDs needs_review; syntheticmodulefallback, no entrypoint proof/no dependency clearance",
+  "files": [
+    {
+      "file": "actual-elf-static-symbol-table-metadata.json",
+      "bytes": 640,
+      "sha256": "6e6b3d9151a3a2e0e391215656ca7b2dbe3a664d416ec636f91dd6d5fa071452"
+    },
+    {
+      "file": "afero-v1.15.0-tag-object.json",
+      "bytes": 2530,
+      "sha256": "5b6e27e365b8b8f6c7af4db29a325c8ecdf89b4637eda70fbc6ad61b1bcc9513"
+    },
+    {
+      "file": "afero-v1.15.0-tag.json",
+      "bytes": 327,
+      "sha256": "9593a1e054ccfd28e044c9a57fea2c05e22addee431ed9eb8c103d6086adb9b0"
+    },
+    {
+      "file": "afero-v1.15.0-tree.json",
+      "bytes": 20525,
+      "sha256": "c7a918d924f49169b588816f8a1b43ab2c236490034825797519c6dd09df6a54"
+    },
+    {
+      "file": "dependency-source/afero/afero.go",
+      "bytes": 3355,
+      "sha256": "ca7d80bad2d46ea36146f885fcb20e7d1193be1bc0cf51f9e37cb0cda8ed5e05"
+    },
+    {
+      "file": "dependency-source/afero/os.go",
+      "bytes": 2927,
+      "sha256": "2923b1d46c4f17259829e47484ad259e1bdb1427b74f4791cf0b7efba2df697d"
+    },
+    {
+      "file": "dependency-source/afero/util.go",
+      "bytes": 7333,
+      "sha256": "45568913d2c775803c35d64f1b5653505b01ebce5739232d45573c9ec3cd8c1f"
+    },
+    {
+      "file": "dependency-source/viper/viper.go",
+      "bytes": 58007,
+      "sha256": "7be920e8bdc1cb17989e15a474ce3553ce40ab400401cbb390fb9a56cf0ff2c4"
+    },
+    {
+      "file": "derivation-first-failure.txt",
+      "bytes": 336,
+      "sha256": "1a8e31965685f49a0551059c95ea9719a63dcf2f9e57f808912f75029fa11742"
+    },
+    {
+      "file": "derivation-receipt.json",
+      "bytes": 510,
+      "sha256": "44321c9006e5aeaf2c3dd80956ea05d44671c492f187f5a52100a2252fc4d130"
+    },
+    {
+      "file": "fetch-provenance.json",
+      "bytes": 10669,
+      "sha256": "5fa8e54d78900fcc1c5524e0b47736ded9958444c78f71966ef557c381f87440"
+    },
+    {
+      "file": "govuln-v1.1.4-tag.json",
+      "bytes": 323,
+      "sha256": "35089bd256fa98a0699b95b5f4520bfd8ecd33cd7e9ff2c2742fa3253bb1e2c4"
+    },
+    {
+      "file": "govuln-v1.1.4-tree.json",
+      "bytes": 113285,
+      "sha256": "e865918179ea7ffaed42d8e30ff8f4a5ee32b2ad5f313398e9353ac24fd9aa52"
+    },
+    {
+      "file": "raw-findings-preserved.json",
+      "bytes": 127382,
+      "sha256": "0d09cac26630524e7c3f9e1d8e09c61325df81d5ba3fcc4133d832faea7e9e9e"
+    },
+    {
+      "file": "rcc-source/AGENTS.md",
+      "bytes": 4311,
+      "sha256": "efcf4ead8762c47b6366aeb13ccdc96800399fb989e327ecbb70ac5b0c6021cd"
+    },
+    {
+      "file": "rcc-source/cmd/rcc/main.go",
+      "bytes": 4064,
+      "sha256": "aea6d63bba957580e25870af367a18053946efdcb2c1597cd6f967ff617fb119"
+    },
+    {
+      "file": "rcc-source/cmd/rccremote/main.go",
+      "bytes": 3335,
+      "sha256": "712777bcf9aa34650a98c2ac8810e1c2a05dbc5fe898712c62b548a4efd7224b"
+    },
+    {
+      "file": "rcc-source/cmd/root.go",
+      "bytes": 7561,
+      "sha256": "e8444945dc26e79dc60250e2515d0ac2ad585d5f92cfae48bccd8d3c19c202d3"
+    },
+    {
+      "file": "rcc-source/docs/agent-boundaries.md",
+      "bytes": 2837,
+      "sha256": "fcc70d7b636485df678e11d8178ab9abd0806130682509e68692a5188be342e8"
+    },
+    {
+      "file": "rcc-source/go.mod",
+      "bytes": 1689,
+      "sha256": "eae3d866a96c296d0cdcb4e9729b4f872abf54dab331993cf717a971ac5b46d0"
+    },
+    {
+      "file": "rcc-source/go.sum",
+      "bytes": 56257,
+      "sha256": "a3c5da16de56297fd887a186b6e8fcbe33ceefd4726ded0936b858e63659f7b4"
+    },
+    {
+      "file": "rcc-source/tasks.py",
+      "bytes": 66889,
+      "sha256": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7"
+    },
+    {
+      "file": "rcc-source/xviper/wrapper.go",
+      "bytes": 3900,
+      "sha256": "5d78fbc58be5ed483ece3ea769e92686cd6e2214d51647336abb419855e92c02"
+    },
+    {
+      "file": "rcc-source-provenance.json",
+      "bytes": 2732,
+      "sha256": "114f7fd30634df6af72a5fb6d9b6c960641cde3b3feceb0ab101c7172e223fb7"
+    },
+    {
+      "file": "report.md",
+      "bytes": 14239,
+      "sha256": "080f46c016d601f4606d364cdd3e7398b1fcab057986012bd27500dda9d6faf4"
+    },
+    {
+      "file": "reviewed-source-call-surface.json",
+      "bytes": 731,
+      "sha256": "c526408f5a0fe519b87b0a51e0d17d97bea7a4d30cf266624b58ec992bc79df2"
+    },
+    {
+      "file": "scanner-source/internal/buildinfo/additions_buildinfo.go",
+      "bytes": 6932,
+      "sha256": "927442c212916e9da5e9891961400c7ad89840a2487913c76bf57a30de79f09e"
+    },
+    {
+      "file": "scanner-source/internal/buildinfo/additions_scan.go",
+      "bytes": 4127,
+      "sha256": "204a5b1f1a4d717026d925819b5ac466f0fce521fc277818d2061ad804eea02a"
+    },
+    {
+      "file": "scanner-source/internal/buildinfo/buildinfo.go",
+      "bytes": 6066,
+      "sha256": "8227728e99fe5c8b7ffc5dcf6dc7ae50ed857fd386423523d73e8681bac38d05"
+    },
+    {
+      "file": "scanner-source/internal/govulncheck/jsonhandler.go",
+      "bytes": 1337,
+      "sha256": "565459f6ba533bba880b3fdd8b1c4c6534afc7abecc95961eed6c376a805b151"
+    },
+    {
+      "file": "scanner-source/internal/scan/binary.go",
+      "bytes": 2814,
+      "sha256": "7e6fd51621b22c5413c788de4f5b0b1dae8602297c622f69b1507ccae001e80b"
+    },
+    {
+      "file": "scanner-source/internal/scan/run.go",
+      "bytes": 4173,
+      "sha256": "0c57548180408f132ed9ed46b979028d2e670a589df5dc8b7530c58d0399e297"
+    },
+    {
+      "file": "scanner-source/internal/scan/source.go",
+      "bytes": 1566,
+      "sha256": "b566bcaa5e2b704bf3190fcf20924da3acfb3cb29657d28563a6b7eb9100bfc2"
+    },
+    {
+      "file": "scanner-source/internal/vulncheck/binary.go",
+      "bytes": 7531,
+      "sha256": "7e5be5475cabd7870de581bf603650be8fbcf69e8f9f4160a8874a228b6de6b0"
+    },
+    {
+      "file": "scanner-source/internal/vulncheck/doc.go",
+      "bytes": 2089,
+      "sha256": "a600568cb12d4ed570823a7c7e803f2e5d74bc26f25830e2ccaf60fed1dfa545"
+    },
+    {
+      "file": "scanner-source/internal/vulncheck/emit.go",
+      "bytes": 5312,
+      "sha256": "ee426f7ad45acfd393935438445ec6646b0d7bff713f101559f651650c3ccd92"
+    },
+    {
+      "file": "scanner-source/internal/vulncheck/source.go",
+      "bytes": 8753,
+      "sha256": "418eed2f4fd0b19d2b41aa62b8558d70730dc52cc2715b7d724c09693f9d228d"
+    },
+    {
+      "file": "scanner-source/internal/vulncheck/witness.go",
+      "bytes": 12786,
+      "sha256": "dfca52ee3fcf91ebc2fb43b3bae807bea31bfa4e8e4ae67ca72a2d5170ca33f2"
+    },
+    {
+      "file": "source-bound-proof.json",
+      "bytes": 16505,
+      "sha256": "237951595e8b7fa9a5c9bacac8e0e392be8bd8ba0869a22570d678dd19fc6798"
+    },
+    {
+      "file": "source-fetch-setup-failure.txt",
+      "bytes": 225,
+      "sha256": "df06843f6a5723d8206bf3ab444f1e40cdf31b96ba4ba16566575c743fb0fde3"
+    },
+    {
+      "file": "static-evidence-first-revision-sha256.txt",
+      "bytes": 111,
+      "sha256": "688d05a9f5cd3f828a36e7db3933458dceffedfd36cf2ddd433b464815ba80d0"
+    },
+    {
+      "file": "static_evidence.initial.py",
+      "bytes": 14755,
+      "sha256": "6f6dc63a81d515ff79dd6ae96760600d238ad6f645158e42af99c1e058107b76"
+    },
+    {
+      "file": "static_evidence.py",
+      "bytes": 16077,
+      "sha256": "1abd019974201713275848dca59abef67f76f8e6e38db5d5e4c3890879a63f8b"
+    },
+    {
+      "file": "supplied-advisories.json",
+      "bytes": 2422,
+      "sha256": "14b3624d53f14c04c9e987ff9d82be3144296753553784b95404535631c20850"
+    },
+    {
+      "file": "triage-finding-v0.json",
+      "bytes": 764105,
+      "sha256": "62a1d5d9154439db3e52b1787fc6fb480c3267603df4bbf518f41c8de0640ea1"
+    },
+    {
+      "file": "viper-v1.21.0-tag-object.json",
+      "bytes": 2530,
+      "sha256": "8cdf8655905e967c2b692cec504ebf87a77d96b6425c070e1a0ea6543cee227f"
+    },
+    {
+      "file": "viper-v1.21.0-tag.json",
+      "bytes": 327,
+      "sha256": "ba057224f5698c422c13e9423fcacaa1552b20bef572aa85eb09e4e3bee4c238"
+    },
+    {
+      "file": "viper-v1.21.0-tree.json",
+      "bytes": 16242,
+      "sha256": "797e07cd8b2eb796b16f4bbe28b069ebae087a77fa370732d2c239e147eb6157"
+    }
+  ],
+  "allocated_bytes_before_completion": 1523712,
+  "global_free_bytes": 3234697216,
+  "floor_bytes": 2684354560,
+  "report": {
+    "file": "report.md",
+    "bytes": 14239,
+    "sha256": "080f46c016d601f4606d364cdd3e7398b1fcab057986012bd27500dda9d6faf4"
+  },
+  "proof": {
+    "file": "source-bound-proof.json",
+    "bytes": 16505,
+    "sha256": "237951595e8b7fa9a5c9bacac8e0e392be8bd8ba0869a22570d678dd19fc6798"
+  }
+}

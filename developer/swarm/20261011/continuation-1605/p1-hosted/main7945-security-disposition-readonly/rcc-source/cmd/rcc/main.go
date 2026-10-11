@@ -1,0 +1,164 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"os/user"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
+
+	"github.com/joshyorko/rcc/anywork"
+	"github.com/joshyorko/rcc/cloud"
+	"github.com/joshyorko/rcc/cmd"
+	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/conda"
+	"github.com/joshyorko/rcc/operations"
+	"github.com/joshyorko/rcc/pathlib"
+	"github.com/joshyorko/rcc/pretty"
+	"github.com/joshyorko/rcc/set"
+)
+
+const (
+	timezonekey = `rcc.cli.tz`
+	oskey       = `rcc.cli.os`
+	daily       = 60 * 60 * 24
+)
+
+func EnsureUserRegistered() (string, error) {
+	var warning string
+
+	cache, err := operations.SummonCache()
+	if err != nil {
+		return warning, err
+	}
+	who, err := user.Current()
+	if err != nil {
+		return warning, err
+	}
+	updated, ok := set.Update(cache.Users, strings.ToLower(who.Username))
+	size := len(updated)
+	if size > 1 {
+		warning = fmt.Sprintf("More than one user is using same %s location! Those users are: %s!", common.Product.HomeVariable(), strings.Join(updated, ", "))
+	}
+	if !ok {
+		return warning, nil
+	}
+	cache.Users = updated
+	return warning, cache.Save()
+}
+
+func TimezoneMetric() error {
+	cache, err := operations.SummonCache()
+	if err != nil {
+		return err
+	}
+	deadline, ok := cache.Stamps[timezonekey]
+	if ok && deadline > common.When {
+		return nil
+	}
+	cache.Stamps[timezonekey] = common.When + daily
+	zone := time.Now().Format("MST-0700")
+	cloud.InternalBackgroundMetric(common.ControllerIdentity(), timezonekey, zone)
+	cloud.InternalBackgroundMetric(common.ControllerIdentity(), oskey, common.Platform())
+	return cache.Save()
+}
+
+func ExitProtection() {
+	status := recover()
+	runtime.Gosched()
+	markTempForRecycling()
+	if status != nil {
+		exit, ok := status.(common.ExitCode)
+		if ok {
+			exit.ShowMessage()
+			pretty.Highlight("[rcc] exit status will be: %d!", exit.Code)
+			cloud.WaitTelemetry()
+			common.WaitLogs()
+			os.Exit(exit.Code)
+		}
+		cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.panic.origin", cmd.Origin())
+		cloud.WaitTelemetry()
+		common.WaitLogs()
+		panic(status)
+	}
+	cloud.WaitTelemetry()
+	common.WaitLogs()
+}
+
+func startTempRecycling() {
+	if common.DisableTempManagement() {
+		common.Timeline("temp management disabled -- no temp recycling")
+		return
+	}
+	defer common.Timeline("temp recycling done")
+	pattern := filepath.Join(common.ProductTempRoot(), "*", "recycle.now")
+	found, err := filepath.Glob(pattern)
+	if err != nil {
+		common.Debug("Recycling failed, reason: %v", err)
+		return
+	}
+	for _, filename := range found {
+		folder := filepath.Dir(filename)
+		changed, err := pathlib.Modtime(folder)
+		if err == nil && time.Since(changed) > 48*time.Hour {
+			if err := os.RemoveAll(folder); err != nil {
+				_ = common.Debug("Recycling %q failed, reason: %v", folder, err)
+			}
+		}
+	}
+}
+
+func markTempForRecycling() {
+	if common.DisableTempManagement() {
+		common.Timeline("temp management disabled -- temp not marked for recycling")
+		return
+	}
+	target := common.ProductTempName()
+	if pathlib.Exists(target) {
+		filename := filepath.Join(target, "recycle.now")
+		pathlib.WriteFile(filename, []byte("True"), 0o644)
+		common.Debug("Marked %q for recycling.", target)
+	}
+}
+
+func main() {
+	defer ExitProtection()
+
+	notify := operations.RccVersionCheck()
+	if notify != nil {
+		defer notify()
+	}
+
+	warning, _ := EnsureUserRegistered()
+	if len(warning) > 0 {
+		defer pretty.Warning("%s", warning)
+	}
+
+	anywork.Backlog(conda.BugsCleanup)
+
+	if common.SharedHolotree {
+		common.TimelineBegin("Start [shared mode]. (parent/pid: %d/%d)", os.Getppid(), os.Getpid())
+	} else {
+		common.TimelineBegin("Start [private mode]. (parent/pid: %d/%d)", os.Getppid(), os.Getpid())
+	}
+	defer common.EndOfTimeline()
+	if common.OneOutOf(6) {
+		anywork.Backlog(startTempRecycling)
+	}
+	defer os.Stderr.Sync()
+	defer os.Stdout.Sync()
+	cmd.Execute()
+	common.Timeline("Command execution done.")
+	if common.OneOutOf(5) {
+		TimezoneMetric()
+	}
+
+	if common.WarrantyVoided() {
+		common.Timeline("Running in 'warranty voided' mode.")
+		pretty.Warning("Note that 'rcc' is running in 'warranty voided' mode.")
+	}
+
+	anywork.Sync()
+}

@@ -1,0 +1,1 @@
+First static_evidence.py invocation numeric exit1 at prior source-log hash assertion, after successful all8binarySHA/staticheader/raw312 checks. Cause: old source receipts hash STDOUT payload; files wrap COMMAND/EXIT/STDOUT/STDERR. No target/scanner/build ran. Original script revision SHA retained separately before correcting parser.
