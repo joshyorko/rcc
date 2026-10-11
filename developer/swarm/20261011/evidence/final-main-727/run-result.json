@@ -1,0 +1,51 @@
+{
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "startedAt": "2026-10-11T02:31:05.947956+00:00",
+  "goSha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "commands": [
+    {
+      "name": "assets",
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3",
+        "-m",
+        "invoke",
+        "assets"
+      ],
+      "numericExit": 0,
+      "seconds": 22.875,
+      "logSha256": "853d9c089e26b2040b9e8ac658859f94f724d1045cbaf9bb0b277803a7514d47"
+    },
+    {
+      "name": "go-all",
+      "command": [
+        "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+        "test",
+        "-count=1",
+        "./..."
+      ],
+      "numericExit": 0,
+      "seconds": 17.094,
+      "logSha256": "2c55ffcaeb18c88109218211c9e15832de6879276394042b42891cc1723574e9"
+    },
+    {
+      "name": "script-all",
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "numericExit": 1,
+      "seconds": 0.416,
+      "logSha256": "8c8e3daecb4626784b328b3e2ab1da01121ad7e899eaa605bdab777956a51398"
+    }
+  ],
+  "scope": "Final-main assets, full CGO Go suite, all script tests and actual source-built binary version. Separate candidate324 full11 receipt remains candidate-bound.",
+  "numericExit": 1,
+  "finishedAt": "2026-10-11T02:31:46.368063+00:00"
+}

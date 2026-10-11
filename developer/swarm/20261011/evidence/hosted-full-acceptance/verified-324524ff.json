@@ -1,0 +1,189 @@
+{
+  "binaryArtifact": {
+    "actualZipSha256": "987a9dd25d896ebdb30d75fa7bdb7ace69d77f931e7cc688d909a30ae1aa8cff",
+    "digest": "sha256:987a9dd25d896ebdb30d75fa7bdb7ace69d77f931e7cc688d909a30ae1aa8cff",
+    "id": 11688577546,
+    "name": "RCC-Binaries",
+    "sizeBytes": 64478867
+  },
+  "coordination": {
+    "receipt": "tmp/coordination-blackbox-v1.json",
+    "scenarioCount": 6
+  },
+  "evidenceArtifact": {
+    "actualZipSha256": "d5080fa142c65458b5081dbb997a838c18a689eb9c1b1ab6bec79c567ba80b89",
+    "digest": "sha256:d5080fa142c65458b5081dbb997a838c18a689eb9c1b1ab6bec79c567ba80b89",
+    "id": 11688954670,
+    "name": "release-candidate-evidence",
+    "sizeBytes": 156395512
+  },
+  "inventory": {
+    "artifact": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/RCC-Binaries-324524ff.zip",
+    "binaries": [
+      {
+        "member": "rcc-linux64",
+        "name": "rcc-linux64",
+        "sha256": "e4fab9231b8412cab6f3bb3b533e35f826e03b61192cdc71a692a7f7b15c4618",
+        "sizeBytes": 22384802
+      },
+      {
+        "member": "rcc-macos64",
+        "name": "rcc-macos64",
+        "sha256": "ea768dcafe9bb7edd6dd8f46f48248678d7f0bf54e79f0e85931d822cdd40fa2",
+        "sizeBytes": 22224816
+      },
+      {
+        "member": "rcc-macosarm64",
+        "name": "rcc-macosarm64",
+        "sha256": "c8455968d066b0f203d51176cb3493231c32c55ab0bca6366678a6573324d9bf",
+        "sizeBytes": 20969794
+      },
+      {
+        "member": "rcc-windows64.exe",
+        "name": "rcc-windows64.exe",
+        "sha256": "8d02256a2c31a1ba43d3e5fbd5f0a30ede9b531b4eccaf4cd45c245e8756f330",
+        "sizeBytes": 20109824
+      },
+      {
+        "member": "rccremote-linux64",
+        "name": "rccremote-linux64",
+        "sha256": "83f8eb86a416cf9abd7e27b115700e1b2dc9180813b60c5305a218ba19ca11bb",
+        "sizeBytes": 9343138
+      },
+      {
+        "member": "rccremote-macos64",
+        "name": "rccremote-macos64",
+        "sha256": "4c6fd6828473fc87c1d8a4dfbd3ac87d02651f7fd607fb892a05aee678875105",
+        "sizeBytes": 9534832
+      },
+      {
+        "member": "rccremote-macosarm64",
+        "name": "rccremote-macosarm64",
+        "sha256": "6f9e809209ace6b39cfd3454e636b4ffb711cee51905628893ad6e779fcfd2b0",
+        "sizeBytes": 8886562
+      },
+      {
+        "member": "rccremote-windows64.exe",
+        "name": "rccremote-windows64.exe",
+        "sha256": "32511940e8ed2bc59ddfca3e306ed4b2001cca776c4e5dfa69813860ee8ce823",
+        "sizeBytes": 9664512
+      }
+    ],
+    "count": 8
+  },
+  "jat": {
+    "archiveDigest": "sha256:2ed41d4f36920ff0f8a1d04e2e72d3de6c15b492c1261fc8f56b48632ed368bd",
+    "binarySha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+    "coldProviderHit": true,
+    "mismatchZeroGets": true,
+    "objectCount": 10121,
+    "platform": "linux_amd64",
+    "providerDeadWarmReuse": true,
+    "receipt": "tmp/jat-class-consumer-receipt.json"
+  },
+  "largeStream": {
+    "bufferBytes": 65536,
+    "bytes": 2147483648,
+    "memoryBytes": 2771952,
+    "memoryMetric": "runtime.MemStats.Alloc heap bytes at test snapshot (not RSS)",
+    "receipt": "tmp/large-stream-receipt.json"
+  },
+  "native": {
+    "archiveDigest": "sha256:fe5f645242cb3c4048d5d6f2c2d6be277ab66a8234e2bc7ec1ce3c4a41501b1f",
+    "binarySha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+    "coldProviderHit": true,
+    "mismatchZeroGets": true,
+    "objectCount": 5045,
+    "platform": "linux_amd64",
+    "providerDeadWarmReuse": true,
+    "receipt": "tmp/native-runtime-receipt.json"
+  },
+  "numericGateExit": {
+    "code": 0,
+    "member": "tmp/release-candidate-exit.json"
+  },
+  "publicMetadataReceipt": "tmp/self-host-metadata-v1.json",
+  "rawLog": {
+    "bytes": 132359,
+    "member": "tmp/release-candidate.log",
+    "receiptEmissionPresent": true
+  },
+  "releaseCandidate": {
+    "all11GatesPassed": true,
+    "candidateBinaryMember": "build/rcc",
+    "candidateBinarySha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+    "receipt": "release-candidate-v1.json"
+  },
+  "robot": {
+    "fail": 0,
+    "outputXml": "tmp/output/output.xml",
+    "pass": 171,
+    "skip": 1,
+    "total": 172
+  },
+  "run": {
+    "jobConclusion": "success",
+    "jobId": 114364186629,
+    "jobName": "Release Candidate Verification",
+    "runConclusion": "success",
+    "runHead": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+    "runId": 38103534317
+  },
+  "schemaVersion": 1,
+  "selfHost": {
+    "actualUploadedBinaries": {
+      "generation B candidate": {
+        "member": "build/self-host/candidate/rcc",
+        "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+        "sizeBytes": 28793283
+      },
+      "generation B remote": {
+        "member": "build/self-host/candidate/rccremote",
+        "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+        "sizeBytes": 13345575
+      },
+      "promoted candidate": {
+        "member": "build/self-host/promoted/rcc",
+        "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+        "sizeBytes": 28793283
+      },
+      "released source": {
+        "member": "build/self-host/released/rcc",
+        "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+        "sizeBytes": 28793283
+      },
+      "released source remote": {
+        "member": "build/self-host/released/rccremote",
+        "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+        "sizeBytes": 13345575
+      }
+    },
+    "archiveRollback": "imported",
+    "artifactEntryCounts": {
+      "afterCandidateImportAndN1Rollback": 5057,
+      "afterOldTaskConsumption": 5057,
+      "beforeArchiveImport": 0
+    },
+    "candidateGenerationSha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+    "candidateVersion": "v18.19.6",
+    "evidenceManifestCount": 15,
+    "exactProvisionalRemovalLimit": "validated by releaseCandidate gate; post-acquire private snapshot is not emitted in this receipt",
+    "generationARuntimeHashes": {
+      "candidate.sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "generationA.candidateSha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "generationA.sourceSha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "generationB.sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda"
+    },
+    "legacyCatalogHashes": {
+      "afterCandidate": "62c1415edbba999962468251d4d9e0b320701b5366cf19db3c5904c2bca61a72",
+      "afterN1": "62c1415edbba999962468251d4d9e0b320701b5366cf19db3c5904c2bca61a72",
+      "before": "e370b91836f63c67fd6728d1fce8e5f512568f6af8f07d876fa7eac15cdbf143"
+    },
+    "legacyObjectCount": 5045,
+    "n1ArchiveMember": "tmp/rcc-n1-environment.rcca",
+    "n1ArchiveSha256": "9ed01cbfe2463f0f064ab10efaf61e8e48a9c96767e7b6aa0629e4e8295bcb85",
+    "receipt": "tmp/self-host-v1.json",
+    "releasedN1Version": "v18.19.5"
+  },
+  "sourceHead": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff"
+}

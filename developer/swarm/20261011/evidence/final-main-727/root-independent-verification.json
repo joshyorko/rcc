@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-11T02:33:44.790348+00:00",
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "fullCGOGoExit": 0,
+  "allScriptTests": 116,
+  "allScriptExit": 0,
+  "actualBinarySha256": "daf9143e7caf0fc2dcf59e999396c5168d4148c7d1bae4fa59ccbbe620018998",
+  "actualBinaryVersion": "v18.19.6",
+  "sourceClean": true,
+  "firstScriptAttemptExit": 1,
+  "firstFailure": "Existing test requires build/rcc; root initially invoked before build. First numeric1/raw log retained, source unchanged, actual build then116tests0.",
+  "logs": [
+    {
+      "name": "actual-build-metadata.log",
+      "sha256": "eb5b6c11846c729206be5a97b507d2be34f849363a57ef9ce056d789df2bda57"
+    },
+    {
+      "name": "actual-version.log",
+      "sha256": "c4b0fab926d0b9479dbacbbd2801213dab5631f25974cbaedcd3c9ac82c400aa"
+    },
+    {
+      "name": "assets.log",
+      "sha256": "853d9c089e26b2040b9e8ac658859f94f724d1045cbaf9bb0b277803a7514d47"
+    },
+    {
+      "name": "build-source.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "go-all.log",
+      "sha256": "2c55ffcaeb18c88109218211c9e15832de6879276394042b42891cc1723574e9"
+    },
+    {
+      "name": "script-all-after-build.log",
+      "sha256": "e6fc277bf426ffa6b2d8f6969545ed76ef445235af6b7f17fe266ef2467a8f10"
+    },
+    {
+      "name": "script-all.log",
+      "sha256": "8c8e3daecb4626784b328b3e2ab1da01121ad7e899eaa605bdab777956a51398"
+    }
+  ],
+  "candidateFull11Source": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "sameTreeDifferentCommit": true,
+  "tagNotPublished": true
+}

@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "verifier": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root_verify_archive_closure.py",
+  "verifierSha256": "7c281d23ec0cd3aa477e1123eed833ac7990f915f9ac6381c45d025aef729878",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root_verify_archive_closure.py",
+    "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/n1-release-candidate-324524ff.rcca",
+    "--producer-label",
+    "hosted324 run38103534317 actual-consumed-archive per separate numeric0 gate",
+    "--expected-artifact",
+    "sha256:fe5f645242cb3c4048d5d6f2c2d6be277ab66a8234e2bc7ec1ce3c4a41501b1f",
+    "--output",
+    "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-archive-closure-current324.json"
+  ],
+  "startedAt": "2026-10-11T02:28:43.871227+00:00",
+  "readOnlyArchive": true,
+  "extracted": false,
+  "executedArtifact": false,
+  "limits": {
+    "encodedArchiveBytes": 268435456,
+    "archiveMemberBytes": 268435456,
+    "archiveMembers": 32768,
+    "indexedLogicalBytes": 2147483648
+  },
+  "limitations": [
+    "No artifact import/acquire/execute, rollback, runtime ABI/CPU/filesystem or N-1 consumption proof",
+    "No signature/provenance/SBOM/revocation authenticity or policy/freshness verification",
+    "Optional platform-index and attestation semantics are not independently validated; their ZIP CRC/SHA are recorded",
+    "Legacy SipHash blueprint key is bound to catalog metadata but not independently recomputed",
+    "Semantic specification descriptor and duplicate-free JSON object verified; full Go RawMessage canonicalization not claimed",
+    "Does not replace Go ZIP parser/reader behavior or claim full RCC schema/security test coverage",
+    "Manifest/index canonical serialization is limited to known integer/string/bool v1 schema; future/unknown fields fail"
+  ],
+  "archive": {
+    "path": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/n1-release-candidate-324524ff.rcca",
+    "bytes": 72591172,
+    "sha256": "9ed01cbfe2463f0f064ab10efaf61e8e48a9c96767e7b6aa0629e4e8295bcb85",
+    "producer_label": "hosted324 run38103534317 actual-consumed-archive per separate numeric0 gate",
+    "consumption_claim": false,
+    "unchanged_after_read": true
+  },
+  "source": {
+    "commit": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+    "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "files": [
+      {
+        "path": "environmentartifact/manifest.go",
+        "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+        "lines": [
+          49,
+          197
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/manifest.go#L49-L197"
+      },
+      {
+        "path": "environmentartifact/compatibility.go",
+        "sha256": "9e939af280e3216d4285216c108df6d913a21636dd553f28639e7c0945e71096",
+        "lines": [
+          11,
+          50
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/compatibility.go#L11-L50"
+      },
+      {
+        "path": "environmentartifact/digest.go",
+        "sha256": "cdb0332c6b31a02a1386e58ddec923bc2cc96e62db5048f2d8a58ee244af9242",
+        "lines": [
+          20,
+          90
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/digest.go#L20-L90"
+      },
+      {
+        "path": "environmentartifact/canonical.go",
+        "sha256": "4c0434e48677dc56630b7691b9594bc27bbd3b13eb229177194d0bd784c782bf",
+        "lines": [
+          10,
+          47
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/canonical.go#L10-L47"
+      },
+      {
+        "path": "environmentartifact/index.go",
+        "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+        "lines": [
+          11,
+          95
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/index.go#L11-L95"
+      },
+      {
+        "path": "environmentartifact/archive.go",
+        "sha256": "542a1f8d5bfda65938464c78112fe56c23c81bde5424ece495efcd437e61f4d4",
+        "lines": [
+          15,
+          375
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/archive.go#L15-L375"
+      },
+      {
+        "path": "environmentartifact/catalog.go",
+        "sha256": "0a61f1ac7f7513c60e2cb13b7ae082bb025aa1adae21e3e6f8828043d247ab34",
+        "lines": [
+          22,
+          168
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/catalog.go#L22-L168"
+      },
+      {
+        "path": "environmentartifact/inventory.go",
+        "sha256": "b9cc03d125061b2c84ea6d230c5ee9033356bb1f2114e0db61406619e65bf820",
+        "lines": [
+          107,
+          140
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/inventory.go#L107-L140"
+      },
+      {
+        "path": "environmentlifecycle/acquire.go",
+        "sha256": "066e1e32381f9e80220eacc5dee4398a84be43e54d3686c379ca2a6611264582",
+        "lines": [
+          290,
+          307
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/acquire.go#L290-L307"
+      },
+      {
+        "path": "htfs/directory.go",
+        "sha256": "8b3cf1f1c233e4f6a447e588ade54e04ec49b33e2fd93abbbd2b15a6e6d1ba3d",
+        "lines": [
+          47,
+          83
+        ],
+        "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/htfs/directory.go#L47-L83"
+      }
+    ]
+  },
+  "manifest_identity": {
+    "verified": true,
+    "artifactDigest": "sha256:fe5f645242cb3c4048d5d6f2c2d6be277ab66a8234e2bc7ec1ce3c4a41501b1f",
+    "method": "independent Go-v1 struct-order JSON reconstruction excluding artifactDigest"
+  },
+  "closure": {
+    "verified": true,
+    "indexedObjects": 5045,
+    "uniqueStoredObjects": 5045,
+    "indexedStoredBytes": 69158801,
+    "indexedLogicalBytes": 166413556,
+    "archiveMembers": 5050,
+    "checkedMembers": 5050,
+    "archiveMemberBytes": 71147042,
+    "catalogLogicalSha256": "74b1d505e4971676a0a778dd403a2bcafbceb4102ee3500c0028d42ca3f707b2",
+    "catalog": {
+      "regularFiles": 5449,
+      "symlinks": 1156,
+      "directories": 333,
+      "rewriteSpans": 1251,
+      "uniqueReferencedObjects": 5045
+    },
+    "canonicalNamesAndGoManifestIndexJSON": true,
+    "writerStoredModeAndEpochExtraMetadata": true
+  },
+  "descriptor_checks": {
+    "manifestFileSha256": "f71e4b49b2c25243319b7eca75984a0249731c5d09fbde27ec00323513d13479",
+    "objectIndex": {
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "digest": "sha256:f42c44e45c5e96fbce7bafb1612057a49270e8fb14ecf987beeea97cd37b172b",
+      "size": 1359084
+    },
+    "catalog": {
+      "mediaType": "application/vnd.rcc.holotree.catalog.v12+gzip",
+      "digest": "sha256:e370b91836f63c67fd6728d1fce8e5f512568f6af8f07d876fa7eac15cdbf143",
+      "size": 625859,
+      "legacyName": "37368f00fc9af086v12.linux_amd64"
+    },
+    "specification": {
+      "mediaType": "application/vnd.rcc.environment.specification.v1+json",
+      "digest": "sha256:5bdf38ca4ce5cb9e16428427751915418c57014a8418523de599d1ece548b23e",
+      "size": 1074,
+      "sourceKind": "robot.yaml",
+      "platform": {
+        "os": "linux",
+        "arch": "amd64",
+        "rccPlatform": "linux_amd64"
+      },
+      "builder": {
+        "kind": "rcc-holotree-v12",
+        "rccVersion": "v18.19.6",
+        "compatibilityKey": "v12-gzip-sha256"
+      }
+    },
+    "legacyBlueprint": {
+      "mediaType": "application/vnd.rcc.environment.legacy-blueprint.v1+yaml",
+      "digest": "sha256:82e63ab9932de1f646e8cbb8b1ca6ebd2d0338030f0c81daad4e762ff629fee1",
+      "size": 51,
+      "legacyBlueprintKey": "37368f00fc9af086"
+    }
+  },
+  "extra_members_crc_sha256_only": {},
+  "status": "PASS",
+  "numericExit": 0,
+  "completedAt": "2026-10-11T02:28:45.143189+00:00"
+}

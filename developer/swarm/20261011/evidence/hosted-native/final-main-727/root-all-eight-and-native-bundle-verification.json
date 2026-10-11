@@ -1,0 +1,109 @@
+{
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "rootActualByteVerification": true,
+  "at": "2026-10-11T02:34:43.099715+00:00",
+  "entries": [
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rcc-linux64",
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rcc-macos64",
+      "sha256": "866527e2c4f21771d57b4707a1b3c2ad19bb0e7254e2f0ac27feb0c5c7530a5a",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rcc-macosarm64",
+      "sha256": "b216a96f99bb302ca370c08290ce61480b96af005867a925448182deeeef038b",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rcc-windows64.exe",
+      "sha256": "ade9c2cb34379b8a279056d093f02e110fc311e7f4f9e33cf3565bc8c7b66c39",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rccremote-linux64",
+      "sha256": "51e73325e6f6a032fdd733de6de4f8b20faa7a4ebfc38aa81b7cc0894303b094",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rccremote-macos64",
+      "sha256": "dec400e169164f05ce45002892e0f2892a8fa5d6abe0a034e99e8fb8461322c9",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rccremote-macosarm64",
+      "sha256": "41663642bf9cf737ee8da4678b8e244e213e8281f1aa1095bd8f83025b810e6d",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "file": "rccremote-windows64.exe",
+      "sha256": "cbafc85815627c021df993c50119eae048ba4031f802a767d80a77696243c33b",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "file": "rcc-linux64",
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "file": "rcc-macos64",
+      "sha256": "866527e2c4f21771d57b4707a1b3c2ad19bb0e7254e2f0ac27feb0c5c7530a5a",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "file": "rcc-macosarm64",
+      "sha256": "b216a96f99bb302ca370c08290ce61480b96af005867a925448182deeeef038b",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "file": "rcc-windows64.exe",
+      "sha256": "ade9c2cb34379b8a279056d093f02e110fc311e7f4f9e33cf3565bc8c7b66c39",
+      "goVersion": "1.26.9",
+      "vcsRevision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "vcsModified": false
+    }
+  ],
+  "bundleDigests": {
+    "RCC-Binaries": "sha256:0233fd07e55753a7c1cf3fa0214f15f28c9c63c32413b172c206824d9c4338ce",
+    "native-runtime-binaries": "sha256:88f406c654de1155e717ded1534fa058ca1c5375007109f2a06364d3a5036ac2"
+  },
+  "publishedReleaseAssets": false
+}

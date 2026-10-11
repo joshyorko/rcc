@@ -1,0 +1,242 @@
+{
+  "source": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "at": "2026-10-11T02:28:47.338092+00:00",
+  "zipActualSha256": "d5080fa142c65458b5081dbb997a838c18a689eb9c1b1ab6bec79c567ba80b89",
+  "numericReceipt": {
+    "sourceSha": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+    "gateExitCode": 0,
+    "teeExitCode": 0
+  },
+  "all11Passed": true,
+  "actualBinaries": [
+    {
+      "member": "build/rcc",
+      "sha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-rcc: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rcc\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/cobra\tv1.10.2\th1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-ldflags=-s\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0,
+      "actualVersion": "v18.19.6",
+      "versionExit": 0
+    },
+    {
+      "member": "build/self-host/released/rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rcc: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rcc\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/cobra\tv1.10.2\th1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0,
+      "actualVersion": "v18.19.6",
+      "versionExit": 0
+    },
+    {
+      "member": "build/self-host/promoted/rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-promoted-rcc: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rcc\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/cobra\tv1.10.2\th1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0,
+      "actualVersion": "v18.19.6",
+      "versionExit": 0
+    },
+    {
+      "member": "build/self-host/candidate/rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rcc: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rcc\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/cobra\tv1.10.2\th1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0,
+      "actualVersion": "v18.19.6",
+      "versionExit": 0
+    },
+    {
+      "member": "build/self-host/released/rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rccremote: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0
+    },
+    {
+      "member": "build/self-host/candidate/rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "goVersionM": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rccremote: go1.26.9\n\tpath\tgithub.com/joshyorko/rcc/cmd/rccremote\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20261011015647-324524fffa4b\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=324524fffa4bd0f76c618f9fbb6ede30e733b2ff\n\tbuild\tvcs.time=2026-10-11T01:56:47Z\n\tbuild\tvcs.modified=false\n",
+      "goMetadataExit": 0
+    }
+  ],
+  "robotCounts": {
+    "PASS": 171,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "vet": "Seven unchanged documented findings allowed; baseline not cleared.",
+  "rawLogSha256": "d5edd62f093444c9031ec35579ed70ff8541c3f6c2a14ed04bcb7cc8f639f916",
+  "allActualMemberHashes": [
+    {
+      "name": "build/rcc",
+      "bytes": 22417570,
+      "sha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf"
+    },
+    {
+      "name": "build/self-host/released/rccremote",
+      "bytes": 13345575,
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2"
+    },
+    {
+      "name": "build/self-host/released/rcc",
+      "bytes": 28793283,
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda"
+    },
+    {
+      "name": "build/self-host/promoted/rcc",
+      "bytes": 28793283,
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda"
+    },
+    {
+      "name": "build/self-host/candidate/rcc",
+      "bytes": 28793283,
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda"
+    },
+    {
+      "name": "build/self-host/candidate/rccremote",
+      "bytes": 13345575,
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2"
+    },
+    {
+      "name": "tmp/coordination-blackbox-v1.json",
+      "bytes": 410,
+      "sha256": "2713d3d72bfa14c1a1fc001e5d3d63484dc4dcd4df007c0f6ab1773f43c4259c"
+    },
+    {
+      "name": "tmp/environment-artifacts-robot/log.html",
+      "bytes": 272558,
+      "sha256": "14d90f7da431f51d83e163c59b5b41a4f9cfa157019217c7e6e42d8fabc6a4fa"
+    },
+    {
+      "name": "tmp/environment-artifacts-robot/output.xml",
+      "bytes": 128781,
+      "sha256": "0c2c89317083815f34cb66ed6088cd902c6862c992fbf773f6ef9311275b02cf"
+    },
+    {
+      "name": "tmp/environment-artifacts-robot/report.html",
+      "bytes": 232406,
+      "sha256": "d4951cb76891fed24ec1608459edf23ed88f65b0411163bf391a1947c16b30b3"
+    },
+    {
+      "name": "tmp/jat-class-consumer-receipt.json",
+      "bytes": 106531,
+      "sha256": "a972c89d2918ec5b4912cf4733a3ac0d18aa0508667bdc1d843c037fb7e1d5fc"
+    },
+    {
+      "name": "tmp/large-stream-receipt.json",
+      "bytes": 447,
+      "sha256": "6aff64b8de4dd00ab65ae1c78ad1030e7dec2940bfee3e5a3646c77c16dd7b47"
+    },
+    {
+      "name": "tmp/native-runtime-receipt.json",
+      "bytes": 106362,
+      "sha256": "5a0f52dbc123fee79a8649d669d25ce0342a7f7651a358d4e6eca039b94df5e0"
+    },
+    {
+      "name": "tmp/output/log.html",
+      "bytes": 895703,
+      "sha256": "a74f4a4af4490d4e363524320f8865e3fa4fa05217eafb689f404773767de43b"
+    },
+    {
+      "name": "tmp/output/native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "cebd700ae46b602f0e7f8cc3e006ef25f18e0a8c62977f1e40b2fb73c3be3c1d"
+    },
+    {
+      "name": "tmp/output/native-runtime-robot-phases.log",
+      "bytes": 3112,
+      "sha256": "8448dfcaacfe507cfdca517071b0d34b9c2bc776b838a5645ce1610f7bbc4a61"
+    },
+    {
+      "name": "tmp/output/output.xml",
+      "bytes": 2246662,
+      "sha256": "90c0bb0a5a808726d7f2162ab644d4082a975842c7d38c12a9615e5559374bfa"
+    },
+    {
+      "name": "tmp/output/report.html",
+      "bytes": 250856,
+      "sha256": "ca68792ded31d8622202679cf6f578557bdb4904e755364d7fd9f73d6fce0ea0"
+    },
+    {
+      "name": "tmp/rcc-n1-environment.rcca",
+      "bytes": 72591172,
+      "sha256": "9ed01cbfe2463f0f064ab10efaf61e8e48a9c96767e7b6aa0629e4e8295bcb85"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/candidate-archive-upgrade.json",
+      "bytes": 14168,
+      "sha256": "fe0f482b73970d5da1d3bc8d7d61fc0c07913aa2a79647608041b465db151254"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/candidate-v12.json",
+      "bytes": 3184,
+      "sha256": "21de25c9ba5033377b42f95d2cfaabf11dc9240f184a68ff7423020c0cfdc469"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/conda.yaml",
+      "bytes": 51,
+      "sha256": "82e63ab9932de1f646e8cbb8b1ca6ebd2d0338030f0c81daad4e762ff629fee1"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/n1-archive-sha256.txt",
+      "bytes": 65,
+      "sha256": "8b39582d62a4ae1be9854914ef7ec998c8c1baa7d944fba3af30dd8966b59040"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/n1-rollback-state.json",
+      "bytes": 7105291,
+      "sha256": "deda855b839572948a006a53809cbf6d730bdf6572e6433ad5eeb106254ea136"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/released-archive-rollback-attempt.json",
+      "bytes": 16250,
+      "sha256": "092fbd8890a7f0b00868fea57430bc63053cead69ec9752760a50b53e6da556a"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/released-v12-archive-closure.json",
+      "bytes": 3174,
+      "sha256": "aa7e9199611aa59998bad856224e3cd01593a96bbc1154c7534a46328b6c302b"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/released-v12-compatibility.json",
+      "bytes": 3175,
+      "sha256": "278a793d6eb2c6172e5116e9c46513d4f6a543f78cc573aa47a58bd67df402ed"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/released-v12-rollback-consumption.json",
+      "bytes": 4884,
+      "sha256": "1e1e3c8e0723fe5301f180227e52b3439aff70cfc7687d6249535a0135fbfbf5"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/released-v12.json",
+      "bytes": 3175,
+      "sha256": "bd5b3321409b51a145f48a94a231e2344a1e37f37b070394c2f0e67bc8164bac"
+    },
+    {
+      "name": "tmp/rcc-self-host-26525/robot.yaml",
+      "bytes": 118,
+      "sha256": "d2c23dbc5d6dea8af2e69a279a325c8148f0ca4653ee2bf25c61216617976a7f"
+    },
+    {
+      "name": "tmp/release-candidate-exit.json",
+      "bytes": 103,
+      "sha256": "2dccb321742793d68a9159f12ab1b6c609942476d34f5f4a98a2d12fb44da010"
+    },
+    {
+      "name": "tmp/release-candidate.log",
+      "bytes": 132359,
+      "sha256": "d5edd62f093444c9031ec35579ed70ff8541c3f6c2a14ed04bcb7cc8f639f916"
+    },
+    {
+      "name": "tmp/release-candidate-v1.json",
+      "bytes": 2208,
+      "sha256": "26067c793366f320ed8e6f81a3540717edcbd41b5ff46bf96134ecbed7d42f8d"
+    },
+    {
+      "name": "tmp/self-host-metadata-v1.json",
+      "bytes": 20,
+      "sha256": "80f3d90666804a9335821cdb40782458835ffedaef33088bd1dc5eb3ef85ce61"
+    },
+    {
+      "name": "tmp/self-host-v1.json",
+      "bytes": 8626,
+      "sha256": "0df18da68a6decc5c8ea0795d384afccfb5288fcbfc4b8ad21031f3a653b0167"
+    }
+  ],
+  "rollbackEvidenceLimit": "The uploaded pre-acquire artifactBefore is empty; omitted post-acquire/provisional snapshots prevent an independent exact removed-record count. Numeric0 internal validator and retained legacy/postrollback snapshots verified separately."
+}

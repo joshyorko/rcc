@@ -1,0 +1,95 @@
+{
+  "script_sha256": "7c281d23ec0cd3aa477e1123eed833ac7990f915f9ac6381c45d025aef729878",
+  "completed_at": "2026-10-11T02:22:26.846224+00:00",
+  "numeric_exit": 0,
+  "controls": [
+    {
+      "control": "duplicate JSON key",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: negative: duplicate JSON key: a"
+    },
+    {
+      "control": "non-JSON NaN constant",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: negative: non-JSON constant NaN"
+    },
+    {
+      "control": "Go HTML and U+2028/U+2029 string escaping",
+      "passed": true,
+      "expected_rejection": false
+    },
+    {
+      "control": "actual canonical Manifest positive",
+      "passed": true,
+      "expected_rejection": false
+    },
+    {
+      "control": "noncanonical Manifest field order",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: Manifest: not Go-struct canonical JSON"
+    },
+    {
+      "control": "unknown Manifest field",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: Manifest: missing/unknown fields"
+    },
+    {
+      "control": "actual gzip logical hash positive",
+      "passed": true,
+      "expected_rejection": false
+    },
+    {
+      "control": "gzip declared logical size too small",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: negative: gzip logical size/budget exceeded"
+    },
+    {
+      "control": "gzip CRC tampering",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "BadGzipFile: CRC check failed 0x5035be8b != 0x5035be8a"
+    },
+    {
+      "control": "unsafe ZIP name '../escape'",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: unsafe/noncanonical ZIP member: '../escape'"
+    },
+    {
+      "control": "unsafe ZIP name 'rcc-environment/../escape'",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: unsafe/noncanonical ZIP member: 'rcc-environment/../escape'"
+    },
+    {
+      "control": "unsafe ZIP name 'rcc-environment//object'",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: unsafe/noncanonical ZIP member: 'rcc-environment//object'"
+    },
+    {
+      "control": "unsafe ZIP name 'rcc-environment/objects\\\\escape'",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: unsafe/noncanonical ZIP member: 'rcc-environment/objects\\\\escape'"
+    },
+    {
+      "control": "unsafe ZIP name 'rcc-environment/name\\x00hidden'",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: ZIP raw name was truncated/noncanonical"
+    },
+    {
+      "control": "ZIP symlink member",
+      "passed": true,
+      "expected_rejection": true,
+      "error": "ValueError: nonregular ZIP member: rcc-environment/objects/link"
+    }
+  ],
+  "scope": "tiny in-memory helper controls; actual whole-archive positive smoke is separate; no temporary archive/files/extraction/Go build/runtime tests"
+}

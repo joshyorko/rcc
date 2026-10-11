@@ -1,0 +1,43 @@
+{
+  "at": "2026-10-11T02:30:34.054851+00:00",
+  "acceptedCandidateSource": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "actualMergedMain": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "actualMergedTree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "rootAcceptsMerge": true,
+  "recordCreatedAfterMerge": true,
+  "releasePublicationAccepted": false,
+  "sixHostedChecks": "completed success, refreshed via connector",
+  "reviews": 0,
+  "reviewThreads": 0,
+  "evidence": [
+    {
+      "path": "hosted-full-acceptance/root-independent-full-verification.json",
+      "sha256": "1ef9c96dca6e776e49dd73db55636c9de20139309a8e1bb4eeb9c73f6c7049a9"
+    },
+    {
+      "path": "hosted-full-acceptance/root-verified-full-checker-324.json",
+      "sha256": "a42aa2dd0c498e05e3e9899864b6a0a5de7f1a8de1b9f2f2cd4d4cb1ce4108d8"
+    },
+    {
+      "path": "hosted-full-acceptance/root-archive-closure-current324.json",
+      "sha256": "6079f47d36360cfc4a7f781712e4ac22ebeee1ed79fbcde871bb0cf2b4aa20f9"
+    },
+    {
+      "path": "hosted-native/pr233-current-324524f/root-native-progress-verification.json",
+      "sha256": "69776b371357d9365be3a906046c79843f02253b886ef2426fe2819625a8f48d"
+    },
+    {
+      "path": "hosted-native/pr233-current-324524f/root-all-eight-and-native-bundle-verification.json",
+      "sha256": "949572a7a25da3f1151a0557862eec833a31a3cc25eabdd84a6706f87190f2a3"
+    },
+    {
+      "path": "hosted-native/pr233-current-324524f/root-distribution-consumer-verification.json",
+      "sha256": "3b590d7a1d7917a82e8696b12521fdf36aa101c4b59d0482fbdd044701231232"
+    },
+    {
+      "path": "hosted-native/pr233-current-324524f/root-native-uv-log-verification.json",
+      "sha256": "3b119fc90535b663389a66e5ef67d5a03851eb9f735ae754772663f0e2814799"
+    }
+  ],
+  "receiptSealCorrection": "Initial seal writer referenced allFourVerified instead of actual allFourPlatformsVerified; the already completed independent four-platform verification remained valid. This corrected record reads the actual field and four entries."
+}

@@ -1,0 +1,11 @@
+{
+  "publishedSource": "012703c2474dd8585972edba0695bad4633d9230",
+  "localReviewedSource": "94c61125528c8adb0a13561d9b47179293e627a0",
+  "sameTree": "884db3fd157fb540e4d48261d164e36896c20a01",
+  "onlyFile": "CONTRIBUTING.md",
+  "fileSha256": "5c04bb026319e653553229cf54af1cd25be3a5954cb1649dfd063ece63d9105a",
+  "rootReadbackPassed": true,
+  "diffCheckPassed": true,
+  "fourExistingDirsMatched": true,
+  "notIntegrated": true
+}

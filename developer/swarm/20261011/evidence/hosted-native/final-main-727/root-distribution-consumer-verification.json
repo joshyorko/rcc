@@ -1,0 +1,167 @@
+{
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "at": "2026-10-11T02:35:09.941643+00:00",
+  "rootVerified": true,
+  "actualEightBinaries": [
+    {
+      "name": "rcc-linux64",
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rcc-macos64",
+      "sha256": "866527e2c4f21771d57b4707a1b3c2ad19bb0e7254e2f0ac27feb0c5c7530a5a",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rcc-macosarm64",
+      "sha256": "b216a96f99bb302ca370c08290ce61480b96af005867a925448182deeeef038b",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rcc-windows64.exe",
+      "sha256": "ade9c2cb34379b8a279056d093f02e110fc311e7f4f9e33cf3565bc8c7b66c39",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rccremote-linux64",
+      "sha256": "51e73325e6f6a032fdd733de6de4f8b20faa7a4ebfc38aa81b7cc0894303b094",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rccremote-macos64",
+      "sha256": "dec400e169164f05ce45002892e0f2892a8fa5d6abe0a034e99e8fb8461322c9",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rccremote-macosarm64",
+      "sha256": "41663642bf9cf737ee8da4678b8e244e213e8281f1aa1095bd8f83025b810e6d",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "rccremote-windows64.exe",
+      "sha256": "cbafc85815627c021df993c50119eae048ba4031f802a767d80a77696243c33b",
+      "compiler": "go1.26.9",
+      "revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    }
+  ],
+  "bundleZipDigest": "sha256:0233fd07e55753a7c1cf3fa0214f15f28c9c63c32413b172c206824d9c4338ce",
+  "distributionSimulation": {
+    "assetCount": 9,
+    "topologyExit": 0,
+    "retention": "synthetic v18.19.5 index fixture",
+    "generator": "actual current workflow Python heredoc",
+    "anchor": "v18196",
+    "published": false,
+    "signing": "No publisher attestation or notarization acceptance implied"
+  },
+  "consumerHelpAgainstExactMain07": [
+    {
+      "command": [
+        "--help"
+      ],
+      "stdoutSha256": "b15c113e6d1231e48cb92c4b602ec5e61cb6de77470ad1d2ef889f24a605f555",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "--help"
+      ],
+      "stdoutSha256": "814130d152552ef8e82f16bf515c2652192b7e066d1860888ebb040763b49aba",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "trust",
+        "verify",
+        "--help"
+      ],
+      "stdoutSha256": "3e78f8a55e6aaa250c7b866dda716fd82d27eeeee732d731669b30873d3a7eea",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "acquire",
+        "--help"
+      ],
+      "stdoutSha256": "63bd24ec90c3fba91a0ba6bca1889ff471cb4d055c6b35e046ac58df2986dad9",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "export",
+        "--help"
+      ],
+      "stdoutSha256": "4e86ee76350c075e227a0585bf1cf3ae03be4bfbec28a4bb79cdc16292d9328e",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "publish",
+        "--help"
+      ],
+      "stdoutSha256": "501efa0ee4e33ec465a83ae8d5fc5e7689032adbd577698ba456d3dd759035f0",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "env",
+        "exec",
+        "--help"
+      ],
+      "stdoutSha256": "a6f8a79676c21c5cf06aa52e48fdb035e18b6a9fba0ef6b04a1f3e568d9c0384",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "provider",
+        "add",
+        "--help"
+      ],
+      "stdoutSha256": "50fcdc7c334a2c34528a3c030be90c3d5e6f5c1788fa0be0db99627f483a6c2c",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "provider",
+        "test",
+        "--help"
+      ],
+      "stdoutSha256": "52b772755836261dccf3faa2b94200986bbc1a9cd59ae0ac8e3437bb9814b460",
+      "exit": 0,
+      "equal": true
+    },
+    {
+      "command": [
+        "cache",
+        "serve",
+        "--help"
+      ],
+      "stdoutSha256": "ea14177d9d6feaae23babc7bd5a6bd4b73c41b65000ab80c331adcac779113c3",
+      "exit": 0,
+      "equal": true
+    }
+  ],
+  "versionSemantics": "Patch changes version/User-Agent/builder metadata; new Manifest v1 identity may differ. No schema change. Candidate324 full N1 archive gate passed on the same tree; this final-main source has no tag/full11 run yet."
+}
