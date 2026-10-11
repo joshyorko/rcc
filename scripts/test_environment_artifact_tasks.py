@@ -41,7 +41,43 @@ class ArtifactTaskTests(unittest.TestCase):
         tasks._assert_clean_tracked_workspace(root)
 
     build_source = inspect.getsource(tasks.build.body)
-    self.assertLess(build_source.index("_assert_clean_tracked_workspace"), build_source.index('c.run(f"go build'))
+    self.assertLess(build_source.index("_assert_clean_source_if_required"), build_source.index('c.run(f"go build'))
+
+  def test_build_source_guard_is_release_ci_opt_in(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tracked.write_text("developer edit\n")
+
+      calls = []
+
+      class Context:
+        def run(self, command):
+          calls.append(command)
+          output = root / "build" / "linux64" / "rcc"
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_bytes(b"test executable placeholder")
+
+      old_cwd = Path.cwd()
+      try:
+        os.chdir(root)
+        with mock.patch.dict(os.environ, {}, clear=True):
+          tasks.build.body(Context(), platform="linux")
+        self.assertEqual(len(calls), 1, "ordinary developer build should allow tracked edits")
+
+        calls.clear()
+        with mock.patch.dict(os.environ, {"RCC_REQUIRE_CLEAN_SOURCE": "1"}, clear=True):
+          with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+            tasks.build.body(Context(), platform="linux")
+        self.assertEqual(calls, [], "release CI guard must fail before compilation")
+      finally:
+        os.chdir(old_cwd)
 
   def test_self_host_uses_the_archive_legacy_blueprint(self):
     with tempfile.TemporaryDirectory() as directory:
@@ -707,6 +743,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("  release-candidate:", workflow)
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
+    build_job = workflow.split("  build:\n", 1)[1].split("\n  release-candidate:", 1)[0]
+    self.assertIn('RCC_REQUIRE_CLEAN_SOURCE: "1"', build_job)
 
   def test_release_candidate_provisions_linux_sandbox_before_contained_gate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()

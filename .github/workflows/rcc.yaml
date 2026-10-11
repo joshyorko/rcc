@@ -40,6 +40,7 @@ jobs:
     env:
       RCC_CANDIDATE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
       RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
+      RCC_REQUIRE_CLEAN_SOURCE: "1"
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
