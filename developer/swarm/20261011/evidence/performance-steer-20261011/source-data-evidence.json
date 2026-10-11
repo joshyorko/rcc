@@ -1,0 +1,212 @@
+{
+  "rcc_sources": [
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "developer/benchmarks/lifecycle.py",
+      "sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/developer/benchmarks/lifecycle.py"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "developer/benchmarks/README.md",
+      "sha256": "87b76e21432491a3517876b90ce81616a4ab73e3e7e0fbfc74fa9672a0527f80",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/developer/benchmarks/README.md"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "environmentartifact/manifest.go",
+      "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/manifest.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "environmentartifact/index.go",
+      "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/index.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "environmentartifact/compatibility.go",
+      "sha256": "9e939af280e3216d4285216c108df6d913a21636dd553f28639e7c0945e71096",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/compatibility.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "common/version.go",
+      "sha256": "38bd449305ec225fea5bbf5df9ce4f6c996fc38e84a9e61f7ba77e8dbce7414e",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/common/version.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "path": "htfs/functions.go",
+      "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+      "equal_accepted_324_blob": true,
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/htfs/functions.go"
+    }
+  ],
+  "existing_data_files": [
+    {
+      "path": "performance/lifecycle-e9a597c-5x-mixed.json",
+      "bytes": 1228054,
+      "sha256": "caa3bfc291665d637ae15ed9281354d1fed9e8e2b659f2f465a34ee6a129dfaa"
+    },
+    {
+      "path": "performance/profile-680f/receipt.json",
+      "bytes": 12993,
+      "sha256": "200c45a196c9afbff1b2c5c09e3e4bb23838464b342b5957954b31ec323a42e2"
+    },
+    {
+      "path": "performance/profile-publication-root-verification.json",
+      "bytes": 1028,
+      "sha256": "bb78915a48ed5e8a741711a2fc6b540a723c580b5220f194e067b86a0eef245d"
+    },
+    {
+      "path": "performance/profile-680f/publish.pprof",
+      "bytes": 48484,
+      "sha256": "5710ec08b11529a63afa162b7d23ac9402079eb97122dd54d9e8eaf458f2f513"
+    },
+    {
+      "path": "consumer-contract-125-20261011/root-independent-verification.json",
+      "bytes": 679,
+      "sha256": "551de6afe356994fd684edcdbf484b423da947f551a23138889a48017fe60be1"
+    },
+    {
+      "path": "consumer-contract-125-20261011/root-version-probe-results.json",
+      "bytes": 2551,
+      "sha256": "2c8593c2ca4b23867c114b1ab0bb4ce5b58e2f8e508df2223135716d02b38a2e"
+    },
+    {
+      "path": "consumer-contract-125-20261011/consumer-fixture.json",
+      "bytes": 1027,
+      "sha256": "c4fb3b8187fdfc8176f10babdf1206b7f610eeb374c231a4061d4c74a8d0fbfc"
+    },
+    {
+      "path": "consumer-contract-125-20261011/provider-contract-probe/root-independent-verification.json",
+      "bytes": 1087,
+      "sha256": "8d44067601f698c6c0044cf98a014620a37e5366d32378a4dff6f4d4dd1ceb51"
+    },
+    {
+      "path": "architecture-118-abi-20261011/source-bound.json",
+      "bytes": 32801,
+      "sha256": "bfe23b55e0e3c748d4e09744ee375a875d507ff6f914a023c8478c2282493551"
+    },
+    {
+      "path": "hosted-full-acceptance/root-merge-acceptance-233.json",
+      "bytes": 2029,
+      "sha256": "9ad48a5726076b07cd07d8a9c73c8c4bb8d7ce561ac3ff34ebbc7b92d0a0a8ca"
+    },
+    {
+      "path": "hosted-full-acceptance/root-independent-full-verification.json",
+      "bytes": 22430,
+      "sha256": "1ef9c96dca6e776e49dd73db55636c9de20139309a8e1bb4eeb9c73f6c7049a9"
+    },
+    {
+      "path": "final-main-727/root-final-main-acceptance.json",
+      "bytes": 2817,
+      "sha256": "fa9ab559894b4f819bd7ef68c140f945cb61a874794a29e4f625e6e8599f0461",
+      "scope": "root independently verified exact main727 hosted checks/native bytes; no release publication"
+    }
+  ],
+  "baseline": {
+    "candidate": {
+      "binary": "/workspace/work/rcc-swarm/performance/build/rcc",
+      "binary_sha256": "fd50655095e6e74fc8f95bea9b16ae5bf83d4d53f4fed75f66a00136396348ce",
+      "consumer_sha": "external-unavailable",
+      "harness_sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2",
+      "rcc_sha": "e9a597c8a901e4c0e303acb606223ec2f0745b1b"
+    },
+    "fixture": [
+      {
+        "files": {
+          "conda.yaml": "channels:\n  - conda-forge\ndependencies:\n  - python=3.11.17\n  - pyyaml=6.0.2\n",
+          "robot.yaml": "tasks:\n  proof:\n    command: [python, task.py]\ncondaConfigFile: conda.yaml\n",
+          "task.py": "import yaml\nprint(yaml.__version__)\n"
+        },
+        "id": "python-package-v1",
+        "kind": "python-package",
+        "robot": "robot.yaml",
+        "source_digest": "3485594108f512838aa8a5a2005fad7e1bf27e6c904b3c9e745e1c30f413f78b"
+      }
+    ],
+    "phase_summary": {
+      "publish": {
+        "n": 1,
+        "wall_median_seconds": 34.550615064,
+        "cpu_median_seconds": 33.620201,
+        "rss_median_mib": 1397.3828125
+      },
+      "acquire": {
+        "n": 5,
+        "wall_median_seconds": 24.208857602,
+        "cpu_median_seconds": 10.758952,
+        "rss_median_mib": 89.16015625
+      },
+      "verify": {
+        "n": 5,
+        "wall_median_seconds": 4.581728344,
+        "cpu_median_seconds": 5.398938,
+        "rss_median_mib": 69.18359375
+      },
+      "startup": {
+        "n": 5,
+        "wall_median_seconds": 0.886798156,
+        "cpu_median_seconds": 0.926591,
+        "rss_median_mib": 65.08984375
+      },
+      "warm": {
+        "n": 5,
+        "wall_median_seconds": 0.699710698,
+        "cpu_median_seconds": 0.773876,
+        "rss_median_mib": 45.79296875
+      },
+      "provider-dead": {
+        "n": 5,
+        "wall_median_seconds": 0.716936086,
+        "cpu_median_seconds": 0.801831,
+        "rss_median_mib": 45.61328125
+      }
+    },
+    "scope": "five Linux consumers, one publication, concurrent/shared host, no real Actions consumer or controlled alternative"
+  },
+  "profile": {
+    "source_sha": "680f96638f0450dc79110dabd296e948713eb613",
+    "binary_sha256": "039287e0863b198b352ae83621297ceca417af62516b9d0b5349b6397dd60428",
+    "wall_seconds": 32.07681873999991,
+    "go_toolchain": "go version go1.26.9 linux/amd64",
+    "sampled_go_cpu_seconds": 14.44,
+    "profile_sha256": "5710ec08b11529a63afa162b7d23ac9402079eb97122dd54d9e8eaf458f2f513",
+    "comparison_valid": false,
+    "scope": "one separate publication, not paired comparative; whole-child OS CPU differs from sampled Go CPU"
+  },
+  "performed": "read-only source/data hash reconciliation only; no benchmarks/runtime executed by this lane",
+  "current_main_binary": {
+    "path": "work/rcc-swarm/evidence/hosted-native/final-main-727/runtime-bininventory/rcc-linux64",
+    "bytes": 22384802,
+    "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "source_revision": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "version": "v18.19.6",
+    "toolchain": "Go1.26.9",
+    "qualified_by": "hosted-native/final-main-727/agent-final-main-acceptance-summary.json and root provenance receipts",
+    "performed_here": "actual bytes independently SHA256 rechecked only; no invocation"
+  }
+}

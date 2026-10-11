@@ -1,0 +1,100 @@
+{
+  "at": "2026-10-11T02:57:30.355172+00:00",
+  "numericExit": 0,
+  "claims": [
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "start": 24,
+      "end": 25,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "start": 578,
+      "end": 604,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "start": 276,
+      "end": 330,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "start": 1800,
+      "end": 1843,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "start": 1868,
+      "end": 1909,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "start": 981,
+      "end": 1077,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "start": 427,
+      "end": 453,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_action_package_handler.py",
+      "start": 225,
+      "end": 255,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/lifecycle.py",
+      "start": 60,
+      "end": 98,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/lifecycle.py",
+      "start": 181,
+      "end": 238,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/manifest.go",
+      "start": 49,
+      "end": 89,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/manifest.go",
+      "start": 132,
+      "end": 174,
+      "hashAndExactExcerptVerified": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/index.go",
+      "start": 63,
+      "end": 94,
+      "hashAndExactExcerptVerified": true
+    }
+  ],
+  "frozenFileDigestsVerified": 9,
+  "runtimeExecutedByResearch": false,
+  "optimizationSelected": false
+}

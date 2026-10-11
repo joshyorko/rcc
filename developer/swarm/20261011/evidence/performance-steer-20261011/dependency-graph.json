@@ -1,0 +1,142 @@
+{
+  "assembled_at": "2026-10-11T02:53:02.299512+00:00",
+  "root_admission": "root-admission.json",
+  "lanes": [
+    {
+      "id": "release-main727",
+      "status": "completed",
+      "owner": "existing native_acceptance / root",
+      "scope": "final-main hosted release qualification; no performance work interference",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "dependency": [],
+      "result": "Actual source727: four required push workflows SUCCESS; four native actual ZIP/API/binary/Robot/JAT checks verified;28UV top-level +16nested passes. Full eleven-gate remains accepted source324 same tree; main non-tag full gate skipped by policy. No v18.19.6 tag/release; PatchRaptor workflow_run success conditional dispatch/bump skipped.",
+      "root_receipt": {
+        "path": "final-main-727/root-final-main-acceptance.json",
+        "sha256": "fa9ab559894b4f819bd7ef68c140f945cb61a874794a29e4f625e6e8599f0461"
+      }
+    },
+    {
+      "id": "performance-graph",
+      "status": "admitted",
+      "owner": "consumer_contract_125 (Sol Extra High)",
+      "scope": "read-only source/data/issues and #125 update proposal only",
+      "dependency": [],
+      "result": "this report; no runtime/benchmark performed"
+    },
+    {
+      "id": "actions-stable3-control",
+      "status": "admitted",
+      "owner": "pr_readiness (Luna High) under explicit root RCC admission",
+      "scope": "immutable community a709 unchanged adapter, stable3 and existing real fixture; isolated checkout/dependencies \u2264500MiB initial newdisk",
+      "source": "a70993fafc99a9f94041485542d5a720797ca394",
+      "dependency": [
+        "complete isolated dependency install",
+        "exact supported RCC stable3",
+        "private home/direct loopback provider",
+        "resource observation/root active-gate budget"
+      ],
+      "result": "Root reports isolated dependency install64main packages; .venv84MiB/checkout24MiB/~249MiB incltemporary tools/cache, within initial500MiB. Actual unchanged-community stable3 real artifact test proceeding; raw runtime receipt pending, no pass inferred."
+    },
+    {
+      "id": "actions-current-metadata-matrix",
+      "status": "waiting",
+      "owner": "existing Actions #101/#134 owner/controller",
+      "scope": "current frozen-v6 supervisor/controller pre-run admission and actual provider/artifact matrix",
+      "dependency": [
+        "frozen-v6 supervisor/controller implementation",
+        "control tests",
+        "supported pre-run admission"
+      ],
+      "result": "#134 latest public actual metadata NOT RUN / HOLD; source GO_COMPONENT only"
+    },
+    {
+      "id": "actions-candidate6-control",
+      "status": "blocked",
+      "owner": "existing Actions #133/#134/#143 owner; RCC root supplies immutable contract",
+      "scope": "real current candidate v18.19.6 consumer, without version bypass",
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "dependency": [
+        "owner-supported explicit version/feature policy checkpoint",
+        "same exact-subject real controls",
+        "Actions current metadata boundary if using held current matrix"
+      ],
+      "result": "current integration still exact3; stable5/candidate6 rejection existing intentional opt-in pin, not release regression"
+    },
+    {
+      "id": "controlled-rcc-main-baseline",
+      "status": "waiting",
+      "owner": "root/native budget and existing #125 benchmark owner",
+      "scope": "same-tree main727 native engine profile, same fixture/cache/trust states, counterbalanced reps",
+      "dependency": [
+        "quiet/reserved measurement budget",
+        "source-bound actual binary qualification",
+        "frozen fixture/resolved inputs/provider state"
+      ],
+      "result": "previous e9a five-run and680f one-run observations noncomparative; no new run"
+    },
+    {
+      "id": "six-direction-experiments",
+      "status": "blocked",
+      "owner": "existing #125 root + isolated admitted implementation owner later",
+      "scope": "six hypotheses independently and only when bottleneck evidence supports them",
+      "dependency": [
+        "actual Actions workloads",
+        "controlled phase profiling",
+        "format/identity compatibility plan",
+        "platform fixture/capability budget"
+      ],
+      "result": "no optimization selected; no implementation fanout admitted"
+    }
+  ],
+  "issue_edges": [
+    {
+      "from": "rcc#125",
+      "to": "rcc#118",
+      "kind": "preserve engine identity/compatibility/leases/trust; broader fixture acceptance stays open"
+    },
+    {
+      "from": "rcc#125",
+      "to": "rcc#229",
+      "kind": "merged harness and historical raw baseline, not completed recommendation"
+    },
+    {
+      "from": "rcc#125",
+      "to": "rcc#64",
+      "kind": "unmerged historical claims retired as current performance evidence"
+    },
+    {
+      "from": "actions#134",
+      "to": "actions#133",
+      "kind": "bounded first-local consumer vs complete RCC adapter"
+    },
+    {
+      "from": "actions#133",
+      "to": "actions#143",
+      "kind": "typed generic adapter contract"
+    },
+    {
+      "from": "actions#139",
+      "to": "actions#143",
+      "kind": "exact-subject real conformance; no fallback"
+    },
+    {
+      "from": "actions#221",
+      "to": "actions#101",
+      "kind": "current integration owner/closure/admission gate"
+    },
+    {
+      "from": "actions#134",
+      "to": "rcc#120",
+      "kind": "supported stable local contract sufficient first-vertical prerequisite, not every broader RCC followup"
+    },
+    {
+      "from": "actions#196",
+      "to": "rcc#208",
+      "kind": "optional collapsed provider convenience; serving accepted, not required for ordinary local control"
+    }
+  ],
+  "hold_boundary": "Explicit root admission supports unchanged historical stable3 local fixture as independent read-only verification; it does not admit current held frozen-v6 supervisor/provider matrix, change Actions pins, or assert #134 complete. No public issue has a GitHub assignee; owner is canonical Actions #101/#134 controller, not an invented writer.",
+  "changes_authorized": false,
+  "new_infrastructure": false,
+  "optimization_selected": false
+}

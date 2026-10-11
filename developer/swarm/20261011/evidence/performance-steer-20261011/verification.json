@@ -1,0 +1,62 @@
+{
+  "verified_at": "2026-10-11T02:56:55.076991+00:00",
+  "numeric_exit": 0,
+  "checks": [
+    "all structured files decode JSON",
+    "all13source claims actual byte hashes/exact line excerpts match",
+    "complete125livebody byte prefix preserved",
+    "independently rehashed actualmain727 binary",
+    "final immutable ref refresh"
+  ],
+  "performed": "read-only source/hash/reconciliation, no runtime/benchmark",
+  "runtime_lane": "sibling pr_readiness independent pending receipt",
+  "files": [
+    {
+      "path": "reconciliation.md",
+      "bytes": 27672,
+      "sha256": "6e5374820f1bcdb0279d8f581102f46691802a9c8cfaba0a4d9d915bdb5f4dc6"
+    },
+    {
+      "path": "dependency-graph.json",
+      "bytes": 6207,
+      "sha256": "05f58751c6519757a3328a2bc50fc21ede564dbede55b8c05e8414d14feb6f5d"
+    },
+    {
+      "path": "source-claims.json",
+      "bytes": 35140,
+      "sha256": "151cf13ee3b1a3115f2a1301e96b79e646c01e8a395f774e09a4fafd77509624"
+    },
+    {
+      "path": "issue-evidence.json",
+      "bytes": 66936,
+      "sha256": "d87ed7b93452415002846870aabfe027872f382dc3d4bc8c5b218fe62e42341a"
+    },
+    {
+      "path": "source-data-evidence.json",
+      "bytes": 8974,
+      "sha256": "54bd95ea9bda0548d9f36769a072ee51408b8e994abf8516e4ee9a2e36ac02af"
+    },
+    {
+      "path": "125-body-update-proposal.md",
+      "bytes": 2829,
+      "sha256": "2fb6a5a85bb273a680364846c0d30a19512e24cbc2e9a5470311d5e2a89c512b"
+    },
+    {
+      "path": "125-proposed-body.md",
+      "bytes": 23692,
+      "sha256": "b9fc95457b1524e844725c4289fa439578985f9665b7567c62536db84805de8e"
+    },
+    {
+      "path": "125-body-preservation.json",
+      "bytes": 512,
+      "sha256": "82ced70a8c565ae844517b73341eca208941efc26a18e543c5e39dea47df51e5"
+    },
+    {
+      "path": "final-ref-refresh.json",
+      "bytes": 888,
+      "sha256": "ccf848e99550e4ff5753a420fc531ea9b8d75ff2d86cf369965f920d0c2a87ae"
+    }
+  ],
+  "frozen": true,
+  "changes_after_freeze": "none planned; follow-up runtime receipts owned separately by pr_readiness/root"
+}

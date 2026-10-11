@@ -1,0 +1,13 @@
+{
+  "issue": 125,
+  "at": "2026-10-11T02:57:39.227352+00:00",
+  "liveUpdatedAt": "2026-10-11T02:56:42Z",
+  "actualReadbackEqual": true,
+  "priorFullBodyPreservedAsPrefix": true,
+  "bodySha256": "70fabdcfbbf93554678eb8b23775054c1057c984ac849098779af2977976c21f",
+  "priorBodySha256": "7401b00798479621b7d1f0714bf6d81b8bea5edb012afe895beaa1d9ed5a0537",
+  "changes": "Append research relationships/source controls; clarify source-defined assertions do not imply runtime pass",
+  "sixDirectionsPreserved": true,
+  "noNewIssue": true,
+  "actionsWrites": false
+}

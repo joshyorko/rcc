@@ -1,0 +1,171 @@
+{
+  "at": "2026-10-11T02:59:08.913314+00:00",
+  "snapshotAt": "2026-10-11T02:46:11.796554+00:00",
+  "issues": [
+    {
+      "repository": "joshyorko/rcc",
+      "number": 125,
+      "state": "open",
+      "updated_at": "2026-10-11T02:46:28Z",
+      "url": "https://github.com/joshyorko/rcc/issues/125",
+      "assignees": [],
+      "body_sha256": "7401b00798479621b7d1f0714bf6d81b8bea5edb012afe895beaa1d9ed5a0537",
+      "body_snapshot": "rcc-125-issue-current.json",
+      "snapshot_sha256": "d25f41a3ea90edd0b9ca123b041d0b08ba99122fc419df68cce6ad0e792e20ad",
+      "comment_count_captured": 4,
+      "reported_comment_count": 4,
+      "relevantComments": [
+        {
+          "id": 5387763459,
+          "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-5387763459",
+          "created_at": "2026-08-23T18:35:00Z",
+          "updated_at": "2026-08-23T18:35:00Z",
+          "body_sha256": "a931449edd1f7884b5800d2a8a8e456a8fe3d4e78c7dcf43b7e84aa6b4afddd7"
+        },
+        {
+          "id": 5392617107,
+          "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-5392617107",
+          "created_at": "2026-08-24T08:28:08Z",
+          "updated_at": "2026-08-24T08:28:08Z",
+          "body_sha256": "fabc469f7b90068e4a565752416410d2d70068d21160474c8d59a4e52816b6ff"
+        }
+      ]
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "number": 118,
+      "state": "open",
+      "updated_at": "2026-10-11T02:33:43Z",
+      "url": "https://github.com/joshyorko/rcc/issues/118",
+      "assignees": [],
+      "body_sha256": "7a4d7ad559a6e286ce389a479ba4908be70ea79480cb425e0f8be7b91055ce25",
+      "body_snapshot": "rcc-118-issue.json",
+      "snapshot_sha256": "6fe3d17b1c762b561831e2f39a9d2a81e32b55e1e371c6a391db29de86a81014",
+      "comment_count_captured": 3,
+      "reported_comment_count": 3,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "number": 229,
+      "state": "closed",
+      "updated_at": "2026-10-10T23:23:00Z",
+      "url": "https://github.com/joshyorko/rcc/pull/229",
+      "assignees": [],
+      "body_sha256": "e78dd57ef3084d1daa3a284f16a715d29b06251a0f9a74dd3adde12ef0c0a101",
+      "body_snapshot": "rcc-229-issue.json",
+      "snapshot_sha256": "4312ebdf82e39f255c1ec18ebc8df2c0aebedcc3eb5b4890bfa2efa02a9f9163",
+      "comment_count_captured": 0,
+      "reported_comment_count": 0,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "number": 64,
+      "state": "closed",
+      "updated_at": "2026-07-19T13:53:10Z",
+      "url": "https://github.com/joshyorko/rcc/pull/64",
+      "assignees": [],
+      "body_sha256": "8a28331e03f17f9ce764230bfa75f3218f7983cb4e3150208be06c86a0b6efd2",
+      "body_snapshot": "rcc-64-issue.json",
+      "snapshot_sha256": "fe854f659b51fa4dfbc4cb0e168eac8925356fb88c62415d955d66a67b6a42ba",
+      "comment_count_captured": 1,
+      "reported_comment_count": 1,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 101,
+      "state": "open",
+      "updated_at": "2026-10-11T01:48:37Z",
+      "url": "https://github.com/joshyorko/actions/issues/101",
+      "assignees": [],
+      "body_sha256": "27584392d03674bd0a640d050550dbc091b62487f96709fff1b3bd5c1c9f1a72",
+      "body_snapshot": "actions-101-issue.json",
+      "snapshot_sha256": "35a1916c21cf7f1cc0d9b0ccc316a360a7c3eaace3fbf52d65b1540a35580840",
+      "comment_count_captured": 169,
+      "reported_comment_count": 169,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 133,
+      "state": "open",
+      "updated_at": "2026-09-07T14:44:24Z",
+      "url": "https://github.com/joshyorko/actions/issues/133",
+      "assignees": [],
+      "body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+      "body_snapshot": "actions-133-issue.json",
+      "snapshot_sha256": "af92d333ff73135c0a23bcd7dd01dd7773ca51092205339bbbb8d50e9f0dc03f",
+      "comment_count_captured": 3,
+      "reported_comment_count": 3,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 134,
+      "state": "open",
+      "updated_at": "2026-10-11T01:44:42Z",
+      "url": "https://github.com/joshyorko/actions/issues/134",
+      "assignees": [],
+      "body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d",
+      "body_snapshot": "actions-134-issue.json",
+      "snapshot_sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398",
+      "comment_count_captured": 5,
+      "reported_comment_count": 5,
+      "relevantComments": [
+        {
+          "id": 6104310927,
+          "url": "https://github.com/joshyorko/actions/issues/134#issuecomment-6104310927",
+          "created_at": "2026-10-11T01:44:42Z",
+          "updated_at": "2026-10-11T01:44:42Z",
+          "body_sha256": "73f3e80c92497c44e582c24c8cf3ddb5fd20d0ba54729d3d52d41e51f9301d31"
+        }
+      ]
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 139,
+      "state": "open",
+      "updated_at": "2026-09-07T14:43:49Z",
+      "url": "https://github.com/joshyorko/actions/issues/139",
+      "assignees": [],
+      "body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21",
+      "body_snapshot": "actions-139-issue.json",
+      "snapshot_sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c",
+      "comment_count_captured": 0,
+      "reported_comment_count": 0,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 143,
+      "state": "open",
+      "updated_at": "2026-09-07T14:43:25Z",
+      "url": "https://github.com/joshyorko/actions/issues/143",
+      "assignees": [],
+      "body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959",
+      "body_snapshot": "actions-143-issue.json",
+      "snapshot_sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8",
+      "comment_count_captured": 0,
+      "reported_comment_count": 0,
+      "relevantComments": []
+    },
+    {
+      "repository": "joshyorko/actions",
+      "number": 221,
+      "state": "open",
+      "updated_at": "2026-10-11T02:39:20Z",
+      "url": "https://github.com/joshyorko/actions/pull/221",
+      "assignees": [],
+      "body_sha256": "f8d2f985ab37767599b6ee5e2babc7859aa8694400c5c24181005b7597c299a1",
+      "body_snapshot": "actions-221-issue.json",
+      "snapshot_sha256": "d544861f681e6da6b121a51677860dbb60aca7a1db74cfc7c00adce8e5768915",
+      "comment_count_captured": 1,
+      "reported_comment_count": 1,
+      "relevantComments": []
+    }
+  ],
+  "fullLocalEvidenceSha256": "d87ed7b93452415002846870aabfe027872f382dc3d4bc8c5b218fe62e42341a",
+  "scope": "Curated public issue/body/comment identities; raw bodies and all169Actions101comments retained locally. This is source/status evidence, not Runtime acceptance."
+}

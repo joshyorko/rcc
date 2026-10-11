@@ -1,0 +1,36 @@
+{
+  "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+  "tree": "80e5c77513f6abf5d07005ee3aee47d49efd927f",
+  "files": [
+    {
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "65abc1efe7879ffc325f84841b9630f05b8a5b11cdc3a32728daf7df7091edcb",
+      "blob": "2184e9edb95683822c323d0e27d73d6d207d3492",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe"
+    },
+    {
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "sha256": "5d4c2630cdea3e325d989bd241888364892dfca4045d79719386b2f6c74371d0",
+      "blob": "6e81aeda234154fb1b02303c67836e69997d5aba",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-25-rcc-runtime-adapter-first-vertical-design.md",
+      "sha256": "27d90b8fef7b4a192e91f98972483fbd318816e7609e56811c0deb2423020405",
+      "blob": "04959cce060972b733663f5bc0922f4727947aac",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-25-rcc-runtime-adapter-first-vertical.md",
+      "sha256": "ab728b18999c8a4950312573488db4f9817131d11b3590322d52d1b9b89d7deb",
+      "blob": "3b786b016320cbe869bee5d2416c80db1ff497ca",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe"
+    },
+    {
+      "path": "action_server/pyproject.toml",
+      "sha256": "be4011d3915e8838249546c70ae30420dadfb0d08c19b59970d8980332c7573f",
+      "blob": "021ab546f04306dcff615e3e31a8395110e78703",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe"
+    }
+  ]
+}

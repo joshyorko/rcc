@@ -1,0 +1,85 @@
+{
+  "at": "2026-10-11T02:54:27.976562+00:00",
+  "sourceFilesVerified": [
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "65abc1efe7879ffc325f84841b9630f05b8a5b11cdc3a32728daf7df7091edcb",
+      "blob": "2184e9edb95683822c323d0e27d73d6d207d3492"
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "sha256": "5d4c2630cdea3e325d989bd241888364892dfca4045d79719386b2f6c74371d0",
+      "blob": "6e81aeda234154fb1b02303c67836e69997d5aba"
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "docs/superpowers/specs/2026-08-25-rcc-runtime-adapter-first-vertical-design.md",
+      "sha256": "27d90b8fef7b4a192e91f98972483fbd318816e7609e56811c0deb2423020405",
+      "blob": "04959cce060972b733663f5bc0922f4727947aac"
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "docs/superpowers/plans/2026-08-25-rcc-runtime-adapter-first-vertical.md",
+      "sha256": "ab728b18999c8a4950312573488db4f9817131d11b3590322d52d1b9b89d7deb",
+      "blob": "3b786b016320cbe869bee5d2416c80db1ff497ca"
+    },
+    {
+      "source": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/pyproject.toml",
+      "sha256": "be4011d3915e8838249546c70ae30420dadfb0d08c19b59970d8980332c7573f",
+      "blob": "021ab546f04306dcff615e3e31a8395110e78703"
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/lifecycle.py",
+      "sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/README.md",
+      "sha256": "87b76e21432491a3517876b90ce81616a4ab73e3e7e0fbfc74fa9672a0527f80",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/manifest.go",
+      "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/index.go",
+      "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/compatibility.go",
+      "sha256": "9e939af280e3216d4285216c108df6d913a21636dd553f28639e7c0945e71096",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "common/version.go",
+      "sha256": "38bd449305ec225fea5bbf5df9ce4f6c996fc38e84a9e61f7ba77e8dbce7414e",
+      "actualGitBytesEqual": true
+    },
+    {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "htfs/functions.go",
+      "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+      "actualGitBytesEqual": true
+    }
+  ],
+  "existingDataFilesVerified": 11,
+  "actions221Commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+  "actions221Tree": "80e5c77513f6abf5d07005ee3aee47d49efd927f",
+  "runtimeExecuted": false,
+  "optimizationSelected": false,
+  "actionsActualPublicCommitAndTreeVerified": true,
+  "actionsActualTreeSourceBlobMatches": 5,
+  "rootActualActionsTreeAt": "2026-10-11T02:54:41.526050+00:00"
+}
