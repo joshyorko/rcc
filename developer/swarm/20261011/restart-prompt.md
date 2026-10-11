@@ -6,7 +6,7 @@ Continue the previously authorized bounded work for `joshyorko/rcc`. Authorizati
 
 Read-only snapshot at **2026-10-11 01:58:27 UTC**: main is `07db6221a3540d227f2106eccf69fe0e7c11fee0` / tree `04338ee249398525abcf9ef69b79ee1a072e2c10`; 10 open issues and 3 open PRs. #208 is closed after #231 acceptance; #98 is open again. Counts are 67 branches, 33 tags, 27 releases, and 0 milestones; latest stable/release is v18.19.5.
 
-PR #233 is an open draft at published head `324524fffa4bd0f76c618f9fbb6ede30e733b2ff`, tree `cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152`, frozen freeze `codex/rcc-integrated-candidate-20261011-hosted-gate`. The PR base metadata remains `11155e58…`; root verified that merging its current source against main 07db yields exactly the current source tree. Do not silently treat base metadata as updated.
+PR #233 is an open draft at published head `324524fffa4bd0f76c618f9fbb6ede30e733b2ff`, tree `cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152`, frozen branch `codex/rcc-integrated-candidate-20261011-hosted-gate`. The PR base metadata remains `11155e58…`; root verified that merging its current source against main 07db yields exactly the current source tree. Do not silently treat base metadata as updated.
 
 ## Active hosted gate
 
@@ -25,3 +25,5 @@ Strict-consumer proof, four-target security scan, and 17-command provider runtim
 There is no release tag, publisher signature, notarization, or v18.19.6 release acceptance. #125 remains research with no optimization decision; #118 remains open for CPU, Rosetta, ABI, native/platform, artifact-carried and path compatibility; #98 is open with private dashboard access unresolved; #185 remains independent, L5 hold-gated governance.
 
 Active lanes: root coordinates exact-head gate completion and preserves source-bound receipts; worker226 owns the label-opt-in full-11 hosted workflow, numeric-exit propagation, and actual-binary archive capture. The release-candidate label is already on #233. Strict identity and provider-contract probing are complete only for 097. No model identity is asserted without source evidence. These checkpoint drafts do not mutate GitHub or repository source.
+
+Current324 root build/interface evidence is in `evidence/hosted-native/pr233-current-324524f/root-all-eight-and-native-bundle-verification.json` and `root-distribution-consumer-verification.json`. ABI timing source review is `evidence/architecture-118-abi-20261011/report.md` plus `root-independent-review.json`; this review launches no new runtime tests and does not waive broad118 acceptance.

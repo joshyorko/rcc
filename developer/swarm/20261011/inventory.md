@@ -29,7 +29,7 @@ Latest stable/release is unchanged. #208 was accepted and closed following #231.
 
 ## Current 324 source and active gates
 
-Current source/tree: `324524fffa4bd0f76c618f9fbb6ede30e733b2ff` / `cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152`, frozen freeze `codex/rcc-integrated-candidate-20261011-hosted-gate`. Root fetched the published Git object, matched it to the reviewed local tree, and verified that the prospective merge tree against main 07db is identical. The four changed files are `.github/workflows/README.md`, `.github/workflows/rcc.yaml`, `scripts/test_validate_release_topology.py`, and `scripts/validate_release_topology.py`.
+Current source/tree: `324524fffa4bd0f76c618f9fbb6ede30e733b2ff` / `cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152`, frozen branch `codex/rcc-integrated-candidate-20261011-hosted-gate`. Root fetched the published Git object, matched it to the reviewed local tree, and verified that the prospective merge tree against main 07db is identical. The four changed files are `.github/workflows/README.md`, `.github/workflows/rcc.yaml`, `scripts/test_validate_release_topology.py`, and `scripts/validate_release_topology.py`.
 
 Workflow implementation evidence: 23 focused topology tests passed; the actual embedded shell pipeline preserved numeric exits 0, 7 and 10, and receipt-bound metadata outside the checkout passed positive/negative controls. This is implementation validation, not a completed candidate release gate. The PR-triggered Rcc workflow and contained ReleaseCandidateVerification gate remain active; all five auxiliary runs passed. Native Linux/macOS-arm/Windows receipts belong to parent 2de, with Intel pending on that parent. Do not report those as current 324 platform receipts.
 

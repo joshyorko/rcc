@@ -1,0 +1,696 @@
+{
+  "observed_at": "2026-10-11T02:03:19.246589+00:00",
+  "repository": "joshyorko/rcc",
+  "commit": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "readonly_checkout": "/workspace/work/rcc-swarm/hosted-rc-gate",
+  "checkout_head": "2f8be3b3ac260497ab17d7a4d9fa679a6004461b",
+  "checkout_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "source_files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "efcf4ead8762c47b6366aeb13ccdc96800399fb989e327ecbb70ac5b0c6021cd",
+      "git_blob_sha1": "469d7d53342860ed7c9df7742934ca9b2004449b",
+      "bytes": 4311,
+      "line_count": 65,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/AGENTS.md"
+    },
+    {
+      "path": "environmentartifact/compatibility.go",
+      "sha256": "9e939af280e3216d4285216c108df6d913a21636dd553f28639e7c0945e71096",
+      "git_blob_sha1": "f3315268ac9fd7574c0569b753db39f11d1b09b5",
+      "bytes": 12254,
+      "line_count": 275,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/compatibility.go"
+    },
+    {
+      "path": "environmentartifact/manifest.go",
+      "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+      "git_blob_sha1": "5da39dc0a255911c0f2a7a2c4747b9f3715cc3b5",
+      "bytes": 7438,
+      "line_count": 198,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/manifest.go"
+    },
+    {
+      "path": "environmentartifact/platform.go",
+      "sha256": "0f1759abd7c3aea88655d58dfe1eeb8355af5bcc3ee80119673dcc8a4d0e1014",
+      "git_blob_sha1": "ad5ee2545c2de263b1035e55171ba29a0ff3a064",
+      "bytes": 1340,
+      "line_count": 38,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/platform.go"
+    },
+    {
+      "path": "environmentartifact/platform_index_test.go",
+      "sha256": "330a00cbdf07d49f01b4219b7d6fde4ce1237c30bd81e265c2b27da30ccb8178",
+      "git_blob_sha1": "66f77da2a7197b7d791074fe19d821fa2e44b5c9",
+      "bytes": 2486,
+      "line_count": 66,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/platform_index_test.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility.go",
+      "sha256": "2ccc69d77a39e5fe9f46a67f6bd21c856f330f9621d9d74b3941488e350c88c7",
+      "git_blob_sha1": "635055402a75d76b6a74501f8383279038cf2dca",
+      "bytes": 8922,
+      "line_count": 259,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_linux.go",
+      "sha256": "ffa3e8a22661d28d59602bea2f51c5ebcbddf2f5a7d7035b97083622e4861f40",
+      "git_blob_sha1": "759860b15ed4b5300aedc6a1140f3eba1ec4dd1f",
+      "bytes": 5738,
+      "line_count": 154,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_linux.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_darwin.go",
+      "sha256": "6e8d51febdefa545a1970a7880c244d6bb8987f56b0e1a08a63bf0b29e4cf005",
+      "git_blob_sha1": "ed790d3dfbf7057bf7bf40d14c20ae6df005b9da",
+      "bytes": 4151,
+      "line_count": 110,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_windows.go",
+      "sha256": "be8075460a34b4c586dfc62a3c42a2ab1ae078785f955e6a2e106d47aa681b16",
+      "git_blob_sha1": "92d15bc1e58d395ae780a360b99fc88a01fed48f",
+      "bytes": 3625,
+      "line_count": 114,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_windows.go"
+    },
+    {
+      "path": "environmentlifecycle/builder.go",
+      "sha256": "30198354b3ba77648c9b98730f0a0596f1599ab6847e2f7b7c5d4d702ff6e075",
+      "git_blob_sha1": "b472caae6b0dab0cfd7de81a63842c9f7b268724",
+      "bytes": 3692,
+      "line_count": 94,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/builder.go"
+    },
+    {
+      "path": "environmentlifecycle/acquire.go",
+      "sha256": "066e1e32381f9e80220eacc5dee4398a84be43e54d3686c379ca2a6611264582",
+      "git_blob_sha1": "d877373990ab67e5cf441f427001700b816a0605",
+      "bytes": 12302,
+      "line_count": 308,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/acquire.go"
+    },
+    {
+      "path": "environmentlifecycle/materialize.go",
+      "sha256": "a8078786a22436d718ab5aa548be3314721be4fba91e5c7dfdbd6d535489a9d3",
+      "git_blob_sha1": "7e1b0cf3e29910e7433bae24972f65306661db55",
+      "bytes": 13901,
+      "line_count": 367,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/materialize.go"
+    },
+    {
+      "path": "environmentlifecycle/execute.go",
+      "sha256": "2c03a4f3d3d215d6dd7cac08bdaf52299c894663c07af163c157f4da843e7a66",
+      "git_blob_sha1": "552953b7b879b680e4f4b1c2e9046992e7f37c20",
+      "bytes": 7591,
+      "line_count": 198,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/execute.go"
+    },
+    {
+      "path": "environmentlifecycle/lease.go",
+      "sha256": "b46d26b44ad81b457ac3aba504f64c2f5a007307fa10c4b4ca14d4983d98f50e",
+      "git_blob_sha1": "4e3ada522dfad8958eb21e46d324d42fdd5d7500",
+      "bytes": 6818,
+      "line_count": 183,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/lease.go"
+    },
+    {
+      "path": "environmentlifecycle/archive.go",
+      "sha256": "2653985edc08f9d387d322a1e973bced2a9f2218bb6e4001c29de473da088476",
+      "git_blob_sha1": "308fdd02a0097f4528038c23975339fd946222d2",
+      "bytes": 10971,
+      "line_count": 284,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/archive.go"
+    },
+    {
+      "path": "environmentlifecycle/real_vertical_test.go",
+      "sha256": "75f81313b860aacbb8b193b109492034ff9ea5d85e4c8cff08ae86769079d395",
+      "git_blob_sha1": "a6c89abe8e3189359035efb2c59da716907c74c8",
+      "bytes": 51113,
+      "line_count": 1157,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/real_vertical_test.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_unix_test.go",
+      "sha256": "a7a3d49165db843ace960e5643ca1acc1c48dd5be8f483597c0e5732e5007d44",
+      "git_blob_sha1": "c28f94e6550546eeb0d02237c7b034ca95a625b9",
+      "bytes": 2409,
+      "line_count": 77,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_unix_test.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_linux_test.go",
+      "sha256": "f01b11b4c1f5e5bef191cfd9ac2994527c6ef21bd42a33646750d5ec0f777132",
+      "git_blob_sha1": "4f80e037ec22f62a19c73455945515e7af405e64",
+      "bytes": 2991,
+      "line_count": 85,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_linux_test.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_darwin_test.go",
+      "sha256": "6c06b9565e7385cd3f83214ff789c9e52eb5fc08a6809af1bc0efc6eff70f51a",
+      "git_blob_sha1": "9bdacad696630a72b55206920257128e68f62c99",
+      "bytes": 3410,
+      "line_count": 95,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin_test.go"
+    },
+    {
+      "path": "environmentlifecycle/compatibility_windows_test.go",
+      "sha256": "3b277dfa9b1943ac33cb21671d5a0f6204c43cc73ec874207dfd1571ad2a0bc4",
+      "git_blob_sha1": "9d3dc7f9f2ab02838ab51c06ae872f20d9456bc5",
+      "bytes": 2643,
+      "line_count": 72,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_windows_test.go"
+    },
+    {
+      "path": "environmentlifecycle/materialize_test.go",
+      "sha256": "40199a15c85a87e82e15e93b5e9ac0f97af9bdc02911430c42feaab5c970c8c3",
+      "git_blob_sha1": "0dd86615a0b968a07761996708f824f8c7e41e15",
+      "bytes": 18782,
+      "line_count": 509,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/materialize_test.go"
+    },
+    {
+      "path": "environmentlifecycle/acquire_test.go",
+      "sha256": "fa8a3b65433fd5bace95b90543f17c16c46e6ba575eae8a03d3c3779f5190abf",
+      "git_blob_sha1": "5c5ea8b6187c59bd56b22c451e07da84eb1532ba",
+      "bytes": 32468,
+      "line_count": 788,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/acquire_test.go"
+    },
+    {
+      "path": "environmentlifecycle/rpath_lifecycle_darwin_test.go",
+      "sha256": "6860c484b01facf0e282f37137d196511ff462a9026ffa3053c3adbb80785c83",
+      "git_blob_sha1": "3603d982a5bfb3fa98f9be02d3210d43181c79c5",
+      "bytes": 8110,
+      "line_count": 208,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/rpath_lifecycle_darwin_test.go"
+    },
+    {
+      "path": "environmentlifecycle/path_darwin_test.go",
+      "sha256": "d1fc79e845f177980bcaf5ad6286bc176244360a4916a3e2c3a20478fd7e2901",
+      "git_blob_sha1": "5198cf19292e96e873a8c6a1bf401c2aed6ed539",
+      "bytes": 1720,
+      "line_count": 60,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/path_darwin_test.go"
+    },
+    {
+      "path": "conda/uvnative_test.go",
+      "sha256": "e3d81f750de6c42d28d9fb44a455f6616251a14eeba7d888bab12e9b7ce2a57a",
+      "git_blob_sha1": "b4f3d07dc0070a3d982f775ec7513c752adeaeca",
+      "bytes": 12784,
+      "line_count": 416,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/conda/uvnative_test.go"
+    },
+    {
+      "path": "robot_tests/uv_native/conda.yaml",
+      "sha256": "b731fcbb270f3600fe87d9b8568734ef2b51e6f5c2b1183414f9118c645d9533",
+      "git_blob_sha1": "f94b504fd2fbdca39ad003678c4331fcd95ebe14",
+      "bytes": 77,
+      "line_count": 5,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/robot_tests/uv_native/conda.yaml"
+    },
+    {
+      "path": "robot_tests/uv_native/robot.yaml",
+      "sha256": "9e30b62f62401d8cdf66458797d2e44db6488c21ca2a9c3d14bf6c15ca646dc6",
+      "git_blob_sha1": "a4b8566982bf95ea538778ede11905d2e4578396",
+      "bytes": 109,
+      "line_count": 6,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/robot_tests/uv_native/robot.yaml"
+    },
+    {
+      "path": "robot_tests/uv_native.robot",
+      "sha256": "0ed72bf9232880b61cf7c76c63a0f24ab550796c727cc56206d73ea911f6578a",
+      "git_blob_sha1": "8755ca9e6ab478c21abb6689e218c7dd5fa0c1ce",
+      "bytes": 4091,
+      "line_count": 109,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/robot_tests/uv_native.robot"
+    },
+    {
+      "path": ".github/workflows/rcc.yaml",
+      "sha256": "3d22e6e2ef10d126064c6771d413783109a50d751dd7138044f57aa6e4dc77a1",
+      "git_blob_sha1": "3027b77c83fdb1fd113b9b91e8fa36e18d9319b6",
+      "bytes": 33250,
+      "line_count": 679,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/.github/workflows/rcc.yaml"
+    },
+    {
+      "path": "htfs/directory.go",
+      "sha256": "8b3cf1f1c233e4f6a447e588ade54e04ec49b33e2fd93abbbd2b15a6e6d1ba3d",
+      "git_blob_sha1": "90e0ef94af8ab4b1adccb80e27b5cef778230e9d",
+      "bytes": 11301,
+      "line_count": 491,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/htfs/directory.go"
+    },
+    {
+      "path": "common/version.go",
+      "sha256": "38bd449305ec225fea5bbf5df9ce4f6c996fc38e84a9e61f7ba77e8dbce7414e",
+      "git_blob_sha1": "3535a069894a9557161cd2e9f79c4a7735a8c780",
+      "bytes": 48,
+      "line_count": 5,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/common/version.go"
+    },
+    {
+      "path": "docs/holotree.md",
+      "sha256": "722f809054e4ad1d7d1a1e84b817c6312867a78f1182d48c94c7645e5bcbd30d",
+      "git_blob_sha1": "8bfdad1a12148701ebda1e50fc25d937d58a8e21",
+      "bytes": 44150,
+      "line_count": 1195,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/docs/holotree.md"
+    },
+    {
+      "path": "docs/v18-compatibility.md",
+      "sha256": "279b0ccde66546fd65a7fca3575b45c9116009204217478715676bd34c897d4e",
+      "git_blob_sha1": "a64f36ad990619d384237bf769d43ad801abb2e4",
+      "bytes": 3512,
+      "line_count": 54,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/docs/v18-compatibility.md"
+    },
+    {
+      "path": "cmd/environmentExec.go",
+      "sha256": "1e62d683fc6d8b4fb7b43add6530dcc9188fc69a435b764d09bc2d68d4b3a1f2",
+      "git_blob_sha1": "67b735e89729952972194f2c222374a5da0dc89e",
+      "bytes": 9103,
+      "line_count": 234,
+      "checkout_bytes_equal": true,
+      "immutable_url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/cmd/environmentExec.go"
+    }
+  ],
+  "performed": [
+    "Public read-only issue/acceptance snapshots",
+    "Immutable git-show source extraction with blob/SHA256 verification",
+    "Read-only call-flow/test coverage review"
+  ],
+  "not_performed": [
+    "Build",
+    "Tests",
+    "Runtime probe",
+    "Private home scan",
+    "Git source/config/ref mutation",
+    "GitHub mutation",
+    "Actions mutation",
+    "Performance measurement"
+  ],
+  "findings": [
+    {
+      "id": "python-recorded",
+      "classification": "static-current-source",
+      "fact": "Compatibility stores exact Python implementation/version/ABI, with producer probe reading SOABI or cache_tag. Requirements are Manifest identity-bearing.",
+      "citations": [
+        {
+          "path": "environmentartifact/compatibility.go",
+          "line_start": 11,
+          "line_end": 50,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/compatibility.go#L11-L50"
+        },
+        {
+          "path": "environmentartifact/manifest.go",
+          "line_start": 132,
+          "line_end": 138,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/manifest.go#L132-L138"
+        },
+        {
+          "path": "environmentlifecycle/compatibility.go",
+          "line_start": 79,
+          "line_end": 95,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility.go#L79-L95"
+        }
+      ]
+    },
+    {
+      "id": "python-preflight-bundled",
+      "classification": "static-current-source",
+      "fact": "Worker preflight uses CPython ArtifactProvided=true and empty version/ABI arrays; comparison bypasses version/ABI equality.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/compatibility.go",
+          "line_start": 191,
+          "line_end": 215,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility.go#L191-L215"
+        },
+        {
+          "path": "environmentartifact/compatibility.go",
+          "line_start": 163,
+          "line_end": 209,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/compatibility.go#L163-L209"
+        }
+      ]
+    },
+    {
+      "id": "abi-readiness-timing",
+      "classification": "static-current-source",
+      "fact": "Cold restoration probes Python before stateReady, warm acquire repeats probe; version/ABI mismatch may leave content/restored files.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/materialize.go",
+          "line_start": 125,
+          "line_end": 158,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/materialize.go#L125-L158"
+        },
+        {
+          "path": "environmentlifecycle/materialize.go",
+          "line_start": 234,
+          "line_end": 258,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/materialize.go#L234-L258"
+        },
+        {
+          "path": "environmentlifecycle/materialize.go",
+          "line_start": 320,
+          "line_end": 350,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/materialize.go#L320-L350"
+        },
+        {
+          "path": "environmentlifecycle/compatibility.go",
+          "line_start": 59,
+          "line_end": 95,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility.go#L59-L95"
+        }
+      ]
+    },
+    {
+      "id": "exec-reacquires-internal-boundary",
+      "classification": "static-current-source",
+      "fact": "Public env exec always acquires first; internal Lease/ExecutionHandle do not independently re-probe ABI.",
+      "citations": [
+        {
+          "path": "cmd/environmentExec.go",
+          "line_start": 77,
+          "line_end": 96,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/cmd/environmentExec.go#L77-L96"
+        },
+        {
+          "path": "environmentlifecycle/lease.go",
+          "line_start": 66,
+          "line_end": 85,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/lease.go#L66-L85"
+        },
+        {
+          "path": "environmentlifecycle/execute.go",
+          "line_start": 43,
+          "line_end": 70,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/execute.go#L43-L70"
+        }
+      ]
+    },
+    {
+      "id": "pre-transfer-worker-check",
+      "classification": "static-current-source",
+      "fact": "HTTP worker preflight precedes object fetch; archive preflight follows read/hash checks but precedes bulk CAS writes.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/acquire.go",
+          "line_start": 60,
+          "line_end": 91,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/acquire.go#L60-L91"
+        },
+        {
+          "path": "environmentlifecycle/acquire.go",
+          "line_start": 206,
+          "line_end": 219,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/acquire.go#L206-L219"
+        },
+        {
+          "path": "environmentlifecycle/archive.go",
+          "line_start": 40,
+          "line_end": 150,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/archive.go#L40-L150"
+        }
+      ]
+    },
+    {
+      "id": "baseline-cpu",
+      "classification": "static-current-source",
+      "fact": "Producers advertise only amd64 sse2 on Linux/Windows; Darwin empty. Windows worker features also sse2 only, Darwin empty. Exact-binary negative uses invented impossible feature.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/compatibility_linux.go",
+          "line_start": 46,
+          "line_end": 54,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_linux.go#L46-L54"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_windows.go",
+          "line_start": 33,
+          "line_end": 41,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_windows.go#L33-L41"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_windows.go",
+          "line_start": 97,
+          "line_end": 105,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_windows.go#L97-L105"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_darwin.go",
+          "line_start": 33,
+          "line_end": 37,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin.go#L33-L37"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_darwin.go",
+          "line_start": 102,
+          "line_end": 106,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin.go#L102-L106"
+        },
+        {
+          "path": "environmentlifecycle/real_vertical_test.go",
+          "line_start": 910,
+          "line_end": 913,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/real_vertical_test.go#L910-L913"
+        }
+      ]
+    },
+    {
+      "id": "native-libraries-limits",
+      "classification": "static-current-source-no-runtime-reproduction",
+      "fact": "Scans/probes validate imported library names/presence and glibc string maximum, not all loader/symbol/dlopen/native instruction requirements. Linux flags union across cpuinfo entries.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/compatibility_linux.go",
+          "line_start": 57,
+          "line_end": 98,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_linux.go#L57-L98"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_linux.go",
+          "line_start": 127,
+          "line_end": 150,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_linux.go#L127-L150"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_windows.go",
+          "line_start": 44,
+          "line_end": 105,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_windows.go#L44-L105"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_darwin.go",
+          "line_start": 40,
+          "line_end": 106,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin.go#L40-L106"
+        }
+      ]
+    },
+    {
+      "id": "real-rosetta-missing",
+      "classification": "static-source-plus-live-acceptance-history",
+      "fact": "Native runners skip native-only Rosetta negative; translation-allowed case acquires without real translated execution proof. GOARCH records process architecture.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/real_vertical_test.go",
+          "line_start": 433,
+          "line_end": 442,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/real_vertical_test.go#L433-L442"
+        },
+        {
+          "path": "environmentlifecycle/real_vertical_test.go",
+          "line_start": 879,
+          "line_end": 898,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/real_vertical_test.go#L879-L898"
+        },
+        {
+          "path": "environmentlifecycle/compatibility_darwin.go",
+          "line_start": 83,
+          "line_end": 106,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility_darwin.go#L83-L106"
+        },
+        {
+          "path": "environmentartifact/platform.go",
+          "line_start": 8,
+          "line_end": 36,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentartifact/platform.go#L8-L36"
+        }
+      ],
+      "history_urls": [
+        "https://github.com/joshyorko/rcc/issues/118",
+        "https://github.com/joshyorko/rcc/issues/121#issuecomment-5453544621"
+      ]
+    },
+    {
+      "id": "transported-path-gap",
+      "classification": "static-source-plus-live-acceptance-history",
+      "fact": "Current path probes create paths on B after acquire; filesystem inventory adds120 to relative longest path and sets Junctions=false. This does not prove transported path/junction preservation.",
+      "citations": [
+        {
+          "path": "environmentlifecycle/real_vertical_test.go",
+          "line_start": 811,
+          "line_end": 874,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/real_vertical_test.go#L811-L874"
+        },
+        {
+          "path": "environmentlifecycle/compatibility.go",
+          "line_start": 98,
+          "line_end": 133,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/compatibility.go#L98-L133"
+        },
+        {
+          "path": "htfs/directory.go",
+          "line_start": 66,
+          "line_end": 82,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/htfs/directory.go#L66-L82"
+        }
+      ]
+    },
+    {
+      "id": "uv-generic-builder",
+      "classification": "static-current-source",
+      "fact": "Existing UV local fixture uses Python3.12.8, UV0.6.1, requests2.32.3; current lifecycle builder kind remains rcc-holotree-v12, so actual UV strategy requires logs/blueprint/inventory evidence.",
+      "citations": [
+        {
+          "path": "robot_tests/uv_native/conda.yaml",
+          "line_start": 1,
+          "line_end": 5,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/robot_tests/uv_native/conda.yaml#L1-L5"
+        },
+        {
+          "path": "robot_tests/uv_native.robot",
+          "line_start": 13,
+          "line_end": 49,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/robot_tests/uv_native.robot#L13-L49"
+        },
+        {
+          "path": "environmentlifecycle/builder.go",
+          "line_start": 64,
+          "line_end": 85,
+          "url": "https://github.com/joshyorko/rcc/blob/324524fffa4bd0f76c618f9fbb6ede30e733b2ff/environmentlifecycle/builder.go#L64-L85"
+        }
+      ]
+    }
+  ],
+  "proposed_decision": {
+    "status": "owner-review-required-not-accepted",
+    "recommended": "Keep worker capability preflight before bulk transfer/import, artifact-provided exact interpreter verification after trusted restoration and before readiness/public user execution. Do not require arbitrary host Python or claim no code executed before readiness.",
+    "alternative_requires_explicit_scope": "If rejection before any restored files or artifact-interpreter execution is required, define authoritative non-executing ABI metadata and its limits as a separate architecture requirement.",
+    "routine_implementation": [
+      "Stage-specific exact-binary ABI negative fixtures",
+      "Observed materialized Python evidence separate from preflight receipt",
+      "Parameterize existing native fixture table",
+      "Resolved package inventories and provider/network counters"
+    ],
+    "operator_or_consumer_inputs": [
+      "Owner acceptance of ABI timing meaning",
+      "Physical/translated Rosetta runner and truthful physical/process identity",
+      "CPU-negative VM/host plus supported package CPU requirement source",
+      "Independently authorized supported Actions consumer checkpoint"
+    ]
+  },
+  "proposed_fixture_rows": [
+    {
+      "name": "pure-python",
+      "performed": false,
+      "reuse": "environmentlifecycle/real_vertical_test.go:129",
+      "proof": "Independent minimal import/value, cold/warm/archive, actual Python tuple and targeted before-ready mismatch"
+    },
+    {
+      "name": "uv-native",
+      "performed": false,
+      "reuse": "robot_tests/uv_native/conda.yaml:1",
+      "proof": "Publish actual UV-built Python3.12.8/requests2.32.3; separate B imports without A/cache/package network"
+    },
+    {
+      "name": "heavy-native",
+      "performed": false,
+      "reuse": "environmentlifecycle/real_vertical_test.go:367",
+      "proof": "Reviewed per-platform pinned NumPy/BLAS artifact executes numeric matrix operation and records loaded paths; actual external-runtime negatives"
+    },
+    {
+      "name": "many-files-relocation",
+      "performed": false,
+      "reuse": "environmentlifecycle/real_vertical_test.go:120",
+      "proof": "4096 deterministic packaged resource files, hashes/count/read result, relocated supported prefixes, A paths unavailable"
+    },
+    {
+      "name": "transported-paths",
+      "performed": false,
+      "reuse": "htfs/directory.go:66",
+      "proof": "Package-contained safe relative links/case/long path/junction data, before-Lift/catalog/B inspection, exact preserved/flattened/rejected semantics"
+    },
+    {
+      "name": "package-cpu",
+      "performed": false,
+      "reuse": "environmentartifact/compatibility.go:204",
+      "proof": "Real pinned AVX2 package instruction and emitted authoritative requirement; supported positive and CPU-masked negative host with zero GETs"
+    },
+    {
+      "name": "rosetta",
+      "performed": false,
+      "reuse": "environmentlifecycle/real_vertical_test.go:433",
+      "proof": "Apple Silicon actual amd64 RCC and amd64 native artifact: native-only rejection and translation-allowed cold/warm/archive execution"
+    }
+  ],
+  "dependencies": {
+    "closed_124": "Reuse identity convergence/unchanged v12/catalog/object bytes; do not rebind altered requirements to old digest.",
+    "accepted_208": "Serving UX/protocol acceptance is separate from package ABI, Rosetta and inferred trust carrier.",
+    "actions_exact_pin": "Actions a70993fafc99a9f94041485542d5a720797ca394 opt-in adapter exact v18.19.3; candidate6 source is v18.19.6. Existing root-verified version/provider probes referenced; no repeated probe or Actions change."
+  },
+  "historical_evidence_references": [
+    {
+      "path": "../consumer-contract-125-20261011/consumer-contract-report.md",
+      "sha256": "cfbb0abd5ab827947394b36f4729a600fbb0a211f756841cba2ef0f8c6f07ddb",
+      "rebound_to_current_candidate": false
+    },
+    {
+      "path": "../consumer-contract-125-20261011/provider-contract-probe/report.md",
+      "sha256": "c68346657587a0b24526ddc5326f92d051594e3c81d6e7ce3a690c803e87e768",
+      "rebound_to_current_candidate": false
+    }
+  ]
+}
