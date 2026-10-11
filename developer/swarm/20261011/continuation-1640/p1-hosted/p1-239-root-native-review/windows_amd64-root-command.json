@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-239-root-native-review/verify_native_bundle_459.py",
+    "windows_amd64",
+    "/dev/shm/rcc-p1-239-independent-root/windows-amd64/windows-amd64-native-runtime-receipt.zip",
+    "11708351363",
+    "9d93d0d1ac6e302f2f2cbac78c5424e4d64bf4b014f6c764a7cbc84a8227b14a"
+  ],
+  "numericExit": 0,
+  "stdout": "{\"status\": \"ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED\", \"source\": \"4592139422f02fb7bc4fbc3f8e0b612a42551044\", \"version\": \"v18.19.6\", \"platform\": \"windows_amd64\", \"artifactId\": 11708351363, \"zipBytes\": 10850308, \"zipSha256\": \"9d93d0d1ac6e302f2f2cbac78c5424e4d64bf4b014f6c764a7cbc84a8227b14a\", \"actualZipPath\": \"/dev/shm/rcc-p1-239-independent-root/windows-amd64/windows-amd64-native-runtime-receipt.zip\", \"actualBinaryPath\": \"/dev/shm/rcc-p1-239-independent-root/windows-amd64/windows_amd64/native-binary-review/assets/rcc-windows64.exe\", \"binaryBytes\": 20118528, \"binarySha256\": \"159da4943682a1f51cfc87e2ea73b33458c7949a70167f9cef656074318a813c\", \"metadataExitCode\": 0, \"robot\": {\"passed\": 1, \"failed\": 0, \"skipped\": 0}, \"linuxJatActualReceiptValidated\": false, \"scope\": \"Exact PR239 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt\", \"memberInventory\": [{\"path\": \"log.html\", \"bytes\": 277305, \"sha256\": \"fcf664cbc9c4004c59135fbd7b3f74ca411b99a69eaa7ce8be62c1599cb4c718\"}, {\"path\": \"native-binary-review/native-binary-review.json\", \"bytes\": 585, \"sha256\": \"74449baf690a68a5835598e97bdb989d2d52fbce74ec2e0cd63f9c09dd15307a\"}, {\"path\": \"native-binary-review/assets/rcc-windows64.exe\", \"bytes\": 20118528, \"sha256\": \"159da4943682a1f51cfc87e2ea73b33458c7949a70167f9cef656074318a813c\"}, {\"path\": \"native-runtime-receipt.json\", \"bytes\": 15997, \"sha256\": \"7e3718c06e3c6061c813c6aa7628914f9ad7ad813bd0ee9538efb12f6300f42a\"}, {\"path\": \"native-runtime-robot-evidence.json\", \"bytes\": 1641, \"sha256\": \"00c82e56250b46bd514def1d689f7409f94bf5293a34476562e584058d97243d\"}, {\"path\": \"native-runtime-robot-phases.log\", \"bytes\": 1606, \"sha256\": \"51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4\"}, {\"path\": \"output.xml\", \"bytes\": 135832, \"sha256\": \"f01ba748d06dee1b18ce54d6442a8e5db752dad6a9d84b7d86f43b38fa2c58c4\"}, {\"path\": \"report.html\", \"bytes\": 234860, \"sha256\": \"d0c3310d00eb5444d217859e128aba99b8e733cfc7fff209d670fbba64662194\"}]}\n",
+  "stderr": ""
+}

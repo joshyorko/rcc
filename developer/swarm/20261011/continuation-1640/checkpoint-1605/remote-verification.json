@@ -1,0 +1,10 @@
+{
+  "status": "ACTUAL_REMOTE_RAW_BYTES_SHA256_AND_SIZE_VERIFIED",
+  "sha": "67cabbbfe784f356a8bff02379d53f04dc0ed6d8",
+  "parent": "1f04f2251960c1e0eeaa97d009c5d6756db12b74",
+  "files": 384,
+  "bytes": 14213910,
+  "seconds": 14.92409516599946,
+  "prior_tree_entries_unchanged": 1554,
+  "original119_preserved": true
+}

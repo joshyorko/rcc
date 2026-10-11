@@ -1,0 +1,13 @@
+{
+  "command": [
+    "python3",
+    "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-239-root-native-review/verify_native_bundle_459.py",
+    "darwin_arm64",
+    "/dev/shm/rcc-p1-239-independent-root/macos-arm64/macos-arm64-native-runtime-receipt.zip",
+    "11707668038",
+    "0ae37b87d548f58a66f2a464cf2eb7a9f3019f2be6aa0b423bfa8e4b5d330c1a"
+  ],
+  "numericExit": 0,
+  "stdout": "{\"status\": \"ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED\", \"source\": \"4592139422f02fb7bc4fbc3f8e0b612a42551044\", \"version\": \"v18.19.6\", \"platform\": \"darwin_arm64\", \"artifactId\": 11707668038, \"zipBytes\": 12498555, \"zipSha256\": \"0ae37b87d548f58a66f2a464cf2eb7a9f3019f2be6aa0b423bfa8e4b5d330c1a\", \"actualZipPath\": \"/dev/shm/rcc-p1-239-independent-root/macos-arm64/macos-arm64-native-runtime-receipt.zip\", \"actualBinaryPath\": \"/dev/shm/rcc-p1-239-independent-root/macos-arm64/darwin_arm64/native-binary-review/assets/rcc-macosarm64\", \"binaryBytes\": 20986322, \"binarySha256\": \"06ed90beb23fbaf5d8d1231250b1b69f263ef7119f5c35adbff3577796c12fcf\", \"metadataExitCode\": 0, \"robot\": {\"passed\": 1, \"failed\": 0, \"skipped\": 0}, \"linuxJatActualReceiptValidated\": false, \"scope\": \"Exact PR239 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt\", \"memberInventory\": [{\"path\": \"native-binary-review/assets/rcc-macosarm64\", \"bytes\": 20986322, \"sha256\": \"06ed90beb23fbaf5d8d1231250b1b69f263ef7119f5c35adbff3577796c12fcf\"}, {\"path\": \"native-binary-review/native-binary-review.json\", \"bytes\": 563, \"sha256\": \"eaa5a3e2ffe22598442ade8719081cd3df3ac969b02896c76b338f9acfa5fb1c\"}, {\"path\": \"native-runtime-receipt.json\", \"bytes\": 15451, \"sha256\": \"8c03e71b99e8f1e24b4e28120b3243b33daa448f7e927d863e3856f98497715e\"}, {\"path\": \"log.html\", \"bytes\": 272903, \"sha256\": \"08b98fea982980faa3820ba56dd594e52618690ffbf01c443671383cd58169d8\"}, {\"path\": \"native-runtime-robot-evidence.json\", \"bytes\": 1674, \"sha256\": \"57794d072f90b7eff5ae2c885c3bc33061d80544a0b6e41adb95d6b8b9f32a63\"}, {\"path\": \"native-runtime-robot-phases.log\", \"bytes\": 1556, \"sha256\": \"a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7\"}, {\"path\": \"output.xml\", \"bytes\": 128974, \"sha256\": \"3ef8868cc49cb80c2eaecdaf09b3fe125d3f55498a75b4650191ce9cbf7a664c\"}, {\"path\": \"report.html\", \"bytes\": 232408, \"sha256\": \"6dcbdec688d1be91d244dbf2f92f9e31da7b9d312c0f4846be3b8b251a520d65\"}]}\n",
+  "stderr": ""
+}

@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-11T15:56:34.096642+00:00",
+  "failedWrapperSHA": "6de799b1efa29438ce057c78f66f72f6215473d582761722efe783d5275d309e",
+  "importServerPGID": 37966,
+  "survivors": [],
+  "closedPortProbeCode": 111,
+  "helperNumericExit": 0,
+  "serverStopNumericExit": 0,
+  "freshSnapshotSHA": "8bbb2e4450e6f72a5d23ec1deab39f41208314a72cf6a7000090b8b0f242e869",
+  "freshSnapshotArtifact": "sha256:0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e",
+  "freshnessOnlyUnsignedFixture": true,
+  "candidateCacheServeExecuted": true,
+  "envVerifyAcquireExecExecuted": false,
+  "originalFailRetained": true,
+  "disposition": "preservedfailedwrapper/fixture; correctedcontinuationonlyremainingpreviouslyunexecutedconsumercommandspendingrootcodeaudit/newadmission"
+}

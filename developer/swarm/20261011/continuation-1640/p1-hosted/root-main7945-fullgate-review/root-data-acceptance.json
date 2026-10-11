@@ -1,0 +1,101 @@
+{
+  "at": "2026-10-11T16:34:03.307528+00:00",
+  "status": "ROOT_ACTUAL_FROZEN_SOURCE_FULL11_RAW_ACCEPTANCE_PASS",
+  "shippingSource": "7945f956b428359928908a9f42e36417b113dafd",
+  "actualGateNumericExit": {
+    "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+    "gateExitCode": 0,
+    "teeExitCode": 0
+  },
+  "actualGates": {
+    "artifactConsumerVertical": "passed",
+    "artifactFocused": "passed",
+    "artifactRace": "passed",
+    "artifactRobot": "passed",
+    "artifactVertical": "passed",
+    "binaryInventory": "passed",
+    "coordinationAcceptance": "passed",
+    "goVet": "passed",
+    "largeStream": "passed",
+    "robot": "passed",
+    "selfHost": "passed"
+  },
+  "actualRobot": {
+    "pass": "171",
+    "fail": "0",
+    "skip": "1"
+  },
+  "fullGoTests": "Exact shipping producer selfHostBuild runs go test ./... for self-host generations; mandatory selfHostgate passed, actualsourcebound commandreceipt verified",
+  "n1": {
+    "archiveSHA256": "868dd01503d860fd2a9159a6b31153a249644aa4aa0130381e56171c90bf5dcb",
+    "archiveRollback": "imported",
+    "actualReleasedRollbackExit": 0,
+    "actualReleasedLegacyTaskExit": 0,
+    "legacyObjectsUnchanged": 5045,
+    "catalogRebasedThenStable": true,
+    "actualPostRollbackArtifactEntriesStable": 5057,
+    "artifactBeforeEmpty": "No pre-acquire fullartifactinventory equivalence claim",
+    "releasedVersion": "v18.19.5",
+    "actualArchiveBytes": "Hosted canonicalvalidator rehashed archive; bounded sidecar observedactualhashreceipt; fullarchivebytes notdownloadedlocally"
+  },
+  "selfhost": {
+    "candidate": {
+      "path": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+      "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "version": "v18.19.6"
+    },
+    "generationA": {
+      "candidate": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+      "candidateSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "source": "/home/runner/work/rcc/rcc/build/self-host/released/rcc",
+      "sourceSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3"
+    },
+    "generationB": {
+      "path": "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+      "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "version": "v18.19.6"
+    },
+    "released": {
+      "path": "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+      "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "version": "v18.19.5"
+    }
+  },
+  "coordination": {
+    "binarySha256": "508c095f50a2554e69e690746b4a628db5ec98fc65fa149de1db335216ebdc8a",
+    "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+    "scenarios": {
+      "cli-claim": "published",
+      "cli-heartbeat": "renewed",
+      "cli-loopback-rejection": "rejected",
+      "cli-prewarm": "ready-and-capacity-limited",
+      "cli-release": "released",
+      "cli-wait": "artifact-backed"
+    },
+    "schemaVersion": 1
+  },
+  "stream": {
+    "bufferBytes": 65536,
+    "bytes": 2147483648,
+    "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+    "interruptionAcceptance": "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds",
+    "memoryBytes": 2772328,
+    "memoryDeltaBytes": 117568,
+    "platform": "linux/amd64",
+    "requests": 1,
+    "restartPolicy": "full-restart",
+    "schemaVersion": 1,
+    "sha256": "47194c6cbe6e6ebc28e1241b6739f03624563d1953fa876349f94c89f5d930f3"
+  },
+  "streamMemoryScope": "GoHeapAllocationdeltaNOTRSS",
+  "sourceBinary": {
+    "path": "/home/runner/work/rcc/rcc/build/rcc",
+    "sha256": "508c095f50a2554e69e690746b4a628db5ec98fc65fa149de1db335216ebdc8a"
+  },
+  "shippingDistributionLinuxHash": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+  "differentBuildBinaryIdentitiesPreserved": true,
+  "all9assetsAnd4ActualNativeBinaries": "Previously root+peer actualbytesverified same7945/manifest26a; notrebound239",
+  "canonical270MBZIP": "Hosted fullbundlevalidated byreadonlyexporter; NOTlocallydownloaded/rehashclaim",
+  "publication": "HOLD noTAG/RELEASE/PUBLISHER",
+  "remaining": "Approvalpolicy/credential403/signingscope/securityriskdisposition/operatorGO/taggedsourcefuture gates"
+}

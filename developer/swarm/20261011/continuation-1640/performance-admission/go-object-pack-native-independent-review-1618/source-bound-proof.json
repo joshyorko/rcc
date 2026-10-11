@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-11T16:28:49.726753+00:00",
+  "verdict": "conditional-proposal-only; three additive preexecution corrections required for stated evidence contract",
+  "harnessSha256": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4",
+  "harnessBytes": 21091,
+  "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+  "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "sourceFiles": [
+    {
+      "path": "artifactprovider/filesystem_unix.go",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 14784,
+      "sha256": "b6b7074c1ffa8987c71a8dd062cf3367dcd27a10f0a32d3d06ddb57689e4cdf1",
+      "matchesImmutableGitBytes": true
+    },
+    {
+      "path": "artifactprovider/filesystem.go",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 9020,
+      "sha256": "c6936f4b7ee10cd7c78255d8b5c2f26c18a88d353f5c5770f6471b335630d1b8",
+      "matchesImmutableGitBytes": true
+    },
+    {
+      "path": "environmentartifact/index.go",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 3485,
+      "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+      "matchesImmutableGitBytes": true
+    },
+    {
+      "path": "environmentartifact/digest.go",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 2259,
+      "sha256": "cdb0332c6b31a02a1386e58ddec923bc2cc96e62db5048f2d8a58ee244af9242",
+      "matchesImmutableGitBytes": true
+    },
+    {
+      "path": "go.mod",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 1689,
+      "sha256": "eae3d866a96c296d0cdcb4e9729b4f872abf54dab331993cf717a971ac5b46d0",
+      "matchesImmutableGitBytes": true
+    },
+    {
+      "path": "go.sum",
+      "commit": "7945f956b428359928908a9f42e36417b113dafd",
+      "bytes": 56257,
+      "sha256": "a3c5da16de56297fd887a186b6e8fcbe33ceefd4726ded0936b858e63659f7b4",
+      "matchesImmutableGitBytes": true
+    }
+  ],
+  "rawSource": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/harness.go",
+      "bytes": 21091,
+      "sha256": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/plan.md",
+      "bytes": 8580,
+      "sha256": "05e8771be5ca114dca293b922c0bb2468ca7f31f8a547fccdfadc9bb4273937d"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/source-manifest.json",
+      "bytes": 60045,
+      "sha256": "c1bc6f5c00a96c9e1e3dc4bcf4bb39b832ef525bc2795f570af61765f17246e6"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/report.md",
+      "bytes": 4720,
+      "sha256": "d6788e9f6753127889e16e101eeae8eb3f273d3e8a40f0bba33b95977ba13032"
+    }
+  ],
+  "findings": [
+    {
+      "id": "M1",
+      "status": "blocks-layout-isolation-admission",
+      "file": "harness.go",
+      "lines": [
+        154,
+        173,
+        176,
+        461,
+        481
+      ],
+      "finding": "Retained pack is overlay-backed; proposed provider copy is tmpfs. This is a filesystem/topology+API comparison unless both arms use the same owned mount.",
+      "correction": "Root-admitted separately hashed owned pack copy beside the owned provider on tmpfs, or explicitly narrow the question to mixed-topology comparison without pack-layout isolation claims."
+    },
+    {
+      "id": "M2",
+      "status": "blocks-valid-counter-admission",
+      "file": "harness.go",
+      "lines": [
+        453,
+        501,
+        502,
+        570,
+        590,
+        592,
+        606
+      ],
+      "finding": "procIO/RSS errors ignored; missing procIO fields remain zero; asymmetric failure can yield negative deltas or plausible zeros while PASS. RSS after pass is not peak.",
+      "correction": "Additive successor fails closed on missing/invalid counters, or records explicit unknown/error and independently bound supervisor evidence; never encode unknown as zero."
+    },
+    {
+      "id": "M3",
+      "status": "blocks-preserved-partial-results-admission",
+      "file": "harness.go",
+      "lines": [
+        196,
+        205,
+        239,
+        252
+      ],
+      "finding": "Completed pass results are held in memory; a later failure returns before output. Supervisor stderr alone cannot preserve earlier raw timings.",
+      "correction": "Write bounded per-pass receipts/progress before next pass and preserve failure status/raw numeric exits; no automatic rerun."
+    }
+  ],
+  "scope": {
+    "objects": 4649,
+    "storedBytes": 4484936,
+    "selection": "all frozen storedSize<4096 entries, digest order",
+    "passes": 10,
+    "pairs": 5,
+    "schedule": [
+      "filesystem",
+      "pack",
+      "pack",
+      "filesystem",
+      "filesystem",
+      "pack",
+      "pack",
+      "filesystem",
+      "filesystem",
+      "pack"
+    ],
+    "temperature": "OS data pages prewarmed by full reads/copy; cache state uncontrolled; not cold/evicted; no full API steady-state prewarm",
+    "CPU": "RUSAGE_SELF user/system delta includes instrumentation outside wall interval; Go GC/allocator state shared across counterbalanced passes",
+    "RSS": "one VmRSS sample after pass; external fail-closed full-tree limit needed",
+    "applicationCounts": "4649 GetObject or4649 ReadAt; no actual open-syscall measurement",
+    "identity": "same stored gzip frame SHA+size; no decompressed/materialized/native consumer claim",
+    "componentHypothesis": "current secure GetObject traversal/alloc/read/verify/reader-drain versus retained descriptor ReadAt/verify; cannot attribute difference solely to open calls or infer dominant Actions cost"
+  },
+  "additionalAdmissionGates": [
+    "Exact nonsymlink owned path/UID/containment preflight and no overlap with source/old homes; RAM provider is mutable only within that namespace.",
+    "Offline module/cache provenance, generated embed-input binding and complete actual build closure/binary/tool metadata remain worker/root-owned unresolved.",
+    "Root-reviewed supervisor per-pass30s/total180s, workspace32MiB/RAM1GiB/process-treeRSS2GiB/freefloor2688548864B; root admission and quiet measurement required.",
+    "Original selected4649 content/mode/mtime plus index/offset/pack pre/post hashes checked; broader original provider inventory is not covered by this harness alone."
+  ],
+  "performed": [
+    "static complete harness read",
+    "six exact source-file comparisons to immutable7945 Git bytes",
+    "hash/line/plan consistency analysis"
+  ],
+  "notPerformed": [
+    "Go compilation/list/test",
+    "harness or provider runtime",
+    "original CAS/provider/home mutation",
+    "source edits",
+    "Actions or GitHub writes"
+  ],
+  "numericExit": 0
+}

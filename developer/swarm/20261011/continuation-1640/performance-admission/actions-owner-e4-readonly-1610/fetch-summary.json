@@ -1,0 +1,278 @@
+{
+  "at": "2026-10-11T16:09:34.890127+00:00",
+  "results": [
+    {
+      "name": "commit",
+      "status": 200,
+      "sha": "e4ff080375a8422bb656e52d218f198521dda078",
+      "tree": "973ff38f49a17a896e4d90f829a72e2ea0ea15e8",
+      "parents": [
+        "6d92344c28a17a727944559fd52f28305ee8eff2",
+        "e3c29cde8878307912e55ed09b6436c0f91d06d5"
+      ],
+      "files": [
+        "action_server/src/actions/server/_server.py",
+        "action_server/src/actions/server/run_outputs/transport.py",
+        "action_server/tests/action_server_tests/run_outputs/test_transport.py",
+        "docs/skills/provenance-observability.md",
+        "docs/skills/repository-operations.md"
+      ]
+    },
+    {
+      "name": "tree",
+      "status": 200,
+      "truncated": false,
+      "count": 1722,
+      "paths": [
+        ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+        "action_server/scripts/verify_dakota_rcc_acceptance.py",
+        "action_server/src/actions/server/_build_common/rcc_bundle.py",
+        "action_server/src/actions/server/_download_rcc.py",
+        "action_server/src/actions/server/_rcc.py",
+        "action_server/src/actions/server/_rcc_robot_utils.py",
+        "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+        "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+        "action_server/tests/action_server_tests/test_rcc_runtime_source_snapshots.py",
+        "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+        "developer/tests/test_rcc_provider_rollback_summary.py",
+        "developer/tests/test_rcc_provider_rollback_workflow.py",
+        "devutils/src/devutils/rcc.py",
+        "docs/design/fixtures/package-revision-v1/portable-rcc.json",
+        "docs/program/evidence/devsy-rcc-local-acceptance-dispatch.json",
+        "docs/program/evidence/rcc-c8-independent-snapshot-review-20261010T0048Z.json",
+        "docs/program/evidence/rcc-control-772-bootstrap-failure.json",
+        "docs/program/evidence/rcc-control-772-bootstrap-failure.log",
+        "docs/program/evidence/rcc-narrow-port-20261010T0007Z-request.json",
+        "docs/program/evidence/rcc-narrow-port-20261010T0007Z-response.json",
+        "docs/program/evidence/rcc-provider-rollback-38034105493",
+        "docs/program/evidence/rcc-provider-rollback-38034105493/acceptance-summary.json",
+        "docs/program/evidence/rcc-provider-rollback-38034105493/acceptance-summary.log",
+        "docs/program/evidence/rcc-provider-rollback-38034105493/run.json",
+        "docs/program/evidence/rcc-provider-rollback-38034464513",
+        "docs/program/evidence/rcc-provider-rollback-38034464513/acceptance-summary.json",
+        "docs/program/evidence/rcc-provider-rollback-38034464513/acceptance-summary.log",
+        "docs/program/evidence/rcc-provider-rollback-38034464513/run.json",
+        "docs/superpowers/plans/2026-08-25-rcc-runtime-adapter-first-vertical.md",
+        "docs/superpowers/specs/2026-08-25-rcc-runtime-adapter-first-vertical-design.md"
+      ]
+    },
+    {
+      "name": "pr308",
+      "status": 200,
+      "updated": "2026-10-11T16:07:52Z",
+      "comments": 0,
+      "head": "e4ff080375a8422bb656e52d218f198521dda078",
+      "base": "e3c29cde8878307912e55ed09b6436c0f91d06d5",
+      "title": "fix(runtime): admit approved RCC test binaries by exact compatibility identity",
+      "firstbody": "Current RCC compatibility source and actual control \u2014 2026-10-11\n\nThis existing implementation lane serves #133/#134/#139/#143 and retained #221 ownership. Current source `e4ff080375a8422bb656e52d218f198521dda078`, tree `973ff38f49a17a896e4d90f829a72e2ea0ea15e8`, replaces the isolated test path's RCC18.19.3-only coupling with approved exact source/binary/platform/build/feature identities, hash validation before a bounded version probe, descriptor/cache partitioning and fail-closed selection. Operator-supplied paths require explicit isolated selection and exact approved bytes. Unknown, unqualified and mismatched identities fail closed. Production downloads, build packaging and default RCC18.19.3 pins remain unchanged.\n\nSOURCEFULL is independently accepted:1427PASS/13existing SKIP, complete1440 unique nodes; LIGHT/static/type/template gates passed. Root full owner SHA256 `fb8a58b643957e72ba1d53d2216d4b73ac42b5e57235b2510f3159f667a2c1a0`, independent full `16d6709b835e1e4f16be8916b3f10eeb852c195845ebd64c5ac8fd08b19595b9`. The normal source push is verified and remains draft. This source"
+    },
+    {
+      "name": "pr308-files",
+      "status": 200,
+      "files": [
+        ".github/workflows/_gen_workflows.py",
+        ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+        "action_server/scripts/verify_dakota_rcc_acceptance.py",
+        "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+        "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+        "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+        "developer/tests/test_rcc_provider_rollback_workflow.py",
+        "docs/skills/repository-operations.md"
+      ]
+    },
+    {
+      "name": "checks",
+      "status": 200,
+      "total": 25,
+      "checks": [
+        {
+          "name": "publish (3.12)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build (windows-py3.12-devmode)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "name": "build (macos-py3.12-devmode)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "name": "build (windows-py3.10-devmode)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build (ubuntu-py3.10-devmode)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "candidate-wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build (ubuntu-py3.12-devmode)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Action Server binary without credentials (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Action Server binary without credentials (windows-2022)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build-wheels (macos-15)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build-wheels (ubuntu-22.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build (macos-py3.10-devmode)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "audit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build-sdist (ubuntu-py3.12)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "copilot-setup-steps",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (n-1, 18.18.1, ubuntu-22.04, rcc-linux64, ab6e25fe616878d79ed2d92ee9c5073d360d8cde637dcf0...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "coverage",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (n-1, 18.18.1, macos-15, rcc-macosarm64, 57d2fe4fb0dc54f2bd09ed0d1c3f3ace28d85a1370dc1984...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (primary, 18.19.3, windows-2022, rcc-windows64.exe, 523a6be8ad92235fbe0a4e4732699f2cd66f9...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (primary, 18.19.3, macos-15, rcc-macosarm64, 778402ccdb7c10e10fbdad7baa7c27b44563c1a90a95...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build Action Server binary without credentials (macos-15)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (n-1, 18.18.1, windows-2022, rcc-windows64.exe, 705e2a4ec70a8bc3881f042a2eae222ed07e39a83...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "toolkit (primary, 18.19.3, ubuntu-22.04, rcc-linux64, 7e588c01751ca2ae15ba13ef67f2f4b7567697a5a83...",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build-wheels (windows-2022)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "issue101",
+      "status": 200,
+      "updated": "2026-10-11T14:23:08Z",
+      "comments": 174,
+      "head": null,
+      "base": null,
+      "title": "Run the Actions Runtime product, runtime-adapter, and control-room factory",
+      "firstbody": "## Actions Convergence & Closure Readiness\n\nActual integration is `e3c29cde8878307912e55ed09b6436c0f91d06d5`, tree `2238ed312babba9fd5ad89a3a1cc581ca6ad2dcf`, after normal #300 merge with ordered `a0d258a1` / `74beef4d` parents. Independent actual receipt SHA256 `51e944e9dc6117e924b2ee8f6c448b6ab93dea318d7efe28611a535eabc7d40b` verifies all1,423 typed source entries and normal GitHub policy admission. The #299\u2192#300 stack is integrated; premerge6workflows/19jobs succeeded. Linux1325passed/13skipped; original Windows1166passed/172skipped and integration131passed/19skipped. All30new transport cases were explicitly skipped on Windows. Earlier failures and accepted scopes remain retained.\n\nEngineering continues on existing branches: #312 refreshed to `ec70a292`/`47a1e4fc` (source LIGHT independently accepted; current full preexecution successor under review), #313 to `12dd3ec5`/`d3428cf6` (source LIGHT passed; old Windows job114480645718 failed and its cause remains unknown). Neither refresh grants fresh hosted qualification.\n\nRCC compatibility SOURCE `b614864b`/`6fa4f5c1` has independent"
+    },
+    {
+      "name": "issue133",
+      "status": 200,
+      "updated": "2026-10-11T15:12:07Z",
+      "comments": 5,
+      "head": null,
+      "base": null,
+      "title": "Use RCC/Holotree as the first full environment and execution adapter for Actions workers",
+      "firstbody": "Parent: #82\nGeneric adapter contract: #143\nDepends on: #129, #130\nInforms: #83, #86, #87, #90, #134, #138, #139, #142, #144\nCross-project implementation: `joshyorko/rcc#118`, `joshyorko/rcc#120`\n\n## Outcome\n\nUse RCC/Holotree as the **first full Capability Runtime Adapter** for Actions workers, consuming RCC's own supported environment identity, provider, materialization, lease, and execution lifecycle rather than treating RCC as a one-time bootstrap command or rebuilding RCC services inside Actions Runtime.\n\nRCC is the default bundled adapter for compatible Action Packages and Robot Task Packages because it already provides:\n\n- deterministic environment specifications and Holotree reuse;\n- Environment Artifact manifests and cryptographic provider identities;\n- local, offline, and warm-cache operation;\n- environment publication/acquisition;\n- worker-local materialization and process-owned leases;\n- bounded execution through a fresh handle/`env exec` contract;\n- Task Package/`robot.yaml` execution semantics;\n- `rcc cache serve` and provider profiles for sharing immutable environment co"
+    },
+    {
+      "name": "issue134",
+      "status": 200,
+      "updated": "2026-10-11T01:44:42Z",
+      "comments": 5,
+      "head": null,
+      "base": null,
+      "title": "Integrate RCC Environment Artifacts and execution as the first local Runtime Adapter",
+      "firstbody": "Parent: #133\nGrounds the generic contract: #143\nRelated: #82, #90, #130, #144, `joshyorko/rcc#118`, `joshyorko/rcc#120`\nInforms: #83, #129, #135, #139\n\n## Outcome\n\nLand the **first collapsed/local Actions consumer proof** of RCC Environment Artifacts and RCC-owned execution lifecycle before building the distributed worker fleet or freezing a supposedly generic adapter abstraction.\n\nReplace the inherited model:\n\n```text\nRCC materializes once\n -> Actions caches PYTHON_EXE / CONDA_PREFIX\n -> Actions treats local paths as the environment contract\n -> Actions independently owns every later preparation decision\n```\n\nwith:\n\n```text\ncurrent package environment input\n        |\nprovisional RccRuntimeAdapter seam\n        |\nRCC resolve/acquire/verify/materialize/lease\n        |\nfresh RCC-supported execution handle / env exec\n        |\nexisting local Action import/process generation\n        |\nreap -> publish outputs -> RCC release\n```\n\nPreserve the excellent local developer experience. Do not require PostgreSQL, remote workers, Kubernetes, a remote provider, a new Package v3 authoring format, or "
+    },
+    {
+      "name": "issue139",
+      "status": 200,
+      "updated": "2026-09-07T14:43:49Z",
+      "comments": 0,
+      "head": null,
+      "base": null,
+      "title": "Build exact-subject capability, runtime-adapter, admission, Deployment, and worker conformance",
+      "firstbody": "Parent: #82\nRelated: #83, #85, #90, #92, #129, #130, #132, #133, #134, #135, #136, #138, #142, #143, #144\n\n## Outcome\n\nCreate one deterministic conformance/evaluation harness proving that Package Revisions, capabilities, Runtime Plans/adapters, shared admission, Deployment projections, workers/placements, providers, Runs, Tasks, Work Items, artifacts, and interactions preserve their declared contracts across local and distributed modes.\n\nThis is executable capability-runtime evidence, not primarily an LLM benchmark.\n\nThe harness must prevent:\n\n1. support claims based on `--version`, health, mocked registration, generated metadata, simulation, or synthetic success instead of real capability execution;\n2. RCC becoming mandatory generic schema by accident;\n3. silent adapter fallback when the pinned backend fails;\n4. duplicated admission gates drifting across UI/CLI/scheduler/workflows;\n5. stale proof being reused for a changed Package, Runtime Plan, binding, policy, worker, or adapter generation;\n6. every possible backend becoming a speculative parity roadmap without demand or promotion"
+    },
+    {
+      "name": "issue143",
+      "status": 200,
+      "updated": "2026-09-07T14:43:25Z",
+      "comments": 0,
+      "head": null,
+      "base": null,
+      "title": "Define pluggable capability runtime adapters, shared admission, execution requirements, and preflight",
+      "firstbody": "Parent: #82\nGrounded by: #134, `joshyorko/rcc#118`, `joshyorko/rcc#120`\nRelated: #83, #87, #90, #129, #130, #132, #133, #138, #139, #142, #144, #145, #146, #147\n\n## Outcome\n\nDefine one typed **Capability Runtime Adapter** contract, one immutable **Resolved Runtime Plan**, and one shared **execution-admission/preflight contract** so Actions Runtime can use RCC deeply as the first proving backend without making RCC the permanent architecture.\n\nSupported adapter kinds may include:\n\n- `rcc` \u2014 first/default and richest implementation, including Task Package semantics, Holotree Environment Artifacts, provider profiles, `rcc env ...`, and `rcc cache serve`;\n- `uv` \u2014 locked Python/project execution using `pyproject.toml`, `uv.lock`, managed Python, and uv semantics;\n- `python` \u2014 explicitly selected trusted system/managed/venv Python with deliberately weaker portability guarantees;\n- `robot-framework` \u2014 direct Robot Framework suite/task execution under an explicitly resolved runtime environment;\n- future operator-installed adapters added as independent conformance slices.\n\nRCC is neither a fi"
+    },
+    {
+      "name": "issue221",
+      "status": 200,
+      "updated": "2026-10-11T15:30:40Z",
+      "comments": 2,
+      "head": null,
+      "base": null,
+      "title": "Integrate Actions Runtime 1.0.3 security, execution, and native acceptance work",
+      "firstbody": "Actual integration is `e3c29cde8878307912e55ed09b6436c0f91d06d5`, tree `2238ed312babba9fd5ad89a3a1cc581ca6ad2dcf`, after normal #300 merge with ordered `a0d258a1` / `74beef4d` parents. Independent actual receipt SHA256 `51e944e9dc6117e924b2ee8f6c448b6ab93dea318d7efe28611a535eabc7d40b` verifies all1,423 typed source entries and normal GitHub policy admission. The #299\u2192#300 stack is integrated; premerge6workflows/19jobs succeeded. Linux1325passed/13skipped; original Windows1166passed/172skipped and integration131passed/19skipped. All30new transport cases were explicitly skipped on Windows. Earlier failures and accepted scopes remain retained.\n\nEngineering continues on existing branches: #312 refreshed to `ec70a292`/`47a1e4fc` (source LIGHT independently accepted; current full preexecution successor under review), #313 to `12dd3ec5`/`d3428cf6` (source LIGHT passed; old Windows job114480645718 failed and its cause remains unknown). Neither refresh grants fresh hosted qualification.\n\nRCC compatibility SOURCE `b614864b`/`6fa4f5c1` has independent current full1363passes/13skips and explicit"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "at": "2026-10-11T16:25:06.892408+00:00",
+  "intactPreservationNotDiscard": true,
+  "noRamExecution": true,
+  "originalSmallReceiptsUnchanged": true,
+  "rootCompletedDuplicateAssetsOnly": true,
+  "records": [
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rccremote-macosarm64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rccremote-macosarm64",
+      "sha256": "d5237343aa6b43f8da2212a37803ef3d2978cd84250d76a2bfef9e4b2d966bde",
+      "bytes": 8869842,
+      "mode": 384,
+      "mtime_ns": 1791674937634530900,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/index.json",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__index.json",
+      "sha256": "fbf3f53357f40463790a9f6b6bd6c9f5e8fcd69ad158831a6620d5d149f4f4de",
+      "bytes": 9313,
+      "mode": 384,
+      "mtime_ns": 1791674841111736129,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rcc-linux64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rcc-linux64",
+      "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "bytes": 22360226,
+      "mode": 384,
+      "mtime_ns": 1791674937154517018,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rcc-macos64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rcc-macos64",
+      "sha256": "34887e542f9db963987d260eff1f6767268b6c7f96a8282221485e60cbb440c5",
+      "bytes": 22195952,
+      "mode": 384,
+      "mtime_ns": 1791674937166517365,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rcc-macosarm64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rcc-macosarm64",
+      "sha256": "867cc6b19c36eae76f01d7004c0a0e322863583af867f6f8201c263eb0febabb",
+      "bytes": 20953090,
+      "mode": 384,
+      "mtime_ns": 1791674937018513085,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rccremote-linux64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rccremote-linux64",
+      "sha256": "33681430500249a360e59e2d9b0050be34495b667c3862becf832ad175dbfb81",
+      "bytes": 9322658,
+      "mode": 384,
+      "mtime_ns": 1791674936706504063,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rccremote-windows64.exe",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rccremote-windows64.exe",
+      "sha256": "5b8f9cc82fd68f8262c9fbc5876d84c380e60d96418b76e4d66a22c4777d63e5",
+      "bytes": 9641472,
+      "mode": 384,
+      "mtime_ns": 1791674937706532983,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rccremote-macos64",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rccremote-macos64",
+      "sha256": "7b0c91133f5517f3711b2e0294b5722ec019d3348ce377859161b9dfe6edaa98",
+      "bytes": 9518240,
+      "mode": 384,
+      "mtime_ns": 1791674937286520836,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/resume-acceptance/release-artifacts/current-release/rcc-windows64.exe",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/current-release__rcc-windows64.exe",
+      "sha256": "7b62dc1f421f7cf33560c1b0567fc5bf8a65fc1d919af28d0ab633f85814a731",
+      "bytes": 20084224,
+      "mode": 384,
+      "mtime_ns": 1791674936954511235,
+      "sourceAttribution": "v18.19.5 actual released assets"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/final-main-727/RCC-Binaries.zip",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/final-main-727__RCC-Binaries.zip",
+      "sha256": "0233fd07e55753a7c1cf3fa0214f15f28c9c63c32413b172c206824d9c4338ce",
+      "bytes": 64478883,
+      "mode": 384,
+      "mtime_ns": 1791685941916408379,
+      "sourceAttribution": "727c1ff8b679cdbbe12836e53c87734a1edb0071 actual historical hosted bundles"
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/final-main-727/native-runtime-binaries.zip",
+      "preserved": "/dev/shm/rcc-preserved-root-artifacts/completed-root-duplicates-1625/final-main-727__native-runtime-binaries.zip",
+      "sha256": "88f406c654de1155e717ded1534fa058ca1c5375007109f2a06364d3a5036ac2",
+      "bytes": 49089276,
+      "mode": 384,
+      "mtime_ns": 1791685941408393721,
+      "sourceAttribution": "727c1ff8b679cdbbe12836e53c87734a1edb0071 actual historical hosted bundles"
+    }
+  ]
+}

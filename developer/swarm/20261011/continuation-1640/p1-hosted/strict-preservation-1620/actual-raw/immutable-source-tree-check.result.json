@@ -1,0 +1,1 @@
+{"argv":["git","-C","/workspace/work/rcc-swarm/build-provenance","rev-parse","7945f956b428359928908a9f42e36417b113dafd^{tree}"],"durationSeconds":0.0281,"numericExit":0,"ownedProcessQuiescence":{"killSent":false,"quiescent":true,"termSent":false},"readerThreadQuiescence":{"aliveReaderThreads":[],"quiescent":true}}

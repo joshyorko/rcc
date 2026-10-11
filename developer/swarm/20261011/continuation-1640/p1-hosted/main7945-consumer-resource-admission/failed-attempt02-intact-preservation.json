@@ -1,0 +1,403 @@
+{
+  "at": "2026-10-11T15:55:33.637566+00:00",
+  "status": "FAIL_PRE_CONSUMER",
+  "reason": "wrapperTypeErrorafteractual7945ownedcache-serve+freshsnapshothelper0+SIGINTserver0; noenvverify/acquire/exec yet",
+  "original": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-consumer/attempt-02",
+  "intactPreserved": "/dev/shm/rcc-main7945-strict-failed-attempt02-root",
+  "rawPublicCopy": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/main7945-strict-failed-attempt02-raw",
+  "allEntries": [
+    {
+      "path": "importer-home",
+      "mode": 488,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/bin",
+      "mode": 448,
+      "mtimeNs": 1791734041673180744,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/hololib",
+      "mode": 488,
+      "mtimeNs": 1791734041685528171,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/hololib/catalog",
+      "mode": 488,
+      "mtimeNs": 1791734041685438405,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/hololib/library",
+      "mode": 488,
+      "mtimeNs": 1791734041685486548,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/hololib/pids",
+      "mode": 488,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/hololib/used",
+      "mode": 488,
+      "mtimeNs": 1791734041685510274,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/journals",
+      "mode": 448,
+      "mtimeNs": 1791734041671205589,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/pipcache",
+      "mode": 448,
+      "mtimeNs": 1791734041673213924,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/pkgs",
+      "mode": 448,
+      "mtimeNs": 1791734041673257590,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/rcc.yaml.lck",
+      "mode": 384,
+      "mtimeNs": 1791734042567302150,
+      "type": "file",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "importer-home/rcccache.yaml",
+      "mode": 384,
+      "mtimeNs": 1791734042567302150,
+      "type": "file",
+      "sizeBytes": 42,
+      "sha256": "d18c1020bd589a672fd4e835a35b33f63164663ebdea4f24c24ddf94b836a81f"
+    },
+    {
+      "path": "importer-home/rcccache.yaml.lck",
+      "mode": 384,
+      "mtimeNs": 1791734042562659595,
+      "type": "file",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "importer-home/robots",
+      "mode": 448,
+      "mtimeNs": 1791734041673242718,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/templates",
+      "mode": 448,
+      "mtimeNs": 1791734042562659595,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/templates/rcc.json",
+      "mode": 384,
+      "mtimeNs": 1791734042562659595,
+      "type": "file",
+      "sizeBytes": 9313,
+      "sha256": "fbf3f53357f40463790a9f6b6bd6c9f5e8fcd69ad158831a6620d5d149f4f4de"
+    },
+    {
+      "path": "importer-home/uv",
+      "mode": 448,
+      "mtimeNs": 1791734041673274857,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/uvcache",
+      "mode": 448,
+      "mtimeNs": 1791734041673199302,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/uvpython",
+      "mode": 448,
+      "mtimeNs": 1791734041673289098,
+      "type": "dir"
+    },
+    {
+      "path": "importer-home/wheels",
+      "mode": 448,
+      "mtimeNs": 1791734041673228636,
+      "type": "dir"
+    },
+    {
+      "path": "raw",
+      "mode": 448,
+      "mtimeNs": 1791734042713927913,
+      "type": "dir"
+    },
+    {
+      "path": "raw/binary.json",
+      "mode": 384,
+      "mtimeNs": 1791734039802716189,
+      "type": "file",
+      "sizeBytes": 324,
+      "sha256": "207ec5723899fb30a9a32d3f52e9766061500c28486924ab961d5d33b022624d"
+    },
+    {
+      "path": "raw/events.jsonl",
+      "mode": 384,
+      "mtimeNs": 1791734042702663672,
+      "type": "file",
+      "sizeBytes": 1233,
+      "sha256": "33005724a46e203fc9b3f16e8096c9d9e4dcee7e8960b1d14bb9b7251cf40dcc"
+    },
+    {
+      "path": "raw/failure-quiescence.json",
+      "mode": 384,
+      "mtimeNs": 1791734042714442414,
+      "type": "file",
+      "sizeBytes": 49,
+      "sha256": "f9887db8254f3ec7fc28e51a5d37b87797eb7bdddb40be3aa8ffdc36a72cdaee"
+    },
+    {
+      "path": "raw/fresh-revocations.json",
+      "mode": 384,
+      "mtimeNs": 1791734042594660527,
+      "type": "file",
+      "sizeBytes": 237,
+      "sha256": "8bbb2e4450e6f72a5d23ec1deab39f41208314a72cf6a7000090b8b0f242e869"
+    },
+    {
+      "path": "raw/provider-before.json",
+      "mode": 384,
+      "mtimeNs": 1791734041651189660,
+      "type": "file",
+      "sizeBytes": 179,
+      "sha256": "3c460039c698262b8c65d5d5fa80ecb8a83cd46c627630d3325f0d6e0aa5d011"
+    },
+    {
+      "path": "raw/provider-before.tsv",
+      "mode": 384,
+      "mtimeNs": 1791734041646632893,
+      "type": "file",
+      "sizeBytes": 973839,
+      "sha256": "69b297d1ab2fcdfbf65360401a311510c34658692ddec7ffc6b4689dcb0d4c9d"
+    },
+    {
+      "path": "raw/resource-samples.jsonl",
+      "mode": 384,
+      "mtimeNs": 1791734042586660294,
+      "type": "file",
+      "sizeBytes": 850,
+      "sha256": "aca166f612f07aafd3f5f83ad263c13307783e9d602f6bd4c85eebf367a1cc67"
+    },
+    {
+      "path": "raw/revocation-helper.result.json",
+      "mode": 384,
+      "mtimeNs": 1791734042700729530,
+      "type": "file",
+      "sizeBytes": 480,
+      "sha256": "610e0b20c36079edf72486590b2b03275b9e7df8bebacd34596329b5e353a6af"
+    },
+    {
+      "path": "raw/revocation-helper.stderr",
+      "mode": 384,
+      "mtimeNs": 1791734042590660410,
+      "type": "file",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/revocation-helper.stdout",
+      "mode": 384,
+      "mtimeNs": 1791734042599246579,
+      "type": "file",
+      "sizeBytes": 216,
+      "sha256": "e70bd71ae7803961aa7e9779d7dba39a45d28b3439a5fe03ab9552c877d3e0bc"
+    },
+    {
+      "path": "raw/revocation-import-server.stderr",
+      "mode": 384,
+      "mtimeNs": 1791734041671205589,
+      "type": "file",
+      "sizeBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "raw/revocation-import-server.stdout",
+      "mode": 384,
+      "mtimeNs": 1791734042568332838,
+      "type": "file",
+      "sizeBytes": 195,
+      "sha256": "825c5f391e90f47d57dd9709edde7f575ca8e5a3f7f65d1e4dbb1d07679e6423"
+    },
+    {
+      "path": "raw/revocation-import-server.stop.json",
+      "mode": 384,
+      "mtimeNs": 1791734042710357127,
+      "type": "file",
+      "sizeBytes": 60,
+      "sha256": "e1388186fbedc78d16c1fd2f581697b3f5c8581a68286099e77b63eac16e5738"
+    },
+    {
+      "path": "raw/run-status.json",
+      "mode": 384,
+      "mtimeNs": 1791734042713927913,
+      "type": "file",
+      "sizeBytes": 229,
+      "sha256": "7c09fb15ec52e81486afb478b2912b64b7c543558218cb039b9071d662aad3d1"
+    },
+    {
+      "path": "raw/source.json",
+      "mode": 384,
+      "mtimeNs": 1791734039767392393,
+      "type": "file",
+      "sizeBytes": 283,
+      "sha256": "908a76e7be79b4f8f6f787f4012fc825fc0e58c4754b7adcc3c3b5d5512cb620"
+    },
+    {
+      "path": "raw/trust-inputs-before.json",
+      "mode": 384,
+      "mtimeNs": 1791734039804453914,
+      "type": "file",
+      "sizeBytes": 1077,
+      "sha256": "5d02b227a7dfa468f68f178b5f4145080a5d897d328158283134442b5d698a37"
+    },
+    {
+      "path": "rcc-linux64",
+      "mode": 448,
+      "mtimeNs": 1791730573834185508,
+      "type": "file",
+      "sizeBytes": 22392994,
+      "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21"
+    },
+    {
+      "path": "revocation-import-root",
+      "mode": 448,
+      "mtimeNs": 1791734042594660527,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/manifests",
+      "mode": 448,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/manifests/sha256",
+      "mode": 448,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/objects",
+      "mode": 448,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/objects/sha256",
+      "mode": 448,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/tmp",
+      "mode": 448,
+      "mtimeNs": 1791734042568332838,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/trust",
+      "mode": 448,
+      "mtimeNs": 1791734042594660527,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/trust/sha256",
+      "mode": 448,
+      "mtimeNs": 1791734042594660527,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/trust/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e",
+      "mode": 448,
+      "mtimeNs": 1791734042599246579,
+      "type": "dir"
+    },
+    {
+      "path": "revocation-import-root/trust/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/revocations.json",
+      "mode": 384,
+      "mtimeNs": 1791734042599246579,
+      "type": "file",
+      "sizeBytes": 237,
+      "sha256": "8bbb2e4450e6f72a5d23ec1deab39f41208314a72cf6a7000090b8b0f242e869"
+    },
+    {
+      "path": "trust-carrier",
+      "mode": 448,
+      "mtimeNs": 1791665436300130254,
+      "type": "dir"
+    },
+    {
+      "path": "trust-carrier/sha256",
+      "mode": 448,
+      "mtimeNs": 1791665436300130254,
+      "type": "dir"
+    },
+    {
+      "path": "trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e",
+      "mode": 448,
+      "mtimeNs": 1791665436385040178,
+      "type": "dir"
+    },
+    {
+      "path": "trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/provenance.json",
+      "mode": 384,
+      "mtimeNs": 1791665436303798473,
+      "type": "file",
+      "sizeBytes": 736,
+      "sha256": "e832acd8fb00627cc444434c0afaeac41ea84d61e664815f15d5c85531965fea"
+    },
+    {
+      "path": "trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/revocations.json",
+      "mode": 384,
+      "mtimeNs": 1791665436385040178,
+      "type": "file",
+      "sizeBytes": 233,
+      "sha256": "89398b5fa2945be913cfdb53bbc51aeb3afe1cdd4e1a14b8e9a67df3009732b0"
+    },
+    {
+      "path": "trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/sbom.json",
+      "mode": 384,
+      "mtimeNs": 1791665436380132562,
+      "type": "file",
+      "sizeBytes": 1412860,
+      "sha256": "336c5edc7495367c14026d0120452d53aff2b2e39a69f7381466dfb2dec214c8"
+    },
+    {
+      "path": "trust-carrier/sha256/0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e/signature.json",
+      "mode": 384,
+      "mtimeNs": 1791665436384969481,
+      "type": "file",
+      "sizeBytes": 475,
+      "sha256": "5e709b2285ba3a07b2af9bdc3535efa82cf759ba978465bf6d5f94f51b2e73f8"
+    },
+    {
+      "path": "trust-roots.json",
+      "mode": 384,
+      "mtimeNs": 1791665433308043910,
+      "type": "file",
+      "sizeBytes": 65,
+      "sha256": "aae748c9408f911d7a94f9010e68b12249aa95c80b954fffc3082b5537404d64"
+    }
+  ],
+  "contentCount": 56,
+  "numericNativeConsumerExecutions": 0,
+  "preservationBeforeWorkspaceCleanup": true
+}

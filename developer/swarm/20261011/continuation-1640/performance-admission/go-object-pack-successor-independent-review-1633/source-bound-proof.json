@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-11T16:35:36.142634+00:00",
+  "verdict": "GO_COMPONENT_STATIC_V2; runtime-and-build-admission-pending",
+  "reviewedHarnesses": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/harness-successor-draft.go",
+      "bytes": 24615,
+      "sha256": "a192bdc1d5bb0e2c87c06e461944e3ecfde9de0aed6056f766c5a50a6405d14b",
+      "resultStructMissingFields": [
+        "UntimedPackOrderedSHA256",
+        "UntimedPackSliceBytes",
+        "UntimedPackSliceCount"
+      ]
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/harness-successor-v2.go",
+      "bytes": 25247,
+      "sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+      "resultStructMissingFields": []
+    }
+  ],
+  "frozenOriginalSha256": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4",
+  "sourceCommit": "7945f956b428359928908a9f42e36417b113dafd",
+  "v1Blocker": {
+    "declarationLines": [
+      61,
+      78
+    ],
+    "literalLine": 201,
+    "finding": "three unknown result struct fields; corrected only in additive v2"
+  },
+  "reviewedCorrections": [
+    "tmpfs magic and st_dev equality before/after provider copy",
+    "all4649 pack slices/SHA/size validated untimed; timed checks unchanged",
+    "procIO read/missing/duplicate-field failures and VmRSS failures propagated",
+    "exclusive0600 JSONL; synced completed pass before PASS_DONE and final run_complete only after source/input post-closure",
+    "v2 declares all three typed untimed-validation fields and rejects symlink/nonregular pack leaf"
+  ],
+  "conditions": [
+    "external supervisor binds exact private nonsymlink tmpfs sibling paths, UID/containment/no overlaps or concurrent writers; helper is not ownership sandbox",
+    "root actual compiler/input/module/embed/binary provenance required; hardcoded source field alone is not embedded revision proof",
+    "external per-pass/total/resource guards and quiet admission remain pending",
+    "classifier requires numeric0 plus complete final event/source closure; failed-row append can itself fail, so preserve stderr/exit and incomplete JSONL as failure"
+  ],
+  "limitations": [
+    "whole-string unsigned-decimal/nonnegative/monotonic proc counter parsing not enforced; ordinary kernel proc trusted for this component",
+    "post-passRSS sample not peak/full-tree; CPU interval includes observer overhead outside wall-loop",
+    "threeAB/twoBA partial balance; warm shared OS/Go allocator/GC state",
+    "applicationGetObject/ReadAt calls not measured syscall-open count; prior HTTP path differs",
+    "generated39embed/21module/266package receipts read but RAM generated payloads/cache/archive not independently rehashed in this harness-only review"
+  ],
+  "existingPreparation": {
+    "command": [
+      "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+      "list",
+      "-deps",
+      "-mod=readonly",
+      "./prep-probe"
+    ],
+    "numericExit": 0,
+    "packages": 266,
+    "stdoutSha256": "942b87af627b7596abe12937f0c7da7ec4733d47ae624050069b5b81110a9706",
+    "scope": "offline package list only, not successor compilation or timed execution"
+  },
+  "rawSource": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/harness.go",
+      "bytes": 21091,
+      "sha256": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/successor-review-notes.md",
+      "bytes": 1838,
+      "sha256": "2bbec4f9d742b307c87bbee28ed0754a24701eb4ee95b786ce1e0584767b8a44"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/offline-go-list-result.json",
+      "bytes": 11023,
+      "sha256": "78b19731ec0b610158818742ba3a004004bfce59c47b1b5343225bbc4c96b60e"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/preparation-summary.json",
+      "bytes": 2427,
+      "sha256": "e1471e22e9115fac420d35444d50cab3cd6ceef72f7466643d005479eb5d0cbb"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generated-inputs-receipt.json",
+      "bytes": 34023,
+      "sha256": "1ee3d5557fd16f89d461fc447932dac2d0ecbb14f865a902fe1a54cd624e9de2"
+    }
+  ],
+  "diagnostics": [
+    {
+      "numericExit": 1,
+      "stage": "own evidence helper regex assertion",
+      "cause": "field regex excluded slice-typed Passes field, giving incorrect missing-field list; corrected simple field-name scan succeeded; harness bytes unchanged"
+    }
+  ],
+  "performed": [
+    "static full original-to-v1 and v1-to-v2 diffs",
+    "read-only source/receipt hashes",
+    "static struct-field cross-check"
+  ],
+  "notPerformed": [
+    "Go compilation/list/test/runtime",
+    "source/owner edits",
+    "downloads",
+    "fixture/provider/CAS/home writes",
+    "Actions or GitHub mutation"
+  ],
+  "numericExit": 0
+}

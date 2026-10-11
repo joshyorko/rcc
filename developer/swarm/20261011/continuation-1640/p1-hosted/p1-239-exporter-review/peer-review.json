@@ -1,0 +1,313 @@
+{
+  "artifactReviewPath": "/dev/shm/rcc-p1-239-exporter-review/review-evidence.zip",
+  "evidenceLimits": [
+    "The bounded exporter sidecar was independently downloaded and matched to the GitHub artifact API SHA-256 and byte size.",
+    "The exporter job itself downloaded and validated the full canonical preparation bundle before creating this sidecar; this peer review did not download or locally re-hash the 270,724,871-byte canonical ZIP.",
+    "Native binaries are represented by source-bound native-runtime receipts and Go/runtime/platform metadata in this sidecar; this review did not fetch or execute the native binary bundle.",
+    "The release-candidate receipt records artifactBefore as empty pre-acquire state; rollback checks are evidenced by the captured 5,045-entry legacy object maps, rollback results, post-rollback artifact state, and successful released v18.19.5 task consumption."
+  ],
+  "exporter": {
+    "artifactApiSha256": "7c54e6bcc13f7a62c2c85ac62e02edbb33731215d858e9b8ea24168501c30125",
+    "artifactBytes": 2167771,
+    "artifactId": 11708177941,
+    "artifactName": "rcc-preparation-review-evidence-38147141244-7945f956b428359928908a9f42e36417b113dafd",
+    "downloadedZipSha256": "7c54e6bcc13f7a62c2c85ac62e02edbb33731215d858e9b8ea24168501c30125",
+    "jobConclusion": "success",
+    "jobId": 114517859635,
+    "memberCount": 29,
+    "members": [
+      "evidence/SHA256SUMS",
+      "evidence/native/darwin_amd64/native-runtime-receipt.json",
+      "evidence/native/darwin_amd64/native-runtime-robot-evidence.json",
+      "evidence/asset-manifest.json",
+      "evidence/native/darwin_amd64/output.xml",
+      "evidence/native/darwin_arm64/native-runtime-receipt.json",
+      "evidence/native/darwin_arm64/native-runtime-robot-evidence.json",
+      "evidence/native/darwin_arm64/output.xml",
+      "evidence/native/linux_amd64/jat-class-consumer-receipt.json",
+      "evidence/native/linux_amd64/native-runtime-receipt.json",
+      "evidence/native/linux_amd64/native-runtime-robot-evidence.json",
+      "evidence/native/linux_amd64/output.xml",
+      "evidence/native/windows_amd64/native-runtime-receipt.json",
+      "evidence/native/windows_amd64/native-runtime-robot-evidence.json",
+      "evidence/native/windows_amd64/output.xml",
+      "evidence/provenance.json",
+      "evidence/release-candidate/coordination-blackbox-v1.json",
+      "evidence/release-candidate/large-stream-receipt.json",
+      "evidence/release-candidate/n1/candidate-archive-upgrade.json",
+      "evidence/release-candidate/n1/n1-archive-sha256.txt",
+      "evidence/release-candidate/n1/n1-rollback-state.json",
+      "evidence/release-candidate/n1/released-archive-rollback-attempt.json",
+      "evidence/release-candidate/n1/released-v12-rollback-consumption.json",
+      "evidence/release-candidate/release-candidate-exit.json",
+      "evidence/release-candidate/release-candidate-v1.json",
+      "evidence/release-candidate/robot/output.xml",
+      "evidence/release-candidate/self-host-metadata-v1.json",
+      "evidence/release-candidate/self-host-v1.json",
+      "review-identity.json"
+    ],
+    "runId": 38155612008,
+    "safeZipMembers": true,
+    "sourceSha": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+    "uncompressedBytes": 10199861,
+    "workflowPath": ".github/workflows/export-release-evidence.yml"
+  },
+  "extractedReviewPath": "/dev/shm/rcc-p1-239-exporter-review-peer/review-evidence/evidence",
+  "fullReleaseCandidate": {
+    "allGatesPassed": true,
+    "binary": {
+      "path": "/home/runner/work/rcc/rcc/build/rcc",
+      "sha256": "508c095f50a2554e69e690746b4a628db5ec98fc65fa149de1db335216ebdc8a"
+    },
+    "coordination": {
+      "binarySha256": "508c095f50a2554e69e690746b4a628db5ec98fc65fa149de1db335216ebdc8a",
+      "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "scenarios": {
+        "cli-claim": "published",
+        "cli-heartbeat": "renewed",
+        "cli-loopback-rejection": "rejected",
+        "cli-prewarm": "ready-and-capacity-limited",
+        "cli-release": "released",
+        "cli-wait": "artifact-backed"
+      },
+      "schemaVersion": 1
+    },
+    "exitRecord": {
+      "gateExitCode": 0,
+      "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "teeExitCode": 0
+    },
+    "gateCount": 11,
+    "gates": {
+      "artifactConsumerVertical": "passed",
+      "artifactFocused": "passed",
+      "artifactRace": "passed",
+      "artifactRobot": "passed",
+      "artifactVertical": "passed",
+      "binaryInventory": "passed",
+      "coordinationAcceptance": "passed",
+      "goVet": "passed",
+      "largeStream": "passed",
+      "robot": "passed",
+      "selfHost": "passed"
+    },
+    "largeStream": {
+      "bufferBytes": 65536,
+      "bytes": 2147483648,
+      "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "interruptionAcceptance": "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds",
+      "memoryBytes": 2772328,
+      "memoryDeltaBytes": 117568,
+      "platform": "linux/amd64",
+      "requests": 1,
+      "restartPolicy": "full-restart",
+      "schemaVersion": 1,
+      "sha256": "47194c6cbe6e6ebc28e1241b6739f03624563d1953fa876349f94c89f5d930f3"
+    },
+    "n1": {
+      "archiveRollback": "imported",
+      "archiveSha256": "868dd01503d860fd2a9159a6b31153a249644aa4aa0130381e56171c90bf5dcb",
+      "artifactDigest": "sha256:aace47e92826f553e67a4c9fd18fa51f69acf7c2a3be4fcd656f020a8f98b66b",
+      "legacyClosure": {
+        "artifactAfterRollbackEqualsAfterArchiveRollback": true,
+        "artifactSnapshots": {
+          "artifactAfterArchiveRollback": 5057,
+          "artifactAfterRollback": 5057,
+          "artifactBefore": 0
+        },
+        "legacyAfterRollback": {
+          "catalog": {
+            "path": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a/hololib/catalog/37368f00fc9af086v12.linux_amd64",
+            "sha256": "fcb61e7197d2b8fdf16b91ea19c9e937450464c54e73f044dfb1e7c44e10df6d",
+            "size": 625771
+          },
+          "objectCount": 5045
+        },
+        "legacyAfterUpgrade": {
+          "catalog": {
+            "path": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a/hololib/catalog/37368f00fc9af086v12.linux_amd64",
+            "sha256": "fcb61e7197d2b8fdf16b91ea19c9e937450464c54e73f044dfb1e7c44e10df6d",
+            "size": 625771
+          },
+          "objectCount": 5045
+        },
+        "legacyBefore": {
+          "catalog": {
+            "path": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a/hololib/catalog/37368f00fc9af086v12.linux_amd64",
+            "sha256": "c984bf4008bf06ee4e02464c619aaf2df4c1c629566edf5fdbb593bb7b66a07e",
+            "size": 625855
+          },
+          "objectCount": 5045
+        },
+        "note": "artifactBefore is an empty pre-acquire snapshot; this exported receipt proves stable post-rollback artifact state, while legacy object maps are captured across N-1 upgrade and rollback.",
+        "objectMapsBeforeToUpgradeEqual": {
+          "legacyAfterUpgrade": true,
+          "legacyBefore": true
+        }
+      },
+      "materializationId": "62fb83f_5a1fac3_7cc1d4b2",
+      "releasedArchiveRollbackReturncode": 0,
+      "releasedOldTaskMarker": "n1-old-task-ok",
+      "releasedOldTaskReturncode": 0
+    },
+    "receiptSourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+    "robotXml": {
+      "fail": "0",
+      "pass": "171",
+      "skip": "1"
+    },
+    "selfHost": {
+      "candidate": {
+        "path": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+        "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+        "version": "v18.19.6"
+      },
+      "commandCount": 12,
+      "generationA": {
+        "candidate": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+        "candidateSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+        "source": "/home/runner/work/rcc/rcc/build/self-host/released/rcc",
+        "sourceSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3"
+      },
+      "generationB": {
+        "path": "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+        "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+        "version": "v18.19.6"
+      },
+      "released": {
+        "path": "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+        "version": "v18.19.5"
+      }
+    }
+  },
+  "nativeReceipts": [
+    {
+      "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "binaryVersion": "v18.19.6",
+      "cold": {
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "nativeImport": "sqlite3"
+      },
+      "jatClassConsumer": {
+        "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+        "coldCacheHit": "provider",
+        "coldExitCode": 0,
+        "robotTestXml": {
+          "fail": "0",
+          "pass": "1",
+          "skip": "0"
+        },
+        "sourceSha": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "platform": "linux_amd64",
+      "robotXml": {
+        "fail": "0",
+        "pass": "1",
+        "skip": "0"
+      },
+      "runtime": "linux/amd64",
+      "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "syntheticCpuMismatchProviderObjectGets": 0,
+      "syntheticCpuMismatchRejected": true,
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      }
+    },
+    {
+      "binarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "binaryVersion": "v18.19.6",
+      "cold": {
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "nativeImport": "sqlite3"
+      },
+      "platform": "windows_amd64",
+      "robotXml": {
+        "fail": "0",
+        "pass": "1",
+        "skip": "0"
+      },
+      "runtime": "windows/amd64",
+      "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "syntheticCpuMismatchProviderObjectGets": 0,
+      "syntheticCpuMismatchRejected": true,
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      }
+    },
+    {
+      "binarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "binaryVersion": "v18.19.6",
+      "cold": {
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "nativeImport": "sqlite3"
+      },
+      "platform": "darwin_amd64",
+      "robotXml": {
+        "fail": "0",
+        "pass": "1",
+        "skip": "0"
+      },
+      "runtime": "darwin/amd64",
+      "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "syntheticCpuMismatchProviderObjectGets": 0,
+      "syntheticCpuMismatchRejected": true,
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      }
+    },
+    {
+      "binarySha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "binaryVersion": "v18.19.6",
+      "cold": {
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "nativeImport": "sqlite3"
+      },
+      "platform": "darwin_arm64",
+      "robotXml": {
+        "fail": "0",
+        "pass": "1",
+        "skip": "0"
+      },
+      "runtime": "darwin/arm64",
+      "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+      "syntheticCpuMismatchProviderObjectGets": 0,
+      "syntheticCpuMismatchRejected": true,
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      }
+    }
+  ],
+  "peerVerifier": {
+    "command": "python3 scripts/release_publication.py verify-review-evidence --root /dev/shm/rcc-p1-239-exporter-review-peer/review-evidence --source-sha 7945f956b428359928908a9f42e36417b113dafd --version v18.19.6 --run-id 38147141244 --artifact-id 11705567118 --manifest-sha 26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c --preparation-zip-digest sha256:75919093aaeb1a49bfa7898246b4bd8d2e56ea065db837a391fb0ec83d78c7f5 --exporter-sha 3fe6e200c0acc06d5920544a3bd5c3c036096855 --exporter-run-id 38155612008",
+    "exitCode": 0,
+    "stdout": "bounded review evidence validated",
+    "verifierSourceBlobSha256": "c57906706cb4a93e9e7d755dadbf09be87785e2c",
+    "verifierSourceCommit": "4592139422f02fb7bc4fbc3f8e0b612a42551044"
+  },
+  "preparationBinding": {
+    "canonicalArtifactApiSha256": "75919093aaeb1a49bfa7898246b4bd8d2e56ea065db837a391fb0ec83d78c7f5",
+    "canonicalArtifactBytes": 270724871,
+    "canonicalArtifactDownloadedLocally": false,
+    "canonicalArtifactId": 11705567118,
+    "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+    "runId": 38147141244,
+    "sourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+    "version": "v18.19.6"
+  },
+  "reviewIdentitySha256": "bb9102f27e1d26ced939bd0be3cc2a8eabcc7ea261f79a54031b4696c385c16d",
+  "reviewResult": "PASS",
+  "reviewScope": "Read-only bounded sidecar review of successful exporter run; no canonical 270 MB preparation artifact downloaded and no release/publishing actions taken."
+}

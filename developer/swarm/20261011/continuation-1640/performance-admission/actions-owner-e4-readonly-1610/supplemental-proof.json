@@ -1,0 +1,28 @@
+[
+  {
+    "name": "pr221-current",
+    "head": "a54c982462d1e7ad011d8152bfc299d997503fb3",
+    "headBranch": "integration/community-release-20261008",
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "draft": true
+  },
+  {
+    "name": "candidate-wheel-artifacts",
+    "total": 1,
+    "artifacts": [
+      {
+        "id": 11707575954,
+        "name": "actions-core-candidate-dist",
+        "size": 185506,
+        "digest": "sha256:1578615939612058f949f7b10fd45e2ea2bc29791d6d7e75c5b9332dfad8d2e0",
+        "url": "https://api.github.com/repos/joshyorko/actions/actions/artifacts/11707575954/zip"
+      }
+    ]
+  },
+  {
+    "name": "build-source",
+    "size": 5470,
+    "sha256": "75c249c111bbf3d81f027a252e7dba54771037f02b402832c0554e119cb4eb12",
+    "gitBlob": "8839a5356c802f21dc779e8d1c3a3ed9ec88aab4"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "path": "source-bound-proof.json",
+      "bytes": 5342,
+      "sha256": "df8fdf8b2a3229408a25823be8d825b74daa7f4da93d480c5fb1966cecd82769"
+    },
+    {
+      "path": "report.md",
+      "bytes": 3020,
+      "sha256": "db227e37b80e7c5198ef23e35ca31b66ab9f0de51d19006793d9f82d385d5b4e"
+    }
+  ],
+  "numericExit": 0
+}

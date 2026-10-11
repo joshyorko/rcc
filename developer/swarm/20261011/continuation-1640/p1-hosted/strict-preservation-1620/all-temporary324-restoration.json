@@ -1,0 +1,212 @@
+{
+  "at": "2026-10-11T16:25:09.524256+00:00",
+  "allListedHistorical324OriginalPathsRestored": true,
+  "files": [
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/release-candidate-evidence-324524ff.zip",
+      "sha256": "d5080fa142c65458b5081dbb997a838c18a689eb9c1b1ab6bec79c567ba80b89",
+      "bytes": 156395512,
+      "mode": 384,
+      "mtime_ns": 1791685630435417879,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/n1-release-candidate-324524ff.rcca",
+      "sha256": "9ed01cbfe2463f0f064ab10efaf61e8e48a9c96767e7b6aa0629e4e8295bcb85",
+      "bytes": 72591172,
+      "mode": 384,
+      "mtime_ns": 1791685698301378336,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-rcc",
+      "sha256": "8e362301a33092fc04d7b8b37697faf34033c7350a4cac529003d045b6f27daf",
+      "bytes": 22417570,
+      "mode": 448,
+      "mtime_ns": 1791685725980681171,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685726893392739,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-promoted-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685727019885717,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rcc",
+      "sha256": "f350c6ea72932b4ca4b8b8e14a18e0590b87955ab20712ea08dd093456c44eda",
+      "bytes": 28793283,
+      "mode": 448,
+      "mtime_ns": 1791685727149395074,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-released-rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "bytes": 13345575,
+      "mode": 448,
+      "mtime_ns": 1791685727240765464,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/root-binaries/build-self-host-candidate-rccremote",
+      "sha256": "715f1fcddc53e64274e7016c35212887e4da2e2e9d5f7b7e41bbb5fa762cf5e2",
+      "bytes": 13345575,
+      "mode": 448,
+      "mtime_ns": 1791685727298739062,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-full-acceptance/RCC-Binaries-324524ff.zip",
+      "sha256": "987a9dd25d896ebdb30d75fa7bdb7ace69d77f931e7cc688d909a30ae1aa8cff",
+      "bytes": 64478867,
+      "mode": 384,
+      "mtime_ns": 1791684074022533214,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rcc-linux64",
+      "sha256": "e4fab9231b8412cab6f3bb3b533e35f826e03b61192cdc71a692a7f7b15c4618",
+      "bytes": 22384802,
+      "mode": 493,
+      "mtime_ns": 1791684236285283918,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rcc-macos64",
+      "sha256": "ea768dcafe9bb7edd6dd8f46f48248678d7f0bf54e79f0e85931d822cdd40fa2",
+      "bytes": 22224816,
+      "mode": 493,
+      "mtime_ns": 1791684236375623628,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rcc-macosarm64",
+      "sha256": "c8455968d066b0f203d51176cb3493231c32c55ab0bca6366678a6573324d9bf",
+      "bytes": 20969794,
+      "mode": 493,
+      "mtime_ns": 1791684236460949064,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rcc-windows64.exe",
+      "sha256": "8d02256a2c31a1ba43d3e5fbd5f0a30ede9b531b4eccaf4cd45c245e8756f330",
+      "bytes": 20109824,
+      "mode": 493,
+      "mtime_ns": 1791684236538218754,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rccremote-linux64",
+      "sha256": "83f8eb86a416cf9abd7e27b115700e1b2dc9180813b60c5305a218ba19ca11bb",
+      "bytes": 9343138,
+      "mode": 493,
+      "mtime_ns": 1791684235988659537,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rccremote-macos64",
+      "sha256": "4c6fd6828473fc87c1d8a4dfbd3ac87d02651f7fd607fb892a05aee678875105",
+      "bytes": 9534832,
+      "mode": 493,
+      "mtime_ns": 1791684236091127963,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rccremote-macosarm64",
+      "sha256": "6f9e809209ace6b39cfd3454e636b4ffb711cee51905628893ad6e779fcfd2b0",
+      "bytes": 8886562,
+      "mode": 493,
+      "mtime_ns": 1791684236037324171,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-distribution-binaries/rccremote-windows64.exe",
+      "sha256": "32511940e8ed2bc59ddfca3e306ed4b2001cca776c4e5dfa69813860ee8ce823",
+      "bytes": 9664512,
+      "mode": 493,
+      "mtime_ns": 1791684236140168978,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rcc-linux64",
+      "sha256": "e4fab9231b8412cab6f3bb3b533e35f826e03b61192cdc71a692a7f7b15c4618",
+      "bytes": 22384802,
+      "mode": 493,
+      "mtime_ns": 1791684236285283918,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rcc-macos64",
+      "sha256": "ea768dcafe9bb7edd6dd8f46f48248678d7f0bf54e79f0e85931d822cdd40fa2",
+      "bytes": 22224816,
+      "mode": 493,
+      "mtime_ns": 1791684236375623628,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rcc-macosarm64",
+      "sha256": "c8455968d066b0f203d51176cb3493231c32c55ab0bca6366678a6573324d9bf",
+      "bytes": 20969794,
+      "mode": 493,
+      "mtime_ns": 1791684236460949064,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rcc-windows64.exe",
+      "sha256": "8d02256a2c31a1ba43d3e5fbd5f0a30ede9b531b4eccaf4cd45c245e8756f330",
+      "bytes": 20109824,
+      "mode": 493,
+      "mtime_ns": 1791684236538218754,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rccremote-linux64",
+      "sha256": "83f8eb86a416cf9abd7e27b115700e1b2dc9180813b60c5305a218ba19ca11bb",
+      "bytes": 9343138,
+      "mode": 493,
+      "mtime_ns": 1791684235988659537,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rccremote-macos64",
+      "sha256": "4c6fd6828473fc87c1d8a4dfbd3ac87d02651f7fd607fb892a05aee678875105",
+      "bytes": 9534832,
+      "mode": 493,
+      "mtime_ns": 1791684236091127963,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rccremote-macosarm64",
+      "sha256": "6f9e809209ace6b39cfd3454e636b4ffb711cee51905628893ad6e779fcfd2b0",
+      "bytes": 8886562,
+      "mode": 493,
+      "mtime_ns": 1791684236037324171,
+      "restoredVerified": true
+    },
+    {
+      "original": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-324524f/root-simulation-assets/rccremote-windows64.exe",
+      "sha256": "32511940e8ed2bc59ddfca3e306ed4b2001cca776c4e5dfa69813860ee8ce823",
+      "bytes": 9664512,
+      "mode": 493,
+      "mtime_ns": 1791684236140168978,
+      "restoredVerified": true
+    }
+  ],
+  "count": 25,
+  "logicalBytesRestored": 675190680,
+  "retainedRAMCopiesIntact": true,
+  "topology": "Original staging lacked inode topology; each original path restored with independently verified SHA,size,mode,mtime. No invented hardlink attribution.",
+  "guard": 2688548864,
+  "workspaceFreeAfter": 2775412736
+}

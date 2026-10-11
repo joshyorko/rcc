@@ -1,0 +1,59 @@
+{
+  "accepted_generator": {
+    "numeric_exit": 0,
+    "path": "generate_embeds_03.py",
+    "sha256": "e6b125b3da6964b4da53d464784063d1d64c4b8e15351f2ae9430758c25c0e12"
+  },
+  "archive_download_numeric_exit": 0,
+  "archive_sha256": "cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6",
+  "archive_size_bytes": 6649407,
+  "build_or_benchmark_run": false,
+  "failed_generator_attempts_preserved": [
+    {
+      "failure": "incorrect assumption about source_manifest snapshot_root and snapshot_files representation",
+      "numeric_exit": 1,
+      "revision": "generate_embeds.py",
+      "sha256": "0cbe415eb546a7527a6a3cef7f10f6ba5b01097d3cfce57574054a46bd6b8633"
+    },
+    {
+      "failure": "copied source directories retained read-only modes",
+      "numeric_exit": 1,
+      "revision": "generate_embeds_02.py",
+      "sha256": "5576ad14d8925aefdfa6cd4d33cc03c427164dbef7c624caf053080ef88b4240"
+    },
+    {
+      "failure": "zip file object used read() instead of read_bytes()",
+      "numeric_exit": 1,
+      "revision": "generate_embeds_03.py",
+      "sha256": "e6b125b3da6964b4da53d464784063d1d64c4b8e15351f2ae9430758c25c0e12"
+    }
+  ],
+  "generated_embed_bytes": 7474027,
+  "generated_embed_file_count": 39,
+  "generated_embed_tree_sha256": "07e3c5978f32cbf9889bb24461e8cb2beee0b3f5358c4a6674b2337bc235e9e8",
+  "micromamba_payload_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+  "micromamba_payload_size_bytes": 17546920,
+  "offline_go_list": {
+    "command": [
+      "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+      "list",
+      "-deps",
+      "-mod=readonly",
+      "./prep-probe"
+    ],
+    "dependency_package_count": 266,
+    "elapsed_s": 0.2632,
+    "go_binary_sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+    "max_owned_gomodcache_gocache_gotmp_allocated_bytes": 63795200,
+    "max_sampled_process_tree_rss_bytes": 37978112,
+    "min_workspace_free_bytes": 2771247104,
+    "numeric_exit": 0,
+    "required_root_go_mod_dirs_absent_but_unused_by_listed_closure": 13,
+    "required_root_go_mod_dirs_present": 21,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "942b87af627b7596abe12937f0c7da7ec4733d47ae624050069b5b81110a9706"
+  },
+  "source_fixture_read": false,
+  "status": "PREPARATION_AND_OFFLINE_PACKAGE_LIST_PASS",
+  "workspace_free_floor_bytes": 2688548864
+}

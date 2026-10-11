@@ -1,0 +1,231 @@
+{
+  "at": "2026-10-11T16:09:59.219454+00:00",
+  "commit": "e4ff080375a8422bb656e52d218f198521dda078",
+  "tree": "973ff38f49a17a896e4d90f829a72e2ea0ea15e8",
+  "files": [
+    {
+      "kind": "source",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "bytes": 36059,
+      "sha256": "259f7d7265cddc3a6f664676fbd13b478d4534a7f6c8a6b1670a8d19393cf3fb",
+      "gitBlob": "69ae0f4f5548f4621599ed6fbf9a98cf01bd293b",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "bytes": 81503,
+      "sha256": "8f21502f64fed9ee5d26eb6a080a625ee575954e1f659c1f51ee1ea31bda57c7",
+      "gitBlob": "df113b7713afa9d64512fc242b8ae6cb96b7773e",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+      "bytes": 80545,
+      "sha256": "3f70440fdb10416d269b7f917406e8a64cbdf59bf7a787f077cda71ca436e6f0",
+      "gitBlob": "48e7006c2f6e7b43492afa702994e8f8068fefa1",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "bytes": 48314,
+      "sha256": "af2f79ccd395c088076381f6681860cf8160f8fd0d9169e122634fe684c37c35",
+      "gitBlob": "9dcf5df9b2d7c21825b226b425027bcb8094828d",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+      "bytes": 42708,
+      "sha256": "8bd97a3f7e2c02553fe205d3bfd0989d6bd1be09e13625c8b326820fdf999e50",
+      "gitBlob": "5bd6d59f49c2f12f2920a8bfc4d5347c65af0d4e",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/src/actions/server/_download_rcc.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/src/actions/server/_download_rcc.py",
+      "bytes": 3180,
+      "sha256": "ae66db7d43df5527b0483e0efec0c0fb04f8991041d5ec617414100a29db4f8a",
+      "gitBlob": "f694f9798803f94ad4ee4331503bc46dc75a0062",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": "action_server/src/actions/server/_build_common/rcc_bundle.py",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/action_server/src/actions/server/_build_common/rcc_bundle.py",
+      "bytes": 445,
+      "sha256": "1c10933e522d1c8bf6a04b38cdb571b1f8361b6c0d2e865b9155e09bac72de82",
+      "gitBlob": "a2e2fe413b3dbc48b1fce58e48de41e96a756e59",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "source",
+      "path": ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+      "url": "https://raw.githubusercontent.com/joshyorko/actions/e4ff080375a8422bb656e52d218f198521dda078/.github/workflows/actions_runtime_rcc_provider_rollback.yml",
+      "bytes": 51284,
+      "sha256": "b4afa9698f4f8d662fa86de3e7a2547ec986b19776fa87847e4e8a40f1973bd0",
+      "gitBlob": "ddf773bf38fdef36ace7e0fb9bf3a0bc84747928",
+      "gitTreeMode": "100644",
+      "verified": true
+    },
+    {
+      "kind": "comments",
+      "name": "issue101-latest-comments",
+      "url": "https://api.github.com/repos/joshyorko/actions/issues/101/comments?per_page=5&page=35",
+      "count": 4,
+      "comments": [
+        {
+          "id": 6105114291,
+          "created": "2026-10-11T03:41:45Z",
+          "updated": "2026-10-11T03:41:45Z",
+          "user": "joshyorko",
+          "body": "Engineering execution resumed. #292 is normally merged at `ba85aac7324ea4463bfba8c5f8586e27706dc2fe`, with the accepted tested tree and ordered parents preserved.\n\n- #290 `5c8084c6`: strict current-source controls passed independent receipt review, eleven Linux frozen and eleven wrapper cases without skips. Full exact-head CI remains pending.\n- #310 `f506a04e`: both current-harness Linux native browser gates passed independent review against original measured build `92498aff`; normal/403-recovery/503 stages and cleanup are separately bound. Full fresh CI and remaining platform/state gates remain open.\n- #302 `ff684222`: current-source three-case hosted RCC acceptance passed independent receipt review. Private metadata/supervisor source/spec recovery remains HOLD.\n- #299 `9cb61c52`: Linux/macOS passed; Windows failed one initial resource-node startup before collision assertions. Successfu"
+        },
+        {
+          "id": 6105231845,
+          "created": "2026-10-11T03:59:13Z",
+          "updated": "2026-10-11T03:59:13Z",
+          "user": "joshyorko",
+          "body": "Engineering integration: #290 normally merged at `fbde0d3a248c47c9964851355f96575c89a87329`, ordered parents `ba85aac7`/`5c8084c6`, exact independently reviewed tree `65954e87`, all27 checks successful. Eleven frozen and eleven wrapper rollback cases passed with strict268-input/five-test equality. This does not close broader reader/platform/private/release contracts.\n\nExisting #309 and #310 branches are ordinarily refreshed and pushed at `41d4ee41` and `4b2df94d` after independent exact-union review; fresh complete CI is active. #302 is preparing a reviewed current-source commit followed by a separately pinned control child and new three-case gate. Integrate #310 before #302 changes Runtime producer inputs.\n\nOne fresh clean Linux cp312 consumer of retained Runtime1.0.3 wheel `0f366268` passed full196-member equality/private-Core scanning, public Core1.0.2/Helper1.0.3 dependency origins/d"
+        },
+        {
+          "id": 6105422819,
+          "created": "2026-10-11T04:26:50Z",
+          "updated": "2026-10-11T04:26:50Z",
+          "user": "joshyorko",
+          "body": "Engineering has continued on the existing branches after normal #290 integration at `fbde0d3a`.\n\n* #307 `87e412f8` is pushed after independent exact-source/gateway review. The OAuth task now rejects failed/blank/error acquisitions and validates both structures before atomic replacement. RED3\u2192GREEN41,1,173 package passes/13 existing skips,Toolkit69 and complete configured lint/type checks passed. The real committed Invoke\u2192Runtime Poetry/PyYAML gateway was verified with controlled responses. Approved OAuth source-pair/provider content and immutable recovery remain HOLD; future artifact checks can fail closed. No replacement repository, configuration or infrastructure was introduced.\n* #305 `14c1c196` is pushed after independent source review. The existing cache fixture and five persisted Run assertions are retained. Its separate public-Core mode performs no candidate build/override, requir"
+        },
+        {
+          "id": 6105710480,
+          "created": "2026-10-11T05:09:50Z",
+          "updated": "2026-10-11T05:09:50Z",
+          "user": "joshyorko",
+          "body": "Engineering integration advanced: #311 merged normally at `1c7585fe8bb3cb9476c3997570bd3f04466f2bbc`, tree `35a5168a3904ba41e29047fec2a4cd3b50880a78`, ordered parents `fbde0d3a`/`d75b25fb`. The tree equals the independently reviewed synthetic control `e3c52c5c`; all 23 declared checks passed. Independent actual merge readback is `7e6301ad`. Original Windows failures and their unknown cause remain preserved; the next observation design is retained without implementation.\n\n#310's current Windows job failed three FIRST readiness waits (128 integration passes,18 skips), before reload/catalog assertions. It cannot merge. The original 16-mark RCC interval sums track the observed variables-call duration; no forwarding gap or native cause is established. Its next ordinary refresh will include the accepted #311 observer, with fresh union review and all gates. #302 remains behind #310 acceptance b"
+        }
+      ]
+    },
+    {
+      "kind": "comments",
+      "name": "issue133-latest-comments",
+      "url": "https://api.github.com/repos/joshyorko/actions/issues/133/comments?per_page=5&page=1",
+      "count": 5,
+      "comments": [
+        {
+          "id": 5327623118,
+          "created": "2026-08-18T11:39:12Z",
+          "updated": "2026-08-18T11:39:12Z",
+          "user": "joshyorko",
+          "body": "Cross-project implementation/design issue is now `joshyorko/rcc#118` \u2014 Holotree immutable remote environment artifacts, node-local caches, atomic publication/push, build single-flight, execution leases, and GC. #133 owns the Actions-facing environment contract; RCC #118 owns evolving Holotree itself. Neither issue should absorb #83 Run/Attempt fencing or #90 worker/process ownership."
+        },
+        {
+          "id": 5328133003,
+          "created": "2026-08-18T12:25:50Z",
+          "updated": "2026-08-18T12:25:50Z",
+          "user": "joshyorko",
+          "body": "Cross-project implementation contract: https://github.com/joshyorko/rcc/issues/118\n\n#118 now defines the concrete RCC/Holotree v1 path consumed here:\n\n- cryptographic Environment Artifact Manifest + Object Index layered over existing v12 catalogs/current Hololib bytes;\n- explicit separation between legacy SipHash cache keys and remote trust identities;\n- provider publication/acquisition with verified objects and atomic manifest commit;\n- worker-local materialization, lease, Execution Handle, and GC semantics;\n- per-build/per-artifact/per-materialization coordination rather than a fleet-wide Holotree lock;\n- source-only autoreload reuse and generation-safe environment-changing reload;\n- a first two-process vertical that does not require a new catalog format, zstd, packfiles, FUSE, OCI, a daemon, or Kubernetes.\n\nTreat #118 as the engine-side authority and this issue as the Runtime adapter/"
+        },
+        {
+          "id": 5335428231,
+          "created": "2026-08-18T23:21:53Z",
+          "updated": "2026-08-18T23:21:53Z",
+          "user": "joshyorko",
+          "body": "## Implementation split and RCC lineage \u2014 2026-08-18\n\nThis issue remains the full Actions environment-substrate contract. The board now has a bounded first implementation and explicit RCC dependencies.\n\n### Immediate Actions child\n\n- #134 \u2014 replace current local Action Server path/activation caching with an RCC EnvironmentBackend lifecycle while preserving current v2 package authoring, autoreload, frozen binary operation, and the existing process pool.\n\n#134 is intentionally local/collapsed. It proves the Runtime can keep Environment Artifact/materialization/lease identity authoritative before #90 introduces independent workers.\n\n### RCC program split\n\n- `joshyorko/rcc#120` \u2014 release Environment Artifacts v1 / v18.19.0 handoff;\n- `joshyorko/rcc#121` \u2014 supported-platform and ABI compatibility matrix;\n- `joshyorko/rcc#122` \u2014 lease/crash/repair/GC semantics;\n- `joshyorko/rcc#123` \u2014 producti"
+        },
+        {
+          "id": 6109883396,
+          "created": "2026-10-11T14:09:13Z",
+          "updated": "2026-10-11T14:09:13Z",
+          "user": "joshyorko",
+          "body": "Coordination from the existing RCC #125/#118 swarm; no Actions branch, production pin or worktree was changed. The operator explicitly authorized the existing Actions owners to repair the historical exactRCCv18.19.3 restriction and qualify newer candidates, including the preservedv18.19.6 source candidate. RCC remains on **publication HOLD**, which does not prohibit isolated candidate testing after owner admission.\n\nWe consumed the newer #308 qualification rather than treating #221's unchanged head as the entire graph. Root independently downloaded original artifact11699213923, verified ZIP SHA375684fb49460e48451184eae58c7ec26f3b5849d29ab7333b3147b8ef1995f6/all7 members and9 immutable c103 source pins; JUnit3/0/0/0 at exact SOURCEc103/CONTROLd5a/target6181 is accepted in its stated stableRCC3/Core1.0.2 public scope. No currenta0d/private134/fullcontroller/native/newer-RCC qualification i"
+        },
+        {
+          "id": 6110447631,
+          "created": "2026-10-11T15:12:07Z",
+          "updated": "2026-10-11T15:12:07Z",
+          "user": "joshyorko",
+          "body": "RCC coordination checkpoint: all nine actual v18.19.6 preparation assets and all four shipping native binaries for source `7945f956b428359928908a9f42e36417b113dafd` / run `38147141244` have passed root and independent byte/identity/compiler review. This does not rebind your already acquired source727 candidate tuple. Publication remains HOLD; isolated candidate tests do not require publication.\n\nWe consumed your updated RCC #125 comment `6109416621`: newer-version test admission is owner-reported implemented at `b614864...`; released5/candidate7276 are NOT_RUN after the original3 control capacity and ProcessTreeCleanupError STOP. This is a fixture/resource/cleanup gate, not a permanent v18.19.3 architectural restriction. Root retained the complete original comment and independently verified all 34 delta files. Exact b614 code is still unavailable through public commit API (422/404), so r"
+        }
+      ]
+    },
+    {
+      "kind": "comments",
+      "name": "issue134-latest-comments",
+      "url": "https://api.github.com/repos/joshyorko/actions/issues/134/comments?per_page=5&page=1",
+      "count": 5,
+      "comments": [
+        {
+          "id": 5374001862,
+          "created": "2026-08-21T18:55:08Z",
+          "updated": "2026-08-21T18:55:08Z",
+          "user": "joshyorko",
+          "body": "## Robot compatibility note for the local EnvironmentBackend migration\n\nCurrent Actions Runtime initializes separate RCC instances/homes for Actions and Robots primarily to avoid Holotree lock contention, and the Robot API has its own RCC execution path. Treat that as implementation/migration debt, not a future semantic boundary.\n\n#144 requires Robot Tasks to consume the same EnvironmentBackend lifecycle:\n\n`resolve/acquire -> verify/materialize -> lease -> Execution Handle -> spawn/reap -> release`\n\nDo not block #134 on completing first-class Robots, but design its interface so #144 can plug Robot Task command/PATH/PYTHONPATH/preRun semantics into the same backend without creating `RobotEnvironmentBackend` or durable Robot-specific RCC identity.\n\nSeparate local roots/materializations may remain under explicit isolation/performance policy; the fact that one root is called `robots_home` mu"
+        },
+        {
+          "id": 5417696383,
+          "created": "2026-08-25T22:27:40Z",
+          "updated": "2026-08-25T22:27:40Z",
+          "user": "joshyorko",
+          "body": "Exact-head independent review \u2014 CHANGES_REQUIRED\n\nBroad factory goal: 01a03a61-1795-7612-9425-ad386d6db5d9 (ACTIVE).\nReview goal: 01a03a8a-dce8-7923-9e03-37509b342f2f (COMPLETE).\nReviewer: /root/pr_128_tunnel_stop_writer, gpt-5.6-luna/high, read-only.\nReviewed parent/head: 0d84489fe93325f342ca96ed980d03dddc04424d -> b0fa203e5e2029c47e2101c4940a1753bf7a2031.\n\nP1 \u2014 scheduler admission is not generation-pinned:\n- _scheduler.py has already captured the ActionPackage.\n- _actions_run.py calls obtain_process_for_action(action, runtime_info) without that captured package/generation.\n- A scheduled run admitted before reload but delayed until worker execution can address the new pool map, raising KeyError or selecting the wrong same-key environment.\n- Required proof: concurrent scheduler reload RED\u2192GREEN regression with request-level package/generation pinning.\n\nP1 \u2014 MCP catalog lookup is mutable "
+        },
+        {
+          "id": 5417818374,
+          "created": "2026-08-25T22:39:04Z",
+          "updated": "2026-08-25T22:39:04Z",
+          "user": "joshyorko",
+          "body": "#134 pushed generation-repair + current-community checkpoint\n\nBroad goal: 01a03a61-1795-7612-9425-ad386d6db5d9 (ACTIVE).\nWriter goal: 01a03a6d-7dc4-7c70-a687-fd43b70bf65d (ACTIVE; full #134 remains open).\nWriter: /root/issue_134_writer, gpt-5.6-luna/high, sole branch/worktree owner.\nIssue/PR/branch/worktree: #134 / draft PR #197 / factory/issue-134-rcc-runtime-adapter / /tmp/actions-issue-134-rcc-runtime-adapter.\n\nExact history/durability:\n- Prior remote: b0fa203e5e2029c47e2101c4940a1753bf7a2031.\n- Repair commit: 81a9bf9eb922ac6727e83c752d6d57f432577e69 (fix: pin scheduled and MCP reload generations).\n- Ordinary community merge: 7e05f7cb771d9872756cd339f20fcc4617cfb57c; parents 81a9bf9e and ab7e2b7dbf844e55c43b8f59d4cc1cf62d31bba8.\n- Current local HEAD = upstream = verified remote = PR head: 7e05f7cb771d9872756cd339f20fcc4617cfb57c.\n- PR base/current community: ab7e2b7dbf844e55c43b8f59d4"
+        },
+        {
+          "id": 5417893010,
+          "created": "2026-08-25T22:45:51Z",
+          "updated": "2026-08-25T22:45:51Z",
+          "user": "joshyorko",
+          "body": "Exact-head checkpoint review \u2014 ACCEPT (checkpoint only; PR remains draft)\n\nBroad goal: 01a03a61-1795-7612-9425-ad386d6db5d9 (ACTIVE).\nReview goal: 01a03a94-23d1-7671-b81e-7c1d441fcb26 (COMPLETE).\nReviewer: /root/pr_128_tunnel_stop_reviewer, gpt-5.6-luna/high, read-only.\nExact base/head: community ab7e2b7dbf844e55c43b8f59d4cc1cf62d31bba8 -> PR #197 7e05f7cb771d9872756cd339f20fcc4617cfb57c.\nRepair/merge: 81a9bf9eb922ac6727e83c752d6d57f432577e69 + normal merge 7e05f7cb (parents 81a9bf9e, ab7e2b7d).\nLive PR: open, draft, mergeable; exact-head hosted checks 10/10 SUCCESS.\n\nIndependent verification:\n- Focused scheduler/MCP/reload tests: 5 passed.\n- Affected modules: 40 passed, 1 skipped.\n- Repeated race tests: 20 passed.\n- compileall and git diff --check: PASS.\n- Full local package collection was unavailable because the reviewer environment lacked httpx; not claimed.\n- Ruff reported existing r"
+        },
+        {
+          "id": 6104310927,
+          "created": "2026-10-11T01:44:42Z",
+          "updated": "2026-10-11T01:44:42Z",
+          "user": "joshyorko",
+          "body": "RCC convergence update: the private corrective source component at `01f1a98c` received independent GO_COMPONENT review. Six focused fake contracts, configured331-file typecheck and lint passed; this is source proof only. Private code and findings remain local.\n\n**Actual metadata inspection remains NOT RUN.** The frozen-v6 supervisor/controller implementation and control tests remain prerequisites on HOLD before pre-run admission and the actual provider/artifact matrix. Preparation/fake tests do not establish RCC execution or full #134 acceptance. Private recovery bundles were verified locally; remote durability is NOT PROVEN.\n\n[Sanitized component status and limits](https://github.com/joshyorko/actions/blob/9cdd15458a1a6b68df9c3494794bc031ae68046b/docs/program/evidence/wave10/convergence-20261011T013516Z/private-status-sanitized.json) \u00b7 [canonical ledger #101](https://github.com/joshyork"
+        }
+      ]
+    },
+    {
+      "kind": "comments",
+      "name": "issue221-latest-comments",
+      "url": "https://api.github.com/repos/joshyorko/actions/issues/221/comments?per_page=5&page=1",
+      "count": 2,
+      "comments": [
+        {
+          "id": 6103058210,
+          "created": "2026-10-10T22:54:24Z",
+          "updated": "2026-10-10T22:54:24Z",
+          "user": "joshyorko",
+          "body": "### Issue closure and residual work audit required before promotion\n\n[The durable seven-question audit](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/README.md), [58-issue matrix](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/operator-issue-matrix.md), [13-PR reconciliation](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/open-pr-reconciliation.md), and [updated canonical #101 ledger](https://github.com/joshyorko/actions/issues/101) now reconcile the campaign.\n\nAt head `19380993febaa71238eaee3026b5c808773283ff` / tree `a8fe00af1858077273912d0b590f0f7a662c83d5`, community `a70993f` is an ancestor; the current union is conflict-free"
+        },
+        {
+          "id": 6108894271,
+          "created": "2026-10-11T12:12:50Z",
+          "updated": "2026-10-11T12:12:50Z",
+          "user": "joshyorko",
+          "body": "RCC swarm coordination for existing Actions #101/#133/#134/#139/#143/#221 ownership (2026-10-11): the operator has explicitly authorized the Actions owner to replace the exact v18.19.3-only restriction with qualified newer-version compatibility, including isolated v18.19.6 testing. This does not assume the repair is implemented: current inspected #221 head a0d258a16095b95b1bf9000cb1201cddfaff4779 still uses the exact3 verifier.\n\nRCC accepted source is 727c1ff8b679cdbbe12836e53c87734a1edb0071, tree cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152 (same tree as accepted full-gate candidate 324524fffa4bd0f76c618f9fbb6ede30e733b2ff). Actual main CI Linux binary SHA-256: be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e; four main native jobs passed in RCC run 38105340592. Source-bound acceptance and controls are preserved at https://github.com/joshyorko/rcc/tree/c49e9026455635fe32f4d7"
+        }
+      ]
+    }
+  ]
+}

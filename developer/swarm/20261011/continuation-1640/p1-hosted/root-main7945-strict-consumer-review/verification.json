@@ -1,0 +1,72 @@
+{
+  "at": "2026-10-11T16:16:53.584679+00:00",
+  "status": "ROOT_INDEPENDENT_ACCEPTANCE_PASS",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+  "actualGoCompilerMetadata": true,
+  "artifact": "sha256:0fd0a3dfd8348e06a1d68e21ce9c5bf8e6830d40a2b2c1e14737e8b27570e26e",
+  "actualIndexedObjects": 5045,
+  "actualCASFiles": 5049,
+  "zeroHashMismatches": true,
+  "actualCASSizesTotal": 71141737,
+  "casListSHA256": "3db36af62cdd94fd23ede251ea761b994bb322702edc420295f05999e1e40517",
+  "readyAndProtectedReferencesExact": true,
+  "activeLeases": 0,
+  "actualLeaseID": "992b0ca6e4e57801340cd431981c8b19",
+  "strictSignedOfflineColdProviderAndProviderlessExecValid": true,
+  "sqliteImportChildActualExit": 0,
+  "sqlitePrintedVersionUnobserved": "--json intentionally records child result only; actualcommand includes import/print, nativepassed; no claimobservedversiontext",
+  "sameUnsignedFixtureSnapshot": true,
+  "originalProviderAll5053FilesActuallyRehashedUnchanged": true,
+  "originalTrustCarrierAndPaddedRootsUnchanged": true,
+  "numericCommands": [
+    {
+      "name": "immutable-source-tree-check.result.json",
+      "numericExit": 0,
+      "sha256": "86754a3fc54670f41a317cb1bb7f6f1aaaec5b63acc1032cbebcd356121d460e",
+      "seconds": 0.0281
+    },
+    {
+      "name": "offline-strict-verify.result.json",
+      "numericExit": 0,
+      "sha256": "1aa47e043893f0b1db82dbed610fd2b6e8385768112374334d73479157738eef",
+      "seconds": 0.0785
+    },
+    {
+      "name": "providerless-sqlite-exec.result.json",
+      "numericExit": 0,
+      "sha256": "e178fa1e9505209945e248708b7002eb75270eadd5e9fd9da899f8b0d7791448",
+      "seconds": 1.2225
+    },
+    {
+      "name": "stop-provider-server.result.json",
+      "numericExit": 0,
+      "sha256": "2cb707de1587e3c27ce09a6ed66d955a1f6c05902fe9184c261b268b7108dd1a",
+      "seconds": 0.2699
+    },
+    {
+      "name": "strict-cold-acquire.result.json",
+      "numericExit": 0,
+      "sha256": "681e1020a9a4be5b2befa69ff1bb50b36fd17bbe6d01e600a1847dfa5d19655b",
+      "seconds": 21.1457
+    },
+    {
+      "name": "version.result.json",
+      "numericExit": 0,
+      "sha256": "975eac4f0b03a762724dec270019ab37f8cdaa843be62dcfc9dd484f5a87bc85",
+      "seconds": 0.8428
+    }
+  ],
+  "providerPGID41126Absent": true,
+  "closedProviderPortProbe": 111,
+  "observedResources": {
+    "serializedSamples": 141,
+    "sampledRSSMax": 132022272,
+    "minimumFree": 2778546176,
+    "maximumScratchAllocated": 422141952,
+    "actualRawBytes": 2094858
+  },
+  "wholeWrapperNumericExit": "workerobserved0; root independentpercommand/data gate executed0, no agent-summary-only completeness",
+  "scope": "OneactualshippingLinux6/nativeSQLiteconsumer/fixturestable5; noActions/newoptimizationgain/signingauthority/publication."
+}

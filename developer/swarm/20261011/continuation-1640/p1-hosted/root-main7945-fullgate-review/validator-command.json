@@ -1,0 +1,28 @@
+{
+  "cmd": [
+    "python3",
+    "/workspace/work/rcc-swarm/two-phase-release/scripts/release_publication.py",
+    "verify-review-evidence",
+    "--root",
+    "/dev/shm/rcc-main7945-fullgate-root",
+    "--source-sha",
+    "7945f956b428359928908a9f42e36417b113dafd",
+    "--version",
+    "v18.19.6",
+    "--run-id",
+    "38147141244",
+    "--artifact-id",
+    "11705567118",
+    "--manifest-sha",
+    "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+    "--preparation-zip-digest",
+    "sha256:75919093aaeb1a49bfa7898246b4bd8d2e56ea065db837a391fb0ec83d78c7f5",
+    "--exporter-sha",
+    "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+    "--exporter-run-id",
+    "38155612008"
+  ],
+  "numericExit": 0,
+  "stdout": "bounded review evidence validated\n",
+  "stderr": ""
+}

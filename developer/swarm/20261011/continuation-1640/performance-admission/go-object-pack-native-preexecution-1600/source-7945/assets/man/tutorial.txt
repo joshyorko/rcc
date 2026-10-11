@@ -1,0 +1,89 @@
+# Welcome to RCC Tutorial
+
+RCC (Repeatable, Contained Code) creates isolated Python environments for automation.
+No system Python required - environments are self-contained and reproducible.
+
+## Quick Start: Create Your First Robot
+
+1. List available templates:
+
+    rcc robot init --json
+
+2. Create a robot from template:
+
+    rcc robot init -t 01-python -d my-robot
+
+3. Pre-build the environment (important for fast first run):
+
+    rcc ht vars -r my-robot/robot.yaml
+
+4. Run it:
+
+    cd my-robot
+    rcc run
+
+## Available Templates
+
+- 01-python           Python minimal - basic automation
+- 02-python-browser   Browser automation with Playwright
+- 03-python-workitems Producer-Consumer pattern for work items
+- 04-python-assistant Assistant AI Chat
+
+## Essential Commands
+
+Run a robot:
+
+    rcc run                              # Run default task
+    rcc run --task "My Task"             # Run specific task
+    rcc run --dev --task "Dev Task"      # Run development task
+
+Environment management:
+
+    rcc ht vars -r robot.yaml            # Build/rebuild environment
+    rcc task shell                       # Interactive shell in environment
+    rcc holotree list                    # List cached environments
+
+Diagnostics:
+
+    rcc configure diagnostics            # System health check
+    rcc configure netdiag                # Network connectivity test
+
+## Project Structure
+
+A minimal robot has two files:
+
+robot.yaml - defines tasks and environment:
+
+    tasks:
+      Main:
+        shell: python main.py
+    environmentConfigs:
+      - conda.yaml
+    artifactsDir: output
+
+conda.yaml - defines dependencies:
+
+    channels:
+      - conda-forge
+    dependencies:
+      - python=3.12.11
+      - uv=0.8.17
+      - pip:
+          - requests
+
+## Pro Tips
+
+- Use 'uv' in conda.yaml for 10-100x faster pip installs
+- Run 'rcc ht vars' after changing conda.yaml to rebuild
+- Use 'rcc task shell' to debug environment issues
+- Check 'rcc configure diagnostics' if builds fail
+
+## Get Help
+
+    rcc --help                           # General help
+    rcc <command> --help                 # Command-specific help
+    rcc man docs                         # Full documentation
+
+Repository: https://github.com/joshyorko/rcc
+
+Have fun automating!

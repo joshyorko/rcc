@@ -1,0 +1,2083 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.10.11 on win32)" generated="20261011 16:00:42.001" rpa="false" schemaversion="4">
+<suite id="s1" name="Environment Artifacts" source="D:\a\rcc\rcc\robot_tests\environment_artifacts.robot">
+<kw name="Prepare Environment Artifact Acceptance" type="SETUP">
+<kw name="Log To Console" library="library">
+<arg>phase=suite-setup:start</arg>
+<msg timestamp="20261011 16:00:42.048" level="INFO">phase=suite-setup:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.046" endtime="20261011 16:00:42.048"/>
+</kw>
+<kw name="Native Rcc Binary" library="library">
+<var>${native_rcc}</var>
+<msg timestamp="20261011 16:00:42.049" level="INFO">${native_rcc} = D:\a\rcc\rcc\build\rcc.exe</msg>
+<status status="PASS" starttime="20261011 16:00:42.048" endtime="20261011 16:00:42.049"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${RCC}</arg>
+<arg>${native_rcc}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.050" level="INFO">${RCC} = D:\a\rcc\rcc\build\rcc.exe</msg>
+<status status="PASS" starttime="20261011 16:00:42.049" endtime="20261011 16:00:42.050"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${FIXTURE_ROOT}</arg>
+<arg>${None}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.051" level="INFO">${FIXTURE_ROOT} = None</msg>
+<status status="PASS" starttime="20261011 16:00:42.050" endtime="20261011 16:00:42.051"/>
+</kw>
+<kw name="New Environment Artifact Fixture" library="library">
+<var>${fixture}</var>
+<msg timestamp="20261011 16:00:42.053" level="INFO">${fixture} = {'root': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz', 'aHome': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a', 'bHome': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz...</msg>
+<status status="PASS" starttime="20261011 16:00:42.051" endtime="20261011 16:00:42.053"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${FIXTURE_ROOT}</arg>
+<arg>${fixture}[root]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.053" level="INFO">${FIXTURE_ROOT} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz</msg>
+<status status="PASS" starttime="20261011 16:00:42.053" endtime="20261011 16:00:42.053"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${A_HOME}</arg>
+<arg>${fixture}[aHome]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.054" level="INFO">${A_HOME} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a</msg>
+<status status="PASS" starttime="20261011 16:00:42.053" endtime="20261011 16:00:42.054"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${B_HOME}</arg>
+<arg>${fixture}[bHome]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.055" level="INFO">${B_HOME} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-b</msg>
+<status status="PASS" starttime="20261011 16:00:42.054" endtime="20261011 16:00:42.055"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${TRUST_ROOT}</arg>
+<arg>${fixture}[bHome]${/}artifacts${/}v1${/}trust</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.056" level="INFO">${TRUST_ROOT} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-b\artifacts\v1\trust</msg>
+<status status="PASS" starttime="20261011 16:00:42.055" endtime="20261011 16:00:42.056"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${PROVIDER_ROOT}</arg>
+<arg>${fixture}[providerRoot]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.056" level="INFO">${PROVIDER_ROOT} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a\artifacts\v1\provider</msg>
+<status status="PASS" starttime="20261011 16:00:42.056" endtime="20261011 16:00:42.056"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${SERVER_STDOUT}</arg>
+<arg>${fixture}[serverStdout]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.056" level="INFO">${SERVER_STDOUT} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server.stdout</msg>
+<status status="PASS" starttime="20261011 16:00:42.056" endtime="20261011 16:00:42.056"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${SERVER_STDERR}</arg>
+<arg>${fixture}[serverStderr]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.058" level="INFO">${SERVER_STDERR} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server.stderr</msg>
+<status status="PASS" starttime="20261011 16:00:42.056" endtime="20261011 16:00:42.058"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${SERVER_RESTART_STDOUT}</arg>
+<arg>${fixture}[serverRestartStdout]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.058" level="INFO">${SERVER_RESTART_STDOUT} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server-restart.stdout</msg>
+<status status="PASS" starttime="20261011 16:00:42.058" endtime="20261011 16:00:42.058"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${SERVER_RESTART_STDERR}</arg>
+<arg>${fixture}[serverRestartStderr]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.058" level="INFO">${SERVER_RESTART_STDERR} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server-restart.stderr</msg>
+<status status="PASS" starttime="20261011 16:00:42.058" endtime="20261011 16:00:42.058"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${PROOF_FILE}</arg>
+<arg>${fixture}[proofFile]</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.060" level="INFO">${PROOF_FILE} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\python-proof.json</msg>
+<status status="PASS" starttime="20261011 16:00:42.058" endtime="20261011 16:00:42.060"/>
+</kw>
+<kw name="Environment Artifact Process Environment" library="library">
+<var>${a_env}</var>
+<arg>${A_HOME}</arg>
+<arg>${False}</arg>
+<msg timestamp="20261011 16:00:42.060" level="INFO">${a_env} = {'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows...</msg>
+<status status="PASS" starttime="20261011 16:00:42.060" endtime="20261011 16:00:42.060"/>
+</kw>
+<kw name="Environment Artifact Process Environment" library="library">
+<var>${b_env}</var>
+<arg>${B_HOME}</arg>
+<arg>${True}</arg>
+<msg timestamp="20261011 16:00:42.060" level="INFO">${b_env} = {'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows...</msg>
+<status status="PASS" starttime="20261011 16:00:42.060" endtime="20261011 16:00:42.060"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${A_ENV}</arg>
+<arg>${a_env}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.060" level="INFO">${A_ENV} = {'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows...</msg>
+<status status="PASS" starttime="20261011 16:00:42.060" endtime="20261011 16:00:42.060"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${B_ENV}</arg>
+<arg>${b_env}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.062" level="INFO">${B_ENV} = {'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows...</msg>
+<status status="PASS" starttime="20261011 16:00:42.060" endtime="20261011 16:00:42.062"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=suite-setup:complete</arg>
+<msg timestamp="20261011 16:00:42.062" level="INFO">phase=suite-setup:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.062" endtime="20261011 16:00:42.062"/>
+</kw>
+<status status="PASS" starttime="20261011 16:00:42.046" endtime="20261011 16:00:42.062"/>
+</kw>
+<test id="s1-t1" name="Portable Environment Is Published Acquired Executed And Reused Offline" line="18">
+<kw name="Log To Console" library="library">
+<arg>phase=test:start</arg>
+<msg timestamp="20261011 16:00:42.064" level="INFO">phase=test:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.062" endtime="20261011 16:00:42.064"/>
+</kw>
+<kw name="Should Not Be Equal" library="BuiltIn">
+<arg>${A_HOME}</arg>
+<arg>${B_HOME}</arg>
+<doc>Fails if the given objects are equal.</doc>
+<msg timestamp="20261011 16:00:42.064" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.064" endtime="20261011 16:00:42.064"/>
+</kw>
+<kw name="Environment Artifact Home Should Be Empty" library="library">
+<arg>${B_HOME}</arg>
+<status status="PASS" starttime="20261011 16:00:42.064" endtime="20261011 16:00:42.064"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=consumer-home-empty:complete</arg>
+<msg timestamp="20261011 16:00:42.066" level="INFO">phase=consumer-home-empty:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.064" endtime="20261011 16:00:42.066"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=binary-version:start</arg>
+<msg timestamp="20261011 16:00:42.066" level="INFO">phase=binary-version:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.066" endtime="20261011 16:00:42.066"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${binary_version_result}</var>
+<arg>${RCC}</arg>
+<arg>version</arg>
+<msg timestamp="20261011 16:00:42.210" level="INFO">${binary_version_result} = namespace(rc=0, stdout='v18.19.6\n', stderr='')</msg>
+<status status="PASS" starttime="20261011 16:00:42.066" endtime="20261011 16:00:42.210"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${binary_version_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:00:42.210" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.210" endtime="20261011 16:00:42.210"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${binary_version}</var>
+<arg>${binary_version_result.stdout}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:00:42.212" level="INFO">${binary_version} = v18.19.6
+</msg>
+<status status="PASS" starttime="20261011 16:00:42.210" endtime="20261011 16:00:42.212"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=binary-version:complete</arg>
+<msg timestamp="20261011 16:00:42.212" level="INFO">phase=binary-version:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.212" endtime="20261011 16:00:42.212"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-server-start:start</arg>
+<msg timestamp="20261011 16:00:42.214" level="INFO">phase=provider-server-start:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.214" endtime="20261011 16:00:42.214"/>
+</kw>
+<kw name="Start Process" library="Process">
+<var>${server}</var>
+<arg>${RCC}</arg>
+<arg>cache</arg>
+<arg>serve</arg>
+<arg>--json</arg>
+<arg>alias=environment-provider</arg>
+<arg>stdout=${SERVER_STDOUT}</arg>
+<arg>stderr=${SERVER_STDERR}</arg>
+<arg>env=${A_ENV}</arg>
+<doc>Starts a new process on background.</doc>
+<msg timestamp="20261011 16:00:42.216" level="INFO">Starting process:
+D:\a\rcc\rcc\build\rcc.exe cache serve --json</msg>
+<msg timestamp="20261011 16:00:42.216" level="DEBUG">Process configuration:
+cwd:     D:\a\rcc\rcc
+shell:   False
+stdout:  D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server.stdout
+stderr:  D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server.stderr
+stdin:   PIPE
+alias:   environment-provider
+env:     {'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'HOMEDRIVE': 'C:', 'HOMEPATH': '\\Users\\runneradmin', 'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64;C:\\Users\\runneradmin\\go\\bin;C:\\hostedtoolcache\\windows\\go\\1.26.9\\x64\\bin;C:\\Program Files\\MongoDB\\Server\\7.0\\bin;C:\\vcpkg;C:\\tools\\zstd;C:\\hostedtoolcache\\windows\\stack\\3.11.1\\x64;C:\\cabal\\bin;C:\\\\ghcup\\bin;C:\\mingw64\\bin;C:\\Program Files\\dotnet;C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin;C:\\Program Files\\R\\R-4.6.1\\bin\\x64;C:\\SeleniumWebDrivers\\GeckoDriver;C:\\SeleniumWebDrivers\\EdgeDriver\\;C:\\SeleniumWebDrivers\\ChromeDriver;C:\\Program Files (x86)\\sbt\\bin;C:\\Program Files (x86)\\GitHub CLI;C:\\Program Files\\Git\\bin;C:\\Program Files (x86)\\pipx_bin;C:\\npm\\prefix;C:\\hostedtoolcache\\windows\\go\\1.24.13\\x64\\bin;C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64;C:\\hostedtoolcache\\windows\\Ruby\\3.3.12\\x64\\bin;C:\\Program Files\\OpenSSL\\bin;C:\\tools\\kotlinc\\bin;C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\17.0.20-101\\x64\\bin;C:\\Program Files\\ImageMagick-7.1.2-Q16-HDRI;C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin;C:\\ProgramData\\kind;C:\\ProgramData\\Chocolatey\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\PowerShell\\7\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files\\Microsoft SQL Server\\170\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\Program Files\\dotnet\\;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files (x86)\\WiX Toolset v3.14\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\140\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\150\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\160\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\170\\DTS\\Binn\\;C:\\ProgramData\\chocolatey\\lib\\pulumi\\tools\\Pulumi\\bin;C:\\Program Files\\CMake\\bin;C:\\Strawberry\\c\\bin;C:\\Strawberry\\perl\\site\\bin;C:\\Strawberry\\perl\\bin;C:\\ProgramData\\chocolatey\\lib\\maven\\apache-maven-3.9.16\\bin;C:\\Program Files\\Microsoft Service Fabric\\bin\\Fabric\\Fabric.Code;C:\\Program Files\\Microsoft SDKs\\Service Fabric\\Tools\\ServiceFabricLocalClusterManager;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Program Files\\GitHub CLI\\;c:\\tools\\php;C:\\Program Files (x86)\\sbt\\bin;C:\\Program Files\\Amazon\\AWSCLIV2\\;C:\\Program Files\\Amazon\\SessionManagerPlugin\\bin\\;C:\\Program Files\\Amazon\\AWSSAMCLI\\bin\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\mongosh\\;C:\\Program Files\\LLVM\\bin;C:\\Program Files (x86)\\LLVM\\bin;C:\\Users\\runneradmin\\.dotnet\\tools;C:\\Users\\runneradmin\\.cargo\\bin;C:\\Users\\runneradmin\\AppData\\Local\\Microsoft\\WindowsApps', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL', 'RCC_HOLOTREE_MODE': 'private', 'ROBOCORP_HOME': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a', 'SYSTEMROOT': 'C:\\Windows', 'TEMP': 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp', 'TMP': 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp', 'USERNAME': 'runneradmin', 'USERPROFILE': 'C:\\Users\\runneradmin', 'WINDIR': 'C:\\Windows'}</msg>
+<msg timestamp="20261011 16:00:42.218" level="INFO">${server} = &lt;Popen: returncode: None args: ['D:\\a\\rcc\\rcc\\build\\rcc.exe', 'cache', ...&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.214" endtime="20261011 16:00:42.218"/>
+</kw>
+<kw name="Set Suite Variable" library="BuiltIn">
+<arg>${SERVER}</arg>
+<arg>${server}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<msg timestamp="20261011 16:00:42.218" level="INFO">${SERVER} = &lt;Popen: returncode: None args: ['D:\\a\\rcc\\rcc\\build\\rcc.exe', 'cache', ...&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.218" endtime="20261011 16:00:42.218"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-server-start:complete</arg>
+<msg timestamp="20261011 16:00:42.218" level="INFO">phase=provider-server-start:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.218" endtime="20261011 16:00:42.218"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-server-json:start</arg>
+<msg timestamp="20261011 16:00:42.221" level="INFO">phase=provider-server-json:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.218" endtime="20261011 16:00:42.221"/>
+</kw>
+<kw name="Wait For Json File" library="library">
+<var>${server_json}</var>
+<arg>${SERVER_STDOUT}</arg>
+<msg timestamp="20261011 16:00:42.592" level="INFO">${server_json} = {'url': 'http://127.0.0.1:59059', 'root': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a\\artifacts\\v1\\provider', 'listen': '127.0.0.1:59059'}</msg>
+<status status="PASS" starttime="20261011 16:00:42.221" endtime="20261011 16:00:42.592"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${provider_url}</var>
+<arg>${server_json}[url]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:00:42.592" level="INFO">${provider_url} = http://127.0.0.1:59059</msg>
+<status status="PASS" starttime="20261011 16:00:42.592" endtime="20261011 16:00:42.592"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${server_json}[root]</arg>
+<arg>${PROVIDER_ROOT}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.592" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.592" endtime="20261011 16:00:42.592"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-server-json:complete</arg>
+<msg timestamp="20261011 16:00:42.594" level="INFO">phase=provider-server-json:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.592" endtime="20261011 16:00:42.594"/>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<arg>${A_ENV}</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" starttime="20261011 16:00:42.594" endtime="20261011 16:00:42.594"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=producer-profile:start</arg>
+<msg timestamp="20261011 16:00:42.594" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.596" level="INFO">phase=producer-profile:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.594" endtime="20261011 16:00:42.596"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${a_profile_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>add</arg>
+<arg>office</arg>
+<arg>--type</arg>
+<arg>http</arg>
+<arg>--url</arg>
+<arg>${provider_url}</arg>
+<arg>--authorization-env</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<arg>--json</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:00:42.732" level="INFO">${a_profile_result} = namespace(rc=0, stdout='{"name":"office","type":"http","url":"http://127.0.0.1:59059","authorizationEnv":"RCC_TEST_PROVIDER_AUTHORIZATION"}\n', stderr='')</msg>
+<status status="PASS" starttime="20261011 16:00:42.596" endtime="20261011 16:00:42.732"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${a_profile_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:00:42.733" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.733" endtime="20261011 16:00:42.733"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${a_profile}</var>
+<arg>${a_profile_result.stdout}</arg>
+<msg timestamp="20261011 16:00:42.733" level="INFO">${a_profile} = {'name': 'office', 'type': 'http', 'url': 'http://127.0.0.1:59059', 'authorizationEnv': 'RCC_TEST_PROVIDER_AUTHORIZATION'}</msg>
+<status status="PASS" starttime="20261011 16:00:42.733" endtime="20261011 16:00:42.733"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${a_profile}[name]</arg>
+<arg>office</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.733" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.733" endtime="20261011 16:00:42.733"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${a_profile}[type]</arg>
+<arg>http</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.735" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.733" endtime="20261011 16:00:42.735"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${a_profile}[url]</arg>
+<arg>${provider_url}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.735" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.735" endtime="20261011 16:00:42.735"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${a_profile}[authorizationEnv]</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.735" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.735" endtime="20261011 16:00:42.735"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${a_profile_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:00:42.735" endtime="20261011 16:00:42.735"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${a_profile_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:00:42.735" endtime="20261011 16:00:42.735"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=producer-profile:complete</arg>
+<msg timestamp="20261011 16:00:42.735" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.737" level="INFO">phase=producer-profile:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.735" endtime="20261011 16:00:42.737"/>
+</kw>
+<kw name="Set To Dictionary" library="Collections">
+<arg>${B_ENV}</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION=Bearer robot-test</arg>
+<doc>Adds the given ``key_value_pairs`` and/or ``items`` to the ``dictionary``.</doc>
+<status status="PASS" starttime="20261011 16:00:42.737" endtime="20261011 16:00:42.737"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=consumer-profile:start</arg>
+<msg timestamp="20261011 16:00:42.737" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.739" level="INFO">phase=consumer-profile:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.737" endtime="20261011 16:00:42.739"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${b_profile_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>add</arg>
+<arg>office</arg>
+<arg>--type</arg>
+<arg>http</arg>
+<arg>--url</arg>
+<arg>${provider_url}</arg>
+<arg>--authorization-env</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:00:42.880" level="INFO">${b_profile_result} = namespace(rc=0, stdout='{"name":"office","type":"http","url":"http://127.0.0.1:59059","authorizationEnv":"RCC_TEST_PROVIDER_AUTHORIZATION"}\n', stderr='')</msg>
+<status status="PASS" starttime="20261011 16:00:42.739" endtime="20261011 16:00:42.880"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${b_profile_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:00:42.881" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.880" endtime="20261011 16:00:42.881"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${b_profile}</var>
+<arg>${b_profile_result.stdout}</arg>
+<msg timestamp="20261011 16:00:42.882" level="INFO">${b_profile} = {'name': 'office', 'type': 'http', 'url': 'http://127.0.0.1:59059', 'authorizationEnv': 'RCC_TEST_PROVIDER_AUTHORIZATION'}</msg>
+<status status="PASS" starttime="20261011 16:00:42.881" endtime="20261011 16:00:42.882"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${b_profile}[name]</arg>
+<arg>office</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.882" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.882" endtime="20261011 16:00:42.882"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${b_profile}[type]</arg>
+<arg>http</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.882" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.882" endtime="20261011 16:00:42.882"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${b_profile}[url]</arg>
+<arg>${provider_url}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.882" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.882" endtime="20261011 16:00:42.882"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${b_profile}[authorizationEnv]</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:00:42.882" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:00:42.882" endtime="20261011 16:00:42.882"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${b_profile_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:00:42.882" endtime="20261011 16:00:42.883"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${b_profile_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:00:42.884" endtime="20261011 16:00:42.884"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=consumer-profile:complete</arg>
+<msg timestamp="20261011 16:00:42.884" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.886" level="INFO">phase=consumer-profile:complete</msg>
+<status status="PASS" starttime="20261011 16:00:42.884" endtime="20261011 16:00:42.886"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=publish:start</arg>
+<msg timestamp="20261011 16:00:42.886" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.886" level="INFO">phase=publish:start</msg>
+<status status="PASS" starttime="20261011 16:00:42.886" endtime="20261011 16:00:42.887"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${published_result}</var>
+<arg>${RCC}</arg>
+<arg>env</arg>
+<arg>publish</arg>
+<arg>--robot</arg>
+<arg>${ROBOT}</arg>
+<arg>--provider</arg>
+<arg>office</arg>
+<arg>--json</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:27.475" level="INFO">${published_result} = namespace(rc=0, stdout='{"artifactDigest":"sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870","specificationDigest":"sha256:2a8df879c94b8446538b765043be66cb94244b052d604536e432d6...</msg>
+<status status="PASS" starttime="20261011 16:00:42.887" endtime="20261011 16:01:27.475"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${published_result.stderr}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20261011 16:01:27.476" level="INFO">Note! For now, resolved effective environment configuration file is "D:\\a\\rcc\\rcc\\robot_tests\\environment_artifacts\\conda.yaml".
+####  Progress: 00/15  v18.19.6     0.032s  Context: "runnervmfi6oq\\runneradmin" &lt;runnervmfi6oq\runneradmin@runnervmfi6oq&gt; [windows_amd64/Microsoft Windows [Version 10.0.26100.33438]].
+####  Progress: 01/15  v18.19.6     0.032s  Fresh [private mode] holotree environment 248bfff4-2e03-e215-b173-efdc024d9c0d. (parent/pid: 6148/3140)
+####  Progress: 02/15  v18.19.6     0.003s  Holotree blueprint is "09f816e7a8406493" [windows_amd64 with 3 workers on 4 CPUs from "conda.yaml"].
+FINAL unified conda environment descriptor:
+---
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- pyyaml=6.0.2
+---
+####  Progress: 03/15  v18.19.6     0.001s  Fill hololib from RCC_REMOTE_ORIGIN skipped. RCC_REMOTE_ORIGIN was not defined.
+####  Progress: 04/15  v18.19.6     0.000s  Cleanup holotree stage for fresh install.
+####  Progress: 05/15  v18.19.6     0.000s  Build environment into holotree stage "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a\\holotree\\h3b120bf_44412bd2016a11t".
+####  Progress: 06/15  v18.19.6     0.000s  Restore partial environment into holotree stage "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a\\holotree\\h3b120bf_44412bd2016a11t".
+Note: Extracting micromamba binary from inside rcc.
+####  Progress: 07/15  v18.19.6     0.431s  Running micromamba phase. (micromamba v2.5.0) [layer: 09f816e7a8406493]
+####  Progress: 08/15  v18.19.6    29.394s  Skipping pip install phase -- no pip dependencies.
+####  Progress: 09/15  v18.19.6     0.000s  Post install scripts phase skipped -- no scripts.
+####  Progress: 10/15  v18.19.6     0.000s  Activate environment started phase.
+####  Progress: 11/15  v18.19.6     1.308s  Pip check skipped.
+####  Progress: 12/15  v18.19.6     0.000s  Update installation plan.
+####  Progress: 13/15  v18.19.6     0.001s  Record holotree stage to hololib [with 3 workers on 4 CPUs].
+####  Progress: 14/15  v18.19.6     0.439s  Restoring space skipped.
+####  Progress: 15/15  v18.19.6     0.555s  Fresh holotree done [with 3 workers on 4 CPUs].
+Installation plan is: D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a\holotree\3b120bf_5a1fac3_9fcd2534\rcc_plan.log
+Environment configuration descriptor is: D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a\holotree\3b120bf_5a1fac3_9fcd2534\identity.yaml
+</msg>
+<status status="PASS" starttime="20261011 16:01:27.475" endtime="20261011 16:01:27.476"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${published_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:27.477" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:27.476" endtime="20261011 16:01:27.477"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${published_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:27.477" endtime="20261011 16:01:27.477"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${published_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:27.477" endtime="20261011 16:01:27.477"/>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<arg>${published_result.stderr}</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<msg timestamp="20261011 16:01:27.479" level="INFO">Length is 2421</msg>
+<status status="PASS" starttime="20261011 16:01:27.477" endtime="20261011 16:01:27.479"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=publish:complete</arg>
+<msg timestamp="20261011 16:01:27.479" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:27.480" level="INFO">phase=publish:complete</msg>
+<status status="PASS" starttime="20261011 16:01:27.479" endtime="20261011 16:01:27.480"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${published}</var>
+<arg>${published_result.stdout}</arg>
+<msg timestamp="20261011 16:01:27.481" level="INFO">${published} = {'artifactDigest': 'sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870', 'specificationDigest': 'sha256:2a8df879c94b8446538b765043be66cb94244b052d604536e432d65272e21957', 'legacyB...</msg>
+<status status="PASS" starttime="20261011 16:01:27.480" endtime="20261011 16:01:27.481"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${artifact}</var>
+<arg>${published}[artifactDigest]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:27.481" level="INFO">${artifact} = sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870</msg>
+<status status="PASS" starttime="20261011 16:01:27.481" endtime="20261011 16:01:27.481"/>
+</kw>
+<kw name="Should Start With" library="BuiltIn">
+<arg>${artifact}</arg>
+<arg>sha256:</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" starttime="20261011 16:01:27.481" endtime="20261011 16:01:27.481"/>
+</kw>
+<kw name="Should Be True" library="BuiltIn">
+<arg>${published}[objectCount] &gt; 0</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" starttime="20261011 16:01:27.481" endtime="20261011 16:01:27.481"/>
+</kw>
+<kw name="Provider Should Contain Manifest" library="library">
+<arg>${PROVIDER_ROOT}</arg>
+<arg>${artifact}</arg>
+<status status="PASS" starttime="20261011 16:01:27.481" endtime="20261011 16:01:27.481"/>
+</kw>
+<kw name="Published Linux Artifact Should Use Portable Kernel Floor" library="library">
+<arg>${PROVIDER_ROOT}</arg>
+<arg>${artifact}</arg>
+<status status="PASS" starttime="20261011 16:01:27.481" endtime="20261011 16:01:27.490"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart:stop:start</arg>
+<msg timestamp="20261011 16:01:27.490" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:27.492" level="INFO">phase=provider-restart:stop:start</msg>
+<status status="PASS" starttime="20261011 16:01:27.490" endtime="20261011 16:01:27.492"/>
+</kw>
+<kw name="Terminate Process" library="Process">
+<var>${stopped}</var>
+<arg>environment-provider</arg>
+<doc>Stops the process gracefully or forcefully.</doc>
+<msg timestamp="20261011 16:01:27.492" level="INFO">Gracefully terminating process.</msg>
+<msg timestamp="20261011 16:01:27.593" level="INFO">Process completed.</msg>
+<msg timestamp="20261011 16:01:27.593" level="INFO">${stopped} = &lt;result object with rc 0&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:27.492" endtime="20261011 16:01:27.593"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${stopped.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:27.594" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:27.593" endtime="20261011 16:01:27.594"/>
+</kw>
+<kw name="Provider Should Be Unreachable" library="library">
+<arg>${provider_url}</arg>
+<status status="PASS" starttime="20261011 16:01:27.594" endtime="20261011 16:01:28.599"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart:stop:complete</arg>
+<msg timestamp="20261011 16:01:28.599" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.601" level="INFO">phase=provider-restart:stop:complete</msg>
+<status status="PASS" starttime="20261011 16:01:28.599" endtime="20261011 16:01:28.601"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart:start:start</arg>
+<msg timestamp="20261011 16:01:28.601" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.603" level="INFO">phase=provider-restart:start:start</msg>
+<status status="PASS" starttime="20261011 16:01:28.601" endtime="20261011 16:01:28.603"/>
+</kw>
+<kw name="Environment Artifact Process Environment" library="library">
+<var>${restart_server_env}</var>
+<arg>${A_HOME}</arg>
+<arg>${False}</arg>
+<msg timestamp="20261011 16:01:28.603" level="INFO">${restart_server_env} = {'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows...</msg>
+<status status="PASS" starttime="20261011 16:01:28.603" endtime="20261011 16:01:28.603"/>
+</kw>
+<kw name="Start Process" library="Process">
+<var>${restarted_server}</var>
+<arg>${RCC}</arg>
+<arg>cache</arg>
+<arg>serve</arg>
+<arg>--json</arg>
+<arg>alias=environment-provider-restarted</arg>
+<arg>stdout=${SERVER_RESTART_STDOUT}</arg>
+<arg>stderr=${SERVER_RESTART_STDERR}</arg>
+<arg>env=${restart_server_env}</arg>
+<doc>Starts a new process on background.</doc>
+<msg timestamp="20261011 16:01:28.605" level="INFO">Starting process:
+D:\a\rcc\rcc\build\rcc.exe cache serve --json</msg>
+<msg timestamp="20261011 16:01:28.605" level="DEBUG">Process configuration:
+cwd:     D:\a\rcc\rcc
+shell:   False
+stdout:  D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server-restart.stdout
+stderr:  D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\server-restart.stderr
+stdin:   PIPE
+alias:   environment-provider-restarted
+env:     {'COMSPEC': 'C:\\Windows\\system32\\cmd.exe', 'HOMEDRIVE': 'C:', 'HOMEPATH': '\\Users\\runneradmin', 'PATH': 'C:\\Program Files\\PowerShell\\7;C:\\Users\\runneradmin\\AppData\\Roaming\\Python\\Python310\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64;C:\\Users\\runneradmin\\go\\bin;C:\\hostedtoolcache\\windows\\go\\1.26.9\\x64\\bin;C:\\Program Files\\MongoDB\\Server\\7.0\\bin;C:\\vcpkg;C:\\tools\\zstd;C:\\hostedtoolcache\\windows\\stack\\3.11.1\\x64;C:\\cabal\\bin;C:\\\\ghcup\\bin;C:\\mingw64\\bin;C:\\Program Files\\dotnet;C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin;C:\\Program Files\\R\\R-4.6.1\\bin\\x64;C:\\SeleniumWebDrivers\\GeckoDriver;C:\\SeleniumWebDrivers\\EdgeDriver\\;C:\\SeleniumWebDrivers\\ChromeDriver;C:\\Program Files (x86)\\sbt\\bin;C:\\Program Files (x86)\\GitHub CLI;C:\\Program Files\\Git\\bin;C:\\Program Files (x86)\\pipx_bin;C:\\npm\\prefix;C:\\hostedtoolcache\\windows\\go\\1.24.13\\x64\\bin;C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Scripts;C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64;C:\\hostedtoolcache\\windows\\Ruby\\3.3.12\\x64\\bin;C:\\Program Files\\OpenSSL\\bin;C:\\tools\\kotlinc\\bin;C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\17.0.20-101\\x64\\bin;C:\\Program Files\\ImageMagick-7.1.2-Q16-HDRI;C:\\Program Files\\Microsoft SDKs\\Azure\\CLI2\\wbin;C:\\ProgramData\\kind;C:\\ProgramData\\Chocolatey\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C:\\Windows\\System32\\OpenSSH\\;C:\\Program Files\\PowerShell\\7\\;C:\\Program Files\\Microsoft\\Web Platform Installer\\;C:\\Program Files\\Microsoft SQL Server\\170\\Tools\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\;C:\\Program Files\\dotnet\\;C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\;C:\\Program Files (x86)\\WiX Toolset v3.14\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\140\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\150\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\160\\DTS\\Binn\\;C:\\Program Files\\Microsoft SQL Server\\170\\DTS\\Binn\\;C:\\ProgramData\\chocolatey\\lib\\pulumi\\tools\\Pulumi\\bin;C:\\Program Files\\CMake\\bin;C:\\Strawberry\\c\\bin;C:\\Strawberry\\perl\\site\\bin;C:\\Strawberry\\perl\\bin;C:\\ProgramData\\chocolatey\\lib\\maven\\apache-maven-3.9.16\\bin;C:\\Program Files\\Microsoft Service Fabric\\bin\\Fabric\\Fabric.Code;C:\\Program Files\\Microsoft SDKs\\Service Fabric\\Tools\\ServiceFabricLocalClusterManager;C:\\Program Files\\nodejs\\;C:\\Program Files\\Git\\cmd;C:\\Program Files\\Git\\mingw64\\bin;C:\\Program Files\\Git\\usr\\bin;C:\\Program Files\\GitHub CLI\\;c:\\tools\\php;C:\\Program Files (x86)\\sbt\\bin;C:\\Program Files\\Amazon\\AWSCLIV2\\;C:\\Program Files\\Amazon\\SessionManagerPlugin\\bin\\;C:\\Program Files\\Amazon\\AWSSAMCLI\\bin\\;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn\\;C:\\Program Files\\mongosh\\;C:\\Program Files\\LLVM\\bin;C:\\Program Files (x86)\\LLVM\\bin;C:\\Users\\runneradmin\\.dotnet\\tools;C:\\Users\\runneradmin\\.cargo\\bin;C:\\Users\\runneradmin\\AppData\\Local\\Microsoft\\WindowsApps', 'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL', 'RCC_HOLOTREE_MODE': 'private', 'ROBOCORP_HOME': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a', 'SYSTEMROOT': 'C:\\Windows', 'TEMP': 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp', 'TMP': 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp', 'USERNAME': 'runneradmin', 'USERPROFILE': 'C:\\Users\\runneradmin', 'WINDIR': 'C:\\Windows'}</msg>
+<msg timestamp="20261011 16:01:28.607" level="INFO">${restarted_server} = &lt;Popen: returncode: None args: ['D:\\a\\rcc\\rcc\\build\\rcc.exe', 'cache', ...&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.603" endtime="20261011 16:01:28.607"/>
+</kw>
+<kw name="Wait For Json File" library="library">
+<var>${restarted_json}</var>
+<arg>${SERVER_RESTART_STDOUT}</arg>
+<msg timestamp="20261011 16:01:28.657" level="INFO">${restarted_json} = {'url': 'http://127.0.0.1:59272', 'root': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-a\\artifacts\\v1\\provider', 'listen': '127.0.0.1:59272'}</msg>
+<status status="PASS" starttime="20261011 16:01:28.607" endtime="20261011 16:01:28.657"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${restarted_url}</var>
+<arg>${restarted_json}[url]</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:28.657" level="INFO">${restarted_url} = http://127.0.0.1:59272</msg>
+<status status="PASS" starttime="20261011 16:01:28.657" endtime="20261011 16:01:28.657"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restarted_json}[root]</arg>
+<arg>${PROVIDER_ROOT}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.658" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.657" endtime="20261011 16:01:28.658"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart:start:complete</arg>
+<msg timestamp="20261011 16:01:28.658" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.659" level="INFO">phase=provider-restart:start:complete</msg>
+<status status="PASS" starttime="20261011 16:01:28.658" endtime="20261011 16:01:28.659"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart-test:start</arg>
+<msg timestamp="20261011 16:01:28.659" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.661" level="INFO">phase=provider-restart-test:start</msg>
+<status status="PASS" starttime="20261011 16:01:28.659" endtime="20261011 16:01:28.661"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${restart_profile_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>add</arg>
+<arg>office</arg>
+<arg>--type</arg>
+<arg>http</arg>
+<arg>--url</arg>
+<arg>${restarted_url}</arg>
+<arg>--authorization-env</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<arg>--replace</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:01:28.795" level="INFO">${restart_profile_result} = namespace(rc=0, stdout='{"name":"office","type":"http","url":"http://127.0.0.1:59272","authorizationEnv":"RCC_TEST_PROVIDER_AUTHORIZATION"}\n', stderr='')</msg>
+<status status="PASS" starttime="20261011 16:01:28.661" endtime="20261011 16:01:28.795"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${restart_profile_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:28.797" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.795" endtime="20261011 16:01:28.797"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${restart_profile}</var>
+<arg>${restart_profile_result.stdout}</arg>
+<msg timestamp="20261011 16:01:28.798" level="INFO">${restart_profile} = {'name': 'office', 'type': 'http', 'url': 'http://127.0.0.1:59272', 'authorizationEnv': 'RCC_TEST_PROVIDER_AUTHORIZATION'}</msg>
+<status status="PASS" starttime="20261011 16:01:28.797" endtime="20261011 16:01:28.798"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_profile}[url]</arg>
+<arg>${restarted_url}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.798" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.798" endtime="20261011 16:01:28.798"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${restart_test_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>test</arg>
+<arg>office</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:01:28.935" level="INFO">${restart_test_result} = namespace(rc=0, stdout='{"reference":"office","reachable":true,"compatible":true,"capabilities":{"schemaVersions":[1],"digestAlgorithms":["sha256"],"encodings":["gzip"],"maxObjectBytes":68719476736,"m...</msg>
+<status status="PASS" starttime="20261011 16:01:28.798" endtime="20261011 16:01:28.935"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${restart_test_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:28.936" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.935" endtime="20261011 16:01:28.936"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${restart_test_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:28.936" endtime="20261011 16:01:28.936"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${restart_test_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:28.937" endtime="20261011 16:01:28.937"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${restart_test}</var>
+<arg>${restart_test_result.stdout}</arg>
+<msg timestamp="20261011 16:01:28.937" level="INFO">${restart_test} = {'reference': 'office', 'reachable': True, 'compatible': True, 'capabilities': {'schemaVersions': [1], 'digestAlgorithms': ['sha256'], 'encodings': ['gzip'], 'maxObjectBytes': 68719476736, 'maxManifes...</msg>
+<status status="PASS" starttime="20261011 16:01:28.937" endtime="20261011 16:01:28.937"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_test}[reachable]</arg>
+<arg>${True}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.937" level="DEBUG">Argument types are:
+&lt;class 'bool'&gt;
+&lt;class 'bool'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.937" endtime="20261011 16:01:28.937"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_test}[compatible]</arg>
+<arg>${True}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.939" level="DEBUG">Argument types are:
+&lt;class 'bool'&gt;
+&lt;class 'bool'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.939" endtime="20261011 16:01:28.939"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-restart-test:complete</arg>
+<msg timestamp="20261011 16:01:28.939" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.939" level="INFO">phase=provider-restart-test:complete</msg>
+<status status="PASS" starttime="20261011 16:01:28.939" endtime="20261011 16:01:28.939"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=producer-restart-profile:start</arg>
+<msg timestamp="20261011 16:01:28.939" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.941" level="INFO">phase=producer-restart-profile:start</msg>
+<status status="PASS" starttime="20261011 16:01:28.939" endtime="20261011 16:01:28.941"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${restart_producer_profile_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>add</arg>
+<arg>office</arg>
+<arg>--type</arg>
+<arg>http</arg>
+<arg>--url</arg>
+<arg>${restarted_url}</arg>
+<arg>--authorization-env</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<arg>--replace</arg>
+<arg>--json</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:28.978" level="INFO">${restart_producer_profile_result} = namespace(rc=0, stdout='{"name":"office","type":"http","url":"http://127.0.0.1:59272","authorizationEnv":"RCC_TEST_PROVIDER_AUTHORIZATION"}\n', stderr='')</msg>
+<status status="PASS" starttime="20261011 16:01:28.941" endtime="20261011 16:01:28.978"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${restart_producer_profile_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:28.978" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.978" endtime="20261011 16:01:28.980"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${restart_producer_profile_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:28.980" endtime="20261011 16:01:28.980"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${restart_producer_profile_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:28.980" endtime="20261011 16:01:28.980"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${restart_producer_profile}</var>
+<arg>${restart_producer_profile_result.stdout}</arg>
+<msg timestamp="20261011 16:01:28.982" level="INFO">${restart_producer_profile} = {'name': 'office', 'type': 'http', 'url': 'http://127.0.0.1:59272', 'authorizationEnv': 'RCC_TEST_PROVIDER_AUTHORIZATION'}</msg>
+<status status="PASS" starttime="20261011 16:01:28.980" endtime="20261011 16:01:28.982"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_producer_profile}[name]</arg>
+<arg>office</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.982" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.982" endtime="20261011 16:01:28.982"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_producer_profile}[url]</arg>
+<arg>${restarted_url}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.982" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.982" endtime="20261011 16:01:28.982"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${restart_producer_profile}[authorizationEnv]</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:28.982" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:28.982" endtime="20261011 16:01:28.982"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=producer-restart-profile:complete</arg>
+<msg timestamp="20261011 16:01:28.982" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.984" level="INFO">phase=producer-restart-profile:complete</msg>
+<status status="PASS" starttime="20261011 16:01:28.982" endtime="20261011 16:01:28.984"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=cold-acquire:start</arg>
+<msg timestamp="20261011 16:01:28.984" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.985" level="INFO">phase=cold-acquire:start</msg>
+<status status="PASS" starttime="20261011 16:01:28.984" endtime="20261011 16:01:28.985"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${cold_result}</var>
+<arg>${RCC}</arg>
+<arg>env</arg>
+<arg>acquire</arg>
+<arg>--artifact</arg>
+<arg>${artifact}</arg>
+<arg>--provider</arg>
+<arg>office</arg>
+<arg>--trust-carrier</arg>
+<arg>${TRUST_ROOT}</arg>
+<arg>--trust-carrier-type</arg>
+<arg>filesystem</arg>
+<arg>--permissive-local</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:01:46.424" level="INFO">${cold_result} = namespace(rc=0, stdout='{"artifactDigest":"sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870","materializationId":"3b120bf_5a1fac3_c105d344","path":"D:\\\\a\\\\rcc\\\\rcc\\\\tmp\...</msg>
+<status status="PASS" starttime="20261011 16:01:28.985" endtime="20261011 16:01:46.424"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${cold_result.stderr}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20261011 16:01:46.425" level="INFO"/>
+<status status="PASS" starttime="20261011 16:01:46.425" endtime="20261011 16:01:46.425"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${cold_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:46.426" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:46.425" endtime="20261011 16:01:46.426"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${cold_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:46.427" endtime="20261011 16:01:46.427"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${cold_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:46.427" endtime="20261011 16:01:46.427"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${cold}</var>
+<arg>${cold_result.stdout}</arg>
+<msg timestamp="20261011 16:01:46.429" level="INFO">${cold} = {'artifactDigest': 'sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870', 'materializationId': '3b120bf_5a1fac3_c105d344', 'path': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3...</msg>
+<status status="PASS" starttime="20261011 16:01:46.427" endtime="20261011 16:01:46.429"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${cold}[artifactDigest]</arg>
+<arg>${artifact}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:46.429" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:46.429" endtime="20261011 16:01:46.429"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${cold}[cacheHit]</arg>
+<arg>provider</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:46.429" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:46.429" endtime="20261011 16:01:46.429"/>
+</kw>
+<kw name="Should Start With" library="BuiltIn">
+<arg>${cold}[path]</arg>
+<arg>${B_HOME}${/}holotree${/}</arg>
+<doc>Fails if the string ``str1`` does not start with the string ``str2``.</doc>
+<status status="PASS" starttime="20261011 16:01:46.429" endtime="20261011 16:01:46.429"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${cold_result.stderr}</arg>
+<arg>micromamba phase</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:46.429" endtime="20261011 16:01:46.430"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=cold-acquire:complete</arg>
+<msg timestamp="20261011 16:01:46.430" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:46.431" level="INFO">phase=cold-acquire:complete</msg>
+<status status="PASS" starttime="20261011 16:01:46.430" endtime="20261011 16:01:46.431"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-exec:start</arg>
+<msg timestamp="20261011 16:01:46.431" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:46.433" level="INFO">phase=artifact-exec:start</msg>
+<status status="PASS" starttime="20261011 16:01:46.431" endtime="20261011 16:01:46.433"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${exec_result}</var>
+<arg>${RCC}</arg>
+<arg>env</arg>
+<arg>exec</arg>
+<arg>--artifact</arg>
+<arg>${artifact}</arg>
+<arg>--trust-carrier</arg>
+<arg>${TRUST_ROOT}</arg>
+<arg>--trust-carrier-type</arg>
+<arg>filesystem</arg>
+<arg>--permissive-local</arg>
+<arg>--json</arg>
+<arg>--</arg>
+<arg>python</arg>
+<arg>${TASK}</arg>
+<arg>${PROOF_FILE}</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:01:47.631" level="INFO">${exec_result} = namespace(rc=0, stdout='{"artifactDigest":"sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870","materializationId":"3b120bf_5a1fac3_c105d344","path":"D:\\\\a\\\\rcc\\\\rcc\\\\tmp\...</msg>
+<status status="PASS" starttime="20261011 16:01:46.433" endtime="20261011 16:01:47.631"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${exec_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:47.633" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.631" endtime="20261011 16:01:47.633"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-exec:complete</arg>
+<msg timestamp="20261011 16:01:47.633" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:47.635" level="INFO">phase=artifact-exec:complete</msg>
+<status status="PASS" starttime="20261011 16:01:47.633" endtime="20261011 16:01:47.635"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${executed}</var>
+<arg>${exec_result.stdout}</arg>
+<msg timestamp="20261011 16:01:47.635" level="INFO">${executed} = {'artifactDigest': 'sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870', 'materializationId': '3b120bf_5a1fac3_c105d344', 'path': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3...</msg>
+<status status="PASS" starttime="20261011 16:01:47.635" endtime="20261011 16:01:47.635"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${executed}[artifactDigest]</arg>
+<arg>${artifact}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.635" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.635" endtime="20261011 16:01:47.635"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${executed}[materializationId]</arg>
+<arg>${cold}[materializationId]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.637" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.635" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${executed}[cacheHit]</arg>
+<arg>local-materialization</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.637" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${executed}[exitCode]</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:47.637" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<arg>${executed}[leaseId]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<msg timestamp="20261011 16:01:47.637" level="INFO">Length is 32</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Read Json File" library="library">
+<var>${proof}</var>
+<arg>${PROOF_FILE}</arg>
+<msg timestamp="20261011 16:01:47.637" level="INFO">${proof} = {'condaOffline': 'true', 'mambaOffline': 'true', 'nativeExtension': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\home-b\\holotree\\3b120bf_5a1fac3_c105d344\\DLLs\\_sqlite3.pyd', 'nativeImpor...</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<arg>${proof}[yamlVersion]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<msg timestamp="20261011 16:01:47.637" level="INFO">Length is 5</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${proof}[condaOffline]</arg>
+<arg>true</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.637" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${proof}[mambaOffline]</arg>
+<arg>true</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.637" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.637"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${proof}[pipNoIndex]</arg>
+<arg>1</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.639" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.637" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${proof}[uvNoIndex]</arg>
+<arg>1</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.639" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${proof}[nativeImport]</arg>
+<arg>sqlite3</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:01:47.639" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<arg>${proof}[nativeExtension]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<msg timestamp="20261011 16:01:47.639" level="INFO">Length is 106</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<arg>${proof}[sqliteVersion]</arg>
+<doc>Verifies that the given item is not empty.</doc>
+<msg timestamp="20261011 16:01:47.639" level="INFO">Length is 6</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Package Manager Caches Should Be Empty" library="library">
+<arg>${B_HOME}</arg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${source_bundle}</var>
+<arg>${FIXTURE_ROOT}${/}source-only.py</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:47.639" level="INFO">${source_bundle} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\source-only.py</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.639"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=source-bundle:start</arg>
+<msg timestamp="20261011 16:01:47.639" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:47.641" level="INFO">phase=source-bundle:start</msg>
+<status status="PASS" starttime="20261011 16:01:47.639" endtime="20261011 16:01:47.641"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${source_bundle_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>bundle</arg>
+<arg>--robot</arg>
+<arg>${ROBOT}</arg>
+<arg>--output</arg>
+<arg>${source_bundle}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:50.483" level="INFO">${source_bundle_result} = namespace(rc=0, stdout='', stderr='Note! For now, resolved effective environment configuration file is "D:\\\\a\\\\rcc\\\\rcc\\\\robot_tests\\\\environment_artifacts\\\\conda.yaml".\nEnvironment hash:...</msg>
+<status status="PASS" starttime="20261011 16:01:47.641" endtime="20261011 16:01:50.483"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${source_bundle_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:50.484" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:50.484" endtime="20261011 16:01:50.485"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${source_bundle_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:50.485" endtime="20261011 16:01:50.485"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${source_bundle_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:50.485" endtime="20261011 16:01:50.486"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=source-bundle:complete</arg>
+<msg timestamp="20261011 16:01:50.486" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:50.488" level="INFO">phase=source-bundle:complete</msg>
+<status status="PASS" starttime="20261011 16:01:50.486" endtime="20261011 16:01:50.488"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${source_run_cwd}</var>
+<arg>${FIXTURE_ROOT}${/}source-run</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:50.488" level="INFO">${source_run_cwd} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\source-run</msg>
+<status status="PASS" starttime="20261011 16:01:50.488" endtime="20261011 16:01:50.488"/>
+</kw>
+<kw name="Create Directory" library="OperatingSystem">
+<arg>${source_run_cwd}</arg>
+<doc>Creates the specified directory.</doc>
+<msg timestamp="20261011 16:01:50.488" level="INFO" html="true">Created directory '&lt;a href="file://D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\source-run"&gt;D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\source-run&lt;/a&gt;'.</msg>
+<status status="PASS" starttime="20261011 16:01:50.488" endtime="20261011 16:01:50.489"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=source-bundle-run:start</arg>
+<msg timestamp="20261011 16:01:50.489" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:50.490" level="INFO">phase=source-bundle-run:start</msg>
+<status status="PASS" starttime="20261011 16:01:50.489" endtime="20261011 16:01:50.490"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${source_run_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>run-from-bundle</arg>
+<arg>${source_bundle}</arg>
+<arg>--task</arg>
+<arg>proof</arg>
+<arg>cwd=${source_run_cwd}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:53.482" level="INFO">${source_run_result} = namespace(rc=0, stdout='{"condaOffline": null, "mambaOffline": null, "nativeExtension": "D:\\\\a\\\\rcc\\\\rcc\\\\tmp\\\\environment-artifacts-4fk3lsoz\\\\home-a\\\\holotree\\\\3b120bf_5a1fac3_9fcd253...</msg>
+<status status="PASS" starttime="20261011 16:01:50.490" endtime="20261011 16:01:53.482"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${source_run_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:53.482" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:53.482" endtime="20261011 16:01:53.482"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${source_run_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:53.483" endtime="20261011 16:01:53.483"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${source_run_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:53.483" endtime="20261011 16:01:53.483"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${source_run_result.stderr}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20261011 16:01:53.485" level="INFO">Note: Found hololib.zip in bundle, importing...
+Note: Found 1 environment(s) in bundle "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3lsoz\\source-only.py"
+Note: 1/1: Processing environment "default"
+Note: 1/1: Blueprint hash for "default" is 09f816e7a8406493
+FINAL unified conda environment descriptor:
+---
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- pyyaml=6.0.2
+---
+OK.
+Note: 1/1: Built environment "default" with hash 09f816e7a8406493
+"C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\workarea6acbb2ee\\robot.yaml" as robot.yaml is:
+tasks:
+  proof:
+    command:
+      - python
+      - task.py
+condaConfigFile: conda.yaml
+artifactsDir: output
+
+Note! For now, resolved effective environment configuration file is "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\workarea6acbb2ee\\conda.yaml".
+####  Progress: 00/15  v18.19.6     1.410s  Context: "runnervmfi6oq\\runneradmin" &lt;runnervmfi6oq\runneradmin@runnervmfi6oq&gt; [windows_amd64/Microsoft Windows [Version 10.0.26100.33438]].
+####  Progress: 01/15  v18.19.6     0.012s  Fresh [private mode] holotree environment 248bfff4-2e03-e215-b173-efdc024d9c0d. (parent/pid: 6148/1120)
+####  Progress: 02/15  v18.19.6     0.010s  Holotree blueprint is "09f816e7a8406493" [windows_amd64 with 3 workers on 4 CPUs from "conda.yaml"].
+FINAL unified conda environment descriptor:
+---
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- pyyaml=6.0.2
+---
+####  Progress: 14/15  v18.19.6     0.090s  Restore space from library [with 3 workers on 4 CPUs; with compression: true].
+Installation plan is: D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a\holotree\3b120bf_5a1fac3_9fcd2534\rcc_plan.log
+Environment configuration descriptor is: D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\home-a\holotree\3b120bf_5a1fac3_9fcd2534\identity.yaml
+####  Progress: 15/15  v18.19.6     0.111s  Fresh holotree done [with 3 workers on 4 CPUs].
+Wanted  Version  Origin  |  No.  |  Available        Version       Origin       |  Status
+------  -------  ------  +  ---  +  ---------        -------       ------       +  ------
+-       -        -       |    1  |  bzip2            1.0.8         conda-forge  |  N/A
+-       -        -       |    2  |  ca-certificates  2026.7.22     conda-forge  |  N/A
+-       -        -       |    3  |  libexpat         2.8.5         conda-forge  |  N/A
+-       -        -       |    4  |  libffi           3.7.0         conda-forge  |  N/A
+-       -        -       |    5  |  liblzma          5.8.3         conda-forge  |  N/A
+-       -        -       |    6  |  libpython        3.11.17       conda-forge  |  N/A
+-       -        -       |    7  |  libsqlite        3.54.0        conda-forge  |  N/A
+-       -        -       |    8  |  libzlib          1.3.2         conda-forge  |  N/A
+-       -        -       |    9  |  openssl          3.6.5         conda-forge  |  N/A
+-       -        -       |   10  |  packaging        26.3          conda-forge  |  N/A
+-       -        -       |   11  |  pip              26.2.1        conda-forge  |  N/A
+-       -        -       |   12  |  python           3.11.17       conda-forge  |  N/A
+-       -        -       |   13  |  python_abi       3.11          conda-forge  |  N/A
+-       -        -       |   14  |  pyyaml           6.0.2         conda-forge  |  N/A
+-       -        -       |   15  |  setuptools       84.0.0        conda-forge  |  N/A
+-       -        -       |   16  |  tk               8.6.13        conda-forge  |  N/A
+-       -        -       |   17  |  tzdata           2026c         conda-forge  |  N/A
+-       -        -       |   18  |  ucrt             10.0.26100.0  conda-forge  |  N/A
+-       -        -       |   19  |  vc               14.5          conda-forge  |  N/A
+-       -        -       |   20  |  vc14_runtime     14.51.36247   conda-forge  |  N/A
+-       -        -       |   21  |  vcomp14          14.51.36247   conda-forge  |  N/A
+-       -        -       |   22  |  wheel            0.48.0        conda-forge  |  N/A
+-       -        -       |   23  |  yaml             0.2.5         conda-forge  |  N/A
+------  -------  ------  +  ---  +  ---------        -------       ------       +  ------
+Wanted  Version  Origin  |  No.  |  Available        Version       Origin       |  Status
+
+--
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@  From rcc "v18.19.6" (controller: "user") point of view, "actual main robot run" was SUCCESS. @@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  |  "Build/Pre-run"  relative time allocation ratio:  1:0
+  |  "Setup/Run"  relative time allocation ratio:  3:13
+OK.
+Artifacts copied to "output"
+</msg>
+<status status="PASS" starttime="20261011 16:01:53.483" endtime="20261011 16:01:53.485"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=source-bundle-run:complete</arg>
+<msg timestamp="20261011 16:01:53.485" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:53.486" level="INFO">phase=source-bundle-run:complete</msg>
+<status status="PASS" starttime="20261011 16:01:53.485" endtime="20261011 16:01:53.486"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${archive}</var>
+<arg>${FIXTURE_ROOT}${/}artifact.rcca</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:53.486" level="INFO">${archive} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\artifact.rcca</msg>
+<status status="PASS" starttime="20261011 16:01:53.486" endtime="20261011 16:01:53.486"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-export:start</arg>
+<msg timestamp="20261011 16:01:53.486" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:53.488" level="INFO">phase=artifact-export:start</msg>
+<status status="PASS" starttime="20261011 16:01:53.486" endtime="20261011 16:01:53.488"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${export_result}</var>
+<arg>${RCC}</arg>
+<arg>env</arg>
+<arg>export</arg>
+<arg>--artifact</arg>
+<arg>${artifact}</arg>
+<arg>--provider</arg>
+<arg>office</arg>
+<arg>--output</arg>
+<arg>${archive}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:55.732" level="INFO">${export_result} = namespace(rc=0, stdout='{"archive":"D:\\\\a\\\\rcc\\\\rcc\\\\tmp\\\\environment-artifacts-4fk3lsoz\\\\artifact.rcca","artifactDigest":"sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856...</msg>
+<status status="PASS" starttime="20261011 16:01:53.488" endtime="20261011 16:01:55.732"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${export_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:55.734" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:55.732" endtime="20261011 16:01:55.734"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${export_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:55.734" endtime="20261011 16:01:55.734"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${export_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:55.734" endtime="20261011 16:01:55.736"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-export:complete</arg>
+<msg timestamp="20261011 16:01:55.736" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:55.736" level="INFO">phase=artifact-export:complete</msg>
+<status status="PASS" starttime="20261011 16:01:55.736" endtime="20261011 16:01:55.736"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${artifact_bundle}</var>
+<arg>${FIXTURE_ROOT}${/}source-artifact.py</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:55.738" level="INFO">${artifact_bundle} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\source-artifact.py</msg>
+<status status="PASS" starttime="20261011 16:01:55.738" endtime="20261011 16:01:55.738"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-bundle:start</arg>
+<msg timestamp="20261011 16:01:55.738" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:55.738" level="INFO">phase=artifact-bundle:start</msg>
+<status status="PASS" starttime="20261011 16:01:55.738" endtime="20261011 16:01:55.738"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${artifact_bundle_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>bundle</arg>
+<arg>--robot</arg>
+<arg>${ROBOT}</arg>
+<arg>--artifact-archive</arg>
+<arg>${archive}</arg>
+<arg>--output</arg>
+<arg>${artifact_bundle}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:01:59.867" level="INFO">${artifact_bundle_result} = namespace(rc=0, stdout='', stderr='Note! For now, resolved effective environment configuration file is "D:\\\\a\\\\rcc\\\\rcc\\\\robot_tests\\\\environment_artifacts\\\\conda.yaml".\nEnvironment hash:...</msg>
+<status status="PASS" starttime="20261011 16:01:55.738" endtime="20261011 16:01:59.867"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${artifact_bundle_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:01:59.869" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:01:59.867" endtime="20261011 16:01:59.869"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${artifact_bundle_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:59.869" endtime="20261011 16:01:59.869"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${artifact_bundle_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:01:59.869" endtime="20261011 16:01:59.871"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-bundle:complete</arg>
+<msg timestamp="20261011 16:01:59.871" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:59.873" level="INFO">phase=artifact-bundle:complete</msg>
+<status status="PASS" starttime="20261011 16:01:59.871" endtime="20261011 16:01:59.873"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${artifact_run_cwd}</var>
+<arg>${FIXTURE_ROOT}${/}artifact-run</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:01:59.873" level="INFO">${artifact_run_cwd} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\artifact-run</msg>
+<status status="PASS" starttime="20261011 16:01:59.873" endtime="20261011 16:01:59.873"/>
+</kw>
+<kw name="Create Directory" library="OperatingSystem">
+<arg>${artifact_run_cwd}</arg>
+<doc>Creates the specified directory.</doc>
+<msg timestamp="20261011 16:01:59.873" level="INFO" html="true">Created directory '&lt;a href="file://D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\artifact-run"&gt;D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\artifact-run&lt;/a&gt;'.</msg>
+<status status="PASS" starttime="20261011 16:01:59.873" endtime="20261011 16:01:59.873"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-bundle-run:start</arg>
+<msg timestamp="20261011 16:01:59.873" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:59.875" level="INFO">phase=artifact-bundle-run:start</msg>
+<status status="PASS" starttime="20261011 16:01:59.873" endtime="20261011 16:01:59.875"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${artifact_run_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>run-from-bundle</arg>
+<arg>${artifact_bundle}</arg>
+<arg>--task</arg>
+<arg>proof</arg>
+<arg>cwd=${artifact_run_cwd}</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:02:07.859" level="INFO">${artifact_run_result} = namespace(rc=0, stdout='', stderr='Note: Found hololib.zip in bundle, importing...\n"C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\workarea6acbb2f7\\\\robot.yaml" as robot.yaml is:\ntasks:\n ...</msg>
+<status status="PASS" starttime="20261011 16:01:59.875" endtime="20261011 16:02:07.859"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${artifact_run_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:07.861" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:07.859" endtime="20261011 16:02:07.861"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${artifact_run_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:07.861" endtime="20261011 16:02:07.861"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${artifact_run_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:07.861" endtime="20261011 16:02:07.861"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${artifact_run_result.stderr}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20261011 16:02:07.863" level="INFO">Note: Found hololib.zip in bundle, importing...
+"C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\workarea6acbb2f7\\robot.yaml" as robot.yaml is:
+tasks:
+  proof:
+    command:
+      - python
+      - task.py
+condaConfigFile: conda.yaml
+artifactsDir: output
+
+</msg>
+<status status="PASS" starttime="20261011 16:02:07.861" endtime="20261011 16:02:07.863"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=artifact-bundle-run:complete</arg>
+<msg timestamp="20261011 16:02:07.863" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:07.863" level="INFO">phase=artifact-bundle-run:complete</msg>
+<status status="PASS" starttime="20261011 16:02:07.863" endtime="20261011 16:02:07.863"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${platform_index}</var>
+<arg>${FIXTURE_ROOT}${/}platform-index.json</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:07.865" level="INFO">${platform_index} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\platform-index.json</msg>
+<status status="PASS" starttime="20261011 16:02:07.865" endtime="20261011 16:02:07.865"/>
+</kw>
+<kw name="Create Multi Platform Index" library="library">
+<var>${index_path}</var>
+<arg>${archive}</arg>
+<arg>${platform_index}</arg>
+<msg timestamp="20261011 16:02:07.909" level="INFO">${index_path} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\platform-index.json</msg>
+<status status="PASS" starttime="20261011 16:02:07.865" endtime="20261011 16:02:07.909"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${indexed_bundle}</var>
+<arg>${FIXTURE_ROOT}${/}multi-platform.py</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:07.909" level="INFO">${indexed_bundle} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\multi-platform.py</msg>
+<status status="PASS" starttime="20261011 16:02:07.909" endtime="20261011 16:02:07.909"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=indexed-bundle:start</arg>
+<msg timestamp="20261011 16:02:07.909" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:07.911" level="INFO">phase=indexed-bundle:start</msg>
+<status status="PASS" starttime="20261011 16:02:07.909" endtime="20261011 16:02:07.911"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${indexed_bundle_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>bundle</arg>
+<arg>--robot</arg>
+<arg>${ROBOT}</arg>
+<arg>--artifact-archive</arg>
+<arg>${archive}</arg>
+<arg>--artifact-index</arg>
+<arg>${index_path}</arg>
+<arg>--output</arg>
+<arg>${indexed_bundle}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:02:11.966" level="INFO">${indexed_bundle_result} = namespace(rc=0, stdout='', stderr='Note! For now, resolved effective environment configuration file is "D:\\\\a\\\\rcc\\\\rcc\\\\robot_tests\\\\environment_artifacts\\\\conda.yaml".\nEnvironment hash:...</msg>
+<status status="PASS" starttime="20261011 16:02:07.911" endtime="20261011 16:02:11.966"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${indexed_bundle_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:11.968" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:11.966" endtime="20261011 16:02:11.968"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${indexed_bundle_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:11.968" endtime="20261011 16:02:11.968"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${indexed_bundle_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:11.968" endtime="20261011 16:02:11.970"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=indexed-bundle:complete</arg>
+<msg timestamp="20261011 16:02:11.970" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:11.972" level="INFO">phase=indexed-bundle:complete</msg>
+<status status="PASS" starttime="20261011 16:02:11.970" endtime="20261011 16:02:11.972"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${indexed_run_cwd}</var>
+<arg>${FIXTURE_ROOT}${/}indexed-run</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:11.972" level="INFO">${indexed_run_cwd} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\indexed-run</msg>
+<status status="PASS" starttime="20261011 16:02:11.972" endtime="20261011 16:02:11.972"/>
+</kw>
+<kw name="Create Directory" library="OperatingSystem">
+<arg>${indexed_run_cwd}</arg>
+<doc>Creates the specified directory.</doc>
+<msg timestamp="20261011 16:02:11.972" level="INFO" html="true">Created directory '&lt;a href="file://D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\indexed-run"&gt;D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\indexed-run&lt;/a&gt;'.</msg>
+<status status="PASS" starttime="20261011 16:02:11.972" endtime="20261011 16:02:11.972"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=indexed-bundle-run:start</arg>
+<msg timestamp="20261011 16:02:11.972" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:11.974" level="INFO">phase=indexed-bundle-run:start</msg>
+<status status="PASS" starttime="20261011 16:02:11.972" endtime="20261011 16:02:11.974"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${indexed_run_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>run-from-bundle</arg>
+<arg>${indexed_bundle}</arg>
+<arg>--task</arg>
+<arg>proof</arg>
+<arg>cwd=${indexed_run_cwd}</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:02:20.074" level="INFO">${indexed_run_result} = namespace(rc=0, stdout='', stderr='Note: Found hololib.zip in bundle, importing...\n"C:\\\\Users\\\\RUNNER~1\\\\AppData\\\\Local\\\\Temp\\\\workarea6acbb303\\\\robot.yaml" as robot.yaml is:\ntasks:\n ...</msg>
+<status status="PASS" starttime="20261011 16:02:11.974" endtime="20261011 16:02:20.074"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${indexed_run_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:20.076" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:20.074" endtime="20261011 16:02:20.076"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${indexed_run_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:20.076" endtime="20261011 16:02:20.076"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${indexed_run_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:20.076" endtime="20261011 16:02:20.078"/>
+</kw>
+<kw name="Log" library="BuiltIn">
+<arg>${indexed_run_result.stderr}</arg>
+<doc>Logs the given message with the given level.</doc>
+<msg timestamp="20261011 16:02:20.078" level="INFO">Note: Found hololib.zip in bundle, importing...
+"C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\workarea6acbb303\\robot.yaml" as robot.yaml is:
+tasks:
+  proof:
+    command:
+      - python
+      - task.py
+condaConfigFile: conda.yaml
+artifactsDir: output
+
+</msg>
+<status status="PASS" starttime="20261011 16:02:20.078" endtime="20261011 16:02:20.078"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=indexed-bundle-run:complete</arg>
+<msg timestamp="20261011 16:02:20.078" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:20.080" level="INFO">phase=indexed-bundle-run:complete</msg>
+<status status="PASS" starttime="20261011 16:02:20.078" endtime="20261011 16:02:20.080"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${wrong_index}</var>
+<arg>${FIXTURE_ROOT}${/}wrong-platform-index.json</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:20.080" level="INFO">${wrong_index} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-platform-index.json</msg>
+<status status="PASS" starttime="20261011 16:02:20.080" endtime="20261011 16:02:20.080"/>
+</kw>
+<kw name="Create Wrong Platform Index" library="library">
+<var>${wrong_index_path}</var>
+<arg>${archive}</arg>
+<arg>${wrong_index}</arg>
+<msg timestamp="20261011 16:02:20.110" level="INFO">${wrong_index_path} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-platform-index.json</msg>
+<status status="PASS" starttime="20261011 16:02:20.080" endtime="20261011 16:02:20.110"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${wrong_bundle}</var>
+<arg>${FIXTURE_ROOT}${/}wrong-platform.py</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:20.112" level="INFO">${wrong_bundle} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-platform.py</msg>
+<status status="PASS" starttime="20261011 16:02:20.110" endtime="20261011 16:02:20.112"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=wrong-platform-bundle:start</arg>
+<msg timestamp="20261011 16:02:20.112" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:20.112" level="INFO">phase=wrong-platform-bundle:start</msg>
+<status status="PASS" starttime="20261011 16:02:20.112" endtime="20261011 16:02:20.112"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${wrong_bundle_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>bundle</arg>
+<arg>--robot</arg>
+<arg>${ROBOT}</arg>
+<arg>--artifact-archive</arg>
+<arg>${archive}</arg>
+<arg>--artifact-index</arg>
+<arg>${wrong_index_path}</arg>
+<arg>--output</arg>
+<arg>${wrong_bundle}</arg>
+<arg>env=${A_ENV}</arg>
+<msg timestamp="20261011 16:02:24.200" level="INFO">${wrong_bundle_result} = namespace(rc=0, stdout='', stderr='Note! For now, resolved effective environment configuration file is "D:\\\\a\\\\rcc\\\\rcc\\\\robot_tests\\\\environment_artifacts\\\\conda.yaml".\nEnvironment hash:...</msg>
+<status status="PASS" starttime="20261011 16:02:20.112" endtime="20261011 16:02:24.200"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${wrong_bundle_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:24.202" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:24.200" endtime="20261011 16:02:24.202"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${wrong_bundle_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:24.202" endtime="20261011 16:02:24.202"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${wrong_bundle_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:24.202" endtime="20261011 16:02:24.203"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=wrong-platform-bundle:complete</arg>
+<msg timestamp="20261011 16:02:24.203" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:24.204" level="INFO">phase=wrong-platform-bundle:complete</msg>
+<status status="PASS" starttime="20261011 16:02:24.203" endtime="20261011 16:02:24.204"/>
+</kw>
+<kw name="Set Variable" library="BuiltIn">
+<var>${wrong_run_cwd}</var>
+<arg>${FIXTURE_ROOT}${/}wrong-run</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<msg timestamp="20261011 16:02:24.204" level="INFO">${wrong_run_cwd} = D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-run</msg>
+<status status="PASS" starttime="20261011 16:02:24.204" endtime="20261011 16:02:24.204"/>
+</kw>
+<kw name="Create Directory" library="OperatingSystem">
+<arg>${wrong_run_cwd}</arg>
+<doc>Creates the specified directory.</doc>
+<msg timestamp="20261011 16:02:24.206" level="INFO" html="true">Created directory '&lt;a href="file://D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-run"&gt;D:\a\rcc\rcc\tmp\environment-artifacts-4fk3lsoz\wrong-run&lt;/a&gt;'.</msg>
+<status status="PASS" starttime="20261011 16:02:24.204" endtime="20261011 16:02:24.206"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=wrong-platform-run:start</arg>
+<msg timestamp="20261011 16:02:24.206" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:24.208" level="INFO">phase=wrong-platform-run:start</msg>
+<status status="PASS" starttime="20261011 16:02:24.206" endtime="20261011 16:02:24.208"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${wrong_run_result}</var>
+<arg>${RCC}</arg>
+<arg>robot</arg>
+<arg>run-from-bundle</arg>
+<arg>${wrong_bundle}</arg>
+<arg>--task</arg>
+<arg>proof</arg>
+<arg>cwd=${wrong_run_cwd}</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:02:30.816" level="INFO">${wrong_run_result} = namespace(rc=3, stdout='', stderr='Note: Found hololib.zip in bundle, importing...\nFailed to import environment artifact from bundle: select bundled platform artifact: no exact environment artifact f...</msg>
+<status status="PASS" starttime="20261011 16:02:24.208" endtime="20261011 16:02:30.816"/>
+</kw>
+<kw name="Should Not Be Equal As Integers" library="BuiltIn">
+<arg>${wrong_run_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are equal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:30.818" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:30.816" endtime="20261011 16:02:30.818"/>
+</kw>
+<kw name="Should Contain" library="BuiltIn">
+<arg>${wrong_run_result.stderr}</arg>
+<arg>no exact environment artifact for platform</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:30.818" endtime="20261011 16:02:30.818"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${wrong_run_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:30.818" endtime="20261011 16:02:30.818"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${wrong_run_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:30.820" endtime="20261011 16:02:30.820"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=wrong-platform-run:complete</arg>
+<msg timestamp="20261011 16:02:30.821" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:30.822" level="INFO">phase=wrong-platform-run:complete</msg>
+<status status="PASS" starttime="20261011 16:02:30.821" endtime="20261011 16:02:30.822"/>
+</kw>
+<kw name="Terminate Process" library="Process">
+<var>${stopped}</var>
+<arg>environment-provider-restarted</arg>
+<doc>Stops the process gracefully or forcefully.</doc>
+<msg timestamp="20261011 16:02:30.822" level="INFO">Gracefully terminating process.</msg>
+<msg timestamp="20261011 16:02:30.926" level="INFO">Process completed.</msg>
+<msg timestamp="20261011 16:02:30.926" level="INFO">${stopped} = &lt;result object with rc 0&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:30.822" endtime="20261011 16:02:30.926"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${stopped.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:30.926" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:30.926" endtime="20261011 16:02:30.928"/>
+</kw>
+<kw name="Provider Should Be Unreachable" library="library">
+<arg>${restarted_url}</arg>
+<status status="PASS" starttime="20261011 16:02:30.928" endtime="20261011 16:02:31.931"/>
+</kw>
+<kw name="Remove From Dictionary" library="Collections">
+<arg>${B_ENV}</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<doc>Removes the given ``keys`` from the ``dictionary``.</doc>
+<msg timestamp="20261011 16:02:31.931" level="INFO">Removed item with key 'RCC_TEST_PROVIDER_AUTHORIZATION' and value 'Bearer robot-test'.</msg>
+<status status="PASS" starttime="20261011 16:02:31.931" endtime="20261011 16:02:31.931"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-dead-test:start</arg>
+<msg timestamp="20261011 16:02:31.931" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.933" level="INFO">phase=provider-dead-test:start</msg>
+<status status="PASS" starttime="20261011 16:02:31.931" endtime="20261011 16:02:31.933"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${provider_test_result}</var>
+<arg>${RCC}</arg>
+<arg>provider</arg>
+<arg>test</arg>
+<arg>office</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:02:31.968" level="INFO">${provider_test_result} = namespace(rc=1, stdout='', stderr='Error: provider test: Get "http://127.0.0.1:59272/v1/capabilities": authorization environment variable "RCC_TEST_PROVIDER_AUTHORIZATION" is not set\nUsage:\n  rcc pr...</msg>
+<status status="PASS" starttime="20261011 16:02:31.933" endtime="20261011 16:02:31.968"/>
+</kw>
+<kw name="Should Not Be Equal As Integers" library="BuiltIn">
+<arg>${provider_test_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are equal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:31.969" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:31.968" endtime="20261011 16:02:31.969"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${provider_test_result.stdout}</arg>
+<arg>reachable</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:31.969" endtime="20261011 16:02:31.970"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${provider_test_result.stdout}</arg>
+<arg>compatible</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:31.970" endtime="20261011 16:02:31.971"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${provider_test_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:31.971" endtime="20261011 16:02:31.972"/>
+</kw>
+<kw name="Should Contain" library="BuiltIn">
+<arg>${provider_test_result.stderr}</arg>
+<arg>RCC_TEST_PROVIDER_AUTHORIZATION</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:31.972" endtime="20261011 16:02:31.972"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${provider_test_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:31.972" endtime="20261011 16:02:31.974"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-dead-test:complete</arg>
+<msg timestamp="20261011 16:02:31.974" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.974" level="INFO">phase=provider-dead-test:complete</msg>
+<status status="PASS" starttime="20261011 16:02:31.974" endtime="20261011 16:02:31.974"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-dead-warm:start</arg>
+<msg timestamp="20261011 16:02:31.975" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.976" level="INFO">phase=provider-dead-warm:start</msg>
+<status status="PASS" starttime="20261011 16:02:31.975" endtime="20261011 16:02:31.976"/>
+</kw>
+<kw name="Run Process Without Group" library="library">
+<var>${warm_result}</var>
+<arg>${RCC}</arg>
+<arg>env</arg>
+<arg>acquire</arg>
+<arg>--artifact</arg>
+<arg>${artifact}</arg>
+<arg>--provider</arg>
+<arg>office</arg>
+<arg>--trust-carrier</arg>
+<arg>${TRUST_ROOT}</arg>
+<arg>--trust-carrier-type</arg>
+<arg>filesystem</arg>
+<arg>--permissive-local</arg>
+<arg>--json</arg>
+<arg>env=${B_ENV}</arg>
+<msg timestamp="20261011 16:02:32.817" level="INFO">${warm_result} = namespace(rc=0, stdout='{"artifactDigest":"sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870","materializationId":"3b120bf_5a1fac3_c105d344","path":"D:\\\\a\\\\rcc\\\\rcc\\\\tmp\...</msg>
+<status status="PASS" starttime="20261011 16:02:31.976" endtime="20261011 16:02:32.817"/>
+</kw>
+<kw name="Should Be Equal As Integers" library="BuiltIn">
+<arg>${warm_result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<msg timestamp="20261011 16:02:32.817" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:32.817" endtime="20261011 16:02:32.817"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${warm_result.stdout}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:32.817" endtime="20261011 16:02:32.819"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${warm_result.stderr}</arg>
+<arg>Bearer robot-test</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:32.819" endtime="20261011 16:02:32.819"/>
+</kw>
+<kw name="Parse Json" library="supporting">
+<var>${warm}</var>
+<arg>${warm_result.stdout}</arg>
+<msg timestamp="20261011 16:02:32.822" level="INFO">${warm} = {'artifactDigest': 'sha256:fb557a53bad572737095627da5ab0677fb109561e2dba7132d5d347856a34870', 'materializationId': '3b120bf_5a1fac3_c105d344', 'path': 'D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-4fk3...</msg>
+<status status="PASS" starttime="20261011 16:02:32.819" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${warm}[artifactDigest]</arg>
+<arg>${artifact}</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:02:32.822" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:32.822" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${warm}[materializationId]</arg>
+<arg>${cold}[materializationId]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:02:32.822" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:32.822" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${warm}[path]</arg>
+<arg>${cold}[path]</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:02:32.822" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:32.822" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<arg>${warm}[cacheHit]</arg>
+<arg>local-materialization</arg>
+<doc>Fails if the given objects are unequal.</doc>
+<msg timestamp="20261011 16:02:32.822" level="DEBUG">Argument types are:
+&lt;class 'str'&gt;
+&lt;class 'str'&gt;</msg>
+<status status="PASS" starttime="20261011 16:02:32.822" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Should Not Contain" library="BuiltIn">
+<arg>${warm_result.stderr}</arg>
+<arg>micromamba phase</arg>
+<doc>Fails if ``container`` contains ``item`` one or more times.</doc>
+<status status="PASS" starttime="20261011 16:02:32.822" endtime="20261011 16:02:32.822"/>
+</kw>
+<kw name="Log To Console" library="library">
+<arg>phase=provider-dead-warm:complete</arg>
+<msg timestamp="20261011 16:02:32.822" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:32.824" level="INFO">phase=provider-dead-warm:complete</msg>
+<status status="PASS" starttime="20261011 16:02:32.824" endtime="20261011 16:02:32.824"/>
+</kw>
+<kw name="Package Manager Caches Should Be Empty" library="library">
+<arg>${B_HOME}</arg>
+<status status="PASS" starttime="20261011 16:02:32.824" endtime="20261011 16:02:32.824"/>
+</kw>
+<kw name="Write Native Runtime Robot Evidence" library="library">
+<arg>${RCC}</arg>
+<arg>${binary_version}</arg>
+<arg>${artifact}</arg>
+<arg>${cold}</arg>
+<arg>${executed}</arg>
+<arg>${warm}</arg>
+<arg>${proof}</arg>
+<status status="PASS" starttime="20261011 16:02:32.826" endtime="20261011 16:02:32.847"/>
+</kw>
+<status status="PASS" starttime="20261011 16:00:42.062" endtime="20261011 16:02:32.847"/>
+</test>
+<kw name="Clean Environment Artifact Acceptance" type="TEARDOWN">
+<kw name="Run Keyword And Ignore Error" library="BuiltIn">
+<arg>Terminate All Processes</arg>
+<arg>kill=${True}</arg>
+<doc>Runs the given keyword with the given arguments and ignores possible error.</doc>
+<kw name="Terminate All Processes" library="Process">
+<arg>kill=${True}</arg>
+<doc>Terminates all still running processes started by this library.</doc>
+<status status="PASS" starttime="20261011 16:02:32.848" endtime="20261011 16:02:32.848"/>
+</kw>
+<status status="PASS" starttime="20261011 16:02:32.848" endtime="20261011 16:02:32.848"/>
+</kw>
+<kw name="Run Keyword If" library="BuiltIn">
+<arg>$FIXTURE_ROOT is not None</arg>
+<arg>Remove Environment Artifact Fixture</arg>
+<arg>${FIXTURE_ROOT}</arg>
+<doc>Runs the given keyword with the given arguments, if ``condition`` is true.</doc>
+<kw name="Remove Environment Artifact Fixture" library="library">
+<arg>${FIXTURE_ROOT}</arg>
+<status status="PASS" starttime="20261011 16:02:32.851" endtime="20261011 16:02:38.576"/>
+</kw>
+<status status="PASS" starttime="20261011 16:02:32.848" endtime="20261011 16:02:38.576"/>
+</kw>
+<status status="PASS" starttime="20261011 16:02:32.848" endtime="20261011 16:02:38.576"/>
+</kw>
+<status status="PASS" starttime="20261011 16:00:42.001" endtime="20261011 16:02:38.576"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Environment Artifacts">Environment Artifacts</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20261011 16:00:42.594" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.735" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.737" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.884" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:00:42.886" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:27.479" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:27.490" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.599" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.601" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.658" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.659" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.939" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.939" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.982" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:28.984" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:46.430" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:46.431" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:47.633" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:47.639" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:50.486" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:50.489" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:53.485" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:53.486" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:55.736" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:55.738" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:59.871" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:01:59.873" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:07.863" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:07.909" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:11.970" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:11.972" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:20.078" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:20.112" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:24.203" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:24.206" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:30.821" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.931" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.974" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:31.975" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+<msg timestamp="20261011 16:02:32.822" level="WARN">Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.</msg>
+</errors>
+</robot>

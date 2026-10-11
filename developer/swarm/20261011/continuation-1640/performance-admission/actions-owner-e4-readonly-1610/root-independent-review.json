@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-11T16:27:03.636698+00:00",
+  "actualCompletionFiles": 31,
+  "actualPublicSourceBlobs": 8,
+  "exactActionsSource": "e4ff080375a8422bb656e52d218f198521dda078",
+  "sourceReviewed": "Explicit TEST_ONLY5/7276 allowlist; default3 retained; declaredfeatures not runtimeprobe; fixture0700guard precedesacquire/Action; shipping7945/5a outsideallowlist. Raw owner sourcefull/runtime receipts unobserved.",
+  "runtimeQualified": false,
+  "noActionsMutationOrExecution": true
+}

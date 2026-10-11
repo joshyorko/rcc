@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-11T16:28:02.911505+00:00",
+  "source": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+  "allFourActualZIPsVerified": true,
+  "gateSourceHash": "d53417cc68809c34cc7b86adb45964bb6e3f2048d0e86f42666f161ca90aafe7",
+  "rows": [
+    {
+      "platform": "linux_amd64",
+      "numericVerifierExit": 0,
+      "artifact": 11707851996
+    },
+    {
+      "platform": "windows_amd64",
+      "numericVerifierExit": 0,
+      "artifact": 11708351363
+    },
+    {
+      "platform": "darwin_arm64",
+      "numericVerifierExit": 0,
+      "artifact": 11707668038
+    },
+    {
+      "platform": "darwin_amd64",
+      "numericVerifierExit": 0,
+      "artifact": 11708156352
+    }
+  ],
+  "frozenShippingSourceUnchanged": "7945f956b428359928908a9f42e36417b113dafd",
+  "noLocalForeignBinaryExecution": true
+}

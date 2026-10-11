@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-11T16:24:22.290192+00:00",
+  "verifiedAllEntries": 32410,
+  "actualFileCount": 15603,
+  "logicalBytes": 337419867,
+  "hardlinkAliasesPreserved": 0,
+  "retainedIntactState": "/dev/shm/rcc-main7945-strict-accepted-attempt03-root",
+  "ownWorkspaceScratchRemovedAfterVerification": true,
+  "noRamExecution": true,
+  "workspaceFree": 3214118912
+}

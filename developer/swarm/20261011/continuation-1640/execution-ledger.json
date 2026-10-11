@@ -1,0 +1,449 @@
+{
+  "timestamp": "2026-10-11T16:36:14.739117+00:00",
+  "repository": "joshyorko/rcc",
+  "main": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+  "tree": "a40d30733b5a80abcfa05d3220403afa653d5665",
+  "accepted_candidate": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "prior_checkpoint": "c49e9026455635fe32f4d747a166ebc52fd0ea58",
+  "release": {
+    "status": "SOURCE-PREPARED; independently verified frozen7945ALL11numericgate0/Robot171/0/1/all9actualassets/all4actualnative/rootstrictsignedcoldoffline5049CAS0mismatch0leases/N1released5archiveimportedlegacy0. NOTPUBLISHED; PUBLICATIONHOLD and policy/signingscope/securityriskgates remain",
+    "frozen_source": "7945f956b428359928908a9f42e36417b113dafd",
+    "no_tag": true,
+    "no_release": true,
+    "no_publisher_dispatch": true,
+    "asset_manifest_sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+    "mandatory_gates": [
+      "Protected approvalpolicy credentials Administration:read and signingscope;403 remains",
+      "Shipping security residualrisk disposition GO-2026-5970/6629 unremediated notcallertraced/strippedsymbolfallback;dashboarddetails403",
+      "Separate explicit operatorGO required afterpreparedmandatoryevidence; no6tag orpublisherdispatch. Actualtaggedsource/postpublicationremote9assets cannotprecedeGO"
+    ],
+    "actual_review_evidence": {
+      "exporterRun": 38155612008,
+      "exporterSource": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+      "reviewArtifact": 11708177941,
+      "actualZIPsha256": "7c54e6bcc13f7a62c2c85ac62e02edbb33731215d858e9b8ea24168501c30125",
+      "actualNumericGateExit": 0,
+      "actualNumericTeeExit": 0,
+      "all11Passed": true,
+      "actualRobot": "171/0/1",
+      "N1archiveSHA": "868dd01503d860fd2a9159a6b31153a249644aa4aa0130381e56171c90bf5dcb",
+      "actualReleasedRollbackAndLegacyExit": 0,
+      "legacyObjectsUnchanged": 5045,
+      "canonical270MBlocalRehash": false,
+      "canonicalFullBundleHostedValidated": true
+    }
+  },
+  "lanes": [
+    {
+      "id": "two-phase-release",
+      "owner": "native_acceptance Luna High",
+      "branch": "codex/rcc-two-phase-release-20261011",
+      "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "status": "MERGED237; frozen7945 manualprepSUCCESS; actual9/4rootpeerverified; rawreceiptexportpending",
+      "independent_review": "Root clean exact-head full139 script tests exit0, TOC idempotence and clean worktree; independent Luna focused3 exit0/YAML/diff0. Universal68b8 guard rejected and narrowed in child; no reset.",
+      "blocker": "Rawfull11/N1 blocked270MBresolver32M; readonlyexport238 awaitingnativeCI; policy403/installcapacity/security/operatorHOLD",
+      "sha": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+      "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+      "pr": 237,
+      "implementation": "Review-only24MiB sidecars and native executed-binary payloads retained. Generated TOC committed. Clean-source guard CI-only; all four Go metadata identity predicates remain strict with field diagnostics.",
+      "tests": "Root139script0/peer3focused0. Exactc6 six hostedcontexts and4nativejobs/fullRC success. Root+peer independentlyverified ALL4actualZIP/binaries officialGo9 clean exactc6 properarch, eachRobot1pass0fail0skip/LinuxJAT. Root actual decodedRC log171pass0fail1skip and finalreceipt announcement; raw156MBnumeric/pergatebundle not downloaded, CI source failclosed exit enforcement reviewed. Never rebind to7945. NEW7945 all4actualZIP/sourceGo9/nativeRobot1pass0fail0skip/LinuxJAT root+peer verified; actualall9sidecars root+peer verified; no old receipt rebinding.",
+      "remaining": "Fresh7945 preparation qualification then independent operator GO required; no tag/publisher dispatch",
+      "prior_failure": {
+        "sha": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+        "run": 38142809725,
+        "state": "fullRC and all four native acceptance tests passed; all four failed later staging metadata/source identity. Actual mismatch field unobserved. Root independently reproduced tracked TOC mutation before Go compilation; original receipts not rebound."
+      },
+      "integration_sha": "7945f956b428359928908a9f42e36417b113dafd"
+    },
+    {
+      "id": "issue181-tests",
+      "owner": "root / workers_226 completed review",
+      "branch": "codex/rcc-181-scale-acceptance-20261011",
+      "sha": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+      "preserved_checkpoint": "3e57fde849398ea69954b4c09d5dad9ca0111361",
+      "pr": 235,
+      "status": "MERGED235 atba2c90415:49:05 afteractual4currentnative/root+Lunaverification+fresh6contexts; residual181OPEN",
+      "independent_review": "Root exacttestonly200lines/hashfa3e8a/currentfa464all4actualnativeAPIsha/binaryGo9/Robot1/0/0/LinuxJAT helper0; rootobservercause/quiescence independentlyproved",
+      "remaining": "residual issue181 remains open; no production change",
+      "blocker": null,
+      "prior_head": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+      "integration_sha": "ba2c904a7d3f75e6e5fdb3ae8b3f0d29ffeb764e",
+      "tests": "FourfocusedraceGoprocess0/2.019s; outerwrapperFAILED120s becauseobserverincludedownalready-exitedps. ROOTactualraw/source/reproduction0+emptyownedPGID independentlyacceptedGoresult WITHOUTrelabellingwrapperPASS. Priorcapfailedattempt01preserved, no thirdrace rerun."
+    },
+    {
+      "id": "issue133-docs",
+      "owner": "graph_inventory Luna High completed / root",
+      "branch": "codex/rcc-133-contributor-map-20261011",
+      "sha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+      "preserved_checkpoint": "012703c2474dd8585972edba0695bad4633d9230",
+      "pr": 236,
+      "status": "MERGED236/64dcc264 afterroot+Lunaactual4sourceboundnativebyte/Robot/JATproof; issue133CLOSED",
+      "independent_review": "root reviewed four rows; git diff check0 and directory/link verification0;root4actualZIP/receipt/Robot+LinuxJAT verified perhead",
+      "remaining": "No reconciled133scope remaining; release source7945 unchanged",
+      "blocker": null,
+      "next": "Dependency-safe post-release-main merge only after exactheadreview/nativebytes; frozen7945releaseassetsunchanged",
+      "prior_head": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+      "integration_sha": "64dcc2640c5970961b8581bf967f172c5d7fad05",
+      "tests": "Freshbdeff all6contexts/all4nativejobsSUCCESS; Lunaactualall4ZIP/API/binary/Go9/receipt/XML/JAT0, ROOTindependentextractionsall4/receipt/Go90; literal4rows/directory/linkreview accepted"
+    },
+    {
+      "id": "provider-stream-baseline",
+      "owner": "workers_226 Luna High completed / root verified",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "status": "accepted component evidence only",
+      "tests": "six controls+separate profile exit0;33222 GETs/416801088 B;full CAS5541 rehash0 mismatch",
+      "independent_review": "root all5543 actual files plus raw runner/controls/profile verified",
+      "remaining": "not materialization/Actions/E2E; startup URL unpersisted/unprofiled session wait4 omitted"
+    },
+    {
+      "id": "compression-micro",
+      "owner": "consumer_contract_125 Sol Extra High completed / root verified",
+      "status": "accepted external codec micro evidence; root actual original/encoded frame hashes verified",
+      "scope": "24 immutable <=1MiB logical objects; external Python gzip1/zstd3; five interleaved reps; roundtrip/hash outside timed batches",
+      "remaining": "exactGo implementation/whole-corpus/E2E/platform/trust/rollback/candidateActions qualification",
+      "tests": "25 samples/5 phasesx5repsx480outputs=12,000 roundtrip/hash passes; worker/supervisor0; gzipencode747.319ms vszstd272.116ms; originalgzipdecode238.199ms vszstd72.821ms; sample24 only/externalcodec/no E2Egain",
+      "independent_review": "root-verification.json;24 originalstored/logicalsha and reproduced24exactencodedframeoutputs"
+    },
+    {
+      "id": "shipping-security",
+      "owner": "pr_readiness Luna High completed / root verified",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "status": "Prior727sourcefourtargets0 retainedNOTrebound; fresh7945eightbinaryJSONprocessing0/all312fallbackrecordsroot+Solactualproof; BOTHadvisoriesneeds_review",
+      "remaining": "GO5970 norm.Iter malformedUTF8/GO6629 Nickname-shortbuffer supportedreachableboundarynotproved; affectedmoduleunremediatedneeds_review;15dashboard403 and7vet separate",
+      "shipping_source": "7945f956b428359928908a9f42e36417b113dafd",
+      "tests": "8actualstrippedELF/PE/MachO bytes+headers/Go9+39findingmsgs each;35syntheticfunctionshapes/2package/2module; actualgovuln1.1.4fallbacksourceblobproof+429Go/4modules/3embedded unchanged. JSON0notcleanfindingstatus.",
+      "independent_review": "Root48actualcompletionfiles/16upstreamblobSHA1/all8raw312msgs/all8actualbinaryhash+headers verified. No newscanner/build/reachableclaim."
+    },
+    {
+      "id": "actions-owner-compatibility",
+      "owner": "existing Actions101/133/134/139/143/221 owners",
+      "source": "b614864ba9da55c13662894b6ef3c8515d9fdb25 OWNER_REPORTED/privatepublicAPI422/404",
+      "status": "Owner reports test-onlynewerrepair and180focusedpasses; first3controlfailedcapacity+cleanup strictSTOP;5/6NOT_RUN; noindependentnewerqualification",
+      "coordination": "https://github.com/joshyorko/actions/issues/133#issuecomment-6110447631",
+      "remaining": "Publicimmutable source/selector/provenance negatives + actualoriginalfailedreceipts + accepted package-cache-sharing/failuremetadatafixture/controller conditional3\u21925\u21927276admission; sixrealworkloadsseparately required. Do nottreat3pinpermanent or bypassSTOP",
+      "tests": "Root actual original Actions artifact11699213923 ZIP8664B SHA375684..., all7 members20503B and9 exact c103 source pins verified. JUnit3/0/0/0 public Linux stable3/Core1.0.2, last-good recovery, one publication. Source/control/target c103/d5a/6181 only; no new Runtime execution.",
+      "public_integration": "e3c29cde8878307912e55ed09b6436c0f91d06d5",
+      "independent_review": "Root actual34manifestfiles/hash/source-boundownercomment retained; privateb614/rawfailedreview uninspected; no new ActionsRuntimeorproductionmutation"
+    },
+    {
+      "id": "pack-layout-micro",
+      "owner": "workers_226 Luna High completed / root verified",
+      "status": "corrected invocation accepted component evidence; original remainsFAILEDdiskcap",
+      "scope": "4649<4KiB originalgzipobjects/4,484,936B;5counterbalanced externalPython individual-open vsownedconcatenation seek/read; cryptographicstoredidentity bothinside timers; noRCCformat/default change",
+      "remaining": "externalPython warm-cachefilesystemcomponent only; no HTTP/Go/materialization/Actions/default format gain",
+      "tests": "10 verified warm-cache controls; individual85.647ms/pack10.153ms median;4649objects4,484,936B;2narrow99Bnegativecases rejected;exit0/cap10MiB passed",
+      "independent_review": "root rehashed all4649originalbytes+metadata/index/pack slices/wholepack;actualsourceunchanged;rawtimers/counts verified"
+    },
+    {
+      "id": "reflink-capability",
+      "owner": "consumer_contract_125 Sol Extra High completed",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071 (RCC not executed)",
+      "status": "scoped negative capability observation, not materializer qualification",
+      "tests": "oneownedFICLONE errno95 exactoverlay path;worker/supervisor0;no conditionalCOWcontrols/fallback/rerun",
+      "independent_review": "rootoriginalstoredbytes/mode/mtime equal;executedrunner/receipt reviewed",
+      "limitations": "RSShelperreturnsinvalid0 when /procchildren absent;no treeRSSguard proof. Ownedcopy cleaned underinitialpermission beforelaterrootkeep request;workerhashreceipt only,rootcannot rehash deletedcopy",
+      "remaining": "supportednativefilesystems/clonefile/COWisolation/relocation/fallback required"
+    },
+    {
+      "id": "journal182-tests",
+      "owner": "workers_226 Luna High completed / root verified",
+      "branch": "codex/rcc-182-journal-tests-20261011",
+      "sha": "36a84430083b3af6f9758408b94054e5197b7f8b",
+      "tree": "2fa0167aa679a4d60c7a5c0002801dc4bdb94ff7",
+      "parents": [
+        "2ab311be5cb8b1e19e9af42dd4bffe6ce51146d0",
+        "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+      ],
+      "status": "focused package tests independentlyaccepted; pushedcheckpoint; noPR/integration",
+      "scope": "onlyjournal/coverage_test.go114lines lifecycle/warranty/open-error/buildstatspersistence4tests",
+      "independent_review": "root actualrawlog/source114test-onlylines/cleanexacthead/resourcewatcher/erratum reviewed",
+      "blocker": "fullrepo/hostedchecks and remainingissuecriteria; PRadmission deferredwhilecriticalreleaseCIqueued",
+      "tests": "Go1.26.9 CGO journal package exit0/82.5%coverage;1.466s; sampledRSS77058048B/temp9293824B; cachegrowth5922816B; numericlimits passed",
+      "remaining": "journalissue staysopen; no productionchange; sourcepreparedrelease727 unaffected"
+    },
+    {
+      "id": "six-way-index-coverage",
+      "owner": "consumer_contract_125 Sol Extra High completed/root verified",
+      "status": "accepted static corpus coverage; not runtime measurements",
+      "source": "originalActionsa709/stableRCC3 Artifactec379; actualindexe5871,491,800B",
+      "tests": "root independent allbands/CDF/topN/weightedquantiles/sample/excluded subsets:small4649=83.962%requests/6.456%storedB;codec20excluded=65.524%storedB/60.060%declaredlogicalB;24sample2.128%storedB",
+      "remaining": "no per-request latency/touchedfiles/working-set attribution or dominantE2Ebottleneck; all6directions have specific prerequisites"
+    },
+    {
+      "id": "large-codec-component",
+      "owner": "workers_226 Luna High",
+      "status": "500 component samples independently verified; whole invocation FAILED_WRAPPER, no timed retry",
+      "scope": "All20 indexed logical>1MiB objects:102457064 logical/45517701 stored bytes (65.524% stored corpus). External CPython gzip1/zstd3 only; fixture historical Actionsa709/stableRCC3, not727 production.",
+      "blocker": "Go actual pipeline and paired RCC/Actions E2E/native/trust/rollback needed before recommendation. Future wrapper proposal only has5 stub tests; does not retroactively qualify old run.",
+      "tests": "500 timed codec operations; worker numeric0/supervisor PASS. Root actual20 original objects/index/manifest plus40 unique reproduced frame hashes/roundtrips and all500 raw schedule/results rows verified. Whole wrapper failure retained: inferred outer1, numeric outer status not captured.",
+      "independent_review": "encoding-large-micro-preexecution/root-verification.json + root-original-manifest-index.json; no timed rerun or originals changed.",
+      "remaining": "No optimization winner. Read-only Go analogue planning separate scope, no runtime admitted.",
+      "phase_median_seconds": {
+        "legacy_gzip_decode": 0.385236996,
+        "gzip_encode": 1.196860796,
+        "zstd_encode": 0.414601178,
+        "gzip_decode": 0.393094516,
+        "zstd_decode": 0.119448651
+      },
+      "frame_totals_bytes": {
+        "gzip": 43769827,
+        "zstd": 39419371
+      },
+      "resource_observations": {
+        "sampled_peak_tree_rss_bytes": 150142976,
+        "elapsed_seconds": 38.863248515,
+        "peak_is_sampled_not_absolute": true
+      }
+    },
+    {
+      "id": "go-gzip-component-plan",
+      "owner": "workers_226 Luna High completed/root actualverification0",
+      "status": "ACCEPTED scoped300-call Go stdlib analogue; ONE guardedinvocation outer/build/metadata/runtime0; earlier revisions unexecuted",
+      "scope": "20 immutablelargeobjects102457064logical/45517701stored; Go9 memory-backed gzipBestSpeed analogue of727, no directRCC/materializer/Actions",
+      "blocker": "Root exact source/launcher/resource admission; compilation must fit free floor using existing storage/cache only",
+      "remaining": "Paired actualRCC pipeline/native/trust/rollback and ownerqualifiednewerActions E2E before winner; crossPython/Go runs notcontrolledcomparison",
+      "tests": "300/300 codec calls,30/30 events; root20actualstored+logical/metadata/mode/mtime/index/manifest/source and300schedule verified;20canonical frame hashes equal actualoriginalstoredobjects; no timedretry",
+      "independent_review": "go-gzip-component-preexecution-root/root-verification.json exit0; initialrootverifier assumedwrongrep3/4phaseorder, preservederratum+script corrected to actualfrozenGo source (no timedrerun)",
+      "performance": {
+        "legacyDecodeMedianMiBps": 136.609123831,
+        "encodeMedianMiBps": 95.0043477401,
+        "decodeMedianMiBps": 134.038984098,
+        "totalSeconds": 47.226654276,
+        "buildSampledRSS": 337932288,
+        "runtimeSampledRSS": 165658624,
+        "minFreeBytes": 2697576448
+      },
+      "binary_sha256": "a25beb9e343e6d616e86dcdbd28a820bd1f5a6d53286637fe5c4debb8b433f06",
+      "results_sha256": "4a8e7954b26265c131d35d3365a3c665643a06b6579c52b33fdc2ffd1ef06ade"
+    },
+    {
+      "id": "release-evidence-export",
+      "owner": "root / native_acceptance proposal / identity LunaHigh independentreview completed",
+      "branch": "codex/rcc-two-phase-release-20261011",
+      "sha": "86cabfb8e4fac2e16048571b727bc60f2c800dba",
+      "tree": "cc0f9b4d155ef9d7f79fccb9c1a71d4c83286052",
+      "pr": 238,
+      "status": "MERGED238 at8e4ec1/actual4currentnativeindependentroot+Luna0; firstreadonlyrun38152186269FAILED N1cataloginitialrebased receipt interpretation",
+      "tests": "Root143script0/peer21focused0/YAML/diff0; exact4filehashmatched; read-onlymanualmainONLY/canonicalpublisherunchanged",
+      "blocker": "Correctedexport239 hostedCI thenactualrawreadback",
+      "remaining": "Allactualsource7945raw11numeric/Robot171/0/1/selfhost/N1/coord/stream stillunobserved. No giantlocalcanonicalAPIsha claim",
+      "integration_sha": "8e4ec1f2130ef7ef084ce74771e32f1ab925754c"
+    },
+    {
+      "id": "release-export-n1-correction",
+      "owner": "native_acceptance Luna High / root / SolExtraHighindependentreview",
+      "branch": "codex/rcc-two-phase-release-20261011",
+      "sha": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+      "pr": 239,
+      "status": "PUSHED/OPEN currentCI; sourceacceptedroot+Sol",
+      "tests": "Rootfull144script0/temporarynonexec hashfixture removed;worker22focused0+143subset0/fullmissingbuildfixtureFAILpreserved;peer1regression+12controls/diff0",
+      "scope": "ONLY2exporter/testfiles; objectclosureimmutableinitialimport, catalogrebasingexpectedatstablepath, fullpostimportrollbackstable; canonicalshipping7945 unchanged",
+      "blocker": "Freshhostedexactheadrequired thennormalmerge andreadonlyoriginalprep export",
+      "remaining": "Actual7945rawN1 stillunobserved; no publicationdecision"
+    },
+    {
+      "id": "shipping-strict-consumer",
+      "owner": "identity_118_124 Luna High / root",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "binary_sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "status": "PreflightHEADassumptionFAIL0commands preserved; actualcache-serve/helperfixture0/serverSIGINT0 thenwrapperTypeErrorFAIL; envverify/acquire/execNOT_RUN. Correctedcontinuationwrapperplanning/testing rootauditpending",
+      "tests": "Rootintact56entries/mode/mtime/hashpreservedFAILEDstateinexistingRAM+allsmallraw; independentPGID37966absent/port45621closed111/freshsnapshotSHA8bbb2e...; no originalprovider started/mutated",
+      "remaining": "Correctedprewrite-cappedwrapper/liveguards tested+rootnewadmission; ONLYunexecutedenvcommands. Rootall5045/5049integrity/lifecycle/providertrustimmutability actual proof thenintactstatepreservation+ALLhistorical324temporaryrestore"
+    },
+    {
+      "id": "six-way-next-native-paired",
+      "owner": "performance_125 Sol ExtraHigh / workers_226 Luna High",
+      "scope": "One proposedGo/RCCFSGetObject vsOWNReadAtpack component4649/4484936B/fivecounterbalancedpairs; actualpairedprototypeharnessplanningonly",
+      "status": "Solread-onlysource/tool/inputreadinesscompleted; Lunaownharness preparationactiveNOT_COMPILED/NOT_RUN/NOT_ADMITTED",
+      "remaining": "Rootreadcode/sourceprojection/cache/resourcepreflightafterstrictconsumerpreservation+alloldtemporaryrestore; noActions/E2E/winner/defaultformat"
+    },
+    {
+      "id": "review-export-n1-correction239",
+      "owner": "native_acceptance LunaHigh +rootindependent +consumer_contract_125 SolExtraHigh",
+      "branch": "codex/rcc-two-phase-release-20261011",
+      "sha": "4592139422f02fb7bc4fbc3f8e0b612a42551044",
+      "pr": 239,
+      "status": "MERGED",
+      "integration_sha": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+      "tests": "root144scripts0/peer12controls0/allhostedchecksSUCCESS/all4actualZIPnativeGo9metadata/Robot1/0/0/LinuxJAT ROOT+Luna0 each",
+      "remaining": "Actualreadonlyexport38155612008 rawshippingfull11/N1 peer+rootverification",
+      "no_shipping_source_rebind": true
+    }
+  ],
+  "issues_open": [
+    98,
+    118,
+    125,
+    131,
+    132,
+    135,
+    181,
+    182,
+    185
+  ],
+  "no_go_drafts": [
+    224,
+    225
+  ],
+  "governance185": "L5 HOLD unchanged",
+  "six_way": [
+    {
+      "direction": "compression",
+      "status": "External24-small and20-large object codecs measured and root component data verified; large whole wrapper FAILED, no timed retry. No Go/E2E/native/default winner."
+    },
+    {
+      "direction": "small-object packs",
+      "status": "all4649smallobjectwarm-cachelayout measured;identity/HTTP/engine/crash/native/E2E pending"
+    },
+    {
+      "direction": "prewarm/persistent reuse",
+      "status": "historical realActions3 sixcalls; candidate/newowner versionqualification/controller fixtures pending"
+    },
+    {
+      "direction": "reflinks/clonefile",
+      "status": "oneoverlay errno95; no conditionalCOWqualification; otherfilesystems/native/fallback pending"
+    },
+    {
+      "direction": "lazy/FUSE",
+      "status": "no mount/engine; actualworking-set/lifecycle/relocation/mount authority unavailable"
+    },
+    {
+      "direction": "compressed images/COW",
+      "status": "builder/mount/image identity/overlay/native/working-set prerequisites absent;noformatimplementation"
+    }
+  ],
+  "resources": {
+    "workspace_free_after_preservation": 3061592064,
+    "floor_plus_guard": 2688548864,
+    "temporary_owned_preserved_bytes": 675190680,
+    "record": "p1-hosted/main7945-consumer-resource-admission/accepted324-temporary-staging.json",
+    "restore_before_handoff": true,
+    "fresh_consumer_admission": "Originallogical330MNOTadmitted; new448MiBallocatedscratch/excluding22.4Mbin/4MprewriteRAW+8Mreserve/guard2688548864/RSS512M/phase120total600. ActualfirstfixturewrapperFAIL preservedintact; correctedunexecutedenvcommandcontinuationrequiresrootaudit/newadmission",
+    "additional_record": "p1-hosted/main7945-consumer-resource-admission/accepted324-additional-staging.json"
+  },
+  "latest_pushed_checkpoint": "67cabbbfe784f356a8bff02379d53f04dc0ed6d8",
+  "checkpoint_remote_verification": "checkpoint-1520/remote-verification.json all301actualremoteSHA/size verified;1253priorunchanged/1554totalentries/original119preserved",
+  "security_dashboard_observation": {
+    "source": "actualGitHub push response081b84f",
+    "open_alerts": 15,
+    "critical": 1,
+    "high": 6,
+    "moderate": 4,
+    "low": 4,
+    "mapping": "unavailable403; no individual alert cleared or classifiednonblocking",
+    "issue98_comment": 6108971791
+  },
+  "active_workers_at_snapshot": [
+    "root Sol High release/integration/independentreview/ledger/checkpoint",
+    "identity_118_124 Luna High correctedstrict7945wrapper/stubtestplan ONLY beforeadmission",
+    "workers_226 Luna High 125 isolatednativepairedharnesspreparationonly NOT_COMPILED/NOT_RUN"
+  ],
+  "hosted_runs": {
+    "237_bb": "38141317804",
+    "237_83d_failed": "38140726296",
+    "235": "38138500683",
+    "236": "38138538107",
+    "237_current": "38144487557",
+    "237_29c3_failed": "38142809725"
+  },
+  "latest_pushed_checkpoint_before_this_snapshot": "f904e2bd77123befcb530936a3fe0b01404ded49",
+  "live_inventory": {
+    "open_issues": 9,
+    "open_prs": 3,
+    "branches": 72,
+    "tags": 33,
+    "releases": 27,
+    "milestones": 0,
+    "latest_stable": "v18.19.5",
+    "v18.19.6_tag_or_release": false,
+    "v18_19_6_publication": false
+  },
+  "worker_allocation": [
+    {
+      "name": "root",
+      "model": "Sol High",
+      "scope": "release/integration/independentreview/ledger/checkpoint",
+      "status": "active"
+    },
+    {
+      "name": "identity_118_124",
+      "model": "Luna High",
+      "scope": "correctedstrict7945wrapper/stubtestplan ONLY beforeadmission",
+      "status": "active"
+    },
+    {
+      "name": "workers_226",
+      "model": "Luna High",
+      "scope": "125 isolatednativepairedharnesspreparationonly NOT_COMPILED/NOT_RUN",
+      "status": "active"
+    },
+    {
+      "owner": "native_acceptance",
+      "model": "Luna High",
+      "status": "idle",
+      "scope": "239sourcefixcompleted/CIpending"
+    },
+    {
+      "owner": "consumer_contract_125",
+      "model": "Sol ExtraHigh",
+      "status": "idle",
+      "scope": "security+239independentreviewcompleted"
+    },
+    {
+      "owner": "performance_125",
+      "model": "Sol ExtraHigh",
+      "status": "idle",
+      "scope": "full6matrix+nativepairedreadinesscompleted"
+    },
+    {
+      "owner": "pr_readiness",
+      "model": "Luna High",
+      "status": "idle",
+      "scope": "eightbinaryscancompleted+erratum"
+    }
+  ],
+  "active_workers": [
+    {
+      "name": "root",
+      "model": "Sol High",
+      "scope": "release/integration/independentreview/ledger/checkpoint"
+    },
+    {
+      "name": "identity_118_124",
+      "model": "Luna High",
+      "scope": "correctedstrict7945wrapper/stubtestplan ONLY beforeadmission"
+    },
+    {
+      "name": "workers_226",
+      "model": "Luna High",
+      "scope": "125 isolatednativepairedharnesspreparationonly NOT_COMPILED/NOT_RUN"
+    }
+  ],
+  "main_scope": "Docs133+test181+readonlyexport238 POST-RELEASE-main; source7945/all9preparedassets immutable",
+  "tree_scope": "tree49baf frozenSHIPPINGSOURCE7945; currentmaintree mustnotrebindpreparedassets",
+  "shipping_tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "resource_restoration": {
+    "strict7945": "Rootactual5049CAS0mismatches/leases0; all32410entries337419867logicalbytes intact /dev/shm/rcc-main7945-strict-accepted-attempt03-root, ownscratchremoved afterverification",
+    "all25temporary324paths": "RESTORED actual675190680bytes/SHA/size/mode/mtime eachverified",
+    "completed_other_root_duplicates": "IntactRAMrelocation completedstable5assets+old727ZIPs; originalsmallreceiptunmodified, locatorsstrict-preservation-1620/completed-root-duplicates-intact-relocation.json",
+    "guard": 2688548864
+  },
+  "actions_compatibility_1628": {
+    "source": "e4ff080375a8422bb656e52d218f198521dda078",
+    "root_actual_source_blobs": 8,
+    "testonly": "released5/exact7276 implemented;shipping7945/5a newownertuple needed",
+    "runtime": "NOTQUALIFIED; current3 owner0750/0700fixtureguardfailurebeforeacquire/Action; originalcapacity+cleanupSTOPseparate; ownercorrection/controller/sourcefresh/capacityrequired",
+    "coordination": "https://github.com/joshyorko/actions/issues/133#issuecomment-6111162766",
+    "productionpins": "unchanged"
+  },
+  "performance_next_lane": {
+    "owner": "workers_226 LunaHigh; consumer_contract_125 SolExtraHigh independentreview; rootresource/sourceadmission",
+    "scope": "Actual7945GoFilesystem.GetObject vsisolatedindexedpack4649sameframes; componentwarmonly",
+    "status": "Rootactual227Git/39embeds/archivepayloadtemplateproof0+offlineGo9list2660; successor79cab staticROOT+SolconditionalGO; supervisor/controlqualificationpending, NO compile/run yet",
+    "source": "7945f956b428359928908a9f42e36417b113dafd",
+    "original_harness": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4 unchanged",
+    "requirements": "sameownedRAMmountbotharms,failclosedIO/RSS,partialreceipts+passdeadline,sourceexactembeds/offlinecache/boundedresources beforecompile",
+    "six_directions": "compression;packfiles;prewarming/reuse;reflinks/clonefile;lazy/FUSE;compressedimages/COW allpreserved, no defaultwinner"
+  }
+}

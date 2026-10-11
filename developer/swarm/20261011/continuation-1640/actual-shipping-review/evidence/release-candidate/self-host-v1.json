@@ -1,0 +1,248 @@
+{
+  "binaries": {
+    "candidate": {
+      "path": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+      "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "version": "v18.19.6"
+    },
+    "generationA": {
+      "candidate": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+      "candidateSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "source": "/home/runner/work/rcc/rcc/build/self-host/released/rcc",
+      "sourceSha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3"
+    },
+    "generationB": {
+      "path": "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+      "sha256": "078723ce80eb06e2fe4b894f0b9b0b19180fd55f5f6aff9cd03bc264d40ac9a3",
+      "version": "v18.19.6"
+    },
+    "released": {
+      "path": "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+      "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "version": "v18.19.5"
+    }
+  },
+  "candidateBinary": "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+  "commands": [
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "run",
+        "-r",
+        "developer/toolkit.yaml",
+        "--dev",
+        "-t",
+        "selfHostBuild"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "step": "selfHostBuild"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+        "run",
+        "-r",
+        "developer/toolkit.yaml",
+        "--dev",
+        "-t",
+        "selfHostProbe"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "step": "selfHostProbe"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+        "run",
+        "-r",
+        "developer/toolkit.yaml",
+        "--dev",
+        "-t",
+        "selfHostBuild"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b"
+      },
+      "step": "selfHostBuild"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+        "run",
+        "-r",
+        "developer/toolkit.yaml",
+        "--dev",
+        "-t",
+        "selfHostProbe"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b"
+      },
+      "step": "selfHostProbe"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "run",
+        "-r",
+        "developer/toolkit.yaml",
+        "--dev",
+        "-t",
+        "selfHostProbe"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b"
+      },
+      "step": "selfHostProbe"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "holotree",
+        "variables",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/conda.yaml",
+        "--robot",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12.json",
+      "step": "released-v12"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+        "holotree",
+        "variables",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/conda.yaml",
+        "--robot",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/candidate-v12.json",
+      "step": "candidate-v12"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "holotree",
+        "variables",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/conda.yaml",
+        "--robot",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-compatibility.json",
+      "step": "released-v12-compatibility"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "holotree",
+        "variables",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/conda.yaml",
+        "--robot",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-archive-closure.json",
+      "step": "released-v12-archive-closure"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+        "env",
+        "acquire",
+        "--archive",
+        "/home/runner/work/rcc/rcc/tmp/rcc-n1-environment.rcca",
+        "--trust-carrier",
+        "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a/artifacts/v1/trust",
+        "--trust-carrier-type",
+        "filesystem",
+        "--permissive-local",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/candidate-archive-upgrade.json",
+      "step": "candidate-archive-upgrade"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "env",
+        "acquire",
+        "--archive",
+        "/home/runner/work/rcc/rcc/tmp/rcc-n1-environment.rcca",
+        "--trust-carrier",
+        "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a/artifacts/v1/trust",
+        "--trust-carrier-type",
+        "filesystem",
+        "--permissive-local",
+        "--json"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-archive-rollback-attempt.json",
+      "step": "released-archive-rollback-attempt"
+    },
+    {
+      "argv": [
+        "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+        "task",
+        "testrun",
+        "--robot",
+        "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+        "--task",
+        "proof",
+        "--no-outputs"
+      ],
+      "env": {
+        "ROBOCORP_HOME": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a"
+      },
+      "evidencePath": "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-rollback-consumption.json",
+      "step": "released-v12-rollback-consumption"
+    }
+  ],
+  "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+  "evidencePaths": [
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/robot.yaml",
+    "build/self-host/released/rcc",
+    "/home/runner/work/rcc/rcc/build/self-host/promoted/rcc",
+    "/home/runner/work/rcc/rcc/build/self-host/candidate/rcc",
+    "/home/runner/work/rcc/rcc/build/self-host/candidate/rccremote",
+    "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b/artifacts/v1/metadata.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/candidate-v12.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-compatibility.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-archive-closure.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/n1-archive-sha256.txt",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/candidate-archive-upgrade.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-archive-rollback-attempt.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/released-v12-rollback-consumption.json",
+    "/home/runner/work/rcc/rcc/tmp/rcc-self-host-26283/n1-rollback-state.json"
+  ],
+  "homes": {
+    "a": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-a",
+    "b": "/home/runner/work/rcc/.rcc-self-host-homes-4wo64ioe/home-b"
+  },
+  "releasedBinary": "/home/runner/work/rcc/rcc/tmp/released-rcc/rcc",
+  "schemaVersion": 1
+}
