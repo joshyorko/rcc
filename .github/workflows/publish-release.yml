@@ -1,0 +1,146 @@
+name: Publish RCC Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      preparation_run_id:
+        description: Successful main-only RCC release preparation workflow run ID
+        required: true
+        type: string
+      source_sha:
+        description: Exact source SHA recorded by that preparation run
+        required: true
+        type: string
+      expected_version:
+        description: Exact version recorded by that preparation run
+        required: true
+        type: string
+      asset_manifest_sha256:
+        description: SHA-256 of evidence/asset-manifest.json reviewed independently
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    name: Publish Reviewed RCC Preparation
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: rcc-production
+    env:
+      RCC_PREPARATION_RUN_ID: ${{ inputs.preparation_run_id }}
+      RCC_SOURCE_SHA: ${{ inputs.source_sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
+      RCC_ASSET_MANIFEST_SHA256: ${{ inputs.asset_manifest_sha256 }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version: "1.26.9"
+      - name: Require configured independent release protection
+        env:
+          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ secrets.RCC_RELEASE_POLICY_AUDIT_TOKEN }}
+        run: python3 scripts/release_publication.py verify-environment --name rcc-production
+      - name: Verify exact successful preparation run and artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/release_publication.py verify-run \
+            --run-id "$RCC_PREPARATION_RUN_ID" \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --workflow-path .github/workflows/rcc.yaml
+      - name: Verify exact release source is current-main history
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$RCC_PREPARATION_RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "Preparation run ID must be numeric."
+            exit 1
+          fi
+          if [[ ! "$RCC_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Source SHA must be a full commit SHA."
+            exit 1
+          fi
+          git fetch --no-tags origin "$RCC_SOURCE_SHA"
+          git cat-file -e "${RCC_SOURCE_SHA}^{commit}"
+          git merge-base --is-ancestor "$RCC_SOURCE_SHA" "$GITHUB_SHA"
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: release-source
+          persist-credentials: false
+      - name: Validate release version and no-auto-publish source
+        run: |
+          python3 scripts/release_publication.py validate-source \
+            --root release-source \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --version "$RCC_RELEASE_VERSION"
+      - name: Validate separately configured Homebrew dispatcher access
+        env:
+          HOMEBREW_TOOLS_PAT: ${{ secrets.HOMEBREW_TOOLS_PAT }}
+        run: python3 scripts/release_publication.py verify-downstream
+      - name: Confirm the version has never been published or tagged
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/release_publication.py verify-release-absent --version "$RCC_RELEASE_VERSION"
+      - name: Download the reviewed artifact from the exact preparation run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/release_publication.py fetch-artifact \
+            --run-id "$RCC_PREPARATION_RUN_ID" \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --workflow-path .github/workflows/rcc.yaml \
+            --zip-path rcc-release-preparation.zip \
+            --output rcc-release-preparation
+      - name: Revalidate manifest, checksums, full11 and native evidence
+        run: |
+          python3 scripts/release_publication.py validate-bundle \
+            --root rcc-release-preparation \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
+            --run-id "$RCC_PREPARATION_RUN_ID"
+          python3 scripts/validate_release_topology.py \
+            --asset-root rcc-release-preparation/assets \
+            --workflow release-source/.github/workflows/rcc.yaml \
+            --index rcc-release-preparation/assets/index.json \
+            --tag-workflow release-source/.github/workflows/create-release-tag.yml \
+            --publisher-workflow release-source/.github/workflows/publish-release.yml \
+            --recovery-workflow release-source/.github/workflows/recover-rcc-185.yml \
+            --version "$RCC_RELEASE_VERSION"
+      - name: Create the new version tag without replacement
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+            -f "ref=refs/tags/${RCC_RELEASE_VERSION}" \
+            -f "sha=${RCC_SOURCE_SHA}"
+      - name: Publish exactly the nine reviewed release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$RCC_RELEASE_VERSION" rcc-release-preparation/assets/* \
+            --verify-tag --generate-notes --title "$RCC_RELEASE_VERSION"
+      - name: Dispatch Homebrew update after release publication
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        with:
+          github-token: ${{ secrets.HOMEBREW_TOOLS_PAT }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: 'homebrew-tools',
+              workflow_id: 'tap-auto-update.yml',
+              ref: 'main',
+              inputs: { slot_id: 'rcc-daily' }
+            });

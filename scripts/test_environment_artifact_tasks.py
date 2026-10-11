@@ -1,7 +1,9 @@
 import json
 import gzip
 import hashlib
+import inspect
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -21,6 +23,62 @@ from robot_tests.environment_artifacts import library as artifact_robot_library 
 
 
 class ArtifactTaskTests(unittest.TestCase):
+  def test_build_source_guard_rejects_tracked_edits_and_precedes_compilation(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tasks._assert_clean_tracked_workspace(root)
+      (root / "untracked-generated-file.txt").write_text("generated\n")
+      tasks._assert_clean_tracked_workspace(root)
+      tracked.write_text("modified\n")
+      with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+        tasks._assert_clean_tracked_workspace(root)
+
+    build_source = inspect.getsource(tasks.build.body)
+    self.assertLess(build_source.index("_assert_clean_source_if_required"), build_source.index('c.run(f"go build'))
+
+  def test_build_source_guard_is_release_ci_opt_in(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tracked.write_text("developer edit\n")
+
+      calls = []
+
+      class Context:
+        def run(self, command):
+          calls.append(command)
+          output = root / "build" / "linux64" / "rcc"
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_bytes(b"test executable placeholder")
+
+      old_cwd = Path.cwd()
+      try:
+        os.chdir(root)
+        with mock.patch.dict(os.environ, {}, clear=True):
+          tasks.build.body(Context(), platform="linux")
+        self.assertEqual(len(calls), 1, "ordinary developer build should allow tracked edits")
+
+        calls.clear()
+        with mock.patch.dict(os.environ, {"RCC_REQUIRE_CLEAN_SOURCE": "1"}, clear=True):
+          with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+            tasks.build.body(Context(), platform="linux")
+        self.assertEqual(calls, [], "release CI guard must fail before compilation")
+      finally:
+        os.chdir(old_cwd)
+
   def test_self_host_uses_the_archive_legacy_blueprint(self):
     with tempfile.TemporaryDirectory() as directory:
       archive = Path(directory) / "fixture.rcca"
@@ -315,13 +373,15 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_native_matrix_uses_exact_binary_and_test_produced_receipt(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
-    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
+    match = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(match, "native robot job is missing")
+    native_job = match.group(1)
     self.assertIn("needs: build", native_job)
     self.assertIn("actions/download-artifact", native_job)
     self.assertIn("RCC_REAL_BINARY", native_job)
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
-    self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
+    self.assertIn("RCC_SOURCE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("TestRealJATClassRCCAtoBVertical", native_job)
     self.assertIn("RCC_REAL_JAT_CLASS_TEST=1", native_job)
@@ -683,6 +743,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("  release-candidate:", workflow)
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
+    build_job = workflow.split("  build:\n", 1)[1].split("\n  release-candidate:", 1)[0]
+    self.assertIn('RCC_REQUIRE_CLEAN_SOURCE: "1"', build_job)
 
   def test_release_candidate_provisions_linux_sandbox_before_contained_gate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
@@ -751,11 +813,52 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("HOMEBREW_TOOLS_PAT", guide)
 
   def test_release_validates_homebrew_handoff_before_publication(self):
-    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    workflow = (ROOT / ".github" / "workflows" / "publish-release.yml").read_text()
     self.assertLess(
-        workflow.index("- name: Validate Homebrew Update Token"),
-        workflow.index("- name: Publish Release"),
+        workflow.index("- name: Validate separately configured Homebrew dispatcher access"),
+        workflow.index("- name: Create the new version tag without replacement"),
     )
+    self.assertLess(
+        workflow.index("- name: Create the new version tag without replacement"),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
+    )
+    self.assertLess(
+        workflow.index('gh release create "$RCC_RELEASE_VERSION"'),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
+    )
+
+  def test_manual_preparation_uploads_nine_review_only_asset_artifacts(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertIn("stage-review-assets", workflow)
+    self.assertEqual(workflow.count("name: Upload review-only release asset"), 9)
+    self.assertIn("rcc-release-preparation", workflow)
+    self.assertIn("check-review-payload", workflow)
+    self.assertNotIn("needs: assemble-release-preparation", workflow)
+    self.assertLess(workflow.index("name: Upload immutable release preparation artifact"),
+                    workflow.index("name: Upload review-only release asset"))
+    for asset in (
+      "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
+      "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64", "index.json",
+    ):
+      with self.subTest(asset=asset):
+        self.assertIn(f"rcc-release-review-assets/{asset}/", workflow)
+
+  def test_native_receipt_artifact_includes_guarded_exact_executable(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    job = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(job)
+    native_job = job.group(1)
+    self.assertIn("stage-native-review-binary", native_job)
+    self.assertIn("check-review-payload", native_job)
+    stage = native_job.index("stage-native-review-binary")
+    guard = native_job.index("check-review-payload")
+    upload = native_job.index("name: ${{ matrix.platform }}-native-runtime-receipt")
+    self.assertLess(stage, guard)
+    self.assertLess(guard, upload)
+    self.assertIn("--receipt \"$RCC_REAL_RECEIPT_FILE\"", native_job)
+    self.assertIn("--source-sha \"$RCC_CANDIDATE_SHA\"", native_job)
+    self.assertIn('--platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}"', native_job)
+    self.assertIn("path: ./tmp/output/", native_job)
 
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):
     commands = []
