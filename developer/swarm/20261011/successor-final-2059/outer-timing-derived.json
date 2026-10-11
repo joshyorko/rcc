@@ -1,0 +1,42 @@
+{
+  "source_checkpoint": "e70fe5531145836b79a386d48250e094d22e2c2c",
+  "source_manifest_sha256": "6f1e8eb81665f583065488dd7d1c1bf084231267c25d2b713b3a7777b538cebb",
+  "scope": "Read-only derivation from accepted NEW six persistent-worker arms, no timed wave replay. Bounded native elapsed is supervisor wall-time observation including native startup, cold Acquire, six full payload verifications, execution/lease release, source checks, profile flush and polling resolution. Controller outer elapsed also includes launcher start/readback and mode guards; not an uninstrumented deployment estimate.",
+  "arms": {
+    "fresh": {
+      "bounded_native_ms": [
+        2688.8636710000355,
+        2547.3236650000217,
+        2355.8664290003435
+      ],
+      "median_bounded_native_ms": 2547.3236650000217,
+      "controller_outer_ms": [
+        2726.2972580001588,
+        2586.305293999885,
+        2387.3623519998546
+      ],
+      "median_controller_outer_ms": 2586.305293999885
+    },
+    "resident": {
+      "bounded_native_ms": [
+        2018.8616430000366,
+        2075.289795000117,
+        2208.6561790001724
+      ],
+      "median_bounded_native_ms": 2075.289795000117,
+      "controller_outer_ms": [
+        2051.8580439998004,
+        2109.3586020001567,
+        2239.3767130001834
+      ],
+      "median_controller_outer_ms": 2109.3586020001567
+    }
+  },
+  "paired_controller_fresh_minus_resident_ms": [
+    674.4392140003583,
+    476.9466919997285,
+    147.9856389996712
+  ],
+  "all_outer_guards_accepted": true,
+  "production_or_Actions_acceptance": false
+}

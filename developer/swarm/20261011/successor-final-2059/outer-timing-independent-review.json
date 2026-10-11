@@ -1,0 +1,51 @@
+{
+  "evidence_checkpoint": "e70fe5531145836b79a386d48250e094d22e2c2c",
+  "raw_inputs": {
+    "runner_results": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/pair-{1..3}-{fresh,resident}/result.json",
+    "controller": "developer/swarm/20261011/successor-next-2035/persistent-worker/results/controller.jsonl"
+  },
+  "review_scope": "Arithmetic verification of existing accepted receipts only; no reruns.",
+  "arms": {
+    "fresh": {
+      "samples": [
+        "pair-1-fresh",
+        "pair-2-fresh",
+        "pair-3-fresh"
+      ],
+      "supervisor_seconds_ms": [
+        2688.8636710000355,
+        2547.3236650000217,
+        2355.8664290003435
+      ],
+      "median_supervisor_seconds_ms": 2547.3236650000217,
+      "controller_outer_elapsed_ms": [
+        2726.2972580001588,
+        2586.305293999885,
+        2387.3623519998546
+      ],
+      "median_controller_outer_elapsed_ms": 2586.305293999885,
+      "all_six_runner_and_guard_checks_pass": true
+    },
+    "resident": {
+      "samples": [
+        "pair-1-resident",
+        "pair-2-resident",
+        "pair-3-resident"
+      ],
+      "supervisor_seconds_ms": [
+        2018.8616430000366,
+        2075.289795000117,
+        2208.6561790001724
+      ],
+      "median_supervisor_seconds_ms": 2075.289795000117,
+      "controller_outer_elapsed_ms": [
+        2051.8580439998004,
+        2109.3586020001567,
+        2239.3767130001834
+      ],
+      "median_controller_outer_elapsed_ms": 2109.3586020001567,
+      "all_six_runner_and_guard_checks_pass": true
+    }
+  },
+  "interpretation": "Supervisor result.seconds includes diagnostic/native startup, cold acquire, repeated payload verification, execution and lease cleanup, source/guard checks, profile flush and poll timing. Controller elapsed additionally includes controller launch, result readback/copy and before/after guard work. Neither is a per-stage sum or uninstrumented deployment estimate. Finite synthetic prototype only; no Actions acceptance."
+}

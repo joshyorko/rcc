@@ -1,0 +1,26 @@
+# Final outer-timing and coordination receipt
+
+The same authorized successor continued from `2f6570c99d5ba98f26ceb7b74d6da69fb84f99e8` through byte-verified `003af703f74fdfcd35bd62d4685bb8c1a69e60f8` and `e70fe5531145836b79a386d48250e094d22e2c2c`. This append-only checkpoint adds arithmetic on existing accepted measurements and an actually delivered repository-channel result. It performs no new native benchmark and leaves every parent entry unchanged.
+
+The full source, lifecycle diagnosis, six-direction state, build failures, source/build binding, raw workloads and independent runtime review are in the immutable [e70fe553 report](https://github.com/joshyorko/rcc/blob/e70fe5531145836b79a386d48250e094d22e2c2c/developer/swarm/20261011/successor-next-2035/report.md). Actual remote readback verified all 128 new files, 5,854,295 bytes, and all 3,210 parent entries; see [remote-checkpoint-e70fe553.json](remote-checkpoint-e70fe553.json). Main remained `7d17122436584dcbfe9b8afddeb56d7c81a10af7` in the last refresh.
+
+The accepted finite Python worker comparison has separate scopes; none is substituted for another:
+
+| Median wall-time scope | Six fresh child processes | One resident child / six requests |
+| --- | ---: | ---: |
+| Sum of RCC ExecuteWithStreams durations | 643.637 ms | 134.099 ms |
+| Provider setup + cold Acquire + execution batch | 2,338.636 ms | 1,796.746 ms |
+| Complete bounded native invocation, observed by supervisor | 2,547.324 ms | 2,075.290 ms |
+| Complete controller invocation through post-guards/readback | 2,586.305 ms | 2,109.359 ms |
+
+These outer results include diagnostic source hashing, profile flushing, launcher/polling and guard overhead, and are not estimates of an uninstrumented deployment. All three paired controller reductions are positive; the raw values and derivation are in [outer-timing-derived.json](outer-timing-derived.json), independently checked in `outer-timing-independent-review.json`. Every measured arm had a fresh private consumer CAS, normal RCC acquisition and compatibility, six independent full 512-payload verifications, actual lease-bound execution, released leases and passing strict 0700 outer/home guards. The earlier independent review verified 3,591 actual materialized files, 36 responses, 18,432 request-level payload checks, six-versus-one PID/lease cardinalities, source/provider immutability and clean bounded exits. The fixture is synthetic and depends on host Python; this is finite worker reuse, not a persistent daemon or Actions/customer-workload qualification.
+
+The exact new result was posted to existing RCC [#125](https://github.com/joshyorko/rcc/issues/125#issuecomment-6113674893) and fetched independently with a matching body. POST/GET request, response and readback bytes are retained here. Earlier RCC125/132 and Actions133 coordination receipts remain in the parent. No external-root direct message delivery is claimed; historical NOT_FOUND remains preserved.
+
+The old guard-failed 60.253/6.283-ms component wave remains unaccepted and unreplayed. The actual failed baseline home remains 0750, unrepaired; new diagnostics use the independently reviewed narrow Linux-only parent overlay and owned global-path redirect. Accepted earlier pack data still shows no gain; gzip-6 reduced stored bytes by 15.88% with mixed latency; no completed timed wave was rerun. Two owned FICLONE routes returned ENOTSUP95, `/dev/fuse` and inspected image tools/devices are absent, and an actual bounded bwrap UID-map attempt failed with read-only filesystem. These are route-specific capability barriers, not universal platform conclusions; no infrastructure or privilege workaround was attempted.
+
+Existing Actions ownership and fixtures remain untouched. Source hash-bound admission is retained, but a fresh baseline18.19.3 → released18.19.5 → exact727 candidate chain still requires actual existing-owner runtime admission and stops at its first failure. Actions727/be55 remains distinct from frozen RCC7945/5a6a. RCCv18.19.6 remains **PUBLICATION HOLD**, with #185 approval-policy/signing-scope and GO-2026-5970/6629 unresolved; no tag/release/publisher dispatch. #224/#225 remain draft NO-GO. No issues were closed, and research is not a release gate.
+
+Next dependency-safe work remains a real workload using the finite streamed execution seam with explicit task isolation/cancellation; source-bound consumer qualification through the existing Actions owner; or a genuine backend on an already available clone/FUSE/image-capable host. A proposed CAS FD session is unimplemented and requires path-replacement/symlink/cleanup identity checks before visible commits; profile evidence does not authorize weaker checks. Two reused bounded LunaHigh source/review workers and the requested SolHigh coordinator produced actual receipts; provider routing telemetry is unavailable. No new task/root or replacement Actions worker was created.
+
+Documentation receipt: canonical guidance **no change**; durable learning and source/runtime evidence are in the parent report; this checkpoint adds verified outer-timing arithmetic and delivered coordination only. No stale guidance was removed. Remaining uncertainty is real-workload/Actions admission, long-lived isolation/cancellation, non-Linux behavior and genuine lazy/image/COW lifecycle on a capable existing host.
