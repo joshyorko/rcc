@@ -3,11 +3,7 @@ on:
   push:
     branches:
       - main
-
-    tags:
-      - "v*" # Run when a new version tag (e.g., v18.5.0) is pushed
     paths-ignore:
-      - ".github/workflows/**"
       - ".dagger/**"
 
   pull_request:
@@ -19,8 +15,18 @@ on:
       - reopened
       - labeled
     paths-ignore:
-      - ".github/workflows/**"
       - ".dagger/**"
+
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact main commit to prepare (must equal this dispatch ref)
+        required: true
+        type: string
+      expected_version:
+        description: Exact version from common/version.go
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -30,14 +36,16 @@ jobs:
     name: Build RCC
     runs-on: ubuntu-latest
     # Build the exact commit bytes consumed by native runtime jobs and releases.
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     env:
-      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      RCC_CANDIDATE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
+      RCC_REQUIRE_CLEAN_SOURCE: "1"
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact candidate checkout
         shell: bash
         run: |
@@ -46,6 +54,13 @@ jobs:
           if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
             echo "Build checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
             exit 1
+          fi
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            if [[ "$GITHUB_REF" != "refs/heads/main" || "$RCC_CANDIDATE_SHA" != "$GITHUB_SHA" ]]; then
+              echo "Release preparation must run from the exact current main commit."
+              exit 1
+            fi
+            python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"
           fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
@@ -101,10 +116,11 @@ jobs:
     name: Release Candidate Verification
     runs-on: ubuntu-latest
     if: >-
-      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-candidate'))
     env:
-      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      RCC_CANDIDATE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
       GOTOOLCHAIN: auto
       ROBOCORP_HOME: ${{ github.workspace }}/../rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.19.5
@@ -113,7 +129,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact candidate checkout
         shell: bash
         run: |
@@ -122,6 +138,13 @@ jobs:
           if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
             echo "Release-candidate checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
             exit 1
+          fi
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            if [[ "$GITHUB_REF" != "refs/heads/main" || "$RCC_CANDIDATE_SHA" != "$GITHUB_SHA" ]]; then
+              echo "Release preparation must run from the exact current main commit."
+              exit 1
+            fi
+            python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"
           fi
       - name: Install pinned released RCC
         run: |
@@ -251,12 +274,201 @@ jobs:
             tmp/environment-artifacts-robot/
             tmp/output/
 
+  assemble-release-preparation:
+    name: Assemble Release Preparation
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs:
+      - build
+      - release-candidate
+      - robot
+    env:
+      RCC_CANDIDATE_SHA: ${{ inputs.source_sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ inputs.source_sha }}
+      - name: Assert source, version, and no-auto-publish workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$RCC_CANDIDATE_SHA"
+          test "$RCC_CANDIDATE_SHA" = "$GITHUB_SHA"
+          python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version: "1.26.9"
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+      - name: Download RCC binaries from this preparation run
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: RCC-Binaries
+          path: downloaded-assets
+      - name: Download full release-candidate receipts
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: release-candidate-evidence
+          path: release-candidate-evidence
+      - name: Download all four native runtime receipts
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: "*-native-runtime-receipt"
+          path: native-runtime-receipts
+      - name: Generate the proposed release index
+        env:
+          VERSION: ${{ inputs.expected_version }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DATE="$(date +"%d.%-m.%Y")"
+          curl --fail --silent --show-error --location --retry 2 \
+            "https://github.com/${REPO}/releases/latest/download/index.json" --output existing.json
+          export DATE
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          version, repo = os.environ["VERSION"], os.environ["REPO"]
+          data = json.loads(Path("existing.json").read_text(encoding="utf-8"))
+          tested = data.get("tested")
+          if not isinstance(tested, list):
+              raise SystemExit("existing release index has no tested list")
+          base = f"https://github.com/{repo}/releases/download/{version}"
+          entry = {
+              "version": version,
+              "when": os.environ["DATE"],
+              "changelog": f"https://github.com/{repo}/blob/main/docs/changelog.md#{version.replace('.', '')}",
+              "windows": f"{base}/rcc-windows64.exe",
+              "linux": f"{base}/rcc-linux64",
+              "macos": f"{base}/rcc-macos64",
+              "macosarm64": f"{base}/rcc-macosarm64",
+          }
+          tested = [item for item in tested if item.get("version") != version]
+          data["tested"] = [entry, *tested][:20]
+          Path("downloaded-assets/index.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+          PY
+          python3 scripts/validate_release_topology.py \
+            --asset-root downloaded-assets \
+            --workflow .github/workflows/rcc.yaml \
+            --tag-workflow .github/workflows/create-release-tag.yml \
+            --recovery-workflow .github/workflows/recover-rcc-185.yml \
+            --publication-workflow .github/workflows/publish-release.yml \
+            --index downloaded-assets/index.json \
+            --version "$RCC_RELEASE_VERSION"
+      - name: Assemble checksummed assets and source-bound evidence
+        run: |
+          python3 scripts/release_publication.py assemble \
+            --assets downloaded-assets \
+            --release-candidate release-candidate-evidence \
+            --native native-runtime-receipts \
+            --output rcc-release-preparation \
+            --source-sha "$RCC_CANDIDATE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --run-id "$GITHUB_RUN_ID" \
+            --go "$(command -v go)"
+      - name: Upload immutable release preparation artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rcc-release-preparation
+          path: rcc-release-preparation/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Stage review-only release asset payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          RCC_ASSET_MANIFEST_SHA256="$(sha256sum rcc-release-preparation/evidence/asset-manifest.json | cut -d' ' -f1)"
+          python3 scripts/release_publication.py stage-review-assets \
+            --root rcc-release-preparation \
+            --output rcc-release-review-assets \
+            --source-sha "$RCC_CANDIDATE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --run-id "$GITHUB_RUN_ID" \
+            --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
+            --go "$(command -v go)"
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-linux64
+          path: rcc-release-review-assets/rcc-linux64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-linux64
+          path: rcc-release-review-assets/rccremote-linux64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-windows64.exe
+          path: rcc-release-review-assets/rcc-windows64.exe/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-windows64.exe
+          path: rcc-release-review-assets/rccremote-windows64.exe/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-macos64
+          path: rcc-release-review-assets/rcc-macos64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-macos64
+          path: rcc-release-review-assets/rccremote-macos64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-macosarm64
+          path: rcc-release-review-assets/rcc-macosarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-macosarm64
+          path: rcc-release-review-assets/rccremote-macosarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-index.json
+          path: rcc-release-review-assets/index.json/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
   robot:
     name: Native Runtime (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
     needs: build
-    # Only run tests on push to main or PRs, not on release workflows
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    # Run native acceptance on main, pull requests, and explicit preparation.
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
@@ -286,18 +498,19 @@ jobs:
             goos: windows
             goarch: amd64
     env:
-      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      RCC_CANDIDATE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
       RCC_NATIVE_PLATFORM: ${{ matrix.platform }}
       RCC_NATIVE_ASSET: ${{ matrix.asset }}
       RCC_NATIVE_BINARY: ${{ matrix.binary }}
       RCC_NATIVE_GOOS: ${{ matrix.goos }}
       RCC_NATIVE_GOARCH: ${{ matrix.goarch }}
-      RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      RCC_SOURCE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
     steps:
       # Checkout first so setup-go can locate go.mod/go.sum for caching
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact candidate checkout
         shell: bash
         run: |
@@ -306,6 +519,13 @@ jobs:
           if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
             echo "Native checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
             exit 1
+          fi
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            if [[ "$GITHUB_REF" != "refs/heads/main" || "$RCC_CANDIDATE_SHA" != "$GITHUB_SHA" ]]; then
+              echo "Release preparation must run from the exact current main commit."
+              exit 1
+            fi
+            python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"
           fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
@@ -357,6 +577,8 @@ jobs:
           )
           if version != expected_version:
               raise SystemExit(f"native RCC version differs: {version} != {expected_version}")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"RCC_BINARY_VERSION={expected_version}\n")
           print(f"verified {target} {expected} {version}")
           PY
           echo "RCC_REAL_BINARY=$(python -c 'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())')" >> "$GITHUB_ENV"
@@ -509,171 +731,39 @@ jobs:
           except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:
               raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        if: success() || failure()
-        with:
-          name: ${{ matrix.platform }}-native-runtime-receipt
-          path: ./tmp/output/
-
-  release:
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs:
-      - build
-      - release-candidate
-      - robot
-    # Only run this job on tag pushes (e.g., refs/tags/v18.5.0)
-    # Publication waits for the tag's native Robot matrix as well as the contained candidate gate.
-    # Grant only the permissions needed to publish a release
-    permissions:
-      contents: write
-    env:
-      RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-
-    steps:
-      - name: Debug Release Job
-        run: |
-          echo "GitHub ref: ${{ github.ref }}"
-          echo "GitHub event name: ${{ github.event_name }}"
-          echo "Build job status: ${{ needs.build.result }}"
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
-      - name: Assert exact candidate checkout
+      - name: Stage exact native binary for review
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
-          actual_sha="$(git rev-parse HEAD)"
-          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then
-            echo "Release checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"
-            exit 1
+          if [[ -z "${RCC_REAL_BINARY:-}" || ! -f "${RCC_REAL_BINARY:-}" || \
+                -z "${RCC_REAL_RECEIPT_FILE:-}" || ! -f "${RCC_REAL_RECEIPT_FILE:-}" || \
+                -z "${RCC_BINARY_VERSION:-}" ]]; then
+            echo "Exact binary or native receipt is unavailable; no native binary sidecar is staged."
+            exit 0
           fi
-      - name: Download Built RCC Binaries
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
-        with:
-          name: RCC-Binaries
-          path: rcc-builds/
-      - name: Set up Python 3.10
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-        with:
-          python-version: "3.10"
-      - name: Generate index.json
-        env:
-          VERSION: ${{ github.ref_name }}
-          REPO: ${{ github.repository }}
-        run: |
-          DATE=$(date +"%d.%-m.%Y")
-          export DATE
-
-          # Try to fetch existing index.json from latest release
-          curl -sL "https://github.com/${REPO}/releases/latest/download/index.json" -o existing.json 2>/dev/null || echo '{"tested":[],"edge":[]}' > existing.json
-
-          # Generate new index.json with this version prepended
-          python3 << 'PYEOF'
-          import json
-          import os
-
-          version = os.environ["VERSION"]
-          date = os.environ.get("DATE", "")
-          repo = os.environ["REPO"]
-
-          # Load existing or create new
-          try:
-              with open('existing.json') as f:
-                  data = json.load(f)
-          except:
-              data = {"tested": [], "edge": []}
-
-          # Build download URLs for GitHub releases
-          base_url = f"https://github.com/{repo}/releases/download/{version}"
-          # Generate changelog anchor (v18.12.0 -> v18120)
-          changelog_anchor = version.replace(".", "")
-
-          new_entry = {
-              "version": version,
-              "when": date,
-              "changelog": f"https://github.com/{repo}/blob/main/docs/changelog.md#{changelog_anchor}",
-              "windows": f"{base_url}/rcc-windows64.exe",
-              "linux": f"{base_url}/rcc-linux64",
-              "macos": f"{base_url}/rcc-macos64",
-              "macosarm64": f"{base_url}/rcc-macosarm64"
-          }
-
-          # Remove duplicate if exists
-          data["tested"] = [v for v in data.get("tested", []) if v["version"] != version]
-
-          # Prepend new version
-          data["tested"] = [new_entry] + data["tested"]
-
-          # Keep last 20 versions
-          data["tested"] = data["tested"][:20]
-
-          with open('rcc-builds/index.json', 'w') as f:
-              json.dump(data, f, indent=1)
-
-          print(f"Generated index.json with {len(data['tested'])} versions")
-          PYEOF
-
-          cat rcc-builds/index.json
-      - name: Validate release topology
-        run: python3 scripts/validate_release_topology.py --asset-root rcc-builds --workflow .github/workflows/rcc.yaml --index rcc-builds/index.json
-      - name: Validate release tag
-        id: validate_tag
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          python3 scripts/release_publication.py stage-native-review-binary \
+            --binary "$RCC_REAL_BINARY" \
+            --receipt "$RCC_REAL_RECEIPT_FILE" \
+            --output tmp/output/native-binary-review \
+            --asset-name "$RCC_NATIVE_ASSET" \
+            --platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}" \
+            --source-sha "$RCC_CANDIDATE_SHA" \
+            --version "$RCC_BINARY_VERSION" \
+            --go "$(command -v go)"
+      - name: Validate native review payload size
+        id: native_payload_size
+        if: always()
+        shell: bash
         run: |
           set -euo pipefail
-          TAG="$RELEASE_TAG"
-          if [[ ! "$TAG" =~ ^v[0-9]+(\.[0-9]+)*([-.][0-9A-Za-z]+)*$ ]]; then
-            echo "Invalid release tag: $TAG"
-            exit 1
+          if [[ -n "${RCC_REAL_BINARY:-}" && -f "${RCC_REAL_BINARY:-}" && \
+                -n "${RCC_REAL_RECEIPT_FILE:-}" && -f "${RCC_REAL_RECEIPT_FILE:-}" ]]; then
+            test -f tmp/output/native-binary-review/native-binary-review.json
           fi
-          git fetch --force origin "refs/tags/${TAG}:refs/tags/${TAG}"
-          tag_sha="$(git rev-parse "${TAG}^{commit}")"
-          if [[ "$tag_sha" != "$RCC_CANDIDATE_SHA" ]]; then
-            echo "Release tag target differs: $tag_sha != $RCC_CANDIDATE_SHA"
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-      - name: Validate Homebrew Update Token
-        env:
-          HOMEBREW_TOOLS_PAT: ${{ secrets.HOMEBREW_TOOLS_PAT }}
-        run: |
-          if [[ -z "$HOMEBREW_TOOLS_PAT" ]]; then
-            echo "HOMEBREW_TOOLS_PAT is required to dispatch the Homebrew tap update."
-            exit 1
-          fi
-      - name: Create Draft Release with Assets
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
+          python3 scripts/release_publication.py check-review-payload --root tmp/output
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && steps.native_payload_size.outcome == 'success'
         with:
-          files: rcc-builds/*
-          tag_name: ${{ steps.validate_tag.outputs.tag }}
-          target_commitish: ${{ github.event.pull_request.head.sha || github.sha }}
-          draft: true
-          prerelease: ${{ contains(github.ref_name, '-rc.') }}
-
-      - name: Publish Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ steps.validate_tag.outputs.tag }}
-        run: |
-          echo "Publishing draft release $TAG..."
-          gh release edit "$TAG" --draft=false
-          echo "Release $TAG is now public"
-
-      - name: Trigger Homebrew Cask Update
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
-        with:
-          github-token: ${{ secrets.HOMEBREW_TOOLS_PAT }}
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: 'homebrew-tools',
-              workflow_id: 'tap-auto-update.yml',
-              ref: 'main',
-              inputs: {
-                slot_id: 'rcc-daily'
-              }
-            });
+          name: ${{ matrix.platform }}-native-runtime-receipt
+          path: ./tmp/output/
