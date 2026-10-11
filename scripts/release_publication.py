@@ -628,6 +628,51 @@ def _review_file_inventory(root):
     return records
 
 
+def _validate_review_n1_legacy_closure(rollback_state):
+    """Check the producer's v12 rule: objects survive import, derived catalog survives rollback."""
+    snapshots = {
+        "before": rollback_state.get("legacyBefore"),
+        "after upgrade": rollback_state.get("legacyAfterUpgrade"),
+        "after rollback": rollback_state.get("legacyAfterRollback"),
+    }
+    for label, state in snapshots.items():
+        _require(isinstance(state, dict), f"review N-1 legacy {label} snapshot is invalid")
+        object_keys = {key for key in state if isinstance(key, str) and key.startswith("object:")}
+        _require(bool(object_keys), f"review N-1 legacy {label} snapshot has no object records")
+        _require(set(state) == object_keys | {"catalog"},
+                 f"review N-1 legacy {label} snapshot has unknown or missing members")
+        for key in object_keys:
+            _require(re.fullmatch(r"object:[0-9a-f]{64}", key) is not None,
+                     f"review N-1 legacy {label} snapshot has an invalid object key")
+            record = state[key]
+            _require(isinstance(record, dict) and set(record) == {"path", "size", "sha256"}
+                     and isinstance(record.get("path"), str) and bool(record["path"])
+                     and type(record.get("size")) is int and record["size"] > 0
+                     and isinstance(record.get("sha256"), str)
+                     and re.fullmatch(r"[0-9a-f]{64}", record["sha256"]) is not None,
+                     f"review N-1 legacy {label} snapshot has an invalid object record")
+        catalog = state["catalog"]
+        _require(isinstance(catalog, dict) and set(catalog) == {"path", "size", "sha256"}
+                 and isinstance(catalog.get("path"), str) and bool(catalog["path"])
+                 and type(catalog.get("size")) is int and catalog["size"] > 0
+                 and isinstance(catalog.get("sha256"), str)
+                 and re.fullmatch(r"[0-9a-f]{64}", catalog["sha256"]) is not None,
+                 f"review N-1 legacy {label} snapshot has an invalid catalog record")
+
+    before = snapshots["before"]
+    upgraded = snapshots["after upgrade"]
+    rolled_back = snapshots["after rollback"]
+    before_objects = {key: value for key, value in before.items() if key.startswith("object:")}
+    upgraded_objects = {key: value for key, value in upgraded.items() if key.startswith("object:")}
+    _require(before_objects == upgraded_objects,
+             "review N-1 archive upgrade changed the legacy v12 object closure")
+    _require(before["catalog"]["path"] == upgraded["catalog"]["path"],
+             "review N-1 archive upgrade changed the consumer catalog path")
+    _require(upgraded == rolled_back,
+             "review N-1 rollback changed the legacy v12 closure after import")
+    return True
+
+
 def validate_review_evidence(root, expected_source_sha, expected_version, expected_run_id,
                              expected_artifact_id, expected_exporter_run_id, expected_manifest_sha,
                              expected_full_artifact_digest,
@@ -784,9 +829,7 @@ def validate_review_evidence(root, expected_source_sha, expected_version, expect
     _require(type(legacy_consumption.get("returncode")) is int and legacy_consumption["returncode"] == 0
              and "n1-old-task-ok" in (legacy_consumption.get("stdout", "") + legacy_consumption.get("stderr", "")),
              "review N-1 released binary did not consume the legacy task")
-    _require(rollback_state.get("legacyBefore") == rollback_state.get("legacyAfterUpgrade")
-             == rollback_state.get("legacyAfterRollback"),
-             "review N-1 rollback changed the legacy v12 closure")
+    _validate_review_n1_legacy_closure(rollback_state)
     _require(rollback_state.get("artifactAfterArchiveRollback") == rollback_state.get("artifactAfterRollback"),
              "review N-1 rollback state changed after legacy consumption")
     if rollback_state["archiveRollback"] == "imported":

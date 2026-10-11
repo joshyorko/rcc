@@ -238,9 +238,18 @@ class ReleasePublicationTests(unittest.TestCase):
             "artifactDigest": candidate_receipt["artifactDigest"],
             "materializationId": candidate_receipt["materializationId"],
             "archiveRollback": "imported",
-            "legacyBefore": {"catalog": {"sha256": "b" * 64}},
-            "legacyAfterUpgrade": {"catalog": {"sha256": "b" * 64}},
-            "legacyAfterRollback": {"catalog": {"sha256": "b" * 64}},
+            "legacyBefore": {
+                "catalog": {"path": "/home/hololib/catalog/v12", "size": 10, "sha256": "b" * 64},
+                "object:" + "a" * 64: {"path": "/home/hololib/library/object-a", "size": 5, "sha256": "a" * 64},
+            },
+            "legacyAfterUpgrade": {
+                "catalog": {"path": "/home/hololib/catalog/v12", "size": 12, "sha256": "c" * 64},
+                "object:" + "a" * 64: {"path": "/home/hololib/library/object-a", "size": 5, "sha256": "a" * 64},
+            },
+            "legacyAfterRollback": {
+                "catalog": {"path": "/home/hololib/catalog/v12", "size": 12, "sha256": "c" * 64},
+                "object:" + "a" * 64: {"path": "/home/hololib/library/object-a", "size": 5, "sha256": "a" * 64},
+            },
             "artifactAfterArchiveRollback": {"entries": []},
             "artifactAfterRollback": {"entries": []},
         }
@@ -250,6 +259,41 @@ class ReleasePublicationTests(unittest.TestCase):
                 json.dumps({"schemaVersion": 1, "sourceSha": SOURCE})
             )
         return manifest_sha
+
+    def test_review_n1_accepts_derived_catalog_rebase_and_rejects_closure_mutations(self):
+        object_key = "object:" + "a" * 64
+        before = {
+            "catalog": {"path": "/home-a/hololib/catalog/v12", "size": 10, "sha256": "b" * 64},
+            object_key: {"path": "/home-a/hololib/library/object-a", "size": 5, "sha256": "a" * 64},
+        }
+        upgraded = {
+            "catalog": {"path": "/home-a/hololib/catalog/v12", "size": 12, "sha256": "c" * 64},
+            object_key: {"path": "/home-a/hololib/library/object-a", "size": 5, "sha256": "a" * 64},
+        }
+        state = {"legacyBefore": before, "legacyAfterUpgrade": upgraded,
+                 "legacyAfterRollback": json.loads(json.dumps(upgraded))}
+        self.assertTrue(publication._validate_review_n1_legacy_closure(state))
+
+        object_mutation = json.loads(json.dumps(state))
+        object_mutation["legacyAfterUpgrade"][object_key]["sha256"] = "d" * 64
+        with self.assertRaisesRegex(ReleaseGateError, "changed the legacy v12 object closure"):
+            publication._validate_review_n1_legacy_closure(object_mutation)
+
+        missing_objects = json.loads(json.dumps(state))
+        for key in ("legacyBefore", "legacyAfterUpgrade", "legacyAfterRollback"):
+            missing_objects[key].pop(object_key)
+        with self.assertRaisesRegex(ReleaseGateError, "has no object records"):
+            publication._validate_review_n1_legacy_closure(missing_objects)
+
+        rollback_mutation = json.loads(json.dumps(state))
+        rollback_mutation["legacyAfterRollback"]["catalog"]["sha256"] = "e" * 64
+        with self.assertRaisesRegex(ReleaseGateError, "changed the legacy v12 closure after import"):
+            publication._validate_review_n1_legacy_closure(rollback_mutation)
+
+        path_mutation = json.loads(json.dumps(state))
+        path_mutation["legacyAfterUpgrade"]["catalog"]["path"] = "/different-home/catalog/v12"
+        with self.assertRaisesRegex(ReleaseGateError, "changed the consumer catalog path"):
+            publication._validate_review_n1_legacy_closure(path_mutation)
 
     def fake_go(self, root, overrides=None):
         executable = root / "fake-go"
