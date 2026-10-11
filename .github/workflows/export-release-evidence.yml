@@ -1,0 +1,96 @@
+name: Export RCC Preparation Review Evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      preparation_run_id:
+        description: Successful main-only RCC preparation workflow run ID
+        required: true
+        type: string
+      source_sha:
+        description: Exact source SHA recorded by that preparation run
+        required: true
+        type: string
+      expected_version:
+        description: Exact version recorded by that preparation run
+        required: true
+        type: string
+      asset_manifest_sha256:
+        description: SHA-256 of evidence/asset-manifest.json in that preparation
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  export:
+    name: Export Bounded Preparation Evidence
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    env:
+      RCC_PREPARATION_RUN_ID: ${{ inputs.preparation_run_id }}
+      RCC_SOURCE_SHA: ${{ inputs.source_sha }}
+      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
+      RCC_ASSET_MANIFEST_SHA256: ${{ inputs.asset_manifest_sha256 }}
+      RCC_EXPORTER_SHA: ${{ github.sha }}
+      RCC_EXPORTER_RUN_ID: ${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Assert main-only exporter and source ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = refs/heads/main
+          test "$(git rev-parse HEAD)" = "$RCC_EXPORTER_SHA"
+          [[ "$RCC_PREPARATION_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ "$RCC_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$RCC_ASSET_MANIFEST_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          git cat-file -e "${RCC_SOURCE_SHA}^{commit}"
+          git merge-base --is-ancestor "$RCC_SOURCE_SHA" "$RCC_EXPORTER_SHA"
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ inputs.source_sha }}
+          path: preparation-source
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version: "1.26.9"
+      - name: Download and revalidate exact preparation; export receipts only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/release_publication.py export-preparation-review \
+            --run-id "$RCC_PREPARATION_RUN_ID" \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
+            --exporter-root . \
+            --exporter-sha "$RCC_EXPORTER_SHA" \
+            --exporter-run-id "$RCC_EXPORTER_RUN_ID" \
+            --source-root preparation-source \
+            --zip-path rcc-preparation.zip \
+            --bundle-root rcc-preparation \
+            --output rcc-preparation-review-evidence \
+            --go "$(command -v go)"
+      - name: Enforce review payload size
+        run: python3 scripts/release_publication.py check-review-payload --root rcc-preparation-review-evidence
+      - name: Upload read-only review evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rcc-preparation-review-evidence-${{ inputs.preparation_run_id }}-${{ inputs.source_sha }}
+          path: rcc-preparation-review-evidence/
+          if-no-files-found: error
+          retention-days: 30

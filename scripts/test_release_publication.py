@@ -20,6 +20,10 @@ from release_publication import (
     validate_environment_protection,
     validate_preparation_run,
     validate_prepared_bundle,
+    validate_review_evidence,
+    stage_review_evidence,
+    export_preparation_review,
+    validate_exporter_source_checkout,
     validate_asset_build_info,
     validate_actual_binary_metadata,
     read_go_build_info,
@@ -179,6 +183,74 @@ class ReleasePublicationTests(unittest.TestCase):
                 (directory / "jat-class-consumer-receipt.json").write_text(json.dumps(jat))
         return manifest_digest
 
+    def review_fixture(self, root):
+        manifest_sha = self.fixture(root)
+        release = root / "evidence" / "release-candidate"
+        tmp = release / "tmp"
+        (tmp / "output").mkdir(parents=True)
+        (tmp / "output" / "output.xml").write_text(
+            '<robot><statistics><total><stat pass="10" fail="0" skip="1">All Tests</stat></total></statistics></robot>'
+        )
+        (tmp / "release-candidate-v1.json").write_text(json.dumps({
+            "schemaVersion": 1,
+            "commitSha": SOURCE,
+            "gates": {name: "passed" for name in publication.RELEASE_CANDIDATE_GATES},
+        }))
+        (tmp / "self-host-v1.json").write_text(json.dumps({
+            "schemaVersion": 1,
+            "commitSha": SOURCE,
+            "homes": {"a": "/tmp/home-a", "b": "/tmp/home-b"},
+            "commands": [{"step": "released-build"}],
+            "binaries": {
+                "released": {"version": "v18.19.5", "sha256": "d" * 64},
+                "candidate": {"version": VERSION, "sha256": "a" * 64},
+                "generationA": {"sourceSha256": "a" * 64, "candidateSha256": "a" * 64},
+                "generationB": {"version": VERSION, "sha256": "b" * 64},
+            },
+        }))
+        (tmp / "self-host-metadata-v1.json").write_text('{"schemaVersion":1}\n')
+        (tmp / "coordination-blackbox-v1.json").write_text(json.dumps({
+            "schemaVersion": 1,
+            "commitSha": SOURCE,
+            "binarySha256": "f" * 64,
+            "scenarios": {name: "passed" for name in
+                          ("cli-claim", "cli-wait", "cli-heartbeat", "cli-release", "cli-prewarm", "cli-loopback-rejection")},
+        }))
+        (tmp / "large-stream-receipt.json").write_text(json.dumps({
+            "schemaVersion": 1, "commitSha": SOURCE, "bytes": 2 << 30,
+            "bufferBytes": 64 * 1024, "requests": 1, "restartPolicy": "full-restart",
+            "interruptionAcceptance": "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds",
+        }))
+        n1 = release / "tmp" / "rcc-self-host-fixture"
+        n1.mkdir()
+        archive_sha = "a" * 64
+        (n1 / "n1-archive-sha256.txt").write_text(archive_sha + "\n")
+        candidate_receipt = {"artifactDigest": "sha256:" + "f" * 64, "materializationId": "mat-1"}
+        (n1 / "candidate-archive-upgrade.json").write_text(json.dumps(candidate_receipt))
+        (n1 / "released-archive-rollback-attempt.json").write_text(json.dumps({
+            "returncode": 0, "stdout": json.dumps(candidate_receipt), "stderr": "",
+        }))
+        (n1 / "released-v12-rollback-consumption.json").write_text(json.dumps({
+            "returncode": 0, "stdout": "n1-old-task-ok\n", "stderr": "",
+        }))
+        state = {
+            "archiveSha256": archive_sha,
+            "artifactDigest": candidate_receipt["artifactDigest"],
+            "materializationId": candidate_receipt["materializationId"],
+            "archiveRollback": "imported",
+            "legacyBefore": {"catalog": {"sha256": "b" * 64}},
+            "legacyAfterUpgrade": {"catalog": {"sha256": "b" * 64}},
+            "legacyAfterRollback": {"catalog": {"sha256": "b" * 64}},
+            "artifactAfterArchiveRollback": {"entries": []},
+            "artifactAfterRollback": {"entries": []},
+        }
+        (n1 / "n1-rollback-state.json").write_text(json.dumps(state))
+        for platform in publication.NATIVE_RECEIPTS:
+            (root / "evidence" / "native" / platform / "native-runtime-robot-evidence.json").write_text(
+                json.dumps({"schemaVersion": 1, "sourceSha": SOURCE})
+            )
+        return manifest_sha
+
     def fake_go(self, root, overrides=None):
         executable = root / "fake-go"
         targets = ASSET_TARGETS
@@ -261,6 +333,166 @@ class ReleasePublicationTests(unittest.TestCase):
                     publication.stage_review_assets(bundle, output, SOURCE, VERSION, 123, digest,
                                                     str(self.fake_go(root)))
             self.assertFalse(output.exists())
+
+    def test_review_evidence_export_contains_only_bound_small_receipts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "prepared"
+            root.mkdir()
+            manifest_sha = self.review_fixture(root)
+            output = Path(directory) / "review"
+            artifact = {"id": 456, "digest": "sha256:" + "b" * 64}
+            with patch.object(publication, "validate_actual_binary_metadata", return_value={}):
+                result = stage_review_evidence(root, output, SOURCE, VERSION, 123, manifest_sha,
+                                               artifact, "c" * 40, 789)
+            self.assertEqual(result["preparationArtifactId"], 456)
+            self.assertEqual(result["preparationArtifactZipSha256"], artifact["digest"])
+            self.assertEqual(result["fileCount"], len(publication.REVIEW_EVIDENCE_PATHS))
+            self.assertLessEqual(result["rawBytes"], publication.MAX_REVIEW_ARTIFACT_BYTES)
+            self.assertFalse((output / "assets").exists())
+            self.assertTrue(validate_review_evidence(output, SOURCE, VERSION, 123, 456, 789, manifest_sha,
+                                                     artifact["digest"], "c" * 40))
+            identity = json.loads((output / "review-identity.json").read_text())
+            self.assertEqual(identity["sourceSha"], SOURCE)
+            self.assertEqual(identity["evidenceExporterWorkflowPath"], publication.REVIEW_EXPORT_WORKFLOW_PATH)
+            self.assertIn("evidence/native/linux_amd64/jat-class-consumer-receipt.json",
+                          {record["path"] for record in identity["files"]})
+            for expected_source, expected_run, expected_artifact, expected_manifest in (
+                ("d" * 40, 123, 456, manifest_sha),
+                (SOURCE, 124, 456, manifest_sha),
+                (SOURCE, 123, 457, manifest_sha),
+                (SOURCE, 123, 456, "e" * 64),
+            ):
+                with self.subTest(source=expected_source, run=expected_run,
+                                  artifact=expected_artifact, manifest=expected_manifest):
+                    with self.assertRaises(ReleaseGateError):
+                        validate_review_evidence(output, expected_source, VERSION, expected_run,
+                                                 expected_artifact, 789, expected_manifest,
+                                                 artifact["digest"], "c" * 40)
+            with self.assertRaisesRegex(ReleaseGateError, "identity or file hash inventory"):
+                validate_review_evidence(output, SOURCE, VERSION, 123, 456, 790, manifest_sha,
+                                         artifact["digest"], "c" * 40)
+
+            (output / "evidence" / "native" / "windows_amd64" / "output.xml").write_text("tampered")
+            with self.assertRaisesRegex(ReleaseGateError, "identity or file hash inventory"):
+                validate_review_evidence(output, SOURCE, VERSION, 123, 456, 789, manifest_sha,
+                                         artifact["digest"], "c" * 40)
+
+    def test_review_evidence_export_rejects_missing_symlinked_and_oversize_inputs(self):
+        artifact = {"id": 456, "digest": "sha256:" + "b" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "missing"
+            root.mkdir()
+            manifest_sha = self.review_fixture(root)
+            (root / "evidence" / "release-candidate" / "tmp" / "large-stream-receipt.json").unlink()
+            with patch.object(publication, "validate_prepared_bundle"), \
+                 patch.object(publication, "validate_actual_binary_metadata", return_value={}):
+                with self.assertRaisesRegex(ReleaseGateError, "missing or ambiguous"):
+                    stage_review_evidence(root, Path(directory) / "out", SOURCE, VERSION, 123,
+                                          manifest_sha, artifact, "c" * 40, 789)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "symlink"
+            root.mkdir()
+            manifest_sha = self.review_fixture(root)
+            target = root / "evidence" / "release-candidate" / "tmp" / "rcc-self-host-fixture" / "n1-archive-sha256.txt"
+            content = target.read_bytes()
+            target.unlink()
+            referent = target.with_name("archive-hash-source.txt")
+            referent.write_bytes(content)
+            target.symlink_to(referent.name)
+            with patch.object(publication, "validate_prepared_bundle"), \
+                 patch.object(publication, "validate_actual_binary_metadata", return_value={}):
+                with self.assertRaisesRegex(ReleaseGateError, "unsafe"):
+                    stage_review_evidence(root, Path(directory) / "out", SOURCE, VERSION, 123,
+                                          manifest_sha, artifact, "c" * 40, 789)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "oversize"
+            root.mkdir()
+            manifest_sha = self.review_fixture(root)
+            (root / "evidence" / "release-candidate" / "tmp" / "large-stream-receipt.json").write_bytes(b"x" * 2048)
+            output = Path(directory) / "out"
+            with patch.object(publication, "validate_prepared_bundle"), \
+                 patch.object(publication, "validate_actual_binary_metadata", return_value={}):
+                with self.assertRaisesRegex(ReleaseGateError, "exceeds 128 raw bytes"):
+                    stage_review_evidence(root, output, SOURCE, VERSION, 123, manifest_sha,
+                                          artifact, "c" * 40, 789, max_bytes=128)
+            self.assertFalse(output.exists())
+
+    def test_evidence_export_checks_ancestor_and_full_artifact_digest(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+            (root / "source.txt").write_text("source\n")
+            subprocess.run(["git", "add", "source.txt"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "source"], cwd=root, check=True)
+            source = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            (root / "exporter.txt").write_text("exporter\n")
+            subprocess.run(["git", "add", "exporter.txt"], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "exporter"], cwd=root, check=True)
+            exporter = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+            self.assertTrue(validate_exporter_source_checkout(root, exporter, source))
+            with self.assertRaisesRegex(ReleaseGateError, "differs from its workflow SHA"):
+                validate_exporter_source_checkout(root, source, source)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "prepared"
+            bundle.mkdir()
+            manifest_sha = self.review_fixture(bundle)
+            artifact = {"id": 456, "name": "rcc-release-preparation", "digest": "sha256:" + "b" * 64}
+            with patch.object(publication, "validate_exporter_source_checkout"), \
+                 patch.object(publication, "validate_source_checkout"), \
+                 patch.object(publication, "verify_preparation_api", return_value=artifact), \
+                 patch.object(publication, "download_preparation_artifact", return_value="sha256:" + "c" * 64), \
+                 patch.object(publication, "stage_review_evidence") as stage:
+                with self.assertRaisesRegex(ReleaseGateError, "differs from the GitHub API"):
+                    export_preparation_review("https://api.github.test", "token", "owner/repo", 123,
+                                              SOURCE, VERSION, manifest_sha, root, "c" * 40,
+                                              789, root, root / "bundle.zip", bundle, root / "review")
+                stage.assert_not_called()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "prepared"
+            artifact = {"id": 456, "name": "rcc-release-preparation", "digest": "sha256:" + "b" * 64}
+            with patch.object(publication, "validate_exporter_source_checkout") as validate_exporter, \
+                 patch.object(publication, "validate_source_checkout") as validate_prepared_source, \
+                 patch.object(publication, "verify_preparation_api", return_value=artifact) as verify_api, \
+                 patch.object(publication, "download_preparation_artifact", return_value=artifact["digest"]) as download, \
+                 patch.object(publication, "stage_review_evidence", return_value={"rawBytes": 120}) as stage:
+                result = export_preparation_review(
+                    "https://api.github.test", "test-token", "owner/repo", 123, SOURCE, VERSION,
+                    "a" * 64, root, "c" * 40, 789, root / "source", root / "bundle.zip", bundle,
+                    root / "review", go_binary="/toolchain/go",
+                )
+            validate_exporter.assert_called_once_with(root, "c" * 40, SOURCE)
+            validate_prepared_source.assert_called_once_with(root / "source", SOURCE, VERSION)
+            verify_api.assert_called_once_with("https://api.github.test", "test-token", "owner/repo", 123,
+                                               SOURCE, ".github/workflows/rcc.yaml")
+            download.assert_called_once_with("https://api.github.test", "test-token", "owner/repo", artifact,
+                                             root / "bundle.zip", bundle)
+            stage.assert_called_once_with(bundle, root / "review", SOURCE, VERSION, 123, "a" * 64,
+                                          artifact, "c" * 40, 789, max_bytes=None, go_binary="/toolchain/go")
+            self.assertEqual(result, {"rawBytes": 120})
+
+    def test_review_export_workflow_is_manual_read_only_and_source_bound(self):
+        workflow = (Path(__file__).parents[1] / ".github" / "workflows" /
+                    "export-release-evidence.yml").read_text()
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertIn("if: github.ref == 'refs/heads/main'", workflow)
+        self.assertIn("actions: read", workflow)
+        self.assertIn("contents: read", workflow)
+        self.assertNotIn("contents: write", workflow)
+        self.assertIn("actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd", workflow)
+        self.assertIn("actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", workflow)
+        self.assertIn("export-preparation-review", workflow)
+        self.assertIn("git merge-base --is-ancestor", workflow)
+        self.assertIn("MAX_REVIEW_ARTIFACT_BYTES", (Path(__file__).parents[1] / "scripts" / "release_publication.py").read_text())
+        for forbidden in ("gh release create", "gh api --method POST", "contents: write", "id-token: write"):
+            self.assertNotIn(forbidden, workflow)
 
     def test_native_binary_review_payload_binds_executed_binary_and_rejects_tampering(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -474,6 +706,17 @@ print("\\tbuild\\tvcs.modified=false")
             validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
 
         run["conclusion"] = "success"
+        self.assertEqual(validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123), artifact)
+        with self.assertRaisesRegex(ReleaseGateError, "source SHA"):
+            validate_preparation_run(run, jobs, artifact, "b" * 40, 42, 123)
+        run["id"] = 124
+        with self.assertRaisesRegex(ReleaseGateError, "run ID"):
+            validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
+        run["id"] = 123
+        run["workflow_id"] = 43
+        with self.assertRaisesRegex(ReleaseGateError, "unexpected workflow"):
+            validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
+        run["workflow_id"] = 42
         jobs = [job for job in jobs if job["name"] != REQUIRED_NATIVE_JOBS[0]]
         with self.assertRaisesRegex(ReleaseGateError, "native job or preparation job"):
             validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
