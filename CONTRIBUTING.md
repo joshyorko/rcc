@@ -21,7 +21,9 @@ Pinned tool versions live in `developer/setup.yaml`:
 - Python **3.10.15**
 - Invoke **2.2.0**
 - Robot Framework **6.1.1** (matches `robot_requirements.txt`)
-- Go **1.26.5** (the contained toolkit, CI, and Dagger use the same version)
+- Go **1.26.9** for RCC builds. The toolkit bootstraps Go 1.26.5 from Conda
+  Forge, then the `go.mod` minimum and Go's default toolchain auto-selection
+  select 1.26.9. CI and Dagger use 1.26.9 directly.
 - Git **2.46.0**
 
 ### 1) Prerequisites
@@ -90,7 +92,8 @@ Sometimes, less (tools) is not more (productivity). But you do you.
 
 ### Requirements
 
-- Go **1.26.x** (CI uses `1.26.5`. Mismatched versions lead to mysterious build failures. Ask us how we know.)
+- Go **1.26.9** (CI uses the same patch release. Mismatched versions lead to
+  mysterious build failures. Ask us how we know.)
 - Python **3.10+**
 - Invoke (`python -m pip install invoke`)
 
@@ -185,7 +188,7 @@ dagger call grep-dir --directory-arg . --pattern "TODO"
 
 **What `RunRobotTests` actually does:**
 
-1. Pulls a `golang:1.26.5` base image
+1. Pulls a `golang:1.26.9` base image
 2. Installs curl, git, and friends
 3. Downloads `rcc` from [our releases](https://github.com/joshyorko/rcc/releases)
 4. Mounts your source directory (read-only, nothing gets mutated on your host)
@@ -211,7 +214,7 @@ The module lives in `.dagger/main.go`. It's just Go code with the Dagger SDK—a
 // Example: Add a new function to run unit tests
 func (m *RccCi) RunUnitTests(ctx context.Context, source *dagger.Directory) (string, error) {
     return dag.Container().
-        From("golang:1.26.5").
+        From("golang:1.26.9").
         WithMountedDirectory("/src", source).
         WithWorkdir("/src").
         WithExec([]string{"go", "test", "./..."}).

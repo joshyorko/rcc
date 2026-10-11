@@ -145,7 +145,8 @@ func TestRealJATClassRCCAtoBVertical(t *testing.T) {
 		t.Skip("the deterministic Git/Perl package filename fixture is Linux-only")
 	}
 	runRealRCCAtoBVertical(t, realEnvironmentFixture{
-		conda: "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n  - git\n  - pyyaml\n",
+		// Pin a Perl build that carries these intentional POSIX colon manpage names.
+		conda: "channels:\n  - conda-forge\ndependencies:\n  - python=3.11\n  - git\n  - pyyaml\n  - perl=5.32.1=10_h7cc23a3_perl5\n",
 		robot: "tasks:\n  proof:\n    command: [python, task.py]\ncondaConfigFile: conda.yaml\nartifactsDir: output\n",
 		sources: map[string]string{
 			"task.py": "import yaml\nassert yaml.safe_load('proof: portable')['proof'] == 'portable'\nprint('jat-class-portable')\n",

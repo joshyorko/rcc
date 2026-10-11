@@ -22,7 +22,8 @@ ZIP carriers use the same attachment names. `env acquire` and `env exec` expose
 explicit filesystem/archive carrier selection. Strict consumers supply their
 deployment-owned Ed25519 public keys at runtime with `--trust-roots`; RCC binds
 those key IDs into the policy and never treats a provider signature as its own
-trust root.
+trust root. Public keys accept standard Base64 with or without trailing
+padding, and the decoded Ed25519 key must be exactly 32 bytes.
 
 Publication stages the required trust set before committing the provider
 manifest, so a failed trust write leaves no visible manifest; a later retry can
