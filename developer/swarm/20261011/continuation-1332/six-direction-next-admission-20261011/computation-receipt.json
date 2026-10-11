@@ -1,0 +1,12 @@
+{
+  "coverage_sha256": "4781afad90ab452aa40bdced81538a28f46adf28c713c361930d2ea307a46d1d",
+  "free_bytes": 2707099648,
+  "mutations": "new owned evidence files only; no fixture/provider/CAS/home/source writes",
+  "namespace_allocated_bytes_before_receipt": 20480,
+  "new_evidence_cap_bytes": 1048576,
+  "numeric_exit_on_success": 0,
+  "scope": "one evidence-only immutable index reduction, not a benchmark",
+  "script_sha256": "460b9ad629482d4f1a5b7241e17f45795a5fc56bfefbaeb5433ec24c77eedf68",
+  "self_maxrss_kib": 16384,
+  "wall_ns_including_index_read_validation_and_output": 51429075
+}

@@ -1,0 +1,21 @@
+{
+  "reviewedUtc": "2026-10-11T13:21:46.761815+00:00",
+  "sourceSha": "36a84430083b3af6f9758408b94054e5197b7f8b",
+  "tree": "2fa0167aa679a4d60c7a5c0002801dc4bdb94ff7",
+  "rootReview": "all114test-onlylines and watcher reviewed; lifecycle suppression/openfailure/buildstatspersistence meaningful; shippingproductionunchanged",
+  "acceptedScope": "focused journal Go9 CGO package tests exit0;82.5%coverage",
+  "remaining": "fullrepository/hostedchecks notrun; no182closure or mainintegration; deferPRwhilecriticalreleaseCIqueued",
+  "rawEvidence": {
+    "go-test-2bb800f7cb00b0fb.log": "26745359d1891f50da4ad85416ceda691ea9b68fa6ad09c05b92a5c496cfd45d",
+    "report.md": "f860790169c502ad1fc616d6d7d07d74e4d166d53154d14bf3947be4fa922f8b",
+    "resource-2bb800f7cb00b0fb.erratum.json": "465ea9cda140a4533d9903549e6e30d5d07adaf1f1c088d351bdf32c207857bc",
+    "resource-2bb800f7cb00b0fb.json": "854d3590756ca7381d7848a7436b0ec83eabcbb9bcca27cb0b20404f84caf84e",
+    "run_check.py": "35eac9ddc972b9faff68c1d49b758929ee4fb6029634df6448050d90b49f2ba7"
+  },
+  "receiptErratum": "originalpeakfield4096wasfinalsample; corrected sampledmax9293824; originalunchanged",
+  "sampledPeakRssBytes": 77058048,
+  "sampledPeakTempBytes": 9293824,
+  "samplingLimitation": "200ms observed samples do not establish absolute transient peak",
+  "freeBytesAfter": 2707263488,
+  "publicationHold": true
+}

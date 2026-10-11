@@ -1,0 +1,10 @@
+{
+  "sourceSha": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "tree": "9bd919e7e68caa237052f354f49c03c5e9e01691",
+  "fullScriptTests": 136,
+  "exitCode": 0,
+  "cleanHead": true,
+  "actualDiffAndLogHashesVerified": true,
+  "review": "root full helper/workflow diff reviewed; independent Luna80 focused tests and negative cases accepted; hosted exact-head proof pending",
+  "publicationHold": true
+}

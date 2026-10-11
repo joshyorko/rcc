@@ -1,0 +1,44 @@
+{
+  "snapshot_utc": "2026-10-11T13:21:10Z",
+  "repository": "joshyorko/rcc",
+  "pull_request": {
+    "number": 237,
+    "url": "https://github.com/joshyorko/rcc/pull/237",
+    "state": "open",
+    "draft": true,
+    "mergeable": true,
+    "head": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+    "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "push_confirmation": "Root confirmed normal fast-forward push at 2026-10-11T13:20:58Z.",
+    "reviews": 0,
+    "review_threads": 0
+  },
+  "checks": {
+    "PR metrics": {"run_id": 38142809667, "conclusion": "success"},
+    "Quality report": {"run_id": 38142809671, "status": "in_progress"},
+    "CodeQL": {"run_id": 38142809665, "status": "in_progress"},
+    "Lint": {"run_id": 38142809676, "status": "in_progress"},
+    "Coverage gate": {"run_id": 38142809674, "status": "in_progress"},
+    "Rcc": {
+      "run_id": 38142809725,
+      "workflow_run_status": "queued",
+      "job_api_snapshot": {
+        "Release Candidate Verification": {"job_id": 114479958669, "status": "in_progress", "active_step": "Run contained release candidate gate"},
+        "Build RCC": {"job_id": 114479958847, "status": "in_progress", "active_step": "Run actions/setup-go"}
+      },
+      "note": "Run summary reported queued while job endpoint already reported two active jobs; preserve the API snapshot as returned. No terminal result yet."
+    }
+  },
+  "previous_source": {
+    "head": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+    "run_id": 38141317804,
+    "snapshot": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/status-crosscheck-237bb-actions221-20261011T132041Z.json",
+    "status_at_previous_snapshot": "Build success; Linux, Windows, macOS ARM native success; macOS Intel and Release Candidate Verification still in progress.",
+    "note": "Do not rebind bb2759e3 results to 29c3cfd."
+  },
+  "actions_221": {
+    "current_head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "latest_owner_compatibility_response": "None found in current PR comment timeline; exact-v18.19.3 verifier remains as recorded in the inspected PR/body."
+  },
+  "status": "Pending new-head checks and native/full-gate evidence. No merge, tag, release or publication dispatch."
+}

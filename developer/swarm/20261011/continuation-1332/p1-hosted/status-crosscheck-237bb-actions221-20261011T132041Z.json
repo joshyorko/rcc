@@ -1,0 +1,53 @@
+{
+  "snapshot_utc": "2026-10-11T13:20:41Z",
+  "scope": {
+    "rcc_pr": "https://github.com/joshyorko/rcc/pull/237",
+    "actions_pr": "https://github.com/joshyorko/actions/pull/221"
+  },
+  "rcc_237": {
+    "state": "open",
+    "draft": true,
+    "mergeable": true,
+    "head": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+    "tree": "75f1a13f81b932c4017973dcaa0642ba05758985",
+    "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "reviews": 0,
+    "review_threads": 0,
+    "checks": {
+      "PR metrics": {"run_id": 38141317781, "conclusion": "success"},
+      "Lint": {"run_id": 38141317784, "conclusion": "success"},
+      "CodeQL": {"run_id": 38141317847, "conclusion": "success"},
+      "Quality report": {"run_id": 38141317893, "conclusion": "success"},
+      "Coverage gate": {"run_id": 38141317915, "conclusion": "success"},
+      "Rcc": {
+        "run_id": 38141317804,
+        "status": "in_progress",
+        "Build RCC": {"job_id": 114475607018, "conclusion": "success"},
+        "Release Candidate Verification": {"job_id": 114475606836, "status": "in_progress", "active_step": "Run contained release candidate gate"},
+        "Native Runtime (linux-amd64)": {"job_id": 114475821432, "conclusion": "success"},
+        "Native Runtime (windows-amd64)": {"job_id": 114475821408, "conclusion": "success"},
+        "Native Runtime (macos-arm64)": {"job_id": 114475821437, "conclusion": "success"},
+        "Native Runtime (macos-amd64)": {"job_id": 114475821424, "status": "in_progress", "active_step": "Run real native A-to-B acceptance"}
+      }
+    },
+    "qualification": "No full11 result yet; four native jobs are not all complete. No result from this head should inherit the failed 83d run's state or evidence."
+  },
+  "actions_221": {
+    "state": "open",
+    "draft": true,
+    "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "reviews": 0,
+    "review_threads": 0,
+    "discussion_count": 2,
+    "latest_discussion": {
+      "id": 6108894271,
+      "author": "joshyorko",
+      "created_at": "2026-10-11T12:12:50Z",
+      "summary": "Requests the Actions owner provide an owner-qualified adapter compatibility checkpoint (exact source SHA, supported versions/features/trust policy and executed conformance evidence), plus the admitted real fixture/controller path. It says the current inspected #221 head still uses the exact v18.19.3 verifier."
+    },
+    "owner_response": "No later owner response found in the current PR comment timeline.",
+    "owner_compatibility_change": "Not evidenced as implemented at inspected head; exact-v18.19.3-only restriction remains according to the current PR/body record. No compatibility acceptance inferred."
+  },
+  "publication": "No tag, release or publication dispatch. No source, PR, issue or label mutations by this worker."
+}

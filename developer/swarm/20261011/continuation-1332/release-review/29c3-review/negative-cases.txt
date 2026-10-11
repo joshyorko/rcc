@@ -1,0 +1,8 @@
+Independent negative checks (isolated temporary directories; no source edits):
+- modified review asset bytes rejected: “review asset bytes differ from manifest”
+- review payload symlink rejected: “review artifact payload contains a symlink”
+- native binary symlink rejected: “native review binary is missing or unsafe”
+- wrong asset/platform combinations rejected: “native review asset/platform mapping is invalid”
+- native source substitution rejected: “native review receipt source/platform identity mismatch”
+- wrong Go source/target metadata rejected: “native review binary Go metadata differs from source/platform identity”
+- mismatched run ID rejected by manifest identity check; boolean/zero run IDs rejected by input validation

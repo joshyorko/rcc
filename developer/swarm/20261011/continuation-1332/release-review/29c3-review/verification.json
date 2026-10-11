@@ -1,0 +1,31 @@
+{
+  "commit": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "diffCheck": {
+    "command": "git diff --check HEAD^ HEAD",
+    "exitCode": 0
+  },
+  "evidenceFiles": {
+    "negative-cases.txt": "6d72c3e9096012975f8dfdab63d2b2f766e4e57e83b11d17b365d0375c65f6b2",
+    "report.md": "820bf6b46c457facdb9bba49a6b34ae167733888a560e3ca8a9efc4a6e1f532f",
+    "test-yaml-diff.log": "9b2bfca2813daedfa788b9b8f30257caceb2dac86cb8fdf70611944ca82b74cc"
+  },
+  "parent": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+  "sourceFileSha256": {
+    ".github/workflows/rcc.yaml": "9b813517d0f3e0f056554b59133dda85900bd6c320d0653bda7387390ab8587a",
+    "docs/release-process.md": "3a85be8a736a426cc05979202c583b466d68c82a83f4f9a4647e841ffb25e093",
+    "scripts/release_publication.py": "daa5e7d735c15057571255a88bb6c44bd1d2ea49206d3ee49f100c8dc43dd62e",
+    "scripts/test_environment_artifact_tasks.py": "c76e86f38d7bfd23b1f4a6badaa7c1c4e5c46ff12cb46aa4a6a83013841615e9",
+    "scripts/test_release_publication.py": "2da08d1588c07d56b492a1ac62b6207431272dc32b8cca1f0855d2dec8d1b559"
+  },
+  "testResult": {
+    "command": "PYTHONPATH=/tmp/rcc-review-pydeps python -m unittest scripts.test_release_publication scripts.test_environment_artifact_tasks",
+    "fixture": "temporary ignored build/rcc mock-gate fixture, removed after test",
+    "result": "80 tests passed"
+  },
+  "tree": "9bd919e7e68caa237052f354f49c03c5e9e01691",
+  "worktreeStatus": "## codex/rcc-two-phase-release-20261011",
+  "yaml": {
+    "jobs": 4,
+    "result": "PASS"
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "common_controls": {
+    "minimum_proposed_matched_repetitions_per_arm": 5,
+    "native_guard": "existing owner pinnednative/heavylib/path fixtures, namedmodule+wheel/runtimeCPU/OS/arch; realRosetta onlyifclaimed; small string Action insufficient",
+    "no_old3_to_new6_gain": true,
+    "safety_guards": [
+      "fullstored/logicalSHA+size",
+      "mode/symlink/relocation",
+      "process/leasecleanup/cancellation",
+      "eager/ordinary/legacy readandrollback"
+    ],
+    "source_logicalfixture_settingsfixed_except_treatment": true,
+    "sourcequalified_implementation_or_setting_required": true
+  },
+  "current_admission": "index-only evidence reduction performed; runtime directions blocked pending namedprerequisites. No optimization selected or dominant E2E bottleneck inferred.",
+  "directions": [
+    {
+      "blockers": [
+        "no accepted RCC zstd engine/format",
+        "current Actions owner version repair/checkpoint",
+        "resource reservation"
+      ],
+      "direction": "zstd/gzip",
+      "extra_guards": [
+        "new correct stored/index/Artifact identities",
+        "supported reader/version and legacy gzip rollback",
+        "corrupt/unsupported frame rejection",
+        "native/relocation equivalence"
+      ],
+      "hypothesis": "qualified codec improves full-package publication/acquire-to-native-first-Action beyond paired variation",
+      "minimum_E2E": "complete pinned package incl20logical>1MiB+empty; same logical fixture with actual qualified Go codec control/treatment;5counterbalanced matched controls/arm",
+      "status": "component accepted; E2E gated"
+    },
+    {
+      "blockers": [
+        "no accepted RCC pack implementation/storage decision",
+        "current Actions owner checkpoint",
+        "fresh consumer disk"
+      ],
+      "direction": "small-object packfiles",
+      "extra_guards": [
+        "offset/length and per-object digest validation",
+        "truncated/corrupt slice rejection",
+        "ordinary object export/read/rollback",
+        "provider-dead behavior"
+      ],
+      "hypothesis": "qualified layout improves RCC acquire/materialize/native-first-Action, independently of a route/batching change",
+      "minimum_E2E": "same complete package/provider API; ordinary indexed layout vs qualified pack; provider-cold lifecycle plus warm local startup separately;5matched controls/arm",
+      "status": "corrected component accepted; original disk-cap invocation rejected"
+    },
+    {
+      "blockers": [
+        "owner candidate6 repair/qualified source and fixture",
+        "held controller matrix admission",
+        "resource reservation"
+      ],
+      "direction": "persistent/prewarmed workers",
+      "extra_guards": [
+        "same results",
+        "PID+creation time and handle/generation/lease assertions",
+        "worker replacement forFalse",
+        "dispose/lease cleanup",
+        "state reset/native/controller matrix separately"
+      ],
+      "hypothesis": "existing reuse setting improves constructor+six-Action lifecycle vsreuseFalse on one qualified source/binary",
+      "minimum_E2E": "fixed min1/max1, reuseTrue/False; constructor and first+fivewarm API and context timers separated;5matched controls/arm",
+      "status": "historical stable3 actual six-call control only"
+    },
+    {
+      "blockers": [
+        "existing clone-capable host/filesystem absent on testedpath",
+        "observer truthful unknown/fail-closed handling",
+        "no admitted engine or current consumer checkpoint"
+      ],
+      "direction": "safe clone/reflink",
+      "extra_guards": [
+        "distinct inodes/no hardlinks",
+        "independent writes/modes/unlink",
+        "original unchanged",
+        "unsupported/error ordinary fallback",
+        "correct relocation"
+      ],
+      "hypothesis": "qualified logical-file clone improves complete restore/native-first-Action vsordinary copies on supported filesystem",
+      "minimum_E2E": "owned capability/mutation/mode/unlink first; logical native/relocated package;5matched lifecycle controls/arm",
+      "status": "errno95 exactoverlay negative; conditional COW NOT_RUN; RSS/cleaned-copy limitations"
+    },
+    {
+      "blockers": [
+        "no actual working-set trace",
+        "existing device/mount/operator authority",
+        "no implementation/current owner checkpoint"
+      ],
+      "direction": "lazy/FUSE",
+      "extra_guards": [
+        "verify-before-exposure",
+        "privatewrites/native/relocation",
+        "corruption/offline handling",
+        "cancellation/drain/unmount/eagerfallback"
+      ],
+      "hypothesis": "verifiedlazy reduces bytes/materialization and first-Action wall without delayed full-working-set failures or unacceptable warm penalty",
+      "minimum_E2E": "same complete native package eager/lazy; actual touched digests/faults/bytes first+warm then fullworking-set;5matched controls/arm",
+      "status": "static tool availability only; no touched-set/mount/lazy runtime"
+    },
+    {
+      "blockers": [
+        "existing imagebuilder/filesystem",
+        "operator mount/overlay lifecycle authority",
+        "no implementation/owner checkpoint/disk budget"
+      ],
+      "direction": "compressed image plus COW",
+      "extra_guards": [
+        "versionedimage/index integrity",
+        "independent consumer writes/native/relocation",
+        "crashrecovery/drain/unmount/providerdead",
+        "eager/export/readrollback"
+      ],
+      "hypothesis": "qualified image/private-overlay improves cold-native-firstAction+repeated lifecycle with creation/mount/cleanup costs separatelyvisible",
+      "minimum_E2E": "same complete package eagerobjects vsqualifiedimage;5matched controls/arm inclfirst/warm/fullworking-set",
+      "status": "no image/mount/runtime; prior mksquashfs+squashfuse absent; overlay FICLONEnegative notportable"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/plan.json",
+      "sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+      "size": 18041
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/summary.json",
+      "sha256": "f90ecf344de908ef2c68310256dd017d7e0f74e88f590aff83fd39d1f3bb6965",
+      "size": 5640
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/root-verification.json",
+      "sha256": "03d461adeba934f6c91fcbd2f3c28a641a4f8c52974d645800f5b78456b8c93c",
+      "size": 10012
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/results.json",
+      "sha256": "65cb60ffe5adc9c77df8890650c909b7cd520339cf408a258d63ae8121a0bda8",
+      "size": 10831
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/root-verification.json",
+      "sha256": "96a5ea5544d6ec7b093189292eb53a5fc1548ff5b8db0217089d458a5633a15f",
+      "size": 1857
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/results-retry01.json",
+      "sha256": "a08d67adc1e06b0d9f09897d57fbfd86bc7213a4e73091f1a1c6eb93b9ea4013",
+      "size": 5146
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/root-verification-retry01.json",
+      "sha256": "9efcd8d5b31d9f952a132000fde2305c26e08ec77cfbbacadc23d48cd944c26d",
+      "size": 712
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/result.json",
+      "sha256": "5fc89d3b19ac8efe71e3b8ed9f373540b3ac8a743d5d4a5781e917123a5f95ce",
+      "size": 1860
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/root-verification.json",
+      "sha256": "32ae2dca030c6280f806309a32701966f0084714659b9292a8aca23efb95d1a5",
+      "size": 1104
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/root-runtime-checkpoint.json",
+      "sha256": "1afd8716d3eb7336e0d70669d707118d84b5333b62d733292f7ec6a2a79ae8b2",
+      "size": 5290
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/root-independent-warm-reuse-verification.json",
+      "sha256": "4ece3c653a0f436acc3e927058ecec3c824cf836eb616a815113e6aa52196173",
+      "size": 5164
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/reconciliation.md",
+      "sha256": "6e5374820f1bcdb0279d8f581102f46691802a9c8cfaba0a4d9d915bdb5f4dc6",
+      "size": 27672
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/public-checkpoint/evidence/performance-steer-20261011/root-performance-checkpoint.md",
+      "sha256": "4de6c80742545c7c217d9cf6dccbb9b5f5a0ad6e762308fbd83d3fc101f3929f",
+      "size": 9757
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/preflight.json",
+      "sha256": "b821aad917ca0120c8764b8635def682d9dd1c9ef7ad37d0287cf4246e8bd229",
+      "size": 3288
+    }
+  ],
+  "new_output_cap_bytes": 1048576,
+  "observed_at": "2026-10-11T13:29:43.444713+00:00",
+  "owner_pending": {
+    "decision": "user authorizes owner repair inclcandidate6; actual changed source/qualified consumer and held controller admission remain pending; no permanent restriction assumed",
+    "last_observed_source": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "reuse_min_idle_policy_link": "https://github.com/joshyorko/actions/blob/a70993fafc99a9f94041485542d5a720797ca394/action_server/src/actions/server/_actions_process_pool.py#L1079-L1121",
+    "version_pin_link": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L24",
+    "version_verifier_link": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L681-L707"
+  },
+  "performed": "one index-only reduction plus read-only accepted-receipt/source inspection. No experiments/repeats/deps/CAS/home/source/issue/Actions writes. New owned evidence only.",
+  "raw_source": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_metadata_and_native_workingset_excluded": true,
+    "sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "size": 1491800,
+    "totals": {
+      "logical_bytes": 170590205,
+      "objects": 5537,
+      "stored_bytes": 69466848
+    }
+  },
+  "schema": "rcc125-next-admission-source-bound-v1",
+  "source_binding": {
+    "fixture_actions_core": "1.0.0",
+    "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+    "fixture_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+    "fixture_producer_actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+    "fixture_producer_actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+    "fixture_python": "3.11.11",
+    "fixture_stable3_binary_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "rcc_component_binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "rcc_component_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_component_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "stable3_binary_source_limit": "vcs.modified=true; released tag is structural reference, not exact binary source binding"
+  }
+}

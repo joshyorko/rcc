@@ -1,0 +1,207 @@
+{
+  "parent": "04d6df1182f2a323ddad23f577b449301e3c9a33",
+  "timestamp": "2026-10-11T13:34:02.547751+00:00",
+  "preservation": "all993priorentries unchanged; original119source-boundevidence preserved",
+  "entries": [
+    {
+      "path": "developer/swarm/20261011/continuation-1332/review-sidecars-full-tests/root-verification.json",
+      "bytes": 399,
+      "sha256": "4d6dcb2b2f051f98cfb5a4830918976ac8a6789d9979380384e1d911a72d0205"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/review-sidecars-full-tests/unittest-discovery-review-sidecars-final.json",
+      "bytes": 1278,
+      "sha256": "5bd13c38812fa6215b7706e5b9cf108f14776c27820c42938f6d39cefd2966cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/review-sidecars-full-tests/unittest-discovery-review-sidecars-final.log",
+      "bytes": 16983,
+      "sha256": "bd3b2bdd48a49dcda56ac3ef4a82e98e8eb05b68fad63f8fc3f8bf5df9887904"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/review-sidecars-full-tests/unittest-discovery-review-sidecars.json",
+      "bytes": 1034,
+      "sha256": "573cf57a2e9f5995789bf5263f8daa7f2330ed8aebaf11196fc33033b1658cfb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/review-sidecars-full-tests/unittest-discovery-review-sidecars.log",
+      "bytes": 16983,
+      "sha256": "35813dc0da0645b98e1219d6fc26e3fdbd3dfd73ea3052c2bc545480ba13ba1c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/release-review/29c3-review/negative-cases.txt",
+      "bytes": 760,
+      "sha256": "6d72c3e9096012975f8dfdab63d2b2f766e4e57e83b11d17b365d0375c65f6b2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/release-review/29c3-review/report.md",
+      "bytes": 1923,
+      "sha256": "820bf6b46c457facdb9bba49a6b34ae167733888a560e3ca8a9efc4a6e1f532f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/release-review/29c3-review/test-yaml-diff.log",
+      "bytes": 660,
+      "sha256": "9b2bfca2813daedfa788b9b8f30257caceb2dac86cb8fdf70611944ca82b74cc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/release-review/29c3-review/verification.json",
+      "bytes": 1516,
+      "sha256": "4346958c1a049b9a36c495f1ea0c8dcd96ca70229f6d737791b0211ea299a986"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/go-test-2bb800f7cb00b0fb.log",
+      "bytes": 363,
+      "sha256": "26745359d1891f50da4ad85416ceda691ea9b68fa6ad09c05b92a5c496cfd45d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/report.md",
+      "bytes": 3725,
+      "sha256": "f860790169c502ad1fc616d6d7d07d74e4d166d53154d14bf3947be4fa922f8b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/resource-2bb800f7cb00b0fb.erratum.json",
+      "bytes": 964,
+      "sha256": "465ea9cda140a4533d9903549e6e30d5d07adaf1f1c088d351bdf32c207857bc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/resource-2bb800f7cb00b0fb.json",
+      "bytes": 3615,
+      "sha256": "854d3590756ca7381d7848a7436b0ec83eabcbb9bcca27cb0b20404f84caf84e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/root-verification.json",
+      "bytes": 1377,
+      "sha256": "fad6d6e7127c02e7adbd357f08dd0d5803d30cdc099112752176a0ed488ea68b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/journal-182/run_check.py",
+      "bytes": 10012,
+      "sha256": "35eac9ddc972b9faff68c1d49b758929ee4fb6029634df6448050d90b49f2ba7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/computation-receipt.json",
+      "bytes": 590,
+      "sha256": "7765fa2bd7fb1984d1bae8a7df5c233c9f8b246cdc4439b580fe9075dd717efb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/coverage.json",
+      "bytes": 7894,
+      "sha256": "4781afad90ab452aa40bdced81538a28f46adf28c713c361930d2ea307a46d1d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/derive_index_coverage.py",
+      "bytes": 6618,
+      "sha256": "460b9ad629482d4f1a5b7241e17f45795a5fc56bfefbaeb5433ec24c77eedf68"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/matrix.md",
+      "bytes": 13433,
+      "sha256": "2caa6a4f32dfc3aad7f83099485702758528751728b986c51c109a6c32d2c74e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/root-verification.json",
+      "bytes": 1262,
+      "sha256": "49ad18f584d1ad653ba7573f68805a1677a669cb2c1c930bc2b7d2bdc1dc8e78"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/run.log",
+      "bytes": 116,
+      "sha256": "3cf7e1c8c5c1bb7ac6407bd3e4773500f002578831b886b2e39340bb65044b89"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/six-direction-next-admission-20261011/source-bound.json",
+      "bytes": 11848,
+      "sha256": "7d791276f7f2a10a6103142dd0d37bd7a54f576ac2e0ef82477bc72ae72bf9e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/p1-hosted/root-jobs-237-29c3-20261011T132526Z.json",
+      "bytes": 26628,
+      "sha256": "beef9eb10757c71e5e1ff531d3bb9ebf30ba47f99b1aa4a1c63d9f647eada88e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/p1-hosted/status-237-29c3cfd-20261011T132110Z.json",
+      "bytes": 2222,
+      "sha256": "c97160f67e35410d2cbbc2d1248379544567556e1bdf46054991d70752305a38"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/p1-hosted/status-237-29c3cfd-20261011T132232Z.json",
+      "bytes": 2269,
+      "sha256": "e887bdcbab39bfe14a18a0fe140cae7e007a976394e2e9b5babe621203409937"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/p1-hosted/status-crosscheck-237bb-actions221-20261011T132041Z.json",
+      "bytes": 2858,
+      "sha256": "eb8603750cfbcd75b4337bf07759ddecc22981a190fe99a4e90b80f629f4f4a6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/execution-ledger.json",
+      "bytes": 13105,
+      "sha256": "c43f9781664b69d89327eb97150f0269d814cf9769bff9330e96f8a05fdc90ba"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/dependency-graph.json",
+      "bytes": 3520,
+      "sha256": "23933405ce367ccc7853fc5b9e1406ac1d80830424b2337b5f6ad7b3331cc11b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-issues.json",
+      "bytes": 2640,
+      "sha256": "fb124632be3351f7063c687a56d1f8407aa1025ff4d235d4adb50d593b03d625"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-prs.json",
+      "bytes": 989,
+      "sha256": "9a399e35ab29cb217b0d2b8fe1dbad952116551c94222a86266ca762705c7332"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-releases.json",
+      "bytes": 3404,
+      "sha256": "da1dd0a50d909ae25ccbfca8deee085f5c25c0c627152e25640b4e52a69dc7a5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-milestones.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-remote-refs.txt",
+      "bytes": 8597,
+      "sha256": "3d9cda8e5741c400e4a8963ccb364a2cc7f61e793318fbcbe8db85be2b4a27a9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/live-final-main.json",
+      "bytes": 101,
+      "sha256": "31afc544d8bc03091ca3384edce3d84f6ca64c186ce8b5cd4755aedadb24a36d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/pr237-update.txt",
+      "bytes": 1123,
+      "sha256": "7b3a3abf2c720562e2d4e1eafdfa9a56d26b6f33910324bfd68419711ae30461"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/issue182-update.txt",
+      "bytes": 1215,
+      "sha256": "c40ad40202fa6190eb742d1ae5c3ab1db18160b67e792810769ae9bda3f12b71"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/restart.md",
+      "bytes": 7145,
+      "sha256": "deb389685c9e3af05bf3a3ac875ef0324a477ac46e70c5c6e6aece6286da6351"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/release-run.json",
+      "bytes": 12046,
+      "sha256": "2194a8ad35f6e3a7bd47398ad81fbff40fb797dbd07bcfab941a60e04a415a3e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/branch-identities.json",
+      "bytes": 336,
+      "sha256": "8f9d93af69aab5f36c2f3ceb0fb8b027375c8ebd172c793125a80009d2d0d13d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1332/prior-04d-remote-verification.json",
+      "bytes": 317,
+      "sha256": "462793d3625c7c73cbdc51fe68eb264e27cafc45abb69ac6275e2153221d2627"
+    }
+  ]
+}

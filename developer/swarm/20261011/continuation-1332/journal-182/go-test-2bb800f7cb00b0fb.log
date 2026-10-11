@@ -1,0 +1,8 @@
+toolchain: go version go1.26.9 linux/amd64
+source_head: 36a84430083b3af6f9758408b94054e5197b7f8b
+command: CC=/usr/bin/gcc /workspace/work/rcc-swarm/tools/go1.26.9/bin/go test -p 1 -count=1 -cover ./journal
+GOTMPDIR/TMPDIR: /dev/shm/rcc-journal-182-2bb800f7cb00b0fb
+
+ok  	github.com/joshyorko/rcc/journal	0.004s	coverage: 82.5% of statements
+
+command_exit_code: 0

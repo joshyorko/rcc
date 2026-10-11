@@ -1,0 +1,5 @@
+Reviewed artifact-access correction pushed at `29c3cfdcc89591768a7204ec594414be0ce846f4` (tree `9bd919e7e68caa237052f354f49c03c5e9e01691`). Root verified source/diff/raw-log hashes and independently reviewed the helper/workflow delta. All 136 local script tests passed; independent Luna review passed 80 focused tests plus negative cases, YAML parsing and diff checks.
+
+The canonical preparation bundle remains the publication input. Nine review-only asset payloads and each native executed-binary payload are bounded to 24 MiB so independent verification can download actual bytes without credential workarounds. Exact-head RCC run [38142809725](https://github.com/joshyorko/rcc/actions/runs/38142809725) is running. Parent bb results remain attributed to bb; no new-head native/full-gate acceptance is claimed.
+
+PUBLICATION HOLD remains: no tag, release or publication dispatch. This draft is not merged. Main-only read-only preparation and independent nine-asset qualification still follow accepted integration; protected policy, signing/credentials, consumer/security disposition and separate operator GO remain gates.

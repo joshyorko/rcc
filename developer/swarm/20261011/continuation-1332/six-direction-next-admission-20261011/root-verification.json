@@ -1,0 +1,35 @@
+{
+  "verifiedUtc": "2026-10-11T13:30:42.987007+00:00",
+  "status": "ACTUAL_IMMUTABLE_INDEX_BYTES_AND_ALL_REDUCTIONS_INDEPENDENTLY_VERIFIED",
+  "indexSha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "totals": {
+    "objects": 5537,
+    "stored_bytes": 69466848,
+    "logical_bytes": 170590205
+  },
+  "smallObjects": {
+    "logical_byte_fraction": 0.0691388465123188,
+    "logical_bytes": 11794410,
+    "objects": 4649,
+    "request_fraction": 0.8396243453133466,
+    "stored_body_byte_fraction": 0.06456224989508665,
+    "stored_bytes": 4484936
+  },
+  "excluded20": {
+    "logical_byte_fraction": 0.600603440273725,
+    "logical_bytes": 102457064,
+    "objects": 20,
+    "request_fraction": 0.0036120642947444466,
+    "stored_body_byte_fraction": 0.6552435055063964,
+    "stored_bytes": 45517701
+  },
+  "sample24": {
+    "logical_byte_fraction": 0.01920796683490708,
+    "logical_bytes": 3276691,
+    "objects": 24,
+    "request_fraction": 0.004334477153693336,
+    "stored_body_byte_fraction": 0.021278869598344234,
+    "stored_bytes": 1478176
+  },
+  "scope": "static corpus coverage only, not execution working set/latency attribution or benchmark gain; existingproducerActionsa709/stableRCC3; no originalwrites or timed reruns"
+}

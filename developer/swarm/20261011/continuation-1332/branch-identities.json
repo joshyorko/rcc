@@ -1,0 +1,10 @@
+{
+  "observedUtc": "2026-10-11T13:26:35.610993+00:00",
+  "releaseBranch": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "journalBranch": "36a84430083b3af6f9758408b94054e5197b7f8b",
+  "main": {
+    "sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+  },
+  "publicationHold": true
+}

@@ -1,0 +1,217 @@
+{
+  "bands": {
+    "stored_4096_to_below_65536": {
+      "logical_byte_fraction": 0.20427564994133163,
+      "logical_bytes": 34847425,
+      "objects": 808,
+      "request_fraction": 0.14592739750767564,
+      "stored_body_byte_fraction": 0.15296388573726563,
+      "stored_bytes": 10625919
+    },
+    "stored_at_least_65536": {
+      "logical_byte_fraction": 0.7265855035463495,
+      "logical_bytes": 123948370,
+      "objects": 80,
+      "request_fraction": 0.014448257178977787,
+      "stored_body_byte_fraction": 0.7824738643676478,
+      "stored_bytes": 54355993
+    },
+    "stored_below_4096": {
+      "logical_byte_fraction": 0.0691388465123188,
+      "logical_bytes": 11794410,
+      "objects": 4649,
+      "request_fraction": 0.8396243453133466,
+      "stored_body_byte_fraction": 0.06456224989508665,
+      "stored_bytes": 4484936
+    }
+  },
+  "codec_excluded_empty_logical": {
+    "logical_byte_fraction": 0.0,
+    "logical_bytes": 0,
+    "objects": 1,
+    "request_fraction": 0.00018060321473722233,
+    "stored_body_byte_fraction": 3.3109318563007207e-07,
+    "stored_bytes": 23
+  },
+  "codec_excluded_logical_above_1048576": {
+    "logical_byte_fraction": 0.600603440273725,
+    "logical_bytes": 102457064,
+    "objects": 20,
+    "request_fraction": 0.0036120642947444466,
+    "stored_body_byte_fraction": 0.6552435055063964,
+    "stored_bytes": 45517701
+  },
+  "codec_existing_sample": {
+    "logical_byte_fraction": 0.01920796683490708,
+    "logical_bytes": 3276691,
+    "objects": 24,
+    "request_fraction": 0.004334477153693336,
+    "stored_body_byte_fraction": 0.021278869598344234,
+    "stored_bytes": 1478176
+  },
+  "cumulative_stored_size_less_than": [
+    {
+      "logical_byte_fraction": 0.0015665905319710472,
+      "logical_bytes": 267245,
+      "objects": 856,
+      "request_fraction": 0.15459635181506232,
+      "stored_body_byte_fraction": 0.0019387521368466293,
+      "stored_bytes": 134679,
+      "threshold_bytes": 256
+    },
+    {
+      "logical_byte_fraction": 0.019260701398418508,
+      "logical_bytes": 3285687,
+      "objects": 3283,
+      "request_fraction": 0.5929203539823009,
+      "stored_body_byte_fraction": 0.02295614449067849,
+      "stored_bytes": 1594691,
+      "threshold_bytes": 1024
+    },
+    {
+      "logical_byte_fraction": 0.0691388465123188,
+      "logical_bytes": 11794410,
+      "objects": 4649,
+      "request_fraction": 0.8396243453133466,
+      "stored_body_byte_fraction": 0.06456224989508665,
+      "stored_bytes": 4484936,
+      "threshold_bytes": 4096
+    },
+    {
+      "logical_byte_fraction": 0.16622083313634567,
+      "logical_bytes": 28355646,
+      "objects": 5273,
+      "request_fraction": 0.9523207513093733,
+      "stored_body_byte_fraction": 0.13553498209678377,
+      "stored_bytes": 9415188,
+      "threshold_bytes": 16384
+    },
+    {
+      "logical_byte_fraction": 0.27341449645365046,
+      "logical_bytes": 46641835,
+      "objects": 5457,
+      "request_fraction": 0.9855517428210222,
+      "stored_body_byte_fraction": 0.2175261356323523,
+      "stored_bytes": 15110855,
+      "threshold_bytes": 65536
+    },
+    {
+      "logical_byte_fraction": 0.3729298525668575,
+      "logical_bytes": 63618180,
+      "objects": 5511,
+      "request_fraction": 0.9953043164168323,
+      "stored_body_byte_fraction": 0.3119911673551102,
+      "stored_bytes": 21673043,
+      "threshold_bytes": 262144
+    },
+    {
+      "logical_byte_fraction": 0.5278011126137049,
+      "logical_bytes": 90037700,
+      "objects": 5530,
+      "request_fraction": 0.9987357774968394,
+      "stored_body_byte_fraction": 0.4814201588648444,
+      "stored_bytes": 33442741,
+      "threshold_bytes": 1048576
+    }
+  ],
+  "largest_stored_objects_coverage": [
+    {
+      "logical_byte_fraction": 0.14872943027414734,
+      "logical_bytes": 25371784,
+      "objects": 1,
+      "request_fraction": 0.00018060321473722233,
+      "stored_body_byte_fraction": 0.15974959739068628,
+      "stored_bytes": 11097301,
+      "top_n": 1
+    },
+    {
+      "logical_byte_fraction": 0.5117650043271827,
+      "logical_bytes": 87302097,
+      "objects": 10,
+      "request_fraction": 0.0018060321473722233,
+      "stored_body_byte_fraction": 0.562350374670807,
+      "stored_bytes": 39064708,
+      "top_n": 10
+    },
+    {
+      "logical_byte_fraction": 0.5999567970505693,
+      "logical_bytes": 102346753,
+      "objects": 20,
+      "request_fraction": 0.0036120642947444466,
+      "stored_body_byte_fraction": 0.6600640639402554,
+      "stored_bytes": 45852570,
+      "top_n": 20
+    },
+    {
+      "logical_byte_fraction": 0.6882059846284844,
+      "logical_bytes": 117401200,
+      "objects": 50,
+      "request_fraction": 0.009030160736861116,
+      "stored_body_byte_fraction": 0.7431398355658803,
+      "stored_bytes": 51623582,
+      "top_n": 50
+    },
+    {
+      "logical_byte_fraction": 0.7457170064365654,
+      "logical_bytes": 127212017,
+      "objects": 100,
+      "request_fraction": 0.018060321473722232,
+      "stored_body_byte_fraction": 0.7984508380170063,
+      "stored_bytes": 55465863,
+      "top_n": 100
+    }
+  ],
+  "no_extrapolation": "Request or byte concentration does not identify end-to-end bottlenecks, codec effect on excluded objects, native/relocation safety, pack RPC savings, lazy touched-set or clone/image benefit.",
+  "schema": "rcc-existing-index-coverage-v1",
+  "scope": "Static index-derived coverage only. No runtime/provider/CAS object read, codec execution, working-set trace, syscall or latency attribution.",
+  "source": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "index_descriptor": {
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "size": 1491800
+    },
+    "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_raw_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_schema": 1,
+    "input_plan": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/plan.json",
+    "input_plan_sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+    "producer": "historical unmodified Actions a709 stable3 attempt10; main727 is later provider component source, not original producer"
+  },
+  "stored_size_weighted_quantiles": [
+    {
+      "logical_byte_weighted_stored_size": 1021730,
+      "quantile_denominator": 2,
+      "quantile_numerator": 1,
+      "request_weighted_stored_size": 811,
+      "stored_byte_weighted_stored_size": 2086645
+    },
+    {
+      "logical_byte_weighted_stored_size": 11097301,
+      "quantile_denominator": 10,
+      "quantile_numerator": 9,
+      "request_weighted_stored_size": 7433,
+      "stored_byte_weighted_stored_size": 11097301
+    },
+    {
+      "logical_byte_weighted_stored_size": 11097301,
+      "quantile_denominator": 100,
+      "quantile_numerator": 95,
+      "request_weighted_stored_size": 15093,
+      "stored_byte_weighted_stored_size": 11097301
+    },
+    {
+      "logical_byte_weighted_stored_size": 11097301,
+      "quantile_denominator": 100,
+      "quantile_numerator": 99,
+      "request_weighted_stored_size": 102492,
+      "stored_byte_weighted_stored_size": 11097301
+    }
+  ],
+  "totals": {
+    "logical_bytes": 170590205,
+    "objects": 5537,
+    "stored_bytes": 69466848
+  },
+  "weighting": "One request per unique indexed stored object, matching accepted provider full-index GET controls. Stored bytes are HTTP body bytes; logical bytes are index-declared decompressed content bytes. Four CAS metadata objects, manifest, audit, framing, headers, native kind and actual action working set are excluded."
+}

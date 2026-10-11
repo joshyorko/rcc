@@ -1,0 +1,125 @@
+{
+  "cc": "/usr/bin/gcc",
+  "command": [
+    "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "test",
+    "-p",
+    "1",
+    "-count=1",
+    "-cover",
+    "./journal"
+  ],
+  "command_log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/journal-182/go-test-2bb800f7cb00b0fb.log",
+  "early_stop_margin_bytes": 4194304,
+  "elapsed_seconds": 1.4663765169998442,
+  "free_bytes_after": 2707263488,
+  "free_bytes_before": 2713186304,
+  "free_floor_bytes": 2684354560,
+  "gocache": "/home/agent/.cache/go-build",
+  "gocache_allocated_bytes_after": 3261616128,
+  "gocache_allocated_bytes_before": 3255693312,
+  "gocache_growth_bytes": 5922816,
+  "gocache_growth_limit_bytes": 16777216,
+  "guard_stop_reason": null,
+  "observer_error": null,
+  "owned_ram_tmp": "/dev/shm/rcc-journal-182-2bb800f7cb00b0fb",
+  "owned_ram_tmp_limit_bytes": 134217728,
+  "owned_ram_tmp_peak_allocated_bytes": 4096,
+  "owned_ram_tmp_removed_after_log_capture": true,
+  "process_exit_code": 0,
+  "process_pid": 10924,
+  "process_tree_rss_limit_bytes": 536870912,
+  "process_tree_rss_peak_bytes": 77058048,
+  "resource_samples": [
+    {
+      "elapsed_seconds": 0.0004666279992306954,
+      "filesystem_consumed_bytes": 0,
+      "free_bytes": 2713186304,
+      "process_tree_pids": [
+        10924
+      ],
+      "process_tree_rss_bytes": 12050432,
+      "tmp_allocated_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.20654726199973084,
+      "filesystem_consumed_bytes": 593920,
+      "free_bytes": 2712592384,
+      "process_tree_pids": [
+        10924,
+        10966
+      ],
+      "process_tree_rss_bytes": 44134400,
+      "tmp_allocated_bytes": 352256
+    },
+    {
+      "elapsed_seconds": 0.41928787599954376,
+      "filesystem_consumed_bytes": 2023424,
+      "free_bytes": 2711162880,
+      "process_tree_pids": [
+        10924,
+        11021
+      ],
+      "process_tree_rss_bytes": 43216896,
+      "tmp_allocated_bytes": 1699840
+    },
+    {
+      "elapsed_seconds": 0.6282877599996937,
+      "filesystem_consumed_bytes": 3579904,
+      "free_bytes": 2709606400,
+      "process_tree_pids": [
+        10924,
+        11065
+      ],
+      "process_tree_rss_bytes": 46845952,
+      "tmp_allocated_bytes": 3182592
+    },
+    {
+      "elapsed_seconds": 0.8381313739992038,
+      "filesystem_consumed_bytes": 4763648,
+      "free_bytes": 2708422656,
+      "process_tree_pids": [
+        10924,
+        11095
+      ],
+      "process_tree_rss_bytes": 77058048,
+      "tmp_allocated_bytes": 4399104
+    },
+    {
+      "elapsed_seconds": 1.0499398779993498,
+      "filesystem_consumed_bytes": 5836800,
+      "free_bytes": 2707349504,
+      "process_tree_pids": [
+        10924,
+        11130
+      ],
+      "process_tree_rss_bytes": 73035776,
+      "tmp_allocated_bytes": 5468160
+    },
+    {
+      "elapsed_seconds": 1.2588350129999526,
+      "filesystem_consumed_bytes": 5840896,
+      "free_bytes": 2707345408,
+      "process_tree_pids": [
+        10924,
+        11143
+      ],
+      "process_tree_rss_bytes": 32227328,
+      "tmp_allocated_bytes": 9293824
+    },
+    {
+      "elapsed_seconds": 1.4663765169998442,
+      "filesystem_consumed_bytes": 5922816,
+      "free_bytes": 2707263488,
+      "process_tree_pids": [],
+      "process_tree_rss_bytes": 77058048,
+      "tmp_allocated_bytes": 4096
+    }
+  ],
+  "runtime_scope": "journal package only; full repository and hosted coverage remain outstanding",
+  "source_head": "36a84430083b3af6f9758408b94054e5197b7f8b",
+  "source_tree": "2fa0167aa679a4d60c7a5c0002801dc4bdb94ff7",
+  "status": "PASS",
+  "timeout_seconds": 120.0,
+  "toolchain": "go version go1.26.9 linux/amd64"
+}

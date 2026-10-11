@@ -1,0 +1,20 @@
+{
+  "command": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10 -m unittest discover -s scripts -p test_*.py -v",
+  "exitCode": 0,
+  "testCount": 136,
+  "startedUtc": "2026-10-11T13:10:45.199136+00:00",
+  "finishedUtc": "2026-10-11T13:10:46.021376+00:00",
+  "python": "Python 3.10.15",
+  "temporaryFixture": {
+    "path": "build/rcc",
+    "sha256": "2b7bf34f8b93c0e89aa6762611373612ecb512c5fd72a36119155e31533959b1",
+    "purpose": "satisfy existing mocked gate-sequence unit test; never executed as RCC",
+    "createdBuildDirectory": true,
+    "removedAfterTest": true
+  },
+  "testedHead": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+  "testedTree": "75f1a13f81b932c4017973dcaa0642ba05758985",
+  "workingDiffSha256": "29d98d2a2c9c537a0d777b2cb16a10d7290b688c105df0439b1e8f00c6553eb6",
+  "rawLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/review-sidecars-full-tests/unittest-discovery-review-sidecars.log",
+  "rawLogSha256": "35813dc0da0645b98e1219d6fc26e3fdbd3dfd73ea3052c2bc545480ba13ba1c"
+}

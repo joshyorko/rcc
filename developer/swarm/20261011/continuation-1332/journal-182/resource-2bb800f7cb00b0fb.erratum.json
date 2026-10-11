@@ -1,0 +1,18 @@
+{
+  "record_type": "resource receipt erratum",
+  "original_receipt": "resource-2bb800f7cb00b0fb.json",
+  "original_receipt_sha256": "854d3590756ca7381d7848a7436b0ec83eabcbb9bcca27cb0b20404f84caf84e",
+  "original_receipt_preserved": true,
+  "defect": "owned_ram_tmp_peak_allocated_bytes records the final sampled allocation rather than the maximum across resource_samples",
+  "corrected_evaluation": {
+    "owned_ram_tmp_peak_allocated_bytes": 9293824,
+    "owned_ram_tmp_limit_bytes": 134217728,
+    "owned_ram_tmp_within_limit": true,
+    "process_tree_rss_peak_bytes": 77058048,
+    "process_tree_rss_peak_basis": "maximum observed among periodic ps-based samples; not an absolute transient maximum",
+    "process_tree_rss_limit_bytes": 536870912,
+    "process_tree_rss_within_limit_for_observed_samples": true,
+    "status": "PASS"
+  },
+  "method": "Recomputed maxima from the preserved resource_samples array; no test rerun and no source or script changes."
+}

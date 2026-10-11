@@ -1,0 +1,16 @@
+$ PYTHONPATH=/tmp/rcc-review-pydeps python -m unittest scripts.test_release_publication scripts.test_environment_artifact_tasks
+................................................................................
+----------------------------------------------------------------------
+Ran 80 tests in 0.566s
+
+OK
+Release-candidate receipt: /tmp/tmpyemhclrp/release-candidate-v1.json
+
+Test setup: temporary ignored build/rcc mock-gate fixture was created for the existing mock-only test and removed in finally. No source files changed.
+
+$ python - <<'PY'  # PyYAML parse
+... assert jobs ...
+YAML parse PASS; jobs: 4
+
+$ git diff --check HEAD^ HEAD
+[exit 0; no output]
