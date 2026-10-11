@@ -274,6 +274,9 @@ jobs:
         run: |
           inv assets
           inv robotsetup
+      - name: Run UV Python prefix symlink containment tests
+        shell: bash
+        run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
       - name: Show commit info
         run: inv what
       - name: Run Windows process supervision and artifact lock acceptance
