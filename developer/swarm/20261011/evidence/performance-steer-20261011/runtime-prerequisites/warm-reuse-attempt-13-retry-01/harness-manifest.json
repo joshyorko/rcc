@@ -1,0 +1,31 @@
+{
+  "attempt": "13-retry-01",
+  "mode": "warm_only_reuse_existing_attempt12_consumer_home",
+  "source_actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+  "source_actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+  "rcc_version": "v18.19.3",
+  "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+  "warm_home": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home",
+  "copied_or_rebuilt_materialization": false,
+  "explicit_acquire_or_provider": false,
+  "worker_script": "consumer_worker.py",
+  "worker_script_sha256": "1968712a8988404bad8cc797520766117739e05039d727b4d56884a5eeeea092",
+  "supervisor_script": "run_consumer.py",
+  "supervisor_script_sha256": "cdbdd76ea7880a2cd0f07eaabbc6fd90ed058f7fe61b56d15a5960f62def7c36",
+  "python_bytecode_override": false,
+  "limits_bytes": {
+    "hard_total": 2576980377,
+    "operational_stop": 2523293286,
+    "minimum_free": 2684354560,
+    "preflight_new_files_ceiling": 20000000
+  },
+  "sampling": {
+    "disk_seconds": 0.2,
+    "process_seconds": 0.1,
+    "dynamic_scan_roots": ["retry run directory", "attempt-12 shared consumer home"],
+    "fixed_baseline": ["complete Actions checkout", "complete runtime-prerequisites evidence root", "fixed RCC binary"]
+  },
+  "calls": {"first_plus_warm": 6, "setting_reuse_processes": true, "min_processes": 1, "max_processes": 1},
+  "attempt12_preserved": true,
+  "attempt13_setup_failure_preserved": true
+}

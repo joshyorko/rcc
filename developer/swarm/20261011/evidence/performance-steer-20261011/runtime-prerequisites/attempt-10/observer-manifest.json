@@ -1,0 +1,25 @@
+{
+  "attempt": "attempt-10",
+  "changes_to_actions_source": false,
+  "environment_preparation": "partial-cache recovery using attempt-05 private home and preserved/regenerated solver state; not cold baseline",
+  "failure_observation": "external _subprocess_runner observer preserves exact RCC argv/stdout/stderr/status and returns original values unchanged",
+  "files": {
+    "run_vertical_attempt10.py": {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/run_vertical_attempt10.py",
+      "sha256": "c14c4d912b6815f700cbf7625496c68637d9ec082acef5e7ecf0f54c607399ee"
+    },
+    "runtime_probe_attempt10.py": {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/runtime_probe_attempt10.py",
+      "sha256": "b60ca09e495f0b89a9f60fc5552dcaff15951e8c51e90e6d4e63d0471fe270fa"
+    }
+  },
+  "intended_action": "single unchanged a709 stable3 real RCC fixture, exact v18.19.3, loopback provider, attempt-05 private home",
+  "resource_policy": {
+    "disk_scan_seconds": 1.0,
+    "hard_total_bytes": 2576980377,
+    "minimum_free_bytes": 2684354560,
+    "process_sample_seconds": 0.1,
+    "stop_threshold_bytes": 2362232012
+  },
+  "status": "prepared after observer signature correction; not executed"
+}

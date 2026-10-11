@@ -1,0 +1,367 @@
+{
+  "attempt": "13-retry-01",
+  "cleanup": {
+    "acceptance": "verified",
+    "lease_exists_after_dispose": false,
+    "lease_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home/artifacts/v1/materializations/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e/leases/ad77a4d62614e3f65026a4b82bb8c895.json",
+    "pool_dispose_wall_ns": 26621740,
+    "pre_dispose_identities": [
+      {
+        "generation": 0,
+        "handle_alive": true,
+        "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+        "handle_object_id": 140516205375856,
+        "worker_processes": [
+          {
+            "cmdline": [
+              "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home/holotree/c2fd1aa_5a1fac3_02c4107a/bin/python3.11",
+              "-m",
+              "preload_actions_server_main",
+              "--tcp",
+              "--host=127.0.0.1",
+              "--port=45051"
+            ],
+            "create_time": 1791690164.37,
+            "pid": 264655
+          }
+        ],
+        "wrapper_args": [
+          "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+          "env",
+          "exec",
+          "--artifact",
+          "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+          "--permissive-local",
+          "--inherit-streams",
+          "--receipt-file",
+          "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/data/rcc-receipts/d6bf40d97e7242258b7b8fae6c2634c6.json",
+          "--",
+          "python",
+          "-m",
+          "preload_actions_server_main",
+          "--tcp",
+          "--host=127.0.0.1",
+          "--port=45051"
+        ],
+        "wrapper_create_time": 1791690163.71,
+        "wrapper_pid": 264639,
+        "wrapper_returncode": null
+      }
+    ],
+    "process_identities_after_dispose": [
+      {
+        "workers": [
+          {
+            "cmdline": [
+              "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home/holotree/c2fd1aa_5a1fac3_02c4107a/bin/python3.11",
+              "-m",
+              "preload_actions_server_main",
+              "--tcp",
+              "--host=127.0.0.1",
+              "--port=45051"
+            ],
+            "create_time": 1791690164.37,
+            "pid": 264655
+          }
+        ],
+        "wrapper_create_time": 1791690163.71,
+        "wrapper_pid": 264639
+      }
+    ],
+    "receipt_lease_matches_live_lease": true,
+    "receipt_paths": [
+      "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/data/rcc-receipts/d6bf40d97e7242258b7b8fae6c2634c6.json"
+    ],
+    "receipts": [
+      {
+        "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+        "exitCode": -1,
+        "leaseId": "ad77a4d62614e3f65026a4b82bb8c895",
+        "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/data/rcc-receipts/d6bf40d97e7242258b7b8fae6c2634c6.json",
+        "reason": "child exited non-zero",
+        "sha256": "5bc72941f9689b681ee8a094138d8dfa097bfab28dc9771d953744c3a8b413dc",
+        "status": "failed",
+        "verificationValid": true
+      }
+    ],
+    "remaining_owned_identities": [],
+    "wrapper_returncodes": [
+      0
+    ]
+  },
+  "cpu_scope": {
+    "outer": "supervisor sampled worker and descendants, including RCC wrapper/child when present",
+    "per_stage": "surviving/new process CPU deltas; exited child CPU omitted",
+    "rss_sum_caveat": "summed simultaneous RSS may double-count shared pages"
+  },
+  "evidence_hashes_sha256": {
+    "consumer-events.jsonl": "84ab7182f7e256d036f2b5b9323cd173bf3da6c947f230cb8edc9a3eecfedfb3",
+    "consumer-result.json": "47d57ed016e1ab6135530d8b04469b514b79aecab51dc842821754404a0dcaa9",
+    "consumer_worker.py": "1968712a8988404bad8cc797520766117739e05039d727b4d56884a5eeeea092",
+    "fixture-inventory.json": "fd5f5db8ca6a4cec6884e4da83d73118a8e635e6739a808fe87765264148fbf0",
+    "fixture/data/rcc-receipts/6beb1ea2a3b44527927287d3cfdecefd.json": "2ef26e2cd631cf6dcb567fa51728a9ab433af6b8066812ef82762ee1da7f246c",
+    "fixture/data/rcc-receipts/d6bf40d97e7242258b7b8fae6c2634c6.json": "5bc72941f9689b681ee8a094138d8dfa097bfab28dc9771d953744c3a8b413dc",
+    "harness-manifest.json": "f81211337f48757c48ced35f6c7bf7a0032adb89f0a38eed5160e6d43538c349",
+    "preflight.json": "9b88ae21fbd40ecb16447315d3dae7b1b01aeb92f965352f5801940e594c69a8",
+    "run_consumer.py": "cdbdd76ea7880a2cd0f07eaabbc6fd90ed058f7fe61b56d15a5960f62def7c36",
+    "supervisor-result.json": "e284447ecde940cdb85305c87468befa3810e0926c5c540b0bec3e88c285af57",
+    "worker.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "worker.stdout.log": "5c06c5ba8102c2617265ae4d53765a5c52d6882a0e49ce7eaae3289842cb12db"
+  },
+  "first_plus_five_warm_calls": [
+    {
+      "call": 1,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 500126843,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 726972056,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 682014011,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    },
+    {
+      "call": 2,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 500141095,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 64584778,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 13637661,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    },
+    {
+      "call": 3,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 500166264,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 55219427,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 12835514,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    },
+    {
+      "call": 4,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 500121185,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 54255234,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 12285249,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    },
+    {
+      "call": 5,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 500122477,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 55573803,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 12506936,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    },
+    {
+      "call": 6,
+      "generation": 0,
+      "handle_key": "_Key(action_package_id='ap-000-1364994e-4b90-4ed8-997a-d87082d8aabc', env='{\"PYTHONPATH\": \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/package\", \"runtime\": {\"artifact_digest\": \"sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e\", \"contract_version\": \"rcc-runtime/v1\", \"environment_fingerprint\": \"2a6cb8f11797ffd0690d915e556e151a8f1ed75d10885d0cda3824aeeb862404\", \"kind\": \"rcc\", \"preparation_class\": \"local\", \"rcc_version\": \"v18.19.3\", \"source_generation\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\", \"source_hash\": \"582f5825930c1c8f2e04eb96c920b9140650d5e5a5ad19ea00ac0ec380a82ec1\"}}', cwd=PosixPath('/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture/package'))",
+      "handle_object_id": 140516205375856,
+      "idle_after_ns": 0,
+      "lease_artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "lease_id": "ad77a4d62614e3f65026a4b82bb8c895",
+      "lease_mat_id": "c2fd1aa_5a1fac3_02c4107a",
+      "lease_owner_pid": 264639,
+      "lease_owner_start": "2645971",
+      "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+      "obtain_through_return_wall_ns": 55959577,
+      "result": "rcc-v18.19.3",
+      "return_code": 0,
+      "run_action_wall_ns": 12496951,
+      "worker_create_time": 1791690164.37,
+      "worker_pid": 264655,
+      "wrapper_create_time": 1791690163.71,
+      "wrapper_pid": 264639
+    }
+  ],
+  "first_pool_construct_plus_first_action_stages": {
+    "first_action_obtain_return_wall_ns": 726972056,
+    "first_run_action_ns": 682014011,
+    "pool_constructor_prewarm_ns": 800145839,
+    "sum_is_not_exact_end_to_end": true
+  },
+  "no_copy_no_acquire": true,
+  "outcome": "passed_six_actions_with_single_reused_process_and_verified_cleanup",
+  "pool_constructor_prewarm_wall_ns": 800145839,
+  "python_bytecode": {
+    "ambient_PYTHONDONTWRITEBYTECODE": null,
+    "override_set_by_supervisor": false,
+    "qualification": "No override was set and launch environment was unset; worker and RCC environment inherited normal Python bytecode behavior."
+  },
+  "resources": {
+    "configured_disk_scan_seconds": 0.2,
+    "disk_scan_count": 13,
+    "dynamic_scan_scope_note": "Writable attempt-13 run directory and shared attempt-12 consumer home were rescanned; checkout, remaining full evidence tree, and RCC binary were counted in the measured fixed baseline. Final total recount covers complete roots.",
+    "limits": {
+      "disk_scan_interval_seconds": 0.2,
+      "disk_scan_scope": "run directory plus shared attempt-12 consumer home, with fixed checkout+entire evidence tree+RCC binary baseline measured before run",
+      "hard_total_bytes": 2576980377,
+      "minimum_free_bytes": 2684354560,
+      "process_sample_interval_seconds": 0.1,
+      "stage_timeout_seconds": 180,
+      "stop_total_bytes": 2523293286,
+      "total_timeout_seconds": 300
+    },
+    "max_actual_disk_scan_gap_ms": 604.817272,
+    "max_sampled_individual_process_rss_bytes": 52645888,
+    "max_sampled_process_tree_rss_sum_bytes": 146882560,
+    "outer_wall_ns_including_setup_and_cleanup": 8962302050,
+    "preflight": {
+      "dynamic_run_and_warm_home_initial_bytes": 317268488,
+      "fixed_bytes_before_warm_action_control": {
+        "checkout": 1805407571,
+        "combined": 2403088162,
+        "complete_runtime_prerequisites_evidence": 575398189,
+        "rcc_binary": 22282402
+      },
+      "fixture": {
+        "copied_from": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0",
+        "copy_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture",
+        "data_tree_bytes": 55172,
+        "database_bytes": 36864,
+        "database_sha256": "d09960799472da6a6f91547566c507d8aee1ae6df7c174e132064cef3326a73b",
+        "expected_fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+        "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+        "package_file_sha256": {
+          "action.py": "fb0565c182158dc99ccfde454b2ffa5c2b42d61e856f4ddfb94d81703f2b38ca",
+          "package.yaml": "66137ac8c68313e7e6707b09cf778dbc49174b047756a8d26e35c3a3d8aeba38"
+        }
+      },
+      "free_before_run_bytes": 2887835648,
+      "hard_total_bytes": 2576980377,
+      "margin_below_stop_bytes": 100205124,
+      "minimum_free_bytes": 2684354560,
+      "paths": {
+        "checkout": "/workspace/work/rcc-swarm/actions-performance-20261011",
+        "complete_runtime_prerequisites_evidence": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites",
+        "rcc_binary": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3"
+      },
+      "predicted_new_files_bytes": 20000000,
+      "predicted_new_files_ceiling_bytes": 20000000,
+      "projected_total_bytes": 2423088162,
+      "status": "admitted_by_preflight",
+      "stop_threshold_bytes": 2523293286,
+      "warm_home_state": "reused_attempt12_consumer_home_no_copy_no_acquire"
+    },
+    "supervisor_free_bytes_at_end": 2879393792,
+    "supervisor_full_owned_bytes_at_end": {
+      "checkout": 1805776433,
+      "combined": 2411292739,
+      "complete_runtime_prerequisites_evidence": 583233904,
+      "rcc_binary": 22282402
+    }
+  },
+  "settings": {
+    "max_processes": 1,
+    "min_processes": 1,
+    "reuse_processes": true
+  },
+  "setup_failure_preserved": {
+    "cause": "run_consumer.py missing CONSUMER_HOME constant; NameError at dynamic-size initialization",
+    "failed_before_preflight_or_RCC_or_worker": true,
+    "namespace": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites",
+    "no_action_or_acquire_started": true
+  },
+  "source": {
+    "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+    "actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+    "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+    "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+    "rcc_path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+    "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428"
+  },
+  "warm_home": {
+    "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "materializationId": "c2fd1aa_5a1fac3_02c4107a",
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home",
+    "prior_acquire_wall_ns": 16114190191,
+    "prior_cacheHit": "provider",
+    "state": "already_acquired_warm_home_from_attempt_12",
+    "verification": {
+      "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "builder": "rcc-holotree-v12",
+      "code": "valid",
+      "decisionID": "sha256:d0d565c22fd51c30be65abb3e8ec5ee8193cf48e9c3e276db5d9466ea0c93114",
+      "platform": "linux_amd64",
+      "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+      "policyMode": "permissive-local",
+      "policyRevision": "artifacttrust/v1",
+      "revocationCheckedAt": "2026-10-11T03:36:11Z",
+      "revocationSnapshot": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "valid": true,
+      "verifiedAt": "2026-10-11T03:36:11Z"
+    }
+  },
+  "warm_session_wall_ns": 3544637807,
+  "publicCuration": {
+    "rawOriginalSha256": "f40665f2915dd71015e686132974b5de4ddde7e10397fe365acbdf8c663b066f",
+    "rawOriginalBytes": 2385127,
+    "omitted": "ordinary_home_entries: full private-home path inventory",
+    "omittedEntries": 34184,
+    "rawRetainedInCloud": true
+  }
+}

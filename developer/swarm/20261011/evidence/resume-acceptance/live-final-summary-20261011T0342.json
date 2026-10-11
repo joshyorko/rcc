@@ -1,0 +1,74 @@
+{
+  "refreshedAtUtc": "2026-10-11T03:40:51.667305+00:00",
+  "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "issues": [
+    185,
+    182,
+    181,
+    135,
+    133,
+    132,
+    131,
+    125,
+    118,
+    98
+  ],
+  "pulls": [
+    [
+      225,
+      true,
+      "b24b29fffab4581456a313a240257d681ad744fd"
+    ],
+    [
+      224,
+      true,
+      "32d51bd00852b003fd0d82050f5fd6d281f362d5"
+    ]
+  ],
+  "branches": 70,
+  "tags": 33,
+  "releases": 27,
+  "milestones": 0,
+  "latestStable": "v18.19.5",
+  "v18.19.6Exists": false,
+  "runs": [
+    [
+      38106400198,
+      "PatchRaptor RCC Release",
+      "workflow_run",
+      "completed",
+      "success"
+    ],
+    [
+      38105340724,
+      "CodeQL",
+      "push",
+      "completed",
+      "success"
+    ],
+    [
+      38105340590,
+      "Lint",
+      "push",
+      "completed",
+      "success"
+    ],
+    [
+      38105340564,
+      "Coverage gate",
+      "push",
+      "completed",
+      "success"
+    ],
+    [
+      38105340592,
+      "Rcc",
+      "push",
+      "completed",
+      "success"
+    ]
+  ],
+  "actions221": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+  "actionsCommunity": "a70993fafc99a9f94041485542d5a720797ca394"
+}

@@ -1,0 +1,106 @@
+{
+  "atUtc": "2026-10-11T03:26:02.412183+00:00",
+  "status": "Real unchanged Linux stable3 Action control accepted by root; fresh consumer plus persistent reuse admitted next",
+  "integratedMain": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "nonReleasePrerequisite": true,
+  "actualActionEvidence": {
+    "source": {
+      "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+      "tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959"
+    },
+    "rccSha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "pytestNumericStatus": 0,
+    "realActionReturnCode": 0,
+    "realResult": "rcc-v18.19.3",
+    "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "expectedNonReuseTeardown": {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/data/rcc-receipts/6beb1ea2a3b44527927287d3cfdecefd.json",
+      "sha256": "2ef26e2cd631cf6dcb567fa51728a9ab433af6b8066812ef82762ee1da7f246c",
+      "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "status": "failed",
+      "exitCode": -1,
+      "reason": "child exited non-zero",
+      "leaseId": "096130a2d32a1fe02a80b884daa5473e"
+    },
+    "providerObjectsVerified": 5541,
+    "stageObservations": [
+      {
+        "event": "publish_artifact",
+        "wall_ns": 28970321014,
+        "child_user_seconds": 20.77444,
+        "child_system_seconds": 7.608633,
+        "return_code": null,
+        "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+        "acquisition_identity_fields": null
+      },
+      {
+        "event": "acquire_artifact",
+        "wall_ns": 14672399059,
+        "child_user_seconds": 5.149099,
+        "child_system_seconds": 4.7865709999999995,
+        "return_code": null,
+        "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+        "acquisition_identity_fields": {
+          "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+          "cacheHit": "provider",
+          "materializationId": "c2fd1aa_5a1fac3_02c4107a",
+          "path": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/holotree/c2fd1aa_5a1fac3_02c4107a"
+        }
+      },
+      {
+        "event": "import_action_package",
+        "wall_ns": 45855215049,
+        "child_user_seconds": 27.742954,
+        "child_system_seconds": 13.090359,
+        "return_code": null,
+        "artifact_digest": null,
+        "acquisition_identity_fields": null
+      },
+      {
+        "event": "worker_startup",
+        "wall_ns": 771154812,
+        "child_user_seconds": 0.011686999999998449,
+        "child_system_seconds": 0.011295000000000499,
+        "return_code": null,
+        "artifact_digest": null,
+        "acquisition_identity_fields": null
+      },
+      {
+        "event": "run_action",
+        "wall_ns": 856158238,
+        "child_user_seconds": 0.0,
+        "child_system_seconds": 0.0,
+        "return_code": 0,
+        "artifact_digest": null,
+        "acquisition_identity_fields": null
+      }
+    ],
+    "outerWallNs": 49519744421,
+    "sampledTreeRssSumBytes": 625799168,
+    "sampledIndividualRssBytes": 530927616
+  },
+  "measurementLimits": [
+    "n=1 shared orchestration host, partial solver/package caches; no repeatable comparison or optimization claim",
+    "Provider acquisition is reported; no cold OS cache or fresh whole private home is claimed",
+    "CPU scopes overlap: child rusage stages, wait4 reaped children and provider-only CPU cannot be blindly added",
+    "Sampled tree RSS sum double counts shared pages and may miss peaks; child maxrss highwater is not per-stage RSS",
+    "Non-reuse worker teardown intentionally yields failed/-1 receipt after a successful Action",
+    "Original nested sidecar counter omitted older runtime evidence and preserved archives; root corrected full-owned total remains under cap",
+    "Tagged source of official RCC3 is structural reference; binary embeds vcs.modified=true",
+    "CorrectedAllOwnedBytes names the two configured measurement roots; fixed RCC3 tool is outside them and is separately included in conservativeOwnedWithFixedToolBytes."
+  ],
+  "resourcePolicy": {
+    "hardOwnedBytes": 2576980377,
+    "stopOwnedBytes": 2362232012,
+    "minimumFilesystemFreeBytes": 2684354560,
+    "independentRootCorrectedBytes": 2062400589,
+    "originalCounterScopeOmissionBytes": 182401629,
+    "fixedOwnedToolBytes": 22282402,
+    "conservativeOwnedWithFixedToolBytes": 2084682991
+  },
+  "measuredPreparationObstacle": "Cold conda metadata totaled 645,367,155 bytes in attempt04. Checksum diagnostics match downloaded data to JSON but inconsistent expected hashes; original solver preserved. Regenerated state plus one recovery control succeeds without changing pins/channels/checksums. Interruption causality not proven.",
+  "optimizationSelected": null,
+  "releaseAuthorityOrActionsPinChanged": false
+}

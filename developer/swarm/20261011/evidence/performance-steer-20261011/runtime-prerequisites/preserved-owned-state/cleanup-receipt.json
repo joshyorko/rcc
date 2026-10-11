@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-11T03:19:15.148267+00:00",
+  "status": "PASS",
+  "exitCode": 0,
+  "removedPaths": [
+    "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-04",
+    "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv"
+  ],
+  "freedRegularFileBytes": 843500493,
+  "filesystemFreeBytesAfterRemoval": 4103569408,
+  "retainedArchives": {
+    "runtime-home-attempt-04": {
+      "archiveSha256": "40158655601a880f00209250e27361d105a996c36b20b76781c63c1b083dd8f4",
+      "manifestSha256": "63f4713970c5b2bdd275eabc93f9bd2b6dbc2cd24cdf9d28440b46865dc02d03"
+    },
+    "88ec62ec-solv": {
+      "archiveSha256": "a391cc9416b485a834daeb321712944a84f1e755f4ff9532507def6874732ae1",
+      "manifestSha256": "6966c067801b0c41059e4469b1eeed79a597e09511370273be5926a1f224bc0d"
+    }
+  },
+  "archivesAndManifestsRehashedAfterRemoval": true,
+  "onlyAuthorizedPathsRemoved": true,
+  "receiptsAndRawLogsRetained": true
+}

@@ -1,0 +1,156 @@
+{
+  "acquire": {
+    "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "cacheHit": "provider",
+    "materializationId": "c2fd1aa_5a1fac3_02c4107a",
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer-home/holotree/c2fd1aa_5a1fac3_02c4107a",
+    "rcc_stdout_sha256": "5b248918d9f476973fc4d2244a3a23d74f3200f04cc8f79a3f76835e2d287e41",
+    "runner_status": 0,
+    "status": "passed",
+    "verification": {
+      "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "builder": "rcc-holotree-v12",
+      "code": "valid",
+      "decisionID": "sha256:d0d565c22fd51c30be65abb3e8ec5ee8193cf48e9c3e276db5d9466ea0c93114",
+      "platform": "linux_amd64",
+      "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+      "policyMode": "permissive-local",
+      "policyRevision": "artifacttrust/v1",
+      "revocationCheckedAt": "2026-10-11T03:36:11Z",
+      "revocationSnapshot": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "valid": true,
+      "verifiedAt": "2026-10-11T03:36:11Z"
+    },
+    "wall_ns": 16114190191
+  },
+  "attempt": 12,
+  "cleanup": {
+    "no_action_or_reuse_cleanup_receipt": true,
+    "provider_returncode": 0
+  },
+  "evidence_hashes": {
+    "consumer-events.jsonl": "64b27523467db1852eef4404bea96b39f5d4c0716042e7fb6256de705ffdd981",
+    "consumer-result.json": "1de9584fb638d5a822d8d26e710e81100848091e055e77a1729de5569a83a285",
+    "consumer_worker.py": "741f7f016b272f23f6e775cc5a418535066fc5007b32ebffb9484d3773fedf5e",
+    "harness-manifest.json": "a59d779a4591fec8a312c3abe7dc83c913ca20c021322b1dbfebecf74f94ff06",
+    "preflight.json": "4ece3a8bf35b6e7aebf000f9478fb504116ea1ac616ffa6a06cc934926259ae6",
+    "provider.stderr.log": "cbe8820e70679588348fffddf0c352be0e8498e1ae9fec3832e757fc65143398",
+    "provider.stdout.log": "f4ab493dde21b3becbace8b41e0248dabdb89ac48fe2cf8507a464acb14db617",
+    "rcc-commands/rcc-01.stderr.log": "cbe8820e70679588348fffddf0c352be0e8498e1ae9fec3832e757fc65143398",
+    "rcc-commands/rcc-01.stdout.log": "57ba3c9c038ed6497b5f04e5064d74548a6947a34a0c018ce59b3f6e40bea199",
+    "rcc-commands/rcc-02.stderr.log": "cbe8820e70679588348fffddf0c352be0e8498e1ae9fec3832e757fc65143398",
+    "rcc-commands/rcc-02.stdout.log": "5b248918d9f476973fc4d2244a3a23d74f3200f04cc8f79a3f76835e2d287e41",
+    "run_consumer.py": "cd9b19724abe5fc790b63ed6ab0e12410b0c6787b37599a20f1acdcb923217aa",
+    "supervisor-result.json": "7281e9f5bda1bdf53ac2988cd386d55876ef0bcbf590d82440cb58bae63191fd",
+    "worker.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "worker.stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "fresh_home": {
+    "after_RCC_version_before_explicit_acquire": {
+      "artifact_state": {
+        "artifacts/v1/content/objects": {
+          "exists": false,
+          "files": [],
+          "regular_file_count": 0
+        },
+        "artifacts/v1/materializations": {
+          "exists": false,
+          "files": [],
+          "regular_file_count": 0
+        }
+      },
+      "lease_files": [],
+      "meaning": "RCC --version initialized ordinary settings/templates only; no CAS object, materialization, or lease existed",
+      "ordinary_settings_skeleton": [
+        "bin",
+        "hololib",
+        "hololib/catalog",
+        "hololib/library",
+        "hololib/pids",
+        "hololib/used",
+        "journals",
+        "pipcache",
+        "pkgs",
+        "rcc.yaml.lck",
+        "rcccache.yaml",
+        "rcccache.yaml.lck",
+        "robots",
+        "templates",
+        "templates/rcc.json",
+        "uv",
+        "uvcache",
+        "uvpython",
+        "wheels"
+      ]
+    },
+    "before_any_RCC_command_or_Actions_import": []
+  },
+  "limits_outcome": "One-second scan stop crossed by actual acquire/materialization growth; final total exceeded stop by 40,180,226 bytes but remained below hard cap; free remained 205,381,632 bytes above minimum floor.",
+  "outcome": "acquire_pass_pool_prewarm_interrupted_by_owned_disk_stop_before_any_action",
+  "pool_and_actions": {
+    "actions_run": 0,
+    "pool_constructor_completed": false,
+    "supervisor_stop_trigger": "owned_disk_limit",
+    "supervisor_worker_exit_code": 1,
+    "warm_actions_run": 0,
+    "worker_error": {
+      "message": "",
+      "traceback": "Traceback (most recent call last):\n  File \"/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-12/consumer_worker.py\", line 301, in main\n    POOL = ActionsProcessPool(settings, {package.id: package}, [action])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src/actions/server/_actions_process_pool.py\", line 747, in __init__\n    self._warmup_processes()\n  File \"/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src/actions/server/_actions_process_pool.py\", line 932, in _warmup_processes\n    self._warmup_processes_unlocked()\n  File \"/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src/actions/server/_actions_process_pool.py\", line 928, in _warmup_processes_unlocked\n    self._create_process(one_action)\n  File \"/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src/actions/server/_actions_process_pool.py\", line 845, in _create_process\n    process_handle = ProcessHandle(\n                     ^^^^^^^^^^^^^^\n  File \"/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src/actions/server/_actions_process_pool.py\", line 302, in __init__\n    s = connection_future.result(10)\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py\", line 451, in result\n    self._condition.wait(timeout)\n  File \"/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py\", line 359, in wait\n    gotit = waiter.acquire(True, timeout)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nKeyboardInterrupt\n",
+      "type": "KeyboardInterrupt"
+    }
+  },
+  "python_bytecode": {
+    "PYTHONDONTWRITEBYTECODE_in_supervisor_environment_at_followup_inspection": null,
+    "qualification": "runner did not set the variable and the inherited environment was unset in the launch shell; pool startup was interrupted before the Action child ran, so this attempt provides no Action bytecode-cache result",
+    "runner_override": false
+  },
+  "rcc_version_check": {
+    "status": 0,
+    "stderr": "Note: Now running rcc v18.19.3. There is newer rcc version v18.19.5 available, released at 07.09.2026.",
+    "stdout": "v18.19.3"
+  },
+  "resources": {
+    "free_margin_over_floor_bytes": 205381632,
+    "last_scan": {
+      "dynamic_run_tree_bytes": 317277499,
+      "estimated_full_owned_total_bytes": 2402261685,
+      "filesystem_free_bytes": 2889834496,
+      "monotonic_ns": 26068243762827,
+      "stop_trigger": "owned_disk_limit"
+    },
+    "limits_bytes": {
+      "hard": 2576980377,
+      "minimum_free": 2684354560,
+      "stop": 2362232012
+    },
+    "max_sampled_individual_process_rss_bytes": 68321280,
+    "max_sampled_process_tree_rss_sum_bytes": 118247424,
+    "observed_final_full_owned_bytes": {
+      "checkout": 1805407571,
+      "combined": 2402412238,
+      "complete_runtime_prerequisites_evidence": 574722265,
+      "rcc_binary": 22282402
+    },
+    "observed_free_bytes": 2889736192,
+    "observed_over_stop_bytes": 40180226,
+    "preflight_fixed_bytes": {
+      "checkout": 1805407571,
+      "combined": 2085186152,
+      "complete_runtime_prerequisites_evidence": 257496179,
+      "rcc_binary": 22282402
+    },
+    "preflight_margin_below_stop_bytes": 31372095,
+    "preflight_projected_total_bytes": 2330859917,
+    "wall_ns_including_setup_and_cleanup": 19803913150
+  },
+  "source": {
+    "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+    "actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+    "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+    "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+    "rcc_path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+    "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428"
+  }
+}

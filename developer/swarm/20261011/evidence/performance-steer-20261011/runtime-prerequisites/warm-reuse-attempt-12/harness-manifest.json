@@ -1,0 +1,22 @@
+{
+  "attempt": 12,
+  "source_actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+  "rcc_version": "v18.19.3",
+  "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+  "worker_script": "consumer_worker.py",
+  "worker_script_sha256": "741f7f016b272f23f6e775cc5a418535066fc5007b32ebffb9484d3773fedf5e",
+  "supervisor_script": "run_consumer.py",
+  "supervisor_script_sha256": "cd9b19724abe5fc790b63ed6ab0e12410b0c6787b37599a20f1acdcb923217aa",
+  "python_bytecode_override": false,
+  "purpose": "single external explicit acquire followed by one first and five sequential warm Actions; no source or adapter changes",
+  "limits_bytes": {
+    "hard_total": 2576980377,
+    "stop_total": 2362232012,
+    "minimum_free": 2684354560
+  },
+  "sampling": {
+    "disk_seconds": 1.0,
+    "process_seconds": 0.1
+  },
+  "attempt_11_preserved": true
+}

@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-11T03:40:19Z",
+  "result": "verified_acquire_only_no_action",
+  "verifiedRawHashes": [
+    "consumer-events.jsonl",
+    "consumer-result.json",
+    "consumer_worker.py",
+    "harness-manifest.json",
+    "preflight.json",
+    "provider.stderr.log",
+    "provider.stdout.log",
+    "rcc-commands/rcc-01.stderr.log",
+    "rcc-commands/rcc-01.stdout.log",
+    "rcc-commands/rcc-02.stderr.log",
+    "rcc-commands/rcc-02.stdout.log",
+    "run_consumer.py",
+    "supervisor-result.json",
+    "worker.stderr.log",
+    "worker.stdout.log"
+  ],
+  "actualConsumerCasObjectsRehashed": 5541,
+  "acquireStageWallNs": 16114190191,
+  "acquireCommandWallNs": 16108789811,
+  "noActionCalls": true,
+  "remainingRecordedProcesses": [],
+  "ownedFootprintBytes": {
+    "checkout": 1805407571,
+    "combined": 2402412238,
+    "complete_runtime_prerequisites_evidence": 574722265,
+    "rcc_binary": 22282402
+  },
+  "hardBudgetUnchanged": 2576980377,
+  "limitsOutcome": "stop crossed, hard and free floor respected",
+  "freshStateAssertionsVerified": true,
+  "comparison": "not a speedup; no warm reuse acceptance"
+}

@@ -1,0 +1,190 @@
+{
+  "at": "2026-10-11T03:24:36.131398+00:00",
+  "numericVerificationExit": 0,
+  "pytestNumericStatus": 0,
+  "source": {
+    "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+    "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+    "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+    "tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959"
+  },
+  "rcc": {
+    "argv": [
+      "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+      "--version"
+    ],
+    "sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "status": 0,
+    "stderr": "Note: Now running rcc v18.19.3. There is newer rcc version v18.19.5 available, released at 07.09.2026.",
+    "stdout": "v18.19.3",
+    "wall_ns": 18619496
+  },
+  "fixtureResult": {
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/run/result.json",
+    "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873",
+    "json": {
+      "result": "rcc-v18.19.3",
+      "message": "",
+      "status": "PASS"
+    }
+  },
+  "actualReceipt": {
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0/data/rcc-receipts/6beb1ea2a3b44527927287d3cfdecefd.json",
+    "sha256": "2ef26e2cd631cf6dcb567fa51728a9ab433af6b8066812ef82762ee1da7f246c",
+    "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "status": "failed",
+    "exitCode": -1,
+    "reason": "child exited non-zero",
+    "leaseId": "096130a2d32a1fe02a80b884daa5473e"
+  },
+  "captureLogsVerified": [
+    {
+      "sequence": 1,
+      "stream": "stdout",
+      "sha256": "6d6b50c72bdbf9b4012a311265ccd71938b17f89be470278300684ad4666f4d0",
+      "bytes": 289
+    },
+    {
+      "sequence": 1,
+      "stream": "stderr",
+      "sha256": "57a5e7a5a196ed5c59b039eac92e0e665346e02712da6d01e632c918b33acf55",
+      "bytes": 2621
+    },
+    {
+      "sequence": 2,
+      "stream": "stdout",
+      "sha256": "dfeefd9fcb9fa89404fded0a4de01a3a1d39f6215b250dc20dff17be4fe616c1",
+      "bytes": 55004
+    },
+    {
+      "sequence": 2,
+      "stream": "stderr",
+      "sha256": "cbe8820e70679588348fffddf0c352be0e8498e1ae9fec3832e757fc65143398",
+      "bytes": 103
+    }
+  ],
+  "stageObservations": [
+    {
+      "event": "publish_artifact",
+      "wall_ns": 28970321014,
+      "child_user_seconds": 20.77444,
+      "child_system_seconds": 7.608633,
+      "return_code": null,
+      "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "acquisition_identity_fields": null
+    },
+    {
+      "event": "acquire_artifact",
+      "wall_ns": 14672399059,
+      "child_user_seconds": 5.149099,
+      "child_system_seconds": 4.7865709999999995,
+      "return_code": null,
+      "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "acquisition_identity_fields": {
+        "artifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+        "cacheHit": "provider",
+        "materializationId": "c2fd1aa_5a1fac3_02c4107a",
+        "path": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/holotree/c2fd1aa_5a1fac3_02c4107a"
+      }
+    },
+    {
+      "event": "import_action_package",
+      "wall_ns": 45855215049,
+      "child_user_seconds": 27.742954,
+      "child_system_seconds": 13.090359,
+      "return_code": null,
+      "artifact_digest": null,
+      "acquisition_identity_fields": null
+    },
+    {
+      "event": "worker_startup",
+      "wall_ns": 771154812,
+      "child_user_seconds": 0.011686999999998449,
+      "child_system_seconds": 0.011295000000000499,
+      "return_code": null,
+      "artifact_digest": null,
+      "acquisition_identity_fields": null
+    },
+    {
+      "event": "run_action",
+      "wall_ns": 856158238,
+      "child_user_seconds": 0.0,
+      "child_system_seconds": 0.0,
+      "return_code": 0,
+      "artifact_digest": null,
+      "acquisition_identity_fields": null
+    }
+  ],
+  "rawOuterWallNs": 49519744421,
+  "wait4ChildrenCpu": {
+    "user": 30.433596,
+    "system": 13.550069,
+    "maxrssKiBHighwater": 527680
+  },
+  "sampledTreeRssSumBytes": 625799168,
+  "sampledIndividualRssBytes": 530927616,
+  "providerOnlyCpu": {
+    "system_seconds_delta": 3.12,
+    "user_seconds_delta": 1.92
+  },
+  "providerObjectsHashed": 5541,
+  "providerObjectHashMismatches": [],
+  "correctedAllOwnedBytes": 2062400589,
+  "originalScopedCounterFinalBytes": 1879998960,
+  "correctedHardLimitBytes": 2576980377,
+  "cacheHistory": {
+    "mode": "recovery using attempt-05 private home and cached repodata/solver state; not a cold baseline",
+    "preexisting_home_cache_files": [
+      {
+        "relative_path": "pkgs/cache/88ec62ec.json",
+        "size_bytes": 454784651
+      },
+      {
+        "relative_path": "pkgs/cache/88ec62ec.solv",
+        "size_bytes": 207817382
+      },
+      {
+        "relative_path": "pkgs/cache/88ec62ec.state.json",
+        "size_bytes": 374
+      },
+      {
+        "relative_path": "pkgs/cache/cache.lock",
+        "size_bytes": 0
+      },
+      {
+        "relative_path": "pkgs/cache/eb045dd1.json",
+        "size_bytes": 190586023
+      },
+      {
+        "relative_path": "pkgs/cache/eb045dd1.solv",
+        "size_bytes": 100721991
+      },
+      {
+        "relative_path": "pkgs/cache/eb045dd1.state.json",
+        "size_bytes": 372
+      }
+    ]
+  },
+  "limits": [
+    "n=1 shared orchestration host, partial solver/package caches; no repeatable comparison or optimization claim",
+    "Provider acquisition is reported; no cold OS cache or fresh whole private home is claimed",
+    "CPU scopes overlap: child rusage stages, wait4 reaped children and provider-only CPU cannot be blindly added",
+    "Sampled tree RSS sum double counts shared pages and may miss peaks; child maxrss highwater is not per-stage RSS",
+    "Non-reuse worker teardown intentionally yields failed/-1 receipt after a successful Action",
+    "Original nested sidecar counter omitted older runtime evidence and preserved archives; root corrected full-owned total remains under cap",
+    "Tagged source of official RCC3 is structural reference; binary embeds vcs.modified=true",
+    "CorrectedAllOwnedBytes names the two configured measurement roots; fixed RCC3 tool is outside them and is separately included in conservativeOwnedWithFixedToolBytes."
+  ],
+  "providerManifest": {
+    "sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "bytes": 2175,
+    "declaredArtifactDigest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "mediaType": "application/vnd.rcc.environment.manifest.v1+json"
+  },
+  "fixedOwnedToolBytes": 22282402,
+  "conservativeOwnedWithFixedToolBytes": 2084682991,
+  "measurementRootScope": [
+    "actions-performance-20261011",
+    "evidence/performance-steer-20261011/runtime-prerequisites"
+  ]
+}

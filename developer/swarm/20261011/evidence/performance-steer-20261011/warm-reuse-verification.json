@@ -1,0 +1,11 @@
+{
+  "numeric_exit": 0,
+  "at": "2026-10-11T03:09:43.091666+00:00",
+  "source_claims_verified": 33,
+  "unchanged_frozen_report_sha256": "6e5374820f1bcdb0279d8f581102f46691802a9c8cfaba0a4d9d915bdb5f4dc6",
+  "report_sha256": "83579246fc1967b3883fed5b4d97cdd926bc11eccd098f71b861a8a9cb652ae7",
+  "source_bound_sha256": "bdacea0b9ecaacbcda3830d43a1edb330ceb67245c54d664b3c65d70bcfd8434",
+  "executed_here": false,
+  "recommendation": "conditional admission only; firststable3 realcontrol/budget unresolved",
+  "optimization_selected": false
+}

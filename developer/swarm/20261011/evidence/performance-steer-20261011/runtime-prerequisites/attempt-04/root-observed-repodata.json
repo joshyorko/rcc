@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-11T03:04:18.387594+00:00",
+  "source": "a70993fafc99a9f94041485542d5a720797ca394",
+  "actualRepodata": [
+    {
+      "file": "88ec62ec.json",
+      "bytes": 454782873,
+      "sha256": "b564c7270d82aac6c3a2a32b1c0356c58f301d37fee22ece50fc50dae66bb2d0",
+      "unchangedDuringHash": true
+    },
+    {
+      "file": "eb045dd1.json",
+      "bytes": 190584282,
+      "sha256": "8696125e9ad775e76d9913cb6f26721651ba35c64d934c73f73fff63cecd40fc",
+      "unchangedDuringHash": true
+    }
+  ],
+  "totalBytes": 645367155,
+  "runReceiptSha256": "697366320770ebebc95e454c56b5b34c6d0d43afd33961b275343a0a251b8138",
+  "scope": "Interrupted environment preparation, not Action invocation/benchmark pass; owned monitor terminated fixture after exceeding initial budget. Object-storage materializer bottleneck is not established."
+}

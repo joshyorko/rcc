@@ -1,0 +1,13 @@
+{
+  "copied_from": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp/test_real_rcc_artifact_action_0",
+  "copy_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/fixture",
+  "data_tree_bytes": 55172,
+  "database_bytes": 36864,
+  "database_sha256": "d09960799472da6a6f91547566c507d8aee1ae6df7c174e132064cef3326a73b",
+  "expected_fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+  "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+  "package_file_sha256": {
+    "action.py": "fb0565c182158dc99ccfde454b2ffa5c2b42d61e856f4ddfb94d81703f2b38ca",
+    "package.yaml": "66137ac8c68313e7e6707b09cf778dbc49174b047756a8d26e35c3a3d8aeba38"
+  }
+}

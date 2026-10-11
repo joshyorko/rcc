@@ -1,0 +1,18 @@
+{"event": "stage_start", "monotonic_ns": 26459686732368, "stage": "warm_pool_construct_and_prewarm"}
+{"counts": {"idle": 1, "running": 0}, "event": "stage_end", "monotonic_ns": 26460487225444, "stage": "warm_pool_construct_and_prewarm", "wall_ns": 800145839}
+{"call": 1, "event": "warm_call_start", "monotonic_ns": 26460491525744}
+{"call": 1, "event": "warm_call_end", "idle_interval_ns": 500126843, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26461719772415, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 726972056, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call": 2, "event": "warm_call_start", "monotonic_ns": 26461725195839}
+{"call": 2, "event": "warm_call_end", "idle_interval_ns": 500141095, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26462290038960, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 64584778, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call": 3, "event": "warm_call_start", "monotonic_ns": 26462295250893}
+{"call": 3, "event": "warm_call_end", "idle_interval_ns": 500166264, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26462850936247, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 55219427, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call": 4, "event": "warm_call_start", "monotonic_ns": 26462856188802}
+{"call": 4, "event": "warm_call_end", "idle_interval_ns": 500121185, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26463410226347, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 54255234, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call": 5, "event": "warm_call_start", "monotonic_ns": 26463415723453}
+{"call": 5, "event": "warm_call_end", "idle_interval_ns": 500122477, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26463971142263, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 55573803, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call": 6, "event": "warm_call_start", "monotonic_ns": 26463977414083}
+{"call": 6, "event": "warm_call_end", "idle_interval_ns": 0, "lease_id": "ad77a4d62614e3f65026a4b82bb8c895", "lease_sha256": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b", "monotonic_ns": 26464031872354, "result": {"message": "", "result": "rcc-v18.19.3", "status": "PASS"}, "return_code": 0, "wall_ns": 55959577, "worker_pid": 264655, "wrapper_pid": 264639}
+{"call_count": 6, "event": "warm_session_end", "monotonic_ns": 26464031936562, "wall_ns": 3544637807}
+{"event": "cleanup_start", "monotonic_ns": 26464041874492, "wall_deadline_seconds": 10}
+{"acceptance": "verified", "event": "cleanup_end", "monotonic_ns": 26464559404926}
+{"event": "worker_finished", "monotonic_ns": 26464573461342, "status": "passed_actions_and_warm_reuse"}

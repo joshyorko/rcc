@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/88ec62ec.json",
+      "bytes": 454784651,
+      "sha256": "7c606c13d8f4f044c439c9e7a3bb9314b78094b866ce8d71976cff2761db3290"
+    },
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/eb045dd1.json",
+      "bytes": 190586023,
+      "sha256": "b1849fbf4f4c6a7ea756b08df7b4e95720d8cd703149c98a629e56da80fc6c49"
+    },
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/88ec62ec.solv",
+      "bytes": 207817382,
+      "sha256": "f3ceaa352f2fdd698c9545779b2d5a3146ff4b8389ea2518edbdf80340c07808"
+    },
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/eb045dd1.solv",
+      "bytes": 100721991,
+      "sha256": "5bd0c275765aafae9d7d6a172224d9e6068ae8e26b5dd58dc2c514b0ebf453a2"
+    }
+  ],
+  "scope": "Post-control cache identity, no mutation. Upstream JSON refresh is distinguished from solver regeneration."
+}

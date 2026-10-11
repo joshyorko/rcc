@@ -1,0 +1,19 @@
+{
+  "after_move": {
+    "mtime_ns": 1791688235410612586,
+    "original_path_absent": true,
+    "preserved_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv",
+    "sha256": "90960e2dfca270d8f9558cec05ee735595d0106ddf1deb18915ff6b3cc8987d7",
+    "size_bytes": 180576256
+  },
+  "before_move": {
+    "mode_octal": "0o600",
+    "mtime_ns": 1791688235410612586,
+    "mtime_utc": "2026-10-11T03:10:35Z",
+    "original_path": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/88ec62ec.solv",
+    "preserved_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv",
+    "sha256": "90960e2dfca270d8f9558cec05ee735595d0106ddf1deb18915ff6b3cc8987d7",
+    "size_bytes": 180576256
+  },
+  "operation": "atomic same-filesystem os.replace; no deletion; libmamba may regenerate solver from unchanged JSON"
+}

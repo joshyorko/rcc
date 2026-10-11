@@ -1,0 +1,7 @@
+{
+  "action": "terminate",
+  "after_status": 0,
+  "before_status": null,
+  "pid": 263790,
+  "psutil_status": "not-running"
+}

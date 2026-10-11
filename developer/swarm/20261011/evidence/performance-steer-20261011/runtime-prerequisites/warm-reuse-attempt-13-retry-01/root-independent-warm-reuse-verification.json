@@ -1,0 +1,117 @@
+{
+  "checkedAt": "2026-10-11T03:44:41Z",
+  "result": "verified_stable3_warm_reuse_single_control",
+  "source": {
+    "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+    "actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+    "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+    "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+    "rcc_path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+    "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428"
+  },
+  "rawEvidenceHashes": {
+    "consumer_worker.py": "1968712a8988404bad8cc797520766117739e05039d727b4d56884a5eeeea092",
+    "run_consumer.py": "cdbdd76ea7880a2cd0f07eaabbc6fd90ed058f7fe61b56d15a5960f62def7c36",
+    "consumer-result.json": "47d57ed016e1ab6135530d8b04469b514b79aecab51dc842821754404a0dcaa9",
+    "supervisor-result.json": "e284447ecde940cdb85305c87468befa3810e0926c5c540b0bec3e88c285af57",
+    "consumer-events.jsonl": "84ab7182f7e256d036f2b5b9323cd173bf3da6c947f230cb8edc9a3eecfedfb3",
+    "harness-manifest.json": "f81211337f48757c48ced35f6c7bf7a0032adb89f0a38eed5160e6d43538c349",
+    "preflight.json": "9b88ae21fbd40ecb16447315d3dae7b1b01aeb92f965352f5801940e594c69a8"
+  },
+  "actualResults": [
+    {
+      "call": 1,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    },
+    {
+      "call": 2,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    },
+    {
+      "call": 3,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    },
+    {
+      "call": 4,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    },
+    {
+      "call": 5,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    },
+    {
+      "call": 6,
+      "bytes": 59,
+      "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+    }
+  ],
+  "numericWorkerAndSupervisorExit": 0,
+  "poolConstructorPrewarmWallNs": 800145839,
+  "runActionApiWallsNs": [
+    682014011,
+    13637661,
+    12835514,
+    12285249,
+    12506936,
+    12496951
+  ],
+  "fiveWarmApiMedianNs": 12506936,
+  "instrumentedContextWallsNs": [
+    726972056,
+    64584778,
+    55219427,
+    54255234,
+    55573803,
+    55959577
+  ],
+  "contextIncludes": "obtain, diagnostic identity/lease checks, run_action and return; not pure API latency",
+  "sameWorkerAcrossSixCalls": {
+    "wrapperPid": 264639,
+    "wrapperCreateTime": 1791690163.71,
+    "pythonPid": 264655,
+    "pythonCreateTime": 1791690164.37,
+    "generation": 0,
+    "handleObjectId": 140516205375856,
+    "leaseId": "ad77a4d62614e3f65026a4b82bb8c895",
+    "leaseObservedRawHash": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+    "leaseOwnerStartTicksReconstructedFromSampledCreateTime": 2645971
+  },
+  "leaseEvidenceLimit": "live lease metadata/hash was captured by source-checked observer; raw live JSON was not separately preserved and cannot be independently rehashed by root. Actual disposal receipt and result files were independently read.",
+  "actualReceiptSha256": "5bc72941f9689b681ee8a094138d8dfa097bfab28dc9771d953744c3a8b413dc",
+  "receiptStatus": "failed",
+  "receiptExitCode": -1,
+  "teardownScope": "intentional dispose after six successful calls; wrapper return 0, lease gone, every sampled identity gone",
+  "remainingRecordedProcesses": [],
+  "sampledTreeRssSumBytes": 146882560,
+  "sampledIndividualRssBytes": 52645888,
+  "rssLimit": "sampled, not peak; tree sum may double-count shared pages",
+  "cpuLimit": "stage deltas cover surviving/new processes and observer; exited child CPU omitted",
+  "outerWallNsIncludingSetupAndCleanup": 8962302050,
+  "ownedFootprintBytes": {
+    "checkout": 1805776433,
+    "combined": 2411292739,
+    "complete_runtime_prerequisites_evidence": 583233904,
+    "rcc_binary": 22282402
+  },
+  "finalFreeBytes": 2879393792,
+  "limits": {
+    "disk_scan_interval_seconds": 0.2,
+    "disk_scan_scope": "run directory plus shared attempt-12 consumer home, with fixed checkout+entire evidence tree+RCC binary baseline measured before run",
+    "hard_total_bytes": 2576980377,
+    "minimum_free_bytes": 2684354560,
+    "process_sample_interval_seconds": 0.1,
+    "stage_timeout_seconds": 180,
+    "stop_total_bytes": 2523293286,
+    "total_timeout_seconds": 300
+  },
+  "sourceMutationRootGitDiff": false,
+  "qualification": "warm-only supported external community control, not current221 controller or candidate6 acceptance; no controlled optimization comparison",
+  "rootVerificationSetupCorrection": "Initial root literal source-pattern assertion used run_action_start_ns; actual source uses action_started. Source was inspected and the correct immediate timer boundary verified; runtime files were not changed."
+}

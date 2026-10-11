@@ -1,0 +1,65 @@
+{
+  "argv": [
+    "/workspace/work/rcc-swarm/actions-performance-20261011/action_server/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-s",
+    "--basetemp",
+    "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/pytest-basetemp",
+    "-p",
+    "runtime_probe_attempt10",
+    "tests/action_server_tests/test_rcc_runtime_adapter.py::test_real_rcc_artifact_action_vertical"
+  ],
+  "checkout_and_evidence_disk_limit_bytes": 2576980377,
+  "checkout_and_evidence_disk_stop_threshold_bytes": 2362232012,
+  "cwd": "/workspace/work/rcc-swarm/actions-performance-20261011/action_server",
+  "disk_scan_interval_seconds": 1.0,
+  "disk_scan_overshoot_allowance_bytes": 214748365,
+  "environment": {
+    "ACTIONS_REAL_RCC_ARTIFACT_TEST": "1",
+    "ACTIONS_RUNTIME_PERF_EVENT_FILE": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/events.jsonl",
+    "ACTIONS_RUNTIME_RCC_BINARY": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+    "ACTIONS_RUNTIME_RCC_COMMANDS_DIR": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/rcc-commands",
+    "ACTIONS_RUNTIME_RCC_PROVIDER": "http://127.0.0.1:39337",
+    "PYTHONPATH": "/workspace/work/rcc-swarm/actions-performance-20261011/action_server/src:/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10",
+    "RCC_HOLOTREE_MODE": "private",
+    "ROBOCORP_HOME": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05",
+    "TMPDIR": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/tmp"
+  },
+  "environment_preparation_mode": "recovery using attempt-05 private home and cached repodata/solver state; not a cold baseline",
+  "observer_sha256": "b60ca09e495f0b89a9f60fc5552dcaff15951e8c51e90e6d4e63d0471fe270fa",
+  "preexisting_home_cache_files": [
+    {
+      "relative_path": "pkgs/cache/88ec62ec.json",
+      "size_bytes": 454784651
+    },
+    {
+      "relative_path": "pkgs/cache/88ec62ec.solv",
+      "size_bytes": 207817382
+    },
+    {
+      "relative_path": "pkgs/cache/88ec62ec.state.json",
+      "size_bytes": 374
+    },
+    {
+      "relative_path": "pkgs/cache/cache.lock",
+      "size_bytes": 0
+    },
+    {
+      "relative_path": "pkgs/cache/eb045dd1.json",
+      "size_bytes": 190586023
+    },
+    {
+      "relative_path": "pkgs/cache/eb045dd1.solv",
+      "size_bytes": 100721991
+    },
+    {
+      "relative_path": "pkgs/cache/eb045dd1.state.json",
+      "size_bytes": 372
+    }
+  ],
+  "process_sample_interval_seconds": 0.1,
+  "runner_sha256": "c14c4d912b6815f700cbf7625496c68637d9ec082acef5e7ecf0f54c607399ee",
+  "timeout_seconds": 900
+}

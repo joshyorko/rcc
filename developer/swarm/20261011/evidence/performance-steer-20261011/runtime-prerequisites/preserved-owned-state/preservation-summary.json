@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "exitCode": 0,
+  "processFdCwdRootScan": "no other process references either exact target path",
+  "initialFreeBytes": 3441954816,
+  "finalFreeBytes": 3259990016,
+  "archiveTotalBytes": 181941152,
+  "archiveCapBytes": 209715200,
+  "freeSpaceFloorBytes": 2684354560,
+  "archives": [
+    {
+      "at": "2026-10-11T03:17:34.579191+00:00",
+      "original": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-04",
+      "archive": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/preserved-owned-state/runtime-home-attempt-04.tar.gz",
+      "archiveSha256": "40158655601a880f00209250e27361d105a996c36b20b76781c63c1b083dd8f4",
+      "archiveBytes": 139106558,
+      "manifest": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/preserved-owned-state/runtime-home-attempt-04-manifest.json",
+      "manifestSha256": "63f4713970c5b2bdd275eabc93f9bd2b6dbc2cd24cdf9d28440b46865dc02d03",
+      "entries": 38,
+      "regularFiles": 16,
+      "directories": 22,
+      "symlinks": 0,
+      "livePathReferences": 0,
+      "archiveEntryContentLinkModeMtimeVerified": true,
+      "secondSourceScanMatchesManifest": true,
+      "originalRemoved": false,
+      "sourceBinding": "Historical completed state only; no source rebinding."
+    },
+    {
+      "at": "2026-10-11T03:17:36.771476+00:00",
+      "original": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv",
+      "archive": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/preserved-owned-state/88ec62ec-solv.tar.gz",
+      "archiveSha256": "a391cc9416b485a834daeb321712944a84f1e755f4ff9532507def6874732ae1",
+      "archiveBytes": 42834594,
+      "manifest": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/preserved-owned-state/88ec62ec-solv-manifest.json",
+      "manifestSha256": "6966c067801b0c41059e4469b1eeed79a597e09511370273be5926a1f224bc0d",
+      "entries": 1,
+      "regularFiles": 1,
+      "directories": 0,
+      "symlinks": 0,
+      "livePathReferences": 0,
+      "archiveEntryContentLinkModeMtimeVerified": true,
+      "secondSourceScanMatchesManifest": true,
+      "originalRemoved": false,
+      "sourceBinding": "Historical completed state only; no source rebinding."
+    }
+  ],
+  "originalsRemainInPlace": true
+}

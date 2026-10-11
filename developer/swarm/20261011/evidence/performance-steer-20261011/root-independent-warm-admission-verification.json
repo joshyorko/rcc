@@ -1,0 +1,387 @@
+{
+  "numericVerificationExit": 0,
+  "sourceOnly": true,
+  "claimsVerified": 33,
+  "reportSha256": "83579246fc1967b3883fed5b4d97cdd926bc11eccd098f71b861a8a9cb652ae7",
+  "claims": [
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        685,
+        697
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        734,
+        747
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        914,
+        932
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        989,
+        1014
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        1079,
+        1121
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        646,
+        682
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        537,
+        571
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        240,
+        277
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        365,
+        399
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_actions_process_pool.py",
+      "sha256": "263e3527fcbb78967f600350ddc6b7b43794fad82d58e5f9e28669f40dce2126",
+      "lines": [
+        852,
+        860
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        369,
+        385
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        399,
+        418
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        456,
+        468
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_settings.py",
+      "sha256": "9fb2c9333c813412e4fbd093664910a4601c8b6994db6577f582c66b49746f72",
+      "lines": [
+        282,
+        303
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_preload_actions/preload_actions_server_main.py",
+      "sha256": "7145fc6ee59929e9f2627679fff334088915690b90394063a98c0335a854ee4d",
+      "lines": [
+        178,
+        255
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_common/process.py",
+      "sha256": "cd5ca0d65c2d076ccebb669a61f60b5c7771c25d8d9689ae507a327ee2fae227",
+      "lines": [
+        381,
+        414
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_models.py",
+      "sha256": "d31d3919f176327308f6b82d119a58c96fa010d403f2b6eec3e0ff23d4640e43",
+      "lines": [
+        80,
+        105
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/execute.go",
+      "sha256": "2c03a4f3d3d215d6dd7cac08bdaf52299c894663c07af163c157f4da843e7a66",
+      "lines": [
+        108,
+        180
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/lease.go",
+      "sha256": "6ba204bbbfe2f87e3e757b045e8fa355e5656bedc3ca843d84dc7dd7a6c47b51",
+      "lines": [
+        47,
+        50
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/lease.go",
+      "sha256": "6ba204bbbfe2f87e3e757b045e8fa355e5656bedc3ca843d84dc7dd7a6c47b51",
+      "lines": [
+        90,
+        119
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/lease.go",
+      "sha256": "6ba204bbbfe2f87e3e757b045e8fa355e5656bedc3ca843d84dc7dd7a6c47b51",
+      "lines": [
+        153,
+        172
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/record.go",
+      "sha256": "3a06628d9ad773f367fec26a7e8d9a15ccde69f618edbf07affbd1f8e29b5a53",
+      "lines": [
+        65,
+        67
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "cmd/environmentExec.go",
+      "sha256": "1e62d683fc6d8b4fb7b43add6530dcc9188fc69a435b764d09bc2d68d4b3a1f2",
+      "lines": [
+        94,
+        138
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_action_package_handler.py",
+      "sha256": "b720af1f5fbaeaed806e1e08e16b1d33f61b80be615deda6ae2b49e10a2ef5c2",
+      "lines": [
+        233,
+        248
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        179,
+        193
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        217,
+        238
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "lines": [
+        241,
+        276
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_rcc.py",
+      "sha256": "74a0646de66d3bfb5a30339080a37c5dc0f79b2e0ab46b7c16a6c19717e6d41b",
+      "lines": [
+        33,
+        54
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "path": "action_server/src/actions/server/_robo_utils/process.py",
+      "sha256": "b2480adb49fca1cbef69dd49c7487f2b25180b97be8e17baad5b2b01320a0da1",
+      "lines": [
+        164,
+        194
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "cmd/environmentAcquire.go",
+      "sha256": "9b743dd8864314ae30bd890efb5702c7c831223a5b71d6a3524ea2bbcf600caf",
+      "lines": [
+        102,
+        113
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "4148c2b71705c9d2baf0e88b48d08a79cb7bda0f",
+      "path": "environmentlifecycle/materialize.go",
+      "sha256": "e633b399951bc0c7336fcd147a0fafaea79f7a24d51d448d405e13dc927b2833",
+      "lines": [
+        259,
+        278
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "65abc1efe7879ffc325f84841b9630f05b8a5b11cdc3a32728daf7df7091edcb",
+      "lines": [
+        90,
+        114
+      ],
+      "verified": true
+    },
+    {
+      "repository": "joshyorko/actions",
+      "commit": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "65abc1efe7879ffc325f84841b9630f05b8a5b11cdc3a32728daf7df7091edcb",
+      "lines": [
+        472,
+        499
+      ],
+      "verified": true
+    }
+  ],
+  "actualReleasedBinary": {
+    "path": "ownedtools/rcc-v18.19.3",
+    "sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "goBuildMetadata": "ownedtools/rcc-v18.19.3: go1.26.5\n\tpath\tgithub.com/joshyorko/rcc/cmd/rcc\n\tmod\tgithub.com/joshyorko/rcc\tv0.0.0-20260828155414-4148c2b71705+dirty\t\n\tdep\tgithub.com/dchest/siphash\tv1.2.3\th1:QXwFc8cFOR2dSa/gE6o/HokBMWtLUaNDVd+22aKHeEA=\n\tdep\tgithub.com/fsnotify/fsnotify\tv1.9.0\th1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=\n\tdep\tgithub.com/go-viper/mapstructure/v2\tv2.4.0\th1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=\n\tdep\tgithub.com/google/shlex\tv0.0.0-20191202100458-e7afc7fbc510\th1:El6M4kTTCOh6aBiKaUGG7oYTSPP8MxqL4YI3kZKwcP4=\n\tdep\tgithub.com/mattn/go-isatty\tv0.0.24\th1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=\n\tdep\tgithub.com/mitchellh/go-ps\tv1.0.0\th1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=\n\tdep\tgithub.com/pelletier/go-toml/v2\tv2.2.4\th1:mye9XuhQ6gvn5h28+VilKrrPoQVanw5PMw/TB0t5Ec4=\n\tdep\tgithub.com/sagikazarmark/locafero\tv0.11.0\th1:1iurJgmM9G3PA/I+wWYIOw/5SyBtxapeHDcg+AAIFXc=\n\tdep\tgithub.com/sourcegraph/conc\tv0.3.1-0.20240121214520-5f936abd7ae8\th1:+jumHNA0Wrelhe64i8F6HNlS8pkoyMv5sreGx2Ry5Rw=\n\tdep\tgithub.com/spf13/afero\tv1.15.0\th1:b/YBCLWAJdFWJTN9cLhiXXcD7mzKn9Dm86dNnfyQw1I=\n\tdep\tgithub.com/spf13/cast\tv1.10.0\th1:h2x0u2shc1QuLHfxi+cTJvs30+ZAHOGRic8uyGTDWxY=\n\tdep\tgithub.com/spf13/cobra\tv1.10.2\th1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=\n\tdep\tgithub.com/spf13/pflag\tv1.0.10\th1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=\n\tdep\tgithub.com/spf13/viper\tv1.21.0\th1:x5S+0EU27Lbphp4UKm1C+1oQO+rKx36vfCoaVebLFSU=\n\tdep\tgithub.com/subosito/gotenv\tv1.6.0\th1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.4\th1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=\n\tdep\tgolang.org/x/sys\tv0.47.0\th1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=\n\tdep\tgolang.org/x/term\tv0.45.0\th1:NwWyBmoJCbfTHpxrWoZ9C6/VxOf7ic219I8xZZFdrf0=\n\tdep\tgolang.org/x/text\tv0.28.0\th1:rhazDwis8INMIwQ4tpjLDzUhx6RlXqZNPEM0huQojng=\n\tdep\tgopkg.in/yaml.v2\tv2.4.0\th1:D8xgwECY7CYvx+Y2n4sBz93Jn9JRvxdiyyo8CTfuKaY=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-ldflags=-s\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n\tbuild\tvcs=git\n\tbuild\tvcs.revision=4148c2b71705c9d2baf0e88b48d08a79cb7bda0f\n\tbuild\tvcs.time=2026-08-28T15:54:14Z\n\tbuild\tvcs.modified=true\n",
+    "limit": "Official downloaded v18.19.3 binary embeds vcs.modified=true. Tagged source is a structural reference; no clean or exact source equivalence is asserted."
+  },
+  "noRuntimeAdmissionFromThisCheck": true,
+  "rccTaggedSourceGitVerified": [
+    "environmentlifecycle/execute.go",
+    "environmentlifecycle/lease.go",
+    "environmentlifecycle/record.go",
+    "cmd/environmentExec.go",
+    "cmd/environmentAcquire.go",
+    "environmentlifecycle/materialize.go"
+  ],
+  "sourceTree": "f22a95374682bca13d0d47b3813aec380e6ae213"
+}

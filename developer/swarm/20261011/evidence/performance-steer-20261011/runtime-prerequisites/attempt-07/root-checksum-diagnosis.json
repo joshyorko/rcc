@@ -1,0 +1,290 @@
+{
+  "numericVerificationExit": 0,
+  "conclusion": "All 38 logged checksum failures (19 packages over two tries) have actual hashes equal to preserved JSON metadata and expected hashes unequal. Inconsistent solver state is a hypothesis pending regeneration, not proven SIGTERM causality.",
+  "stderrSha256": "82ac5cc66fe065f77c0e9672d4a076f53c4ea453c83b96297c55fa4326cfd27c",
+  "json": {
+    "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/88ec62ec.json",
+    "bytes": 454784651,
+    "sha256": "7c606c13d8f4f044c439c9e7a3bb9314b78094b866ce8d71976cff2761db3290"
+  },
+  "solvFiles": [
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/eb045dd1.solv",
+      "bytes": 100721991,
+      "sha256": "5bd0c275765aafae9d7d6a172224d9e6068ae8e26b5dd58dc2c514b0ebf453a2"
+    },
+    {
+      "path": "actions-performance-20261011/runtime-home-attempt-05/pkgs/cache/88ec62ec.solv",
+      "bytes": 180576256,
+      "sha256": "90960e2dfca270d8f9558cec05ee735595d0106ddf1deb18915ff6b3cc8987d7"
+    }
+  ],
+  "checks": [
+    {
+      "package": "libsqlite-3.54.0-h0737f62_101.conda",
+      "expected": "21560b0022560b0023560b0024560b0025560b0026560b0027560b0028560b00",
+      "actual": "b4d5d4428bd1931eede11d2d69389c5b9d396a7f3c8df9d7c39c9efd80761eb3",
+      "metadataSha256": "b4d5d4428bd1931eede11d2d69389c5b9d396a7f3c8df9d7c39c9efd80761eb3",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libgcc-16.2.0-ha9f2e26_7.conda",
+      "expected": "8c570b008d570b008e570b008f570b0090570b0091570b0092570b0093570b00",
+      "actual": "e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea",
+      "metadataSha256": "e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "ncurses-6.6-hdb14827_1.conda",
+      "expected": "8b570b008c570b008d570b008e570b008f570b0090570b0091570b0092570b00",
+      "actual": "5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3",
+      "metadataSha256": "5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda",
+      "expected": "12bd9a3f089ee6c9266a37dab82afabd18335a698559cdbcd86150a48bf54ba6",
+      "actual": "901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28",
+      "metadataSha256": "901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "openssl-3.6.5-h781a0a9_0.conda",
+      "expected": "73a7e3d226d84263324dc6c34be8d488fb5311b904bd54cbc962f093352682a6",
+      "actual": "9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c",
+      "metadataSha256": "9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "tk-8.6.13-noxft_h1df4ec4_4.conda",
+      "expected": "0d570b000e570b000f570b0010570b0011570b0012570b0013570b0014570b00",
+      "actual": "a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1",
+      "metadataSha256": "a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "bzip2-1.0.8-hda65f42_10.conda",
+      "expected": "0a3857b8bc2881aaf243b447ba3d2931a512f340ee988d6051bd8c4c04e0935d",
+      "actual": "1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96",
+      "metadataSha256": "1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "readline-8.3-hd6e31c0_1.conda",
+      "expected": "f676c0aed55902139a4a38280ab7eecfd7a259a4449c335112e5ab65d612fc17",
+      "actual": "01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d",
+      "metadataSha256": "01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libgomp-16.2.0-he0feb66_7.conda",
+      "expected": "90b812a9dcd8cdfb589a40d9a25bf962d3054911d2c5261a42aeee580f0c1f22",
+      "actual": "92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758",
+      "metadataSha256": "92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "zstd-1.5.7-hb78ec9c_7.conda",
+      "expected": "8e7b0a008f7b0a00907b0a00917b0a00927b0a00937b0a00947b0a00957b0a00",
+      "actual": "47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60",
+      "metadataSha256": "47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libxcrypt-4.4.38-h280c20c_0.conda",
+      "expected": "e5550b00e6550b00e7550b00e8550b00e9550b00ea550b00eb550b00ec550b00",
+      "actual": "f7e9292dd219a6435bbb1223da9586c3e70d66d169c5a92f08db3f2127df04e9",
+      "metadataSha256": "f7e9292dd219a6435bbb1223da9586c3e70d66d169c5a92f08db3f2127df04e9",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libexpat-2.8.5-hd2095e1_0.conda",
+      "expected": "20580b0021580b0022580b0023580b0024580b0025580b0026580b0027580b00",
+      "actual": "6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0",
+      "metadataSha256": "6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "liblzma-5.8.3-hb03c661_1.conda",
+      "expected": "f190898e8238de48ab74e392028faa03c3b09b2378d35bbc72bbbe2a47c11240",
+      "actual": "9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab",
+      "metadataSha256": "9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libffi-3.7.0-h81df57d_1.conda",
+      "expected": "a87b0a00a97b0a00aa7b0a00ab7b0a00ac7b0a00ad7b0a00ae7b0a00af7b0a00",
+      "actual": "c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106",
+      "metadataSha256": "c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libzlib-1.3.2-h25fd6f3_3.conda",
+      "expected": "d27b0a00d37b0a00d47b0a00d57b0a00d67b0a00d77b0a00d87b0a00d97b0a00",
+      "actual": "eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736",
+      "metadataSha256": "eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libnsl-2.0.1-hb9d3cd8_1.conda",
+      "expected": "1ccc5c893f201061448553046f11e36c2d00013a32ae9e484f189e1a4d3c93db",
+      "actual": "927fe72b054277cde6cb82597d0fcf6baf127dcbce2e0a9d8925a68f1265eef5",
+      "metadataSha256": "927fe72b054277cde6cb82597d0fcf6baf127dcbce2e0a9d8925a68f1265eef5",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "_openmp_mutex-4.5-20_gnu.conda",
+      "expected": "65570b0066570b0067570b0068570b0069570b006a570b006b570b006c570b00",
+      "actual": "1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+      "metadataSha256": "1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libuuid-2.42.4-hcfc3c73_0.conda",
+      "expected": "767b0a00777b0a00787b0a00797b0a007a7b0a007b7b0a007c7b0a007d7b0a00",
+      "actual": "f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041",
+      "metadataSha256": "f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "python-3.11.11-h9e4cc4f_2_cpython.conda",
+      "expected": "254359cf928f93172d83985378a013544883c77fd6bff4c15186ed0d283f35ef",
+      "actual": "e0be7ad95a034d10e021f15317bf5c70fc1161564fa47844984c245505cde36c",
+      "metadataSha256": "e0be7ad95a034d10e021f15317bf5c70fc1161564fa47844984c245505cde36c",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libgcc-16.2.0-ha9f2e26_7.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea",
+      "metadataSha256": "e031634c3a928f9594eba868bc46ef5230d6571a364a0c63215b06c4563bfcea",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libsqlite-3.54.0-h0737f62_101.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "b4d5d4428bd1931eede11d2d69389c5b9d396a7f3c8df9d7c39c9efd80761eb3",
+      "metadataSha256": "b4d5d4428bd1931eede11d2d69389c5b9d396a7f3c8df9d7c39c9efd80761eb3",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "openssl-3.6.5-h781a0a9_0.conda",
+      "expected": "73a7e3d226d84263324dc6c34be8d488fb5311b904bd54cbc962f093352682a6",
+      "actual": "9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c",
+      "metadataSha256": "9c1533f1cf784f0e250919c0c9762d0b0e6bc727a79290ffb7cea1ceca1d038c",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "ncurses-6.6-hdb14827_1.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3",
+      "metadataSha256": "5d46557214ed184381dafe835b7c94a474a1c3b307a08a250b1ea4779b44ffb3",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "tk-8.6.13-noxft_h1df4ec4_4.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1",
+      "metadataSha256": "a1a241d172c1ccab067ba245206dd048bc3c2d1b84504b53c9468e99adfc16a1",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "ld_impl_linux-64-2.46.1-default_hbd61a6d_103.conda",
+      "expected": "12bd9a3f089ee6c9266a37dab82afabd18335a698559cdbcd86150a48bf54ba6",
+      "actual": "901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28",
+      "metadataSha256": "901649b1edbe841fd4ee7e2d491a05184ed540eb01cdae506872f344babc1d28",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libgomp-16.2.0-he0feb66_7.conda",
+      "expected": "90b812a9dcd8cdfb589a40d9a25bf962d3054911d2c5261a42aeee580f0c1f22",
+      "actual": "92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758",
+      "metadataSha256": "92a0bb350c7be6a4eedcb4e111c60aefd176018e6b1c009a6e025dbe9bbcd758",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "zstd-1.5.7-hb78ec9c_7.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60",
+      "metadataSha256": "47d682b9f6d6ec9eb1a6e6c3e75ea6273e899e78fb7fc59f81d39745009fbc60",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "readline-8.3-hd6e31c0_1.conda",
+      "expected": "f676c0aed55902139a4a38280ab7eecfd7a259a4449c335112e5ab65d612fc17",
+      "actual": "01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d",
+      "metadataSha256": "01b3fe073a66e321970d09e04b388708f8cbdca5cdfbfcb7c9eeb470ad10383d",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libxcrypt-4.4.38-h280c20c_0.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "f7e9292dd219a6435bbb1223da9586c3e70d66d169c5a92f08db3f2127df04e9",
+      "metadataSha256": "f7e9292dd219a6435bbb1223da9586c3e70d66d169c5a92f08db3f2127df04e9",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "bzip2-1.0.8-hda65f42_10.conda",
+      "expected": "0a3857b8bc2881aaf243b447ba3d2931a512f340ee988d6051bd8c4c04e0935d",
+      "actual": "1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96",
+      "metadataSha256": "1a0d382c515ebf55f8ee1f38c8b81bc95af5c2acc42ad53b66bc5df932032f96",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "liblzma-5.8.3-hb03c661_1.conda",
+      "expected": "f190898e8238de48ab74e392028faa03c3b09b2378d35bbc72bbbe2a47c11240",
+      "actual": "9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab",
+      "metadataSha256": "9787df8c22a59c9a70d3e5a10db9ad663485e75e9ccc3f09bd092cb7b95e0dab",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libexpat-2.8.5-hd2095e1_0.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0",
+      "metadataSha256": "6de73033a7c5f712c9c5a54124e4581e025691029835e5bceaf10a333a7e7bc0",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libuuid-2.42.4-hcfc3c73_0.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041",
+      "metadataSha256": "f34b8d1de9a2bf62476d8608057d9b8a918d97444236dc53a47128f2fae79041",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libffi-3.7.0-h81df57d_1.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106",
+      "metadataSha256": "c8c7583ef063bc3c430f1d48298e5ad24f796a35c22ed5b14183325825a61106",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libzlib-1.3.2-h25fd6f3_3.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736",
+      "metadataSha256": "eb8a0db0aa570124f7d2a93d7c7f596e3390df5e047818d873baad32985fc736",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "libnsl-2.0.1-hb9d3cd8_1.conda",
+      "expected": "1ccc5c893f201061448553046f11e36c2d00013a32ae9e484f189e1a4d3c93db",
+      "actual": "927fe72b054277cde6cb82597d0fcf6baf127dcbce2e0a9d8925a68f1265eef5",
+      "metadataSha256": "927fe72b054277cde6cb82597d0fcf6baf127dcbce2e0a9d8925a68f1265eef5",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "_openmp_mutex-4.5-20_gnu.conda",
+      "expected": "0000000000000000000000000000000000000000000000000000000000000000",
+      "actual": "1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+      "metadataSha256": "1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+      "actualMatchesJson": true
+    },
+    {
+      "package": "python-3.11.11-h9e4cc4f_2_cpython.conda",
+      "expected": "254359cf928f93172d83985378a013544883c77fd6bff4c15186ed0d283f35ef",
+      "actual": "e0be7ad95a034d10e021f15317bf5c70fc1161564fa47844984c245505cde36c",
+      "metadataSha256": "e0be7ad95a034d10e021f15317bf5c70fc1161564fa47844984c245505cde36c",
+      "actualMatchesJson": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "verifiedAtUtc": "2026-10-11T03:17:11.711680+00:00",
+  "numericVerificationExit": 0,
+  "preservedSolverVerified": {
+    "mtime_ns": 1791688235410612586,
+    "original_path_absent": true,
+    "preserved_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv",
+    "sha256": "90960e2dfca270d8f9558cec05ee735595d0106ddf1deb18915ff6b3cc8987d7",
+    "size_bytes": 180576256
+  },
+  "directReplay": {
+    "status": -15,
+    "wall_ns": 8657551318,
+    "diskStop": true,
+    "finalTotalBytes": 2128675031,
+    "hardLimitBytes": 2147483648,
+    "hardHeadroomBytes": 18808617
+  },
+  "actualLogs": [
+    {
+      "stream": "stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stream": "stderr",
+      "bytes": 1312,
+      "sha256": "d36954deb95b27d23be78ff6a08c1c5b7c6dbc2093b133dba6ed0556bc5de6e9"
+    }
+  ],
+  "limit": "Resource-stopped regeneration; no completed publication, no acquire, no Action, and no proven solver repair or interruption causality."
+}

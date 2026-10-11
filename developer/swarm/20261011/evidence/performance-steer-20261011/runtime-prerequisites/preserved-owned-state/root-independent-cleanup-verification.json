@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-11T03:19:53.920236+00:00",
+  "numericVerificationExit": 0,
+  "cleanupReceiptSha256": "677b62d500cc7b0ea8919e4c7ce3163b4d42047b31076da7bfa61ba5d20f4d41",
+  "originalPathsAbsent": [
+    "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-04",
+    "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-08/preserved-cache/88ec62ec.solv"
+  ],
+  "bothArchiveAndManifestHashesVerifiedAfterCleanup": true,
+  "sourceBindingsRetained": true
+}

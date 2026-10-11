@@ -1,0 +1,224 @@
+{
+  "home": {
+    "mode": 488,
+    "mtimeNs": 1791687755064726889,
+    "type": "directory"
+  },
+  "home/bin": {
+    "mode": 448,
+    "mtimeNs": 1791687752267101884,
+    "type": "directory"
+  },
+  "home/hololib": {
+    "mode": 488,
+    "mtimeNs": 1791687752280386829,
+    "type": "directory"
+  },
+  "home/hololib/catalog": {
+    "mode": 488,
+    "mtimeNs": 1791687752280337104,
+    "type": "directory"
+  },
+  "home/hololib/library": {
+    "mode": 488,
+    "mtimeNs": 1791687752280352838,
+    "type": "directory"
+  },
+  "home/hololib/pids": {
+    "mode": 488,
+    "mtimeNs": 1791687754946270120,
+    "type": "directory"
+  },
+  "home/hololib/pids/user___262235___user___262279___agent___global.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754945845947,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/hololib/pids/user___262235___user___262279___agent___robocorp.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754946340136,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/hololib/used": {
+    "mode": 488,
+    "mtimeNs": 1791687752280370084,
+    "type": "directory"
+  },
+  "home/holotree": {
+    "mode": 448,
+    "mtimeNs": 1791687755064726889,
+    "type": "directory"
+  },
+  "home/holotree/global.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754944723426,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/journals": {
+    "mode": 448,
+    "mtimeNs": 1791687752264727223,
+    "type": "directory"
+  },
+  "home/micromamba": {
+    "mode": 448,
+    "mtimeNs": 1791687754946473468,
+    "type": "directory"
+  },
+  "home/micromamba/v2.5.0": {
+    "mode": 448,
+    "mtimeNs": 1791687754948723542,
+    "type": "directory"
+  },
+  "home/micromamba/v2.5.0/micromamba": {
+    "mode": 493,
+    "mtimeNs": 1791687755056726658,
+    "sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+    "size": 17546920,
+    "type": "file"
+  },
+  "home/pipcache": {
+    "mode": 448,
+    "mtimeNs": 1791687752267131699,
+    "type": "directory"
+  },
+  "home/pkgs": {
+    "mode": 448,
+    "mtimeNs": 1791687755080727350,
+    "type": "directory"
+  },
+  "home/pkgs/cache": {
+    "mode": 1533,
+    "mtimeNs": 1791687756600771212,
+    "type": "directory"
+  },
+  "home/pkgs/cache/88ec62ec.json": {
+    "mode": 384,
+    "mtimeNs": 1791687756580770635,
+    "sha256": "b564c7270d82aac6c3a2a32b1c0356c58f301d37fee22ece50fc50dae66bb2d0",
+    "size": 454782873,
+    "type": "file"
+  },
+  "home/pkgs/cache/88ec62ec.json.lock": {
+    "mode": 384,
+    "mtimeNs": 1791687756600771212,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/pkgs/cache/88ec62ec.state.json": {
+    "mode": 384,
+    "mtimeNs": 1791687756600771212,
+    "sha256": "be310b710c94530cc924736935f2942525de02bde4045276ad52f68d81b04bbb",
+    "size": 374,
+    "type": "file"
+  },
+  "home/pkgs/cache/eb045dd1.json": {
+    "mode": 384,
+    "mtimeNs": 1791687755512739817,
+    "sha256": "8696125e9ad775e76d9913cb6f26721651ba35c64d934c73f73fff63cecd40fc",
+    "size": 190584282,
+    "type": "file"
+  },
+  "home/pkgs/cache/eb045dd1.state.json": {
+    "mode": 384,
+    "mtimeNs": 1791687755520740047,
+    "sha256": "245d841c84c53d4931203610e79c130b32619b3b5e705159ee477bbca5149ef5",
+    "size": 372,
+    "type": "file"
+  },
+  "home/pkgs/urls.txt": {
+    "mode": 384,
+    "mtimeNs": 1791687755076727235,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/rcc.yaml": {
+    "mode": 384,
+    "mtimeNs": 1791687754944709013,
+    "sha256": "49ee5185e622686f7bb8906596b48af17f21a3223b39020bce5bdd0a2ea879c9",
+    "size": 61,
+    "type": "file"
+  },
+  "home/rcc.yaml.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754944312006,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/rcccache.yaml": {
+    "mode": 384,
+    "mtimeNs": 1791687752964595878,
+    "sha256": "d18c1020bd589a672fd4e835a35b33f63164663ebdea4f24c24ddf94b836a81f",
+    "size": 42,
+    "type": "file"
+  },
+  "home/rcccache.yaml.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754940723311,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/robocorp.lck": {
+    "mode": 384,
+    "mtimeNs": 1791687754946270120,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "size": 0,
+    "type": "file"
+  },
+  "home/robots": {
+    "mode": 448,
+    "mtimeNs": 1791687752267201004,
+    "type": "directory"
+  },
+  "home/temp": {
+    "mode": 448,
+    "mtimeNs": 1791687755064726889,
+    "type": "directory"
+  },
+  "home/temp/cdf792b82706780a": {
+    "mode": 448,
+    "mtimeNs": 1791687755064726889,
+    "type": "directory"
+  },
+  "home/templates": {
+    "mode": 448,
+    "mtimeNs": 1791687752960666176,
+    "type": "directory"
+  },
+  "home/templates/rcc.json": {
+    "mode": 384,
+    "mtimeNs": 1791687752960666176,
+    "sha256": "fbf3f53357f40463790a9f6b6bd6c9f5e8fcd69ad158831a6620d5d149f4f4de",
+    "size": 9313,
+    "type": "file"
+  },
+  "home/uv": {
+    "mode": 448,
+    "mtimeNs": 1791687752267229117,
+    "type": "directory"
+  },
+  "home/uvcache": {
+    "mode": 448,
+    "mtimeNs": 1791687752267117207,
+    "type": "directory"
+  },
+  "home/uvpython": {
+    "mode": 448,
+    "mtimeNs": 1791687752267242217,
+    "type": "directory"
+  },
+  "home/wheels": {
+    "mode": 448,
+    "mtimeNs": 1791687752267185391,
+    "type": "directory"
+  }
+}

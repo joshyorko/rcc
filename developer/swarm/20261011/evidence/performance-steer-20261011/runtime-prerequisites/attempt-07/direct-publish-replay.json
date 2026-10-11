@@ -1,0 +1,475 @@
+{
+  "binary_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+  "binary_version": "v18.19.3",
+  "command": [
+    "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+    "env",
+    "publish",
+    "--environment",
+    "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-06/pytest-basetemp/test_real_rcc_artifact_action_0/package/package.yaml",
+    "--json",
+    "--provider",
+    "http://127.0.0.1:34711"
+  ],
+  "disk_scans": [
+    {
+      "dynamic_bytes": 956652686,
+      "estimated_total_bytes": 1732857378,
+      "monotonic_ns": 24527300705872
+    },
+    {
+      "dynamic_bytes": 956652686,
+      "estimated_total_bytes": 1732857378,
+      "monotonic_ns": 24528384064396
+    },
+    {
+      "dynamic_bytes": 956652686,
+      "estimated_total_bytes": 1732857378,
+      "monotonic_ns": 24529480198143
+    },
+    {
+      "dynamic_bytes": 992713388,
+      "estimated_total_bytes": 1768918080,
+      "monotonic_ns": 24530570486897
+    },
+    {
+      "dynamic_bytes": 956666491,
+      "estimated_total_bytes": 1732871183,
+      "monotonic_ns": 24531641949859
+    },
+    {
+      "dynamic_bytes": 956666491,
+      "estimated_total_bytes": 1732871183,
+      "monotonic_ns": 24532720802426
+    },
+    {
+      "dynamic_bytes": 956666491,
+      "estimated_total_bytes": 1732871183,
+      "monotonic_ns": 24533793106233
+    },
+    {
+      "dynamic_bytes": 960741959,
+      "estimated_total_bytes": 1736946651,
+      "monotonic_ns": 24534865896905
+    }
+  ],
+  "disk_stop": false,
+  "environment": {
+    "RCC_HOLOTREE_MODE": "private",
+    "ROBOCORP_HOME": "/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05",
+    "TMPDIR": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-07/tmp"
+  },
+  "final_total_bytes": 1732890014,
+  "initial_dynamic_bytes": 956651300,
+  "initial_total_bytes": 1732855992,
+  "limit_bytes": 2147483648,
+  "mode": "direct exact-command replay only; no pytest replay",
+  "package_file_sha256": "66137ac8c68313e7e6707b09cf778dbc49174b047756a8d26e35c3a3d8aeba38",
+  "prior_attempt": "attempt-06 failed inside adapter publish; package file preserved",
+  "process_samples": [
+    {
+      "monotonic_ns": 24526221430120,
+      "sampled_tree_rss_sum_bytes": 12427264
+    },
+    {
+      "monotonic_ns": 24526326523810,
+      "sampled_tree_rss_sum_bytes": 53563392
+    },
+    {
+      "monotonic_ns": 24526431984787,
+      "sampled_tree_rss_sum_bytes": 127397888
+    },
+    {
+      "monotonic_ns": 24526537306433,
+      "sampled_tree_rss_sum_bytes": 205750272
+    },
+    {
+      "monotonic_ns": 24526642338489,
+      "sampled_tree_rss_sum_bytes": 283488256
+    },
+    {
+      "monotonic_ns": 24526747316394,
+      "sampled_tree_rss_sum_bytes": 328376320
+    },
+    {
+      "monotonic_ns": 24526852433220,
+      "sampled_tree_rss_sum_bytes": 369721344
+    },
+    {
+      "monotonic_ns": 24526958556703,
+      "sampled_tree_rss_sum_bytes": 410624000
+    },
+    {
+      "monotonic_ns": 24527063763946,
+      "sampled_tree_rss_sum_bytes": 449433600
+    },
+    {
+      "monotonic_ns": 24527169062222,
+      "sampled_tree_rss_sum_bytes": 485404672
+    },
+    {
+      "monotonic_ns": 24527274611183,
+      "sampled_tree_rss_sum_bytes": 494981120
+    },
+    {
+      "monotonic_ns": 24527400862987,
+      "sampled_tree_rss_sum_bytes": 499638272
+    },
+    {
+      "monotonic_ns": 24527506804123,
+      "sampled_tree_rss_sum_bytes": 500703232
+    },
+    {
+      "monotonic_ns": 24527613256534,
+      "sampled_tree_rss_sum_bytes": 502759424
+    },
+    {
+      "monotonic_ns": 24527719416030,
+      "sampled_tree_rss_sum_bytes": 511078400
+    },
+    {
+      "monotonic_ns": 24527827529640,
+      "sampled_tree_rss_sum_bytes": 512380928
+    },
+    {
+      "monotonic_ns": 24527933314317,
+      "sampled_tree_rss_sum_bytes": 515899392
+    },
+    {
+      "monotonic_ns": 24528039470858,
+      "sampled_tree_rss_sum_bytes": 520146944
+    },
+    {
+      "monotonic_ns": 24528144827997,
+      "sampled_tree_rss_sum_bytes": 526114816
+    },
+    {
+      "monotonic_ns": 24528250607888,
+      "sampled_tree_rss_sum_bytes": 527396864
+    },
+    {
+      "monotonic_ns": 24528358032862,
+      "sampled_tree_rss_sum_bytes": 538484736
+    },
+    {
+      "monotonic_ns": 24528484285176,
+      "sampled_tree_rss_sum_bytes": 547115008
+    },
+    {
+      "monotonic_ns": 24528589529254,
+      "sampled_tree_rss_sum_bytes": 423272448
+    },
+    {
+      "monotonic_ns": 24528694687256,
+      "sampled_tree_rss_sum_bytes": 399835136
+    },
+    {
+      "monotonic_ns": 24528802456503,
+      "sampled_tree_rss_sum_bytes": 401723392
+    },
+    {
+      "monotonic_ns": 24528910011085,
+      "sampled_tree_rss_sum_bytes": 423936000
+    },
+    {
+      "monotonic_ns": 24529017030494,
+      "sampled_tree_rss_sum_bytes": 431345664
+    },
+    {
+      "monotonic_ns": 24529124057035,
+      "sampled_tree_rss_sum_bytes": 471347200
+    },
+    {
+      "monotonic_ns": 24529231463161,
+      "sampled_tree_rss_sum_bytes": 509317120
+    },
+    {
+      "monotonic_ns": 24529338631647,
+      "sampled_tree_rss_sum_bytes": 526524416
+    },
+    {
+      "monotonic_ns": 24529446114900,
+      "sampled_tree_rss_sum_bytes": 533278720
+    },
+    {
+      "monotonic_ns": 24529580383209,
+      "sampled_tree_rss_sum_bytes": 549408768
+    },
+    {
+      "monotonic_ns": 24529687628541,
+      "sampled_tree_rss_sum_bytes": 549871616
+    },
+    {
+      "monotonic_ns": 24529796121355,
+      "sampled_tree_rss_sum_bytes": 550072320
+    },
+    {
+      "monotonic_ns": 24529904814543,
+      "sampled_tree_rss_sum_bytes": 550072320
+    },
+    {
+      "monotonic_ns": 24530011901566,
+      "sampled_tree_rss_sum_bytes": 208039936
+    },
+    {
+      "monotonic_ns": 24530119100167,
+      "sampled_tree_rss_sum_bytes": 209453056
+    },
+    {
+      "monotonic_ns": 24530226618654,
+      "sampled_tree_rss_sum_bytes": 209260544
+    },
+    {
+      "monotonic_ns": 24530333978931,
+      "sampled_tree_rss_sum_bytes": 209334272
+    },
+    {
+      "monotonic_ns": 24530441461127,
+      "sampled_tree_rss_sum_bytes": 209580032
+    },
+    {
+      "monotonic_ns": 24530546898087,
+      "sampled_tree_rss_sum_bytes": 209604608
+    },
+    {
+      "monotonic_ns": 24530670614460,
+      "sampled_tree_rss_sum_bytes": 209604608
+    },
+    {
+      "monotonic_ns": 24530775666938,
+      "sampled_tree_rss_sum_bytes": 32665600
+    },
+    {
+      "monotonic_ns": 24530882158056,
+      "sampled_tree_rss_sum_bytes": 55984128
+    },
+    {
+      "monotonic_ns": 24530987190273,
+      "sampled_tree_rss_sum_bytes": 122564608
+    },
+    {
+      "monotonic_ns": 24531092400219,
+      "sampled_tree_rss_sum_bytes": 179449856
+    },
+    {
+      "monotonic_ns": 24531197475722,
+      "sampled_tree_rss_sum_bytes": 258994176
+    },
+    {
+      "monotonic_ns": 24531302661997,
+      "sampled_tree_rss_sum_bytes": 316649472
+    },
+    {
+      "monotonic_ns": 24531408093939,
+      "sampled_tree_rss_sum_bytes": 357253120
+    },
+    {
+      "monotonic_ns": 24531513740527,
+      "sampled_tree_rss_sum_bytes": 397266944
+    },
+    {
+      "monotonic_ns": 24531619281185,
+      "sampled_tree_rss_sum_bytes": 439476224
+    },
+    {
+      "monotonic_ns": 24531742121645,
+      "sampled_tree_rss_sum_bytes": 486838272
+    },
+    {
+      "monotonic_ns": 24531848352489,
+      "sampled_tree_rss_sum_bytes": 495280128
+    },
+    {
+      "monotonic_ns": 24531953919136,
+      "sampled_tree_rss_sum_bytes": 499834880
+    },
+    {
+      "monotonic_ns": 24532059427745,
+      "sampled_tree_rss_sum_bytes": 502104064
+    },
+    {
+      "monotonic_ns": 24532164494734,
+      "sampled_tree_rss_sum_bytes": 501936128
+    },
+    {
+      "monotonic_ns": 24532269813996,
+      "sampled_tree_rss_sum_bytes": 506953728
+    },
+    {
+      "monotonic_ns": 24532375364368,
+      "sampled_tree_rss_sum_bytes": 507396096
+    },
+    {
+      "monotonic_ns": 24532481141033,
+      "sampled_tree_rss_sum_bytes": 513544192
+    },
+    {
+      "monotonic_ns": 24532592707689,
+      "sampled_tree_rss_sum_bytes": 513572864
+    },
+    {
+      "monotonic_ns": 24532697837323,
+      "sampled_tree_rss_sum_bytes": 515375104
+    },
+    {
+      "monotonic_ns": 24532820942494,
+      "sampled_tree_rss_sum_bytes": 518815744
+    },
+    {
+      "monotonic_ns": 24532926407578,
+      "sampled_tree_rss_sum_bytes": 522309632
+    },
+    {
+      "monotonic_ns": 24533032208961,
+      "sampled_tree_rss_sum_bytes": 529551360
+    },
+    {
+      "monotonic_ns": 24533137938414,
+      "sampled_tree_rss_sum_bytes": 534102016
+    },
+    {
+      "monotonic_ns": 24533243040557,
+      "sampled_tree_rss_sum_bytes": 543080448
+    },
+    {
+      "monotonic_ns": 24533349306504,
+      "sampled_tree_rss_sum_bytes": 560439296
+    },
+    {
+      "monotonic_ns": 24533454715942,
+      "sampled_tree_rss_sum_bytes": 402157568
+    },
+    {
+      "monotonic_ns": 24533559907571,
+      "sampled_tree_rss_sum_bytes": 404221952
+    },
+    {
+      "monotonic_ns": 24533665049553,
+      "sampled_tree_rss_sum_bytes": 426405888
+    },
+    {
+      "monotonic_ns": 24533770163444,
+      "sampled_tree_rss_sum_bytes": 441647104
+    },
+    {
+      "monotonic_ns": 24533893258060,
+      "sampled_tree_rss_sum_bytes": 482701312
+    },
+    {
+      "monotonic_ns": 24533998559995,
+      "sampled_tree_rss_sum_bytes": 512520192
+    },
+    {
+      "monotonic_ns": 24534103722790,
+      "sampled_tree_rss_sum_bytes": 531206144
+    },
+    {
+      "monotonic_ns": 24534208969812,
+      "sampled_tree_rss_sum_bytes": 538054656
+    },
+    {
+      "monotonic_ns": 24534314127338,
+      "sampled_tree_rss_sum_bytes": 550531072
+    },
+    {
+      "monotonic_ns": 24534419411582,
+      "sampled_tree_rss_sum_bytes": 552333312
+    },
+    {
+      "monotonic_ns": 24534524820470,
+      "sampled_tree_rss_sum_bytes": 552587264
+    },
+    {
+      "monotonic_ns": 24534630161104,
+      "sampled_tree_rss_sum_bytes": 552587264
+    },
+    {
+      "monotonic_ns": 24534735272871,
+      "sampled_tree_rss_sum_bytes": 209801216
+    },
+    {
+      "monotonic_ns": 24534840397919,
+      "sampled_tree_rss_sum_bytes": 209891328
+    },
+    {
+      "monotonic_ns": 24534966032426,
+      "sampled_tree_rss_sum_bytes": 210153472
+    },
+    {
+      "monotonic_ns": 24535072175116,
+      "sampled_tree_rss_sum_bytes": 210300928
+    },
+    {
+      "monotonic_ns": 24535177611876,
+      "sampled_tree_rss_sum_bytes": 210300928
+    },
+    {
+      "monotonic_ns": 24535282790816,
+      "sampled_tree_rss_sum_bytes": 210300928
+    },
+    {
+      "monotonic_ns": 24535387981525,
+      "sampled_tree_rss_sum_bytes": 210300928
+    },
+    {
+      "monotonic_ns": 24535493991891,
+      "sampled_tree_rss_sum_bytes": 210300928
+    }
+  ],
+  "provider": {
+    "argv": [
+      "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+      "cache",
+      "serve",
+      "--root",
+      "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-07/provider-content",
+      "--listen",
+      "127.0.0.1:0",
+      "--json"
+    ],
+    "pid": 262937,
+    "startup": {
+      "listen": "127.0.0.1:34711",
+      "root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-07/provider-content",
+      "url": "http://127.0.0.1:34711"
+    }
+  },
+  "scan_interval_seconds": 1.0,
+  "source_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+  "status": 1,
+  "stderr": {
+    "bytes": 34018,
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-07/rcc-publish.stderr.log",
+    "sha256": "82ac5cc66fe065f77c0e9672d4a076f53c4ea453c83b96297c55fa4326cfd27c"
+  },
+  "stderr_last_lines": [
+    "    Expected: 0000000000000000000000000000000000000000000000000000000000000000",
+    "    Actual: 1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9",
+    "    ",
+    "_openmp_mutex-4.5-20_gnu.conda tarball has incorrect SHA256",
+    "info     libmamba Download finished, tarball available at '/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/pkgs/python-3.11.11-h9e4cc4f_2_cpython.conda'",
+    "error    libmamba File not valid: SHA256 doesn't match expectation \"/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/pkgs/python-3.11.11-h9e4cc4f_2_cpython.conda\"",
+    "    Expected: 254359cf928f93172d83985378a013544883c77fd6bff4c15186ed0d283f35ef",
+    "    Actual: e0be7ad95a034d10e021f15317bf5c70fc1161564fa47844984c245505cde36c",
+    "    ",
+    "python-3.11.11-h9e4cc4f_2_cpython.conda tarball has incorrect SHA256",
+    "critical libmamba Found incorrect downloads. Aborting",
+    "",
+    "[N] ####  Progress: 15/15  v18.19.3     4.798s  Fresh holotree done [with 4 workers on 5 CPUs].",
+    "Error: build environment: build current RCC environment: Failed to create environment, reason Could not create environment..",
+    "[N] Note: Now running rcc v18.19.3. There is newer rcc version v18.19.5 available, released at 07.09.2026.",
+    "[D] Marked \"/workspace/work/rcc-swarm/actions-performance-20261011/runtime-home-attempt-05/temp/08733fb8449c7ba0\" for recycling.",
+    "[N] Error: [rcc v18.19.3] build environment: build current RCC environment: Failed to create environment, reason Could not create environment..",
+    "[N] [rcc] exit status will be: 1!",
+    "[D] wait telemetry to complete",
+    "[D] telemetry sending completed"
+  ],
+  "stdout": {
+    "bytes": 0,
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-07/rcc-publish.stdout.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stdout_last_lines": [],
+  "stop_threshold_bytes": 2040528896,
+  "wall_ns": 9378611433
+}
