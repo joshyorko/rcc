@@ -1,0 +1,274 @@
+{
+  "schema": "actions-pr308-narrow-public-parent-deadline-source/v1",
+  "status": "FROZEN_SOURCE_FOR_INDEPENDENT_REVIEW_BEFORE_SEPARATE_CONTROL_NO_PUSH",
+  "head": "7eb5bce946750555ab009f77592862920a901506",
+  "tree": "3ff76037779763d0461ff3a755b900c9ed83dcf8",
+  "soleparent": "bc4296014fed571b478bc86911217e5f1dbcdc01",
+  "branch": "fix/rcc-candidate-wheel-identities-20261010",
+  "ordinary_merge": {
+    "head": "bc4296014fed571b478bc86911217e5f1dbcdc01",
+    "tree": "075b1d2beceeaf62faefdb3544bf9792e4d6cb19",
+    "ordered_parents": [
+      "4ca431b51b018b947fac6f096ca3cdc21028dd28",
+      "77647484b3cdd8e18aabf344a4018ea8ed8e3ea0"
+    ],
+    "all1409typedparent_union": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/pre-source-and-ordinary-union-checkpoint.json",
+      "size": 431810,
+      "sha256": "9839fc79213723e0712e62049d0004447cc62a91b3ef8a2c5de1164d5a01da12"
+    }
+  },
+  "source_delta": [
+    "action_server/scripts/verify_dakota_rcc_acceptance.py",
+    "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+    "docs/skills/repository-operations.md"
+  ],
+  "all1406_other_typed_leaves_exact_ordinary_union": true,
+  "all1409_pre_full_working_hashes_exact_after_full_and_commit": true,
+  "accepted_guard_reuse": {
+    "source": "639b591a19d80688afcfabf62d6f4bff8b8a0d69",
+    "exact2helper_ASTs_and_timeout_handler": true,
+    "exact7_fixture_test_ASTs19controls": true,
+    "whole308verifier_AST_unchanged_after_removing_guard": true,
+    "whole308test_AST_unchanged_after_removing19controls_and_hashlib": true,
+    "existing_negative_actual_contract_candidate_versions_argv_deadlines_unchanged": true,
+    "only_test_join_whitespace_format_adjustment": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/formatting-and-original-test-preservation.json",
+      "size": 422,
+      "sha256": "bcc4662a86814b91e6365ff41841bb8090bff2a6b81948dfa694ce6e059d717f"
+    },
+    "no_native_profile_module_or_whole639_branch_import": true
+  },
+  "protectedproducer": {
+    "count": 268,
+    "selectors": 5,
+    "all273_exact_actual_target_bodymode": true,
+    "native92498_changed_inputs": [
+      "action_server/src/actions/server/_rcc_runtime_adapter.py"
+    ],
+    "oldnative_status": "UNQUALIFIED_NEW_ADAPTER_NO_NATIVE_EXECUTION",
+    "proof": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/producer-inputs-and-pre-full-source-checkpoint.json",
+      "size": 229514,
+      "sha256": "38c26c9d1c8fc9d209eda1729cc3f8dc3acc7bcbf2351862b5ec89bf5c2d0a3a"
+    }
+  },
+  "gates": {
+    "Doctor": "PASS",
+    "Bootstrap": "REUSED30measuredinputs/fiveOWNprefix+sourceorigins;noinstaller",
+    "Toolkit": 96,
+    "guard_RED": {
+      "failed": 16,
+      "passed": 3,
+      "deselected": 38
+    },
+    "guard_GREEN": {
+      "passed": 19,
+      "deselected": 38
+    },
+    "scoped": {
+      "passed": 133,
+      "skipped": 1,
+      "deselected": 3,
+      "scope": "candidate+currentadapter+source-staging; existingreal_RCC opt-in skip and3integration deselections unverified"
+    },
+    "configured_static": "Ruff check/format/Isort PASS",
+    "Mypy_files": 337,
+    "full_configured_runtime": {
+      "passed": 1190,
+      "skipped": 13,
+      "warnings": 15,
+      "duration_seconds": 129.13,
+      "workers": 2,
+      "outer_bound_seconds": 600,
+      "cleanup_grace_seconds": 10,
+      "ONE_execution": true
+    },
+    "generator": "8generated+dependabot byte-roundtrip;all30trackedYAMLparsedandunchanged",
+    "diff_check": "PASS"
+  },
+  "SOURCE_CONTROL_separation": {
+    "source_frozen_first": true,
+    "current_control_still_pins": "d642a3ac24f8da85101538bdfdf59b509fd74bfb",
+    "current_control_tree": "fdf2823ebcdbd938b9047fd452c9fb13eb4be4e4",
+    "next_control": "Only after independentSOURCEGO:2generatorpins+2testconstants to exactS/S_tree; append existing308optinbranch and testcontract; regenerateONE_RCCworkflow;retainallotherleaves/events/deadlines/paths/permissions/selectors/profile/Core1.0.2/rawsummary."
+  },
+  "actual_scope_HOLD": {
+    "candidate_negative_test": "NOTRUN and unchangedexpectsaggregateFAIL; greennegativecontract cannotpositivequalify",
+    "candidate_parent": "Separate2465watchdog/2510test+10cleanup currentactualrunnerUNQUALIFIED/NOTAUTHORIZED;660controlnotcoverage",
+    "private": "01f/frozen-v6source/specmissing,no reconstruction/full134",
+    "fresh_hosted_3case": "RequiredafterCONTROLrootreview/push,sourcepinnewS;threecase doesnotexecutecandidateCLIparenttimeout",
+    "native_OAuth_cold_release": "HOLD;no nativebuild/actual/provider/metadata/release fallback"
+  },
+  "documentation_improvement": {
+    "Canonical_file_changed_or_proposed": "docs/skills/repository-operations.md",
+    "Exact_delta": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/exact-implemented-canonical-delta.patch",
+      "size": 4385,
+      "sha256": "2bd81847fda0b761e42b24c704dbe9eccda907c21f40cc3b4e5d88bf704e12f6"
+    },
+    "Durable_learning_captured": "ProvisionalworkerPASSversusparentdeadlineFAIL with preserved original receipt; narrow guard independent of native/profileimplementation; source/controlseparate; retainednegativecandidate test notpositiveacceptance andunchanged2465/2510bounds need separateenvelope.",
+    "Evidence": "Exactaccepted639AST/19REDGREEN/currentconfiguredgates/immutable4caactualnegativeassertions+constants;776ordinarysourceproduceradapterdelta/sourcepinidentities.",
+    "Stale_or_ambiguous_guidance_removed": "SourceRuntime/candidate broadwrapperwording narrowed to retainedcandidatehistory; liveoptinnegativecontract disclosed; parenttimeout notinferredRuntimecleanupFAIL; no wholepublicprofile or3case parentcoverageambiguity.",
+    "Remaining_uncertainty": "CurrenthostedCIand3caseactualafternewcontrolpending;positivecandidate/privatefull134/nativechangedadapter/OAuth/releaseremainHOLD.",
+    "proposal_disposition": "v2 accepted reused inowningguide adaptedonlyordinarymergecontext;originalcanonical/receipts preserved."
+  },
+  "evidence": [
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/changed-test-format.log",
+      "size": 3728,
+      "sha256": "d365f0c1cb5c56a146c119238337f4d8b08d4df8d19c1cb56282c11b4c9771d6"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/diff-check.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/doctor.log",
+      "size": 13487,
+      "sha256": "987088d01480092d952b72d915735ef22807ecdde45a2d46aee1fd0bfff1fddb"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/exact-implemented-canonical-delta.patch",
+      "size": 4385,
+      "sha256": "2bd81847fda0b761e42b24c704dbe9eccda907c21f40cc3b4e5d88bf704e12f6"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/final-pre-full-source-hashes-and-capacity.json",
+      "size": 187820,
+      "sha256": "d174e32d66608099bf05a6ea1b07f8a3b8921032478f2f912d3235bf8323d1db"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/format-changed-test.py",
+      "size": 196,
+      "sha256": "c2e88c844b98d308598b0cffb0a87b848e687f3f95df780273f5acac29fce514"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/formatting-and-original-test-preservation.json",
+      "size": 422,
+      "sha256": "bcc4662a86814b91e6365ff41841bb8090bff2a6b81948dfa694ce6e059d717f"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/freeze-source.py",
+      "size": 9595,
+      "sha256": "405978a4fb2a95767a7afea9355ee060e7b814a6a0c5f98e9e3650d72362bedd"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/full-configured-source.log",
+      "size": 308345,
+      "sha256": "582a506a3f5318679f9b80d1629bc8aa12aa1ae1de7cdc93669a9b58c3f86ca2"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/generator-roundtrip.json",
+      "size": 10286,
+      "sha256": "d03086cf1c1c65efb2ec389ee3153695c6d8902c2c972e4838fc4ad8ce6d834b"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/generator-roundtrip.log",
+      "size": 4563,
+      "sha256": "eaa4074b8898a397e01d052471a3f5a1d0c7b88d55de8db5b8de886dbb8bcacb"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/generator-roundtrip.py",
+      "size": 1811,
+      "sha256": "80e15e60793d56d908cfe9eb5e6ca26725289ab83787603b57050a0db13dc1d9"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/guard-GREEN.log",
+      "size": 3909,
+      "sha256": "33748a9d0acfb5c5181d0128e34b194175c6791fe650b1d465febba94723d1d5"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/guard-RED.log",
+      "size": 50682,
+      "sha256": "84945fb6eba81cd092bc4ae85341a04531b5a546cc6086478bd6d8c82a497906"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/implemented-source-scope-pre-gates.json",
+      "size": 949,
+      "sha256": "33480b3bc5ab508f4de47894118254dadc9617d99d5625aeb175b28bf2f19230"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/origin-action_server.json",
+      "size": 283,
+      "sha256": "f7a00c055eca6ebcd32e62cfa620b224f99ba834111d9d230937a29c9ede2f05"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/origin-actions-http-helper.json",
+      "size": 264,
+      "sha256": "d8ab3c61fcf9ed762629848de7f5974dc488f23d963f533e7032717d29b18f1c"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/origin-actions.json",
+      "size": 218,
+      "sha256": "5f39b76931c708942c66e5df09de5930082f14aa780bbbf57634c913cd0f5fef"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/origin-devutils.json",
+      "size": 240,
+      "sha256": "0f8a5be23e17e152e1bac26efa4e81c5a9cad12821a7422edf7ac15ad8d1e6a0"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/origin-work-items.json",
+      "size": 249,
+      "sha256": "d4da434483e01c6ca190a89eae5de51ca9b5a0ef9baa32722fd2382b05bab99d"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/own-Bootstrap-reuse-inputs-and-origins.json",
+      "size": 6413,
+      "sha256": "e111c3c4a155f6c9439795863e8c8d2b4878630112e693c3b1fe0e28b4b8fc40"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/own-bootstrap-reuse.log",
+      "size": 6755,
+      "sha256": "5ded97ffda24205e513aac1707464752afa5951951adb81663a5466d3f8cd7c4"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/pre-source-and-ordinary-union-checkpoint.json",
+      "size": 431810,
+      "sha256": "9839fc79213723e0712e62049d0004447cc62a91b3ef8a2c5de1164d5a01da12"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/producer-inputs-and-pre-full-source-checkpoint.json",
+      "size": 229514,
+      "sha256": "38c26c9d1c8fc9d209eda1729cc3f8dc3acc7bcbf2351862b5ec89bf5c2d0a3a"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/run-full-source.py",
+      "size": 88,
+      "sha256": "50a01ae3d7a06581876e3c3b5d573321b352605f16c0b43327a06122e0c9a0d5"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/run-guard-controls.py",
+      "size": 222,
+      "sha256": "f1a986c645cf6a39d4e3e87ae60759326211d4972fd7b47d04261b272411cf94"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/run-light-gates.py",
+      "size": 367,
+      "sha256": "e01f8a81a75dec76c1e10d529847bba7da719660769610dcbd0d372349392693"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/scoped-static-corrected.log",
+      "size": 6989,
+      "sha256": "d4924d37bf6c0cce5fb3e4ba32d86f821c5db1fbcdad75852942bd0596b7a5e0"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/scoped-static.log",
+      "size": 6512,
+      "sha256": "5264af50dbc63b257d2f67dad54040b3ec2119e7e93b0d07e3057b458c8bc8d5"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/toolkit.log",
+      "size": 14344,
+      "sha256": "80567e2525576174465317879a7b1c6e003727fda57688143da02c8facb34774"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/verify-own-bootstrap-reuse.py",
+      "size": 2689,
+      "sha256": "6013ee944964546a257bd5bb0b4d1711f49aa84b1727be0a45594b993fe4cd4d"
+    }
+  ],
+  "upstream_disposition": "none"
+}

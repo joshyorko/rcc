@@ -1,0 +1,1622 @@
+﻿2026-10-11T13:21:56.6118322Z Current runner version: '2.337.0'
+2026-10-11T13:21:56.6141142Z ##[group]Runner Image Provisioner
+2026-10-11T13:21:56.6142063Z Hosted Compute Agent
+2026-10-11T13:21:56.6142636Z Version: 20261002.596
+2026-10-11T13:21:56.6143228Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T13:21:56.6143904Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T13:21:56.6144593Z Worker ID: {bb0ddab2-f1eb-4946-8ede-4cbce6691f80}
+2026-10-11T13:21:56.6145252Z Region: centralus
+2026-10-11T13:21:56.6145930Z Cloud: Azure
+2026-10-11T13:21:56.6146546Z ##[endgroup]
+2026-10-11T13:21:56.6147863Z ##[group]Operating System
+2026-10-11T13:21:56.6148442Z Ubuntu
+2026-10-11T13:21:56.6148997Z 24.04.5
+2026-10-11T13:21:56.6149463Z LTS
+2026-10-11T13:21:56.6149970Z ##[endgroup]
+2026-10-11T13:21:56.6150479Z ##[group]Runner Image
+2026-10-11T13:21:56.6151050Z Image: ubuntu-24.04
+2026-10-11T13:21:56.6151574Z Version: 20261004.327.1
+2026-10-11T13:21:56.6152763Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T13:21:56.6154184Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T13:21:56.6155086Z ##[endgroup]
+2026-10-11T13:21:56.6156278Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T13:21:56.6158432Z Contents: read
+2026-10-11T13:21:56.6159002Z Metadata: read
+2026-10-11T13:21:56.6159519Z ##[endgroup]
+2026-10-11T13:21:56.6161479Z Secret source: Actions
+2026-10-11T13:21:56.6162330Z Cache mode: write
+2026-10-11T13:21:56.6163213Z Prepare workflow directory
+2026-10-11T13:21:56.6644030Z Prepare all required actions
+2026-10-11T13:21:56.6692741Z Getting action download info
+2026-10-11T13:21:56.9523124Z Download action repository 'actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd' (SHA:93cb6efe18208431cddfb8368fd83d5badbf9bfd)
+2026-10-11T13:21:57.0609328Z Download action repository 'actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c' (SHA:4a3601121dd01d1626a1e23e37211e3254c1c06c)
+2026-10-11T13:21:57.6643201Z Download action repository 'actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405' (SHA:a309ff8b426b58ec0e2a45f0f869d46889d02405)
+2026-10-11T13:21:57.7563286Z Download action repository 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0' (SHA:634f93cb2916e3fdff6788551b99b062d0335ce0)
+2026-10-11T13:21:58.2267183Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-11T13:21:58.4885214Z Complete job name: Native Runtime (linux-amd64)
+2026-10-11T13:21:58.5716634Z ##[group]Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+2026-10-11T13:21:58.5718307Z with:
+2026-10-11T13:21:58.5719230Z   ref: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:58.5720383Z   repository: joshyorko/rcc
+2026-10-11T13:21:58.5727927Z   token: ***
+2026-10-11T13:21:58.5728809Z   ssh-strict: true
+2026-10-11T13:21:58.5729679Z   ssh-user: git
+2026-10-11T13:21:58.5730546Z   persist-credentials: true
+2026-10-11T13:21:58.5731528Z   clean: true
+2026-10-11T13:21:58.5732402Z   sparse-checkout-cone-mode: true
+2026-10-11T13:21:58.5733420Z   fetch-depth: 1
+2026-10-11T13:21:58.5734271Z   fetch-tags: false
+2026-10-11T13:21:58.5735119Z   show-progress: true
+2026-10-11T13:21:58.5736137Z   lfs: false
+2026-10-11T13:21:58.5736997Z   submodules: false
+2026-10-11T13:21:58.5737878Z   set-safe-directory: true
+2026-10-11T13:21:58.5739027Z env:
+2026-10-11T13:21:58.5739974Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:58.5741331Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:21:58.5742244Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:21:58.5743277Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:21:58.5744267Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:21:58.5745219Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:21:58.5746256Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:21:58.5747338Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:58.5748532Z ##[endgroup]
+2026-10-11T13:21:58.6778522Z Syncing repository: joshyorko/rcc
+2026-10-11T13:21:58.6782883Z ##[group]Getting Git version info
+2026-10-11T13:21:58.6784775Z Working directory is '/home/runner/work/rcc/rcc'
+2026-10-11T13:21:58.6788018Z [command]/usr/bin/git version
+2026-10-11T13:21:58.6805516Z git version 2.55.0
+2026-10-11T13:21:58.6824944Z ##[endgroup]
+2026-10-11T13:21:58.6836985Z Temporarily overriding HOME='/home/runner/work/_temp/af0ce4e3-9c52-480a-95f7-af665cd4c087' before making global git config changes
+2026-10-11T13:21:58.6841015Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T13:21:58.6844006Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-11T13:21:58.6894431Z Deleting the contents of '/home/runner/work/rcc/rcc'
+2026-10-11T13:21:58.6899446Z ##[group]Initializing the repository
+2026-10-11T13:21:58.6904178Z [command]/usr/bin/git init /home/runner/work/rcc/rcc
+2026-10-11T13:21:58.7005510Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T13:21:58.7008028Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T13:21:58.7010306Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T13:21:58.7012393Z hint: call:
+2026-10-11T13:21:58.7013380Z hint:
+2026-10-11T13:21:58.7014559Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T13:21:58.7016151Z hint:
+2026-10-11T13:21:58.7017397Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T13:21:58.7019904Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T13:21:58.7021451Z hint:
+2026-10-11T13:21:58.7022994Z hint: 	git branch -m <name>
+2026-10-11T13:21:58.7024205Z hint:
+2026-10-11T13:21:58.7026066Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T13:21:58.7028502Z Initialized empty Git repository in /home/runner/work/rcc/rcc/.git/
+2026-10-11T13:21:58.7032386Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-10-11T13:21:58.7064156Z ##[endgroup]
+2026-10-11T13:21:58.7065713Z ##[group]Disabling automatic garbage collection
+2026-10-11T13:21:58.7067603Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T13:21:58.7097024Z ##[endgroup]
+2026-10-11T13:21:58.7098472Z ##[group]Setting up auth
+2026-10-11T13:21:58.7102406Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T13:21:58.7129587Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T13:21:58.7443795Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T13:21:58.7473354Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T13:21:58.7647114Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T13:21:58.7673937Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T13:21:58.7853879Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T13:21:58.7887554Z ##[endgroup]
+2026-10-11T13:21:58.7889954Z ##[group]Fetching the repository
+2026-10-11T13:21:58.7897820Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.4025466Z From https://github.com/joshyorko/rcc
+2026-10-11T13:21:59.4026925Z  * branch            29c3cfdcc89591768a7204ec594414be0ce846f4 -> FETCH_HEAD
+2026-10-11T13:21:59.4029880Z ##[endgroup]
+2026-10-11T13:21:59.4030600Z ##[group]Determining the checkout info
+2026-10-11T13:21:59.4032655Z ##[endgroup]
+2026-10-11T13:21:59.4040191Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T13:21:59.4094702Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T13:21:59.4121869Z ##[group]Checking out the ref
+2026-10-11T13:21:59.4124649Z [command]/usr/bin/git checkout --progress --force 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.4501160Z Note: switching to '29c3cfdcc89591768a7204ec594414be0ce846f4'.
+2026-10-11T13:21:59.4502122Z 
+2026-10-11T13:21:59.4502547Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T13:21:59.4503469Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T13:21:59.4504106Z state without impacting any branches by switching back to a branch.
+2026-10-11T13:21:59.4504443Z 
+2026-10-11T13:21:59.4504757Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T13:21:59.4505411Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T13:21:59.4505934Z 
+2026-10-11T13:21:59.4506166Z   git switch -c <new-branch-name>
+2026-10-11T13:21:59.4506429Z 
+2026-10-11T13:21:59.4506634Z Or undo this operation with:
+2026-10-11T13:21:59.4506988Z 
+2026-10-11T13:21:59.4507240Z   git switch -
+2026-10-11T13:21:59.4507553Z 
+2026-10-11T13:21:59.4507973Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T13:21:59.4508581Z 
+2026-10-11T13:21:59.4509013Z HEAD is now at 29c3cfd Add review-only release asset artifacts
+2026-10-11T13:21:59.4511551Z ##[endgroup]
+2026-10-11T13:21:59.4546959Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T13:21:59.4566095Z 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.4769193Z ##[group]Run set -euo pipefail
+2026-10-11T13:21:59.4769845Z [36;1mset -euo pipefail[0m
+2026-10-11T13:21:59.4770413Z [36;1mactual_sha="$(git rev-parse HEAD)"[0m
+2026-10-11T13:21:59.4770954Z [36;1mif [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then[0m
+2026-10-11T13:21:59.4771571Z [36;1m  echo "Native checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"[0m
+2026-10-11T13:21:59.4772181Z [36;1m  exit 1[0m
+2026-10-11T13:21:59.4772576Z [36;1mfi[0m
+2026-10-11T13:21:59.4773064Z [36;1mif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then[0m
+2026-10-11T13:21:59.4773754Z [36;1m  if [[ "$GITHUB_REF" != "refs/heads/main" || "$RCC_CANDIDATE_SHA" != "$GITHUB_SHA" ]]; then[0m
+2026-10-11T13:21:59.4774468Z [36;1m    echo "Release preparation must run from the exact current main commit."[0m
+2026-10-11T13:21:59.4775056Z [36;1m    exit 1[0m
+2026-10-11T13:21:59.4775422Z [36;1m  fi[0m
+2026-10-11T13:21:59.4776499Z [36;1m  python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"[0m
+2026-10-11T13:21:59.4777268Z [36;1mfi[0m
+2026-10-11T13:21:59.4978108Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:21:59.4978648Z env:
+2026-10-11T13:21:59.4979243Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.4979789Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:21:59.4980266Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:21:59.4980709Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:21:59.4981128Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:21:59.4981594Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:21:59.4982007Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:21:59.4982491Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.4982990Z ##[endgroup]
+2026-10-11T13:21:59.5192694Z ##[group]Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+2026-10-11T13:21:59.5193245Z with:
+2026-10-11T13:21:59.5193628Z   go-version: 1.26.9
+2026-10-11T13:21:59.5194019Z   check-latest: false
+2026-10-11T13:21:59.5196680Z   token: ***
+2026-10-11T13:21:59.5197199Z   cache: true
+2026-10-11T13:21:59.5197635Z env:
+2026-10-11T13:21:59.5198131Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.5198690Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:21:59.5199150Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:21:59.5199840Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:21:59.5200306Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:21:59.5200775Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:21:59.5201240Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:21:59.5201752Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:21:59.5202348Z ##[endgroup]
+2026-10-11T13:21:59.6568548Z Setup go version spec 1.26.9
+2026-10-11T13:21:59.6579981Z Attempting to download 1.26.9...
+2026-10-11T13:22:00.3655178Z matching 1.26.9...
+2026-10-11T13:22:00.3690658Z Acquiring 1.26.9 from https://github.com/actions/go-versions/releases/download/1.26.9-37875104533/go-1.26.9-linux-x64.tar.gz
+2026-10-11T13:22:00.8730788Z Extracting Go...
+2026-10-11T13:22:00.8843956Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/a9940c0a-240c-4545-9292-3ef8e2103ed5 -f /home/runner/work/_temp/ab249e7d-7d7f-4d99-afda-ea88715a84c1
+2026-10-11T13:22:02.4835932Z Successfully extracted go to /home/runner/work/_temp/a9940c0a-240c-4545-9292-3ef8e2103ed5
+2026-10-11T13:22:02.4836602Z Adding to the cache ...
+2026-10-11T13:22:07.8726085Z Successfully cached go to /opt/hostedtoolcache/go/1.26.9/x64
+2026-10-11T13:22:07.8727012Z Added go to the path
+2026-10-11T13:22:07.8729473Z Successfully set up Go version 1.26.9
+2026-10-11T13:22:07.8909376Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOMODCACHE
+2026-10-11T13:22:07.8937735Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOCACHE
+2026-10-11T13:22:07.8965888Z /home/runner/go/pkg/mod
+2026-10-11T13:22:07.8985094Z /home/runner/.cache/go-build
+2026-10-11T13:22:08.0527455Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.26.9-14b47f31eec5c1b878ad4184139696410b24861d8f0018bbfa6c1e6c74bfc953
+2026-10-11T13:22:09.2487382Z Received 134217728 of 196189775 (68.4%), 123.9 MBs/sec
+2026-10-11T13:22:09.5214365Z Received 196189775 of 196189775 (100.0%), 142.9 MBs/sec
+2026-10-11T13:22:09.5215410Z Cache Size: ~187 MB (196189775 B)
+2026-10-11T13:22:09.5254630Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5317f592-4e8a-4dd2-aad8-0ba7ce118141/cache.tzst -P -C /home/runner/work/rcc/rcc --use-compress-program unzstd
+2026-10-11T13:22:10.7422833Z Cache restored successfully
+2026-10-11T13:22:10.7498867Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.26.9-14b47f31eec5c1b878ad4184139696410b24861d8f0018bbfa6c1e6c74bfc953
+2026-10-11T13:22:10.7531180Z go version go1.26.9 linux/amd64
+2026-10-11T13:22:10.7531492Z 
+2026-10-11T13:22:10.7531971Z ##[group]go env
+2026-10-11T13:22:10.7640861Z AR='ar'
+2026-10-11T13:22:10.7641440Z CC='gcc'
+2026-10-11T13:22:10.7642185Z CGO_CFLAGS='-O2 -g'
+2026-10-11T13:22:10.7642594Z CGO_CPPFLAGS=''
+2026-10-11T13:22:10.7642960Z CGO_CXXFLAGS='-O2 -g'
+2026-10-11T13:22:10.7643357Z CGO_ENABLED='1'
+2026-10-11T13:22:10.7643717Z CGO_FFLAGS='-O2 -g'
+2026-10-11T13:22:10.7644074Z CGO_LDFLAGS='-O2 -g'
+2026-10-11T13:22:10.7644441Z CXX='g++'
+2026-10-11T13:22:10.7644754Z GCCGO='gccgo'
+2026-10-11T13:22:10.7645182Z GO111MODULE=''
+2026-10-11T13:22:10.7645548Z GOAMD64='v1'
+2026-10-11T13:22:10.7646164Z GOARCH='amd64'
+2026-10-11T13:22:10.7646497Z GOAUTH='netrc'
+2026-10-11T13:22:10.7646872Z GOBIN=''
+2026-10-11T13:22:10.7647215Z GOCACHE='/home/runner/.cache/go-build'
+2026-10-11T13:22:10.7647593Z GOCACHEPROG=''
+2026-10-11T13:22:10.7647919Z GODEBUG=''
+2026-10-11T13:22:10.7648316Z GOENV='/home/runner/.config/go/env'
+2026-10-11T13:22:10.7648672Z GOEXE=''
+2026-10-11T13:22:10.7648964Z GOEXPERIMENT=''
+2026-10-11T13:22:10.7649462Z GOFIPS140='off'
+2026-10-11T13:22:10.7649763Z GOFLAGS=''
+2026-10-11T13:22:10.7650527Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build3295750117=/tmp/go-build -gno-record-gcc-switches'
+2026-10-11T13:22:10.7651216Z GOHOSTARCH='amd64'
+2026-10-11T13:22:10.7651528Z GOHOSTOS='linux'
+2026-10-11T13:22:10.7651826Z GOINSECURE=''
+2026-10-11T13:22:10.7652192Z GOMOD='/home/runner/work/rcc/rcc/go.mod'
+2026-10-11T13:22:10.7652590Z GOMODCACHE='/home/runner/go/pkg/mod'
+2026-10-11T13:22:10.7652952Z GONOPROXY=''
+2026-10-11T13:22:10.7653353Z GONOSUMDB=''
+2026-10-11T13:22:10.7653644Z GOOS='linux'
+2026-10-11T13:22:10.7653985Z GOPATH='/home/runner/go'
+2026-10-11T13:22:10.7654294Z GOPRIVATE=''
+2026-10-11T13:22:10.7654659Z GOPROXY='https://proxy.golang.org,direct'
+2026-10-11T13:22:10.7655097Z GOROOT='/opt/hostedtoolcache/go/1.26.9/x64'
+2026-10-11T13:22:10.7655455Z GOSUMDB='sum.golang.org'
+2026-10-11T13:22:10.7656038Z GOTELEMETRY='local'
+2026-10-11T13:22:10.7656605Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+2026-10-11T13:22:10.7657210Z GOTMPDIR=''
+2026-10-11T13:22:10.7657632Z GOTOOLCHAIN='local'
+2026-10-11T13:22:10.7658067Z GOTOOLDIR='/opt/hostedtoolcache/go/1.26.9/x64/pkg/tool/linux_amd64'
+2026-10-11T13:22:10.7658543Z GOVCS=''
+2026-10-11T13:22:10.7658861Z GOVERSION='go1.26.9'
+2026-10-11T13:22:10.7659173Z GOWORK=''
+2026-10-11T13:22:10.7659509Z PKG_CONFIG='pkg-config'
+2026-10-11T13:22:10.7659738Z 
+2026-10-11T13:22:10.7660181Z ##[endgroup]
+2026-10-11T13:22:10.7928195Z ##[group]Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+2026-10-11T13:22:10.7928712Z with:
+2026-10-11T13:22:10.7929010Z   python-version: 3.10
+2026-10-11T13:22:10.7929368Z   check-latest: false
+2026-10-11T13:22:10.7931466Z   token: ***
+2026-10-11T13:22:10.7931804Z   update-environment: true
+2026-10-11T13:22:10.7932141Z   allow-prereleases: false
+2026-10-11T13:22:10.7932465Z   freethreaded: false
+2026-10-11T13:22:10.7932792Z env:
+2026-10-11T13:22:10.7933131Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:10.7933571Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:10.7933906Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:10.7934612Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:10.7935015Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:10.7935418Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:10.7935905Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:10.7936341Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:10.7936881Z   GOTOOLCHAIN: local
+2026-10-11T13:22:10.7937170Z ##[endgroup]
+2026-10-11T13:22:10.9235892Z ##[group]Installed versions
+2026-10-11T13:22:10.9488080Z Successfully set up CPython (3.10.22)
+2026-10-11T13:22:10.9488908Z ##[endgroup]
+2026-10-11T13:22:10.9722211Z ##[group]Run actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+2026-10-11T13:22:10.9722767Z with:
+2026-10-11T13:22:10.9723096Z   name: native-runtime-binaries
+2026-10-11T13:22:10.9723451Z   path: native-runtime-binaries
+2026-10-11T13:22:10.9723852Z   merge-multiple: false
+2026-10-11T13:22:10.9724191Z   repository: joshyorko/rcc
+2026-10-11T13:22:10.9724515Z   run-id: 38142809725
+2026-10-11T13:22:10.9724817Z env:
+2026-10-11T13:22:10.9725175Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:10.9725599Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:10.9726143Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:10.9726495Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:10.9726874Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:10.9727180Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:10.9727545Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:10.9727924Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:10.9728425Z   GOTOOLCHAIN: local
+2026-10-11T13:22:10.9728788Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:10.9729312Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:10.9729806Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:10.9730228Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:10.9730726Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:10.9731169Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:10.9731568Z ##[endgroup]
+2026-10-11T13:22:11.1184731Z Downloading single artifact
+2026-10-11T13:22:11.1333801Z (node:2363) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T13:22:11.1334580Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T13:22:11.3027701Z Preparing to download the following artifacts:
+2026-10-11T13:22:11.3028847Z - native-runtime-binaries (ID: 11703468005, Size: 49100496, Expected Digest: sha256:fe31c814c73d1ce31bcd8ab0c079d5098e6d57cae63e675241d62e7c1d73a990)
+2026-10-11T13:22:11.4840135Z Redirecting to blob download url: https://productionresultssa13.blob.core.windows.net/actions-results/6d6410c9-d756-8679-8f45-03e6555240ce/workflow-job-run-707fa14b-8798-5fe7-b282-aabaca970564/artifacts/793d5908538cdd31e0dac32a1c92b8f88724a5bfc34ff2af6017bda850f9539c.zip
+2026-10-11T13:22:11.4842358Z Starting download of artifact to: /home/runner/work/rcc/rcc/native-runtime-binaries
+2026-10-11T13:22:11.6681538Z (node:2363) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2026-10-11T13:22:12.8643430Z SHA256 digest of downloaded artifact is fe31c814c73d1ce31bcd8ab0c079d5098e6d57cae63e675241d62e7c1d73a990
+2026-10-11T13:22:12.8644451Z Artifact download completed successfully.
+2026-10-11T13:22:12.8644909Z Total of 1 artifact(s) downloaded
+2026-10-11T13:22:12.8649782Z Download artifact has finished successfully
+2026-10-11T13:22:12.8914537Z ##[group]Run set -euo pipefail
+2026-10-11T13:22:12.8915112Z [36;1mset -euo pipefail[0m
+2026-10-11T13:22:12.8915501Z [36;1mmkdir -p build tmp/output[0m
+2026-10-11T13:22:12.8916093Z [36;1mpython - <<'PY'[0m
+2026-10-11T13:22:12.8916482Z [36;1mimport hashlib, os[0m
+2026-10-11T13:22:12.8916890Z [36;1mfrom pathlib import Path[0m
+2026-10-11T13:22:12.8917292Z [36;1m[0m
+2026-10-11T13:22:12.8917715Z [36;1msource = Path("native-runtime-binaries") / os.environ["RCC_NATIVE_ASSET"][0m
+2026-10-11T13:22:12.8918252Z [36;1mtarget = Path(os.environ["RCC_NATIVE_BINARY"])[0m
+2026-10-11T13:22:12.8918662Z [36;1mexpected = next([0m
+2026-10-11T13:22:12.8919006Z [36;1m    line.split()[0][0m
+2026-10-11T13:22:12.8919510Z [36;1m    for line in (Path("native-runtime-binaries") / "SHA256SUMS").read_text().splitlines()[0m
+2026-10-11T13:22:12.8920087Z [36;1m    if line.split(maxsplit=1)[1] == os.environ["RCC_NATIVE_ASSET"][0m
+2026-10-11T13:22:12.8920554Z [36;1m)[0m
+2026-10-11T13:22:12.8921030Z [36;1mactual = hashlib.sha256(source.read_bytes()).hexdigest()[0m
+2026-10-11T13:22:12.8921459Z [36;1mif actual != expected:[0m
+2026-10-11T13:22:12.8921892Z [36;1m    raise SystemExit(f"native RCC bytes differ: {actual} != {expected}")[0m
+2026-10-11T13:22:12.8922387Z [36;1mimport platform, subprocess[0m
+2026-10-11T13:22:12.8922873Z [36;1mgoos = {"Linux": "linux", "Darwin": "darwin", "Windows": "windows"}[platform.system()][0m
+2026-10-11T13:22:12.8923528Z [36;1mgoarch = {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}[platform.machine()][0m
+2026-10-11T13:22:12.8924140Z [36;1mif (goos, goarch) != (os.environ["RCC_NATIVE_GOOS"], os.environ["RCC_NATIVE_GOARCH"]):[0m
+2026-10-11T13:22:12.8924745Z [36;1m    raise SystemExit(f"runner platform differs: {goos}/{goarch}")[0m
+2026-10-11T13:22:12.8925286Z [36;1mif subprocess.check_output(["go", "env", "GOOS"], text=True).strip() != goos:[0m
+2026-10-11T13:22:12.8926096Z [36;1m    raise SystemExit("go env GOOS does not match runner")[0m
+2026-10-11T13:22:12.8926661Z [36;1mif subprocess.check_output(["go", "env", "GOARCH"], text=True).strip() != goarch:[0m
+2026-10-11T13:22:12.8927183Z [36;1m    raise SystemExit("go env GOARCH does not match runner")[0m
+2026-10-11T13:22:12.8927662Z [36;1mtarget.write_bytes(source.read_bytes())[0m
+2026-10-11T13:22:12.8928060Z [36;1mif os.name != "nt":[0m
+2026-10-11T13:22:12.8928421Z [36;1m    target.chmod(0o755)[0m
+2026-10-11T13:22:12.8928924Z [36;1mversion = __import__("subprocess").check_output([str(target), "version"], text=True).strip()[0m
+2026-10-11T13:22:12.8929442Z [36;1mexpected_version = next([0m
+2026-10-11T13:22:12.8929809Z [36;1m    line.split("`")[1][0m
+2026-10-11T13:22:12.8930244Z [36;1m    for line in Path("common/version.go").read_text().splitlines()[0m
+2026-10-11T13:22:12.8930858Z [36;1m    if "Version = `" in line[0m
+2026-10-11T13:22:12.8931184Z [36;1m)[0m
+2026-10-11T13:22:12.8931516Z [36;1mif version != expected_version:[0m
+2026-10-11T13:22:12.8932024Z [36;1m    raise SystemExit(f"native RCC version differs: {version} != {expected_version}")[0m
+2026-10-11T13:22:12.8932590Z [36;1mwith open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:[0m
+2026-10-11T13:22:12.8933140Z [36;1m    env_file.write(f"RCC_BINARY_VERSION={expected_version}\n")[0m
+2026-10-11T13:22:12.8933600Z [36;1mprint(f"verified {target} {expected} {version}")[0m
+2026-10-11T13:22:12.8934023Z [36;1mPY[0m
+2026-10-11T13:22:12.8934632Z [36;1mecho "RCC_REAL_BINARY=$(python -c 'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())')" >> "$GITHUB_ENV"[0m
+2026-10-11T13:22:12.8935711Z [36;1mecho "RCC_REAL_BINARY_SHA256=$(python -c 'import hashlib,os; print(hashlib.sha256(open(os.environ["RCC_NATIVE_BINARY"],"rb").read()).hexdigest())')" >> "$GITHUB_ENV"[0m
+2026-10-11T13:22:12.8936959Z [36;1mecho "RCC_REAL_RECEIPT_FILE=$(python -c 'from pathlib import Path; print(Path("tmp/output/native-runtime-receipt.json").resolve())')" >> "$GITHUB_ENV"[0m
+2026-10-11T13:22:12.9051041Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:22:12.9051488Z env:
+2026-10-11T13:22:12.9051938Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:12.9052347Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:12.9052754Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:12.9053103Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:12.9053473Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:12.9053803Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:12.9054142Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:12.9054546Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:12.9054935Z   GOTOOLCHAIN: local
+2026-10-11T13:22:12.9055351Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:12.9055957Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:12.9056478Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:12.9057012Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:12.9057467Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:12.9057968Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:12.9058391Z ##[endgroup]
+2026-10-11T13:22:13.5038121Z verified build/rcc 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da v18.19.6
+2026-10-11T13:22:13.6113015Z ##[group]Run python -m pip install invoke==2.2.0
+2026-10-11T13:22:13.6113502Z [36;1mpython -m pip install invoke==2.2.0[0m
+2026-10-11T13:22:13.6152225Z shell: /usr/bin/bash -e {0}
+2026-10-11T13:22:13.6152565Z env:
+2026-10-11T13:22:13.6152958Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:13.6153386Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:13.6153726Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:13.6154098Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:13.6154432Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:13.6154767Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:13.6155089Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:13.6155444Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:13.6155936Z   GOTOOLCHAIN: local
+2026-10-11T13:22:13.6156322Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:13.6156808Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:13.6157398Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:13.6157827Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:13.6158376Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:13.6158817Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:13.6159199Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:22:13.6159716Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:22:13.6160250Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:22:13.6160891Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:22:13.6161350Z ##[endgroup]
+2026-10-11T13:22:16.7222007Z Collecting invoke==2.2.0
+2026-10-11T13:22:16.8112344Z   Downloading invoke-2.2.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-11T13:22:17.0390413Z Downloading invoke-2.2.0-py3-none-any.whl (160 kB)
+2026-10-11T13:22:17.2396576Z Installing collected packages: invoke
+2026-10-11T13:22:17.3101996Z Successfully installed invoke-2.2.0
+2026-10-11T13:22:17.3609288Z ##[group]Run inv assets
+2026-10-11T13:22:17.3609698Z [36;1minv assets[0m
+2026-10-11T13:22:17.3610074Z [36;1minv robotsetup[0m
+2026-10-11T13:22:17.3649643Z shell: /usr/bin/bash -e {0}
+2026-10-11T13:22:17.3650055Z env:
+2026-10-11T13:22:17.3650446Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:17.3650909Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:17.3651229Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:17.3651673Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:17.3652005Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:17.3652344Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:17.3652695Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:17.3653087Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:17.3653548Z   GOTOOLCHAIN: local
+2026-10-11T13:22:17.3653900Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:17.3654438Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:17.3655045Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:17.3655527Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:17.3656234Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:17.3656740Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:17.3657142Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:22:17.3657553Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:22:17.3658093Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:22:17.3658755Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:22:17.3659245Z ##[endgroup]
+2026-10-11T13:22:37.2161013Z Using micromamba version v2.5.0
+2026-10-11T13:22:37.2162251Z Downloading from official source: https://micro.mamba.pm/api/micromamba/linux-64/2.5.0
+2026-10-11T13:22:37.2163059Z Compressing blobs/assets/micromamba.linux_amd64
+2026-10-11T13:22:37.2163947Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-64/2.5.0
+2026-10-11T13:22:37.2164745Z Compressing blobs/assets/micromamba.darwin_amd64
+2026-10-11T13:22:37.2165701Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-arm64/2.5.0
+2026-10-11T13:22:37.2167367Z Compressing blobs/assets/micromamba.darwin_arm64
+2026-10-11T13:22:37.2167884Z Downloading from official source: https://micro.mamba.pm/api/micromamba/win-64/2.5.0
+2026-10-11T13:22:37.2168465Z Compressing blobs/assets/micromamba.windows_amd64
+2026-10-11T13:22:37.2169008Z Directory templates/python/ => /home/runner/work/rcc/rcc/blobs/assets/python.zip
+2026-10-11T13:22:37.2169659Z Directory templates/standard/ => /home/runner/work/rcc/rcc/blobs/assets/standard.zip
+2026-10-11T13:22:37.2170250Z Directory templates/extended/ => /home/runner/work/rcc/rcc/blobs/assets/extended.zip
+2026-10-11T13:22:37.2170802Z Copying assets/externally_managed.txt to blobs/assets/
+2026-10-11T13:22:37.2171284Z Copying assets/micromamba_version.txt to blobs/assets/
+2026-10-11T13:22:37.2171716Z Copying assets/robocorp_settings.yaml to blobs/assets/
+2026-10-11T13:22:37.2172190Z Copying assets/speedtest.yaml to blobs/assets/
+2026-10-11T13:22:37.2172592Z Copying assets/templates.yaml to blobs/assets/
+2026-10-11T13:22:37.2173296Z Copying assets/netdiag.yaml to blobs/assets/
+2026-10-11T13:22:37.2173698Z Copying assets/depxtraction.py to blobs/assets/
+2026-10-11T13:22:37.2174108Z Copying assets/man/tutorial.txt to blobs/assets/man/
+2026-10-11T13:22:37.2174586Z Copying assets/man/LICENSE.txt to blobs/assets/man/
+2026-10-11T13:22:37.2174985Z Copying docs/roadmap.md to blobs/docs/
+2026-10-11T13:22:37.2175422Z Copying docs/features.md to blobs/docs/
+2026-10-11T13:22:37.2176086Z Copying docs/troubleshooting.md to blobs/docs/
+2026-10-11T13:22:37.2176483Z Copying docs/recipes.md to blobs/docs/
+2026-10-11T13:22:37.2176950Z Copying docs/environment-artifact-trust.md to blobs/docs/
+2026-10-11T13:22:37.2177520Z Copying docs/change-classification.md to blobs/docs/
+2026-10-11T13:22:37.2178013Z Copying docs/holotree.md to blobs/docs/
+2026-10-11T13:22:37.2178379Z Copying docs/history.md to blobs/docs/
+2026-10-11T13:22:37.2178778Z Copying docs/v18-compatibility.md to blobs/docs/
+2026-10-11T13:22:37.2179213Z Copying docs/maintenance.md to blobs/docs/
+2026-10-11T13:22:37.2179700Z Copying docs/environment-artifact-compatibility.md to blobs/docs/
+2026-10-11T13:22:37.2180194Z Copying docs/BUILD.md to blobs/docs/
+2026-10-11T13:22:37.2180589Z Copying docs/ai-ops-runbook.md to blobs/docs/
+2026-10-11T13:22:37.2181041Z Copying docs/profile_configuration.md to blobs/docs/
+2026-10-11T13:22:37.2181504Z Copying docs/cloud-commands.md to blobs/docs/
+2026-10-11T13:22:37.2181898Z Copying docs/venv.md to blobs/docs/
+2026-10-11T13:22:37.2182307Z Copying docs/agent-boundaries.md to blobs/docs/
+2026-10-11T13:22:37.2182706Z Copying docs/changelog.md to blobs/docs/
+2026-10-11T13:22:37.2183099Z Copying docs/vocabulary.md to blobs/docs/
+2026-10-11T13:22:37.2183518Z Copying docs/usecases.md to blobs/docs/
+2026-10-11T13:22:37.2183912Z Copying docs/README.md to blobs/docs/
+2026-10-11T13:22:37.2184377Z Copying docs/environment-build-coordination.md to blobs/docs/
+2026-10-11T13:22:37.2184835Z Copying docs/review-rubric.md to blobs/docs/
+2026-10-11T13:22:37.2185234Z Copying docs/release-process.md to blobs/docs/
+2026-10-11T13:22:37.2185682Z Copying docs/metrics.md to blobs/docs/
+2026-10-11T13:22:37.2186262Z Copying docs/environment-caching.md to blobs/docs/
+2026-10-11T13:22:37.7455562Z Collecting robotframework==6.1.1 (from -r robot_requirements.txt (line 1))
+2026-10-11T13:22:37.8269944Z   Downloading robotframework-6.1.1-py3-none-any.whl.metadata (7.5 kB)
+2026-10-11T13:22:37.8523633Z Downloading robotframework-6.1.1-py3-none-any.whl (699 kB)
+2026-10-11T13:22:37.9267692Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 699.1/699.1 kB 15.0 MB/s  0:00:00
+2026-10-11T13:22:37.9636481Z Installing collected packages: robotframework
+2026-10-11T13:22:38.2454533Z Successfully installed robotframework-6.1.1
+2026-10-11T13:22:38.4713541Z invoke==2.2.0
+2026-10-11T13:22:38.4714138Z robotframework==6.1.1
+2026-10-11T13:22:38.5229830Z ##[group]Run go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
+2026-10-11T13:22:38.5230748Z [36;1mgo test -count=1 ./conda -run '^TestCopyPythonPrefix' -v[0m
+2026-10-11T13:22:38.5288116Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:22:38.5288859Z env:
+2026-10-11T13:22:38.5289424Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:38.5290134Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:38.5290620Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:38.5291130Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:38.5291721Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:38.5292227Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:38.5292751Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:38.5293285Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:38.5293889Z   GOTOOLCHAIN: local
+2026-10-11T13:22:38.5294511Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:38.5295489Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:38.5296490Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:38.5297915Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:38.5298688Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:38.5299428Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:38.5300135Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:22:38.5300705Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:22:38.5301645Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:22:38.5302687Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:22:38.5303629Z ##[endgroup]
+2026-10-11T13:22:46.3161756Z === RUN   TestCopyPythonPrefixRejectsAmbiguousCacheMatches
+2026-10-11T13:22:46.3165277Z --- PASS: TestCopyPythonPrefixRejectsAmbiguousCacheMatches (0.00s)
+2026-10-11T13:22:46.3166367Z === RUN   TestCopyPythonPrefixRejectsEscapingSymlink
+2026-10-11T13:22:46.3168225Z --- PASS: TestCopyPythonPrefixRejectsEscapingSymlink (0.00s)
+2026-10-11T13:22:46.3169230Z === RUN   TestCopyPythonPrefixAllowsInternalRelativeLinkThroughAliasedParent
+2026-10-11T13:22:46.3175022Z --- PASS: TestCopyPythonPrefixAllowsInternalRelativeLinkThroughAliasedParent (0.00s)
+2026-10-11T13:22:46.3176358Z === RUN   TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal
+2026-10-11T13:22:46.3177394Z === RUN   TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal/absolute_internal_target
+2026-10-11T13:22:46.3179220Z === RUN   TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal/absolute_outside_target
+2026-10-11T13:22:46.3183236Z --- PASS: TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal (0.00s)
+2026-10-11T13:22:46.3184596Z     --- PASS: TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal/absolute_internal_target (0.00s)
+2026-10-11T13:22:46.3186260Z     --- PASS: TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal/absolute_outside_target (0.00s)
+2026-10-11T13:22:46.3187389Z === RUN   TestCopyPythonPrefixRejectsEscapingSymlinkChain
+2026-10-11T13:22:46.3188348Z === RUN   TestCopyPythonPrefixRejectsEscapingSymlinkChain/physical_cache
+2026-10-11T13:22:46.3189405Z === RUN   TestCopyPythonPrefixRejectsEscapingSymlinkChain/aliased_cache_parent
+2026-10-11T13:22:46.3194041Z --- PASS: TestCopyPythonPrefixRejectsEscapingSymlinkChain (0.00s)
+2026-10-11T13:22:46.3195497Z     --- PASS: TestCopyPythonPrefixRejectsEscapingSymlinkChain/physical_cache (0.00s)
+2026-10-11T13:22:46.3197257Z     --- PASS: TestCopyPythonPrefixRejectsEscapingSymlinkChain/aliased_cache_parent (0.00s)
+2026-10-11T13:22:46.3198388Z === RUN   TestCopyPythonPrefixRejectsSymlinkCycle
+2026-10-11T13:22:46.3203917Z --- PASS: TestCopyPythonPrefixRejectsSymlinkCycle (0.00s)
+2026-10-11T13:22:46.3204655Z === RUN   TestCopyPythonPrefixCopiesUnaliasedRelativeLinkAsFile
+2026-10-11T13:22:46.3208072Z --- PASS: TestCopyPythonPrefixCopiesUnaliasedRelativeLinkAsFile (0.00s)
+2026-10-11T13:22:46.3208741Z PASS
+2026-10-11T13:22:46.3212027Z ok  	github.com/joshyorko/rcc/conda	0.016s
+2026-10-11T13:22:46.3462905Z ##[group]Run inv what
+2026-10-11T13:22:46.3463327Z [36;1minv what[0m
+2026-10-11T13:22:46.3502943Z shell: /usr/bin/bash -e {0}
+2026-10-11T13:22:46.3503317Z env:
+2026-10-11T13:22:46.3503736Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:46.3504191Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:46.3504530Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:46.3504927Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:46.3505246Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:46.3505626Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:46.3506281Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:46.3506669Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:46.3507240Z   GOTOOLCHAIN: local
+2026-10-11T13:22:46.3507632Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.3508127Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:46.3508778Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.3509355Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.3509863Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.3510316Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:46.3510719Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:22:46.3511133Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:22:46.3511655Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:22:46.3512352Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:22:46.3512835Z ##[endgroup]
+2026-10-11T13:22:46.4588945Z go version go1.26.9 linux/amd64
+2026-10-11T13:22:46.5129836Z commit 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:46.5130660Z Author: Josh Yorko <joshua.yorko@gmail.com>
+2026-10-11T13:22:46.5131357Z Date:   Sun Oct 11 13:11:21 2026 +0000
+2026-10-11T13:22:46.5131666Z 
+2026-10-11T13:22:46.5131870Z     Add review-only release asset artifacts
+2026-10-11T13:22:46.5132253Z     
+2026-10-11T13:22:46.5132677Z     Signed-off-by: Josh Yorko <joshua.yorko@gmail.com>
+2026-10-11T13:22:46.5132948Z 
+2026-10-11T13:22:46.5133175Z  .coverage-thresholds.json                          |    3 +
+2026-10-11T13:22:46.5133701Z  .dagger/.gitattributes                             |    4 +
+2026-10-11T13:22:46.5134315Z  .dagger/.gitignore                                 |    5 +
+2026-10-11T13:22:46.5135160Z  .dagger/go.mod                                     |   50 +
+2026-10-11T13:22:46.5135936Z  .dagger/go.sum                                     |   89 +
+2026-10-11T13:22:46.5136696Z  .dagger/main.go                                    |  196 ++
+2026-10-11T13:22:46.5137650Z  .devcontainer/devcontainer.json                    |    3 +
+2026-10-11T13:22:46.5138160Z  .editorconfig                                      |   17 +
+2026-10-11T13:22:46.5138601Z  .gitattributes                                     |   15 +
+2026-10-11T13:22:46.5139101Z  .github/ISSUE_TEMPLATE/bug_report.md               |   35 +
+2026-10-11T13:22:46.5139541Z  .github/pull_request_template.md                   |   36 +
+2026-10-11T13:22:46.5140018Z  .github/renovate.json5                             |  100 +
+2026-10-11T13:22:46.5140547Z  .github/scripts/primeagen-impl-context.sh          |  500 +++
+2026-10-11T13:22:46.5141045Z  .github/scripts/vjmp-review-context.sh             |  484 +++
+2026-10-11T13:22:46.5141548Z  .github/workflows/README.md                        |  253 ++
+2026-10-11T13:22:46.5142005Z  .github/workflows/codeql-analysis.yml              |   73 +
+2026-10-11T13:22:46.5142495Z  .github/workflows/codex-pr-review.txt              |   78 +
+2026-10-11T13:22:46.5142987Z  .github/workflows/copilot-setup-steps.yml          |   55 +
+2026-10-11T13:22:46.5143487Z  .github/workflows/coverage-gate.yml                |   59 +
+2026-10-11T13:22:46.5143981Z  .github/workflows/create-release-tag.yml           |   17 +
+2026-10-11T13:22:46.5144786Z  .github/workflows/dagger.yaml                      |   23 +
+2026-10-11T13:22:46.5145265Z  .github/workflows/lint.yml                         |   44 +
+2026-10-11T13:22:46.5145847Z  .github/workflows/patchraptor-release.yml          |  138 +
+2026-10-11T13:22:46.5146452Z  .github/workflows/pr-metrics.yml                   |   21 +
+2026-10-11T13:22:46.5146938Z  .github/workflows/publish-release.yml              |  146 +
+2026-10-11T13:22:46.5147452Z  .github/workflows/quality-report.yml               |   65 +
+2026-10-11T13:22:46.5147957Z  .github/workflows/rcc.yaml                         |  768 +++++
+2026-10-11T13:22:46.5148445Z  .github/workflows/recover-rcc-185.yml              |   17 +
+2026-10-11T13:22:46.5148910Z  .github/workflows/recovery/recover_rcc_185.py      |  275 ++
+2026-10-11T13:22:46.5149421Z  .github/workflows/recovery/test_recover_rcc_185.py |  100 +
+2026-10-11T13:22:46.5149901Z  .gitignore                                         |   37 +
+2026-10-11T13:22:46.5150361Z  .golangci.yml                                      |   11 +
+2026-10-11T13:22:46.5150940Z  .../task-3-report.md                               |   75 +
+2026-10-11T13:22:46.5151413Z  .../task-4-report.md                               |   26 +
+2026-10-11T13:22:46.5151874Z  AGENTS.md                                          |   65 +
+2026-10-11T13:22:46.5152314Z  CONTRIBUTING.md                                    |  366 +++
+2026-10-11T13:22:46.5152829Z  LICENSE                                            |  202 ++
+2026-10-11T13:22:46.5153274Z  README.md                                          |  373 +++
+2026-10-11T13:22:46.5153757Z  anywork/pending.go                                 |   74 +
+2026-10-11T13:22:46.5154231Z  anywork/worker.go                                  |  127 +
+2026-10-11T13:22:46.5154675Z  anywork/worker_test.go                             |  105 +
+2026-10-11T13:22:46.5155175Z  artifactpolicy/http.go                             |   36 +
+2026-10-11T13:22:46.5155644Z  artifactprovider/admin.go                          |  427 +++
+2026-10-11T13:22:46.5156331Z  artifactprovider/admin_test.go                     |  462 +++
+2026-10-11T13:22:46.5156814Z  artifactprovider/conformance_test.go               |   60 +
+2026-10-11T13:22:46.5157325Z  artifactprovider/deferred.go                       |  160 +
+2026-10-11T13:22:46.5157848Z  artifactprovider/deferred_test.go                  |   86 +
+2026-10-11T13:22:46.5158341Z  artifactprovider/filesystem.go                     |  308 ++
+2026-10-11T13:22:46.5158856Z  artifactprovider/filesystem_other.go               |   30 +
+2026-10-11T13:22:46.5159320Z  artifactprovider/filesystem_test.go                |  291 ++
+2026-10-11T13:22:46.5159836Z  artifactprovider/filesystem_unix.go                |  469 +++
+2026-10-11T13:22:46.5160324Z  artifactprovider/filesystem_windows.go             |  284 ++
+2026-10-11T13:22:46.5160840Z  artifactprovider/http.go                           | 1084 +++++++
+2026-10-11T13:22:46.5161384Z  artifactprovider/http_policy.go                    |    7 +
+2026-10-11T13:22:46.5161862Z  artifactprovider/http_policy_test.go               |  206 ++
+2026-10-11T13:22:46.5162388Z  artifactprovider/http_test.go                      |  708 +++++
+2026-10-11T13:22:46.5162901Z  artifactprovider/journal.go                        | 1005 ++++++
+2026-10-11T13:22:46.5163425Z  artifactprovider/journal_test.go                   |  405 +++
+2026-10-11T13:22:46.5163907Z  artifactprovider/manifest_test.go                  |  342 +++
+2026-10-11T13:22:46.5164374Z  artifactprovider/path_darwin_test.go               |   38 +
+2026-10-11T13:22:46.5164888Z  artifactprovider/policy.go                         |  358 +++
+2026-10-11T13:22:46.5165380Z  artifactprovider/provider.go                       |  237 ++
+2026-10-11T13:22:46.5166065Z  artifactprovider/provider_test.go                  |   69 +
+2026-10-11T13:22:46.5166556Z  artifactprovider/publish_darwin.go                 |   27 +
+2026-10-11T13:22:46.5167057Z  artifactprovider/publish_linux.go                  |   17 +
+2026-10-11T13:22:46.5167727Z  artifacttrust/carrier.go                           |  457 +++
+2026-10-11T13:22:46.5168198Z  artifacttrust/carrier_test.go                      |  228 ++
+2026-10-11T13:22:46.5168703Z  artifacttrust/receipt.go                           |  127 +
+2026-10-11T13:22:46.5169173Z  artifacttrust/trust.go                             |  913 ++++++
+2026-10-11T13:22:46.5169693Z  artifacttrust/trust_test.go                        |  372 +++
+2026-10-11T13:22:46.5170180Z  assets/.gitignore                                  |    1 +
+2026-10-11T13:22:46.5170618Z  assets/depxtraction.py                             |   87 +
+2026-10-11T13:22:46.5171131Z  assets/externally_managed.txt                      |   21 +
+2026-10-11T13:22:46.5171585Z  assets/index.json                                  |   69 +
+2026-10-11T13:22:46.5172120Z  assets/man/LICENSE.txt                             |  202 ++
+2026-10-11T13:22:46.5172572Z  assets/man/tutorial.txt                            |   89 +
+2026-10-11T13:22:46.5173042Z  assets/micromamba_version.txt                      |    1 +
+2026-10-11T13:22:46.5173781Z  assets/netdiag.yaml                                |   26 +
+2026-10-11T13:22:46.5174570Z  assets/robocorp_settings.yaml                      |   48 +
+2026-10-11T13:22:46.5175224Z  assets/speedtest.yaml                              |    7 +
+2026-10-11T13:22:46.5175975Z  assets/templates.yaml                              |    4 +
+2026-10-11T13:22:46.5176749Z  blobs/asset_test.go                                |   61 +
+2026-10-11T13:22:46.5177413Z  blobs/assets/.gitignore                            |    5 +
+2026-10-11T13:22:46.5177923Z  blobs/assets/man/.gitignore                        |    1 +
+2026-10-11T13:22:46.5178461Z  blobs/doc.go                                       |    2 +
+2026-10-11T13:22:46.5178965Z  blobs/docs/.gitignore                              |    1 +
+2026-10-11T13:22:46.5179527Z  blobs/embedded.go                                  |   46 +
+2026-10-11T13:22:46.5180109Z  blobs/micromamba_darwin_amd64.go                   |   10 +
+2026-10-11T13:22:46.5180633Z  blobs/micromamba_darwin_arm64.go                   |   10 +
+2026-10-11T13:22:46.5181098Z  blobs/micromamba_linux.go                          |   10 +
+2026-10-11T13:22:46.5181643Z  blobs/micromamba_windows.go                        |   10 +
+2026-10-11T13:22:46.5182153Z  buildcoord/buildcoord.go                           | 1592 ++++++++++
+2026-10-11T13:22:46.5182693Z  buildcoord/buildcoord_test.go                      | 1259 ++++++++
+2026-10-11T13:22:46.5183216Z  buildcoord/disk_linux.go                           |   57 +
+2026-10-11T13:22:46.5183687Z  buildcoord/disk_other.go                           |   42 +
+2026-10-11T13:22:46.5184155Z  buildcoord/lock_other.go                           |   18 +
+2026-10-11T13:22:46.5184640Z  buildcoord/lock_unix.go                            |   37 +
+2026-10-11T13:22:46.5185108Z  buildcoord/lock_unix_test.go                       |   37 +
+2026-10-11T13:22:46.5185611Z  buildcoord/lock_windows.go                         |   49 +
+2026-10-11T13:22:46.5186301Z  buildcoord/process_executor.go                     |  427 +++
+2026-10-11T13:22:46.5186935Z  cloud/client.go                                    |  281 ++
+2026-10-11T13:22:46.5187418Z  cloud/client_test.go                               |  113 +
+2026-10-11T13:22:46.5187875Z  cloud/doc.go                                       |    2 +
+2026-10-11T13:22:46.5188337Z  cloud/metrics.go                                   |  160 +
+2026-10-11T13:22:46.5188778Z  cloud/readfile.go                                  |   31 +
+2026-10-11T13:22:46.5189261Z  cmd/assistant.go                                   |   24 +
+2026-10-11T13:22:46.5189729Z  cmd/assistantList.go                               |   47 +
+2026-10-11T13:22:46.5190213Z  cmd/assistantRun.go                                |  134 +
+2026-10-11T13:22:46.5190666Z  cmd/authorize.go                                   |   50 +
+2026-10-11T13:22:46.5191110Z  cmd/bundle_utils.go                                |  356 +++
+2026-10-11T13:22:46.5191749Z  cmd/bundle_utils_test.go                           |  241 ++
+2026-10-11T13:22:46.5192194Z  cmd/cache.go                                       |   36 +
+2026-10-11T13:22:46.5192695Z  cmd/cacheServe.go                                  |  177 ++
+2026-10-11T13:22:46.5193151Z  cmd/cacheServe_test.go                             |  313 ++
+2026-10-11T13:22:46.5193658Z  cmd/carrier.go                                     |   99 +
+2026-10-11T13:22:46.5194104Z  cmd/cleanup.go                                     |   48 +
+2026-10-11T13:22:46.5194533Z  cmd/cloud.go                                       |   21 +
+2026-10-11T13:22:46.5195010Z  cmd/cloudNew.go                                    |   53 +
+2026-10-11T13:22:46.5195453Z  cmd/cloudPrepare.go                                |   73 +
+2026-10-11T13:22:46.5196312Z  cmd/command_darwin.go                              |   18 +
+2026-10-11T13:22:46.5196765Z  cmd/command_linux.go                               |   24 +
+2026-10-11T13:22:46.5197202Z  cmd/command_windows.go                             |   26 +
+2026-10-11T13:22:46.5197850Z  cmd/commontools.go                                 |   20 +
+2026-10-11T13:22:46.5198349Z  cmd/community.go                                   |   21 +
+2026-10-11T13:22:46.5198821Z  cmd/communitypull.go                               |   65 +
+2026-10-11T13:22:46.5199298Z  cmd/configure.go                                   |   21 +
+2026-10-11T13:22:46.5199837Z  cmd/configureTLSexport.go                          |   66 +
+2026-10-11T13:22:46.5200296Z  cmd/configureTLSprobe.go                           |   50 +
+2026-10-11T13:22:46.5200817Z  cmd/configureprofile.go                            |  184 ++
+2026-10-11T13:22:46.5201281Z  cmd/credentials.go                                 |   90 +
+2026-10-11T13:22:46.5201741Z  cmd/diagnostics.go                                 |   43 +
+2026-10-11T13:22:46.5202212Z  cmd/dirhash.go                                     |   79 +
+2026-10-11T13:22:46.5202707Z  cmd/doc.go                                         |    3 +
+2026-10-11T13:22:46.5203151Z  cmd/download.go                                    |   45 +
+2026-10-11T13:22:46.5203588Z  cmd/environment.go                                 |   54 +
+2026-10-11T13:22:46.5204077Z  cmd/environmentAcquire.go                          |  114 +
+2026-10-11T13:22:46.5204553Z  cmd/environmentCoordinate.go                       |  295 ++
+2026-10-11T13:22:46.5205063Z  cmd/environmentExec.go                             |  234 ++
+2026-10-11T13:22:46.5205549Z  cmd/environmentExport.go                           |   41 +
+2026-10-11T13:22:46.5206286Z  cmd/environmentLifecycle.go                        |   68 +
+2026-10-11T13:22:46.5206804Z  cmd/environmentLifecycle_test.go                   |   40 +
+2026-10-11T13:22:46.5207298Z  cmd/environmentPublish.go                          |  196 ++
+2026-10-11T13:22:46.5207798Z  cmd/environmentTrust.go                            |  126 +
+2026-10-11T13:22:46.5208278Z  cmd/environmentTrustPolicy.go                      |  103 +
+2026-10-11T13:22:46.5208766Z  cmd/environmentTrust_test.go                       |  160 +
+2026-10-11T13:22:46.5209274Z  cmd/environment_test.go                            |  923 ++++++
+2026-10-11T13:22:46.5209755Z  cmd/events.go                                      |   46 +
+2026-10-11T13:22:46.5210249Z  cmd/feedback.go                                    |  108 +
+2026-10-11T13:22:46.5210682Z  cmd/finder.go                                      |   39 +
+2026-10-11T13:22:46.5211151Z  cmd/holotree.go                                    |   23 +
+2026-10-11T13:22:46.5211634Z  cmd/holotreeBlueprints.go                          |   56 +
+2026-10-11T13:22:46.5212104Z  cmd/holotreeBootstrap.go                           |   69 +
+2026-10-11T13:22:46.5212619Z  cmd/holotreeBundle.go                              |  414 +++
+2026-10-11T13:22:46.5213088Z  cmd/holotreeCatalogs.go                            |  184 ++
+2026-10-11T13:22:46.5213587Z  cmd/holotreeCheck.go                               |  101 +
+2026-10-11T13:22:46.5214132Z  cmd/holotreeDelete.go                              |  108 +
+2026-10-11T13:22:46.5214635Z  cmd/holotreeExport.go                              |   93 +
+2026-10-11T13:22:46.5215096Z  cmd/holotreeHash.go                                |   91 +
+2026-10-11T13:22:46.5215553Z  cmd/holotreeImport.go                              |   80 +
+2026-10-11T13:22:46.5216338Z  cmd/holotreeInit.go                                |   56 +
+2026-10-11T13:22:46.5216783Z  cmd/holotreeList.go                                |   91 +
+2026-10-11T13:22:46.5217278Z  cmd/holotreePlan.go                                |   42 +
+2026-10-11T13:22:46.5217729Z  cmd/holotreePrebuild.go                            |  151 +
+2026-10-11T13:22:46.5218170Z  cmd/holotreePull.go                                |   51 +
+2026-10-11T13:22:46.5218705Z  cmd/holotreeRemove.go                              |   69 +
+2026-10-11T13:22:46.5219153Z  cmd/holotreeShared.go                              |   44 +
+2026-10-11T13:22:46.5219642Z  cmd/holotreeStats.go                               |   40 +
+2026-10-11T13:22:46.5220173Z  cmd/holotreeVariables.go                           |  185 ++
+2026-10-11T13:22:46.5220655Z  cmd/holotreeVenv.go                                |  117 +
+2026-10-11T13:22:46.5221144Z  cmd/identity.go                                    |   35 +
+2026-10-11T13:22:46.5221564Z  cmd/initialize.go                                  |   69 +
+2026-10-11T13:22:46.5222058Z  cmd/interactive.go                                 |   20 +
+2026-10-11T13:22:46.5222737Z  cmd/internal.go                                    |   21 +
+2026-10-11T13:22:46.5223218Z  cmd/internalEnv.go                                 |   38 +
+2026-10-11T13:22:46.5223657Z  cmd/longpaths.go                                   |   39 +
+2026-10-11T13:22:46.5224087Z  cmd/man.go                                         |  119 +
+2026-10-11T13:22:46.5224551Z  cmd/merge.go                                       |   51 +
+2026-10-11T13:22:46.5224991Z  cmd/netdiagnostics.go                              |   58 +
+2026-10-11T13:22:46.5225498Z  cmd/provider.go                                    |  112 +
+2026-10-11T13:22:46.5226110Z  cmd/providerAdd.go                                 |   43 +
+2026-10-11T13:22:46.5226604Z  cmd/providerInspect.go                             |   82 +
+2026-10-11T13:22:46.5227117Z  cmd/providerList.go                                |   45 +
+2026-10-11T13:22:46.5227569Z  cmd/providerRemove.go                              |   32 +
+2026-10-11T13:22:46.5228059Z  cmd/providerTest.go                                |   39 +
+2026-10-11T13:22:46.5228539Z  cmd/provider_test.go                               |  437 +++
+2026-10-11T13:22:46.5229074Z  cmd/pull.go                                        |   63 +
+2026-10-11T13:22:46.5229544Z  cmd/push.go                                        |   59 +
+2026-10-11T13:22:46.5230031Z  cmd/rcc/main.go                                    |  164 +
+2026-10-11T13:22:46.5230523Z  cmd/rcc/main_test.go                               |  112 +
+2026-10-11T13:22:46.5230980Z  cmd/rccremote/main.go                              |  122 +
+2026-10-11T13:22:46.5231519Z  cmd/rccremote/main_test.go                         |  175 ++
+2026-10-11T13:22:46.5231971Z  cmd/receipt_replace_unix.go                        |    9 +
+2026-10-11T13:22:46.5232476Z  cmd/receipt_replace_windows.go                     |   13 +
+2026-10-11T13:22:46.5232974Z  cmd/robot.go                                       |   20 +
+2026-10-11T13:22:46.5233457Z  cmd/robotBundle.go                                 |  312 ++
+2026-10-11T13:22:46.5233999Z  cmd/robotBundleArtifact.go                         |   97 +
+2026-10-11T13:22:46.5234486Z  cmd/robotBundleUnpack.go                           |   73 +
+2026-10-11T13:22:46.5235021Z  cmd/robotBundle_test.go                            |  182 ++
+2026-10-11T13:22:46.5235478Z  cmd/robotRunFromBundle.go                          |  155 +
+2026-10-11T13:22:46.5236309Z  cmd/robotdependencies.go                           |   63 +
+2026-10-11T13:22:46.5236848Z  cmd/robotdiagnostics.go                            |   32 +
+2026-10-11T13:22:46.5237417Z  cmd/root.go                                        |  173 ++
+2026-10-11T13:22:46.5237893Z  cmd/root_test.go                                   |    1 +
+2026-10-11T13:22:46.5238330Z  cmd/run.go                                         |   70 +
+2026-10-11T13:22:46.5238800Z  cmd/script.go                                      |   51 +
+2026-10-11T13:22:46.5239261Z  cmd/settings.go                                    |   46 +
+2026-10-11T13:22:46.5239744Z  cmd/sharedvariables.go                             |   40 +
+2026-10-11T13:22:46.5240242Z  cmd/shell.go                                       |   40 +
+2026-10-11T13:22:46.5240717Z  cmd/speed.go                                       |   98 +
+2026-10-11T13:22:46.5241147Z  cmd/task.go                                        |   22 +
+2026-10-11T13:22:46.5241620Z  cmd/testrun.go                                     |   95 +
+2026-10-11T13:22:46.5242063Z  cmd/unwrap.go                                      |   35 +
+2026-10-11T13:22:46.5242525Z  cmd/upload.go                                      |   45 +
+2026-10-11T13:22:46.5243088Z  cmd/userinfo.go                                    |   46 +
+2026-10-11T13:22:46.5243565Z  cmd/version.go                                     |   22 +
+2026-10-11T13:22:46.5244030Z  cmd/wizardcreate.go                                |   34 +
+2026-10-11T13:22:46.5244485Z  cmd/workspace.go                                   |   53 +
+2026-10-11T13:22:46.5244984Z  cmd/wrap.go                                        |   34 +
+2026-10-11T13:22:46.5245451Z  common/algorithms.go                               |  101 +
+2026-10-11T13:22:46.5246118Z  common/algorithms_test.go                          |   36 +
+2026-10-11T13:22:46.5246624Z  common/categories.go                               |   21 +
+2026-10-11T13:22:46.5247085Z  common/commander.go                                |   30 +
+2026-10-11T13:22:46.5247623Z  common/diagnostics.go                              |   98 +
+2026-10-11T13:22:46.5248089Z  common/doc.go                                      |    3 +
+2026-10-11T13:22:46.5248589Z  common/elapsed.go                                  |   80 +
+2026-10-11T13:22:46.5249065Z  common/elapsed_test.go                             |   18 +
+2026-10-11T13:22:46.5249560Z  common/exit.go                                     |   25 +
+2026-10-11T13:22:46.5250039Z  common/identities.go                               |   26 +
+2026-10-11T13:22:46.5250495Z  common/journal.go                                  |   22 +
+2026-10-11T13:22:46.5250987Z  common/logger.go                                   |  124 +
+2026-10-11T13:22:46.5251445Z  common/platform_darwin.go                          |   35 +
+2026-10-11T13:22:46.5251983Z  common/platform_linux.go                           |   35 +
+2026-10-11T13:22:46.5252458Z  common/platform_windows.go                         |   53 +
+2026-10-11T13:22:46.5252918Z  common/scorecard.go                                |   66 +
+2026-10-11T13:22:46.5253426Z  common/strategies.go                               |   77 +
+2026-10-11T13:22:46.5253909Z  common/timeline.go                                 |   93 +
+2026-10-11T13:22:46.5254422Z  common/variables.go                                |  415 +++
+2026-10-11T13:22:46.5254890Z  common/variables_test.go                           |   72 +
+2026-10-11T13:22:46.5255382Z  common/version.go                                  |    5 +
+2026-10-11T13:22:46.5255944Z  conda/activate.go                                  |  171 ++
+2026-10-11T13:22:46.5256434Z  conda/cleanup.go                                   |  233 ++
+2026-10-11T13:22:46.5256940Z  conda/condayaml.go                                 |  707 +++++
+2026-10-11T13:22:46.5257402Z  conda/condayaml_test.go                            |  240 ++
+2026-10-11T13:22:46.5257898Z  conda/config.go                                    |   47 +
+2026-10-11T13:22:46.5258357Z  conda/config_test.go                               |   56 +
+2026-10-11T13:22:46.5258792Z  conda/dependencies.go                              |  249 ++
+2026-10-11T13:22:46.5259375Z  conda/diagnosis.go                                 |  106 +
+2026-10-11T13:22:46.5259830Z  conda/environment_test.go                          |   14 +
+2026-10-11T13:22:46.5260340Z  conda/extarnallymanaged.go                         |   55 +
+2026-10-11T13:22:46.5260821Z  conda/installing.go                                |   68 +
+2026-10-11T13:22:46.5261273Z  conda/packageyaml.go                               |  118 +
+2026-10-11T13:22:46.5261773Z  conda/plananalyzer.go                              |  173 ++
+2026-10-11T13:22:46.5262220Z  conda/platform_darwin.go                           |   75 +
+2026-10-11T13:22:46.5262759Z  conda/platform_linux.go                            |   75 +
+2026-10-11T13:22:46.5263205Z  conda/platform_test.go                             |   38 +
+2026-10-11T13:22:46.5263701Z  conda/platform_windows.go                          |  107 +
+2026-10-11T13:22:46.5264147Z  conda/robocorp.go                                  |  334 ++
+2026-10-11T13:22:46.5264595Z  conda/robocorp_test.go                             |   84 +
+2026-10-11T13:22:46.5265191Z  conda/testdata/case_package/package.yaml           |   13 +
+2026-10-11T13:22:46.5265641Z  conda/testdata/case_package_dev/package.yaml       |   19 +
+2026-10-11T13:22:46.5266320Z  conda/testdata/conda.yaml                          |   10 +
+2026-10-11T13:22:46.5266786Z  conda/testdata/layers.yaml                         |    9 +
+2026-10-11T13:22:46.5267274Z  conda/testdata/other.yaml                          |    9 +
+2026-10-11T13:22:46.5267756Z  conda/testdata/third.yaml                          |   10 +
+2026-10-11T13:22:46.5268229Z  conda/uvbootstrap.go                               |  443 +++
+2026-10-11T13:22:46.5268736Z  conda/uvbootstrap_test.go                          |  355 +++
+2026-10-11T13:22:46.5269184Z  conda/uvnative.go                                  |  469 +++
+2026-10-11T13:22:46.5269722Z  conda/uvnative_test.go                             |  416 +++
+2026-10-11T13:22:46.5270170Z  conda/validate.go                                  |   46 +
+2026-10-11T13:22:46.5270637Z  conda/validate_test.go                             |   23 +
+2026-10-11T13:22:46.5271126Z  conda/workflows.go                                 |  679 +++++
+2026-10-11T13:22:46.5271630Z  dagger.json                                        |    8 +
+2026-10-11T13:22:46.5272116Z  developer/.gitignore                               |   17 +
+2026-10-11T13:22:46.5272547Z  developer/README.md                                |   85 +
+2026-10-11T13:22:46.5273024Z  developer/benchmarks/README.md                     |   65 +
+2026-10-11T13:22:46.5273608Z  .../20261010-linux-overlayfs-mixed.json.gz         |  Bin 0 -> 258741 bytes
+2026-10-11T13:22:46.5274206Z  developer/benchmarks/baselines/README.md           |   49 +
+2026-10-11T13:22:46.5274825Z  developer/benchmarks/holotree.py                   |   78 +
+2026-10-11T13:22:46.5275580Z  developer/benchmarks/lifecycle.py                  |  281 ++
+2026-10-11T13:22:46.5276408Z  developer/benchmarks/test_holotree.py              |   25 +
+2026-10-11T13:22:46.5276906Z  developer/benchmarks/test_lifecycle.py             |   67 +
+2026-10-11T13:22:46.5277406Z  developer/call_invoke.py                           |    9 +
+2026-10-11T13:22:46.5277912Z  developer/setup.yaml                               |   15 +
+2026-10-11T13:22:46.5278389Z  developer/toolkit.yaml                             |   71 +
+2026-10-11T13:22:46.5278916Z  docs/BUILD.md                                      |   29 +
+2026-10-11T13:22:46.5279367Z  docs/README.md                                     |  283 ++
+2026-10-11T13:22:46.5279901Z  docs/agent-boundaries.md                           |   45 +
+2026-10-11T13:22:46.5280394Z  docs/ai-ops-runbook.md                             |   24 +
+2026-10-11T13:22:46.5280907Z  docs/change-classification.md                      |   14 +
+2026-10-11T13:22:46.5281462Z  docs/changelog.md                                  | 3203 ++++++++++++++++++++
+2026-10-11T13:22:46.5281983Z  docs/cloud-commands.md                             |  362 +++
+2026-10-11T13:22:46.5282622Z  docs/environment-artifact-compatibility.md         |   48 +
+2026-10-11T13:22:46.5283120Z  docs/environment-artifact-trust.md                 |   58 +
+2026-10-11T13:22:46.5283644Z  docs/environment-build-coordination.md             |  163 +
+2026-10-11T13:22:46.5284152Z  docs/environment-caching.md                        |   89 +
+2026-10-11T13:22:46.5284646Z  docs/features.md                                   |   33 +
+2026-10-11T13:22:46.5285134Z  docs/history.md                                    |  450 +++
+2026-10-11T13:22:46.5285665Z  docs/holotree-disk-usage.png                       |  Bin 0 -> 4946 bytes
+2026-10-11T13:22:46.5286506Z  docs/holotree.md                                   | 1195 ++++++++
+2026-10-11T13:22:46.5287051Z  docs/holotree_specs/API_REFERENCE_SYSCALLS.md      |  659 ++++
+2026-10-11T13:22:46.5287623Z  ...rating RCC Holotree Environment Performance.pdf |  Bin 0 -> 117972 bytes
+2026-10-11T13:22:46.5288196Z  docs/holotree_specs/BLAZINGLY_FAST_SPEC.md         | 1047 +++++++
+2026-10-11T13:22:46.5288758Z  docs/holotree_specs/FAST_FILE_COPY_QUICKREF.md     |  213 ++
+2026-10-11T13:22:46.5289372Z  docs/holotree_specs/FAST_FILE_COPY_RESEARCH.md     | 1074 +++++++
+2026-10-11T13:22:46.5289892Z  .../FILESYSTEM_COMPRESSION_IMPLEMENTATION_PLAN.md  |  726 +++++
+2026-10-11T13:22:46.5290389Z  .../holotree_specs/FILESYSTEM_COMPRESSION_INDEX.md |  429 +++
+2026-10-11T13:22:46.5290917Z  .../FILESYSTEM_COMPRESSION_QUICK_ANSWERS.md        |  509 ++++
+2026-10-11T13:22:46.5291442Z  .../FILESYSTEM_COMPRESSION_RESEARCH.md             |  772 +++++
+2026-10-11T13:22:46.5291954Z  .../FILESYSTEM_COMPRESSION_VISUAL_SUMMARY.md       |  546 ++++
+2026-10-11T13:22:46.5292475Z  .../FILESYSTEM_DETECTION_EXAMPLE.go.example        |  446 +++
+2026-10-11T13:22:46.5292957Z  .../FILE_COPY_OPTIMIZATION_SUMMARY.md              |  244 ++
+2026-10-11T13:22:46.5293505Z  docs/holotree_specs/GO_REFLINK_LIBRARIES.md        |  377 +++
+2026-10-11T13:22:46.5293998Z  docs/holotree_specs/HOLOTREE_IMPROVEMENTS_SPEC.md  |  390 +++
+2026-10-11T13:22:46.5294527Z  .../IMPLEMENTATION_EXAMPLE_LINUX.go.example        |  191 ++
+2026-10-11T13:22:46.5295032Z  docs/holotree_specs/PERFORMANCE_COMPARISON.txt     |   84 +
+2026-10-11T13:22:46.5295531Z  .../README_FILE_COPY_OPTIMIZATION.md               |  368 +++
+2026-10-11T13:22:46.5296374Z  docs/holotree_specs/REFLINKS_RESEARCH.md           |  721 +++++
+2026-10-11T13:22:46.5296882Z  docs/holotree_specs/REFLINKS_SUMMARY.md            |  513 ++++
+2026-10-11T13:22:46.5297894Z  docs/holotree_specs/REFLINK_EXAMPLE.go.example     |  352 +++
+2026-10-11T13:22:46.5298404Z  docs/holotree_specs/REFLINK_INTEGRATION_GUIDE.md   |  658 ++++
+2026-10-11T13:22:46.5298961Z  docs/holotree_specs/REFLINK_QUICK_START.md         |  290 ++
+2026-10-11T13:22:46.5299461Z  docs/holotree_specs/STARTING_POINT.md              |  281 ++
+2026-10-11T13:22:46.5299947Z  docs/maintenance.md                                |   88 +
+2026-10-11T13:22:46.5300452Z  docs/metrics.md                                    |   21 +
+2026-10-11T13:22:46.5300913Z  docs/metrics/README.md                             |    9 +
+2026-10-11T13:22:46.5301455Z  docs/profile_configuration.md                      |   68 +
+2026-10-11T13:22:46.5301925Z  docs/rcc-env-hotels.svg                            |  390 +++
+2026-10-11T13:22:46.5302429Z  docs/rcc-logo.svg                                  |   54 +
+2026-10-11T13:22:46.5302911Z  docs/recipes.md                                    | 1090 +++++++
+2026-10-11T13:22:46.5303414Z  docs/release-process.md                            |   38 +
+2026-10-11T13:22:46.5303927Z  docs/review-rubric.md                              |   21 +
+2026-10-11T13:22:46.5304385Z  docs/roadmap.md                                    |  264 ++
+2026-10-11T13:22:46.5304934Z  docs/robocorp_stack.png                            |  Bin 0 -> 66899 bytes
+2026-10-11T13:22:46.5305437Z  docs/skills/README.md                              |   21 +
+2026-10-11T13:22:46.5306102Z  docs/skills/meta-skill-improvement/SKILL.md        |   82 +
+2026-10-11T13:22:46.5306753Z  docs/skills/rcc-development/SKILL.md               |   86 +
+2026-10-11T13:22:46.5307276Z  ...08-18-environment-artifact-provider-profiles.md |  628 ++++
+2026-10-11T13:22:46.5307853Z  .../plans/2026-08-18-environment-artifacts-v1.md   |  664 ++++
+2026-10-11T13:22:46.5308411Z  ...environment-artifacts-program-reconciliation.md |  195 ++
+2026-10-11T13:22:46.5308976Z  ...2026-08-23-actions-consumer-benchmark-bridge.md |  102 +
+2026-10-11T13:22:46.5309475Z  ...6-08-28-portable-linux-artifact-kernel-floor.md |   78 +
+2026-10-11T13:22:46.5309944Z  .../plans/2026-09-07-rcc-122-convergence.md        |   85 +
+2026-10-11T13:22:46.5310506Z  ...nvironment-artifact-provider-profiles-design.md |  484 +++
+2026-10-11T13:22:46.5311055Z  .../2026-08-18-environment-artifacts-v1-design.md  |  647 ++++
+2026-10-11T13:22:46.5311600Z  docs/troubleshooting.md                            |  111 +
+2026-10-11T13:22:46.5312065Z  docs/usecases.md                                   |   37 +
+2026-10-11T13:22:46.5312532Z  docs/v18-compatibility.md                          |   54 +
+2026-10-11T13:22:46.5313128Z  docs/venv.md                                       |   95 +
+2026-10-11T13:22:46.5313560Z  docs/vocabulary.md                                 |  137 +
+2026-10-11T13:22:46.5314102Z  environmentartifact/archive.go                     |  376 +++
+2026-10-11T13:22:46.5314600Z  environmentartifact/archive_test.go                |  247 ++
+2026-10-11T13:22:46.5315166Z  environmentartifact/canonical.go                   |  113 +
+2026-10-11T13:22:46.5315653Z  environmentartifact/catalog.go                     |  175 ++
+2026-10-11T13:22:46.5316480Z  environmentartifact/catalog_test.go                |  247 ++
+2026-10-11T13:22:46.5317026Z  environmentartifact/compatibility.go               |  275 ++
+2026-10-11T13:22:46.5317489Z  environmentartifact/compatibility_test.go          |  165 +
+2026-10-11T13:22:46.5318048Z  environmentartifact/digest.go                      |   91 +
+2026-10-11T13:22:46.5318522Z  environmentartifact/digest_test.go                 |   98 +
+2026-10-11T13:22:46.5319006Z  environmentartifact/index.go                       |   96 +
+2026-10-11T13:22:46.5319505Z  environmentartifact/index_test.go                  |   66 +
+2026-10-11T13:22:46.5319975Z  environmentartifact/inventory.go                   |  163 +
+2026-10-11T13:22:46.5320516Z  environmentartifact/inventory_test.go              |  183 ++
+2026-10-11T13:22:46.5320971Z  environmentartifact/legacy.go                      |   54 +
+2026-10-11T13:22:46.5321500Z  environmentartifact/manifest.go                    |  198 ++
+2026-10-11T13:22:46.5321970Z  environmentartifact/manifest_test.go               |  239 ++
+2026-10-11T13:22:46.5322475Z  environmentartifact/platform.go                    |   38 +
+2026-10-11T13:22:46.5322981Z  environmentartifact/platform_index.go              |   71 +
+2026-10-11T13:22:46.5323451Z  environmentartifact/platform_index_test.go         |   66 +
+2026-10-11T13:22:46.5323976Z  environmentlifecycle/acquire.go                    |  308 ++
+2026-10-11T13:22:46.5324453Z  environmentlifecycle/acquire_test.go               |  788 +++++
+2026-10-11T13:22:46.5324994Z  environmentlifecycle/admin.go                      |  432 +++
+2026-10-11T13:22:46.5325500Z  environmentlifecycle/admin_remove_other.go         |    9 +
+2026-10-11T13:22:46.5326219Z  environmentlifecycle/admin_remove_unix.go          |   73 +
+2026-10-11T13:22:46.5326731Z  environmentlifecycle/admin_remove_windows.go       |  175 ++
+2026-10-11T13:22:46.5327241Z  environmentlifecycle/admin_test.go                 |  662 ++++
+2026-10-11T13:22:46.5327734Z  environmentlifecycle/archive.go                    |  284 ++
+2026-10-11T13:22:46.5328225Z  environmentlifecycle/archive_export.go             |  107 +
+2026-10-11T13:22:46.5328727Z  environmentlifecycle/artifact_lock_other.go        |   46 +
+2026-10-11T13:22:46.5329369Z  environmentlifecycle/artifact_lock_process_test.go |  106 +
+2026-10-11T13:22:46.5329878Z  environmentlifecycle/artifact_lock_unix.go         |   53 +
+2026-10-11T13:22:46.5330470Z  environmentlifecycle/builder.go                    |   94 +
+2026-10-11T13:22:46.5330968Z  environmentlifecycle/builder_test.go               |  173 ++
+2026-10-11T13:22:46.5331449Z  environmentlifecycle/compatibility.go              |  259 ++
+2026-10-11T13:22:46.5331986Z  environmentlifecycle/compatibility_darwin.go       |  110 +
+2026-10-11T13:22:46.5332474Z  environmentlifecycle/compatibility_darwin_test.go  |   95 +
+2026-10-11T13:22:46.5332972Z  environmentlifecycle/compatibility_linux.go        |  154 +
+2026-10-11T13:22:46.5333476Z  environmentlifecycle/compatibility_linux_test.go   |   85 +
+2026-10-11T13:22:46.5333981Z  environmentlifecycle/compatibility_unix_test.go    |   77 +
+2026-10-11T13:22:46.5334506Z  environmentlifecycle/compatibility_windows.go      |  114 +
+2026-10-11T13:22:46.5334980Z  environmentlifecycle/compatibility_windows_test.go |   72 +
+2026-10-11T13:22:46.5335495Z  environmentlifecycle/content_linux_test.go         |   74 +
+2026-10-11T13:22:46.5336215Z  environmentlifecycle/content_lock_other.go         |   42 +
+2026-10-11T13:22:46.5336798Z  environmentlifecycle/content_lock_unix.go          |   47 +
+2026-10-11T13:22:46.5337293Z  environmentlifecycle/content_other.go              |   29 +
+2026-10-11T13:22:46.5337764Z  environmentlifecycle/content_publish_darwin.go     |   30 +
+2026-10-11T13:22:46.5338286Z  environmentlifecycle/content_publish_linux.go      |   17 +
+2026-10-11T13:22:46.5338785Z  environmentlifecycle/content_unix.go               |  574 ++++
+2026-10-11T13:22:46.5339304Z  environmentlifecycle/content_windows.go            |  543 ++++
+2026-10-11T13:22:46.5339809Z  environmentlifecycle/convergence_process_test.go   |  588 ++++
+2026-10-11T13:22:46.5340307Z  environmentlifecycle/coordination.go               |  173 ++
+2026-10-11T13:22:46.5340861Z  environmentlifecycle/coordination_test.go          |  177 ++
+2026-10-11T13:22:46.5341352Z  environmentlifecycle/crash_subprocess_test.go      |  596 ++++
+2026-10-11T13:22:46.5341883Z  environmentlifecycle/execute.go                    |  198 ++
+2026-10-11T13:22:46.5342361Z  environmentlifecycle/execute_process_test.go       |  313 ++
+2026-10-11T13:22:46.5342901Z  environmentlifecycle/execution_supervisor_linux.go |   35 +
+2026-10-11T13:22:46.5343423Z  environmentlifecycle/execution_supervisor_other.go |   23 +
+2026-10-11T13:22:46.5343896Z  .../execution_supervisor_windows.go                |   66 +
+2026-10-11T13:22:46.5344413Z  environmentlifecycle/final_acceptance_test.go      |  156 +
+2026-10-11T13:22:46.5344905Z  environmentlifecycle/gc.go                         |  720 +++++
+2026-10-11T13:22:46.5345459Z  environmentlifecycle/gc_content_test.go            |  280 ++
+2026-10-11T13:22:46.5346168Z  environmentlifecycle/gc_policy_test.go             |  987 ++++++
+2026-10-11T13:22:46.5346645Z  environmentlifecycle/gc_process_test.go            |  156 +
+2026-10-11T13:22:46.5347179Z  environmentlifecycle/lease.go                      |  183 ++
+2026-10-11T13:22:46.5347661Z  environmentlifecycle/lease_test.go                 |  561 ++++
+2026-10-11T13:22:46.5348224Z  environmentlifecycle/lifecycle_regressions_test.go |  274 ++
+2026-10-11T13:22:46.5348719Z  environmentlifecycle/materialize.go                |  367 +++
+2026-10-11T13:22:46.5349261Z  environmentlifecycle/materialize_test.go           |  509 ++++
+2026-10-11T13:22:46.5349744Z  environmentlifecycle/path_darwin_test.go           |   60 +
+2026-10-11T13:22:46.5350215Z  environmentlifecycle/process_identity_darwin.go    |   26 +
+2026-10-11T13:22:46.5350784Z  environmentlifecycle/process_identity_linux.go     |   25 +
+2026-10-11T13:22:46.5351264Z  environmentlifecycle/process_identity_other.go     |    9 +
+2026-10-11T13:22:46.5351785Z  environmentlifecycle/process_identity_windows.go   |   30 +
+2026-10-11T13:22:46.5352262Z  environmentlifecycle/publish.go                    |  291 ++
+2026-10-11T13:22:46.5352763Z  environmentlifecycle/publish_test.go               |  454 +++
+2026-10-11T13:22:46.5353307Z  environmentlifecycle/real_vertical_test.go         | 1157 +++++++
+2026-10-11T13:22:46.5353907Z  environmentlifecycle/reconcile.go                  |  146 +
+2026-10-11T13:22:46.5354456Z  environmentlifecycle/reconcile_test.go             |   57 +
+2026-10-11T13:22:46.5354947Z  environmentlifecycle/record.go                     |  100 +
+2026-10-11T13:22:46.5355459Z  environmentlifecycle/roots.go                      |  114 +
+2026-10-11T13:22:46.5356227Z  .../rpath_lifecycle_darwin_test.go                 |  208 ++
+2026-10-11T13:22:46.5356710Z  environmentlifecycle/trust.go                      |   97 +
+2026-10-11T13:22:46.5357216Z  fail/fail_test.go                                  |    1 +
+2026-10-11T13:22:46.5357671Z  fail/handling.go                                   |   44 +
+2026-10-11T13:22:46.5358162Z  go.mod                                             |   50 +
+2026-10-11T13:22:46.5358580Z  go.sum                                             |  576 ++++
+2026-10-11T13:22:46.5359023Z  hamlet/doc.go                                      |    2 +
+2026-10-11T13:22:46.5359512Z  hamlet/hamlet.go                                   |  136 +
+2026-10-11T13:22:46.5360029Z  hamlet/hamlet_test.go                              |  172 ++
+2026-10-11T13:22:46.5360524Z  htfs/commands.go                                   |  286 ++
+2026-10-11T13:22:46.5360958Z  htfs/delegates.go                                  |   37 +
+2026-10-11T13:22:46.5361467Z  htfs/directory.go                                  |  491 +++
+2026-10-11T13:22:46.5361930Z  htfs/fs_test.go                                    |   76 +
+2026-10-11T13:22:46.5362388Z  htfs/functions.go                                  |  560 ++++
+2026-10-11T13:22:46.5362875Z  htfs/library.go                                    |  477 +++
+2026-10-11T13:22:46.5363329Z  htfs/portable.go                                   |  125 +
+2026-10-11T13:22:46.5363840Z  htfs/portable_test.go                              |  101 +
+2026-10-11T13:22:46.5364269Z  htfs/relocator.go                                  |   82 +
+2026-10-11T13:22:46.5364740Z  htfs/relocator_test.go                             |   48 +
+2026-10-11T13:22:46.5365225Z  htfs/testdata/.gitignore                           |    3 +
+2026-10-11T13:22:46.5365696Z  htfs/testdata/simple.yaml                          |    4 +
+2026-10-11T13:22:46.5366431Z  htfs/testdata/simple_darwin.zip                    |  Bin 0 -> 173430 bytes
+2026-10-11T13:22:46.5367000Z  htfs/testdata/simple_linux.zip                     |  Bin 0 -> 158614 bytes
+2026-10-11T13:22:46.5367595Z  htfs/testdata/simple_windows.zip                   |  Bin 0 -> 173520 bytes
+2026-10-11T13:22:46.5368072Z  htfs/unmanaged.go                                  |  147 +
+2026-10-11T13:22:46.5368575Z  htfs/virtual.go                                    |  169 ++
+2026-10-11T13:22:46.5369058Z  htfs/ziplibrary.go                                 |  157 +
+2026-10-11T13:22:46.5369526Z  journal/buildstats.go                              |  598 ++++
+2026-10-11T13:22:46.5370020Z  journal/coverage_test.go                           |   73 +
+2026-10-11T13:22:46.5370467Z  journal/journal.go                                 |  123 +
+2026-10-11T13:22:46.5370956Z  journal/journal_test.go                            |   51 +
+2026-10-11T13:22:46.5371413Z  mocks/client.go                                    |   82 +
+2026-10-11T13:22:46.5371877Z  mocks/client_test.go                               |   32 +
+2026-10-11T13:22:46.5372343Z  mocks/doc.go                                       |    2 +
+2026-10-11T13:22:46.5372826Z  operations/assistant.go                            |  393 +++
+2026-10-11T13:22:46.5373326Z  operations/authorize.go                            |  269 ++
+2026-10-11T13:22:46.5373791Z  operations/authorize_test.go                       |  165 +
+2026-10-11T13:22:46.5374246Z  operations/bugs_test.go                            |   26 +
+2026-10-11T13:22:46.5374714Z  operations/cache.go                                |  121 +
+2026-10-11T13:22:46.5375212Z  operations/carrier.go                              |  173 ++
+2026-10-11T13:22:46.5375702Z  operations/carrier_test.go                         |   40 +
+2026-10-11T13:22:46.5376373Z  operations/community.go                            |   83 +
+2026-10-11T13:22:46.5376833Z  operations/community_test.go                       |   19 +
+2026-10-11T13:22:46.5377352Z  operations/credentials.go                          |  270 ++
+2026-10-11T13:22:46.5377831Z  operations/credentials_test.go                     |   73 +
+2026-10-11T13:22:46.5378324Z  operations/diagnostics.go                          |  710 +++++
+2026-10-11T13:22:46.5378811Z  operations/doc.go                                  |    3 +
+2026-10-11T13:22:46.5379336Z  operations/encryptionv1.go                         |  134 +
+2026-10-11T13:22:46.5379842Z  operations/fixing.go                               |  104 +
+2026-10-11T13:22:46.5380285Z  operations/fixing_test.go                          |   16 +
+2026-10-11T13:22:46.5380779Z  operations/initialize.go                           |  256 ++
+2026-10-11T13:22:46.5381243Z  operations/initialize_test.go                      |   29 +
+2026-10-11T13:22:46.5381748Z  operations/issues.go                               |  164 +
+2026-10-11T13:22:46.5382286Z  operations/jsonout.go                              |   11 +
+2026-10-11T13:22:46.5382748Z  operations/netdiagnostics.go                       |  182 ++
+2026-10-11T13:22:46.5383253Z  operations/processtree.go                          |  258 ++
+2026-10-11T13:22:46.5383703Z  operations/pull.go                                 |  166 +
+2026-10-11T13:22:46.5384212Z  operations/rccversioncheck.go                      |  106 +
+2026-10-11T13:22:46.5384676Z  operations/robotcache.go                           |   83 +
+2026-10-11T13:22:46.5385137Z  operations/running.go                              |  392 +++
+2026-10-11T13:22:46.5385641Z  operations/running_test.go                         |   18 +
+2026-10-11T13:22:46.5386386Z  operations/security_test.go                        |   37 +
+2026-10-11T13:22:46.5386898Z  operations/testdata/payload.txt                    |    1 +
+2026-10-11T13:22:46.5387366Z  operations/tlscheck.go                             |  460 +++
+2026-10-11T13:22:46.5387893Z  operations/updownload.go                           |  178 ++
+2026-10-11T13:22:46.5388367Z  operations/workspaces.go                           |  132 +
+2026-10-11T13:22:46.5388858Z  operations/zipper.go                               |  473 +++
+2026-10-11T13:22:46.5389361Z  operations/zipper_test.go                          |   95 +
+2026-10-11T13:22:46.5389816Z  pathlib/copyfile.go                                |   57 +
+2026-10-11T13:22:46.5390306Z  pathlib/doc.go                                     |    2 +
+2026-10-11T13:22:46.5390772Z  pathlib/finder.go                                  |   56 +
+2026-10-11T13:22:46.5391214Z  pathlib/finder_test.go                             |   28 +
+2026-10-11T13:22:46.5391728Z  pathlib/functions.go                               |  336 ++
+2026-10-11T13:22:46.5392184Z  pathlib/functions_test.go                          |   30 +
+2026-10-11T13:22:46.5392664Z  pathlib/lock.go                                    |   63 +
+2026-10-11T13:22:46.5393131Z  pathlib/lock_unix.go                               |   56 +
+2026-10-11T13:22:46.5393627Z  pathlib/lock_windows.go                            |  116 +
+2026-10-11T13:22:46.5394076Z  pathlib/lockpids.go                                |  200 ++
+2026-10-11T13:22:46.5394514Z  pathlib/lockpids_test.go                           |   27 +
+2026-10-11T13:22:46.5395030Z  pathlib/md5.go                                     |   24 +
+2026-10-11T13:22:46.5395469Z  pathlib/md5_test.go                                |   24 +
+2026-10-11T13:22:46.5396175Z  pathlib/sha256.go                                  |   24 +
+2026-10-11T13:22:46.5396629Z  pathlib/sha256_test.go                             |   31 +
+2026-10-11T13:22:46.5397074Z  pathlib/shared.go                                  |   35 +
+2026-10-11T13:22:46.5397597Z  pathlib/targetpath.go                              |  137 +
+2026-10-11T13:22:46.5398034Z  pathlib/targetpath_test.go                         |   25 +
+2026-10-11T13:22:46.5398622Z  pathlib/testdata/commented_ignores                 |    4 +
+2026-10-11T13:22:46.5399081Z  pathlib/testdata/empty                             |    0
+2026-10-11T13:22:46.5399595Z  pathlib/testdata/hello.txt                         |    1 +
+2026-10-11T13:22:46.5400046Z  pathlib/testdata/valid_ignores                     |    1 +
+2026-10-11T13:22:46.5400492Z  pathlib/touch.go                                   |   25 +
+2026-10-11T13:22:46.5400984Z  pathlib/validators.go                              |   63 +
+2026-10-11T13:22:46.5401426Z  pathlib/variables.go                               |   20 +
+2026-10-11T13:22:46.5401951Z  pathlib/walk.go                                    |  219 ++
+2026-10-11T13:22:46.5402400Z  pathlib/walk_test.go                               |  113 +
+2026-10-11T13:22:46.5402856Z  pretty/functions.go                                |  117 +
+2026-10-11T13:22:46.5403330Z  pretty/internal.go                                 |   15 +
+2026-10-11T13:22:46.5403795Z  pretty/pager.go                                    |   59 +
+2026-10-11T13:22:46.5404293Z  pretty/pretty_test.go                              |    1 +
+2026-10-11T13:22:46.5404789Z  pretty/setup_darwin.go                             |    6 +
+2026-10-11T13:22:46.5405297Z  pretty/setup_linux.go                              |    6 +
+2026-10-11T13:22:46.5405880Z  pretty/setup_windows.go                            |   44 +
+2026-10-11T13:22:46.5406471Z  pretty/variables.go                                |   66 +
+2026-10-11T13:22:46.5406951Z  remotree/delta.go                                  |  147 +
+2026-10-11T13:22:46.5407396Z  remotree/listings.go                               |  114 +
+2026-10-11T13:22:46.5407894Z  remotree/manage.go                                 |   26 +
+2026-10-11T13:22:46.5408349Z  remotree/messages.go                               |    9 +
+2026-10-11T13:22:46.5408822Z  remotree/missing_test.go                           |    1 +
+2026-10-11T13:22:46.5409299Z  remotree/server.go                                 |   67 +
+2026-10-11T13:22:46.5409764Z  remotree/server_handlers_test.go                   |  109 +
+2026-10-11T13:22:46.5410259Z  remotree/trigger.go                                |   51 +
+2026-10-11T13:22:46.5410698Z  robot/doc.go                                       |    2 +
+2026-10-11T13:22:46.5411149Z  robot/robot.go                                     |  568 ++++
+2026-10-11T13:22:46.5411613Z  robot/robot_test.go                                |  117 +
+2026-10-11T13:22:46.5412074Z  robot/setup.go                                     |   46 +
+2026-10-11T13:22:46.5412569Z  robot/setup_test.go                                |   30 +
+2026-10-11T13:22:46.5413024Z  robot/testdata/bad.yaml                            |    1 +
+2026-10-11T13:22:46.5413512Z  robot/testdata/complex.yaml                        |   54 +
+2026-10-11T13:22:46.5413973Z  robot/testdata/environmentless.yaml                |   17 +
+2026-10-11T13:22:46.5414438Z  robot/testdata/robot.yaml                          |   28 +
+2026-10-11T13:22:46.5415012Z  robot/testdata/template.yaml                       |   28 +
+2026-10-11T13:22:46.5415513Z  robot_requirements.txt                             |    1 +
+2026-10-11T13:22:46.5416341Z  robot_tests/__init__.robot                         |    5 +
+2026-10-11T13:22:46.5416903Z  robot_tests/bare_action/package.yaml               |   19 +
+2026-10-11T13:22:46.5417390Z  robot_tests/blueprint.robot                        |   29 +
+2026-10-11T13:22:46.5417868Z  robot_tests/bug_reports.robot                      |   46 +
+2026-10-11T13:22:46.5418320Z  robot_tests/certificates.yaml                      |    4 +
+2026-10-11T13:22:46.5418783Z  robot_tests/conda.yaml                             |    4 +
+2026-10-11T13:22:46.5419273Z  robot_tests/development_process.robot              |   13 +
+2026-10-11T13:22:46.5419790Z  robot_tests/development_process_acceptance.py      |  166 +
+2026-10-11T13:22:46.5420272Z  robot_tests/documentation.robot                    |   21 +
+2026-10-11T13:22:46.5420725Z  robot_tests/environment_artifact_binary.robot      |   13 +
+2026-10-11T13:22:46.5421313Z  robot_tests/environment_artifacts.robot            |  401 +++
+2026-10-11T13:22:46.5421886Z  robot_tests/environment_artifacts/conda.yaml       |    5 +
+2026-10-11T13:22:46.5422382Z  robot_tests/environment_artifacts/library.py       |  325 ++
+2026-10-11T13:22:46.5422876Z  robot_tests/environment_artifacts/robot.yaml       |    7 +
+2026-10-11T13:22:46.5423339Z  robot_tests/environment_artifacts/task.py          |   25 +
+2026-10-11T13:22:46.5423862Z  robot_tests/exitcodes.robot                        |   46 +
+2026-10-11T13:22:46.5424323Z  .../expected/blueprint/blueprint_devdeps_json.txt  |    4 +
+2026-10-11T13:22:46.5424835Z  .../expected/blueprint/blueprint_devdeps_txt.txt   |    1 +
+2026-10-11T13:22:46.5425319Z  robot_tests/expected/blueprint/blueprint_json.txt  |    4 +
+2026-10-11T13:22:46.5425923Z  robot_tests/expected/blueprint/blueprint_txt.txt   |    1 +
+2026-10-11T13:22:46.5426623Z  .../expected/ht_hash/ht_hash_devdeps_json.txt      |    3 +
+2026-10-11T13:22:46.5427173Z  .../expected/ht_hash/ht_hash_devdeps_json_show.txt |    4 +
+2026-10-11T13:22:46.5427920Z  .../expected/ht_hash/ht_hash_devdeps_txt.txt       |    1 +
+2026-10-11T13:22:46.5428506Z  .../expected/ht_hash/ht_hash_devdeps_txt_show.txt  |   12 +
+2026-10-11T13:22:46.5429306Z  robot_tests/expected/ht_hash/ht_hash_json.txt      |    3 +
+2026-10-11T13:22:46.5429852Z  robot_tests/expected/ht_hash/ht_hash_json_show.txt |    4 +
+2026-10-11T13:22:46.5430438Z  robot_tests/expected/ht_hash/ht_hash_txt.txt       |    1 +
+2026-10-11T13:22:46.5431109Z  robot_tests/expected/ht_hash/ht_hash_txt_conda.txt |    1 +
+2026-10-11T13:22:46.5431841Z  robot_tests/expected/ht_hash/ht_hash_txt_show.txt  |   10 +
+2026-10-11T13:22:46.5432543Z  robot_tests/export_holozip.robot                   |  101 +
+2026-10-11T13:22:46.5433133Z  robot_tests/fullrun.robot                          |  269 ++
+2026-10-11T13:22:46.5433761Z  robot_tests/holotree.robot                         |  146 +
+2026-10-11T13:22:46.5434395Z  robot_tests/holotree_bundle.robot                  |   93 +
+2026-10-11T13:22:46.5435029Z  robot_tests/ht_hash.robot                          |   93 +
+2026-10-11T13:22:46.5435605Z  robot_tests/maintenance.robot                      |   52 +
+2026-10-11T13:22:46.5436491Z  robot_tests/profile_alpha.yaml                     |   14 +
+2026-10-11T13:22:46.5437214Z  robot_tests/profile_beta.yaml                      |   21 +
+2026-10-11T13:22:46.5437851Z  robot_tests/profile_gamma.yaml                     |   14 +
+2026-10-11T13:22:46.5438585Z  robot_tests/profiles.robot                         |  128 +
+2026-10-11T13:22:46.5439292Z  robot_tests/python375.yaml                         |    7 +
+2026-10-11T13:22:46.5439997Z  robot_tests/python3913.yaml                        |    7 +
+2026-10-11T13:22:46.5440691Z  robot_tests/rccremote.robot                        |   13 +
+2026-10-11T13:22:46.5441427Z  robot_tests/report.json                            |    5 +
+2026-10-11T13:22:46.5442137Z  robot_tests/resources.robot                        |   82 +
+2026-10-11T13:22:46.5442877Z  robot_tests/robot_bundle.robot                     |  140 +
+2026-10-11T13:22:46.5443599Z  robot_tests/settings.yaml                          |    3 +
+2026-10-11T13:22:46.5444337Z  robot_tests/spellbug/conda.yaml                    |    7 +
+2026-10-11T13:22:46.5445043Z  robot_tests/spellbug/robot.yaml                    |   14 +
+2026-10-11T13:22:46.5445713Z  robot_tests/spellbug/task.py                       |    4 +
+2026-10-11T13:22:46.5446810Z  robot_tests/supporting.py                          |  231 ++
+2026-10-11T13:22:46.5447514Z  robot_tests/templates.robot                        |   80 +
+2026-10-11T13:22:46.5448233Z  .../testdata/bundle/envs/default/conda.yaml        |    8 +
+2026-10-11T13:22:46.5448957Z  .../testdata/bundle_multi/envs/default/conda.yaml  |    6 +
+2026-10-11T13:22:46.5449690Z  .../testdata/bundle_multi/envs/dev/conda.yaml      |    6 +
+2026-10-11T13:22:46.5450396Z  .../testdata/robot_bundle/envs/extra/conda.yaml    |    4 +
+2026-10-11T13:22:46.5451379Z  robot_tests/testdata/robot_bundle/robot/conda.yaml |    5 +
+2026-10-11T13:22:46.5452159Z  robot_tests/testdata/robot_bundle/robot/robot.yaml |    6 +
+2026-10-11T13:22:46.5452893Z  robot_tests/testdata/robot_bundle/robot/task.py    |    3 +
+2026-10-11T13:22:46.5455615Z  robot_tests/unmanaged_space.robot                  |  132 +
+2026-10-11T13:22:46.5456686Z  robot_tests/uv_native.robot                        |  109 +
+2026-10-11T13:22:46.5457429Z  robot_tests/uv_native/conda.yaml                   |    5 +
+2026-10-11T13:22:46.5458198Z  robot_tests/uv_native/robot.yaml                   |    6 +
+2026-10-11T13:22:46.5458901Z  robot_tests/uv_native/task.py                      |    7 +
+2026-10-11T13:22:46.5459645Z  robot_tests/uv_system_flag/conda.yaml              |    7 +
+2026-10-11T13:22:46.5460381Z  scripts/deadcode.py                                |  238 ++
+2026-10-11T13:22:46.5461125Z  scripts/fixtures/pr-event.json                     |   14 +
+2026-10-11T13:22:46.5461865Z  scripts/pr-metrics.mjs                             |   25 +
+2026-10-11T13:22:46.5462826Z  scripts/release_publication.py                     | 1113 +++++++
+2026-10-11T13:22:46.5463649Z  scripts/test_deadcode.py                           |  268 ++
+2026-10-11T13:22:46.5464462Z  scripts/test_environment_artifact_tasks.py         |  915 ++++++
+2026-10-11T13:22:46.5465284Z  scripts/test_micromamba_tasks.py                   |  365 +++
+2026-10-11T13:22:46.5466656Z  scripts/test_release_publication.py                |  657 ++++
+2026-10-11T13:22:46.5467412Z  scripts/test_toc.py                                |   64 +
+2026-10-11T13:22:46.5468234Z  scripts/test_validate_agent_docs.py                |  162 +
+2026-10-11T13:22:46.5468982Z  scripts/test_validate_release_topology.py          |  394 +++
+2026-10-11T13:22:46.5469793Z  scripts/toc.py                                     |  106 +
+2026-10-11T13:22:46.5470513Z  scripts/validate_agent_docs.py                     |  136 +
+2026-10-11T13:22:46.5471306Z  scripts/validate_release_topology.py               |  267 ++
+2026-10-11T13:22:46.5472122Z  set/functions.go                                   |   99 +
+2026-10-11T13:22:46.5472876Z  set/functions_test.go                              |   44 +
+2026-10-11T13:22:46.5473655Z  settings/api.go                                    |   40 +
+2026-10-11T13:22:46.5474361Z  settings/data.go                                   |  328 ++
+2026-10-11T13:22:46.5475161Z  settings/network_test.go                           |  133 +
+2026-10-11T13:22:46.5476040Z  settings/platform.go                               |  144 +
+2026-10-11T13:22:46.5476749Z  settings/platform_darwin.go                        |    5 +
+2026-10-11T13:22:46.5477550Z  settings/platform_linux.go                         |    5 +
+2026-10-11T13:22:46.5478240Z  settings/platform_linux_test.go                    |   39 +
+2026-10-11T13:22:46.5479154Z  settings/platform_windows.go                       |    5 +
+2026-10-11T13:22:46.5479871Z  settings/profile.go                                |  100 +
+2026-10-11T13:22:46.5480661Z  settings/provider.go                               |  114 +
+2026-10-11T13:22:46.5481385Z  settings/provider_store.go                         |  106 +
+2026-10-11T13:22:46.5482090Z  settings/provider_store_darwin_test.go             |   29 +
+2026-10-11T13:22:46.5482932Z  settings/provider_store_other.go                   |   81 +
+2026-10-11T13:22:46.5483649Z  settings/provider_store_test.go                    |  268 ++
+2026-10-11T13:22:46.5484402Z  settings/provider_store_unix.go                    |  184 ++
+2026-10-11T13:22:46.5485124Z  settings/provider_store_windows.go                 |  133 +
+2026-10-11T13:22:46.5486021Z  settings/provider_test.go                          |  136 +
+2026-10-11T13:22:46.5486834Z  settings/settings.go                               |  442 +++
+2026-10-11T13:22:46.5487568Z  settings/settings_test.go                          |   42 +
+2026-10-11T13:22:46.5488362Z  shell/doc.go                                       |    2 +
+2026-10-11T13:22:46.5489099Z  shell/task.go                                      |  181 ++
+2026-10-11T13:22:46.5490099Z  shell/transparent_test.go                          |   29 +
+2026-10-11T13:22:46.5490810Z  tasks.py                                           | 1509 +++++++++
+2026-10-11T13:22:46.5491528Z  templates/extended/.gitignore                      |   13 +
+2026-10-11T13:22:46.5492337Z  templates/extended/README.md                       |   64 +
+2026-10-11T13:22:46.5493008Z  templates/extended/conda.yaml                      |   15 +
+2026-10-11T13:22:46.5493773Z  templates/extended/devdata/env.json                |    3 +
+2026-10-11T13:22:46.5494463Z  templates/extended/keywords/keywords.robot         |    7 +
+2026-10-11T13:22:46.5495221Z  templates/extended/libraries/MyLibrary.py          |    8 +
+2026-10-11T13:22:46.5496257Z  templates/extended/libraries/__init__.py           |    0
+2026-10-11T13:22:46.5497018Z  templates/extended/robot.yaml                      |   17 +
+2026-10-11T13:22:46.5497786Z  templates/extended/tasks.robot                     |   15 +
+2026-10-11T13:22:46.5498525Z  templates/extended/variables/MyVariables.py        |    3 +
+2026-10-11T13:22:46.5499523Z  templates/extended/variables/__init__.py           |    0
+2026-10-11T13:22:46.5500315Z  templates/extended/variables/variables.py          |    3 +
+2026-10-11T13:22:46.5501060Z  templates/python/.gitignore                        |   13 +
+2026-10-11T13:22:46.5501803Z  templates/python/conda.yaml                        |   15 +
+2026-10-11T13:22:46.5502522Z  templates/python/robot.yaml                        |   12 +
+2026-10-11T13:22:46.5503306Z  templates/python/task.py                           |    9 +
+2026-10-11T13:22:46.5503972Z  templates/standard/.gitignore                      |   13 +
+2026-10-11T13:22:46.5504707Z  templates/standard/conda.yaml                      |   15 +
+2026-10-11T13:22:46.5505456Z  templates/standard/robot.yaml                      |   12 +
+2026-10-11T13:22:46.5506480Z  templates/standard/tasks.robot                     |    7 +
+2026-10-11T13:22:46.5507286Z  wizard/common.go                                   |   85 +
+2026-10-11T13:22:46.5508009Z  wizard/create.go                                   |   99 +
+2026-10-11T13:22:46.5508709Z  wizard/wizard_test.go                              |    1 +
+2026-10-11T13:22:46.5509416Z  xviper/doc.go                                      |    3 +
+2026-10-11T13:22:46.5510196Z  xviper/tracking.go                                 |   61 +
+2026-10-11T13:22:46.5510957Z  xviper/tracking_test.go                            |   25 +
+2026-10-11T13:22:46.5511687Z  xviper/wrapper.go                                  |  202 ++
+2026-10-11T13:22:46.5512343Z  681 files changed, 104254 insertions(+)
+2026-10-11T13:22:46.5579669Z ##[group]Run set -euo pipefail
+2026-10-11T13:22:46.5580136Z [36;1mset -euo pipefail[0m
+2026-10-11T13:22:46.5580751Z [36;1mRCC_REAL_ARTIFACT_TEST=1 go test -timeout 45m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v[0m
+2026-10-11T13:22:46.5619665Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:22:46.5620161Z env:
+2026-10-11T13:22:46.5620556Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:46.5620988Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:22:46.5621343Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:22:46.5621733Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:22:46.5622124Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:22:46.5622471Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:22:46.5622788Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:22:46.5623191Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:22:46.5623586Z   GOTOOLCHAIN: local
+2026-10-11T13:22:46.5624068Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.5624603Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:22:46.5625066Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.5625588Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.5626175Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:22:46.5626681Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:22:46.5627086Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:22:46.5627452Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:22:46.5628043Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:22:46.5628658Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:22:46.5629199Z ##[endgroup]
+2026-10-11T13:22:49.4641047Z === RUN   TestRealCurrentRCCAtoBVertical
+2026-10-11T13:24:23.1639692Z Note! For now, resolved effective environment configuration file is "/tmp/TestRealCurrentRCCAtoBVertical590134809/001/conda.yaml".
+2026-10-11T13:24:23.1641558Z ####  Progress: 00/15  v18.19.6    93.712s  Context: "" <runner@runnervmmprz5> [linux_amd64/Ubuntu 24.04.5 LTS [id=ubuntu; id-like=debian; version=24.04]].
+2026-10-11T13:24:23.1643878Z ####  Progress: 01/15  v18.19.6     0.000s  Fresh [private mode] holotree environment a08209c4-3696-f81a-f7a4-2e65b6fd96c1. (parent/pid: 4360/4570)
+2026-10-11T13:24:23.1677144Z ####  Progress: 02/15  v18.19.6     0.001s  Holotree blueprint is "37368f00fc9af086" [linux_amd64 with 2 workers on 4 CPUs from "conda.yaml"].
+2026-10-11T13:24:23.2399570Z FINAL unified conda environment descriptor:
+2026-10-11T13:24:23.2400182Z ---
+2026-10-11T13:24:23.2400563Z channels:
+2026-10-11T13:24:23.2400857Z - conda-forge
+2026-10-11T13:24:23.2401238Z dependencies:
+2026-10-11T13:24:23.2401600Z - python=3.11
+2026-10-11T13:24:23.2401876Z ---
+2026-10-11T13:24:23.2402352Z ####  Progress: 14/15  v18.19.6     0.075s  Restoring space skipped.
+2026-10-11T13:24:23.2402865Z ####  Progress: 15/15  v18.19.6     0.000s  Fresh holotree done [with 2 workers on 4 CPUs].
+2026-10-11T13:24:24.4231297Z Installation plan is: /tmp/TestRealCurrentRCCAtoBVertical590134809/002/producer-home/holotree/62fb83f_b35c539_b7b14173/rcc_plan.log
+2026-10-11T13:24:24.4232784Z Environment configuration descriptor is: /tmp/TestRealCurrentRCCAtoBVertical590134809/002/producer-home/holotree/62fb83f_b35c539_b7b14173/identity.yaml
+2026-10-11T13:25:17.8837206Z     real_vertical_test.go:133: native runtime receipt: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:25:34.1620101Z --- PASS: TestRealCurrentRCCAtoBVertical (164.70s)
+2026-10-11T13:25:34.1621635Z PASS
+2026-10-11T13:25:34.1627885Z ok  	github.com/joshyorko/rcc/environmentlifecycle	164.713s
+2026-10-11T13:25:34.1886507Z ##[group]Run set -euo pipefail
+2026-10-11T13:25:34.1886915Z [36;1mset -euo pipefail[0m
+2026-10-11T13:25:34.1887237Z [36;1mRCC_REAL_JAT_CLASS_TEST=1 \[0m
+2026-10-11T13:25:34.1887810Z [36;1mRCC_REAL_RECEIPT_FILE="$(pwd)/tmp/output/jat-class-consumer-receipt.json" \[0m
+2026-10-11T13:25:34.1888393Z [36;1mgo test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$' -v[0m
+2026-10-11T13:25:34.1928101Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:25:34.1928438Z env:
+2026-10-11T13:25:34.1928742Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:25:34.1929068Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:25:34.1929312Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:25:34.1929589Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:25:34.1929839Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:25:34.1930078Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:25:34.1930320Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:25:34.1930760Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:25:34.1931077Z   GOTOOLCHAIN: local
+2026-10-11T13:25:34.1931369Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:25:34.1931774Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:25:34.1932165Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:25:34.1932532Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:25:34.1932892Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:25:34.1933261Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:25:34.1933570Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:25:34.1933843Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:25:34.1934279Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:25:34.1934821Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:25:34.1935219Z ##[endgroup]
+2026-10-11T13:25:34.6253465Z === RUN   TestRealJATClassRCCAtoBVertical
+2026-10-11T13:28:06.6141077Z Note! For now, resolved effective environment configuration file is "/tmp/TestRealJATClassRCCAtoBVertical4178461023/001/conda.yaml".
+2026-10-11T13:28:06.6143731Z Warning: Holotree blueprint "e526593130bc4239" is not publicly cacheable. Use `rcc robot diagnostics` to find out more.
+2026-10-11T13:28:06.6146302Z ####  Progress: 00/15  v18.19.6   152.000s  Context: "" <runner@runnervmmprz5> [linux_amd64/Ubuntu 24.04.5 LTS [id=ubuntu; id-like=debian; version=24.04]].
+2026-10-11T13:28:06.6147778Z ####  Progress: 01/15  v18.19.6     0.000s  Fresh [private mode] holotree environment aa2ea4df-207b-e3b4-0846-7c60cc5b3e73. (parent/pid: 5005/5046)
+2026-10-11T13:28:06.6148554Z Warning: Holotree blueprint "e526593130bc4239" is not publicly cacheable. Use `rcc robot diagnostics` to find out more.
+2026-10-11T13:28:06.6149309Z ####  Progress: 02/15  v18.19.6     0.000s  Holotree blueprint is "e526593130bc4239" [linux_amd64 with 2 workers on 4 CPUs from "conda.yaml"].
+2026-10-11T13:28:06.7392146Z FINAL unified conda environment descriptor:
+2026-10-11T13:28:06.7392678Z ---
+2026-10-11T13:28:06.7393066Z channels:
+2026-10-11T13:28:06.7393312Z - conda-forge
+2026-10-11T13:28:06.7393649Z dependencies:
+2026-10-11T13:28:06.7393970Z - python=3.11
+2026-10-11T13:28:06.7394258Z - git
+2026-10-11T13:28:06.7394536Z - pyyaml
+2026-10-11T13:28:06.7394948Z - perl=5.32.1=10_h7cc23a3_perl5
+2026-10-11T13:28:06.7395289Z ---
+2026-10-11T13:28:06.7395888Z ####  Progress: 14/15  v18.19.6     0.125s  Restoring space skipped.
+2026-10-11T13:28:06.7396408Z ####  Progress: 15/15  v18.19.6     0.000s  Fresh holotree done [with 2 workers on 4 CPUs].
+2026-10-11T13:28:09.3680266Z Installation plan is: /tmp/TestRealJATClassRCCAtoBVertical4178461023/002/producer-home/holotree/62fb83f_b35c539_b7b14173/rcc_plan.log
+2026-10-11T13:28:09.3682205Z Environment configuration descriptor is: /tmp/TestRealJATClassRCCAtoBVertical4178461023/002/producer-home/holotree/62fb83f_b35c539_b7b14173/identity.yaml
+2026-10-11T13:30:01.2091076Z     real_vertical_test.go:147: native runtime receipt: /home/runner/work/rcc/rcc/tmp/output/jat-class-consumer-receipt.json
+2026-10-11T13:30:37.2246855Z --- PASS: TestRealJATClassRCCAtoBVertical (302.60s)
+2026-10-11T13:30:37.2248308Z PASS
+2026-10-11T13:30:37.2265915Z ok  	github.com/joshyorko/rcc/environmentlifecycle	302.615s
+2026-10-11T13:30:37.2430825Z ##[group]Run python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot
+2026-10-11T13:30:37.2431436Z [36;1mpython -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot[0m
+2026-10-11T13:30:37.2471452Z shell: /usr/bin/bash -e {0}
+2026-10-11T13:30:37.2471747Z env:
+2026-10-11T13:30:37.2472026Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:30:37.2472358Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:30:37.2472613Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:30:37.2472881Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:30:37.2473144Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:30:37.2473390Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:30:37.2473621Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:30:37.2473908Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:30:37.2474210Z   GOTOOLCHAIN: local
+2026-10-11T13:30:37.2474504Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:30:37.2474947Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:30:37.2475344Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:30:37.2475720Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:30:37.2476327Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:30:37.2476699Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:30:37.2477030Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:30:37.2477316Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:30:37.2477758Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:30:37.2478305Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:30:37.2478697Z ##[endgroup]
+2026-10-11T13:30:37.4468722Z ==============================================================================
+2026-10-11T13:30:37.4469579Z Environment Artifacts                                                         
+2026-10-11T13:30:37.4470139Z ==============================================================================
+2026-10-11T13:30:37.8537310Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:30:37.8746553Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:30:37.8758370Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:30:37.8961138Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:30:37.8972169Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.0388602Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.0421068Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.1476289Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.1490161Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2056902Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2071443Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2449993Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2460504Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2664236Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:13.2673004Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:32.0673725Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:32.0686049Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:32.8084722Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:32.8148559Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:35.5763346Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:35.5880208Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:39.5445272Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:39.5460474Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:41.0258443Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:41.0275041Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:44.9872337Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:44.9945648Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:54.7124630Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:54.7761849Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:58.7878925Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:31:58.7905645Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:10.1452384Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:10.1714793Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:14.1963499Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:14.4260382Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:23.6732835Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:23.7773842Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:23.7991176Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:23.8001432Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:24.4289468Z [ WARN ] Keyword 'Log To Console' found both from a custom library 'library' and a standard library 'BuiltIn'. The custom keyword is used. To select explicitly, and to get rid of this warning, use either 'library.Log To Console' or 'BuiltIn.Log To Console'.
+2026-10-11T13:32:24.4530562Z Portable Environment Is Published Acquired Executed And Reused Off... | PASS |
+2026-10-11T13:32:24.4531400Z ------------------------------------------------------------------------------
+2026-10-11T13:32:31.0534015Z Environment Artifacts                                                 | PASS |
+2026-10-11T13:32:31.0534698Z 1 test, 1 passed, 0 failed
+2026-10-11T13:32:31.0535141Z ==============================================================================
+2026-10-11T13:32:31.0544690Z Output:  /home/runner/work/rcc/rcc/tmp/output/output.xml
+2026-10-11T13:32:31.0810365Z Log:     /home/runner/work/rcc/rcc/tmp/output/log.html
+2026-10-11T13:32:31.0846957Z Report:  /home/runner/work/rcc/rcc/tmp/output/report.html
+2026-10-11T13:32:31.1169104Z ##[group]Run python - <<'PY'
+2026-10-11T13:32:31.1169596Z [36;1mpython - <<'PY'[0m
+2026-10-11T13:32:31.1169847Z [36;1mimport json, os[0m
+2026-10-11T13:32:31.1170091Z [36;1mfrom pathlib import Path[0m
+2026-10-11T13:32:31.1170390Z [36;1mfrom tasks import _validate_receipt_commit[0m
+2026-10-11T13:32:31.1170682Z [36;1m[0m
+2026-10-11T13:32:31.1170948Z [36;1mreceipt = Path(os.environ["RCC_REAL_RECEIPT_FILE"])[0m
+2026-10-11T13:32:31.1171369Z [36;1mrobot = Path("tmp/output/native-runtime-robot-evidence.json")[0m
+2026-10-11T13:32:31.1171767Z [36;1mif not receipt.is_file() or not robot.is_file():[0m
+2026-10-11T13:32:31.1172164Z [36;1m    raise SystemExit("missing exact CLI receipt or Robot evidence")[0m
+2026-10-11T13:32:31.1172515Z [36;1m[0m
+2026-10-11T13:32:31.1172724Z [36;1mdef require(value, key, label):[0m
+2026-10-11T13:32:31.1173048Z [36;1m    if not isinstance(value, dict) or key not in value:[0m
+2026-10-11T13:32:31.1173447Z [36;1m        raise SystemExit(f"malformed {label}: missing {key}")[0m
+2026-10-11T13:32:31.1173776Z [36;1m    return value[key][0m
+2026-10-11T13:32:31.1174017Z [36;1m[0m
+2026-10-11T13:32:31.1174224Z [36;1mdef lifecycle(label, evidence):[0m
+2026-10-11T13:32:31.1174541Z [36;1m    digest = require(evidence, "artifactDigest", label)[0m
+2026-10-11T13:32:31.1174892Z [36;1m    cold = require(evidence, "cold", label)[0m
+2026-10-11T13:32:31.1175201Z [36;1m    warm = require(evidence, "warm", label)[0m
+2026-10-11T13:32:31.1175537Z [36;1m    mismatch = require(evidence, "mismatch", label)[0m
+2026-10-11T13:32:31.1176258Z [36;1m    if require(cold, "artifactDigest", f"{label}.cold") != digest or require(warm, "artifactDigest", f"{label}.warm") != digest:[0m
+2026-10-11T13:32:31.1176814Z [36;1m        raise SystemExit(f"{label} digest identity mismatch")[0m
+2026-10-11T13:32:31.1177393Z [36;1m    if require(cold, "cacheHit", f"{label}.cold") != "provider" or require(warm, "cacheHit", f"{label}.warm") != "local-materialization":[0m
+2026-10-11T13:32:31.1177994Z [36;1m        raise SystemExit(f"{label} cold/warm cache provenance mismatch")[0m
+2026-10-11T13:32:31.1178740Z [36;1m    if require(cold, "materializationId", f"{label}.cold") != require(warm, "materializationId", f"{label}.warm") or require(cold, "path", f"{label}.cold") != require(warm, "path", f"{label}.warm"):[0m
+2026-10-11T13:32:31.1179469Z [36;1m        raise SystemExit(f"{label} materialization identity mismatch")[0m
+2026-10-11T13:32:31.1180016Z [36;1m    if require(cold, "leaseId", f"{label}.cold") == "" or require(cold, "leaseReleased", f"{label}.cold") is not True:[0m
+2026-10-11T13:32:31.1180534Z [36;1m        raise SystemExit(f"{label} lease evidence is incomplete")[0m
+2026-10-11T13:32:31.1180959Z [36;1m    compatibility = require(cold, "compatibility", f"{label}.cold")[0m
+2026-10-11T13:32:31.1181411Z [36;1m    worker = require(compatibility, "worker", f"{label}.cold.compatibility")[0m
+2026-10-11T13:32:31.1181896Z [36;1m    worker_os = require(worker, "os", f"{label}.cold.compatibility.worker")[0m
+2026-10-11T13:32:31.1182374Z [36;1m    worker_cpu = require(worker, "cpu", f"{label}.cold.compatibility.worker")[0m
+2026-10-11T13:32:31.1182866Z [36;1m    worker_python = require(worker, "python", f"{label}.cold.compatibility.worker")[0m
+2026-10-11T13:32:31.1183406Z [36;1m    worker_filesystem = require(worker, "filesystem", f"{label}.cold.compatibility.worker")[0m
+2026-10-11T13:32:31.1185134Z [36;1m    if not require(worker, "relocationVersions", f"{label}.cold.compatibility.worker") or not require(worker_os, "family", f"{label}.cold.compatibility.worker.os") or not require(worker_os, "nativeArchitecture", f"{label}.cold.compatibility.worker.os") or not require(worker_cpu, "architecture", f"{label}.cold.compatibility.worker.cpu") or require(worker_filesystem, "maxPath", f"{label}.cold.compatibility.worker.filesystem") <= 0 or require(worker_python, "artifactProvided", f"{label}.cold.compatibility.worker.python") is not True:[0m
+2026-10-11T13:32:31.1187204Z [36;1m        raise SystemExit(f"{label} worker capability receipt is incomplete")[0m
+2026-10-11T13:32:31.1187772Z [36;1m    if require(warm, "providerDeadWarmReuse", f"{label}.warm") is not True:[0m
+2026-10-11T13:32:31.1188245Z [36;1m        raise SystemExit(f"{label} provider-dead warm evidence is incomplete")[0m
+2026-10-11T13:32:31.1188877Z [36;1m    if require(mismatch, "rejected", f"{label}.mismatch") is not True or require(mismatch, "providerObjectGets", f"{label}.mismatch") != 0:[0m
+2026-10-11T13:32:31.1189508Z [36;1m        raise SystemExit(f"{label} mismatch was not rejected before object fetch")[0m
+2026-10-11T13:32:31.1190229Z [36;1m    if require(cold, "nativeImport", f"{label}.cold") != "sqlite3" or not require(cold, "nativeExtension", f"{label}.cold") or not require(cold, "sqliteVersion", f"{label}.cold"):[0m
+2026-10-11T13:32:31.1190931Z [36;1m        raise SystemExit(f"{label} native import evidence is incomplete")[0m
+2026-10-11T13:32:31.1191284Z [36;1m[0m
+2026-10-11T13:32:31.1191502Z [36;1mdef robot_lifecycle(evidence):[0m
+2026-10-11T13:32:31.1191863Z [36;1m    digest = require(evidence, "artifactDigest", "robotExactBinary")[0m
+2026-10-11T13:32:31.1192281Z [36;1m    cold = require(evidence, "cold", "robotExactBinary")[0m
+2026-10-11T13:32:31.1192668Z [36;1m    execute = require(evidence, "execute", "robotExactBinary")[0m
+2026-10-11T13:32:31.1193060Z [36;1m    warm = require(evidence, "warm", "robotExactBinary")[0m
+2026-10-11T13:32:31.1193559Z [36;1m    if any(require(item, "artifactDigest", "robotExactBinary") != digest for item in (cold, execute, warm)):[0m
+2026-10-11T13:32:31.1194072Z [36;1m        raise SystemExit("Robot artifact identity mismatch")[0m
+2026-10-11T13:32:31.1194923Z [36;1m    if require(cold, "cacheHit", "robotExactBinary.cold") != "provider" or require(execute, "cacheHit", "robotExactBinary.execute") != "local-materialization" or require(warm, "cacheHit", "robotExactBinary.warm") != "local-materialization":[0m
+2026-10-11T13:32:31.1196326Z [36;1m        raise SystemExit("Robot cache provenance mismatch")[0m
+2026-10-11T13:32:31.1197072Z [36;1m    if len({require(item, "materializationId", "robotExactBinary") for item in (cold, execute, warm)}) != 1 or len({require(item, "path", "robotExactBinary") for item in (cold, execute, warm)}) != 1:[0m
+2026-10-11T13:32:31.1197815Z [36;1m        raise SystemExit("Robot materialization identity mismatch")[0m
+2026-10-11T13:32:31.1198620Z [36;1m    if require(execute, "leaseId", "robotExactBinary.execute") == "" or require(execute, "leaseReleased", "robotExactBinary.execute") is not True or require(execute, "exitCode", "robotExactBinary.execute") != 0:[0m
+2026-10-11T13:32:31.1199434Z [36;1m        raise SystemExit("Robot lease/execute evidence is incomplete")[0m
+2026-10-11T13:32:31.1199918Z [36;1m    if require(warm, "providerDeadWarmReuse", "robotExactBinary.warm") is not True:[0m
+2026-10-11T13:32:31.1200412Z [36;1m        raise SystemExit("Robot provider-dead warm evidence is incomplete")[0m
+2026-10-11T13:32:31.1200865Z [36;1m    native = require(evidence, "native", "robotExactBinary")[0m
+2026-10-11T13:32:31.1201632Z [36;1m    if require(native, "import", "robotExactBinary.native") != "sqlite3" or not require(native, "extension", "robotExactBinary.native") or not require(native, "sqliteVersion", "robotExactBinary.native"):[0m
+2026-10-11T13:32:31.1202416Z [36;1m        raise SystemExit("Robot native import evidence is incomplete")[0m
+2026-10-11T13:32:31.1202759Z [36;1m[0m
+2026-10-11T13:32:31.1202955Z [36;1mtry:[0m
+2026-10-11T13:32:31.1203195Z [36;1m    data = json.loads(receipt.read_text())[0m
+2026-10-11T13:32:31.1203568Z [36;1m    _validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])[0m
+2026-10-11T13:32:31.1203966Z [36;1m    robot_evidence = json.loads(robot.read_text())[0m
+2026-10-11T13:32:31.1204303Z [36;1m    binary = require(data, "binary", "receipt")[0m
+2026-10-11T13:32:31.1204660Z [36;1m    exact = require(data, "exactBinaryCLI", "receipt")[0m
+2026-10-11T13:32:31.1205097Z [36;1m    source = require(data, "sourceAPI", "receipt")[0m
+2026-10-11T13:32:31.1205641Z [36;1m    if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):[0m
+2026-10-11T13:32:31.1206357Z [36;1m        raise SystemExit("receipt and exact CLI artifact identities differ")[0m
+2026-10-11T13:32:31.1206830Z [36;1m    platform_checks = require(exact, "platformChecks", "exactBinaryCLI")[0m
+2026-10-11T13:32:31.1207253Z [36;1m    platform = require(data, "platform", "receipt")[0m
+2026-10-11T13:32:31.1207563Z [36;1m    expected_checks = {[0m
+2026-10-11T13:32:31.1208054Z [36;1m        "linux": {"runnerOS", "machine", "caseCollision", "executableSymlink", "filesystemType", "libc", "glibcMuslMismatch"},[0m
+2026-10-11T13:32:31.1208973Z [36;1m        "darwin": {"runnerOS", "machine", "caseCollision", "executableSymlink", "rosetta", "machoRPath", "machoDependencies", "quarantineXattr", "codeSigning", "translationAllowed", "nativeOnlyOnRosetta"},[0m
+2026-10-11T13:32:31.1209919Z [36;1m        "windows": {"runnerOS", "machine", "caseCollision", "executableSymlink", "longPath", "junction", "fileLock", "pathNormalization"},[0m
+2026-10-11T13:32:31.1210417Z [36;1m    }[0m
+2026-10-11T13:32:31.1210667Z [36;1m    platform_family = platform.split("_", 1)[0][0m
+2026-10-11T13:32:31.1211183Z [36;1m    if not isinstance(platform_checks, dict) or set(platform_checks) != expected_checks.get(platform_family, set()):[0m
+2026-10-11T13:32:31.1211846Z [36;1m        raise SystemExit(f"exact CLI platform probe key set is invalid for {platform}: {sorted(platform_checks)}")[0m
+2026-10-11T13:32:31.1212352Z [36;1m    for key, value in platform_checks.items():[0m
+2026-10-11T13:32:31.1212831Z [36;1m        if not isinstance(value, str) or not value or value.startswith(("skipped:", "unavailable:", "failed")):[0m
+2026-10-11T13:32:31.1213491Z [36;1m            if not (platform_family == "darwin" and key == "nativeOnlyOnRosetta" and value == "skipped:native-runner"):[0m
+2026-10-11T13:32:31.1214130Z [36;1m                raise SystemExit(f"exact CLI platform probe {key} is not a passing or explicit fact: {value}")[0m
+2026-10-11T13:32:31.1214778Z [36;1m    if platform_checks["caseCollision"] not in {"case-insensitive-filesystem", "case-sensitive-filesystem"}:[0m
+2026-10-11T13:32:31.1215440Z [36;1m        raise SystemExit(f"caseCollision is not a truthful filesystem fact: {platform_checks['caseCollision']}")[0m
+2026-10-11T13:32:31.1216162Z [36;1m    if not isinstance(platform_checks, dict) or not platform_checks:[0m
+2026-10-11T13:32:31.1216605Z [36;1m        raise SystemExit("exact CLI platform probe receipt is incomplete")[0m
+2026-10-11T13:32:31.1216994Z [36;1m    lifecycle("exactBinaryCLI", exact)[0m
+2026-10-11T13:32:31.1217304Z [36;1m    lifecycle("sourceAPI", source)[0m
+2026-10-11T13:32:31.1217764Z [36;1m    if require(robot_evidence, "binarySha256", "robotExactBinary") != require(binary, "sha256", "receipt"):[0m
+2026-10-11T13:32:31.1218338Z [36;1m        raise SystemExit("Robot evidence binary does not match staged RCC binary")[0m
+2026-10-11T13:32:31.1218780Z [36;1m    robot_lifecycle(robot_evidence)[0m
+2026-10-11T13:32:31.1219113Z [36;1m    data["robotExactBinary"] = robot_evidence[0m
+2026-10-11T13:32:31.1219469Z [36;1m    receipt.write_text(json.dumps(data, indent=2) + "\n")[0m
+2026-10-11T13:32:31.1219901Z [36;1mexcept (json.JSONDecodeError, OSError, TypeError, ValueError) as error:[0m
+2026-10-11T13:32:31.1220398Z [36;1m    raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")[0m
+2026-10-11T13:32:31.1220766Z [36;1mPY[0m
+2026-10-11T13:32:31.1259819Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:32:31.1260168Z env:
+2026-10-11T13:32:31.1260449Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.1260784Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:32:31.1261026Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:32:31.1261289Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:32:31.1261687Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:32:31.1262021Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:32:31.1262254Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:32:31.1262535Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.1262832Z   GOTOOLCHAIN: local
+2026-10-11T13:32:31.1263121Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.1263521Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:32:31.1263915Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.1264287Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.1264642Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.1265011Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:32:31.1265326Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:32:31.1265605Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:32:31.1266180Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:32:31.1266721Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:32:31.1267117Z ##[endgroup]
+2026-10-11T13:32:31.2433845Z ##[group]Run set -euo pipefail
+2026-10-11T13:32:31.2434167Z [36;1mset -euo pipefail[0m
+2026-10-11T13:32:31.2434508Z [36;1mif [[ -z "${RCC_REAL_BINARY:-}" || ! -f "${RCC_REAL_BINARY:-}" || \[0m
+2026-10-11T13:32:31.2434946Z [36;1m      -z "${RCC_REAL_RECEIPT_FILE:-}" || ! -f "${RCC_REAL_RECEIPT_FILE:-}" || \[0m
+2026-10-11T13:32:31.2435337Z [36;1m      -z "${RCC_BINARY_VERSION:-}" ]]; then[0m
+2026-10-11T13:32:31.2435977Z [36;1m  echo "Exact binary or native receipt is unavailable; no native binary sidecar is staged."[0m
+2026-10-11T13:32:31.2436399Z [36;1m  exit 0[0m
+2026-10-11T13:32:31.2436623Z [36;1mfi[0m
+2026-10-11T13:32:31.2436945Z [36;1mpython3 scripts/release_publication.py stage-native-review-binary \[0m
+2026-10-11T13:32:31.2437343Z [36;1m  --binary "$RCC_REAL_BINARY" \[0m
+2026-10-11T13:32:31.2437657Z [36;1m  --receipt "$RCC_REAL_RECEIPT_FILE" \[0m
+2026-10-11T13:32:31.2437982Z [36;1m  --output tmp/output/native-binary-review \[0m
+2026-10-11T13:32:31.2438335Z [36;1m  --asset-name "$RCC_NATIVE_ASSET" \[0m
+2026-10-11T13:32:31.2438682Z [36;1m  --platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}" \[0m
+2026-10-11T13:32:31.2439026Z [36;1m  --source-sha "$RCC_CANDIDATE_SHA" \[0m
+2026-10-11T13:32:31.2439327Z [36;1m  --version "$RCC_BINARY_VERSION" \[0m
+2026-10-11T13:32:31.2439603Z [36;1m  --go "$(command -v go)"[0m
+2026-10-11T13:32:31.2476092Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:32:31.2476438Z env:
+2026-10-11T13:32:31.2476716Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.2477047Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:32:31.2477294Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:32:31.2477559Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:32:31.2477820Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:32:31.2478080Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:32:31.2478315Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:32:31.2478600Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.2478910Z   GOTOOLCHAIN: local
+2026-10-11T13:32:31.2479207Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.2479609Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:32:31.2480005Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.2480375Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.2480737Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.2481107Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:32:31.2481425Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:32:31.2481707Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:32:31.2482148Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:32:31.2482818Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:32:31.2483219Z ##[endgroup]
+2026-10-11T13:32:31.3421890Z release preflight failed: native review binary Go metadata differs from source/platform identity
+2026-10-11T13:32:31.3523505Z ##[error]Process completed with exit code 1.
+2026-10-11T13:32:31.3569443Z ##[group]Run set -euo pipefail
+2026-10-11T13:32:31.3569769Z [36;1mset -euo pipefail[0m
+2026-10-11T13:32:31.3570117Z [36;1mif [[ -n "${RCC_REAL_BINARY:-}" && -f "${RCC_REAL_BINARY:-}" && \[0m
+2026-10-11T13:32:31.3570578Z [36;1m      -n "${RCC_REAL_RECEIPT_FILE:-}" && -f "${RCC_REAL_RECEIPT_FILE:-}" ]]; then[0m
+2026-10-11T13:32:31.3571067Z [36;1m  test -f tmp/output/native-binary-review/native-binary-review.json[0m
+2026-10-11T13:32:31.3571442Z [36;1mfi[0m
+2026-10-11T13:32:31.3571796Z [36;1mpython3 scripts/release_publication.py check-review-payload --root tmp/output[0m
+2026-10-11T13:32:31.3609959Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T13:32:31.3610310Z env:
+2026-10-11T13:32:31.3610595Z   RCC_CANDIDATE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.3610924Z   RCC_RELEASE_VERSION: 
+2026-10-11T13:32:31.3611174Z   RCC_NATIVE_PLATFORM: linux-amd64
+2026-10-11T13:32:31.3611439Z   RCC_NATIVE_ASSET: rcc-linux64
+2026-10-11T13:32:31.3611731Z   RCC_NATIVE_BINARY: build/rcc
+2026-10-11T13:32:31.3611977Z   RCC_NATIVE_GOOS: linux
+2026-10-11T13:32:31.3612220Z   RCC_NATIVE_GOARCH: amd64
+2026-10-11T13:32:31.3612497Z   RCC_SOURCE_SHA: 29c3cfdcc89591768a7204ec594414be0ce846f4
+2026-10-11T13:32:31.3612799Z   GOTOOLCHAIN: local
+2026-10-11T13:32:31.3613085Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.3613489Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T13:32:31.3613893Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.3614250Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.3614615Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T13:32:31.3614984Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T13:32:31.3615302Z   RCC_BINARY_VERSION: v18.19.6
+2026-10-11T13:32:31.3615586Z   RCC_REAL_BINARY: /home/runner/work/rcc/rcc/build/rcc
+2026-10-11T13:32:31.3616186Z   RCC_REAL_BINARY_SHA256: 3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da
+2026-10-11T13:32:31.3616730Z   RCC_REAL_RECEIPT_FILE: /home/runner/work/rcc/rcc/tmp/output/native-runtime-receipt.json
+2026-10-11T13:32:31.3617138Z ##[endgroup]
+2026-10-11T13:32:31.3679594Z ##[error]Process completed with exit code 1.
+2026-10-11T13:32:31.3778279Z Post job cleanup.
+2026-10-11T13:32:31.4594802Z [command]/usr/bin/git version
+2026-10-11T13:32:31.4627253Z git version 2.55.0
+2026-10-11T13:32:31.4661333Z Temporarily overriding HOME='/home/runner/work/_temp/11c6800c-9341-4692-b407-9b091d1bd2be' before making global git config changes
+2026-10-11T13:32:31.4662483Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T13:32:31.4667765Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-11T13:32:31.4702719Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T13:32:31.4733473Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T13:32:31.4922490Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T13:32:31.4944653Z http.https://github.com/.extraheader
+2026-10-11T13:32:31.4954011Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-11T13:32:31.4985016Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T13:32:31.5166721Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T13:32:31.5192300Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T13:32:31.5497057Z Cleaning up orphan processes
+2026-10-11T13:32:31.5726204Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

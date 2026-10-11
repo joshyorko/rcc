@@ -1,0 +1,11 @@
+{
+  "sourceSha": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "scope": "isolatedRAM reproduction of invsupport pretoc, no Go build/nativebyte claim",
+  "scriptSha256": "6cf218260d89a980552e0371b2a4e1b740fa91d803f00c15f68c998b3601bcf6",
+  "trackedReadmeBeforeSha256": "2b79bede22b36a5e1e66fbfda45880ad517308af9c5b71dd399870f18d3ce8c4",
+  "generatedReadmeAfterSha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+  "scriptExit": 0,
+  "sourceOriginalUnchanged": true,
+  "runtime": "no RCC/Go compilation; ownedRAMdocs cleanedafterdiff receipt",
+  "conclusion": "build task pre-support/pre-toc rewrites TRACKEDdocsREADME because new release-process headings missing from committedTOC; woulddirtycheckoutbeforeGo build; nativebinaryactualGo metadata field remainsnotobserved yet"
+}

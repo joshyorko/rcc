@@ -1,0 +1,110 @@
+{
+  "snapshot_utc": "2026-10-11T13:48:47Z",
+  "rcc": {
+    "main": {
+      "sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "default_branch": "main"
+    },
+    "tags": {
+      "public_rest_page1_count": 33,
+      "latest_names": ["v18.19.5", "v18.19.4", "v18.19.3"],
+      "new_tag_claim": false
+    },
+    "releases": {
+      "public_rest_page1_count": 27,
+      "latest_release": {
+        "tag": "v18.19.5",
+        "published_at": "2026-09-07T19:02:08Z",
+        "draft": false,
+        "prerelease": false
+      },
+      "new_release_claim": false
+    },
+    "pr237": {
+      "url": "https://github.com/joshyorko/rcc/pull/237",
+      "state": "open",
+      "draft": true,
+      "mergeable": true,
+      "head": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+      "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "reviews": 0,
+      "review_threads": 0,
+      "checks": {
+        "PR metrics": {"run_id": 38144487603, "conclusion": "success"},
+        "Lint": {"run_id": 38144487594, "conclusion": "success"},
+        "CodeQL": {"run_id": 38144487609, "conclusion": "success"},
+        "Coverage gate": {"run_id": 38144487535, "conclusion": "success"},
+        "Quality report": {"run_id": 38144487544, "conclusion": "success"},
+        "Rcc": {
+          "run_id": 38144487557,
+          "status": "in_progress",
+          "Build RCC": {"job_id": 114484872811, "conclusion": "success"},
+          "Release Candidate Verification": {"job_id": 114484873035, "status": "in_progress", "active_step": "Run contained release candidate gate"},
+          "Native Runtime (macos-amd64)": {"job_id": 114485081806, "status": "in_progress", "active_step": "Run UV Python prefix symlink containment tests"},
+          "Native Runtime (windows-amd64)": {"job_id": 114485081819, "status": "in_progress", "active_step": "Run Windows Environment Artifact Robot acceptance against exact binary"},
+          "Native Runtime (linux-amd64)": {"job_id": 114485081855, "status": "in_progress", "active_step": "Run real native A-to-B acceptance"},
+          "Native Runtime (macos-arm64)": {"job_id": 114485081871, "status": "in_progress", "active_step": "Run macOS system-alias no-follow acceptance"}
+        }
+      },
+      "claim": "The exact c6c7a012 head has no terminal full11/native outcome yet. No receipts/results from earlier heads are rebound."
+    },
+    "previous_head_29c3": {
+      "head": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+      "rcc_run_id": 38142809725,
+      "run_status": "in_progress because macos-amd64 native job remained active",
+      "build_job": {"id": 114479958847, "conclusion": "success"},
+      "release_candidate_job": {"id": 114479958669, "conclusion": "success"},
+      "native_jobs": {
+        "windows-amd64": {
+          "job_id": 114480147770,
+          "status": "failure",
+          "native_A_to_B": "success",
+          "Windows acceptance and Robot": "success",
+          "final_stage": "Stage exact native binary for review failed; review-payload size validation failed"
+        },
+        "linux-amd64": {
+          "job_id": 114480147837,
+          "status": "failure",
+          "native_A_to_B": "success",
+          "JAT": "success",
+          "Robot": "success",
+          "final_stage": "Stage exact native binary for review failed; review-payload size validation failed"
+        },
+        "macos-arm64": {
+          "job_id": 114480147864,
+          "status": "failure",
+          "native_A_to_B": "success",
+          "Robot": "success",
+          "final_stage": "Stage exact native binary for review failed; review-payload size validation failed"
+        },
+        "macos-amd64": {
+          "job_id": 114480147852,
+          "status": "in_progress",
+          "last_observed_step": "Run Environment Artifact Robot acceptance against exact binary"
+        }
+      },
+      "root_attribution": "Root reports a tracked TOC causing the reproducible dirty-source failure during native review-payload staging. Root has not observed the actual Go metadata field. This attribution is root-reported, not independently reproduced in this read-only lane.",
+      "source_binding": "All 29c3cfd evidence remains separate from c6c7a012."
+    }
+  },
+  "actions_221": {
+    "url": "https://github.com/joshyorko/actions/pull/221",
+    "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "state": "open",
+    "draft": true,
+    "comment_count": 2,
+    "latest_comment_id": 6108894271,
+    "latest_comment_at": "2026-10-11T12:12:50Z",
+    "latest_owner_reply": "No later owner response present in the current PR timeline.",
+    "compatibility": "The exact-v18.19.3 verifier is still described as current; no newer-version compatibility evidence inferred."
+  },
+  "worker_actions": {
+    "retries": false,
+    "cancellations": false,
+    "artifact_downloads": false,
+    "source_or_github_mutations": false,
+    "review_thread_closures": false,
+    "tag_or_release_mutations": false
+  }
+}

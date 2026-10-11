@@ -1,0 +1,235 @@
+{
+  "schema": "independent-original-threecase-byte-proof-v1",
+  "source": {
+    "sha": "7eb5bce946750555ab009f77592862920a901506",
+    "tree": "3ff76037779763d0461ff3a755b900c9ed83dcf8"
+  },
+  "control": {
+    "sha": "b673ddd761ba4ccd68e9baa8faaa9ab666df794e",
+    "tree": "56d108fcdb5d43f7f27a8f2554fec51b702519f4",
+    "sole_parent": "7eb5bce946750555ab009f77592862920a901506"
+  },
+  "all22_references_verified": true,
+  "original": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/frozen-original-threecase-proof.json",
+    "bytes": 19720,
+    "sha256": "16b60ef82e907388a768642e17db2134b5dfaea966cfc7045aa1715879ca38f4"
+  },
+  "ZIP": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/original-artifact-11697165172.zip",
+    "bytes": 7582,
+    "sha256": "5bebad77cc556a5bf5cef84feae8d76d3a7d5c5aecfc63378691cc79dec3719d"
+  },
+  "decoded_original_log": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/original-job-114425127596.private.log",
+    "bytes": 887255,
+    "sha256": "d36e0a7695b52fa2113a6d3a43c6554b1c5f032c0f777410bfadd2972b135c1b"
+  },
+  "all7_original_archive_members": [
+    {
+      "member": "rcc-provider-rollback-evidence/acceptance-summary.json",
+      "bytes": 3067,
+      "sha256": "0cae877e37e4ad4721045e8095cd3f40bb361006048e38ea2cfbea8de2c05fde",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/acceptance-summary.log",
+      "bytes": 686,
+      "sha256": "d4cc8ec93cf0227ae2206808180e53b29271b45c8658151106c01d416a0455fd",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/lifecycle-receipt.json",
+      "bytes": 7881,
+      "sha256": "a18529d3dc94cfc150352d6dedc674883814245eca5573205a2ce92427875b8c",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/lifecycle-summary.json",
+      "bytes": 1221,
+      "sha256": "56ad7a1548939ae3e143be6a83a846de330eb6bce4317d0cfc0e4a5190e22817",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/published-details-receipt.json",
+      "bytes": 1483,
+      "sha256": "0d8f704b99becdc0baad46006c276e4406b862bbf96408011ad587da68179129",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/staged-consumer-receipt.json",
+      "bytes": 2393,
+      "sha256": "42fb4f5876557bcffc597738bb642df22c69d91349c54d5d3c53fce97033abde",
+      "mode": "0o100644"
+    },
+    {
+      "member": "rcc-provider-rollback-junit.xml",
+      "bytes": 752,
+      "sha256": "99bd574e75a7d2313d50fb20749632ada952bb132f9c3a4f16642ac6ea4a9787",
+      "mode": "0o100644"
+    }
+  ],
+  "raw_members_equal_owner_retained_and_private0600": true,
+  "JUnit_counts": {
+    "tests": 3,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "JUnit_identities": [
+    [
+      "test_current_candidate_import_rollback",
+      "test_current_candidate_failed_reload_keeps_last_good_action_usable"
+    ],
+    [
+      "test_source_staging_rcc_consumer",
+      "test_published_artifact_details_preserves_one_rcc_identity_pair"
+    ],
+    [
+      "test_source_staging_rcc_consumer",
+      "test_staged_package_executes_in_managed_rcc_runtime"
+    ]
+  ],
+  "actual_C_and_S_checkout_SHA_original_log_lines": [
+    124,
+    224
+  ],
+  "immutable_Git_trees_match_raw_receipts": true,
+  "all9_source_mode_blob_hash_records": [
+    {
+      "name": "action_package_handler",
+      "path": "action_server/src/actions/server/_action_package_handler.py",
+      "git_mode": "100644",
+      "git_blob": "a306eb11038f8cd4114415fb978321eb2ac51a0f",
+      "bytes": 24361,
+      "sha256": "a623ec0d2a7862bc5f27599fda853cb039ce68459b18c95e01c7a53adcdedb64"
+    },
+    {
+      "name": "actions_import",
+      "path": "action_server/src/actions/server/_actions_import.py",
+      "git_mode": "100644",
+      "git_blob": "50f72e8c95dcc4455a8225eb19c8d3309faada58",
+      "bytes": 28217,
+      "sha256": "57ad235e30fdd84c763f84efd7ccdd8514d620d5b5cfff05ac1051f60ceefad3"
+    },
+    {
+      "name": "runtime_adapter",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "git_mode": "100644",
+      "git_blob": "09234363409bf979016a970c34b8b38ff642fb1f",
+      "bytes": 27382,
+      "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a"
+    },
+    {
+      "name": "rollback_test",
+      "path": "action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+      "git_mode": "100644",
+      "git_blob": "13c760dd2adbd38bfeec039eba73376bbf32745c",
+      "bytes": 23456,
+      "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b"
+    },
+    {
+      "name": "staged_consumer_test",
+      "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "git_mode": "100644",
+      "git_blob": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+      "bytes": 19214,
+      "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a"
+    },
+    {
+      "name": "source_staging",
+      "path": "action_server/src/actions/server/deployments/source_staging.py",
+      "git_mode": "100644",
+      "git_blob": "b475fd6688b7afc6606cde2cba9a1294d771a64c",
+      "bytes": 25641,
+      "sha256": "fda3f2c045414a9cae21cc0765a3eb7c72db2ddd2f5d74e567a04a0513baf620"
+    },
+    {
+      "name": "source_read",
+      "path": "action_server/src/actions/server/deployments/source_read.py",
+      "git_mode": "100644",
+      "git_blob": "7ec910a2ef7aecd2be73c6a7b786d42ea78c81af",
+      "bytes": 11051,
+      "sha256": "4ae8cbe57aa5c924585f4257a1be1700aa49baa63d6150efba20935045f7a8a5"
+    },
+    {
+      "name": "source_manifest",
+      "path": "action_server/src/actions/server/deployments/source_manifest.py",
+      "git_mode": "100644",
+      "git_blob": "5c02ece585884a656175d586e6b3d5a64f0c065e",
+      "bytes": 8281,
+      "sha256": "4fb8d376d1b4aa06d301dedaeee67a2916561c7d10b8f1dadd657870b37b2b43"
+    },
+    {
+      "name": "acceptance_helper",
+      "path": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "git_mode": "100644",
+      "git_blob": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+      "bytes": 80376,
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3"
+    }
+  ],
+  "independent_offline_validator": {
+    "actual_binary_provider_or_test_execution": false,
+    "exit": 0,
+    "issues": [],
+    "original_strict_predicate_AST_restored_exact": true,
+    "observation_adapters": [
+      "git_value",
+      "file_sha256",
+      "two recorded RCCversion values",
+      "private os.environ proxy"
+    ],
+    "regenerated_summary_files_byte_exact_original": [
+      "acceptance-summary.json",
+      "acceptance-summary.log",
+      "lifecycle-summary.json"
+    ],
+    "output": {
+      "path": "/workspace/engineering/pr308-current776-independent-actual-review/independent-offline-validator-recorded-inputs-v3/validator-output.private.log",
+      "bytes": 686,
+      "sha256": "d4cc8ec93cf0227ae2206808180e53b29271b45c8658151106c01d416a0455fd"
+    }
+  },
+  "publication": {
+    "invocations": 1,
+    "raw_pair_and_aliases_args_valid": true,
+    "raw_payload_sha256": "5275941be63a8f3f81e1c667a9a008311c809378c2b03a852879ee986e7c8d04",
+    "RCCsha": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "RCCversion": "v18.19.3",
+    "scope": "publication-details case only; other two cases have separate providers/environments"
+  },
+  "staged_core": {
+    "version": "1.0.2",
+    "member_count": 2,
+    "authored_source_staged_inventory_bytes_sizes_modes_equal": true,
+    "managed_worker_and_Core_origins_verified": true,
+    "not_wholeCore_or_wheel_proof": true
+  },
+  "lifecycle": {
+    "HTTP": 200,
+    "natural_return_before_separate_cleanup": 1,
+    "forced_stop_used": false,
+    "post_cleanup_return": 1,
+    "post_cleanup_is_natural_evidence": false,
+    "captured_before": 0,
+    "same_captured_remaining": 0,
+    "provider_operations_count": 2,
+    "provider_operations_unchanged": true,
+    "persisted_runs_status2_and_expected_results": true,
+    "scope": "captured tree only; source treats psutil inspection failure as empty, so no complete snapshot/universal reap proof"
+  },
+  "actual_control_three_branches": [
+    "test/rcc-provider-rollback-hosted-20261010",
+    "fix/rcc-published-artifact-details-20261010",
+    "fix/rcc-candidate-wheel-identities-20261010"
+  ],
+  "path_filter_exact_accepted_target": true,
+  "canonical": {
+    "path": "/workspace/engineering/pr308-accepted-public-guard-independent-control-review/canonical-three-reviewed-control-branches-proposed.patch",
+    "bytes": 1016,
+    "sha256": "cd97355e9506350c286532607b87c5ce4ff492073a78fb72336517fe8164b5cd"
+  },
+  "source_clean_and_owner_frozen_inputs_unchanged": true,
+  "no_download_native_provider_or_binary_rerun": true
+}

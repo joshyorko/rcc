@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-10-11T14:05:08.067925+00:00",
+  "verdict": "ROOT_ACTUAL_ORIGINAL_ZIP_AND_NINE_SOURCE_PINS_VERIFIED; EXACT_PUBLIC_THREE_CASE_RCC3_SCOPE_ONLY",
+  "source": {
+    "commit": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+    "tree": "21676c626a933c2d55761ec85ecf26fe0eef26bb"
+  },
+  "control": {
+    "commit": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+    "tree": "fa3f7728d315c9a192f88e17acf15f164d4eee13",
+    "sole_parent": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962"
+  },
+  "target": "6181b044c75de35386f1ae30e71725398b6a7feb",
+  "artifact_id": 11699213923,
+  "actual_zip_sha256": "375684fb49460e48451184eae58c7ec26f3b5849d29ab7333b3147b8ef1995f6",
+  "members": [
+    {
+      "path": "rcc-provider-rollback-evidence/acceptance-summary.json",
+      "bytes": 3067,
+      "sha256": "dc362614c401b42885ec0f778873a8eb649628cbefb58e0ddb8c469f08a53ada"
+    },
+    {
+      "path": "rcc-provider-rollback-evidence/lifecycle-receipt.json",
+      "bytes": 10901,
+      "sha256": "e35c9f7ca5cda7d4833e2558b20a966705b44fee8d57f8eec6e16d3bb0e80c19"
+    },
+    {
+      "path": "rcc-provider-rollback-evidence/acceptance-summary.log",
+      "bytes": 686,
+      "sha256": "385dc3a6514ebfa85d6564af07ddb2305e09d1641d0863fbf450d1503290af0a"
+    },
+    {
+      "path": "rcc-provider-rollback-evidence/lifecycle-summary.json",
+      "bytes": 1221,
+      "sha256": "55d3d01180d400dcc00c8027be5ab805c3854f7ee5cccf7f16e99fb3dc08798b"
+    },
+    {
+      "path": "rcc-provider-rollback-evidence/published-details-receipt.json",
+      "bytes": 1483,
+      "sha256": "0f350f5335006ffcc84ac82c9befca7ef9e2ebf552b6b0702629581efd63c41c"
+    },
+    {
+      "path": "rcc-provider-rollback-evidence/staged-consumer-receipt.json",
+      "bytes": 2393,
+      "sha256": "e8a999fcac5ff201b1d42f5d660caac05b82f2baf8227453933c188e5dbc4919"
+    },
+    {
+      "path": "rcc-provider-rollback-junit.xml",
+      "bytes": 752,
+      "sha256": "ad0e40fc117eb3b9a47401dd7de05e0123e4d7123e343f61a05c33430a37b530"
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "action_server/src/actions/server/_action_package_handler.py",
+      "sha256": "a623ec0d2a7862bc5f27599fda853cb039ce68459b18c95e01c7a53adcdedb64",
+      "git_blob": "a306eb11038f8cd4114415fb978321eb2ac51a0f",
+      "bytes": 24361
+    },
+    {
+      "path": "action_server/src/actions/server/_actions_import.py",
+      "sha256": "57ad235e30fdd84c763f84efd7ccdd8514d620d5b5cfff05ac1051f60ceefad3",
+      "git_blob": "50f72e8c95dcc4455a8225eb19c8d3309faada58",
+      "bytes": 28217
+    },
+    {
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a",
+      "git_blob": "09234363409bf979016a970c34b8b38ff642fb1f",
+      "bytes": 27382
+    },
+    {
+      "path": "action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+      "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b",
+      "git_blob": "13c760dd2adbd38bfeec039eba73376bbf32745c",
+      "bytes": 23456
+    },
+    {
+      "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a",
+      "git_blob": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+      "bytes": 19214
+    },
+    {
+      "path": "action_server/src/actions/server/deployments/source_staging.py",
+      "sha256": "fda3f2c045414a9cae21cc0765a3eb7c72db2ddd2f5d74e567a04a0513baf620",
+      "git_blob": "b475fd6688b7afc6606cde2cba9a1294d771a64c",
+      "bytes": 25641
+    },
+    {
+      "path": "action_server/src/actions/server/deployments/source_read.py",
+      "sha256": "4ae8cbe57aa5c924585f4257a1be1700aa49baa63d6150efba20935045f7a8a5",
+      "git_blob": "7ec910a2ef7aecd2be73c6a7b786d42ea78c81af",
+      "bytes": 11051
+    },
+    {
+      "path": "action_server/src/actions/server/deployments/source_manifest.py",
+      "sha256": "4fb8d376d1b4aa06d301dedaeee67a2916561c7d10b8f1dadd657870b37b2b43",
+      "git_blob": "5c02ece585884a656175d586e6b3d5a64f0c065e",
+      "bytes": 8281
+    },
+    {
+      "path": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3",
+      "git_blob": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+      "bytes": 80376
+    }
+  ],
+  "junit": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fixture_case_elapsed_seconds": {
+    "test_current_candidate_failed_reload_keeps_last_good_action_usable": 78.476,
+    "test_staged_package_executes_in_managed_rcc_runtime": 59.801,
+    "test_published_artifact_details_preserves_one_rcc_identity_pair": 33.76
+  },
+  "elapsed_scope": "JUnit fixture durations include setup and cleanup; not cold-first Action/API/acquisition timers, CPU/RSS/I/O, comparative optimization evidence or a newly executed workload",
+  "observations": "RCC3 exact binary, Core1.0.2 typed managed worker, last-good recovery with unchanged two provider operations, one actual publication, scoped natural return before cleanup",
+  "no_new_runtime_or_actions_mutation": true,
+  "remaining": "No candidate6 compatibility, current221 target/fullCI/controller/native/private134/positive offline-warm qualification or universal descendant-reaping proof. No performance gain inferred."
+}

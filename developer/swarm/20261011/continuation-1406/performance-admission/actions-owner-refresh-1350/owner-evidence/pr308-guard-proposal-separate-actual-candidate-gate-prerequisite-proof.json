@@ -1,0 +1,57 @@
+{
+  "status": "READ_ONLY_GATE_PREREQUISITE_QUALIFICATION_NO_TEST_OR_PRODUCT_EXECUTION",
+  "source": "4ca431b51b018b947fac6f096ca3cdc21028dd28",
+  "source_input_sha256": {
+    "action_server/scripts/verify_dakota_rcc_acceptance.py": "8c3c84f0f417e12d68049938088b57a61e0140b2d6a303e35eb0f05c1a843235",
+    "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py": "065f7596ea87dd0f02ca6e9ca926a7f2926190955381b874a545eb18fb344eab"
+  },
+  "actual_test_name": "test_dakota_local_rcc_action_over_authenticated_http",
+  "actual_test_source_lines": [
+    132,
+    199
+  ],
+  "exact_negative_assertions": [
+    "live_receipt['acceptance_status'] == 'FAIL'",
+    "live_receipt['cells']['offline_warm_action'] == 'FAIL'",
+    "live_receipt['cells']['offline_warm_artifact_verification'] == 'FAIL'",
+    "live_receipt['cells']['offline_warm_wrapper_exit'] == 'FAIL'",
+    "live_receipt['cells']['zero_requests_during_warm_runtime'] == 'FAIL'"
+  ],
+  "negative_contract_means_pytest_PASS_is_not_positive_candidate_GO": true,
+  "retained_constants": {
+    "proof_seconds": 2400,
+    "cleanup_grace_seconds": 10,
+    "CLI_watchdog_seconds": 2465,
+    "test_owned_envelope_seconds": 2510,
+    "CLI_expression": "PROOF_TIMEOUT_SECONDS + 6 * CLEANUP_GRACE_SECONDS + 5",
+    "test_keyword_expressions": {
+      "timeout_seconds": "harness.CLI_WATCHDOG_SECONDS + 4 * harness.CLEANUP_GRACE_SECONDS + 5",
+      "env": "harness.child_environment(os.environ, task_root=receipt_path.parent / 'process-root', extra={'ACTIONS_RUNTIME_RCC_BINARY': os.environ['ACTIONS_RUNTIME_RCC_BINARY'], 'ACTIONS_ACCEPTANCE_POETRY': os.environ['ACTIONS_ACCEPTANCE_POETRY'], 'ACTIONS_ACCEPTANCE_ROBOCORP_HOME': os.environ['ACTIONS_ACCEPTANCE_ROBOCORP_HOME']})",
+      "cleanup_grace_seconds": "harness.CLEANUP_GRACE_SECONDS"
+    }
+  },
+  "actual_test_and_all_guard_code_controls_unchanged_from_original_proposal": true,
+  "code_test_patch_prefix_sha256": "363e822e75a5eb68687a9bc27df1acefd39286bbb8dcb864fcaf339afa3b96a7",
+  "new_source_patch": {
+    "path": "/workspace/engineering/pr308-public-deadline-next-source-proposal/exact-narrow-accepted-guard-source-proposal-v2.patch",
+    "size": 17456,
+    "sha256": "e3a77b3d457bd5c46a2496bb6133aaa6a6bb16f0c03f560963883cb3c4522287"
+  },
+  "new_canonical_patch": {
+    "path": "/workspace/engineering/pr308-public-deadline-next-source-proposal/exact-canonical-guard-reuse-scope-proposal-v2.patch",
+    "size": 4107,
+    "sha256": "088809b8d7a906e6e3f53b1d5357976f465bc2ffd8a368250fad3a998cf2f0e2"
+  },
+  "capacity_snapshot": {
+    "available_bytes": 1332756480,
+    "clean_pr308": true,
+    "scope": "Snapshot only. Recheck before authorized preparation; no capacity permission or artifact/newbuild admission. Stack309 owns reserved broad test slot; no concurrent full suite here."
+  },
+  "actual_candidate_prerequisites": [
+    "Separate root-approved positive success contract, retained primary failure disposition and immutable current source/artifact/platform dependency review. No assertion rewrite or failed-cell waiver in this narrow source lane.",
+    "Separate immutable runner qualification with complete enclosing deadline/cleanup envelope for unchanged2465/2510 bounds. Earlier660s control or browser runner is not coverage of this invocation.",
+    "Qualified root-coordinated capacity and heavy slot. No provisioning, prewarm/cache reset, blind rerun or implicit native92498 requalification.",
+    "Missing private01f/frozen-v6 specification and full134 remain explicit HOLD. Public candidate negative test and threecase compatibility do not recover or replace them."
+  ],
+  "authority": "SOURCE proposal only pending root lane authorization; no actual candidate run/retry authorization."
+}

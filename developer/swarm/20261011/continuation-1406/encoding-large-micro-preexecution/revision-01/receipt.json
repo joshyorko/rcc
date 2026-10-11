@@ -1,0 +1,7 @@
+{
+  "revision": "reviewed proposal revision 1",
+  "status": "preserved as reviewed but unaccepted; never executed",
+  "plan_sha256": "218a7294ee57b6026589837e7913c6d34ad4866ba33b728fc1c8ed9167fadded",
+  "runner_sha256": "e60f3c91be9c44e548c1a9721938a877bcbfeea337c1ed20614695d04702d501",
+  "superseded_by": "corrected revision pending root review; no codec workload admitted"
+}

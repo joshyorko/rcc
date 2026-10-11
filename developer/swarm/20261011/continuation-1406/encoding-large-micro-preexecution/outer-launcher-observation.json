@@ -1,0 +1,20 @@
+{
+  "command": "env PYTHONDONTWRITEBYTECODE=1 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-large-micro/encoding_large.py",
+  "no_retry": true,
+  "note": "The outer status is derived from the observed traceback and exact entrypoint control flow; the worker and supervisor numeric statuses are directly in their receipts.",
+  "outer_launcher_observed": "Traceback ended with SystemExit: 0 because runner entrypoint catches BaseException around sys.exit(supervisor()); this code path returns outer status 1.",
+  "outer_numeric_exit": 1,
+  "raw_sources": {
+    "events_jsonl_sha256": "302c0e515295ec6f3544e30a3cd9ae2b872120d1aedc7e2b61b421f167b22f93",
+    "results_json_sha256": "9546441ea67af3e5ac7122db2a08a305b9e7f19e5336278b655b4048861adf58",
+    "run_log_sha256": "fee48ad5279c6f9da323f0cd53a8de2a1bbc06c8d2a6127bf06e0bcba92ed76e",
+    "supervisor_json_sha256": "d4fe86856f4149e5f4a7b446765d48fa21e24252f11b255b66ad767d4c9bddec"
+  },
+  "runner_source_at_execution": "040feb2e0db53787e8b6aa6e2f871d73d79f177be960e07349fd1993180b5315",
+  "single_invocation": true,
+  "supervisor_failure": null,
+  "supervisor_numeric_worker_exit": 0,
+  "supervisor_status": "PASS",
+  "worker_numeric_exit": 0,
+  "worker_status": "PASS"
+}

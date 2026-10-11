@@ -1,0 +1,316 @@
+{
+  "codecs": {
+    "gzip_external": {
+      "implementation": "zlib.compress(level=1,wbits=31)",
+      "zlib_version": "1.3.2"
+    },
+    "legacy": "CPython gzip.decompress of exact original stored gzip bytes",
+    "no_install_or_fetch": true,
+    "versions_are_rechecked_before_execution": true,
+    "zstd_external": {
+      "implementation": "zstandard.ZstdCompressor(level=3,threads=0,write_content_size=True,write_checksum=True)",
+      "libzstd": "1.5.7",
+      "python_package": "0.25.0"
+    }
+  },
+  "experiment": "external Python gzip/zstd codec micro on all indexed logical objects >1 MiB; component result only",
+  "fixture_provenance": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "historical_producer": "Actions run a709 using stable RCC3",
+    "source_relationship": "RCC main727 identifies current provider code context only; this experiment does not execute RCC and main727 is not the fixture producer"
+  },
+  "immutability": {
+    "before_after": "verify selected objects actual stored size/SHA and mode/mtime before and after; also verify index and manifest exact bytes/SHA; does not claim whole-CAS rehash in this lane",
+    "cleanup": "no provider cleanup; retain all small experiment receipts for review",
+    "original_provider": "read-only; never create, delete, chmod, or rewrite under provider root",
+    "scratch": "no persistent payload/frame output; only plan, runner, stdout event log, stderr, raw per-object result and supervisor receipt in this namespace"
+  },
+  "interpretation": "External CPython component comparison only. No RCC execution, Go codec equivalence, Artifact format migration, provider/HTTP optimization, materialization/Actions speedup, or production winner claim.",
+  "limits": {
+    "admission": "recheck current free bytes >= floor + margin immediately before start; no free-space reservation is assumed",
+    "early_stop_margin_bytes": 4194304,
+    "minimum_filesystem_free_bytes": 2684354560,
+    "owned_evidence_allocated_bytes_max": 1048576,
+    "phase_timeout_seconds": 30,
+    "rss_observer": "supervisor samples ps -eo pid,ppid,rss and follows descendants of known supervisor/worker PIDs; sampled peak, not absolute transient maximum",
+    "sample_interval_seconds": 0.1,
+    "sampled_process_tree_rss_abort_bytes": 536870912,
+    "stop_policy": "stop first failure; terminate owned process group, reap children, no automatic retry",
+    "total_timeout_seconds": 120
+  },
+  "measurement": {
+    "frame_retention": "never retain encoded/decoded payloads after per-object verification; only frame SHA256 and size retained",
+    "per_object_cpu": "process_time_ns immediately around one codec call",
+    "per_object_wall": "perf_counter_ns immediately around one codec call",
+    "preparation_call_counts_expected": {
+      "gzip_frame_encode_before_decode_timing": 100,
+      "gzip_roundtrip_decode_after_encode": 100,
+      "original_gzip_decode_for_input_validation": 540,
+      "zstd_frame_encode_before_decode_timing": 100,
+      "zstd_roundtrip_decode_after_encode": 100
+    },
+    "raw_output": "one row per object/phase/repetition with input/output byte counts, output/frame SHA256, wall ns, CPU ns, and verification result",
+    "timed_scope": "only codec call; source file read, original gzip decode to logical bytes, external frame preparation, hashing, roundtrip and validation are outside each codec timer",
+    "verification": "for every operation verify exact expected logical SHA256 and size after timer; encode phases also roundtrip and verify the new frame. Decode-new phases regenerate one expected frame immediately before timing and compare its digest/size to canonical encode-phase frame receipt.",
+    "weighted_analysis": "compare total timed wall/CPU divided by total logical bytes for each phase; report total byte volume and ratios, not unweighted object averages"
+  },
+  "provenance_receipts": {
+    "prior_accepted_external_micro_execution_receipt_sha256": "c4ddb1cc70882137ea0f08da6e310d820153ef90cbe8c903b5d36a867b333c84",
+    "prior_accepted_external_micro_plan_sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+    "prior_accepted_external_micro_runner_sha256": "28b77a7325861b90f77811ea0389977d72b0c9c4452691d1c86192a16df6d93e",
+    "prior_micro_artifact_producer": "historical Actions run a709 using stable RCC3; do not attribute fixture production to main727"
+  },
+  "schedule": {
+    "calls_per_phase": 100,
+    "calls_total": 500,
+    "no_inner_repeats": true,
+    "object_order": "for each phase/repetition, rotate storedDigest-sorted list by (repetition + phase_index) mod 20",
+    "one_call_per_object_per_phase_per_repetition": true,
+    "phase_order": [
+      [
+        "legacy-gzip-decode",
+        "gzip-level1-encode",
+        "zstd-level3-encode",
+        "gzip-level1-decode",
+        "zstd-level3-decode"
+      ],
+      [
+        "gzip-level1-encode",
+        "zstd-level3-encode",
+        "gzip-level1-decode",
+        "zstd-level3-decode",
+        "legacy-gzip-decode"
+      ],
+      [
+        "zstd-level3-encode",
+        "gzip-level1-decode",
+        "zstd-level3-decode",
+        "legacy-gzip-decode",
+        "gzip-level1-encode"
+      ],
+      [
+        "gzip-level1-decode",
+        "zstd-level3-decode",
+        "legacy-gzip-decode",
+        "gzip-level1-encode",
+        "zstd-level3-encode"
+      ],
+      [
+        "zstd-level3-decode",
+        "legacy-gzip-decode",
+        "gzip-level1-encode",
+        "zstd-level3-encode",
+        "gzip-level1-decode"
+      ]
+    ],
+    "repetitions": 5
+  },
+  "source": {
+    "corpus_totals_from_index": {
+      "logical_bytes": 170590205,
+      "objects": 5537,
+      "stored_bytes": 69466848
+    },
+    "index_bytes": 1491800,
+    "index_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "manifest_bytes": 2175,
+    "manifest_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "objects": [
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "5ede1e96ce191fbcf740817d511f72beda30ee3783dca395023067b1184fe80b",
+        "logicalSize": 7252896,
+        "storedDigest": "sha256:09324aa549f414cccf1bd9eedcfbb7136daaf45a1be3f4ed62e3f699a25a14a7",
+        "storedSize": 2924731
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9f9fc1f5ab856181716b7dff697daf16aa5b0f47f7add572c491ac31a10ef8f4",
+        "logicalSize": 1228008,
+        "storedDigest": "sha256:0ca3adc8c7eb5b65c6e6d72b34aa7725bf7a58a7c041831a64b01c1e5e2db76c",
+        "storedSize": 566453
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7432dd221132c301970e9f526a9654b10cbd53bb92b1f0cb3d6d899877ff8c53",
+        "logicalSize": 1581720,
+        "storedDigest": "sha256:13926031d2c807cccaaa42d34f323fdaf6940ab11e127a3846b9ddc52565968a",
+        "storedSize": 909604
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "a812cd8dcd4ae107c42d9fc374a4b910bdfc0ddde19aebfe3e3f02cca93fd100",
+        "logicalSize": 2966864,
+        "storedDigest": "sha256:2b0413b30607801a45c5cde979d575ac32ff976d50794964825b680724fe7d14",
+        "storedSize": 1035796
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "aa9bb0d7b261b8266ababd9e19f5bf2f505d9a84ba360ce16502297e8a033765",
+        "logicalSize": 2650176,
+        "storedDigest": "sha256:331ba32e2544ca2148166cc1c9f28c2905f9cb554697080bb28130c014b46e3e",
+        "storedSize": 875725
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "0d91512e2f1cd19642df9ecc9e5939b06504ed5e8e3989f1d349df4a902ae89d",
+        "logicalSize": 1237448,
+        "storedDigest": "sha256:37cfbb69d19b1d3692d3f9aea58050a86e53eade59de90a34af997d5f1f717dd",
+        "storedSize": 582916
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "f62ea9da9ed6289bfe868cd6845968a2c854d1427f8548d52cae02a42b4f0356",
+        "logicalSize": 1232695,
+        "storedDigest": "sha256:3c1f1c1c504d8ef3169d46f806b1003c3f46abd82c37c3a1463d7adb8d1a94f0",
+        "storedSize": 1229362
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "34324e0835be6e103844d7c416bec42834cf803d3ba8d9519df15ced19914dfe",
+        "logicalSize": 1674616,
+        "storedDigest": "sha256:515204a424242c2e8d890930ede119f1063e7240195716878035323e6b7e7597",
+        "storedSize": 809275
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7b7a760153f880c29f49bef084aad6968de3cc3ad6303c7398f5e697662c41cc",
+        "logicalSize": 1101623,
+        "storedDigest": "sha256:5cb68dc2020ea6187f2714fd73778706abea7dfa89a330f60b68fee23f511695",
+        "storedSize": 153332
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9b0cd0068df0f7d98b1ec5874845b034d1f5b2adc724508f6857d9dc18c77178",
+        "logicalSize": 1990448,
+        "storedDigest": "sha256:5f6ae849002fdcd40b1847935c7d9d2e81564d1e8feb81d23b0f58e424975353",
+        "storedSize": 983075
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "e6ed1ed462080e0bea796247125c1a8624fb3134be3646c51c8942f38505e53b",
+        "logicalSize": 25317208,
+        "storedDigest": "sha256:658f6161539f18c3380de032cc5f80bb0683ec168e48a28d03f8d90c1446cd6c",
+        "storedSize": 11038953
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "67694582bb07ec2852df4d092b44dded578f3d1b38134967385c495f18c79c6e",
+        "logicalSize": 1636392,
+        "storedDigest": "sha256:6a1d4b5dd3e37140a6e84033225f5905fc793d43f873951f3cd60d9a35ff923d",
+        "storedSize": 778021
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "36c57dc318a720cff9acde104f633fd4b8eef0f5a4cba0dbbc3869cd026aec41",
+        "logicalSize": 1309928,
+        "storedDigest": "sha256:7a7ac3b31e6f79fbe52bb09eeddabb8cc9332749d2edd0f7c9f9aa0fdf1bea79",
+        "storedSize": 535030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "5a7331d26863a2e958df6239ad0b6a6dbaa1eb6f3f42ae7af3fca609f6a605c3",
+        "logicalSize": 1792280,
+        "storedDigest": "sha256:84d0b711cdd37ef491dadfac6a642a433938550589d732c2f4d80b65d5c5fd5f",
+        "storedSize": 1021730
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "67129e428f47e2f67c33cb2e85a92a6d2ff0014d587407cf7a8e5dba0c68c6ce",
+        "logicalSize": 1536216,
+        "storedDigest": "sha256:8ecf53c83c1dbab92619df5252aa29684179de970f264be3d249c219898ffd8a",
+        "storedSize": 679607
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc",
+        "logicalSize": 2110226,
+        "storedDigest": "sha256:a4590863da27ae4bdbad404cb8de0f7e41e2795597b871fa29358f698bb34a64",
+        "storedSize": 2086645
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "74519a830fae91abc48662768dbd326692e919b37655c798b1c9da71a344f809",
+        "logicalSize": 25371784,
+        "storedDigest": "sha256:ace7d606afed2338c4964483d32160437a14ff7026d3c9e6b22b9273a5bd11f8",
+        "storedSize": 11097301
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "b0e2bad8c117a3ad7d344d7924272d12b8e363956efb91b5074e43d4e201a08d",
+        "logicalSize": 1198840,
+        "storedDigest": "sha256:cba6ead1cd51a63ea37f871d84d9f3d139f01d57e7135d3e1038113dbc732d56",
+        "storedSize": 563030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "1e5d23fa66915204b9b67202a46993844d81cda56f6ad52cead2def37617ee29",
+        "logicalSize": 14434376,
+        "storedDigest": "sha256:e0b720793da12f48d75c7de57152cd7ea1e0261ae574498dc3b65a310ade802c",
+        "storedSize": 5322030
+      },
+      {
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "579a71f6f44e9f8c66ad15a6d04faf770f6bbd72c6d9bf6259516742ce394ef1",
+        "logicalSize": 4833320,
+        "storedDigest": "sha256:f16d644f333731a74d7694e163289dd23d43b3853834712b7410210c8c5752dd",
+        "storedSize": 2325085
+      }
+    ],
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "selected_count": 20,
+    "selected_logical_bytes": 102457064,
+    "selected_logical_fraction": 0.600603440273725,
+    "selected_stored_bytes": 45517701,
+    "selected_stored_fraction": 0.6552435055063964,
+    "selection": "all entries with logicalSize > 1048576, sorted lexicographically by storedDigest"
+  },
+  "status": "PLAN_ONLY_WAITING_ROOT_ADMISSION",
+  "toolchain": {
+    "basis": "exact hashes and versions from already accepted external 24-object micro in encoding-micro/plan.json and execution-receipt.json; runner must recheck before any timed operation",
+    "libzstd_version": [
+      1,
+      5,
+      7
+    ],
+    "module_hashes": {
+      "python_zstandard": {
+        "bytes": 7235,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/__init__.py",
+        "sha256": "5dd909e0b60a946a0b08deaf57545d17dc044f5df4040beec55f7ef6c6fecd11"
+      },
+      "zstandard_backend": {
+        "bytes": 11552544,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/backend_c.cpython-312-x86_64-linux-gnu.so",
+        "sha256": "7eb41c8b36cd99ed6c67e39f8574e42472687a14c6038c512bb3a90b7082616d"
+      }
+    },
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "python_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_zstandard_version": "0.25.0",
+    "zlib_version": "1.3.2"
+  }
+}

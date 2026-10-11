@@ -1,0 +1,16 @@
+{
+  "sourceSha": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "testedUtc": "2026-10-11T13:45:56.298818+00:00",
+  "rootIndependentFullTests": 139,
+  "numericExitCode": 0,
+  "rawLogSha256": "b180ba181da617fdd7c81a513f6cc789f056a6168e19e228322a22a8a878c2f7",
+  "toolkitPython": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10",
+  "tocExitCode": 0,
+  "tocReadmeSha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+  "tocIdempotent": true,
+  "cleanHeadBeforeAfter": true,
+  "mockIgnoredBinaryNeverExecutedAndRemoved": true,
+  "review": "root entire29toc6diff; CI-onlyflag preservesdefaultbehavior; independentpeer3focusedtests; exact-headhostedproof notyetavailable",
+  "publicationHold": true
+}

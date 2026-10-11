@@ -1,0 +1,18 @@
+test_eof_records_normal_numeric_zero_exit_and_final_event (__main__.SupervisorStaticChecks.test_eof_records_normal_numeric_zero_exit_and_final_event) ... ok
+test_eof_while_worker_live_is_rejected (__main__.SupervisorStaticChecks.test_eof_while_worker_live_is_rejected) ... ok
+test_event_lines_and_eof_tail_are_preserved (__main__.SupervisorStaticChecks.test_event_lines_and_eof_tail_are_preserved) ... ok
+test_live_worker_missing_in_race_fails_closed (__main__.SupervisorStaticChecks.test_live_worker_missing_in_race_fails_closed) ... ok
+test_poll_to_ps_exit_race_is_recorded_as_exited (__main__.SupervisorStaticChecks.test_poll_to_ps_exit_race_is_recorded_as_exited) ... ok
+test_ps_tree_fails_closed_when_live_worker_missing (__main__.SupervisorStaticChecks.test_ps_tree_fails_closed_when_live_worker_missing) ... ok
+test_ps_tree_requires_live_worker_and_counts_it (__main__.SupervisorStaticChecks.test_ps_tree_requires_live_worker_and_counts_it) ... ok
+test_result_guard_accepts_complete_frozen_counts (__main__.SupervisorStaticChecks.test_result_guard_accepts_complete_frozen_counts) ... ok
+test_result_guard_rejects_incomplete_canonical_frames (__main__.SupervisorStaticChecks.test_result_guard_rejects_incomplete_canonical_frames) ... ok
+test_result_guard_rejects_incomplete_timed_counts (__main__.SupervisorStaticChecks.test_result_guard_rejects_incomplete_timed_counts) ... ok
+test_result_guard_rejects_loaded_module_path_mismatch (__main__.SupervisorStaticChecks.test_result_guard_rejects_loaded_module_path_mismatch) ... ok
+test_result_guard_rejects_source_mutation (__main__.SupervisorStaticChecks.test_result_guard_rejects_source_mutation) ... ok
+test_result_guard_rejects_wrong_untimed_counts (__main__.SupervisorStaticChecks.test_result_guard_rejects_wrong_untimed_counts) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.004s
+
+OK

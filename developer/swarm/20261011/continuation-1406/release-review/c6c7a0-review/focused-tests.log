@@ -1,0 +1,15 @@
+$ PYTHONPATH=/tmp/rcc-review-pydeps python -m unittest scripts.test_environment_artifact_tasks.ArtifactTaskTests.test_build_source_guard_rejects_tracked_edits_and_precedes_compilation scripts.test_environment_artifact_tasks.ArtifactTaskTests.test_build_source_guard_is_release_ci_opt_in scripts.test_release_publication.ReleasePublicationTests.test_native_review_reports_each_go_metadata_mismatch
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.035s
+
+OK
+Built: build/linux64/rcc (linux/amd64)
+
+$ PyYAML parse; assert build job RCC_REQUIRE_CLEAN_SOURCE == '1'
+workflow YAML parse PASS; build-job opt-in is exact string 1
+
+$ git diff --check HEAD^ HEAD
+[exit 0; no output]
+
+No Go/native build, artifact download, or hosted workflow rerun was performed by this review.

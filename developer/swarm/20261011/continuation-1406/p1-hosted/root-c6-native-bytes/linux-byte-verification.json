@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-11T13:59:09.902860+00:00",
+  "platform": "linux_amd64",
+  "source": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "actual_zip_sha256": "d480e63fa8f0208462a24f253df73fa5cd921196e0752a2ba9c1ecb2a8cd188f",
+  "zip_api_digest_match": true,
+  "actual_binary_sha256": "5865bcf12594166d74c5f2de818deacf066fad83aefad8ab184c3897a1d49f9c",
+  "actual_binary_bytes": 22392994,
+  "actual_go_metadata": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "linux",
+    "GOAMD64": "v1",
+    "vcs": "git",
+    "vcs.revision": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "vcs.time": "2026-10-11T13:44:16Z",
+    "vcs.modified": "false"
+  },
+  "go_metadata_exit": 0,
+  "native_receipt_actual_sha256": "93d22b1b4994a4c1cbceb73842689c05992843226ab5e3cf05209b13a4e64e4b",
+  "raw_zip_and_binary_retained_at": "/dev/shm/rcc-c6-native-review-root",
+  "no_foreign_platform_execution": true
+}

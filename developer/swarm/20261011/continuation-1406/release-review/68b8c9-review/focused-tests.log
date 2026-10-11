@@ -1,0 +1,8 @@
+$ PYTHONPATH=/tmp/rcc-review-pydeps python -m unittest scripts.test_environment_artifact_tasks.ArtifactTaskTests.test_build_source_guard_rejects_tracked_edits_and_precedes_compilation scripts.test_release_publication.ReleasePublicationTests.test_native_review_reports_each_go_metadata_mismatch
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.021s
+
+OK
+
+Scope: two focused Python tests only; no Go build/test, native binary download, or Actions rerun.

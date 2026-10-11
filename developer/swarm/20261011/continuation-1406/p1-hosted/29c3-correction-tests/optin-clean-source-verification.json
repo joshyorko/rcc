@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "sourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "worktreeClean": true,
+  "python": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10",
+  "pythonSuiteCommand": "python -m unittest discover -s scripts -p 'test_*.py'",
+  "pythonSuiteExitCode": 0,
+  "pythonSuiteTestCount": 139,
+  "pythonSuiteLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-correction-tests/python-unittest-discovery-optin.log",
+  "pythonSuiteLogSha256": "e3471f18c7c1bc31acdf9938ea3ad0e10ac2ee259721fa9283e2515e25582e51",
+  "tocCommand": "python scripts/toc.py",
+  "tocExitCode": 0,
+  "tocReadmeBeforeSha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+  "tocReadmeAfterSha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+  "diffCheckExitCode": 0,
+  "change": "CI build job sets RCC_REQUIRE_CLEAN_SOURCE=1; ordinary inv build does not enforce clean tracked source. Tests verify ordinary dirty-tree build reaches mocked compiler and opt-in dirty-tree build fails before compiler."
+}

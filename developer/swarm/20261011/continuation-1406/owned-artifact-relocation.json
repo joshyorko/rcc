@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-11T14:01:12.765644+00:00",
+  "scope": "Relocated only root-owned artifact attachment; no deletion of evidence or unowned caches",
+  "original_path": "/workspace/attachments/19f7b279-7526-4723-97f8-c3b124ead88b/rcc-237-release-candidate-evidence.zip",
+  "retained_local_path": "/dev/shm/rcc-preserved-root-artifacts/source83-failed-release-candidate-evidence.zip",
+  "size_bytes": 13208397,
+  "actual_sha256": "4f8c3f700751e0f31452159ca1aad6989c95639d1e23f7a056e105aa9ade5270",
+  "durable_exact_raw_bytes": "04d6df1182f2a323ddad23f577b449301e3c9a33:developer/swarm/20261011/continuation-1306/p1-hosted/release-ci-failure/rcc-237-release-candidate-evidence.zip",
+  "prior_actual_remote_all146_verification": "checkpoint-1306/remote-verification.json",
+  "workspace_free_before": 2700054528,
+  "workspace_free_after": 2713268224,
+  "original_failure_qualification_unchanged": true
+}

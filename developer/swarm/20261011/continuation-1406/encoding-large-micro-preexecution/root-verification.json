@@ -1,0 +1,42 @@
+{
+  "reviewedUtc": "2026-10-11T13:47:14.401550+00:00",
+  "status": "500_RAW_COMPONENT_SAMPLES_AND20_UNIQUE_FRAMES_INDEPENDENTLY_VERIFIED; WHOLE_INVOCATION_WRAPPER_FAILURE_RETAINED",
+  "rawResultsSha256": "9546441ea67af3e5ac7122db2a08a305b9e7f19e5336278b655b4048861adf58",
+  "verifiedOriginalObjects": 20,
+  "verifiedCanonicalFrames": 40,
+  "timedSamples": 500,
+  "numericWorkerExit": 0,
+  "supervisorStatus": "PASS",
+  "outerPythonToolNumericExitCaptured": false,
+  "outerFailure": "SystemExit0 caught by BaseException; outer1 inferredfromsourceflow/observedtranscript, notnumerictoolcapture; erratumretained",
+  "noTimedRetry": true,
+  "rootFrameReproduction": "one untimed each20frame/codecpair withactualstored/logical hashes; no persistedframes or originals changed",
+  "phaseMedians": {
+    "gzip-level1-decode": {
+      "medianWallNs": 393094516,
+      "medianCpuNs": 392879523
+    },
+    "gzip-level1-encode": {
+      "medianWallNs": 1196860796,
+      "medianCpuNs": 1194970655
+    },
+    "legacy-gzip-decode": {
+      "medianWallNs": 385236996,
+      "medianCpuNs": 385136298
+    },
+    "zstd-level3-decode": {
+      "medianWallNs": 119448651,
+      "medianCpuNs": 119422936
+    },
+    "zstd-level3-encode": {
+      "medianWallNs": 414601178,
+      "medianCpuNs": 414025754
+    }
+  },
+  "encodedByteTotals": {
+    "gzip": 43769827,
+    "zstd": 39419371
+  },
+  "sampledTreePeakRssBytes": 150142976,
+  "scope": "externalCPythoncodec only; no Go/RCC/Actions/materializer/publication gain or winner"
+}

@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-10-11T13:54:43.523137+00:00",
+  "scope": "root current actual original manifest/index byte verification, outside immutable executed namespace",
+  "files": [
+    {
+      "kind": "manifest",
+      "bytes": 2175,
+      "actual_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0"
+    },
+    {
+      "kind": "index",
+      "bytes": 1491800,
+      "actual_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6"
+    }
+  ],
+  "no_timed_rerun": true
+}

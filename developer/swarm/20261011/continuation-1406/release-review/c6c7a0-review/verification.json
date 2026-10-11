@@ -1,0 +1,29 @@
+{
+  "commit": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "evidenceFiles": {
+    "focused-tests.log": "e9056a3b2a82c144b290cbe1f91d6434c55fb6626e9d239a0ff302fcf7603f4c",
+    "report.md": "22ba8719e3c9ec30f14cc2e73de312703288fdbd9eff10d956bc330eed6f9026"
+  },
+  "focusedTests": {
+    "log": "focused-tests.log",
+    "noGoOrNativeRuns": true,
+    "result": "3 passed"
+  },
+  "independentSourceBoundReceipt": {
+    "claims": "139 Python tests and TOC idempotence are reported by this exact-source receipt, not rerun in this review.",
+    "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-correction-tests/optin-clean-source-verification.json"
+  },
+  "parent": "68b8c9bf3f33336ed9bfe5a27945cf9cbf075bda",
+  "result": "No blocker found in reviewed opt-in guard/diagnostic scope.",
+  "sourceFileSha256": {
+    ".github/workflows/rcc.yaml": "3f9f3fbf9f4d92412795097e3586776ce3d3ee4d338ef1c5ea14524b37125d91",
+    "docs/README.md": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+    "docs/release-process.md": "23899789d352c68fe7ce8e7e0920d702a3033299adcfe941d2bcc45b821f7b6f",
+    "scripts/release_publication.py": "077301e17427b42f786768d9a59bbcf0b2b93ccec296ed9ba6c55d96ac670118",
+    "scripts/test_environment_artifact_tasks.py": "01ed6dad2e91e03626ae97122d57b483fc04f2358baef07595734f689075e2cc",
+    "scripts/test_release_publication.py": "6d285d28c2d55f84b41d389cbc4eed317ec5b027de49eb9ec5c13caf1a4e0929",
+    "tasks.py": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7"
+  },
+  "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "worktreeStatus": "## codex/rcc-two-phase-release-20261011"
+}

@@ -1,0 +1,507 @@
+{
+  "PR308": {
+    "PR_diff_changed_paths": 6,
+    "base_target": "6181b044c75de35386f1ae30e71725398b6a7feb",
+    "currentintegrationtarget": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "draft": true,
+    "final_CONTROL_changed_paths_vsSOURCE": 3,
+    "head": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+    "merged": false,
+    "selectedimmutableblobs": [
+      {
+        "git_blob_sha1": "8b5a42fc1223daaafc639370d572719b4fc8978c",
+        "mode": "100644",
+        "path": ".github/workflows/_gen_workflows.py",
+        "sha256": "4ed1a208be8b72f0d9ea55ff5a7c5085379e9e0256e05a9b3f44419c551752bc",
+        "size": 160627
+      },
+      {
+        "git_blob_sha1": "ddf773bf38fdef36ace7e0fb9bf3a0bc84747928",
+        "mode": "100644",
+        "path": ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+        "sha256": "b4afa9698f4f8d662fa86de3e7a2547ec986b19776fa87847e4e8a40f1973bd0",
+        "size": 51284
+      },
+      {
+        "git_blob_sha1": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+        "mode": "100644",
+        "path": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+        "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3",
+        "size": 80376
+      },
+      {
+        "git_blob_sha1": "5986562fc40731ea19b64eece3bcb8fea0cd31f2",
+        "mode": "100644",
+        "path": "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+        "sha256": "c84029ef30e84c863f06b4720c27dc839909db44d7fc0d9190274021cfccbf8f",
+        "size": 40081
+      },
+      {
+        "git_blob_sha1": "3590c015ec8b069b40cca97914b50c33ffd3a836",
+        "mode": "100644",
+        "path": "developer/tests/test_rcc_provider_rollback_workflow.py",
+        "sha256": "52d590804e5ba618801c1d19834c496eba82bcb8c56010f818b56756ba79a8eb",
+        "size": 11951
+      },
+      {
+        "git_blob_sha1": "f4c5023f361e3406eba5da5a471a392a899285a5",
+        "mode": "100644",
+        "path": "docs/skills/repository-operations.md",
+        "sha256": "7be5660a7a2d5466b9e32ab32c71b60582eee1df4a6288bad6fbda6a7a74da63",
+        "size": 250841
+      },
+      {
+        "git_blob_sha1": "09234363409bf979016a970c34b8b38ff642fb1f",
+        "mode": "100644",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a",
+        "size": 27382
+      },
+      {
+        "git_blob_sha1": "1a310407efe52091194e4d121ac7bece15ea5b70",
+        "mode": "100644",
+        "path": "action_server/src/actions/server/_rcc.py",
+        "sha256": "74a0646de66d3bfb5a30339080a37c5dc0f79b2e0ab46b7c16a6c19717e6d41b",
+        "size": 17149
+      },
+      {
+        "git_blob_sha1": "a93e622dfd2764592d51ab4bb02e8e796a6abae3",
+        "mode": "100644",
+        "path": "actions/pyproject.toml",
+        "sha256": "9de923a2bf29d73d486ebf67982e177c0ab41d8a35266f7dd1f2d75b1ec43ec3",
+        "size": 1219
+      },
+      {
+        "git_blob_sha1": "311c7f28fa6d441755b26945ed6374a4fcb67263",
+        "mode": "100644",
+        "path": "actions-http-helper/pyproject.toml",
+        "sha256": "1888af6e0e2ce2280080920338245122563f69ce677796a5dbddc4c6bb07d28d",
+        "size": 881
+      },
+      {
+        "git_blob_sha1": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+        "mode": "100644",
+        "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+        "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a",
+        "size": 19214
+      },
+      {
+        "git_blob_sha1": "13c760dd2adbd38bfeec039eba73376bbf32745c",
+        "mode": "100644",
+        "path": "action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+        "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b",
+        "size": 23456
+      }
+    ],
+    "source_parent": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+    "source_tree": "21676c626a933c2d55761ec85ecf26fe0eef26bb",
+    "tree": "fa3f7728d315c9a192f88e17acf15f164d4eee13"
+  },
+  "claims": [
+    {
+      "file": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "finding": "Poetry derives Actions wheel versions; exact wheel filename/METADATA validated",
+      "git_blob_sha1": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+      "lines": [
+        928,
+        1014
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/scripts/verify_dakota_rcc_acceptance.py#L928-L1014",
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3"
+    },
+    {
+      "file": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "finding": "helper requires RCC3 version and exactLinuxstable3binarySHA",
+      "git_blob_sha1": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+      "lines": [
+        1266,
+        1289
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/scripts/verify_dakota_rcc_acceptance.py#L1266-L1289",
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3"
+    },
+    {
+      "file": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "finding": "productionadapteroverride+defaultbothverify exactRCC3",
+      "git_blob_sha1": "09234363409bf979016a970c34b8b38ff642fb1f",
+      "lines": [
+        681,
+        707
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/src/actions/server/_rcc_runtime_adapter.py#L681-L707",
+      "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a"
+    },
+    {
+      "file": "action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+      "finding": "optincandidatewheel expects overallFAIL/offlinewarmFAIL; notpositive fullcandidateadmission",
+      "git_blob_sha1": "5986562fc40731ea19b64eece3bcb8fea0cd31f2",
+      "lines": [
+        388,
+        454
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py#L388-L454",
+      "sha256": "c84029ef30e84c863f06b4720c27dc839909db44d7fc0d9190274021cfccbf8f"
+    },
+    {
+      "file": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "finding": "publicstagedfixture pinsPython3.12.15/Core1.0.2",
+      "git_blob_sha1": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+      "lines": [
+        229,
+        230
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py#L229-L230",
+      "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a"
+    },
+    {
+      "file": "action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+      "finding": "publicrollbacktest independentlypinsRCC3version+SHA",
+      "git_blob_sha1": "13c760dd2adbd38bfeec039eba73376bbf32745c",
+      "lines": [
+        176,
+        185
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/action_server/tests/action_server_tests/test_current_candidate_import_rollback.py#L176-L185",
+      "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b"
+    },
+    {
+      "file": ".github/workflows/_gen_workflows.py",
+      "finding": "workflowselects3publiccases withsameRCC3SHA",
+      "git_blob_sha1": "8b5a42fc1223daaafc639370d572719b4fc8978c",
+      "lines": [
+        1954,
+        1966
+      ],
+      "link": "https://github.com/joshyorko/actions/blob/d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d/.github/workflows/_gen_workflows.py#L1954-L1966",
+      "sha256": "4ed1a208be8b72f0d9ea55ff5a7c5085379e9e0256e05a9b3f44419c551752bc"
+    }
+  ],
+  "historical_c49_and_six_directions": "unchanged; existingstable3warmcontrol/componentprofilesnotcurrent221/candidate6 qualification",
+  "observed_at": "2026-10-11T14:03:24.823523+00:00",
+  "owner_acceptance": {
+    "JUnit": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 3
+    },
+    "artifact": 11699213923,
+    "checkpoint_commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+    "cleanup": {
+      "HTTP_shutdown": 200,
+      "captured_descendants_before_stop": 0,
+      "captured_survivors": 0,
+      "forced_stop_used": false,
+      "natural_return_code_before_separate_cleanup": 1,
+      "universal_reaping_qualified": false
+    },
+    "control_C": {
+      "commit": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+      "sole_parent": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+      "tree": "fa3f7728d315c9a192f88e17acf15f164d4eee13"
+    },
+    "directory_contents_listing_count": 1000,
+    "directory_listing_complete": false,
+    "job": 114449993317,
+    "lane_verification_limit": "selectedpublicreceipts Gitblob/SHA and sourceconsistency verified; originalprivateZIP/log/memberpayloads NOTreacquired/rehashed; runtime evidence attributed to ownerindependentreview, not performed here",
+    "limits": [
+      "Three original case scopes only; not full CI or admission for a different source/control/target",
+      "Policy protection403 remains UNKNOWN; no bypass",
+      "Nine sampled source pins do not qualify complete native producer; accepted302 adapter differs92498",
+      "Core1.0.2 staged sample does not qualify full Runtime/Core wheel, registry/cold consumer or content authority",
+      "Private134/135, positive2510/provider metadata/native/publication/fullrelease HOLD"
+    ],
+    "recorded_verdict": "GO_EXACT_ORIGINAL_THREECASE_ONLY__FULL_CI_POLICY_RELEASE_HOLD",
+    "review_path": "pr308-current618-threecase-independent-OWNERFINAL-independent-current308-original-threecase-review.json",
+    "review_sha256": "5dbff4ce52ad00d7167315944f9f62f82b6199d118b6ed19663b2bca21014771",
+    "run": 38132652607,
+    "selected_receipt_proof": [
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "585da2529a703dec07a9334d5cb8f7a04b767c97",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-control-CONTROL-frozen-checkpoint.json",
+        "sha256": "4771821583f54164018854bee073ba8318d3164ea4e152324525913f6af734c6",
+        "size": 9522,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-control-CONTROL-frozen-checkpoint.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "cde06e0c71c78d05915b4093d69bb59620630575",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/README.md",
+        "sha256": "82944624a768fb9aa70c7df0b883cb08243aa6f9c71e2ff19d1348a65259d61e",
+        "size": 41791,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/README.md"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "ff29aecf337869e5668d0ae8feff33b46c796e1c",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-independent-independent-frozen-original-threecase-actual-review.json",
+        "sha256": "28f6b0055d89fff600fbaeec5dd3c063871afc0a4413374c16bb332c62b82106",
+        "size": 7669,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-independent-independent-frozen-original-threecase-actual-review.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "d308a52783f436d805885b44920be517fed0a7c7",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-original-acquisition-and-member-inventory.json",
+        "sha256": "3780215b4c811eb85a7419ddb5454bf7df89081a150a7583a6466ad947d81065",
+        "size": 3017,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-original-acquisition-and-member-inventory.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "cfeced2bbfc2a3a815c543f06995939d5611478f",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-proposal-separate-actual-candidate-gate-prerequisite-proof.json",
+        "sha256": "bd65509d12659fa1aa89afdf97b6e532b7065e78fbb4790268c57247cc5a5143",
+        "size": 3726,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-proposal-separate-actual-candidate-gate-prerequisite-proof.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "08cfc5c012eeba5d6788c91795aa8ec38caedca5",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-independent-independent-original-byte-identity-and-offline-proof.json",
+        "sha256": "d6de403c41178e57465aed3dfe0c85ceb140198036df82250dac28ddf309fdcb",
+        "size": 8865,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-fresh-threecase-independent-independent-original-byte-identity-and-offline-proof.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "d12fba7647890637550013dc7f9b2b9047a91409",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-terminal-CI-frozen-terminal-CI-successor.json",
+        "sha256": "7a418398f556d51ce23b0f471fbfcbbb8a9da011ea827131efa655175bc76284",
+        "size": 42837,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-terminal-CI-frozen-terminal-CI-successor.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "8d1764350a3cef26450a0a656591f710ee6138bd",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-source-SOURCE-frozen-checkpoint.json",
+        "sha256": "523e46db8f4ea12dfbb0afbe8f6d2ce675cb0aedd79658b8b4d2585f151afb8b",
+        "size": 12828,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-guard-source-SOURCE-frozen-checkpoint.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "16c6ca37414a4cce2dba463b3f2a413df93b5edf",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-fresh-actual-metadata-OWNERFINAL-fresh308-current618-threecase-original-artifact-metadata.json",
+        "sha256": "744d7077a9e6e199cdbb39a560f4ddd7ab92ba1901d33c9c613c1925537cf3bd",
+        "size": 5875,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-fresh-actual-metadata-OWNERFINAL-fresh308-current618-threecase-original-artifact-metadata.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "67895e92e22e73810b04d06d9f40fd8908e93f11",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-source-SOURCE-frozen-owner-final-checkpoint.json",
+        "sha256": "de231c011ee899c8e3ce6c6de4f2448136350758231f3f873f760d30600f4678",
+        "size": 110017,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-source-SOURCE-frozen-owner-final-checkpoint.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "f4f29186978164ef98e1e4951243914d059bab9b",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-fresh-threecase-original-OWNERFINAL-original-current618-threecase-proof-v2.json",
+        "sha256": "ade1a51327e4539dd526ccc3bc95faf672b2883ee4d5562dafe36c2475fa2ee3",
+        "size": 21359,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-fresh-threecase-original-OWNERFINAL-original-current618-threecase-proof-v2.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "278aa73d74e1003ae00c19e2de0452b0a48694f5",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-threecase-independent-OWNERFINAL-independent-current308-original-threecase-review.json",
+        "sha256": "5dbff4ce52ad00d7167315944f9f62f82b6199d118b6ed19663b2bca21014771",
+        "size": 7857,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-threecase-independent-OWNERFINAL-independent-current308-original-threecase-review.json"
+      },
+      {
+        "commit": "62f4e180f6c894777ebc8ed3a729e88d2f6531d6",
+        "git_blob_sha1": "508d10bce8ba2a75ea6a28fedbbffd01f78b43d1",
+        "path": "docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-control-CONTROL-frozen-owner-final-checkpoint.json",
+        "sha256": "c646a010c8b4108f19a6897761a6cd6469f59d8ff90b7e2ecd700eadac37832c",
+        "size": 141218,
+        "url": "https://raw.githubusercontent.com/joshyorko/actions/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011/pr308-current618-control-CONTROL-frozen-owner-final-checkpoint.json"
+      }
+    ],
+    "source_S": {
+      "commit": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+      "tree": "21676c626a933c2d55761ec85ecf26fe0eef26bb"
+    },
+    "target": "6181b044c75de35386f1ae30e71725398b6a7feb"
+  },
+  "pagination": [
+    {
+      "actual_fetched_count": 174,
+      "comments_metadata_count": 174,
+      "issue": 101,
+      "issue_body_sha256": "6d131365dada2059ba190fa50c9b45ac329c75fd6356c80d95582fb008a9762e",
+      "issue_json_sha256": "280d6a79ae0ed7b2935845f935fb493419d323c0d9d874b1ace9f2b1f8f5e91d",
+      "issue_updated_at": "2026-10-11T12:00:41Z",
+      "latest_comment": {
+        "body_sha256": "19c1a769235909152c9d38fd5351716f1e9bcd12d3a91ea52286648da7efbf90",
+        "created_at": "2026-10-11T05:09:50Z",
+        "id": 6105710480,
+        "updated_at": "2026-10-11T05:09:50Z",
+        "url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105710480"
+      },
+      "pages": [
+        {
+          "count": 100,
+          "file": "comments-101-page-1.json",
+          "sha256": "85748e63ca085ef3948c25a4f1734a2f6582fd731fe63024a949b7eef1184f92",
+          "size": 321857
+        },
+        {
+          "count": 74,
+          "file": "comments-101-page-2.json",
+          "sha256": "33d898af4b6d96fcc3b3ca9b9209bcd6b726c609f11258558af75208234faff1",
+          "size": 372572
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 3,
+      "comments_metadata_count": 3,
+      "issue": 133,
+      "issue_body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+      "issue_json_sha256": "af92d333ff73135c0a23bcd7dd01dd7773ca51092205339bbbb8d50e9f0dc03f",
+      "issue_updated_at": "2026-09-07T14:44:24Z",
+      "latest_comment": {
+        "body_sha256": "54e3e4f11b78515ea59b578e101b72196d81f9871752d8f19b9c7bef7430de69",
+        "created_at": "2026-08-18T23:21:53Z",
+        "id": 5335428231,
+        "updated_at": "2026-08-18T23:21:53Z",
+        "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-5335428231"
+      },
+      "pages": [
+        {
+          "count": 3,
+          "file": "comments-133-page-1.json",
+          "sha256": "26c170c27ed8bac2c181cd71ca39463e448cbd373b9c899d540a17de305c41b7",
+          "size": 13589
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 5,
+      "comments_metadata_count": 5,
+      "issue": 134,
+      "issue_body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d",
+      "issue_json_sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398",
+      "issue_updated_at": "2026-10-11T01:44:42Z",
+      "latest_comment": {
+        "body_sha256": "73f3e80c92497c44e582c24c8cf3ddb5fd20d0ba54729d3d52d41e51f9301d31",
+        "created_at": "2026-10-11T01:44:42Z",
+        "id": 6104310927,
+        "updated_at": "2026-10-11T01:44:42Z",
+        "url": "https://github.com/joshyorko/actions/issues/134#issuecomment-6104310927"
+      },
+      "pages": [
+        {
+          "count": 5,
+          "file": "comments-134-page-1.json",
+          "sha256": "0c64347a26ec19acedb060d601ce4d43b04bf17a9f6395f0b91cf9bc71fa2dd5",
+          "size": 23616
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 0,
+      "comments_metadata_count": 0,
+      "issue": 139,
+      "issue_body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21",
+      "issue_json_sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c",
+      "issue_updated_at": "2026-09-07T14:43:49Z",
+      "latest_comment": null,
+      "pages": [
+        {
+          "count": 0,
+          "file": "comments-139-page-1.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "size": 2
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 0,
+      "comments_metadata_count": 0,
+      "issue": 143,
+      "issue_body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959",
+      "issue_json_sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8",
+      "issue_updated_at": "2026-09-07T14:43:25Z",
+      "latest_comment": null,
+      "pages": [
+        {
+          "count": 0,
+          "file": "comments-143-page-1.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "size": 2
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 2,
+      "comments_metadata_count": 2,
+      "issue": 221,
+      "issue_body_sha256": "ddf4dcfdfadd2d1db53f889e9dfb023463643aed86001972ccc71b30c9790771",
+      "issue_json_sha256": "6f8a1a2b771377fc8a1ddefe9b4b7fa8165331aa9c073478cbe480ba96f4ddda",
+      "issue_updated_at": "2026-10-11T12:12:50Z",
+      "latest_comment": {
+        "body_sha256": "55062473f581c7dd3769cc712da0c1723714457fc1408e3fb8e088ebaefa6468",
+        "created_at": "2026-10-11T12:12:50Z",
+        "id": 6108894271,
+        "updated_at": "2026-10-11T12:12:50Z",
+        "url": "https://github.com/joshyorko/actions/pull/221#issuecomment-6108894271"
+      },
+      "pages": [
+        {
+          "count": 2,
+          "file": "comments-221-page-1.json",
+          "sha256": "fb86d2549a8a815d5c5ba287c2715b21e1fcda508fc62704fa2d5fc836465ef9",
+          "size": 10481
+        }
+      ],
+      "terminal_page_is_short": true
+    },
+    {
+      "actual_fetched_count": 0,
+      "comments_metadata_count": 0,
+      "issue": 308,
+      "issue_body_sha256": "53893c5559bd40c5fb9b5b4e939bb5a895857ae1387160e057f275313919b4d6",
+      "issue_json_sha256": "7281265bd34a75d1d47aaa0ac524b27394fadff9d180bbe7458cc66b2149dc6f",
+      "issue_updated_at": "2026-10-11T10:40:10Z",
+      "latest_comment": null,
+      "pages": [
+        {
+          "count": 0,
+          "file": "comments-308-page-1.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "size": 2
+        }
+      ],
+      "terminal_page_is_short": true
+    }
+  ],
+  "performed": "publicread-only metadata/comments/source/retainedreceipts fetch and Gitblob/SHA256/staticconsistency checks. NO Runtime/RCC/test/provider/benchmark execution; NO Actions state/source/pin/branch/issues mutation; NO dependency/home/worker creation.",
+  "prerequisites": [
+    "existingownerimmutableversion/features/manifest/catalog/ABI/trustcompatibility policy/source andnegativeincompatibility controls",
+    "consistentactualselectedbinary/source/digest qualification in adapter/helper/workflow/fixture whereused; no bypass",
+    "ownercurrenta0dtargetrefresh/fullCI/policy andadmittedfixture/controller/resourcetimer/privateconsumer namespace",
+    "existingprivate01f/frozenv6source/spec/controllerrecoverybeforeactualfull134matrix",
+    "exactnative/platform/fullcleanup/139/143scopesandreleaseauthority remainseparate"
+  ],
+  "result": {
+    "authorized_owner_repair": "YESincludingcandidate6, implementation/qualificationNOTobserved",
+    "controller_private01f_frozenv6_full134": "HOLD_NOT_RUN perlatest134andcurrentcampaignbody",
+    "newer_Rcc_candidate6": "BLOCKED; inspectedadapter/helper/workflow/publicfixture exact3versionandbinarygate unchanged",
+    "optimizations_selected": false,
+    "publicLinuxRCC3threecase": "OWNER_INDEPENDENT_SCOPED_GO d5a/c103/6181 ONLY",
+    "publication": "HOLD,noTAG,noPUBLISH",
+    "wheel_identity_repair": "IMPLEMENTED_SOURCE; syntheticcandidatefixtureversioncontrols notactualbuiltwheel proof"
+  },
+  "schema": "actions-owner-refresh-readonly-v1",
+  "scope": "named101/133/134/139/143/221/308 threads and selectedimmutablePR308/source/ownercheckpointreceipts; not an exhaustive allbranches/checkpoints admission census"
+}

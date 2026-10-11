@@ -1,0 +1,192 @@
+{
+  "schema": "fresh308-current618-threecase-artifact-metadata-only-v1",
+  "verdict": "HOLD_ORIGINAL_THREECASE_PROOF_NOT_ACQUIRED",
+  "source_control_pin": {
+    "source_candidate_sha": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+    "source_candidate_tree": "21676c626a933c2d55761ec85ecf26fe0eef26bb",
+    "control_sha": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+    "control_tree": "fa3f7728d315c9a192f88e17acf15f164d4eee13",
+    "strict_RCC_SHA256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "push_runs": [
+      {
+        "id": 38132652607,
+        "event": "push",
+        "path": ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "declared_jobs": 1,
+        "materialized_jobs": 1,
+        "missing_declared_job_names": []
+      }
+    ],
+    "actual_threecase_receipt": "NOT_ACQUIRED_NOT_ADMITTED_NO_OLD_ACTUAL_TRANSFER",
+    "source_control_distinct": true
+  },
+  "original_successful_job": {
+    "id": 114449993317,
+    "run": 38132652607,
+    "name": "build",
+    "status": "completed",
+    "conclusion": "success",
+    "steps": [
+      {
+        "number": 1,
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 2,
+        "name": "Checkout workflow control revision",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 3,
+        "name": "Checkout immutable Runtime candidate",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 4,
+        "name": "Verify immutable Runtime candidate revision",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 5,
+        "name": "Install the latest version of uv",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 6,
+        "name": "Install Python 3.12",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 7,
+        "name": "Verify runner libc supports the test artifact",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 8,
+        "name": "Install devutils requirements",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 9,
+        "name": "Install and verify pinned RCC v18.19.3",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 10,
+        "name": "Preseed and verify Action Server RCC",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 11,
+        "name": "Install Action Server developer environment",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 12,
+        "name": "Reverify both RCC binaries after devinstall",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 13,
+        "name": "Prepare isolated acceptance evidence",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 14,
+        "name": "Run current-candidate RCC provider rollback acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 15,
+        "name": "Write sanitized source and test evidence",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 16,
+        "name": "Validate RCC rollback admission",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 17,
+        "name": "Upload sanitized acceptance evidence",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 32,
+        "name": "Post Install the latest version of uv",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 33,
+        "name": "Post Checkout immutable Runtime candidate",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 34,
+        "name": "Post Checkout workflow control revision",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "number": 35,
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "original_run": 38132652607,
+  "original_artifact": {
+    "id": 11699213923,
+    "name": "rcc-provider-rollback-38132652607-1",
+    "size_in_bytes": 8664,
+    "expired": false,
+    "metadata_digest": "sha256:375684fb49460e48451184eae58c7ec26f3b5849d29ab7333b3147b8ef1995f6",
+    "workflow_run": {
+      "id": 38132652607,
+      "repository_id": 948932748,
+      "head_repository_id": 948932748,
+      "head_branch": "fix/rcc-candidate-wheel-identities-20261010",
+      "head_sha": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d"
+    }
+  },
+  "single_metadata_endpoint": {
+    "path": "/workspace/engineering/pr308-current618-fresh-threecase-metadata-owned/single-artifact-metadata-request.json",
+    "bytes": 233,
+    "sha256": "c3b452f3af45fb517b07855d3a057518e5fcbefbaadddd50b3f9e792c83aa831"
+  },
+  "complete_original_metadata_response": {
+    "path": "/workspace/engineering/pr308-current618-fresh-threecase-metadata-owned/original-artifact-metadata.response.private",
+    "bytes": 764,
+    "sha256": "025004851e2226170a9e485de1c5ed92d1a48d162489324f4d4605146ed7fd07"
+  },
+  "CI_owner": {
+    "path": "/workspace/engineering/current618-305-306-282-308-CI-successor/OWNERFINAL-current618-PR305-306-282-308-complete-CI-successor-v3.json",
+    "bytes": 551283,
+    "sha256": "f0d58b6faf7d248b04fa46118991927ea0d37a3ae16979082795b8ae19b21c32"
+  },
+  "no_download_execution_or_old_actual_carry": true
+}

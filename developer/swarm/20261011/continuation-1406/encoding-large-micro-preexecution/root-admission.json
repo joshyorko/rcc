@@ -1,0 +1,13 @@
+{
+  "status": "ROOT_ADMISSION_AFTER_COMPLETE_RUNNER_REVIEW",
+  "planSha256": "3a31525d00d0403c84acf1e908c85a71d17d8aebfa915dd7011476880af265df",
+  "scriptSha256": "040feb2e0db53787e8b6aa6e2f871d73d79f177be960e07349fd1993180b5315",
+  "inputActualIndexVerified": true,
+  "inputObjects": 20,
+  "timedCalls": 500,
+  "allowedInvocations": 1,
+  "freeBytesAtAdmission": 2705895424,
+  "guards": "120s total/30s phase/sampledknownPIDtreeRSS512MiB/1MiBownedevidence/freefloor2.5GiB+4MiBmargin",
+  "scope": "externalPythoncomponent; no RCC/Actions/materializer/default/source/pin/fixturewrites; no framespersisted",
+  "correctionsReviewed": "EOF numericexit/drain;knownlivePID failclosed;actualimportedmodulehashes;finalsample/rawcounts/tool/sourcechecks; priorrevisionpreservedneverexecuted"
+}

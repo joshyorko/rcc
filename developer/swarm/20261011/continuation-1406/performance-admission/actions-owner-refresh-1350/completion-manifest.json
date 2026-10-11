@@ -1,0 +1,311 @@
+{
+  "status": "READ_ONLY_REFRESH_COMPLETE",
+  "numeric_source_check_exit": 0,
+  "sourceblobs": 12,
+  "original_runtime_execution": 0,
+  "all_named_commentpages_fetched": true,
+  "files": [
+    {
+      "path": "comments-101-page-1.json",
+      "size": 321857,
+      "sha256": "85748e63ca085ef3948c25a4f1734a2f6582fd731fe63024a949b7eef1184f92"
+    },
+    {
+      "path": "comments-101-page-2.json",
+      "size": 372572,
+      "sha256": "33d898af4b6d96fcc3b3ca9b9209bcd6b726c609f11258558af75208234faff1"
+    },
+    {
+      "path": "comments-133-page-1.json",
+      "size": 13589,
+      "sha256": "26c170c27ed8bac2c181cd71ca39463e448cbd373b9c899d540a17de305c41b7"
+    },
+    {
+      "path": "comments-134-page-1.json",
+      "size": 23616,
+      "sha256": "0c64347a26ec19acedb060d601ce4d43b04bf17a9f6395f0b91cf9bc71fa2dd5"
+    },
+    {
+      "path": "comments-139-page-1.json",
+      "size": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "comments-143-page-1.json",
+      "size": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "comments-221-page-1.json",
+      "size": 10481,
+      "sha256": "fb86d2549a8a815d5c5ba287c2715b21e1fcda508fc62704fa2d5fc836465ef9"
+    },
+    {
+      "path": "comments-308-page-1.json",
+      "size": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "commit-d5a3d2f.json",
+      "size": 1136,
+      "sha256": "28c600c16368ee4bf43352b3ae19133a0ab43d708d5db5d7de3dccad9a62860d"
+    },
+    {
+      "path": "fetch-provenance.json",
+      "size": 9905,
+      "sha256": "a0fb99f31f6f03f62426ad20029b88c1238cf4ce8a750610e7acc6d831dec064"
+    },
+    {
+      "path": "immutable-source-proof.json",
+      "size": 3487,
+      "sha256": "121ef3a5d96c3216afba70ec2c18176733ab0e72abd2ee23a83ed33fa6d510a9"
+    },
+    {
+      "path": "issue-101-body.md",
+      "size": 33571,
+      "sha256": "6d131365dada2059ba190fa50c9b45ac329c75fd6356c80d95582fb008a9762e"
+    },
+    {
+      "path": "issue-101.json",
+      "size": 37884,
+      "sha256": "280d6a79ae0ed7b2935845f935fb493419d323c0d9d874b1ace9f2b1f8f5e91d"
+    },
+    {
+      "path": "issue-133-body.md",
+      "size": 13936,
+      "sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c"
+    },
+    {
+      "path": "issue-133.json",
+      "size": 18321,
+      "sha256": "af92d333ff73135c0a23bcd7dd01dd7773ca51092205339bbbb8d50e9f0dc03f"
+    },
+    {
+      "path": "issue-134-body.md",
+      "size": 13087,
+      "sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d"
+    },
+    {
+      "path": "issue-134.json",
+      "size": 17421,
+      "sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398"
+    },
+    {
+      "path": "issue-139-body.md",
+      "size": 16665,
+      "sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21"
+    },
+    {
+      "path": "issue-139.json",
+      "size": 21147,
+      "sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c"
+    },
+    {
+      "path": "issue-143-body.md",
+      "size": 17749,
+      "sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959"
+    },
+    {
+      "path": "issue-143.json",
+      "size": 22229,
+      "sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8"
+    },
+    {
+      "path": "issue-221-body.md",
+      "size": 17915,
+      "sha256": "ddf4dcfdfadd2d1db53f889e9dfb023463643aed86001972ccc71b30c9790771"
+    },
+    {
+      "path": "issue-221.json",
+      "size": 22154,
+      "sha256": "6f8a1a2b771377fc8a1ddefe9b4b7fa8165331aa9c073478cbe480ba96f4ddda"
+    },
+    {
+      "path": "issue-308-body.md",
+      "size": 10297,
+      "sha256": "53893c5559bd40c5fb9b5b4e939bb5a895857ae1387160e057f275313919b4d6"
+    },
+    {
+      "path": "issue-308.json",
+      "size": 14504,
+      "sha256": "7281265bd34a75d1d47aaa0ac524b27394fadff9d180bbe7458cc66b2149dc6f"
+    },
+    {
+      "path": "owner-engineering-directory.json",
+      "size": 1638884,
+      "sha256": "4ec3c060cb7b15437bdf9fbce09878127d4835dc5251a99bc6d8f1ed07d60051"
+    },
+    {
+      "path": "owner-evidence/README.md",
+      "size": 41791,
+      "sha256": "82944624a768fb9aa70c7df0b883cb08243aa6f9c71e2ff19d1348a65259d61e"
+    },
+    {
+      "path": "owner-evidence/pr308-current618-control-CONTROL-frozen-owner-final-checkpoint.json",
+      "size": 141218,
+      "sha256": "c646a010c8b4108f19a6897761a6cd6469f59d8ff90b7e2ecd700eadac37832c"
+    },
+    {
+      "path": "owner-evidence/pr308-current618-fresh-actual-metadata-OWNERFINAL-fresh308-current618-threecase-original-artifact-metadata.json",
+      "size": 5875,
+      "sha256": "744d7077a9e6e199cdbb39a560f4ddd7ab92ba1901d33c9c613c1925537cf3bd"
+    },
+    {
+      "path": "owner-evidence/pr308-current618-fresh-threecase-original-OWNERFINAL-original-current618-threecase-proof-v2.json",
+      "size": 21359,
+      "sha256": "ade1a51327e4539dd526ccc3bc95faf672b2883ee4d5562dafe36c2475fa2ee3"
+    },
+    {
+      "path": "owner-evidence/pr308-current618-source-SOURCE-frozen-owner-final-checkpoint.json",
+      "size": 110017,
+      "sha256": "de231c011ee899c8e3ce6c6de4f2448136350758231f3f873f760d30600f4678"
+    },
+    {
+      "path": "owner-evidence/pr308-current618-threecase-independent-OWNERFINAL-independent-current308-original-threecase-review.json",
+      "size": 7857,
+      "sha256": "5dbff4ce52ad00d7167315944f9f62f82b6199d118b6ed19663b2bca21014771"
+    },
+    {
+      "path": "owner-evidence/pr308-fresh-threecase-independent-independent-frozen-original-threecase-actual-review.json",
+      "size": 7669,
+      "sha256": "28f6b0055d89fff600fbaeec5dd3c063871afc0a4413374c16bb332c62b82106"
+    },
+    {
+      "path": "owner-evidence/pr308-fresh-threecase-independent-independent-original-byte-identity-and-offline-proof.json",
+      "size": 8865,
+      "sha256": "d6de403c41178e57465aed3dfe0c85ceb140198036df82250dac28ddf309fdcb"
+    },
+    {
+      "path": "owner-evidence/pr308-fresh-threecase-original-acquisition-and-member-inventory.json",
+      "size": 3017,
+      "sha256": "3780215b4c811eb85a7419ddb5454bf7df89081a150a7583a6466ad947d81065"
+    },
+    {
+      "path": "owner-evidence/pr308-guard-control-CONTROL-frozen-checkpoint.json",
+      "size": 9522,
+      "sha256": "4771821583f54164018854bee073ba8318d3164ea4e152324525913f6af734c6"
+    },
+    {
+      "path": "owner-evidence/pr308-guard-proposal-separate-actual-candidate-gate-prerequisite-proof.json",
+      "size": 3726,
+      "sha256": "bd65509d12659fa1aa89afdf97b6e532b7065e78fbb4790268c57247cc5a5143"
+    },
+    {
+      "path": "owner-evidence/pr308-guard-source-SOURCE-frozen-checkpoint.json",
+      "size": 12828,
+      "sha256": "523e46db8f4ea12dfbb0afbe8f6d2ce675cb0aedd79658b8b4d2585f151afb8b"
+    },
+    {
+      "path": "owner-evidence/pr308-terminal-CI-frozen-terminal-CI-successor.json",
+      "size": 42837,
+      "sha256": "7a418398f556d51ce23b0f471fbfcbbb8a9da011ea827131efa655175bc76284"
+    },
+    {
+      "path": "owner-evidence-proof.json",
+      "size": 7982,
+      "sha256": "bfda1ce3dabfc7a4870a302dfbe447322b52d18913900b3e742d568953e21645"
+    },
+    {
+      "path": "pull-221.json",
+      "size": 33766,
+      "sha256": "2796c008b1d34aa00d78c193203ea594a223e71fae87753603a72f65b9b353b3"
+    },
+    {
+      "path": "pull-308-files-page-1.json",
+      "size": 43355,
+      "sha256": "7bbbf6fad71bc0e79bee998f793ad385797f3e8eadad844b9135edac9c8f89f9"
+    },
+    {
+      "path": "pull-308.json",
+      "size": 26140,
+      "sha256": "0bf4333568f7622cdecc11fae7d1727fe56da49818d3fb5af1a80c22763b8e1f"
+    },
+    {
+      "path": "report.md",
+      "size": 12226,
+      "sha256": "b9bf49c496ff9665654e9ee6f8313b2568e012dec96041134893f9453894ebc9"
+    },
+    {
+      "path": "source/.github/workflows/_gen_workflows.py",
+      "size": 160627,
+      "sha256": "4ed1a208be8b72f0d9ea55ff5a7c5085379e9e0256e05a9b3f44419c551752bc"
+    },
+    {
+      "path": "source/.github/workflows/actions_runtime_rcc_provider_rollback.yml",
+      "size": 51284,
+      "sha256": "b4afa9698f4f8d662fa86de3e7a2547ec986b19776fa87847e4e8a40f1973bd0"
+    },
+    {
+      "path": "source/action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "size": 80376,
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3"
+    },
+    {
+      "path": "source/action_server/src/actions/server/_rcc.py",
+      "size": 17149,
+      "sha256": "74a0646de66d3bfb5a30339080a37c5dc0f79b2e0ab46b7c16a6c19717e6d41b"
+    },
+    {
+      "path": "source/action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "size": 27382,
+      "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a"
+    },
+    {
+      "path": "source/action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+      "size": 23456,
+      "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b"
+    },
+    {
+      "path": "source/action_server/tests/action_server_tests/test_dakota_rcc_acceptance.py",
+      "size": 40081,
+      "sha256": "c84029ef30e84c863f06b4720c27dc839909db44d7fc0d9190274021cfccbf8f"
+    },
+    {
+      "path": "source/action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "size": 19214,
+      "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a"
+    },
+    {
+      "path": "source/actions/pyproject.toml",
+      "size": 1219,
+      "sha256": "9de923a2bf29d73d486ebf67982e177c0ab41d8a35266f7dd1f2d75b1ec43ec3"
+    },
+    {
+      "path": "source/actions-http-helper/pyproject.toml",
+      "size": 881,
+      "sha256": "1888af6e0e2ce2280080920338245122563f69ce677796a5dbddc4c6bb07d28d"
+    },
+    {
+      "path": "source/developer/tests/test_rcc_provider_rollback_workflow.py",
+      "size": 11951,
+      "sha256": "52d590804e5ba618801c1d19834c496eba82bcb8c56010f818b56756ba79a8eb"
+    },
+    {
+      "path": "source/docs/skills/repository-operations.md",
+      "size": 250841,
+      "sha256": "7be5660a7a2d5466b9e32ab32c71b60582eee1df4a6288bad6fbda6a7a74da63"
+    },
+    {
+      "path": "source-bound.json",
+      "size": 26147,
+      "sha256": "eca7b275691badd8371a71e7129b03a38fd02d05a88253c8e7d45d235b841ed8"
+    },
+    {
+      "path": "source-commit-c103.json",
+      "size": 1399,
+      "sha256": "87a34918ee110db174f40963f32a03778a4e750dce746a4576161c6570f0cb1c"
+    },
+    {
+      "path": "source-fetch-provenance.json",
+      "size": 5507,
+      "sha256": "5b38cf52f4f809d05dbccca852ea271918edd9fda79230a586fcc5284a5a2b59"
+    },
+    {
+      "path": "tree-d5a3d2f.json",
+      "size": 448269,
+      "sha256": "6827108b63eaa112cfc0bdf4fc39859945b42548e30948d3da7c708f0a2539aa"
+    }
+  ],
+  "allocated_bytes_before_manifest": 4587520,
+  "free_bytes": 2712838144
+}

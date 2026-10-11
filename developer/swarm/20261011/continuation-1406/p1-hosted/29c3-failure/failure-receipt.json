@@ -1,0 +1,40 @@
+{
+  "workflowRunId": 38142809725,
+  "sourceCommit": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "sourceTree": "9bd919e7e68caa237052f354f49c03c5e9e01691",
+  "jobs": [
+    {
+      "jobId": 114480147837,
+      "platform": "linux_amd64",
+      "conclusion": "failure",
+      "binarySha256": "3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da",
+      "logPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-failure/native-job-114480147837.log",
+      "logSha256": "50fbdf3a2606e48a57e9dfb311fa6478b1dc677bb7376566a5d542a736633d1a",
+      "stepsPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-failure/native-job-114480147837-steps.json",
+      "stepsSha256": "e797acdb561b54120cdfabf911590b52011a4b7d10893e3e3ca69b1b19be24d3",
+      "failedSteps": [
+        "Stage exact native binary for review",
+        "Validate native review payload size"
+      ],
+      "observedFailure": "release preflight failed: native review binary Go metadata differs from source/platform identity",
+      "downstream": "upload-artifact skipped after size validation failure"
+    },
+    {
+      "jobId": 114480147864,
+      "platform": "darwin_arm64",
+      "conclusion": "failure",
+      "binarySha256": "eeb2267bd607577240bbdad8450bd09f216f0698e609760e255c561230fbac8d",
+      "logPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-failure/native-job-114480147864.log",
+      "logSha256": "f1d8bd7aa87d369917c7e251781f05c00eeef3ab9d5a52340bd3bca671b6b7c5",
+      "stepsPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-failure/native-job-114480147864-steps.json",
+      "stepsSha256": "1431ef91a3dce340ca29786c4c4ebac89e97273bb4e16f7830ae5ff44091ce58",
+      "failedSteps": [
+        "Stage exact native binary for review",
+        "Validate native review payload size"
+      ],
+      "observedFailure": "release preflight failed: native review binary Go metadata differs from source/platform identity",
+      "downstream": "upload-artifact skipped after size validation failure"
+    }
+  ],
+  "interpretation": "Native A-to-B/Robot and, on Linux, JAT/receipt binding passed. Earlier receipt source/platform/version/runtime GOOS/GOARCH and binary SHA checks passed. The subsequent Go build-info predicate failed, but the helper emitted no field-level values; exact mismatching Go metadata key is not available in the hosted log. Size-check failure is consequential because no sidecar metadata was staged."
+}

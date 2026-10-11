@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Set up job",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 1
+  },
+  {
+    "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 2
+  },
+  {
+    "name": "Assert exact candidate checkout",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 3
+  },
+  {
+    "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 4
+  },
+  {
+    "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 5
+  },
+  {
+    "name": "Download exact release-built RCC binary",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 6
+  },
+  {
+    "name": "Stage and assert native RCC binary",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 7
+  },
+  {
+    "name": "Install invoke",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 8
+  },
+  {
+    "name": "Setup Robot Environment",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 9
+  },
+  {
+    "name": "Run UV Python prefix symlink containment tests",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 10
+  },
+  {
+    "name": "Show commit info",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 11
+  },
+  {
+    "name": "Run Windows process supervision and artifact lock acceptance",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 12
+  },
+  {
+    "name": "Run Windows Robot binary spelling acceptance",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 13
+  },
+  {
+    "name": "Run macOS system-alias no-follow acceptance",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 14
+  },
+  {
+    "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 15
+  },
+  {
+    "name": "Run real native A-to-B acceptance",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 16
+  },
+  {
+    "name": "Run JAT-class real consumer A-to-B acceptance",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 17
+  },
+  {
+    "name": "Run Environment Artifact Robot acceptance against exact binary",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 18
+  },
+  {
+    "name": "Bind Robot evidence into native runtime receipt",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 19
+  },
+  {
+    "name": "Stage exact native binary for review",
+    "status": "completed",
+    "conclusion": "failure",
+    "number": 20
+  },
+  {
+    "name": "Validate native review payload size",
+    "status": "completed",
+    "conclusion": "failure",
+    "number": 21
+  },
+  {
+    "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 22
+  },
+  {
+    "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 42
+  },
+  {
+    "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+    "status": "completed",
+    "conclusion": "skipped",
+    "number": 43
+  },
+  {
+    "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 44
+  },
+  {
+    "name": "Complete job",
+    "status": "completed",
+    "conclusion": "success",
+    "number": 45
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-11T14:01:48.356046+00:00",
+  "platform": "darwin_arm64",
+  "source": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+  "actual_zip_sha256": "95aaf70a6776dd46a08244312a3001f1f0143fdbd2b7525b250408bfa1cf04d6",
+  "zip_api_digest_match": true,
+  "actual_binary_sha256": "67d5daf790a3b69d07d90ef28df17234deb90b7502513f67555df385cc86857e",
+  "actual_binary_bytes": 20969810,
+  "actual_go_metadata": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "arm64",
+    "GOOS": "darwin",
+    "GOARM64": "v8.0",
+    "vcs": "git",
+    "vcs.revision": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+    "vcs.time": "2026-10-11T13:44:16Z",
+    "vcs.modified": "false"
+  },
+  "go_metadata_exit": 0,
+  "native_receipt_actual_sha256": "1c9ef6bb40b413b2af1f3c07d147748340112c8d5ec12c73929af6d2d1fb4641",
+  "raw_zip_and_binary_retained_at": "/dev/shm/rcc-c6-native-review-root",
+  "no_foreign_platform_execution": true
+}

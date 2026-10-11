@@ -1,0 +1,31 @@
+{
+  "current_execution_namespace_files": [
+    "__pycache__",
+    "encoding_large.py",
+    "plan.json"
+  ],
+  "plan_sha256": "3a31525d00d0403c84acf1e908c85a71d17d8aebfa915dd7011476880af265df",
+  "preserves_reviewed_unaccepted_revision_1": {
+    "archive": "../revision-01/",
+    "plan_sha256": "218a7294ee57b6026589837e7913c6d34ad4866ba33b728fc1c8ed9167fadded",
+    "runner_sha256": "e60f3c91be9c44e548c1a9721938a877bcbfeea337c1ed20614695d04702d501"
+  },
+  "reviewer_fixes": [
+    "EOF assigns numeric worker exit and drains/parses final output",
+    "require live child PID in ps samples with fail-closed race handling",
+    "compare and record actual imported zstandard module/backend paths and hashes",
+    "validate final resource sample and complete event plus timed/untimed calls, canonical frames, weighted summaries and source identity"
+  ],
+  "revision": "2",
+  "runner_sha256": "040feb2e0db53787e8b6aa6e2f871d73d79f177be960e07349fd1993180b5315",
+  "runtime_execution_count": 0,
+  "status": "corrected frozen proposal; static checks passed; no codec workload executed; waiting root admission",
+  "validation": {
+    "ast_parse_exit": 0,
+    "static_stub_test_command": "python3 /workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-large-micro-preexecution/static_supervisor_checks.py",
+    "static_stub_test_count": 13,
+    "static_stub_test_exit": 0,
+    "static_stub_test_log_sha256": "6d150c957d95347d6317cb4de9be7241c08aafe4693c8a6207650f5469060083",
+    "static_stub_test_scope": "EOF numeric-zero exit/tail parsing; fail-closed supervisor+live-worker ps observation and poll-to-ps exit race; result call counts, per-object coverage, untimed codec counts, canonical frames, weighted bytes, toolchain identities, and source mutation. No codec worker invoked."
+  }
+}

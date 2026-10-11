@@ -1,0 +1,111 @@
+{
+  "snapshot_utc": "2026-10-11T13:55:39Z",
+  "rcc_repository_state": {
+    "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "open_pr237": {
+      "state": "open",
+      "draft": true,
+      "mergeable": true,
+      "head": "c6c7a01239635e07f28517e2fc84230e0ab42509",
+      "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "review_count": 0,
+      "review_thread_count": 0
+    },
+    "tags": {"count": 33, "latest": "v18.19.5"},
+    "releases": {"count": 27, "latest_tag": "v18.19.5", "published_at": "2026-09-07T19:02:08Z"},
+    "publication_changes": false
+  },
+  "current_head_c6c7a012": {
+    "workflow_run": {"id": 38144487557, "status": "in_progress", "conclusion": null},
+    "checks": {
+      "PR metrics": {"id": 38144487603, "conclusion": "success"},
+      "Lint": {"id": 38144487594, "conclusion": "success"},
+      "CodeQL": {"id": 38144487609, "conclusion": "success"},
+      "Coverage gate": {"id": 38144487535, "conclusion": "success"},
+      "Quality report": {"id": 38144487544, "conclusion": "success"}
+    },
+    "jobs": {
+      "Build RCC": {"id": 114484872811, "conclusion": "success"},
+      "Release Candidate Verification": {"id": 114484873035, "status": "in_progress", "step": "Run contained release candidate gate"},
+      "Native Runtime (macos-amd64)": {"id": 114485081806, "status": "in_progress", "step": "Run real native A-to-B acceptance"},
+      "Native Runtime (windows-amd64)": {"id": 114485081819, "status": "in_progress", "step": "Run real native A-to-B acceptance"},
+      "Native Runtime (linux-amd64)": {"id": 114485081855, "status": "in_progress", "step": "Run Environment Artifact Robot acceptance"},
+      "Native Runtime (macos-arm64)": {"id": 114485081871, "status": "in_progress", "step": "Run Environment Artifact Robot acceptance"}
+    },
+    "artifacts": [
+      {"id": 11704650153, "name": "RCC-Binaries", "size_bytes": 64502657, "api_digest": "sha256:6f850f0dc37e979ab14241b20137712d793d185f3f5c31b3231f12831753e227", "head": "c6c7a01239635e07f28517e2fc84230e0ab42509"},
+      {"id": 11704535491, "name": "native-runtime-binaries", "size_bytes": 49100741, "api_digest": "sha256:feb021126a30ca4bb9f44195ea0810816fde8df7488dabff72efc6771f38541e", "head": "c6c7a01239635e07f28517e2fc84230e0ab42509"}
+    ],
+    "native_review_payload_artifacts": "None listed yet; all four platform jobs remain in progress before review-payload staging.",
+    "qualification": "No terminal full11/native result yet. The listed native-runtime-binaries artifact is the build input bundle; it is not a platform review payload and was not downloaded."
+  },
+  "previous_head_29c3cfd": {
+    "workflow_run": {"id": 38142809725, "status": "completed", "conclusion": "failure"},
+    "release_candidate_verification": {"job_id": 114479958669, "conclusion": "success"},
+    "build": {"job_id": 114479958847, "conclusion": "success"},
+    "platform_jobs": {
+      "windows-amd64": {
+        "job_id": 114480147770,
+        "job_conclusion": "failure",
+        "native_A_to_B": "success",
+        "windows_robot_and_supervision": "success",
+        "review_payload_stage": "failure",
+        "binary_sha256": "10a3bbdb3a7a4a8f12d78a22badf892c767615b4fcf543f5e844c522ef424f18"
+      },
+      "linux-amd64": {
+        "job_id": 114480147837,
+        "job_conclusion": "failure",
+        "native_A_to_B": "success",
+        "JAT": "success",
+        "Robot": "success",
+        "review_payload_stage": "failure",
+        "binary_sha256": "3754115ed0af273df3e5b934482daea37e82330de8acd4d3b5aaf0f5f9a8e3da"
+      },
+      "macos-amd64": {
+        "job_id": 114480147852,
+        "job_conclusion": "failure",
+        "native_A_to_B": "success",
+        "Robot": "success",
+        "review_payload_stage": "failure",
+        "binary_sha256": "5b43d016d617b8eec3b63abb5a96eb15beb0244834b64b99250caf2c5f05c2f5"
+      },
+      "macos-arm64": {
+        "job_id": 114480147864,
+        "job_conclusion": "failure",
+        "native_A_to_B": "success",
+        "Robot": "success",
+        "review_payload_stage": "failure",
+        "binary_sha256": "eeb2267bd607577240bbdad8450bd09f216f0698e609760e255c561230fbac8d"
+      }
+    },
+    "diagnostic": {
+      "all_four_logs": "Each logged source SHA was 29c3cfdcc89591768a7204ec594414be0ce846f4; Go toolchain reported go1.26.9 on the corresponding native OS/architecture.",
+      "stage_error": "release preflight failed: native review binary Go metadata differs from source/platform identity",
+      "metadata_detail": "No specific mismatched Go build-info field is printed in the decoded logs. Root reports tracked-TOC dirty-source correlation; actual Go metadata field remains unobserved.",
+      "payload_size_step": "The following Validate native review payload size step failed because the required native-binary-review.json was not staged; decoded log exposes no payload-size value or distinct size threshold diagnostic.",
+      "root_attribution": "Tracked TOC is root-reported as the reproducible dirty-source cause; not independently reproduced in this read-only status lane."
+    },
+    "artifacts": [
+      {"id": 11704267401, "name": "release-candidate-evidence", "size_bytes": 156410560, "api_digest": "sha256:83192bb3c98d28bbee9a001c67c7134ce6deac48bd594437041928c6e8d68888", "head": "29c3cfdcc89591768a7204ec594414be0ce846f4"},
+      {"id": 11703468005, "name": "native-runtime-binaries", "size_bytes": 49100496, "api_digest": "sha256:fe31c814c73d1ce31bcd8ab0c079d5098e6d57cae63e675241d62e7c1d73a990", "head": "29c3cfdcc89591768a7204ec594414be0ce846f4"},
+      {"id": 11703078460, "name": "RCC-Binaries", "size_bytes": 64502373, "api_digest": "sha256:05c2478d7ebb6ca4210f7c92ed3d54e079a8c5c3a7b832340eea7b510d3bfc0b", "head": "29c3cfdcc89591768a7204ec594414be0ce846f4"}
+    ],
+    "native_review_payload_artifacts": "None listed; per-platform review-binary staging failed on all four platforms."
+  },
+  "actions_pr221": {
+    "state": "open",
+    "draft": true,
+    "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "comment_count": 2,
+    "latest_comment_id": 6108894271,
+    "latest_comment_at": "2026-10-11T12:12:50Z",
+    "owner_compatibility_reply": "None found; no newer-version compatibility change qualified."
+  },
+  "mutations_and_downloads": {
+    "source_or_github_mutations": false,
+    "job_reruns_or_cancellations": false,
+    "artifact_downloads": false,
+    "review_thread_closures": false
+  }
+}

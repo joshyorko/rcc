@@ -1,0 +1,12 @@
+{
+  "codec_workload_executed": false,
+  "current_execution_namespace_files": [
+    "encoding_large.py",
+    "plan.json"
+  ],
+  "erratum_for": "../encoding-large-micro-preexecution/revision-02/receipt.json",
+  "latest_static_check_exit": 0,
+  "latest_static_check_log_sha256": "6d150c957d95347d6317cb4de9be7241c08aafe4693c8a6207650f5469060083",
+  "reason": "Static module import initially generated __pycache__/encoding_large.cpython-312.pyc inside the fresh runtime namespace after the receipt inventory. It was removed as owned scratch before re-review; the final static test sets sys.dont_write_bytecode before importing the runner.",
+  "runner_and_plan_hashes_unchanged_from_revision_02": true
+}

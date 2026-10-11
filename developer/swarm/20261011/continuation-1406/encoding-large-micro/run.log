@@ -1,0 +1,2 @@
+{"command": ["/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python", "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-large-micro/encoding_large.py"], "plan_sha256": "3a31525d00d0403c84acf1e908c85a71d17d8aebfa915dd7011476880af265df"}
+{"elapsed_seconds": 38.863108442999874, "failure": null, "numeric_worker_exit": 0, "status": "PASS"}

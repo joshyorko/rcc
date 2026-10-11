@@ -1,0 +1,16 @@
+--- 29c3/docs/README.md
++++ after-inv-support-toc/docs/README.md
+@@ -277,7 +277,10 @@
+ ### 18.5 [Prewarming](https://github.com/joshyorko/rcc/blob/main/docs/environment-build-coordination.md#prewarming)
+ ### 18.6 [Offline test matrix](https://github.com/joshyorko/rcc/blob/main/docs/environment-build-coordination.md#offline-test-matrix)
+ ## 19 [RCC quality metrics](https://github.com/joshyorko/rcc/blob/main/docs/metrics.md#rcc-quality-metrics)
+-## 20 [Pull request review rubric](https://github.com/joshyorko/rcc/blob/main/docs/review-rubric.md#pull-request-review-rubric)
+-## 21 [RCC v18 compatibility contract](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#rcc-v18-compatibility-contract)
+-#### 21.1.1 [Consumer lifecycle contract](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#consumer-lifecycle-contract)
+-### 21.2 [Program completion boundary](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#program-completion-boundary)+## 20 [RCC release preparation and publication](https://github.com/joshyorko/rcc/blob/main/docs/release-process.md#rcc-release-preparation-and-publication)
++### 20.1 [Signing limits](https://github.com/joshyorko/rcc/blob/main/docs/release-process.md#signing-limits)
++### 20.2 [Documentation receipt](https://github.com/joshyorko/rcc/blob/main/docs/release-process.md#documentation-receipt)
++## 21 [Pull request review rubric](https://github.com/joshyorko/rcc/blob/main/docs/review-rubric.md#pull-request-review-rubric)
++## 22 [RCC v18 compatibility contract](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#rcc-v18-compatibility-contract)
++#### 22.1.1 [Consumer lifecycle contract](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#consumer-lifecycle-contract)
++### 22.2 [Program completion boundary](https://github.com/joshyorko/rcc/blob/main/docs/v18-compatibility.md#program-completion-boundary)

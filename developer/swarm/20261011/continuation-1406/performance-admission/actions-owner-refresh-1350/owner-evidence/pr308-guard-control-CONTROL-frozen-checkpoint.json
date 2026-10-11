@@ -1,0 +1,178 @@
+{
+  "schema": "actions-pr308-candidate-guard-control/v1",
+  "status": "FROZEN_CONTROL_FOR_INDEPENDENT_NORMAL_PUSH_REVIEW_NO_PUSH",
+  "C": "b673ddd761ba4ccd68e9baa8faaa9ab666df794e",
+  "C_tree": "56d108fcdb5d43f7f27a8f2554fec51b702519f4",
+  "soleparent_SOURCE_S": "7eb5bce946750555ab009f77592862920a901506",
+  "SOURCE_S_tree": "3ff76037779763d0461ff3a755b900c9ed83dcf8",
+  "ordinary_refresh_S0": "bc4296014fed571b478bc86911217e5f1dbcdc01",
+  "existing_branch": "fix/rcc-candidate-wheel-identities-20261010",
+  "changed_paths": [
+    ".github/workflows/_gen_workflows.py",
+    ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+    "developer/tests/test_rcc_provider_rollback_workflow.py"
+  ],
+  "complete_source_tree_leaves": 1409,
+  "unchanged_other_body_mode_pairs": 1406,
+  "no_deletion_no_novel_noncontrol_leaf": true,
+  "complete1409committed_workingbytes_exact_precommit": true,
+  "exact_AST_scope": {
+    "generator_only2candidatepins_and1existing_branch_optin": true,
+    "test_only2constants_and1exact_branch_contract": true,
+    "all_other_generator_AST_predicates_strings_selectors_profiles_rawsummary_Core1_0_2_deadlines_preserved": true,
+    "workflow_rawbytes_normalized_only5identityvalues_and1branch_equalsSOURCE_S": true,
+    "all_other_workflows_exactSOURCE_S": true
+  },
+  "immutable_pin_binding": {
+    "candidate_sha": "7eb5bce946750555ab009f77592862920a901506",
+    "candidate_tree": "3ff76037779763d0461ff3a755b900c9ed83dcf8",
+    "self_pin": false,
+    "control_subject": "b673ddd761ba4ccd68e9baa8faaa9ab666df794e",
+    "previous_sha": "d642a3ac24f8da85101538bdfdf59b509fd74bfb",
+    "previous_tree": "fdf2823ebcdbd938b9047fd452c9fb13eb4be4e4",
+    "new_existing_optin_branch": "fix/rcc-candidate-wheel-identities-20261010",
+    "original_optin_branches_retained": [
+      "test/rcc-provider-rollback-hosted-20261010",
+      "fix/rcc-published-artifact-details-20261010"
+    ],
+    "same_push_event_paths_permissions_no_retry_or_skip_edits": true
+  },
+  "nine_source_hash_sample": {
+    "path": "/workspace/engineering/pr308-accepted-public-guard-control/workflow-and-nine-source-preservation-proof.json",
+    "size": 2509,
+    "sha256": "547c242d1336844bc0b0dd01260170fa0cdf1e5bd0bfaacb25950895bb820dd0"
+  },
+  "producer_and_selected_inventory": "SOURCE S exact268+5=273 current776 producer/test inputs retained body/mode; native92498 adapterdelta remainsUNQUALIFIED. Nine hashes remain sample, not fullproducer.",
+  "gates": {
+    "pin_RED": "1failed4passed againstoldD642 workflow",
+    "branch_RED": "1failed4passed againstold2branch contract",
+    "focused_GREEN": 55,
+    "Toolkit": 96,
+    "changed_test_Ruff_check_format": "PASS",
+    "configured_package_Isort_test_and_generator": "PASS",
+    "changed_Python_compile": "PASS",
+    "generator_roundtrip": "8generated+dependabot unchangedC; all30trackedYAMLparsed/bytesunchanged; onlyONE_RCCworkflowdiffersS",
+    "diff_check": "PASS",
+    "full_SOURCE_reused": {
+      "head": "7eb5bce946750555ab009f77592862920a901506",
+      "passed": 1190,
+      "skipped": 13,
+      "Mypy_files": 337,
+      "scope": "No repeatfullsuite; independentacceptedSOURCE S and everypackage/source/noncontrolleafexact."
+    }
+  },
+  "source_qualification_receipt": {
+    "path": "/workspace/engineering/pr308-accepted-public-guard-source/SOURCE-frozen-checkpoint.json",
+    "size": 12828,
+    "sha256": "523e46db8f4ea12dfbb0afbe8f6d2ce675cb0aedd79658b8b4d2585f151afb8b"
+  },
+  "independent_source_GO": {
+    "path": "/workspace/engineering/pr308-accepted-public-guard-independent-source-review/independent-frozen-S-source-review.json",
+    "size": 6631,
+    "sha256": "29c13d7e5bcb3400decbf41286ea736fb0073c6c5afc695ca382826c40a02e03"
+  },
+  "scope_HOLD": {
+    "fresh_hosted_CI": "NOTRUN untilrootnormalpush;derivefullcurrentexpectedinventoryincludinglatepublisher,noold19/26carry",
+    "fresh_three_case": "NOTRUN currentS/C; old30254a remains historicalD642/A346/base774/776proof; newbranch optin enablesseparateacceptedreport",
+    "actual_candidate": "NOTRUN/NOTAUTHORIZED retainednegativeFAILcontractunchanged;19servicefreeguardcontrols notpositiveparentactual2510gate",
+    "private_full134": "Missingoriginal01f/frozen-v6spec;fullprivate/metadataHOLD,no reconstruction",
+    "native_OAuth_release": "Changedadapternative92498UNQUALIFIED;providerwarm/coldregistry/fullplatform/OAuthcontent/releaseHOLD"
+  },
+  "documentation_improvement": {
+    "Canonical_file_changed_or_proposed": "docs/skills/repository-operations.md",
+    "Exact_delta_integrated_in_SOURCE_S": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-source/exact-implemented-canonical-delta.patch",
+      "size": 4385,
+      "sha256": "2bd81847fda0b761e42b24c704dbe9eccda907c21f40cc3b4e5d88bf704e12f6"
+    },
+    "Durable_learning_captured": "Parentreceiptworkerstatus provisional; narrowdeadlineguard independentprofile/native; immutableSOURCE firstthen CONTROL pins exactreviewedS SHA/tree and adds existingoptinbranch;3casecontrol doesnotexercisecandidateCLIparenttimeout;retainednegativecandidatecontract notpositiveactualacceptance.",
+    "Evidence": "ExactSOURCE S independent29c; source19REDGREEN/full1190 gates; CwholeAST/rawworkflow normalization, pin/branchRED55GREEN/Toolkit96/1406preservedsourcepairs.",
+    "Stale_or_ambiguous_guidance_removed": "The acceptedSOURCE canonicaldelta corrects candidatehistory/negativeactual and source/control scope; no cosmetic C guidechange, exact guidebody/mode unchangedS.",
+    "Remaining_uncertainty": "FreshC hostedfullCI/actual3casepending;positivecandidate2510/privatefull134/changednative/OAuth/release remainHOLD.",
+    "Disposition": "Accepted2bdSOURCE canonicaldelta retained exact; controlimplementsits source-first reviewedpins invariant, no newunsupportedclaim."
+  },
+  "evidence": [
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/branch-RED.log",
+      "size": 6289,
+      "sha256": "c829e63a83493f486f64eb767dd2f7c552f002d7d8fadf1d26bab66e4d5d4e6b"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/control-source-AST-scope-proof.json",
+      "size": 774,
+      "sha256": "1f1d0014e3346adcce7824318c23e36e569559dd0bc2a7585a0ac1bbc01bac68"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/diff-check.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/final-precommit-control-hashes.json",
+      "size": 187809,
+      "sha256": "c619d5dead8d8333523f3d629eb8ef8d48505578ede1192bfed8d8b8ad769cd6"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/generate-one-workflow.log",
+      "size": 3650,
+      "sha256": "b85e8c26938855f8fc5378b2ae61d1e193945ee2a9f309fc63797910d7eb904a"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/generate-one-workflow.py",
+      "size": 432,
+      "sha256": "7784ffa9ec7a4365abc6526bd1b94b0e0bebf97a7164c7100d3cb9ebe37fd451"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/generator-roundtrip.json",
+      "size": 10286,
+      "sha256": "8f25f9bc65d44ae9a4d2957d0d57943b7fee93633241829a873594fdfb87401a"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/generator-roundtrip.log",
+      "size": 4564,
+      "sha256": "74c7e6efa262cdd5cf2baa06419fe0eb71f7d85a60b779b7a3a35118a46bf391"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/generator-roundtrip.py",
+      "size": 1812,
+      "sha256": "0f5ae0f7a5cfdc716b5b9be7729ff2098a1efbdc144e1148cc505820d957dc3c"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/green-controls-static.log",
+      "size": 4742,
+      "sha256": "baf4d6c34b1e4c000e902637bb01968c715b4cb61dff8b882299a00164a31809"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/pin-RED.log",
+      "size": 7795,
+      "sha256": "d16bc62bc1bc83740e2428507d8d0348abec29b9109eaf33402340783cb97a64"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/pre-C-reviewed-source-checkpoint.json",
+      "size": 470,
+      "sha256": "06ca3c5704bc1d63cc9d903217b67311e58aa23cc5f6ecd662f90bf73e3d460f"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/run-green-controls-static.py",
+      "size": 758,
+      "sha256": "43afbd40997510f9fbf8610a2c362dbe4401732080acb7261667637cab9dff89"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/run-red-controls.py",
+      "size": 125,
+      "sha256": "55b128663058a61b19a07c8a11f49bec0ce585618547e82973d1731d22996f57"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/toolkit.log",
+      "size": 14346,
+      "sha256": "f76986e5d5e7bf7e3cb17b055f2a3f57f7a04d6415ea883c349c0bd6880365df"
+    },
+    {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-control/workflow-and-nine-source-preservation-proof.json",
+      "size": 2509,
+      "sha256": "547c242d1336844bc0b0dd01260170fa0cdf1e5bd0bfaacb25950895bb820dd0"
+    }
+  ],
+  "upstream_disposition": "none",
+  "actions": "Onlyauthorizedexistingbranch3pathcontrolchanges/limitedgatewaycontrols/genchecks/localcommit;no newbranch/push/merge/actualprovider/native/metadata/install/download/fullSOURCErerun."
+}

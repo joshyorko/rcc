@@ -1,0 +1,107 @@
+{
+  "schema": "independent-original-current776-threecase-actual-review-v1",
+  "decision": "GO_SCOPED_ORIGINAL_PUBLIC_LINUX_THREECASE_ONLY; FULL_CI_POLICY_AND_BROADER_ACCEPTANCE_HOLD",
+  "source_S": {
+    "commit": "7eb5bce946750555ab009f77592862920a901506",
+    "tree": "3ff76037779763d0461ff3a755b900c9ed83dcf8"
+  },
+  "control_C": {
+    "commit": "b673ddd761ba4ccd68e9baa8faaa9ab666df794e",
+    "tree": "56d108fcdb5d43f7f27a8f2554fec51b702519f4",
+    "sole_parent": "7eb5bce946750555ab009f77592862920a901506"
+  },
+  "accepted_target": "77647484b3cdd8e18aabf344a4018ea8ed8e3ea0",
+  "original_run": 38124233445,
+  "original_job": 114425127596,
+  "original_artifact": 11697165172,
+  "owner_announced_frozen_receipt": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/frozen-original-threecase-proof.json",
+    "bytes": 19720,
+    "sha256": "16b60ef82e907388a768642e17db2134b5dfaea966cfc7045aa1715879ca38f4"
+  },
+  "independent_byte_and_offline_proof": {
+    "path": "/workspace/engineering/pr308-current776-independent-actual-review/independent-original-byte-identity-and-offline-proof.json",
+    "bytes": 8865,
+    "sha256": "d6de403c41178e57465aed3dfe0c85ceb140198036df82250dac28ddf309fdcb"
+  },
+  "independent_review_script": {
+    "path": "/workspace/engineering/pr308-current776-independent-actual-review/review_original_bytes_v3.py",
+    "bytes": 15461,
+    "sha256": "108fa3c149b62b5028f7a9a50ad9d9a7f723770624a5c831a14479ffa9b92471"
+  },
+  "verification": {
+    "all22_owner_reference_size_SHA256_exact": true,
+    "ZIP7582_SHA5beb_and_decoded_log887255_SHAd36e_original": true,
+    "exact_seven_members17483_expanded_bytes_private_retained_equal": true,
+    "all_original_archive_recorded_modes": "100644; private retained0600",
+    "JUnit": "3 namedPASS/0FAIL/0ERROR/0SKIP; suite counts agree actual testcase elements",
+    "actual_checkout": "Original job git log output directly binds Cb673 then S7eb; immutable Git Ctree56d/Stree3ff and receipts match, not synthetic reassignment",
+    "source_sample": "Nine exact Git blob bodies/modes and hash fields; three Runtime module source-origin bindings verified",
+    "strict_validator": "Actual C workflow step body90e802 equals retained validator; independent transformed recorded-observation replay restores exact original AST including all predicates; no subprocess/RCC/provider/test invocation; exit0/issues[]",
+    "derived_outputs": "Independent regenerated acceptance-summary.json/log and lifecycle-summary.json byte-equal original; source/runtime RCC version/hash values are original recorded observations, not new host measurement",
+    "publication": "One real captured publication invocation in named details case; raw JSON bytes/hash and canonical specification/artifact pair plus aliases/args match; other two cases have separate providers/environments",
+    "staged_consumer": "Exact two original authored action.py/package.yaml bytes/size/mode inventories match stage; typed result/Core1.0.2/managed origins admitted; not complete Core or Runtime wheel proof",
+    "lifecycle": "Three persisted result/status2 values as expected, unchanged two provider operation records; HTTP200 and natural return1 observed before separate cleanup; forced_stop_usedFalse; post-cleanup1 excluded from natural-exit proof",
+    "cleanup_limit": "Captured-before0/same-captured-survivors0 only. Source catches psutil failures as empty; no complete snapshot or universal descendant-reaping proof",
+    "immutability": "Original owner receipt/source C/worktree unchanged after review"
+  },
+  "safe_publication_identity": {
+    "specification_digest": "sha256:5e7dcfdb9f4ca5cc19ca6b2e93cad75a3fd60f598d4a71fd10451bffc1ddc56f",
+    "artifact_digest": "sha256:128a21ba2f2655b08ba36d060de099bfd80b50e8a73ad77fb742da0838d179d3",
+    "raw_payload_sha256": "5275941be63a8f3f81e1c667a9a008311c809378c2b03a852879ee986e7c8d04",
+    "raw_keys": [
+      "artifactDigest",
+      "legacyBlueprintKey",
+      "objectCount",
+      "reusedBytes",
+      "specificationDigest",
+      "uploadedBytes"
+    ],
+    "raw_object_count": 4960,
+    "raw_uploaded_bytes": 76127475,
+    "raw_reused_bytes": 0
+  },
+  "scope": {
+    "admitted": "Original public Linux three selected RCC cases at exact S7eb/Cb673 tuple only",
+    "RCC": "Original hosted selected checksum-pinned v18.19.3/Linux glibc2.39 observations",
+    "Core_floor": "Public Core1.0.2 two-member sample only",
+    "not_admitted": [
+      "Full fresh CI; owner snapshot retained7pending of26 and no new poll",
+      "Traditional protection HTTP403 UNKNOWN; no bypass",
+      "Original NOT_RUN negative CLI2510 is not positive current parent-deadline guard proof",
+      "Private metadata/backend/CLI/external providers/whole134/135 qualification",
+      "Native/current complete producer/frozen artifacts/cold install/other-platform qualification",
+      "Whole Core3 or Runtime wheel content/authenticated cold registry proof",
+      "Runtime release/publication/wholeissue closure/integration",
+      "Earlier302Sprime/Cprime/raw54a receipts not relabeled despite nine sampled source matches"
+    ]
+  },
+  "Documentation_improvement": {
+    "Canonical_file_changed_or_proposed": "docs/skills/repository-operations.md: exact cd973 proposal explicitly reused; root checkpoint equivalent remains pending its own source review",
+    "Exact_delta": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-independent-control-review/canonical-three-reviewed-control-branches-proposed.patch",
+      "bytes": 1016,
+      "sha256": "cd97355e9506350c286532607b87c5ce4ff492073a78fb72336517fe8164b5cd"
+    },
+    "Equivalent_checkpoint_paragraph": {
+      "path": "/workspace/engineering/campaign-checkpoint/docs/skills/repository-operations.md",
+      "start_line": 3208,
+      "paragraph_sha256": "7eed31cb62b691ac5c9f74673c5f956c233be3103cc0bba09049fe6fc5d919d2",
+      "reviewed_current_source_branch_list_matches": true,
+      "checkpoint_freeze_or_commit_admission": false
+    },
+    "Durable_learning": "Generated control permits exactly three reviewed push branches with unchanged path filter. Bind original C/S/raw artifact proof separately from full CI tested merge, and keep nine sampled bodies/Core1.0.2/captured-tree cleanup limits explicit.",
+    "Evidence": "Original C workflow list and unchanged accepted target path filter; original run38124233445/job114425127596, seven raw members/JUnit3/no-skip, nine Git bodies, direct C/S checkout output and exact validator-derived summary bytes. Root checkpoint3208 paragraph has same three branches/path-filter limit.",
+    "Stale_or_ambiguous_guidance_removed": "cd973 replaces stale two-branch permission list with actual three-branch source contract; no new cosmetic paragraph or broad execution/cleanup claim.",
+    "Remaining_uncertainty": "FullCI/policy/current positive guard/private/native/wholewheel/release remain HOLD. Recorded binary observations not independently rerun. Empty captured set does not establish complete enumeration."
+  },
+  "review_actions": {
+    "application_source_or_index_edits": false,
+    "downloads": 0,
+    "provider_native_binary_or_test_execution": 0,
+    "pure_recorded_input_validator_replays": "Three bounded independent attempts; each strict admission succeeded. First later inspector guard excluded valid UTF8 encode literal; second later inspector loop variable shadowed receipt path. Corrected read-only v3 proof retains predecessors/outputs. These are reader defects, not product failures or native retries.",
+    "all_review_outputs_outside_Git_private": true,
+    "push_merge_or_issue_mutation": false
+  },
+  "Upstream_disposition": "none"
+}

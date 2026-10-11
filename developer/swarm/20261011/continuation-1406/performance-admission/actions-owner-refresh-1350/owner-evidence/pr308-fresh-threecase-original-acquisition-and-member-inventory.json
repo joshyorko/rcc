@@ -1,0 +1,85 @@
+{
+  "artifact": 11697165172,
+  "ZIP": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/original-artifact-11697165172.zip",
+    "bytes": 7582,
+    "sha256": "5bebad77cc556a5bf5cef84feae8d76d3a7d5c5aecfc63378691cc79dec3719d"
+  },
+  "job_log": {
+    "path": "/workspace/engineering/pr308-current776-fresh-threecase-owned/original-job-114425127596.private.log",
+    "bytes": 887255,
+    "sha256": "d36e0a7695b52fa2113a6d3a43c6554b1c5f032c0f777410bfadd2972b135c1b"
+  },
+  "members": [
+    {
+      "member": "rcc-provider-rollback-evidence/acceptance-summary.json",
+      "bytes": 3067,
+      "sha256": "0cae877e37e4ad4721045e8095cd3f40bb361006048e38ea2cfbea8de2c05fde",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "a6876ee7",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/acceptance-summary.log",
+      "bytes": 686,
+      "sha256": "d4cc8ec93cf0227ae2206808180e53b29271b45c8658151106c01d416a0455fd",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "67c6a44e",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/lifecycle-receipt.json",
+      "bytes": 7881,
+      "sha256": "a18529d3dc94cfc150352d6dedc674883814245eca5573205a2ce92427875b8c",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "5e61026a",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/lifecycle-summary.json",
+      "bytes": 1221,
+      "sha256": "56ad7a1548939ae3e143be6a83a846de330eb6bce4317d0cfc0e4a5190e22817",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "7ed745da",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/published-details-receipt.json",
+      "bytes": 1483,
+      "sha256": "0d8f704b99becdc0baad46006c276e4406b862bbf96408011ad587da68179129",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "cb9e0e68",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-evidence/staged-consumer-receipt.json",
+      "bytes": 2393,
+      "sha256": "42fb4f5876557bcffc597738bb642df22c69d91349c54d5d3c53fce97033abde",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "c09b0399",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    },
+    {
+      "member": "rcc-provider-rollback-junit.xml",
+      "bytes": 752,
+      "sha256": "99bd574e75a7d2313d50fb20749632ada952bb132f9c3a4f16642ac6ea4a9787",
+      "zip_recorded_mode": "0o100644",
+      "zip_CRC32": "0c094bd0",
+      "compression": 8,
+      "retained_private_mode": "0600",
+      "original_bytes_equal": true
+    }
+  ]
+}

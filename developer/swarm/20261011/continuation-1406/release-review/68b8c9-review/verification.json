@@ -1,0 +1,29 @@
+{
+  "commit": "68b8c9bf3f33336ed9bfe5a27945cf9cbf075bda",
+  "evidenceFiles": {
+    "focused-tests.log": "22f8b13d7416563675b69534d4b7e99e95f6638f2dd5573ada306092a8c9a656",
+    "report.md": "c5cc0c70a7d202636c2746a52745d15d8bf3d434f755eb8c5e0a567ede1e4fd0"
+  },
+  "parent": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "reviewFinding": {
+    "file": "tasks.py",
+    "line": 1456,
+    "severity": "blocking",
+    "summary": "Unconditional tracked-source dirty check blocks ordinary developer inv build on intended local edits."
+  },
+  "sourceFileSha256": {
+    "docs/README.md": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d",
+    "docs/release-process.md": "23899789d352c68fe7ce8e7e0920d702a3033299adcfe941d2bcc45b821f7b6f",
+    "scripts/release_publication.py": "077301e17427b42f786768d9a59bbcf0b2b93ccec296ed9ba6c55d96ac670118",
+    "scripts/test_environment_artifact_tasks.py": "0a2adf12446eb60e1cf39a2491ac88365b04f7dfd4aca8c94eb83b51009e6fa0",
+    "scripts/test_release_publication.py": "6d285d28c2d55f84b41d389cbc4eed317ec5b027de49eb9ec5c13caf1a4e0929",
+    "tasks.py": "ffd0e8757e0cab75a1e01085fd54d6ae70a38dc3f7dad776e1a1c932a2e192bd"
+  },
+  "tests": {
+    "command": "PYTHONPATH=/tmp/rcc-review-pydeps python -m unittest scripts.test_environment_artifact_tasks.ArtifactTaskTests.test_build_source_guard_rejects_tracked_edits_and_precedes_compilation scripts.test_release_publication.ReleasePublicationTests.test_native_review_reports_each_go_metadata_mismatch",
+    "goOrNativeRuns": false,
+    "result": "2 tests passed"
+  },
+  "tree": "8a3491337355ade68d0d253914b3986adc5de29d",
+  "worktreeStatus": "## codex/rcc-two-phase-release-20261011"
+}

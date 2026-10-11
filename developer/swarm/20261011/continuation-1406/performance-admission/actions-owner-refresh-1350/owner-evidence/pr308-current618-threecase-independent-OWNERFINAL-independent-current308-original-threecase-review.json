@@ -1,0 +1,172 @@
+{
+  "verdict": "GO_EXACT_ORIGINAL_THREECASE_ONLY__FULL_CI_POLICY_RELEASE_HOLD",
+  "owner": {
+    "path": "/workspace/engineering/pr308-current618-fresh-threecase-original-owned/OWNERFINAL-original-current618-threecase-proof-v2.json",
+    "bytes": 21359,
+    "sha256": "ade1a51327e4539dd526ccc3bc95faf672b2883ee4d5562dafe36c2475fa2ee3"
+  },
+  "evidence_bindings_verified": 24,
+  "source_S": {
+    "commit": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+    "tree": "21676c626a933c2d55761ec85ecf26fe0eef26bb"
+  },
+  "control_C": {
+    "commit": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+    "tree": "fa3f7728d315c9a192f88e17acf15f164d4eee13",
+    "sole_parent": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962"
+  },
+  "target": "6181b044c75de35386f1ae30e71725398b6a7feb",
+  "actual_original_checkouts": {
+    "control": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+    "candidate": "c10380a4d2ebc6f0aca63eb85c8f84a337da4962",
+    "control_log_lines": [
+      123,
+      124
+    ],
+    "candidate_log_lines": [
+      223,
+      224
+    ],
+    "synthetic_merge_relabel": false
+  },
+  "run": 38132652607,
+  "job": 114449993317,
+  "artifact": 11699213923,
+  "original_ZIP": {
+    "path": "/workspace/engineering/pr308-current618-fresh-threecase-original-owned/original-artifact-11699213923.zip",
+    "bytes": 8664,
+    "sha256": "375684fb49460e48451184eae58c7ec26f3b5849d29ab7333b3147b8ef1995f6"
+  },
+  "decoded_private_original_log": {
+    "path": "/workspace/engineering/pr308-current618-fresh-threecase-original-owned/job-114449993317-original.private.log",
+    "bytes": 861113,
+    "sha256": "bcf7167d1dbdaf590d71fec44a10e07cccac5a87bacac44af0da974a5098cab2"
+  },
+  "original_members_verified": 7,
+  "expanded_bytes": 20503,
+  "source_Git_pins_verified": [
+    {
+      "name": "action_package_handler",
+      "path": "action_server/src/actions/server/_action_package_handler.py",
+      "git_mode": "100644",
+      "git_blob": "a306eb11038f8cd4114415fb978321eb2ac51a0f",
+      "bytes": 24361,
+      "sha256": "a623ec0d2a7862bc5f27599fda853cb039ce68459b18c95e01c7a53adcdedb64"
+    },
+    {
+      "name": "actions_import",
+      "path": "action_server/src/actions/server/_actions_import.py",
+      "git_mode": "100644",
+      "git_blob": "50f72e8c95dcc4455a8225eb19c8d3309faada58",
+      "bytes": 28217,
+      "sha256": "57ad235e30fdd84c763f84efd7ccdd8514d620d5b5cfff05ac1051f60ceefad3"
+    },
+    {
+      "name": "runtime_adapter",
+      "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+      "git_mode": "100644",
+      "git_blob": "09234363409bf979016a970c34b8b38ff642fb1f",
+      "bytes": 27382,
+      "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a"
+    },
+    {
+      "name": "rollback_test",
+      "path": "action_server/tests/action_server_tests/test_current_candidate_import_rollback.py",
+      "git_mode": "100644",
+      "git_blob": "13c760dd2adbd38bfeec039eba73376bbf32745c",
+      "bytes": 23456,
+      "sha256": "60d81fabaa2ba0446ff888109e050c883ee944553794636fd527a6fe27d4691b"
+    },
+    {
+      "name": "staged_consumer_test",
+      "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+      "git_mode": "100644",
+      "git_blob": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+      "bytes": 19214,
+      "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a"
+    },
+    {
+      "name": "source_staging",
+      "path": "action_server/src/actions/server/deployments/source_staging.py",
+      "git_mode": "100644",
+      "git_blob": "b475fd6688b7afc6606cde2cba9a1294d771a64c",
+      "bytes": 25641,
+      "sha256": "fda3f2c045414a9cae21cc0765a3eb7c72db2ddd2f5d74e567a04a0513baf620"
+    },
+    {
+      "name": "source_read",
+      "path": "action_server/src/actions/server/deployments/source_read.py",
+      "git_mode": "100644",
+      "git_blob": "7ec910a2ef7aecd2be73c6a7b786d42ea78c81af",
+      "bytes": 11051,
+      "sha256": "4ae8cbe57aa5c924585f4257a1be1700aa49baa63d6150efba20935045f7a8a5"
+    },
+    {
+      "name": "source_manifest",
+      "path": "action_server/src/actions/server/deployments/source_manifest.py",
+      "git_mode": "100644",
+      "git_blob": "5c02ece585884a656175d586e6b3d5a64f0c065e",
+      "bytes": 8281,
+      "sha256": "4fb8d376d1b4aa06d301dedaeee67a2916561c7d10b8f1dadd657870b37b2b43"
+    },
+    {
+      "name": "acceptance_helper",
+      "path": "action_server/scripts/verify_dakota_rcc_acceptance.py",
+      "git_mode": "100644",
+      "git_blob": "b2b8a58b2114b5a3e8fddbf90c7ad6314c6c1d05",
+      "bytes": 80376,
+      "sha256": "e4a311dd9e6dd6fa98b0257f37716b7e326eeac7f2beb8d9324802e40878fba3"
+    }
+  ],
+  "JUnit": {
+    "tests": 3,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "source_step_sha256": "90e8023a40e5846dcf8985d8fbde1f816e5addc8f78feb175613d9924ee0c717",
+  "offline_original_output_comparison": {
+    "six_retained_outputs_equal_original_member_bytes": true,
+    "inspected_adapter_scope": "Only recorded Git/file hashes/two RCC-version observations/environment replacements; admission predicates and summary construction retained",
+    "validator_executed_by_reviewer": false,
+    "new_RCC_observation": false
+  },
+  "observed_case_scopes": {
+    "lifecycle": "Two persisted last-good results, recovered result, two provider operations unchanged; original source samples bound",
+    "published_details": "One invocation; original raw JSON hash and specification/artifact pair+aliases bound, loopback provider and argv validated",
+    "staged_consumer": "Two authored sample files and inventory/body/modes identical; typed result from managed worker with published Core1.0.2"
+  },
+  "cleanup": {
+    "HTTP_shutdown": 200,
+    "natural_return_code_before_separate_cleanup": 1,
+    "forced_stop_used": false,
+    "captured_descendants_before_stop": 0,
+    "captured_survivors": 0,
+    "universal_reaping_qualified": false
+  },
+  "limits": [
+    "Three original case scopes only; not full CI or admission for a different source/control/target",
+    "Policy protection403 remains UNKNOWN; no bypass",
+    "Nine sampled source pins do not qualify complete native producer; accepted302 adapter differs92498",
+    "Core1.0.2 staged sample does not qualify full Runtime/Core wheel, registry/cold consumer or content authority",
+    "Private134/135, positive2510/provider metadata/native/publication/fullrelease HOLD"
+  ],
+  "Documentation_improvement": {
+    "Canonical_file_changed_or_proposed": "docs/skills/repository-operations.md; accepted exact cd973 three-control-branch correction reused, plus50ad separate executed checkout identity lesson",
+    "Exact_documentation_delta": {
+      "path": "/workspace/engineering/pr308-accepted-public-guard-independent-control-review/canonical-three-reviewed-control-branches-proposed.patch",
+      "bytes": 1016,
+      "sha256": "cd97355e9506350c286532607b87c5ce4ff492073a78fb72336517fe8164b5cd"
+    },
+    "Durable_learning_captured": "Permitted push branches are source-bound; current control checkout, staged candidate, seven original raw receipts, three-case gate and complete CI remain separate qualifications.",
+    "Evidence": "Immutable C push branch list3; original job checkout lines123-124/223-224; seven original ZIP members, nine Git source pins and exactJUnit3/0.",
+    "Stale_or_ambiguous_guidance_removed": "Stale two-branch list corrected to three; no broad cleanup, Core3 or whole-CI claim from the three-case receipt.",
+    "Remaining_uncertainty": "Full current CI/policy/private/native/whole-wheel/content-authority/release gates remain separate and held."
+  },
+  "Upstream_disposition": "none",
+  "review_script": {
+    "path": "/workspace/engineering/pr308-current618-threecase-independent-review/verify_readonly.py",
+    "bytes": 13416,
+    "sha256": "bbcd974005aa96131ed2a0245b24795b64d65ce67e99291f7c482deb83a28c45"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "command": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10 -m unittest discover -s scripts -p test_*.py -v",
+  "exitCode": 0,
+  "testCount": 138,
+  "startedUtc": "2026-10-11T13:40:50.949750+00:00",
+  "finishedUtc": "2026-10-11T13:40:51.830290+00:00",
+  "python": "Python 3.10.15",
+  "temporaryFixture": {
+    "path": "build/rcc",
+    "sha256": "2b7bf34f8b93c0e89aa6762611373612ecb512c5fd72a36119155e31533959b1",
+    "purpose": "existing mocked gate-sequence test only; never executed as RCC",
+    "removedAfterTest": true
+  },
+  "testedHead": "29c3cfdcc89591768a7204ec594414be0ce846f4",
+  "workingDiffSha256": "1ce482289d5f8abbb20e159d71aca07722daf7a434b71a0c4c476fb3e15d70a5",
+  "rawLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/29c3-correction-tests/python-unittest-discovery.log",
+  "rawLogSha256": "3b6204e3ddf914e8c90de795864542ceeeadbdce16b639677ac927b44dbeee6c",
+  "testedCommit": "68b8c9bf3f33336ed9bfe5a27945cf9cbf075bda",
+  "testedTree": "8a3491337355ade68d0d253914b3986adc5de29d",
+  "committedDiffSha256": "1ce482289d5f8abbb20e159d71aca07722daf7a434b71a0c4c476fb3e15d70a5",
+  "commitContainsExactlyTestedDiff": true,
+  "worktreeCleanAfterCommit": true,
+  "tocIdempotenceSha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d"
+}

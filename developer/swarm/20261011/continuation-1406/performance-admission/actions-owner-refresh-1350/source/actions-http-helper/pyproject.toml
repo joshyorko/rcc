@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "actions-http-helper"
+version = "1.0.3"
+description = "HTTP library that enables the use of OS certificate stores when working behind MITM firewalls"
+authors = ["Joshua Yorko"]
+maintainers = ["Joshua Yorko"]
+readme = "README.md"
+repository = "https://github.com/joshyorko/actions/tree/community"
+license = "Apache-2.0"
+packages = [{ include = "*", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+truststore = ">=0.10,<1.0"
+urllib3 = ">=2.5.0"
+pyyaml = ">=5.0"
+types-PyYAML = ">=6.0.0"
+
+[tool.poetry.group.dev.dependencies]
+actions-local-devutils = { path = "../devutils/", develop = true }
+pytest-cov = "5.0.0"
+
+[tool.mypy]
+mypy_path = "src:tests"
+
+[tool.black]
+skip-string-normalization = false
+skip-magic-trailing-comma = false
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
