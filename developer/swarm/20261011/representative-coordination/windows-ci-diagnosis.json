@@ -1,0 +1,26 @@
+{
+  "job": "114544417671",
+  "metadata_exit": 0,
+  "scope": "Read-only existing owner CI diagnosis; no source repair/qualification execution",
+  "head": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+  "conclusion": "failure",
+  "run_id": 38164596550,
+  "logs_exit": 1,
+  "log_bytes": 0,
+  "logs_error": "Provider log redirect returned Forbidden; no bypass attempted",
+  "denial_raw_sha256": "d611258c47030f5442c8560b69cbf81a5990d761b89ed296ab5e115b26706a80",
+  "denial_raw_scope": "Private transient /tmp; signed redirect URL omitted from committed evidence",
+  "denial_committed": "Redacted stderr; no signed capability URL",
+  "failed_steps": [
+    {
+      "number": 15,
+      "name": "Test (not integration)"
+    },
+    {
+      "number": 22,
+      "name": "`inv typecheck`"
+    }
+  ],
+  "actual_failure_cause": "Unknown: underlying log content unavailable",
+  "job_url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417671"
+}

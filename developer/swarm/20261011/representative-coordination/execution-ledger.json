@@ -1,0 +1,429 @@
+{
+  "timestamp": "2026-10-11T22:00:52.500762+00:00",
+  "repository": "joshyorko/rcc",
+  "repository_id": 1051101627,
+  "parent_checkpoint": "6a1ddce272211fbdc84a9100bf45f55c32710810",
+  "historical_ledger": "developer/swarm/20261011/representative-2110/execution-ledger.json",
+  "authority": "ONE user-authorized successor; only historical replacement prohibition superseded; all other constraints/ownership/evidence preserved",
+  "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "release": {
+    "status": "PUBLICATION HOLD",
+    "frozen_source": "7945f956b428359928908a9f42e36417b113dafd",
+    "linux_binary_sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+    "retained_qualification": "historical ledger and manifests, no replay",
+    "no_tag": true,
+    "no_release": true,
+    "no_publisher_dispatch": true,
+    "blockers": [
+      "required protected rcc-production environment absent/read404",
+      "policy protected read403 and signing scope unresolved",
+      "GO-2026-5970/GO-2026-6629 residual risk disposition unresolved",
+      "separate publication approval absent"
+    ]
+  },
+  "routing": {
+    "coordinator_requested": "GPT-6.1 Sol High",
+    "children_configured": [
+      {
+        "name": "capability_integrity",
+        "model": "gpt-6-luna",
+        "effort": "high",
+        "scope": "bounded representative driver/source and isolated sampler source review, no benchmark execution"
+      },
+      {
+        "name": "actions_admission_refresh",
+        "model": "gpt-6-luna",
+        "effort": "high",
+        "scope": "bounded exact Actions source/hash refresh, native admission and independent raw execution review, no owner/source/runtime repairs"
+      }
+    ],
+    "native_execution_owner": "coordinator",
+    "provider_execution_telemetry": "not exposed; no model routing telemetry inferred"
+  },
+  "lanes": [
+    {
+      "issue": 132,
+      "id": "private-home-lifecycle",
+      "owner": "coordinator",
+      "status": "frozen actual import baseline FAILED1 retained; narrowLinuxoverlay12controlsPASS",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "review": "../successor-1955/lifecycle-review/post-review.md",
+      "remaining": "explicit leaves, ancestor/races, other existing modes, UID-only negative, nonLinux and production acceptance unqualified",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "small-object-pack-pipeline",
+      "owner": "coordinator / bounded Luna implementation + independent review",
+      "status": "6PASS / 12controlsPASS; no measured gain",
+      "source_sha256": "c1dd426967511e436bc408ad168704685e04359d6be2064e5ddb250d8c1f4b42",
+      "evidence": "../successor-1955/pack-e2e/results/measurements.jsonl",
+      "review": "../successor-1955/pack-e2e/independent-runtime-review.md",
+      "remaining": "actual workloads/Actions, producer build overhead, cold OS cache, maintainable production proposal; membershipnegative absent",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "gzip-pipeline",
+      "status": "6PASS; gzip6 stored16pctsmaller; mixedlatency/no winner",
+      "source_sha256": "2d1ae24dd6aa2a4c7347b7aa30fb27256c990cd3ff2cae8d8f46b303e19d2dc0",
+      "evidence": "../successor-1955/compression-e2e/results/controller.jsonl",
+      "review": "../successor-1955/compression-e2e/independent-runtime-review.md",
+      "remaining": "producer constructioncost, actual workloads and release/Actions independent",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "prewarm-local-materialization",
+      "status": "6 realwarmAcquire+ExecutePASS / sameoutputs / zeroprovidercalls / cleanleases / strict700",
+      "remaining": "finite persistent-child comparison now measured separately; long-lived workers/Actions acceptance unqualified",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "reflink-clonefile",
+      "status": "ownedworkspaceoverlay + tmpfstwo64KiBFICLONEENOTSUP95; verifiedcopyfallbackintegrity",
+      "remaining": "not universalno-go; actualclonecapable existinghostpath/nativeMac unavailable",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "lazy-fuse",
+      "status": "kernelregistered /dev/fuseabsent",
+      "remaining": "device mount route unavailable; latefault-integrity/lifecycle prototype not implemented",
+      "evidence_status": "retained accepted/failed original evidence, not rerun"
+    },
+    {
+      "issue": 125,
+      "id": "compressed-image-cow",
+      "status": "inspected image/FUSE/loop route absent; actual bwrap UID-map fails read-only exit1",
+      "remaining": "no genuine mounted backend admitted; not universal no-go; no provisioning",
+      "evidence_status": "retained accepted/failed original evidence, not rerun",
+      "evidence": "../successor-next-2035/compressed-image-cow-feasibility.json + ../successor-next-2035/namespace-probe/result.json"
+    },
+    {
+      "id": "actions-consumer-admission",
+      "owner": "existing external root01a128d1-75e2-71fe-9528-54b0163600dc",
+      "issues": [
+        101,
+        133,
+        134,
+        139,
+        143
+      ],
+      "prs": [
+        221,
+        308
+      ],
+      "status": "Current PR221/308 exactheads retained; source-bound adapter/verifier/fixtures read; baseline3 actual owner runtime PASS absent;5/727 NOTRUN",
+      "head308": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+      "checks308": "25success/1Windowsfailure",
+      "head221": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+      "checks221": "34success/1skip",
+      "evidence": "actions-refresh/report.md",
+      "mutation": "Read-only refresh; no source repair or owner worktree/home/controller/pin mutation; later authorized existing133coordination only",
+      "remaining": "consumeactualowneradmission/rawcurrent3 numericreceipt thenversionorderSTOPfirstfailure; shipping7945distinct",
+      "evidence_status": "retained accepted/failed original evidence, not rerun",
+      "fresh_refresh": "actions-final-refresh/summary.json",
+      "new_runtime_admission": "none in newly read existing133comments"
+    },
+    {
+      "id": "finite-persistent-child",
+      "issue": 125,
+      "owner": "coordinator with reused Luna source preparation / independent review",
+      "status": "untimed exit73control PASS, six NEW timed arms PASS; scoped finitebatch benefit",
+      "base_source": "7945f956b428359928908a9f42e36417b113dafd",
+      "source_sha256": "8b3f059965f93f9bb80e04e5ffb8caf1c059d395e3bee3b1efcb3d9eda410c9c",
+      "binary_sha256": "6c058c78cd7ddf20dd3da6230e805ca043b72d8a784573f48f02c8c8955606ce",
+      "fixture": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+      "batch_medians_ms": {
+        "fresh": 643.63676,
+        "resident": 134.098918
+      },
+      "cold_setup_acquire_batch_medians_ms": {
+        "fresh": 2338.636311,
+        "resident": 1796.746079
+      },
+      "evidence": "../successor-next-2035/persistent-worker/results/controller.jsonl",
+      "source_review": "../successor-next-2035/persistent-worker/source/independent-source-review.md",
+      "runtime_review": "../successor-next-2035/persistent-worker/independent-runtime-review.md",
+      "coordinator_verification": "../successor-next-2035/coordinator-verification.json",
+      "remaining": "Prior synthetic result retained, now separately actual maintained repository suites measured; Actions/nonLinux/long-lived/persistent pool remain unqualified"
+    },
+    {
+      "id": "real-repository-finite-worker",
+      "issue": 125,
+      "owner": "coordinator native execution with bounded Luna source/review",
+      "status": "Six accepted arms/540actualtestcases/18whole-tree guidance validations; controlled privateLinux only",
+      "base_source": "7945f956b428359928908a9f42e36417b113dafd",
+      "binary_sha256": "3bbd5de7fd97774141950fe183e6636fa49923ad7f346bf61cb33793e6c055d2",
+      "go_sha256": "f3bd699f0f5fccdda76252c1848a0a7d69e6c0f2c92563a76145583623577a04",
+      "driver_sha256": "8fc5926c98731e75c7f01df4d4a55640db67bd23dab7cf0fe7241ee7b4f22f7e",
+      "source_closure": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56",
+      "admission": "native-admission.json",
+      "result": "measured-outcomes.json",
+      "raw": "results-group-2/controller.jsonl",
+      "readback": "final-integrity-readback.json",
+      "review": "postmeasurement-independent-review.md",
+      "scope": "freshCAS eacharm normalAcquire + publicExecuteWithStreams; cooperativePythonstate isolation; privateLinux supervisor overlay; fixture96bytepythonwrapper delegateshost3.12.14; notfullcontained or Actions qualification",
+      "remaining": [
+        "long-lived or concurrent worker lifecycle/security boundaries",
+        "native macOS/Windows controls",
+        "actual Actions owner source-bound baseline3 admission before5/727",
+        "production proposal remains unadmitted"
+      ]
+    }
+  ],
+  "draft_no_go_prs": [
+    224,
+    225
+  ],
+  "retained_failed_component_wave": {
+    "objects": 4649,
+    "component_ms": [
+      60.253,
+      6.283
+    ],
+    "outer_status": "FAILED1 strict700\u2192750",
+    "not_accepted_e2e_gain": true,
+    "not_reexecuted": true
+  },
+  "documentation_receipt": "report.md last paragraph",
+  "checkpoint_policy": "Normal existing-branch append-only checkpoint, preserve all3752parententries, verifyeveryremote byte beforedurability claim",
+  "coordination": {
+    "receipted_posts": [
+      "https://github.com/joshyorko/rcc/issues/125#issuecomment-6113444261",
+      "https://github.com/joshyorko/rcc/issues/132#issuecomment-6113444452",
+      "https://github.com/joshyorko/actions/issues/133#issuecomment-6113444599"
+    ],
+    "readback": "coordination-receipt.json",
+    "external_root_delivery": "Not claimed; repository POST+GET bodyexact only, historicalNOT_FOUND preserved",
+    "latest125": {
+      "post_exit": 0,
+      "independent_get_exit": 0,
+      "body_exact": true,
+      "comment_id": 6113674893,
+      "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-6113674893",
+      "scope": "Authorized existing repository channel; no external-root direct delivery claim."
+    },
+    "earlier_readback": "../successor-next-2035/coordination-readback.json",
+    "current_checkpoint_posts": {
+      "timestamp": "2026-10-11T21:59:28.545823+00:00",
+      "checkpoint": "6a1ddce272211fbdc84a9100bf45f55c32710810",
+      "receipts": [
+        {
+          "key": "rcc125",
+          "repository": "joshyorko/rcc",
+          "issue": 125,
+          "comment_id": 6114272423,
+          "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-6114272423",
+          "post_exit": 0,
+          "independent_get_exit": 0,
+          "body_exact": true,
+          "body_sha256": "6c27e5e5c34439c9cb611e422b78cc0e6e86139ca0b6374044be77d3d3c7e159",
+          "scope": "Authorized existing repository coordination channel; no direct external-root delivery claim"
+        },
+        {
+          "key": "rcc132",
+          "repository": "joshyorko/rcc",
+          "issue": 132,
+          "comment_id": 6114272825,
+          "url": "https://github.com/joshyorko/rcc/issues/132#issuecomment-6114272825",
+          "post_exit": 0,
+          "independent_get_exit": 0,
+          "body_exact": true,
+          "body_sha256": "10b342704078fd04fcac62625670b5e57bf1605d4c83d6955e1769cd5fac0f03",
+          "scope": "Authorized existing repository coordination channel; no direct external-root delivery claim"
+        },
+        {
+          "key": "actions133",
+          "repository": "joshyorko/actions",
+          "issue": 133,
+          "comment_id": 6114273250,
+          "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6114273250",
+          "post_exit": 0,
+          "independent_get_exit": 0,
+          "body_exact": true,
+          "body_sha256": "48feacaa1038179e4c7df8edf56140e15fd7223330681e34d8d0806e10ca7da8",
+          "scope": "Authorized existing repository coordination channel; no direct external-root delivery claim"
+        }
+      ]
+    }
+  },
+  "checkpoint_loaded_chain": [
+    "2f6570c99d5ba98f26ceb7b74d6da69fb84f99e8",
+    "003af703f74fdfcd35bd62d4685bb8c1a69e60f8",
+    "e70fe5531145836b79a386d48250e094d22e2c2c",
+    "af32f876377911d1995706e290a424f0f0e4f417",
+    "6a1ddce272211fbdc84a9100bf45f55c32710810"
+  ],
+  "first_successor_remote_verification": "remote-checkpoint-003af703.json",
+  "diagnosis": {
+    "profile_review": "../successor-next-2035/local-hotpath-review/profile-attribution.json",
+    "FD_session_admission": "unimplemented; end-only inode check too late before visible commit; see coordinator-admission.md",
+    "new_namespace_probe": "../successor-next-2035/namespace-probe/result.json",
+    "namespace_exact_error": "bwrap: setting up uid map: Read-only file system"
+  },
+  "previous_successor_remote_verification": "remote-checkpoint-e70fe553.json",
+  "outer_timing_derivation": "outer-timing-derived.json",
+  "outer_timing_independent_review": "outer-timing-independent-review.json",
+  "parent_remote_verification": "representative-remote-verification.json",
+  "new_failures_preserved": [
+    {
+      "phase": "untimed setup",
+      "status": "FAILED expectedlease750 actual700 underumask077;0testcases",
+      "evidence": "results-negative/"
+    },
+    {
+      "phase": "directchild cancellation",
+      "status": "FAILED livegrandchild14882 afterdirectchildkill;exactPIDFDfallbackSIGTERM cannotmakePASS",
+      "evidence": "results-negative-2/"
+    },
+    {
+      "phase": "first real-workload arm",
+      "status": "FAILED unittestconstructor3args vsprivate0args;0testcases;notperformance",
+      "evidence": "results-group/pair-1-fresh-worker.jsonl"
+    },
+    {
+      "phase": "old sampler pair2resident",
+      "status": "Worker90PASS butouterENOENTabort/missingresult;REJECTED excludedalltimingstatistics",
+      "evidence": "sampler-failure-readback.json"
+    },
+    {
+      "phase": "readback verifier construction",
+      "status": "Firstreadonlyverify TypeError sortingstructuredtestIds; normalizedClass.method andPASS;notworkloadfailure"
+    },
+    {
+      "phase": "profile decoding",
+      "status": "Firstread-onlypprof unavailabledefaultcache; retainedstderr; usedownedGo cache;noexecutionreplay",
+      "evidence": "profiles/pair-1-fresh.pprof-first-error.stderr"
+    }
+  ],
+  "new_controls": {
+    "privateLinuxprocessgroup": "Setpgid+childsubreaper+pidfd/start-bound groupdrain andWait4 beforeleaseRelease; actualcancelreadyparent/grandchild bothabsent beforeouterfallback; notescape/newsession sandbox",
+    "isolation": "poison/error then cleanprobe samePID/lease PASS; fresh/resident smoke180cases PASS; private tasktempremoved andlogsretained",
+    "sampler": "source-reviewedv4positive47744fileswrite/delete2actualENOENTcaught;negativeEACCESfailsclosed rc-15 waited nofinalalive; controlsnotperformance",
+    "bounds": "context25s outer30s build60s GOMAXPROCS2 GOMEMLIMIT1GiB sampled2GiBtreeRSS128MiBlogicalscratch8MiBoutput2.5GiBfreefloor; nohardquota orabsolutepeak claim"
+  },
+  "measured_outcomes": {
+    "scope": "Arithmetic only from accepted receipts; no replay",
+    "corrected_v4_pairs": 2,
+    "fresh_controller_median_ms": 7084.673893499712,
+    "resident_controller_median_ms": 5662.51771799989,
+    "fresh_batch_median_ms": 4083.1142710000004,
+    "resident_batch_median_ms": 2751.2729005,
+    "per_pair": [
+      {
+        "pair": 1,
+        "runner": "v3",
+        "fresh_batch_ms": 4102.078102,
+        "resident_batch_ms": 3041.904435,
+        "fresh_controller_ms": 6111.079445999167,
+        "resident_controller_ms": 5399.077381000097
+      },
+      {
+        "pair": 2,
+        "runner": "v4",
+        "fresh_batch_ms": 4041.052558,
+        "resident_batch_ms": 2660.44193,
+        "fresh_controller_ms": 7320.565897999586,
+        "resident_controller_ms": 5750.417942999775
+      },
+      {
+        "pair": 3,
+        "runner": "v4",
+        "fresh_batch_ms": 4125.175984,
+        "resident_batch_ms": 2842.103871,
+        "fresh_controller_ms": 6848.781888999838,
+        "resident_controller_ms": 5574.617493000005
+      }
+    ],
+    "retained_pair1_not_replayed": true,
+    "discarded_arm_not_included": true,
+    "profile_scope": "Go Execute-phase after Acquire only, not Python or Acquire CPU; child CPU separately recorded; profile overhead included native/fullcontroller",
+    "corrected_v4_controller_reduction_percent": 20.073699889061515
+  },
+  "integrity_summary": {
+    "status": "PASS",
+    "scope": "Read-only postexecution hashes/census and exact-byte log collection; no workload replay",
+    "input_files": 681,
+    "binding_files": 535,
+    "provider_files": 519,
+    "materialized_file_checks": 8721,
+    "materialized_mismatches": 0,
+    "remaining_leases": 0,
+    "remaining_task_tempdirs": 0,
+    "live_worker_executables": [],
+    "accepted": [
+      {
+        "label": "pair-1-fresh",
+        "cases": 90,
+        "tasks": 6
+      },
+      {
+        "label": "pair-1-resident",
+        "cases": 90,
+        "tasks": 6
+      },
+      {
+        "label": "resume-pair-2-resident",
+        "cases": 90,
+        "tasks": 6
+      },
+      {
+        "label": "resume-pair-2-fresh",
+        "cases": 90,
+        "tasks": 6
+      },
+      {
+        "label": "resume-pair-3-fresh",
+        "cases": 90,
+        "tasks": 6
+      },
+      {
+        "label": "resume-pair-3-resident",
+        "cases": 90,
+        "tasks": 6
+      }
+    ],
+    "accepted_test_cases": 540,
+    "historical_failed_home_mode": "0750 preserved"
+  },
+  "untimed_or_rejected_elapsed_excluded": true,
+  "production_source_or_format_changes": false,
+  "windows_ci_additional_readback": {
+    "job": "114544417671",
+    "metadata_exit": 0,
+    "scope": "Read-only existing owner CI diagnosis; no source repair/qualification execution",
+    "head": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+    "conclusion": "failure",
+    "run_id": 38164596550,
+    "logs_exit": 1,
+    "log_bytes": 0,
+    "logs_error": "Provider log redirect returned Forbidden; no bypass attempted",
+    "denial_raw_sha256": "d611258c47030f5442c8560b69cbf81a5990d761b89ed296ab5e115b26706a80",
+    "denial_raw_scope": "Private transient /tmp; signed redirect URL omitted from committed evidence",
+    "denial_committed": "Redacted stderr; no signed capability URL",
+    "failed_steps": [
+      {
+        "number": 15,
+        "name": "Test (not integration)"
+      },
+      {
+        "number": 22,
+        "name": "`inv typecheck`"
+      }
+    ],
+    "actual_failure_cause": "Unknown: underlying log content unavailable",
+    "job_url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417671"
+  },
+  "no_new_workload_execution": true,
+  "immutable_workload_evidence_prefix": "developer/swarm/20261011/representative-2110",
+  "evidence_path_resolution": {
+    "retained_lane_diagnosis_and_workload_relative_fields": "developer/swarm/20261011/representative-2110",
+    "new_coordination_and_CI_relative_fields": "developer/swarm/20261011/representative-coordination",
+    "repository_relative_fields": "Resolve developer/... directly fromrepositoryroot",
+    "historical_authoritative_ledger": "developer/swarm/20261011/representative-2110/execution-ledger.json",
+    "reason": "Parent packet is immutable; copied retained lane fields refer to its evidence, not missing siblingfiles in this coordination-only appendix"
+  }
+}
