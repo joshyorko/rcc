@@ -63,8 +63,52 @@ ASSET_TARGETS = {
 }
 EXPECTED_GO_VERSION = "go1.26.9"
 MAX_REVIEW_ARTIFACT_BYTES = 24 * 1024 * 1024
+REVIEW_EXPORT_WORKFLOW_PATH = ".github/workflows/export-release-evidence.yml"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
+RELEASE_CANDIDATE_GATES = (
+    "artifactFocused",
+    "artifactRace",
+    "artifactVertical",
+    "artifactConsumerVertical",
+    "artifactRobot",
+    "binaryInventory",
+    "largeStream",
+    "robot",
+    "selfHost",
+    "goVet",
+    "coordinationAcceptance",
+)
+REVIEW_RELEASE_CANDIDATE_FILES = (
+    "release-candidate-exit.json",
+    "release-candidate-v1.json",
+    "self-host-v1.json",
+    "self-host-metadata-v1.json",
+    "coordination-blackbox-v1.json",
+    "large-stream-receipt.json",
+)
+REVIEW_N1_FILES = (
+    "n1-archive-sha256.txt",
+    "candidate-archive-upgrade.json",
+    "released-archive-rollback-attempt.json",
+    "released-v12-rollback-consumption.json",
+    "n1-rollback-state.json",
+)
+REVIEW_NATIVE_FILES = (
+    "native-runtime-receipt.json",
+    "native-runtime-robot-evidence.json",
+    "output.xml",
+)
+REVIEW_EVIDENCE_PATHS = tuple(sorted((
+    "evidence/asset-manifest.json",
+    "evidence/SHA256SUMS",
+    "evidence/provenance.json",
+    *(f"evidence/release-candidate/{name}" for name in REVIEW_RELEASE_CANDIDATE_FILES),
+    "evidence/release-candidate/robot/output.xml",
+    *(f"evidence/release-candidate/n1/{name}" for name in REVIEW_N1_FILES),
+    *(f"evidence/native/{platform}/{name}" for platform in NATIVE_RECEIPTS for name in REVIEW_NATIVE_FILES),
+    "evidence/native/linux_amd64/jat-class-consumer-receipt.json",
+)))
 
 
 class ReleaseGateError(ValueError):
@@ -503,6 +547,349 @@ def validate_review_assets(root, expected_source_sha, expected_version, expected
         }
         _require(identity == expected_identity, f"review artifact identity mismatch: {name}")
     return True
+
+
+def validate_exporter_source_checkout(root, exporter_sha, preparation_source_sha):
+    """Require the exporter to run from main history containing the exact prepared source."""
+    validate_inputs(preparation_source_sha, "v0.0.0")
+    _require(isinstance(exporter_sha, str) and SHA_RE.fullmatch(exporter_sha) is not None,
+             "invalid evidence exporter source SHA")
+    try:
+        actual = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=root, text=True, stderr=subprocess.PIPE
+        ).strip()
+        ancestor = subprocess.run(
+            ["git", "merge-base", "--is-ancestor", preparation_source_sha, exporter_sha],
+            cwd=root, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ReleaseGateError(f"cannot validate evidence exporter source history: {error}") from error
+    _require(actual == exporter_sha, "evidence exporter checkout differs from its workflow SHA")
+    _require(ancestor.returncode == 0,
+             "prepared source is not an ancestor of the evidence exporter main commit")
+    return True
+
+
+def _unique_evidence_file(root, filename, description):
+    matches = [path for path in Path(root).rglob(filename) if path.name == filename]
+    _require(len(matches) == 1, f"{description} is missing or ambiguous: {filename}")
+    path = matches[0]
+    _require(path.is_file() and not path.is_symlink(), f"{description} is unsafe: {filename}")
+    return path
+
+
+def _review_evidence_sources(root):
+    root = Path(root)
+    evidence = root / "evidence"
+    sources = {
+        "evidence/asset-manifest.json": evidence / "asset-manifest.json",
+        "evidence/SHA256SUMS": evidence / "SHA256SUMS",
+        "evidence/provenance.json": evidence / "provenance.json",
+    }
+    release = evidence / "release-candidate"
+    for name in REVIEW_RELEASE_CANDIDATE_FILES:
+        sources[f"evidence/release-candidate/{name}"] = _unique_evidence_file(
+            release, name, "release-candidate evidence file"
+        )
+    robot_xml = release / "tmp" / "output" / "output.xml"
+    _require(robot_xml.is_file() and not robot_xml.is_symlink(),
+             "release-candidate Robot XML is missing or unsafe")
+    sources["evidence/release-candidate/robot/output.xml"] = robot_xml
+    for name in REVIEW_N1_FILES:
+        sources[f"evidence/release-candidate/n1/{name}"] = _unique_evidence_file(
+            release, name, "N-1 archive evidence file"
+        )
+    native_root = evidence / "native"
+    for platform in NATIVE_RECEIPTS:
+        platform_root = native_root / platform
+        _require(platform_root.is_dir() and not platform_root.is_symlink(),
+                 f"native platform evidence is missing or unsafe: {platform}")
+        for name in REVIEW_NATIVE_FILES:
+            path = platform_root / name
+            _require(path.is_file() and not path.is_symlink(),
+                     f"native review evidence is missing or unsafe: {platform}/{name}")
+            sources[f"evidence/native/{platform}/{name}"] = path
+    jat = native_root / "linux_amd64" / "jat-class-consumer-receipt.json"
+    _require(jat.is_file() and not jat.is_symlink(), "Linux JAT consumer receipt is missing or unsafe")
+    sources["evidence/native/linux_amd64/jat-class-consumer-receipt.json"] = jat
+    _require(set(sources) == set(REVIEW_EVIDENCE_PATHS), "internal review evidence allowlist is inconsistent")
+    for relative, path in sources.items():
+        _require(path.is_file() and not path.is_symlink(), f"review evidence is missing or unsafe: {relative}")
+    return sources
+
+
+def _review_file_inventory(root):
+    root = Path(root)
+    records = []
+    for relative in REVIEW_EVIDENCE_PATHS:
+        path = root / relative
+        _require(path.is_file() and not path.is_symlink(), f"review evidence is missing or unsafe: {relative}")
+        records.append({"path": relative, "sha256": _sha256(path), "size": path.stat().st_size})
+    return records
+
+
+def validate_review_evidence(root, expected_source_sha, expected_version, expected_run_id,
+                             expected_artifact_id, expected_exporter_run_id, expected_manifest_sha,
+                             expected_full_artifact_digest,
+                             expected_exporter_sha, max_bytes=None):
+    """Validate a bounded, evidence-only sidecar against its canonical identity."""
+    validate_inputs(expected_source_sha, expected_version)
+    _require(type(expected_run_id) is int and expected_run_id > 0, "invalid review preparation run ID")
+    _require(type(expected_artifact_id) is int and expected_artifact_id > 0,
+             "invalid review preparation artifact ID")
+    _require(type(expected_exporter_run_id) is int and expected_exporter_run_id > 0,
+             "invalid evidence exporter workflow run ID")
+    _require(isinstance(expected_manifest_sha, str)
+             and re.fullmatch(r"[0-9a-f]{64}", expected_manifest_sha) is not None,
+             "invalid review asset manifest SHA-256")
+    _require(isinstance(expected_full_artifact_digest, str)
+             and re.fullmatch(r"sha256:[0-9a-f]{64}", expected_full_artifact_digest) is not None,
+             "invalid full preparation artifact ZIP digest")
+    _require(isinstance(expected_exporter_sha, str) and SHA_RE.fullmatch(expected_exporter_sha) is not None,
+             "invalid evidence exporter source SHA")
+    root = Path(root)
+    _require(root.is_dir() and not root.is_symlink(), "review evidence root is missing or unsafe")
+    actual = set()
+    directories = set()
+    for path in root.rglob("*"):
+        relative = str(path.relative_to(root)).replace(os.sep, "/")
+        mode = path.lstat().st_mode
+        _require(not stat.S_ISLNK(mode), f"review evidence contains a symlink: {relative}")
+        if stat.S_ISDIR(mode):
+            directories.add(relative)
+        elif stat.S_ISREG(mode):
+            actual.add(relative)
+        else:
+            raise ReleaseGateError(f"review evidence contains a nonregular entry: {relative}")
+    expected_files = {*REVIEW_EVIDENCE_PATHS, "review-identity.json"}
+    _require(actual == expected_files,
+             f"review evidence file set mismatch: missing={sorted(expected_files - actual)} extra={sorted(actual - expected_files)}")
+    expected_directories = {str(Path(name).parent).replace(os.sep, "/")
+                            for name in REVIEW_EVIDENCE_PATHS if Path(name).parent != Path(".")}
+    expected_directories.update({"evidence", "evidence/release-candidate", "evidence/release-candidate/robot",
+                                 "evidence/release-candidate/n1", "evidence/native"})
+    expected_directories.update(f"evidence/native/{platform}" for platform in NATIVE_RECEIPTS)
+    _require(directories == expected_directories,
+             f"review evidence directory layout mismatch: {sorted(directories)}")
+    check_review_payload_size(root, max_bytes=max_bytes)
+    identity = _read_json(root / "review-identity.json")
+    expected_identity = {
+        "schemaVersion": 1,
+        "preparationRunId": expected_run_id,
+        "preparationArtifactId": expected_artifact_id,
+        "preparationWorkflowPath": ".github/workflows/rcc.yaml",
+        "preparationArtifactZipSha256": expected_full_artifact_digest,
+        "sourceSha": expected_source_sha,
+        "version": expected_version,
+        "assetManifestSha256": expected_manifest_sha,
+        "evidenceExporterWorkflowPath": REVIEW_EXPORT_WORKFLOW_PATH,
+        "evidenceExporterRunId": expected_exporter_run_id,
+        "evidenceExporterSourceSha": expected_exporter_sha,
+        "files": _review_file_inventory(root),
+    }
+    _require(type(expected_identity["preparationArtifactId"]) is int
+             and expected_identity["preparationArtifactId"] > 0,
+             "review identity has invalid preparation artifact ID")
+    _require(identity == expected_identity, "review evidence identity or file hash inventory mismatch")
+
+    manifest_path = root / "evidence" / "asset-manifest.json"
+    _require(_sha256(manifest_path) == expected_manifest_sha, "review asset manifest SHA differs from requested value")
+    manifest = _read_json(manifest_path)
+    _require(manifest.get("schemaVersion") == 1 and manifest.get("sourceSha") == expected_source_sha
+             and manifest.get("version") == expected_version
+             and manifest.get("preparationRunId") == expected_run_id,
+             "review asset manifest identity mismatch")
+    assets = manifest.get("assets")
+    _require(isinstance(assets, dict) and set(assets) == set(ASSET_NAMES),
+             "review asset manifest asset set mismatch")
+    provenance = _read_json(root / "evidence" / "provenance.json")
+    _require(provenance.get("schemaVersion") == 1 and provenance.get("sourceSha") == expected_source_sha
+             and provenance.get("version") == expected_version
+             and provenance.get("preparationRunId") == expected_run_id
+             and provenance.get("assetManifestSha256") == expected_manifest_sha,
+             "review provenance identity mismatch")
+    checksums = _parse_asset_checksums(root / "evidence" / "SHA256SUMS", ASSET_NAMES)
+    _require(checksums == {f"assets/{name}": record.get("sha256") for name, record in assets.items()},
+             "review checksum file differs from the manifest")
+
+    gate_exit = _read_json(root / "evidence/release-candidate/release-candidate-exit.json")
+    _require(gate_exit.get("sourceSha") == expected_source_sha
+             and _is_zero_exit_code(gate_exit.get("gateExitCode"))
+             and _is_zero_exit_code(gate_exit.get("teeExitCode")),
+             "review release-candidate gate did not pass with numeric zero exit status")
+    gate_receipt = _read_json(root / "evidence/release-candidate/release-candidate-v1.json")
+    _require(gate_receipt.get("schemaVersion") == 1 and gate_receipt.get("commitSha") == expected_source_sha,
+             "review release-candidate receipt source identity mismatch")
+    gates = gate_receipt.get("gates")
+    _require(isinstance(gates, dict) and set(gates) == set(RELEASE_CANDIDATE_GATES)
+             and all(gates[name] == "passed" for name in RELEASE_CANDIDATE_GATES),
+             "review release-candidate receipt is missing a passing required gate")
+    _validate_robot_xml(root / "evidence/release-candidate/robot/output.xml", "release-candidate")
+    release_evidence = root / "evidence/release-candidate"
+    self_host = _read_json(release_evidence / "self-host-v1.json")
+    _require(self_host.get("schemaVersion") == 1 and self_host.get("commitSha") == expected_source_sha,
+             "review self-host receipt source identity mismatch")
+    _require(isinstance(self_host.get("homes"), dict) and set(self_host["homes"]) == {"a", "b"}
+             and isinstance(self_host.get("commands"), list) and isinstance(self_host.get("binaries"), dict)
+             and {"released", "generationA", "candidate", "generationB"}.issubset(self_host["binaries"]),
+             "review self-host lifecycle receipt is incomplete")
+    binaries = self_host["binaries"]
+    released, candidate_binary, generation_a, generation_b = (
+        binaries[name] for name in ("released", "candidate", "generationA", "generationB")
+    )
+    _require(isinstance(released, dict) and isinstance(released.get("version"), str)
+             and isinstance(released.get("sha256"), str)
+             and isinstance(candidate_binary, dict) and candidate_binary.get("version") == expected_version
+             and isinstance(candidate_binary.get("sha256"), str)
+             and isinstance(generation_a, dict) and generation_a.get("sourceSha256") == candidate_binary.get("sha256")
+             and generation_a.get("candidateSha256") == candidate_binary.get("sha256")
+             and isinstance(generation_b, dict) and generation_b.get("version") == expected_version
+             and isinstance(generation_b.get("sha256"), str),
+             "review self-host binary generations are not bound to the candidate version and bytes")
+    _require(_read_json(release_evidence / "self-host-metadata-v1.json") == {"schemaVersion": 1},
+             "review self-host home-b metadata fixture is invalid")
+    coordination = _read_json(release_evidence / "coordination-blackbox-v1.json")
+    required_scenarios = {"cli-claim", "cli-wait", "cli-heartbeat", "cli-release", "cli-prewarm",
+                          "cli-loopback-rejection"}
+    _require(coordination.get("schemaVersion") == 1 and coordination.get("commitSha") == expected_source_sha
+             and isinstance(coordination.get("binarySha256"), str)
+             and re.fullmatch(r"[0-9a-f]{64}", coordination["binarySha256"]) is not None
+             and isinstance(coordination.get("scenarios"), dict)
+             and set(coordination["scenarios"]) == required_scenarios,
+             "review coordination receipt is incomplete or source-mismatched")
+    stream = _read_json(release_evidence / "large-stream-receipt.json")
+    _require(stream.get("schemaVersion") == 1 and stream.get("commitSha") == expected_source_sha
+             and type(stream.get("bytes")) is int and stream["bytes"] >= (2 << 30)
+             and stream.get("bufferBytes") == 64 * 1024
+             and type(stream.get("requests")) is int and stream["requests"] == 1
+             and stream.get("restartPolicy") == "full-restart"
+             and stream.get("interruptionAcceptance") ==
+             "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds",
+             "review large-stream receipt is incomplete or source-mismatched")
+    archive_hash_text = (release_evidence / "n1" / "n1-archive-sha256.txt").read_text(encoding="ascii").strip()
+    _require(re.fullmatch(r"[0-9a-f]{64}", archive_hash_text) is not None,
+             "review N-1 archive SHA-256 receipt is malformed")
+    candidate = _read_json(release_evidence / "n1" / "candidate-archive-upgrade.json")
+    rollback_attempt = _read_json(release_evidence / "n1" / "released-archive-rollback-attempt.json")
+    legacy_consumption = _read_json(release_evidence / "n1" / "released-v12-rollback-consumption.json")
+    rollback_state = _read_json(release_evidence / "n1" / "n1-rollback-state.json")
+    _require(isinstance(candidate.get("artifactDigest"), str) and candidate.get("materializationId"),
+             "review candidate archive acquisition receipt lacks artifact identity")
+    _require(rollback_state.get("archiveSha256") == archive_hash_text
+             and rollback_state.get("artifactDigest") == candidate["artifactDigest"]
+             and rollback_state.get("materializationId") == candidate["materializationId"],
+             "review N-1 archive receipt identity differs across upgrade and rollback")
+    _require(rollback_state.get("archiveRollback") in {"imported", "unsupported"},
+             "review N-1 archive rollback result is unsupported")
+    _require(type(legacy_consumption.get("returncode")) is int and legacy_consumption["returncode"] == 0
+             and "n1-old-task-ok" in (legacy_consumption.get("stdout", "") + legacy_consumption.get("stderr", "")),
+             "review N-1 released binary did not consume the legacy task")
+    _require(rollback_state.get("legacyBefore") == rollback_state.get("legacyAfterUpgrade")
+             == rollback_state.get("legacyAfterRollback"),
+             "review N-1 rollback changed the legacy v12 closure")
+    _require(rollback_state.get("artifactAfterArchiveRollback") == rollback_state.get("artifactAfterRollback"),
+             "review N-1 rollback state changed after legacy consumption")
+    if rollback_state["archiveRollback"] == "imported":
+        try:
+            old_result = json.loads(rollback_attempt.get("stdout", ""))
+        except (TypeError, json.JSONDecodeError) as error:
+            raise ReleaseGateError("review N-1 released-binary rollback output is not valid JSON") from error
+        _require(rollback_attempt.get("returncode") == 0
+                 and old_result.get("artifactDigest") == candidate["artifactDigest"]
+                 and old_result.get("materializationId") == candidate["materializationId"],
+                 "review N-1 released-binary rollback did not consume the candidate artifact")
+    else:
+        error_output = (rollback_attempt.get("stdout", "") + "\n" + rollback_attempt.get("stderr", "")).lower()
+        _require(type(rollback_attempt.get("returncode")) is int and rollback_attempt["returncode"] != 0
+                 and (("unknown flag" in error_output and "archive" in error_output)
+                      or ("unknown command" in error_output and ("archive" in error_output or '"env"' in error_output))),
+                 "review N-1 unsupported rollback does not match the accepted old-CLI failure")
+    for platform, asset_name in NATIVE_RECEIPTS.items():
+        platform_root = root / "evidence/native" / platform
+        receipt_path = platform_root / "native-runtime-receipt.json"
+        receipt = _read_json(receipt_path)
+        _validate_native_receipt(receipt, platform, asset_name, assets[asset_name], expected_source_sha, expected_version)
+        _validate_robot_xml(platform_root / "output.xml", platform)
+    jat_path = root / "evidence/native/linux_amd64/jat-class-consumer-receipt.json"
+    jat = _read_json(jat_path)
+    _validate_native_receipt(jat, "linux_amd64", NATIVE_RECEIPTS["linux_amd64"],
+                             assets[NATIVE_RECEIPTS["linux_amd64"]], expected_source_sha,
+                             expected_version, require_robot=False)
+    _require(jat.get("exactBinaryCLI", {}).get("cold", {}).get("nativeImport") == "sqlite3",
+             "review Linux JAT receipt does not prove the native SQLite import")
+    return True
+
+
+def stage_review_evidence(root, output, source_sha, version, run_id, manifest_sha,
+                          full_artifact, exporter_sha, exporter_run_id, max_bytes=None, go_binary="go"):
+    """Copy only bounded source-bound receipts from the already verified full artifact."""
+    validate_prepared_bundle(root, source_sha, version, manifest_sha, run_id)
+    validate_actual_binary_metadata(root, source_sha, go_binary)
+    _require(isinstance(full_artifact, dict), "full preparation artifact metadata is unreadable")
+    artifact_id = full_artifact.get("id")
+    artifact_digest = full_artifact.get("digest")
+    _require(type(artifact_id) is int and artifact_id > 0, "full preparation artifact ID is invalid")
+    _require(isinstance(artifact_digest, str) and re.fullmatch(r"sha256:[0-9a-f]{64}", artifact_digest) is not None,
+             "full preparation artifact ZIP digest is invalid")
+    sources = _review_evidence_sources(root)
+    limit = MAX_REVIEW_ARTIFACT_BYTES if max_bytes is None else max_bytes
+    _require(type(limit) is int and limit > 0, "review artifact size limit is invalid")
+    source_size = sum(path.stat().st_size for path in sources.values())
+    _require(source_size <= limit,
+             f"review artifact payload exceeds {limit} raw bytes: {source_size}")
+    output = Path(output)
+    _require(not output.exists(), f"review evidence output already exists: {output}")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=".rcc-review-evidence-", dir=output.parent))
+    try:
+        for relative, source in sources.items():
+            destination = temporary / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, destination)
+        manifest_sha = _sha256(temporary / "evidence/asset-manifest.json")
+        identity = {
+            "schemaVersion": 1,
+            "preparationRunId": run_id,
+            "preparationArtifactId": artifact_id,
+            "preparationWorkflowPath": ".github/workflows/rcc.yaml",
+            "preparationArtifactZipSha256": artifact_digest,
+            "sourceSha": source_sha,
+            "version": version,
+            "assetManifestSha256": manifest_sha,
+            "evidenceExporterWorkflowPath": REVIEW_EXPORT_WORKFLOW_PATH,
+            "evidenceExporterRunId": exporter_run_id,
+            "evidenceExporterSourceSha": exporter_sha,
+            "files": _review_file_inventory(temporary),
+        }
+        (temporary / "review-identity.json").write_text(
+            json.dumps(identity, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        total_size = check_review_payload_size(temporary, max_bytes=max_bytes)
+        validate_review_evidence(temporary, source_sha, version, run_id, artifact_id,
+                                 exporter_run_id, manifest_sha,
+                                 artifact_digest, exporter_sha, max_bytes=max_bytes)
+        os.replace(temporary, output)
+        return {"fileCount": len(sources), "rawBytes": total_size, "assetManifestSha256": manifest_sha,
+                "preparationArtifactId": artifact_id, "preparationArtifactZipSha256": artifact_digest,
+                "sourceSha": source_sha, "version": version, "preparationRunId": run_id,
+                "evidenceExporterRunId": exporter_run_id}
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+
+
+def export_preparation_review(api_url, token, repository, run_id, source_sha, version, manifest_sha,
+                              exporter_root, exporter_sha, exporter_run_id, source_root, zip_path, bundle_root,
+                              output_root, max_bytes=None, go_binary="go"):
+    """Download and validate an existing successful preparation, then export small evidence only."""
+    validate_exporter_source_checkout(exporter_root, exporter_sha, source_sha)
+    validate_source_checkout(source_root, source_sha, version)
+    artifact = verify_preparation_api(api_url, token, repository, run_id, source_sha, ".github/workflows/rcc.yaml")
+    _require(artifact.get("name") == "rcc-release-preparation", "preparation artifact has an unexpected name")
+    actual_digest = download_preparation_artifact(api_url, token, repository, artifact, zip_path, bundle_root)
+    _require(actual_digest == artifact.get("digest"), "downloaded full preparation digest differs from the GitHub API value")
+    return stage_review_evidence(bundle_root, output_root, source_sha, version, run_id, manifest_sha,
+                                 artifact, exporter_sha, exporter_run_id, max_bytes=max_bytes, go_binary=go_binary)
 
 
 def stage_review_assets(root, output, expected_source_sha, expected_version, expected_run_id,
@@ -1038,6 +1425,29 @@ def main():
     fetch.add_argument("--artifact-name", default="rcc-release-preparation")
     fetch.add_argument("--zip-path", type=Path, required=True)
     fetch.add_argument("--output", type=Path, required=True)
+    export_review = subparsers.add_parser("export-preparation-review")
+    export_review.add_argument("--run-id", type=int, required=True)
+    export_review.add_argument("--source-sha", required=True)
+    export_review.add_argument("--version", required=True)
+    export_review.add_argument("--manifest-sha", required=True)
+    export_review.add_argument("--exporter-root", type=Path, required=True)
+    export_review.add_argument("--exporter-sha", required=True)
+    export_review.add_argument("--exporter-run-id", type=int, required=True)
+    export_review.add_argument("--source-root", type=Path, required=True)
+    export_review.add_argument("--zip-path", type=Path, required=True)
+    export_review.add_argument("--bundle-root", type=Path, required=True)
+    export_review.add_argument("--output", type=Path, required=True)
+    export_review.add_argument("--go", default="go")
+    verify_review = subparsers.add_parser("verify-review-evidence")
+    verify_review.add_argument("--root", type=Path, required=True)
+    verify_review.add_argument("--source-sha", required=True)
+    verify_review.add_argument("--version", required=True)
+    verify_review.add_argument("--run-id", type=int, required=True)
+    verify_review.add_argument("--artifact-id", type=int, required=True)
+    verify_review.add_argument("--manifest-sha", required=True)
+    verify_review.add_argument("--preparation-zip-digest", required=True)
+    verify_review.add_argument("--exporter-sha", required=True)
+    verify_review.add_argument("--exporter-run-id", type=int, required=True)
     environment = subparsers.add_parser("verify-environment")
     environment.add_argument("--name", default="rcc-production")
     source = subparsers.add_parser("validate-source")
@@ -1086,6 +1496,23 @@ def main():
             _require(artifact.get("name") == args.artifact_name, "preparation artifact has an unexpected name")
             digest = download_preparation_artifact(api_url, token, repository, artifact, args.zip_path, args.output)
             print(f"preparation artifact ZIP verified and extracted: id={artifact.get('id')} digest={digest}")
+        elif args.command == "export-preparation-review":
+            repository = os.environ.get("GITHUB_REPOSITORY", "")
+            api_url = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+            token = os.environ.get("GH_TOKEN", "")
+            _require(bool(repository), "GITHUB_REPOSITORY is unavailable")
+            result = export_preparation_review(
+                api_url, token, repository, args.run_id, args.source_sha, args.version, args.manifest_sha,
+                args.exporter_root, args.exporter_sha, args.exporter_run_id, args.source_root, args.zip_path,
+                args.bundle_root, args.output, go_binary=args.go,
+            )
+            print("bounded review evidence exported: " + json.dumps(result, sort_keys=True))
+        elif args.command == "verify-review-evidence":
+            validate_review_evidence(
+                args.root, args.source_sha, args.version, args.run_id, args.artifact_id,
+                args.exporter_run_id, args.manifest_sha, args.preparation_zip_digest, args.exporter_sha,
+            )
+            print("bounded review evidence validated")
         elif args.command == "verify-environment":
             repository = os.environ.get("GITHUB_REPOSITORY", "")
             api_url = os.environ.get("GITHUB_API_URL", "https://api.github.com")
