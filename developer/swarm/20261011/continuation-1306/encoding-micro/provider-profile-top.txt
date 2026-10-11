@@ -1,0 +1,26 @@
+File: rcc-main727
+Build ID: d6f1d07b3115e196ac2b30aa19203d7c764dfe60
+Type: cpu
+Time: 2026-10-11 12:12:02 UTC
+Duration: 1.10s, Total samples = 700ms (63.86%)
+Showing nodes accounting for 520ms, 74.29% of 700ms total
+Showing top 18 nodes out of 230
+      flat  flat%   sum%        cum   cum%
+     210ms 30.00% 30.00%      210ms 30.00%  internal/runtime/syscall/linux.Syscall6
+      70ms 10.00% 40.00%       70ms 10.00%  runtime.futex
+      40ms  5.71% 45.71%       40ms  5.71%  crypto/internal/fips140/sha256.blockSHANI
+      40ms  5.71% 51.43%       40ms  5.71%  runtime.typePointers.next
+      20ms  2.86% 54.29%       20ms  2.86%  runtime.(*spanSet).pop
+      20ms  2.86% 57.14%       20ms  2.86%  runtime.step
+      10ms  1.43% 58.57%       10ms  1.43%  internal/abi.(*MapType).IndirectElem
+      10ms  1.43% 60.00%       10ms  1.43%  internal/filepathlite.(*lazybuf).append
+      10ms  1.43% 61.43%       50ms  7.14%  internal/poll.sendFileChunk
+      10ms  1.43% 62.86%       10ms  1.43%  internal/runtime/atomic.(*Uintptr).Load
+      10ms  1.43% 64.29%       10ms  1.43%  internal/runtime/maps.(*Map).getWithoutKeySmallFastStr
+      10ms  1.43% 65.71%       10ms  1.43%  internal/runtime/maps.(*Map).putSlotSmallFastStr
+      10ms  1.43% 67.14%       20ms  2.86%  net/http.(*chunkWriter).writeHeader
+      10ms  1.43% 68.57%       10ms  1.43%  runtime.(*lfstack).pop
+      10ms  1.43% 70.00%       10ms  1.43%  runtime.(*mspan).refillAllocCache
+      10ms  1.43% 71.43%       10ms  1.43%  runtime.(*spanSet).push
+      10ms  1.43% 72.86%       30ms  4.29%  runtime.(*sweepLocked).sweep
+      10ms  1.43% 74.29%       10ms  1.43%  runtime.(*timer).stop

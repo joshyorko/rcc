@@ -1,0 +1,75 @@
+{
+  "assigned_by_parent": "existing workers226, no additional agents",
+  "experiment": "external Python stored-small per-file open/read/hash versus owned single concatenated file offset read/hash",
+  "frozen_original_subject": {
+    "artifact": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "count": 4649,
+    "fraction_of_all_content_objects": 0.8396243453133466,
+    "fraction_of_all_content_stored_bytes": 0.06456224989508665,
+    "index": {
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "size": 1491800
+    },
+    "logical_bytes_not_decoded_in_layout_control": 11794410,
+    "ordering": "storedDigest lexicographic",
+    "predicate": "storedSize<4096",
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "stored_bytes": 4484936,
+    "unique_stored_digests": 4649
+  },
+  "limits_from_parent": {
+    "exact_runtime_RSS_watchdogs": "worker freezes and root checks before admission",
+    "heavyoverlap": false,
+    "minimum_filesystem_free_bytes": 2684354560,
+    "new_owned_bytes_max": 10485760,
+    "newdependencies": false,
+    "source/default/format/pin_changes": false
+  },
+  "required_invariants": [
+    "originalCAS provider only read; do not chmod/rewrite/delete/startmutableprovider here",
+    "ownpack is experimental opaque concatenation, not published RCCobject/packindex/Artifact",
+    "each frame reconstructs identical original stored digest+size; fixed offsetindex bound to frozen input list and finalpackhash",
+    "all original read and pack read/hash checks inside bothtimers; same per-frame hash and size semantics, no gzipdecode in onlyone mode",
+    "five counterbalanced repetitions, exact appoperation counts and processCPU/wall/RSS/procIO; no autoretry",
+    "actual file syscalls require separately qualifiedtrace; appopen/read counters are not OS syscall counts",
+    "cachewarm/uncontrolled; preparation/wholepackbuilding andvalidation outside measuredread loops",
+    "owned negatives only; preserve failed checks, restore exactpackhash before any subsequent admitted phase; avoid wholepackduplicate undercap"
+  ],
+  "six_directions": [
+    {
+      "direction": "gzip/zstd",
+      "status": "rootacceptedexternal24objectcodec micro; Goencoding/versionedformat/nativeconsumerspending"
+    },
+    {
+      "direction": "small-objectpacks",
+      "status": "rootassignedexistingworker proposed all4649readcontrol, finaladmissionpendingworkerfrozenplan/bytes"
+    },
+    {
+      "direction": "persistent/prewarm",
+      "status": "c49historicalstable3samegenerationreuseaccepted; currentconsumerrepair/controller/reload/matrixpending"
+    },
+    {
+      "direction": "safeclone/reflink",
+      "status": "toolsavailable; no actualfilesystemCOW/isolationmeasurement; laterownedtinycloneproofneedsrootadmission"
+    },
+    {
+      "direction": "lazy/FUSE",
+      "status": "fusermount3/straceinstalledpaths; mountauthority/working-set/integrity/nativeleaseproofpending"
+    },
+    {
+      "direction": "compressedimage+COW",
+      "status": "builder absent, mountauthority/nativeoverlay/identity/rollbackpending; noinstallation/newinfra"
+    }
+  ],
+  "status": "ADVISORY_ONLY;workers226 owns exact plan and root final admission",
+  "unsupported_claims": [
+    "remoteHTTPrequestcoalescing win",
+    "endtoendRCCDrop/Action acceleration",
+    "current221candidate6migrationacceptance",
+    "authenticatedproductionpackformat",
+    "native/relocated/link/path/ABI/Rosetta proof",
+    "materializerwinner"
+  ],
+  "why_measure": "Actual source/profile exposes object-level open/stat/full-hash/seek/stream work, with4649smallobjects and warm physical read_bytes0. Small sampled profile cannot prove dominant total runtime cost. This isolates local per-file read overhead while preserving exact original stored bytes."
+}

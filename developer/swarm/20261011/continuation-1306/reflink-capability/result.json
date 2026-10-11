@@ -1,0 +1,64 @@
+{
+  "allocated_accounting_bytes_final": 532480,
+  "assertions": [
+    {
+      "files": [
+        {
+          "allocated_accounting_bytes": 491520,
+          "dev": 27,
+          "ino": 444945,
+          "mode": 384,
+          "name": "source.bin",
+          "nlink": 1,
+          "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+          "size": 488201
+        }
+      ],
+      "phase": "owned ordinary source copy"
+    }
+  ],
+  "free_bytes_final": 2770509824,
+  "operations": [
+    {
+      "dest": "scratch/clone.bin",
+      "errno": 95,
+      "errno_name": "ENOTSUP",
+      "error": "[Errno 95] Operation not supported",
+      "operation": "fcntl.ioctl",
+      "request": 1074041865,
+      "return": null,
+      "source": "scratch/source.bin"
+    }
+  ],
+  "original_post": {
+    "mode": 384,
+    "mtime_ns": 1791688986756382139,
+    "nlink": 1,
+    "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "size": 488201
+  },
+  "original_pre": {
+    "mode": 384,
+    "mtime_ns": 1791688986756382139,
+    "nlink": 1,
+    "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "size": 488201
+  },
+  "original_pre_post_equal": true,
+  "pid": 8310,
+  "plan_sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca",
+  "schema": "rcc-cow-capability-result-v1",
+  "scope": "Exact owned overlay path only; no ordinary-vs-clone comparison, mutation, chmod or unlink controls performed. No automatic fallback.",
+  "stage_observer": {
+    "minimum_free_bytes": 2770509824,
+    "peak_allocated_accounting_bytes": 532480,
+    "peak_worker_rss_bytes": 0
+  },
+  "status": "CLONE_UNAVAILABLE_ON_TESTED_PATH",
+  "whole_worker_wall_seconds": 0.02064335300019593,
+  "worker_usage": {
+    "maxrss_kib": 20084,
+    "system_seconds": 0.018501,
+    "user_seconds": 0.026233
+  }
+}

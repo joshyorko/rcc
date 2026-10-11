@@ -1,0 +1,201 @@
+{
+  "actions_source": {
+    "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/action_server/src/actions/server/_rcc_runtime_adapter.py",
+    "link": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L681-L707",
+    "override_and_verifier_lines": [
+      681,
+      707
+    ],
+    "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a",
+    "status": "Current immutable source still exact v18.19.3. User authorizes owner repair including candidate6; no changed source/owner-qualified runtime checkpoint observed. Current branch and held matrix remain independently owned; no Actions mutation performed.",
+    "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+    "version_pin_lines": [
+      24,
+      24
+    ]
+  },
+  "decision": "Do not repeat clone experiment or implement fallback/engine here. Admit later capability/isolation probe only on an existing operator-supported clone-capable filesystem with repaired observability and exact small limits. Lazy/FUSE and image/COW remain prerequisite-gated. All six retained; no optimization selected.",
+  "evidence": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/plan.json",
+      "sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca",
+      "size": 6404
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/preflight.json",
+      "sha256": "b821aad917ca0120c8764b8635def682d9dd1c9ef7ad37d0287cf4246e8bd229",
+      "size": 3288
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/reflink_capability.py",
+      "sha256": "525fe1f22c45e8e66c5db78999fa4767be908ca2dda2677c5eefa69daa7a3038",
+      "size": 14621
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/result.json",
+      "sha256": "5fc89d3b19ac8efe71e3b8ed9f373540b3ac8a743d5d4a5781e917123a5f95ce",
+      "size": 1860
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/supervisor-result.json",
+      "sha256": "48eecccc8a68e7e801a1d97ccd95754b947524d72370ae7ef7fd9b37ada4553c",
+      "size": 761
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/static-review.json",
+      "sha256": "92fa1cd12e98a837cac8d6d67063409153f9a845d89c6951bd81b3439f9ee368",
+      "size": 526
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/rss-observer-diagnostic.json",
+      "sha256": "003cd947e559d156f25cb6bb0eb32f3e05d403d6b07c25235ef14f942a8e3008",
+      "size": 879
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/cleanup-receipt.json",
+      "sha256": "9f49d366a5f95d9b6402fc0902832ba5bdc20a7ca31b03863ed2f5df389f3edf",
+      "size": 1452
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/report.md",
+      "sha256": "33fafe9f5df2baee4aa16f3afd6e1ff1524f09969df4481d5c1ba726038c661b",
+      "size": 12211
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/source-bound.json",
+      "sha256": "d279daa4462ee1edc3d3596796b5d3a6ca4e3dffe7ac4d84b6d0b844b8936d1e",
+      "size": 15644
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/root-verification.json",
+      "sha256": "03d461adeba934f6c91fcbd2f3c28a641a4f8c52974d645800f5b78456b8c93c",
+      "size": 10012
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/root-verification.json",
+      "sha256": "96a5ea5544d6ec7b093189292eb53a5fc1548ff5b8db0217089d458a5633a15f",
+      "size": 1857
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/next-experiment-prerequisites.json",
+      "sha256": "4e6bba8879c3c0bdb99da685d85613a2cfcef76baeb38da4d69bd0d2ccf39a62",
+      "size": 406
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/public-checkpoint/evidence/performance-steer-20261011/root-performance-checkpoint.md",
+      "sha256": "4de6c80742545c7c217d9cf6dccbb9b5f5a0ad6e762308fbd83d3fc101f3929f",
+      "size": 9757
+    }
+  ],
+  "executed_harness_lines": {
+    "RLIMIT_AS": [
+      92,
+      92
+    ],
+    "actual_ioctl": [
+      186,
+      200
+    ],
+    "owned_copy_verification": [
+      182,
+      182
+    ],
+    "rss_helper": [
+      50,
+      61
+    ]
+  },
+  "observed_at": "2026-10-11T12:54:35.897780+00:00",
+  "owner_checkpoint": {
+    "base_ref": "community",
+    "base_sha": "a70993fafc99a9f94041485542d5a720797ca394",
+    "draft": true,
+    "head_ref": "integration/community-release-20261008",
+    "head_sha": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "http_status": 200,
+    "merged": false,
+    "observed_at": "2026-10-11T12:49:14.510811+00:00",
+    "owner": "joshyorko",
+    "scope": "public PR metadata only; no owner acceptance inferred",
+    "state": "open",
+    "updated_at": "2026-10-11T12:12:50Z",
+    "url": "https://api.github.com/repos/joshyorko/actions/pulls/221"
+  },
+  "runtime_fact": {
+    "RSS_future_requirement": "Fail closed or record unavailable descendant enumeration as unknown; never discard valid VmRSS or report missing process-tree RSS as zero. Executed script preserved unchanged.",
+    "RSS_limitation": "/proc task children absent; helper discarded readable VmRSS after child-path ENOENT and returned0. Sampled RSS guard not validated. Actual worker maxRSS20084KiB, RLIMIT_AS512MiB applied; no cp child ran. Frozen raw harness preserved; no rerun.",
+    "automatic_runtime_retries": 0,
+    "cleanup_limitation": "Executed before root later keep-until-independent-proof message arrived, under initial explicit cleanup authorization after lane verified receipts. Root cannot independently rehash deleted owned copy; no recreation or rerun. Initial retained-for-review status was superseded by cleanup before root readback.",
+    "cleanup_timing_utc": "2026-10-11T12:53:33.320636+00:00",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python /workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/reflink_capability.py --admitted > /workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/run.log 2> /workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/run.stderr",
+    "direct_FICLONE_errno": 95,
+    "errno_aliases": [
+      "ENOTSUP",
+      "EOPNOTSUPP"
+    ],
+    "original_CAS_prepost_content_size_mode_mtime_equal": true,
+    "owned_cleanup_only": [
+      "scratch/source.bin",
+      "scratch/clone.bin"
+    ],
+    "qualification": "negative capability on exact owned overlay path; no clone/COW behavioral success, no conditional cp or isolation controls",
+    "supervisor_exit": 0,
+    "tool_exit": 0,
+    "worker_exit": 0
+  },
+  "schema": "rcc-cow-capability-source-bound-v1",
+  "six_directions": [
+    {
+      "direction": "zstd/gzip",
+      "next_dependency": "actual Go codec plus native/relocation/integrity/identity/read/rollback contract and admitted consumer workloads",
+      "status": "24-object external codec micro performed and independently accepted; no Go/E2E/default claim"
+    },
+    {
+      "direction": "small-object packfiles",
+      "next_dependency": "root acceptance of raw layout receipts; profile framing/open cost separately from network/materialization; preserve integrity and provider format/API compatibility",
+      "status": "5537-GET provider component accepted; worker226 owns separate 4649-object external layout controls/receipts"
+    },
+    {
+      "direction": "persistent/prewarmed workers",
+      "next_dependency": "existing Actions owner qualified version repair/candidate6 checkpoint and admission; controller reload/concurrency/provider-recovery scope",
+      "status": "c49 actual community stable3 repeated six Action calls with same observed process/lease; no full current owner matrix acceptance"
+    },
+    {
+      "direction": "safe clone/reflink",
+      "next_dependency": "operator-provided existing clone-capable filesystem/test host; same owned-only byte/mode/unlink isolation proof; then logical/native/relocated fixtures and per-platform ordinary fallback qualification; fix external observer portability before later runtime",
+      "status": "one exact local FICLONE negative runtime errno95; tool syntax supported but filesystem path unavailable"
+    },
+    {
+      "direction": "lazy/FUSE",
+      "next_dependency": "actual admitted consumer working-set evidence, existing operator mount/device/cleanup authority, verification before use, writable isolation, native/path relocation, cancellation/drain/unmount/eager fallback",
+      "status": "fusermount3/strace path availability only; no mount/FUSE operation or materializer"
+    },
+    {
+      "direction": "compressed image plus COW",
+      "next_dependency": "existing image builder/native filesystem and explicit operator mount/overlay authority; image/index identity and verification, private write isolation, native/path relocation, crash recovery/unmount/provider fallback; no installation/new infra authorized",
+      "status": "mount tool path only; mksquashfs/squashfuse absent in prior immutable preflight; local FICLONE unavailable on tested overlay"
+    }
+  ],
+  "source": {
+    "binary": {
+      "invoked": false,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e"
+    },
+    "files": [
+      {
+        "finding": "DropFile opens library, creates separate sink, verifies logical digest, rewrites relocation offsets, renames and sets mode/time; this external stored-payload clone probe does not implement this path.",
+        "lines": [
+          259,
+          302
+        ],
+        "link": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/htfs/functions.go#L259-L302",
+        "path": "/workspace/work/rcc-swarm/final-main-727/htfs/functions.go",
+        "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd"
+      }
+    ],
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+  }
+}

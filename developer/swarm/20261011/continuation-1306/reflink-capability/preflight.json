@@ -1,0 +1,88 @@
+{
+  "actions_owner_checkpoint": {
+    "base_ref": "community",
+    "base_sha": "a70993fafc99a9f94041485542d5a720797ca394",
+    "draft": true,
+    "head_ref": "integration/community-release-20261008",
+    "head_sha": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "http_status": 200,
+    "merged": false,
+    "observed_at": "2026-10-11T12:49:14.510811+00:00",
+    "owner": "joshyorko",
+    "scope": "public PR metadata only; no owner acceptance inferred",
+    "state": "open",
+    "updated_at": "2026-10-11T12:12:50Z",
+    "url": "https://api.github.com/repos/joshyorko/actions/pulls/221"
+  },
+  "commands": [
+    {
+      "argv": [
+        "uname",
+        "-sr"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "Linux 6.18.44\n"
+    },
+    {
+      "argv": [
+        "stat",
+        "-f",
+        "-c",
+        "%T %S",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "overlayfs 4096\n"
+    },
+    {
+      "argv": [
+        "findmnt",
+        "-T",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability",
+        "-no",
+        "FSTYPE,TARGET"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "overlay /\n"
+    },
+    {
+      "argv": [
+        "/usr/bin/cp",
+        "--version"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout": "cp (GNU coreutils) 9.7\nPackaged by Debian (9.7-3)\nCopyright (C) 2025 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Torbj\u00f6rn Granlund, David MacKenzie, and Jim Meyering.\n"
+    }
+  ],
+  "free_bytes": 2773925888,
+  "kernel_header": {
+    "FICLONERANGE_line": 214,
+    "FICLONE_definition": "_IOW(0x94, 9, int)",
+    "FICLONE_line": 213,
+    "path": "/usr/include/linux/fs.h",
+    "sha256": "40bbfb639152e1a5b523816411556d35178731f20ee971f585bd82edd43fc53a"
+  },
+  "machine": "x86_64",
+  "observed_at": "2026-10-11T12:49:14.510833+00:00",
+  "original": {
+    "is_symlink": false,
+    "mode": 384,
+    "mtime_ns": 1791688986756382139,
+    "nlink": 1,
+    "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/c5/01/c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "size": 488201
+  },
+  "performed": "read-only commands, hashes, source lookup and public PR metadata. No payload copy, clone ioctl, chmod, unlink, mount or FUSE operation performed. New evidence metadata only.",
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": "rcc-cow-capability-preflight-v1",
+  "support": "FICLONE tool/header exists; actual overlay/backing filesystem capability UNKNOWN until isolated admitted probe",
+  "tool_hashes": {
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "/usr/bin/cp": "5a3a8808bab81a67c6ac578670f5608595f1569948d4dc7d7d604c1d08d596d9"
+  }
+}

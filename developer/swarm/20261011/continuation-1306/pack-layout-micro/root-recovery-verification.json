@@ -1,0 +1,15 @@
+{
+  "status": "BYTES_VERIFIED_ORIGINAL_INVOCATION_FAILED_DISK_CAP",
+  "original_json_sha256": "d2b564cfc64ad082823ba740ae15a1a862a19ffc99f7bf96ba4d2de912b360b8",
+  "original_json_bytes": 1896667,
+  "archive_sha256": "66ae4cbafdf2580591e178287f12df15943802283f4fa4973e556050724ec8e4",
+  "archive_restores_original_exactly": true,
+  "actual_original_objects_and_pack_slices_verified": 4649,
+  "source_metadata_unchanged": true,
+  "primary_pack_sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+  "negative_copy_restored_exact": true,
+  "original_numeric_exit": 1,
+  "original_cap_bytes": 10485760,
+  "original_postreceipt_allocated_bytes": 11427840,
+  "claims": "Ten diagnostic controls ran; finalcapfailure means original invocation not accepted. PASS inside early JSON is superseded by final command failure. Recovery does not retroactively qualify it."
+}

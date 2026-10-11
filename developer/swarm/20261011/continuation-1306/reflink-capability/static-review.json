@@ -1,0 +1,8 @@
+{
+  "performed": "AST parse and read-only actual index-schema check before runtime; no payload or ioctl yet",
+  "initial_setup_lookup_exit": 1,
+  "initial_setup_lookup_error": "KeyError objects: actual immutable index uses entries. Corrected external harness before any runtime execution; no payload retry.",
+  "harness_sha256": "525fe1f22c45e8e66c5db78999fa4767be908ca2dda2677c5eefa69daa7a3038",
+  "corrected_actual_index_key": "entries",
+  "plan_sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca"
+}

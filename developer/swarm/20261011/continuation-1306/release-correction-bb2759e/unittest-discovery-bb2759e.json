@@ -1,0 +1,24 @@
+{
+  "sourceSha": "ed8f8fb68dccc264a69d2967f8019d027ebd7062",
+  "command": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10 -m unittest discover -s scripts -p test_*.py -v",
+  "exitCode": 0,
+  "testCount": 131,
+  "startedUtc": "2026-10-11T12:56:19.524333+00:00",
+  "finishedUtc": "2026-10-11T12:56:20.303204+00:00",
+  "python": "Python 3.10.15",
+  "temporaryFixture": {
+    "path": "build/rcc",
+    "sha256": "9ff99ab91ca942431f231b31348313b97ac911dd235a3c579e7fe2eb36c6487d",
+    "purpose": "satisfy existing mocked gate-sequence unit test that hashes build/rcc; not executed as RCC",
+    "createdBuildDirectory": true,
+    "removedAfterTest": true
+  },
+  "previousDefaultPythonAttempt": "unittest-discovery-default-python-attempt.json (exit 1: default Python lacks Invoke)",
+  "rawLog": "/workspace/work/rcc-swarm/evidence/continuation-20261011/release-correction-bb2759e/unittest-discovery-bb2759e.log",
+  "rawLogSha256": "975955a9b8bdabf4b96f923af9facf256eb47d954d988b082569844bc5673008",
+  "testedSourceCommit": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+  "testedSourceTree": "75f1a13f81b932c4017973dcaa0642ba05758985",
+  "testedCommitDiffSha256": "3c77dd7b32b3cb50f8f1efd28ed741c6f419abd82538d12f712b87b10d009d1c",
+  "commitContainsExactlyTestedTree": true,
+  "receiptForCommit": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936"
+}

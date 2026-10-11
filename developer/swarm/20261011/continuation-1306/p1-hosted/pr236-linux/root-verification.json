@@ -1,0 +1,12 @@
+{
+  "status": "RAW_ZIP_RECEIPT_XML_JAT_REHASHED",
+  "zip_sha256": "49cd674a16b753f934bac04675f0d315870095d96cb5b5621aaa705b18f08cf3",
+  "source": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+  "binary_sha256_claim": "bc919205660e653606de8d8751b9ef7fac4d514b8318463bb64f80bf2acc47bd",
+  "actual_binary_bytes": "not yet independently downloaded; distinct remaining merge gate",
+  "Robot": {
+    "pass": "1",
+    "fail": "0",
+    "skip": "0"
+  }
+}

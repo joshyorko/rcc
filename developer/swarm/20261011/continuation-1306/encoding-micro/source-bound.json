@@ -1,0 +1,242 @@
+{
+  "actual_execution": {
+    "actual_run_count": 1,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python /workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/encoding_micro.py > /workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/run.log 2> /workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/supervisor.stderr.log",
+    "numeric_exec_status": 0,
+    "numeric_supervisor_status": 0,
+    "numeric_worker_status": 0,
+    "original_plan_sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+    "postrun_zlib_metadata": {
+      "builtin": true,
+      "module_origin": "built-in",
+      "native_file_hashes": [],
+      "python_binary_hash": "recorded in frozen plan; built-in zlib has no separate __file__",
+      "version": "1.3.2"
+    },
+    "retries": 0,
+    "script_sha256": "28b77a7325861b90f77811ea0389977d72b0c9c4452691d1c86192a16df6d93e",
+    "setup_observation": [
+      {
+        "classification": "generic /usr/bin/go is not the Go toolchain. No profile or micro execution occurred.",
+        "command": "GOTOOLCHAIN=local go tool pprof -top -nodecount=18 <profile>",
+        "exit": 1,
+        "output": "Go: Unknown option: tool"
+      },
+      {
+        "classification": "read-only analysis of existing profile using existing exacttoolchain; no install/build",
+        "command": "GOTOOLCHAIN=local /workspace/work/rcc-swarm/tools/go1.26.9/bin/go tool pprof -top -nodecount=18 <profile>",
+        "exit": 0,
+        "output_file": "provider-profile-top.txt"
+      },
+      {
+        "classification": "postrun receipt preparation assumed dynamic extension; corrected with module_origin=built-in and existing Python hash. Actual micro finished PASS before this metadata failure; no micro rerun.",
+        "command": "postrun public-status+native-library metadata script",
+        "exit": 1,
+        "output": "AttributeError: module zlib has no attribute __file__"
+      }
+    ]
+  },
+  "codec_versions": {
+    "architecture": "x86_64",
+    "codec_file_hashes": [
+      {
+        "bytes": 30894944,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+      },
+      {
+        "bytes": 7235,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/__init__.py",
+        "sha256": "5dd909e0b60a946a0b08deaf57545d17dc044f5df4040beec55f7ef6c6fecd11"
+      },
+      {
+        "bytes": 11552544,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/backend_c.cpython-312-x86_64-linux-gnu.so",
+        "sha256": "7eb41c8b36cd99ed6c67e39f8574e42472687a14c6038c512bb3a90b7082616d"
+      }
+    ],
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "visible_cpu_count": 5
+  },
+  "created_at": "2026-10-11T12:29:57.654057+00:00",
+  "external_codec_settings": {
+    "gzip_external": {
+      "context": "new independent codec context per object",
+      "implementation": "Python zlib.compress",
+      "level": 1,
+      "version": "1.3.2",
+      "wbits": 31
+    },
+    "identity": "gzip and zstd outputs have different stored digests. Only exact original logical SHA256+size retained; no existing Artifact digest reused for changed stored bytes.",
+    "legacy_gzip_decode": "gzip.decompress of exact unchanged original stored objects; external CPython/zlib decoder, not RCC Go runtime",
+    "zstd_external": {
+      "context": "new independent codec context per object",
+      "implementation": "Python zstandard.ZstdCompressor",
+      "level": 3,
+      "python_version": "0.25.0",
+      "threads": 0,
+      "write_checksum": true,
+      "write_content_size": true,
+      "zstd_version": [
+        1,
+        5,
+        7
+      ]
+    }
+  },
+  "limits": "only actual external codec24eligibleobjects; no implementation or storage/materializer/defaultformat optimizationselected",
+  "next_experiment_advisory": {
+    "assigned_by_parent": "existing workers226, no additional agents",
+    "experiment": "external Python stored-small per-file open/read/hash versus owned single concatenated file offset read/hash",
+    "frozen_original_subject": {
+      "artifact": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "count": 4649,
+      "fraction_of_all_content_objects": 0.8396243453133466,
+      "fraction_of_all_content_stored_bytes": 0.06456224989508665,
+      "index": {
+        "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+        "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+        "size": 1491800
+      },
+      "logical_bytes_not_decoded_in_layout_control": 11794410,
+      "ordering": "storedDigest lexicographic",
+      "predicate": "storedSize<4096",
+      "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+      "stored_bytes": 4484936,
+      "unique_stored_digests": 4649
+    },
+    "limits_from_parent": {
+      "exact_runtime_RSS_watchdogs": "worker freezes and root checks before admission",
+      "heavyoverlap": false,
+      "minimum_filesystem_free_bytes": 2684354560,
+      "new_owned_bytes_max": 10485760,
+      "newdependencies": false,
+      "source/default/format/pin_changes": false
+    },
+    "required_invariants": [
+      "originalCAS provider only read; do not chmod/rewrite/delete/startmutableprovider here",
+      "ownpack is experimental opaque concatenation, not published RCCobject/packindex/Artifact",
+      "each frame reconstructs identical original stored digest+size; fixed offsetindex bound to frozen input list and finalpackhash",
+      "all original read and pack read/hash checks inside bothtimers; same per-frame hash and size semantics, no gzipdecode in onlyone mode",
+      "five counterbalanced repetitions, exact appoperation counts and processCPU/wall/RSS/procIO; no autoretry",
+      "actual file syscalls require separately qualifiedtrace; appopen/read counters are not OS syscall counts",
+      "cachewarm/uncontrolled; preparation/wholepackbuilding andvalidation outside measuredread loops",
+      "owned negatives only; preserve failed checks, restore exactpackhash before any subsequent admitted phase; avoid wholepackduplicate undercap"
+    ],
+    "six_directions": [
+      {
+        "direction": "gzip/zstd",
+        "status": "rootacceptedexternal24objectcodec micro; Goencoding/versionedformat/nativeconsumerspending"
+      },
+      {
+        "direction": "small-objectpacks",
+        "status": "rootassignedexistingworker proposed all4649readcontrol, finaladmissionpendingworkerfrozenplan/bytes"
+      },
+      {
+        "direction": "persistent/prewarm",
+        "status": "c49historicalstable3samegenerationreuseaccepted; currentconsumerrepair/controller/reload/matrixpending"
+      },
+      {
+        "direction": "safeclone/reflink",
+        "status": "toolsavailable; no actualfilesystemCOW/isolationmeasurement; laterownedtinycloneproofneedsrootadmission"
+      },
+      {
+        "direction": "lazy/FUSE",
+        "status": "fusermount3/straceinstalledpaths; mountauthority/working-set/integrity/nativeleaseproofpending"
+      },
+      {
+        "direction": "compressedimage+COW",
+        "status": "builder absent, mountauthority/nativeoverlay/identity/rollbackpending; noinstallation/newinfra"
+      }
+    ],
+    "status": "ADVISORY_ONLY;workers226 owns exact plan and root final admission",
+    "unsupported_claims": [
+      "remoteHTTPrequestcoalescing win",
+      "endtoendRCCDrop/Action acceleration",
+      "current221candidate6migrationacceptance",
+      "authenticatedproductionpackformat",
+      "native/relocated/link/path/ABI/Rosetta proof",
+      "materializerwinner"
+    ],
+    "why_measure": "Actual source/profile exposes object-level open/stat/full-hash/seek/stream work, with4649smallobjects and warm physical read_bytes0. Small sampled profile cannot prove dominant total runtime cost. This isolates local per-file read overhead while preserving exact original stored bytes."
+  },
+  "original_Artifact_and_provider_untouched": true,
+  "owner_status": {
+    "comment_count": 2,
+    "draft": true,
+    "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+    "latest_comments": [
+      {
+        "author": "joshyorko",
+        "body": "### Issue closure and residual work audit required before promotion\n\n[The durable seven-question audit](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/README.md), [58-issue matrix](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/operator-issue-matrix.md), [13-PR reconciliation](https://github.com/joshyorko/actions/blob/031012f53743b1ba76b5b44e2912a5eea355eb2b/docs/program/evidence/issue-closure-audit-20261010/open-pr-reconciliation.md), and [updated canonical #101 ledger](https://github.com/joshyorko/actions/issues/101) now reconcile the campaign.\n\nAt head `19380993febaa71238eaee3026b5c808773283ff` / tree `a8fe00af1858077273912d0b590f0f7a662c83d5`, community `a70993f` is an ancestor; the current union is conflict-free and includes #304's accepted Core workflow changes. The complete delivered range is 449 new commits / 382 changed files. Core1.0.3 is published and verified: older body pointers to an earlier head and absent Core publication are superseded.\n\n**Automatic closure set UNKNOWN; 0 observed candidates. Premature closure risk count UNKNOWN.** No keywords occur in the current body or complete new commit range; public Development links are empty. Authenticated closingIssuesReferences/manual relationships remain unavailable. Recheck the authenticated set at the final merge head and verify each complete contract. If promotion occurs first, audit the actual merged commit and issue states.\n\n**Current admission remains held**: draft, queued RCC CI, final combined-tree/acceptance/release and closure gates. Required-versus-advisory check policy is UNKNOWN. Four narrow issues (#162/#194/#209/#279) are closure recommendations, not blanket promotion completion. No PR metadata/state change or merge is performed by this comment.",
+        "body_sha256": "1586fe4373fd4be68ad4a7912cfe7a15ec10078ff97c7b688b895da933d800b0",
+        "id": 6103058210,
+        "updated_at": "2026-10-10T22:54:24Z",
+        "url": "https://github.com/joshyorko/actions/pull/221#issuecomment-6103058210"
+      },
+      {
+        "author": "joshyorko",
+        "body": "RCC swarm coordination for existing Actions #101/#133/#134/#139/#143/#221 ownership (2026-10-11): the operator has explicitly authorized the Actions owner to replace the exact v18.19.3-only restriction with qualified newer-version compatibility, including isolated v18.19.6 testing. This does not assume the repair is implemented: current inspected #221 head a0d258a16095b95b1bf9000cb1201cddfaff4779 still uses the exact3 verifier.\n\nRCC accepted source is 727c1ff8b679cdbbe12836e53c87734a1edb0071, tree cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152 (same tree as accepted full-gate candidate 324524fffa4bd0f76c618f9fbb6ede30e733b2ff). Actual main CI Linux binary SHA-256: be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e; four main native jobs passed in RCC run 38105340592. Source-bound acceptance and controls are preserved at https://github.com/joshyorko/rcc/tree/c49e9026455635fe32f4d747a166ebc52fd0ea58/developer/swarm/20261011 . RCC publication is explicitly on HOLD: no tag or release; this does not prevent isolated candidate testing.\n\nPlease supply the owner-qualified adapter compatibility checkpoint (exact source SHA, supported versions/features/trust policy, executed conformance evidence), and the admitted real fixture/controller path for cold-first, persistent-worker warm calls, source-only reload, environment generation change/drain, concurrent packages/workers, and provider restart/failure/recovery. RCC will consume that evidence and run isolated candidate controls without modifying Actions integration branches, production pins, or another owner's worktrees. Current source-only gates and historical community3 control receipts will not be relabeled as current221/candidate6 acceptance.\n\nMeanwhile RCC #125 is continuing bounded RCC-native profiling and preserves all six research directions. No materializer recommendation or measured optimization gain is claimed.",
+        "body_sha256": "55062473f581c7dd3769cc712da0c1723714457fc1408e3fb8e088ebaefa6468",
+        "id": 6108894271,
+        "updated_at": "2026-10-11T12:12:50Z",
+        "url": "https://github.com/joshyorko/actions/pull/221#issuecomment-6108894271"
+      }
+    ],
+    "observed_at": "2026-10-11T12:23:08.398675+00:00",
+    "source_repair_verified": false,
+    "version_source_last_verified": "a0d258a16095b95b1bf9000cb1201cddfaff4779 exactv18.19.3"
+  },
+  "performance_reference_commit": "c49e9026455635fe32f4d747a166ebc52fd0ea58",
+  "reference_receipts": [
+    {
+      "bytes": 10831,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/results.json",
+      "sha256": "65cb60ffe5adc9c77df8890650c909b7cd520339cf408a258d63ae8121a0bda8"
+    },
+    {
+      "bytes": 28120,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/stream_baseline.py",
+      "sha256": "89d15715e7a50e66e9851469d3e04fa996e50fd0b2d277ffb973b85f9c1c0aaa"
+    },
+    {
+      "bytes": 10528,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/provider-cpu.pprof",
+      "sha256": "3e741e77e19750def5a05cd0acaf64b2f8d6c49771bd5edec24b7edd44f15e28"
+    },
+    {
+      "bytes": 2091299,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/preflight.json",
+      "sha256": "dd29b088b2cc026e64034d403bffaa2b67db7d7ed4ca4e5d0be73a8df72ea22d"
+    },
+    {
+      "bytes": 2090041,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/postflight.json",
+      "sha256": "ec5f28624e27a9124f0d38afe74faa2e77353351175e12e591efc144b73f5f0b"
+    },
+    {
+      "bytes": 1857,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/root-verification.json",
+      "sha256": "96a5ea5544d6ec7b093189292eb53a5fc1548ff5b8db0217089d458a5633a15f"
+    },
+    {
+      "bytes": 10012,
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/root-verification.json",
+      "sha256": "03d461adeba934f6c91fcbd2f3c28a641a4f8c52974d645800f5b78456b8c93c"
+    }
+  ],
+  "root_acceptance": {
+    "encoding": "PASS",
+    "provider": "PASS",
+    "root_workflow": "independently rehashed/redecoded originals and reproduced each codecframe once; no timedbenchmarkrerun"
+  },
+  "source_reference": {
+    "actual_encoding": "Go gzip.NewWriterLevel(gzip.BestSpeed),lines239\u2013247. Python zliblevel1 is external codec control, not exact Go encoder reproduction.",
+    "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "path": "htfs/functions.go",
+    "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+    "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/htfs/functions.go#L223"
+  }
+}

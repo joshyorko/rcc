@@ -1,0 +1,13 @@
+{
+  "status": "RAW_ZIP_RECEIPT_XML_REHASHED",
+  "source": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "platform": "windows_amd64",
+  "binary_sha256_claim": "157dece6b58468f5c54d3b2e572a8162dd3811ee11017d303d39952e8a016043",
+  "actual_binary_bytes": "blocked: connector32MiB limit;gh artifact403",
+  "zip_sha256": "c465d037c5152991ca3ca7865dd553b311991fe2b84297bf391adc87125d6215",
+  "Robot": {
+    "pass": "1",
+    "fail": "0",
+    "skip": "0"
+  }
+}

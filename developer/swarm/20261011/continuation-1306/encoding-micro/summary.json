@@ -1,0 +1,206 @@
+{
+  "corpus_frame_bytes": {
+    "external_gzip_bytes": 1423669,
+    "original_gzip_bytes": 1478176,
+    "zstd_bytes": 1324847
+  },
+  "corpus_object_count": 24,
+  "limitation": "equal8perstoredsizebucket and <=1MiB only; raw byte-weighted corpus ratios cannot extrapolate entirefixture, RCCpipeline or Actions; no winner/defaultselected",
+  "numeric_supervisor_exit": 0,
+  "numeric_worker_exit": 0,
+  "phases": {
+    "decode-external-gzip": {
+      "cpu_cv": 0.0086412831980433,
+      "cpu_max_ns": 240465666,
+      "cpu_median_ns": 237409291,
+      "cpu_min_ns": 235163600,
+      "cpu_ns": [
+        239304170,
+        237409291,
+        240465666,
+        237112138,
+        235163600
+      ],
+      "cpu_stdev_ns": 2055683.2679510722,
+      "n": 5,
+      "wall_cv": 0.008666713512093754,
+      "wall_max_ns": 240480820,
+      "wall_median_ns": 237450375,
+      "wall_min_ns": 235174134,
+      "wall_ns": [
+        239352069,
+        237450375,
+        240480820,
+        237121466,
+        235174134
+      ],
+      "wall_stdev_ns": 2061947.8428659877
+    },
+    "decode-legacy-gzip": {
+      "cpu_cv": 0.011093869194745342,
+      "cpu_max_ns": 242239755,
+      "cpu_median_ns": 238166908,
+      "cpu_min_ns": 235525108,
+      "cpu_ns": [
+        242239755,
+        239768260,
+        238166908,
+        235525108,
+        236643862
+      ],
+      "cpu_stdev_ns": 2645541.4368190872,
+      "n": 5,
+      "wall_cv": 0.011091570457269051,
+      "wall_max_ns": 242250003,
+      "wall_median_ns": 238199401,
+      "wall_min_ns": 235535272,
+      "wall_ns": [
+        242250003,
+        239781059,
+        238199401,
+        235535272,
+        236654679
+      ],
+      "wall_stdev_ns": 2645163.0073133865
+    },
+    "decode-zstd": {
+      "cpu_cv": 0.01741766201685695,
+      "cpu_max_ns": 74225084,
+      "cpu_median_ns": 72824903,
+      "cpu_min_ns": 71251443,
+      "cpu_ns": [
+        73248333,
+        72824903,
+        71389939,
+        74225084,
+        71251443
+      ],
+      "cpu_stdev_ns": 1264312.2123869562,
+      "n": 5,
+      "wall_cv": 0.017432513622967168,
+      "wall_max_ns": 74220942,
+      "wall_median_ns": 72821359,
+      "wall_min_ns": 71249353,
+      "wall_ns": [
+        73254808,
+        72821359,
+        71385082,
+        74220942,
+        71249353
+      ],
+      "wall_stdev_ns": 1265361.8169969015
+    },
+    "encode-gzip": {
+      "cpu_cv": 0.009262973599766036,
+      "cpu_max_ns": 756692455,
+      "cpu_median_ns": 747246671,
+      "cpu_min_ns": 740001825,
+      "cpu_ns": [
+        753729627,
+        756692455,
+        747246671,
+        740001825,
+        743579270
+      ],
+      "cpu_stdev_ns": 6931019.71443054,
+      "n": 5,
+      "wall_cv": 0.009019908838977707,
+      "wall_max_ns": 756754458,
+      "wall_median_ns": 747318587,
+      "wall_min_ns": 740177340,
+      "wall_ns": [
+        753765858,
+        756754458,
+        747318587,
+        740177340,
+        744524790
+      ],
+      "wall_stdev_ns": 6751475.788758691
+    },
+    "encode-zstd": {
+      "cpu_cv": 0.05704094917612846,
+      "cpu_max_ns": 304297904,
+      "cpu_median_ns": 272081720,
+      "cpu_min_ns": 265956529,
+      "cpu_ns": [
+        304297904,
+        277052091,
+        265956529,
+        266567427,
+        272081720
+      ],
+      "cpu_stdev_ns": 15811245.397975603,
+      "n": 5,
+      "wall_cv": 0.057048324636886194,
+      "wall_max_ns": 304312009,
+      "wall_median_ns": 272115953,
+      "wall_min_ns": 265957917,
+      "wall_ns": [
+        304312009,
+        277054401,
+        265957917,
+        266569635,
+        272115953
+      ],
+      "wall_stdev_ns": 15813908.716172608
+    }
+  },
+  "resource_observations": {
+    "free_bytes_final": 2786672640,
+    "maximum_sampled_RSS_bytes": 97894400,
+    "maximum_sampled_owned_allocated_bytes": 49152,
+    "minimum_sampled_free_bytes": 2786701312,
+    "owned_allocated_bytes_recorded": 77824,
+    "whole_experiment_wall_ns": 10730919737,
+    "whole_worker_maxrss_kib": 95556
+  },
+  "status": "PASS",
+  "strata_frame_sizes": [
+    {
+      "bucket": "under4KiB",
+      "external_gzip_bytes": 8911,
+      "original_gzip_bytes": 9023,
+      "sample_count": 8,
+      "sample_logical_bytes": 24885,
+      "zstd_bytes": 8513,
+      "zstd_larger_than_original_object_count": 0,
+      "zstd_smaller_than_original_object_count": 8
+    },
+    {
+      "bucket": "4KiBto64KiB",
+      "external_gzip_bytes": 131673,
+      "original_gzip_bytes": 133503,
+      "sample_count": 8,
+      "sample_logical_bytes": 346307,
+      "zstd_bytes": 124217,
+      "zstd_larger_than_original_object_count": 0,
+      "zstd_smaller_than_original_object_count": 8
+    },
+    {
+      "bucket": "atLeast64KiB",
+      "external_gzip_bytes": 1283085,
+      "original_gzip_bytes": 1335650,
+      "sample_count": 8,
+      "sample_logical_bytes": 2905499,
+      "zstd_bytes": 1192117,
+      "zstd_larger_than_original_object_count": 0,
+      "zstd_smaller_than_original_object_count": 8
+    }
+  ],
+  "timed_logical_bytes_per_sample": 65533820,
+  "timed_sample_operations": 480,
+  "verified_outputs": 12000,
+  "zstd_vs_external_gzip": {
+    "decode_CPU_median_ratio": 0.3067483277223552,
+    "decode_wall_median_ratio": 0.30668032846863263,
+    "encode_CPU_median_ratio": 0.36411232135151256,
+    "encode_wall_median_ratio": 0.3641230898489616,
+    "size_ratio": 0.9305863933259767
+  },
+  "zstd_vs_original_Go_gzip_frames": {
+    "decode_CPU_median_ratio": 0.3057725509036713,
+    "decode_wall_median_ratio": 0.30571596189698225,
+    "implementation_limit": "decoders external CPython libs; originalframes actualGoBestSpeed. No measured exactGo encoding latency.",
+    "size_ratio": 0.8962714859394281
+  }
+}

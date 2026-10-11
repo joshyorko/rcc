@@ -1,0 +1,143 @@
+{
+  "timestamp": "2026-10-11T13:09:00.306708+00:00",
+  "source_checkpoint": "081b84f2cab23ff924717e46e4ebcde6124e5e5d",
+  "nodes": [
+    {
+      "issue": 98,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 118,
+      "status": "open",
+      "lane": "architecture"
+    },
+    {
+      "issue": 125,
+      "status": "open",
+      "lane": "research"
+    },
+    {
+      "issue": 131,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 132,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 133,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 135,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 181,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 182,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 185,
+      "status": "open",
+      "lane": "governance hold"
+    }
+  ],
+  "edges": [
+    {
+      "from": "118",
+      "to": "124",
+      "state": "identity foundation accepted/closed"
+    },
+    {
+      "from": "118",
+      "to": "208",
+      "state": "serving accepted/closed; broader platform contract remains"
+    },
+    {
+      "from": "125",
+      "to": "229",
+      "state": "benchmark harness merged; source-bound observations retained"
+    },
+    {
+      "from": "125",
+      "to": "64",
+      "state": "historical closed/unmerged claims not accepted current gains"
+    },
+    {
+      "from": "125",
+      "to": "Actions221",
+      "state": "version repair owner-authorized; qualification pending"
+    },
+    {
+      "from": "Actions133",
+      "to": "Actions134/139/143",
+      "state": "same-subject Runtime/adapter/conformance contracts"
+    },
+    {
+      "from": "133",
+      "to": "PR236",
+      "state": "accepted source review +6greenchecks+4native receipts; actualbinarybytes transferblocked;unmergeddraft"
+    },
+    {
+      "from": "181",
+      "to": "PR235",
+      "state": "accepted source review +6greenchecks+4native receipts; actualbinarybytes transferblocked;unmergeddraft"
+    },
+    {
+      "from": "two-phase-release",
+      "to": "release-qualification",
+      "state": "PR237bb131unit0; hostedfull11/nativepending;actual9assetreview/approval readiness stillrequired"
+    },
+    {
+      "from": "release-qualification",
+      "to": "operator-GO",
+      "state": "explicit PUBLICATION HOLD; no tag/no publication"
+    },
+    {
+      "from": "125",
+      "to": "release-qualification",
+      "state": "not a mandatory technical gate"
+    },
+    {
+      "from": "PR237",
+      "to": "release-qualification",
+      "state": "read-onlypreparation separatefromprotectedmanualpublisher;notintegratedyet"
+    },
+    {
+      "from": "182",
+      "to": "journal-test-checkpoint36a8443",
+      "state": "unacceptedtests/localonly; officialGo9boundedruntimepending"
+    },
+    {
+      "from": "125",
+      "to": "compression/pack/COWcomponent",
+      "state": "measuredcomponents/scopedcapability;nooptimizationwinnerorE2Erecommendation"
+    },
+    {
+      "from": "PR237",
+      "to": "release-qualification",
+      "state": "read-onlypreparation separatefromprotectedmanualpublisher;notintegratedyet"
+    },
+    {
+      "from": "182",
+      "to": "journal-test-checkpoint36a8443",
+      "state": "unacceptedtests/localonly; officialGo9boundedruntimepending"
+    },
+    {
+      "from": "125",
+      "to": "compression/pack/COWcomponent",
+      "state": "measuredcomponents/scopedcapability;nooptimizationwinnerorE2Erecommendation"
+    }
+  ]
+}

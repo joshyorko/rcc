@@ -1,0 +1,46 @@
+{
+  "pull_request": 236,
+  "run_id": 38138538107,
+  "job_id": 114467557343,
+  "artifact_id": 11702560005,
+  "artifact_name": "windows-amd64-native-runtime-receipt",
+  "artifact_size_bytes": 173678,
+  "artifact_api_sha256": "sha256:4e626191f4fa05775642ee9583b6ee08ae09c4b51f128ae66a2ea5b37f83ac03",
+  "artifact_actual_sha256": "sha256:4e626191f4fa05775642ee9583b6ee08ae09c4b51f128ae66a2ea5b37f83ac03",
+  "receipt_sha256": "9daa32e4f8712bd74fa7218869463396933dd95ca3d158e9559bacdf71be0b90",
+  "robot_xml_sha256": "204270a4c7055926c38929fbf0bbaa47f06081fd051b8e16deb7d19b2e03eebd",
+  "source_commit": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+  "platform": "windows_amd64",
+  "binary_version": "v18.19.6",
+  "binary_sha256": "b85a382c6aeb1be499ada2c3239ab4d48116daab9649bea9ec95dd9cb43ccbdb",
+  "runtime_target": "windows/amd64",
+  "artifact_digest": "sha256:06a1684be9de9e52ec692b95dd0741e47cca9696a1ccf81c8b0a8441de8db37c",
+  "artifact_objects": 3808,
+  "cold": {
+    "exitCode": 0,
+    "cacheHit": "provider",
+    "leaseReleased": true,
+    "nativeImport": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "warm": {
+    "exitCode": 0,
+    "cacheHit": "local-materialization",
+    "leaseReleased": true,
+    "providerDeadWarmReuse": true
+  },
+  "mismatch": {
+    "rejected": true,
+    "providerObjectGets": 0
+  },
+  "robot": {
+    "source": "robot_tests/environment_artifacts.robot",
+    "binary_sha256": "b85a382c6aeb1be499ada2c3239ab4d48116daab9649bea9ec95dd9cb43ccbdb",
+    "version": "v18.19.6",
+    "cold_cache": "provider",
+    "execute_exit": 0,
+    "warm_provider_dead": true,
+    "sqlite": "3.54.0"
+  },
+  "root_independent_rehash_pending": true
+}

@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/reflink_capability.py",
+    "--worker"
+  ],
+  "minimum_free_bytes": 2770505728,
+  "peak_allocated_accounting_bytes": 536576,
+  "peak_process_tree_rss_bytes": 0,
+  "plan_sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca",
+  "rss_sampling_scope": "supervisor plus worker and observed named descendant PIDs; /proc children/status only",
+  "samples": 2,
+  "schema": "rcc-cow-capability-supervisor-v1",
+  "started_monotonic": 3884.243833144,
+  "stop_reason": null,
+  "supervisor_exit": 0,
+  "whole_supervisor_wall_seconds": 0.10301533900019422,
+  "worker_exit": 0
+}

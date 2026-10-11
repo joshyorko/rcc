@@ -1,0 +1,13 @@
+{
+  "status": "RAW_ZIP_RECEIPT_XML_REHASHED",
+  "source": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "platform": "darwin_arm64",
+  "binary_sha256_claim": "712e3bb861657c835dec1a8a8b3c8bbdb0e1a1c3e222ece5fcfb8b7cec6c88a7",
+  "actual_binary_bytes": "blocked: connector32MiB limit;gh artifact403",
+  "zip_sha256": "ff3c4b6efdb8b0e7ae07810353453d65f787f0cb8c7db95426e2bade617f81a2",
+  "Robot": {
+    "pass": "1",
+    "fail": "0",
+    "skip": "0"
+  }
+}

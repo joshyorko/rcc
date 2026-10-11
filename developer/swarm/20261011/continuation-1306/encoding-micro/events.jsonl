@@ -1,0 +1,53 @@
+{"event": "stage-start", "stage": "untimed-original-validation"}
+{"event": "prepared", "logical_bytes": 3276691, "original_validation_count": 24, "payloads_written_to_disk": false}
+{"event": "stage-start", "repetition": 0, "stage": "encode-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 28473380, "phase": "encode-gzip", "process_cpu_ns": 753729627, "repetition": 0, "verified_outputs": 480, "wall_ns": 753765858}
+{"event": "stage-start", "repetition": 0, "stage": "encode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 26496940, "phase": "encode-zstd", "process_cpu_ns": 304297904, "repetition": 0, "verified_outputs": 480, "wall_ns": 304312009}
+{"event": "stage-start", "repetition": 0, "stage": "decode-legacy-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-legacy-gzip", "process_cpu_ns": 242239755, "repetition": 0, "verified_outputs": 480, "wall_ns": 242250003}
+{"event": "stage-start", "repetition": 0, "stage": "decode-external-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-external-gzip", "process_cpu_ns": 239304170, "repetition": 0, "verified_outputs": 480, "wall_ns": 239352069}
+{"event": "stage-start", "repetition": 0, "stage": "decode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-zstd", "process_cpu_ns": 73248333, "repetition": 0, "verified_outputs": 480, "wall_ns": 73254808}
+{"event": "stage-start", "repetition": 1, "stage": "encode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 26496940, "phase": "encode-zstd", "process_cpu_ns": 277052091, "repetition": 1, "verified_outputs": 480, "wall_ns": 277054401}
+{"event": "stage-start", "repetition": 1, "stage": "encode-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 28473380, "phase": "encode-gzip", "process_cpu_ns": 756692455, "repetition": 1, "verified_outputs": 480, "wall_ns": 756754458}
+{"event": "stage-start", "repetition": 1, "stage": "decode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-zstd", "process_cpu_ns": 72824903, "repetition": 1, "verified_outputs": 480, "wall_ns": 72821359}
+{"event": "stage-start", "repetition": 1, "stage": "decode-external-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-external-gzip", "process_cpu_ns": 237409291, "repetition": 1, "verified_outputs": 480, "wall_ns": 237450375}
+{"event": "stage-start", "repetition": 1, "stage": "decode-legacy-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-legacy-gzip", "process_cpu_ns": 239768260, "repetition": 1, "verified_outputs": 480, "wall_ns": 239781059}
+{"event": "stage-start", "repetition": 2, "stage": "encode-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 28473380, "phase": "encode-gzip", "process_cpu_ns": 747246671, "repetition": 2, "verified_outputs": 480, "wall_ns": 747318587}
+{"event": "stage-start", "repetition": 2, "stage": "encode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 26496940, "phase": "encode-zstd", "process_cpu_ns": 265956529, "repetition": 2, "verified_outputs": 480, "wall_ns": 265957917}
+{"event": "stage-start", "repetition": 2, "stage": "decode-legacy-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-legacy-gzip", "process_cpu_ns": 238166908, "repetition": 2, "verified_outputs": 480, "wall_ns": 238199401}
+{"event": "stage-start", "repetition": 2, "stage": "decode-external-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-external-gzip", "process_cpu_ns": 240465666, "repetition": 2, "verified_outputs": 480, "wall_ns": 240480820}
+{"event": "stage-start", "repetition": 2, "stage": "decode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-zstd", "process_cpu_ns": 71389939, "repetition": 2, "verified_outputs": 480, "wall_ns": 71385082}
+{"event": "stage-start", "repetition": 3, "stage": "encode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 26496940, "phase": "encode-zstd", "process_cpu_ns": 266567427, "repetition": 3, "verified_outputs": 480, "wall_ns": 266569635}
+{"event": "stage-start", "repetition": 3, "stage": "encode-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 28473380, "phase": "encode-gzip", "process_cpu_ns": 740001825, "repetition": 3, "verified_outputs": 480, "wall_ns": 740177340}
+{"event": "stage-start", "repetition": 3, "stage": "decode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-zstd", "process_cpu_ns": 74225084, "repetition": 3, "verified_outputs": 480, "wall_ns": 74220942}
+{"event": "stage-start", "repetition": 3, "stage": "decode-external-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-external-gzip", "process_cpu_ns": 237112138, "repetition": 3, "verified_outputs": 480, "wall_ns": 237121466}
+{"event": "stage-start", "repetition": 3, "stage": "decode-legacy-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-legacy-gzip", "process_cpu_ns": 235525108, "repetition": 3, "verified_outputs": 480, "wall_ns": 235535272}
+{"event": "stage-start", "repetition": 4, "stage": "encode-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 28473380, "phase": "encode-gzip", "process_cpu_ns": 743579270, "repetition": 4, "verified_outputs": 480, "wall_ns": 744524790}
+{"event": "stage-start", "repetition": 4, "stage": "encode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 26496940, "phase": "encode-zstd", "process_cpu_ns": 272081720, "repetition": 4, "verified_outputs": 480, "wall_ns": 272115953}
+{"event": "stage-start", "repetition": 4, "stage": "decode-legacy-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-legacy-gzip", "process_cpu_ns": 236643862, "repetition": 4, "verified_outputs": 480, "wall_ns": 236654679}
+{"event": "stage-start", "repetition": 4, "stage": "decode-external-gzip"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-external-gzip", "process_cpu_ns": 235163600, "repetition": 4, "verified_outputs": 480, "wall_ns": 235174134}
+{"event": "stage-start", "repetition": 4, "stage": "decode-zstd"}
+{"event": "sample", "hash_and_roundtrip_verification_inside_timer": false, "logical_bytes_processed": 65533820, "operations": 480, "output_bytes": 65533820, "phase": "decode-zstd", "process_cpu_ns": 71251443, "repetition": 4, "verified_outputs": 480, "wall_ns": 71249353}
+{"event": "complete", "samples": 25, "status": "PASS", "verified_outputs": 12000}

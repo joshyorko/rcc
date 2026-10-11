@@ -1,0 +1,272 @@
+"/home/runner/work/rcc/rcc/developer/toolkit.yaml" as robot.yaml is:
+tasks:
+  robot:
+    shell: python call_invoke.py robot
+
+devTasks:
+  unitTests:
+    shell: python call_invoke.py test
+  build:
+    shell: python call_invoke.py build
+  local:
+    shell: python call_invoke.py local
+  tools:
+    shell: python call_invoke.py tooling
+  toc:
+    shell: python call_invoke.py toc
+  deadcode:
+    shell: python call_invoke.py deadcode
+  format:
+    shell: python call_invoke.py format
+  lint:
+    shell: python call_invoke.py lint
+  lintAll:
+    shell: python call_invoke.py lintAll
+  lintFix:
+    shell: python call_invoke.py lintFix
+  agentDocs:
+    shell: python call_invoke.py agentdocs
+  assets:
+    shell: python call_invoke.py assets
+  unpackTest:
+    shell: python call_invoke.py unpackTest
+  artifactFocused:
+    shell: python call_invoke.py artifactFocused
+  artifactRace:
+    shell: python call_invoke.py artifactRace
+  goVet:
+    shell: python call_invoke.py goVet
+  artifactVertical:
+    shell: python call_invoke.py artifactVertical
+  artifactConsumerVertical:
+    shell: python call_invoke.py artifactConsumerVertical
+  artifactRobot:
+    shell: python call_invoke.py artifactRobot
+  binaryInventory:
+    shell: python call_invoke.py binaryInventory
+  selfHost:
+    shell: python call_invoke.py selfHost
+  selfHostBuild:
+    shell: python call_invoke.py selfHostBuild
+  selfHostProbe:
+    shell: python call_invoke.py selfHostProbe
+  releaseCandidate:
+    shell: python call_invoke.py releaseCandidate
+  coordinationAcceptance:
+    shell: python call_invoke.py coordinationAcceptance
+  largeStream:
+    shell: python call_invoke.py largeStream
+  holotreeBenchmark:
+    shell: python benchmarks/holotree.py
+  lifecycleBenchmark:
+    shell: python benchmarks/lifecycle.py --binary ../build/rcc
+
+environmentConfigs:
+  - setup.yaml
+
+artifactsDir: tmp
+
+PATH:
+PYTHONPATH:
+ignoreFiles:
+  - .gitignore
+
+Note: Operating in developer mode. Using 'devTasks:' instead of 'tasks:'.
+Note! For now, resolved effective environment configuration file is "/home/runner/work/rcc/rcc/developer/setup.yaml".
+####  Progress: 00/15  v18.19.5     0.435s  Context: "" <runner@runnervmmprz5> [linux_amd64/Ubuntu 24.04.5 LTS [id=ubuntu; id-like=debian; version=24.04]].
+####  Progress: 01/15  v18.19.5     0.001s  Fresh [private mode] holotree environment 9fbb4b2b-7adb-3365-bae3-156781c2cdc7. (parent/pid: 2531/2533)
+Warning: Holotree blueprint "9df6bbd21dfe6798" is not publicly cacheable. Use `rcc robot diagnostics` to find out more.
+####  Progress: 02/15  v18.19.5     0.001s  Holotree blueprint is "9df6bbd21dfe6798" [linux_amd64 with 3 workers on 4 CPUs from "setup.yaml"].
+FINAL unified conda environment descriptor:
+---
+channels:
+- conda-forge
+dependencies:
+- python=3.10.15
+- invoke=2.2.0
+- robotframework=6.1.1
+- go=1.26.5
+- golangci-lint=2.12.2
+- git=2.46.0
+- util-linux
+---
+####  Progress: 03/15  v18.19.5     0.000s  Fill hololib from RCC_REMOTE_ORIGIN skipped. RCC_REMOTE_ORIGIN was not defined.
+####  Progress: 04/15  v18.19.5     0.000s  Cleanup holotree stage for fresh install.
+####  Progress: 05/15  v18.19.5     0.000s  Build environment into holotree stage "/home/runner/work/rcc/rcc-release-candidate-home/holotree/h62fb83f_493f813dad24d3t".
+####  Progress: 06/15  v18.19.5     0.000s  Restore partial environment into holotree stage "/home/runner/work/rcc/rcc-release-candidate-home/holotree/h62fb83f_493f813dad24d3t".
+Note: Extracting micromamba binary from inside rcc.
+####  Progress: 07/15  v18.19.5     0.215s  Running micromamba phase. (micromamba v2.5.0) [layer: 9df6bbd21dfe6798]
+####  Progress: 08/15  v18.19.5    34.656s  Skipping pip install phase -- no pip dependencies.
+####  Progress: 09/15  v18.19.5     0.048s  Post install scripts phase skipped -- no scripts.
+####  Progress: 10/15  v18.19.5     0.166s  Activate environment started phase.
+####  Progress: 11/15  v18.19.5     0.631s  Pip check skipped.
+####  Progress: 12/15  v18.19.5     0.000s  Update installation plan.
+####  Progress: 13/15  v18.19.5     0.001s  Record holotree stage to hololib [with 3 workers on 4 CPUs].
+####  Progress: 14/15  v18.19.5     1.439s  Restore space from library [with 3 workers on 4 CPUs; with compression: true].
+Installation plan is: /home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/rcc_plan.log
+Environment configuration descriptor is: /home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/identity.yaml
+####  Progress: 15/15  v18.19.5     5.653s  Fresh holotree done [with 3 workers on 4 CPUs].
+Wanted  Version  Origin  |  No.  |  Available         Version       Origin       |  Status
+------  -------  ------  +  ---  +  ---------         -------       ------       +  ------
+-       -        -       |    1  |  _go_select        2.3.0         conda-forge  |  N/A
+-       -        -       |    2  |  _openmp_mutex     4.5           conda-forge  |  N/A
+-       -        -       |    3  |  bzip2             1.0.8         conda-forge  |  N/A
+-       -        -       |    4  |  c-ares            1.34.8        conda-forge  |  N/A
+-       -        -       |    5  |  ca-certificates   2026.7.22     conda-forge  |  N/A
+-       -        -       |    6  |  git               2.46.0        conda-forge  |  N/A
+-       -        -       |    7  |  go                1.26.5        conda-forge  |  N/A
+-       -        -       |    8  |  golangci-lint     2.12.2        conda-forge  |  N/A
+-       -        -       |    9  |  invoke            2.2.0         conda-forge  |  N/A
+-       -        -       |   10  |  keyutils          1.6.3         conda-forge  |  N/A
+-       -        -       |   11  |  krb5              1.22.2        conda-forge  |  N/A
+-       -        -       |   12  |  ld_impl_linux-64  2.46.1        conda-forge  |  N/A
+-       -        -       |   13  |  libcurl           8.21.0        conda-forge  |  N/A
+-       -        -       |   14  |  libedit           3.1.20260512  conda-forge  |  N/A
+-       -        -       |   15  |  libev             4.33          conda-forge  |  N/A
+-       -        -       |   16  |  libexpat          2.8.5         conda-forge  |  N/A
+-       -        -       |   17  |  libffi            3.7.0         conda-forge  |  N/A
+-       -        -       |   18  |  libgcc            16.2.0        conda-forge  |  N/A
+-       -        -       |   19  |  libgcc-ng         16.2.0        conda-forge  |  N/A
+-       -        -       |   20  |  libgfortran       16.2.0        conda-forge  |  N/A
+-       -        -       |   21  |  libgfortran5      16.2.0        conda-forge  |  N/A
+-       -        -       |   22  |  libgomp           16.2.0        conda-forge  |  N/A
+-       -        -       |   23  |  libiconv          1.18          conda-forge  |  N/A
+-       -        -       |   24  |  liblzma           5.8.3         conda-forge  |  N/A
+-       -        -       |   25  |  liblzma-devel     5.8.3         conda-forge  |  N/A
+-       -        -       |   26  |  libnghttp2        1.68.1        conda-forge  |  N/A
+-       -        -       |   27  |  libnsl            2.0.1         conda-forge  |  N/A
+-       -        -       |   28  |  libsqlite         3.54.0        conda-forge  |  N/A
+-       -        -       |   29  |  libssh2           1.11.1        conda-forge  |  N/A
+-       -        -       |   30  |  libstdcxx         16.2.0        conda-forge  |  N/A
+-       -        -       |   31  |  libuuid           2.42.2        conda-forge  |  N/A
+-       -        -       |   32  |  libxcrypt         4.4.38        conda-forge  |  N/A
+-       -        -       |   33  |  libzlib           1.3.2         conda-forge  |  N/A
+-       -        -       |   34  |  ncurses           6.6           conda-forge  |  N/A
+-       -        -       |   35  |  openssl           3.6.5         conda-forge  |  N/A
+-       -        -       |   36  |  packaging         26.3          conda-forge  |  N/A
+-       -        -       |   37  |  pcre2             10.44         conda-forge  |  N/A
+-       -        -       |   38  |  perl              5.44.0        conda-forge  |  N/A
+-       -        -       |   39  |  pip               26.2.1        conda-forge  |  N/A
+-       -        -       |   40  |  python            3.10.15       conda-forge  |  N/A
+-       -        -       |   41  |  python_abi        3.10          conda-forge  |  N/A
+-       -        -       |   42  |  readline          8.3           conda-forge  |  N/A
+-       -        -       |   43  |  robotframework    6.1.1         conda-forge  |  N/A
+-       -        -       |   44  |  setuptools        84.0.0        conda-forge  |  N/A
+-       -        -       |   45  |  tk                8.6.13        conda-forge  |  N/A
+-       -        -       |   46  |  tzdata            2026c         conda-forge  |  N/A
+-       -        -       |   47  |  util-linux        2.42.2        conda-forge  |  N/A
+-       -        -       |   48  |  wheel             0.48.0        conda-forge  |  N/A
+-       -        -       |   49  |  xz                5.8.3         conda-forge  |  N/A
+-       -        -       |   50  |  xz-gpl-tools      5.8.3         conda-forge  |  N/A
+-       -        -       |   51  |  xz-tools          5.8.3         conda-forge  |  N/A
+-       -        -       |   52  |  zstd              1.5.7         conda-forge  |  N/A
+------  -------  ------  +  ---  +  ---------         -------       ------       +  ------
+Wanted  Version  Origin  |  No.  |  Available         Version       Origin       |  Status
+
+--
+Using micromamba version v2.5.0
+Downloading from official source: https://micro.mamba.pm/api/micromamba/linux-64/2.5.0
+Compressing blobs/assets/micromamba.linux_amd64
+Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-64/2.5.0
+Compressing blobs/assets/micromamba.darwin_amd64
+Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-arm64/2.5.0
+Compressing blobs/assets/micromamba.darwin_arm64
+Downloading from official source: https://micro.mamba.pm/api/micromamba/win-64/2.5.0
+Compressing blobs/assets/micromamba.windows_amd64
+Directory templates/python/ => /home/runner/work/rcc/rcc/blobs/assets/python.zip
+Directory templates/standard/ => /home/runner/work/rcc/rcc/blobs/assets/standard.zip
+Directory templates/extended/ => /home/runner/work/rcc/rcc/blobs/assets/extended.zip
+Copying assets/externally_managed.txt to blobs/assets/
+Copying assets/micromamba_version.txt to blobs/assets/
+Copying assets/robocorp_settings.yaml to blobs/assets/
+Copying assets/speedtest.yaml to blobs/assets/
+Copying assets/templates.yaml to blobs/assets/
+Copying assets/netdiag.yaml to blobs/assets/
+Copying assets/depxtraction.py to blobs/assets/
+Copying assets/man/tutorial.txt to blobs/assets/man/
+Copying assets/man/LICENSE.txt to blobs/assets/man/
+Copying docs/roadmap.md to blobs/docs/
+Copying docs/features.md to blobs/docs/
+Copying docs/troubleshooting.md to blobs/docs/
+Copying docs/recipes.md to blobs/docs/
+Copying docs/environment-artifact-trust.md to blobs/docs/
+Copying docs/change-classification.md to blobs/docs/
+Copying docs/holotree.md to blobs/docs/
+Copying docs/history.md to blobs/docs/
+Copying docs/v18-compatibility.md to blobs/docs/
+Copying docs/maintenance.md to blobs/docs/
+Copying docs/environment-artifact-compatibility.md to blobs/docs/
+Copying docs/BUILD.md to blobs/docs/
+Copying docs/ai-ops-runbook.md to blobs/docs/
+Copying docs/profile_configuration.md to blobs/docs/
+Copying docs/cloud-commands.md to blobs/docs/
+Copying docs/venv.md to blobs/docs/
+Copying docs/agent-boundaries.md to blobs/docs/
+Copying docs/changelog.md to blobs/docs/
+Copying docs/vocabulary.md to blobs/docs/
+Copying docs/usecases.md to blobs/docs/
+Copying docs/README.md to blobs/docs/
+Copying docs/environment-build-coordination.md to blobs/docs/
+Copying docs/review-rubric.md to blobs/docs/
+Copying docs/release-process.md to blobs/docs/
+Copying docs/metrics.md to blobs/docs/
+Copying docs/environment-caching.md to blobs/docs/
+go: downloading go1.26.9 (linux/amd64)
+go: downloading github.com/spf13/cobra v1.10.2
+go: downloading github.com/mattn/go-isatty v0.0.24
+go: downloading golang.org/x/term v0.45.0
+go: downloading github.com/dchest/siphash v1.2.3
+go: downloading gopkg.in/yaml.v2 v2.4.0
+go: downloading github.com/mitchellh/go-ps v1.0.0
+go: downloading golang.org/x/sys v0.47.0
+go: downloading github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
+go: downloading github.com/spf13/viper v1.21.0
+go: downloading github.com/spf13/pflag v1.0.10
+go: downloading github.com/fsnotify/fsnotify v1.9.0
+go: downloading github.com/go-viper/mapstructure/v2 v2.4.0
+go: downloading github.com/sagikazarmark/locafero v0.11.0
+go: downloading github.com/spf13/afero v1.15.0
+go: downloading github.com/spf13/cast v1.10.0
+go: downloading github.com/sourcegraph/conc v0.3.1-0.20240121214520-5f936abd7ae8
+go: downloading github.com/subosito/gotenv v1.6.0
+go: downloading github.com/pelletier/go-toml/v2 v2.2.4
+go: downloading go.yaml.in/yaml/v3 v3.0.4
+go: downloading golang.org/x/text v0.28.0
+ok  	github.com/joshyorko/rcc/artifacttrust	0.040s
+ok  	github.com/joshyorko/rcc/environmentartifact	0.608s
+ok  	github.com/joshyorko/rcc/artifactprovider	1.518s
+ok  	github.com/joshyorko/rcc/environmentlifecycle	13.448s
+ok  	github.com/joshyorko/rcc/htfs	0.097s
+ok  	github.com/joshyorko/rcc/cmd	0.343s
+ok  	github.com/joshyorko/rcc/cmd/rcc	0.339s
+ok  	github.com/joshyorko/rcc/cmd/rccremote	0.017s
+...........................F...................E.......................................
+======================================================================
+ERROR: test_release_validates_homebrew_handoff_before_publication (scripts.test_environment_artifact_tasks.ArtifactTaskTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/rcc/rcc/scripts/test_environment_artifact_tasks.py", line 756, in test_release_validates_homebrew_handoff_before_publication
+    workflow.index("- name: Validate Homebrew Update Token"),
+ValueError: substring not found
+
+======================================================================
+FAIL: test_native_matrix_uses_exact_binary_and_test_produced_receipt (scripts.test_environment_artifact_tasks.ArtifactTaskTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/rcc/rcc/scripts/test_environment_artifact_tasks.py", line 324, in test_native_matrix_uses_exact_binary_and_test_produced_receipt
+    self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
+AssertionError: 'RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}' not found in '    name: Native Runtime (${{ matrix.platform }})\n    runs-on: ${{ matrix.os }}\n    needs: build\n    # Run native acceptance on main, pull requests, and explicit preparation.\n    if: github.event_name == \'push\' || github.event_name == \'pull_request\' || github.event_name == \'workflow_dispatch\'\n    strategy:\n      fail-fast: false\n      matrix:\n        include:\n          - os: "ubuntu-latest"\n            platform: linux-amd64\n            asset: rcc-linux64\n            binary: build/rcc\n            goos: linux\n            goarch: amd64\n          - os: "macos-15-intel"\n            platform: macos-amd64\n            asset: rcc-macos64\n            binary: build/rcc\n            goos: darwin\n            goarch: amd64\n          - os: "macos-latest"\n            platform: macos-arm64\n            asset: rcc-macosarm64\n            binary: build/rcc\n            goos: darwin\n            goarch: arm64\n          - os: "windows-latest"\n            platform: windows-amd64\n            asset: rcc-windows64.exe\n            binary: build/rcc.exe\n            goos: windows\n            goarch: amd64\n    env:\n      RCC_CANDIDATE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}\n      RCC_RELEASE_VERSION: ${{ inputs.expected_version }}\n      RCC_NATIVE_PLATFORM: ${{ matrix.platform }}\n      RCC_NATIVE_ASSET: ${{ matrix.asset }}\n      RCC_NATIVE_BINARY: ${{ matrix.binary }}\n      RCC_NATIVE_GOOS: ${{ matrix.goos }}\n      RCC_NATIVE_GOARCH: ${{ matrix.goarch }}\n      RCC_SOURCE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}\n    steps:\n      # Checkout first so setup-go can locate go.mod/go.sum for caching\n      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd\n        with:\n          ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}\n      - name: Assert exact candidate checkout\n        shell: bash\n        run: |\n          set -euo pipefail\n          actual_sha="$(git rev-parse HEAD)"\n          if [[ "$actual_sha" != "$RCC_CANDIDATE_SHA" ]]; then\n            echo "Native checkout differs: $actual_sha != $RCC_CANDIDATE_SHA"\n            exit 1\n          fi\n          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then\n            if [[ "$GITHUB_REF" != "refs/heads/main" || "$RCC_CANDIDATE_SHA" != "$GITHUB_SHA" ]]; then\n              echo "Release preparation must run from the exact current main commit."\n              exit 1\n            fi\n            python3 scripts/release_publication.py validate-source --root . --source-sha "$RCC_CANDIDATE_SHA" --version "$RCC_RELEASE_VERSION"\n          fi\n      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c\n        with:\n          go-version: "1.26.9"\n      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405\n        with:\n          python-version: "3.10"\n      - name: Download exact release-built RCC binary\n        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0\n        with:\n          name: native-runtime-binaries\n          path: native-runtime-binaries\n      - name: Stage and assert native RCC binary\n        shell: bash\n        run: |\n          set -euo pipefail\n          mkdir -p build tmp/output\n          python - <<\'PY\'\n          import hashlib, os\n          from pathlib import Path\n\n          source = Path("native-runtime-binaries") / os.environ["RCC_NATIVE_ASSET"]\n          target = Path(os.environ["RCC_NATIVE_BINARY"])\n          expected = next(\n              line.split()[0]\n              for line in (Path("native-runtime-binaries") / "SHA256SUMS").read_text().splitlines()\n              if line.split(maxsplit=1)[1] == os.environ["RCC_NATIVE_ASSET"]\n          )\n          actual = hashlib.sha256(source.read_bytes()).hexdigest()\n          if actual != expected:\n              raise SystemExit(f"native RCC bytes differ: {actual} != {expected}")\n          import platform, subprocess\n          goos = {"Linux": "linux", "Darwin": "darwin", "Windows": "windows"}[platform.system()]\n          goarch = {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}[platform.machine()]\n          if (goos, goarch) != (os.environ["RCC_NATIVE_GOOS"], os.environ["RCC_NATIVE_GOARCH"]):\n              raise SystemExit(f"runner platform differs: {goos}/{goarch}")\n          if subprocess.check_output(["go", "env", "GOOS"], text=True).strip() != goos:\n              raise SystemExit("go env GOOS does not match runner")\n          if subprocess.check_output(["go", "env", "GOARCH"], text=True).strip() != goarch:\n              raise SystemExit("go env GOARCH does not match runner")\n          target.write_bytes(source.read_bytes())\n          if os.name != "nt":\n              target.chmod(0o755)\n          version = __import__("subprocess").check_output([str(target), "version"], text=True).strip()\n          expected_version = next(\n              line.split("`")[1]\n              for line in Path("common/version.go").read_text().splitlines()\n              if "Version = `" in line\n          )\n          if version != expected_version:\n              raise SystemExit(f"native RCC version differs: {version} != {expected_version}")\n          print(f"verified {target} {expected} {version}")\n          PY\n          echo "RCC_REAL_BINARY=$(python -c \'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())\')" >> "$GITHUB_ENV"\n          echo "RCC_REAL_BINARY_SHA256=$(python -c \'import hashlib,os; print(hashlib.sha256(open(os.environ["RCC_NATIVE_BINARY"],"rb").read()).hexdigest())\')" >> "$GITHUB_ENV"\n          echo "RCC_REAL_RECEIPT_FILE=$(python -c \'from pathlib import Path; print(Path("tmp/output/native-runtime-receipt.json").resolve())\')" >> "$GITHUB_ENV"\n      - name: Install invoke\n        run: python -m pip install invoke==2.2.0\n      - name: Setup Robot Environment\n        run: |\n          inv assets\n          inv robotsetup\n      - name: Run UV Python prefix symlink containment tests\n        shell: bash\n        run: go test -count=1 ./conda -run \'^TestCopyPythonPrefix\' -v\n      - name: Show commit info\n        run: inv what\n      - name: Run Windows process supervision and artifact lock acceptance\n        if: matrix.goos == \'windows\'\n        shell: bash\n        run: go test -count=1 ./environmentlifecycle -run \'^(TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams|TestIndependentProcessArtifactLockContentionBlocks)$\' -v\n      - name: Run Windows Robot binary spelling acceptance\n        if: matrix.goos == \'windows\'\n        timeout-minutes: 2\n        run: python -m robot -d tmp/native-binary-probe robot_tests/environment_artifact_binary.robot\n      - name: Run macOS system-alias no-follow acceptance\n        if: matrix.goos == \'darwin\'\n        shell: bash\n        run: go test -count=1 ./artifactprovider ./environmentlifecycle ./settings -run \'^(TestDarwinSystemAliasPathsPreserveNoFollow|TestDarwinRPathArtifactRelocatesAndExecutesColdAndWarm)$\' -v\n      - name: Run Windows Environment Artifact Robot acceptance against exact binary\n        if: matrix.goos == \'windows\'\n        timeout-minutes: 8\n        run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot\n      - name: Run real native A-to-B acceptance\n        shell: bash\n        run: |\n          set -euo pipefail\n          RCC_REAL_ARTIFACT_TEST=1 go test -timeout 45m -count=1 ./environmentlifecycle -run \'^TestRealCurrentRCCAtoBVertical$\' -v\n      - name: Run JAT-class real consumer A-to-B acceptance\n        if: matrix.goos == \'linux\'\n        shell: bash\n        run: |\n          set -euo pipefail\n          RCC_REAL_JAT_CLASS_TEST=1 \\\n          RCC_REAL_RECEIPT_FILE="$(pwd)/tmp/output/jat-class-consumer-receipt.json" \\\n          go test -timeout 30m -count=1 ./environmentlifecycle -run \'^TestRealJATClassRCCAtoBVertical$\' -v\n      - name: Run Environment Artifact Robot acceptance against exact binary\n        if: matrix.goos != \'windows\'\n        timeout-minutes: 15\n        run: python -m robot -L DEBUG -d tmp/output robot_tests/environment_artifacts.robot\n      - name: Bind Robot evidence into native runtime receipt\n        if: success() || failure()\n        shell: bash\n        run: |\n          python - <<\'PY\'\n          import json, os\n          from pathlib import Path\n          from tasks import _validate_receipt_commit\n\n          receipt = Path(os.environ["RCC_REAL_RECEIPT_FILE"])\n          robot = Path("tmp/output/native-runtime-robot-evidence.json")\n          if not receipt.is_file() or not robot.is_file():\n              raise SystemExit("missing exact CLI receipt or Robot evidence")\n\n          def require(value, key, label):\n              if not isinstance(value, dict) or key not in value:\n                  raise SystemExit(f"malformed {label}: missing {key}")\n              return value[key]\n\n          def lifecycle(label, evidence):\n              digest = require(evidence, "artifactDigest", label)\n              cold = require(evidence, "cold", label)\n              warm = require(evidence, "warm", label)\n              mismatch = require(evidence, "mismatch", label)\n              if require(cold, "artifactDigest", f"{label}.cold") != digest or require(warm, "artifactDigest", f"{label}.warm") != digest:\n                  raise SystemExit(f"{label} digest identity mismatch")\n              if require(cold, "cacheHit", f"{label}.cold") != "provider" or require(warm, "cacheHit", f"{label}.warm") != "local-materialization":\n                  raise SystemExit(f"{label} cold/warm cache provenance mismatch")\n              if require(cold, "materializationId", f"{label}.cold") != require(warm, "materializationId", f"{label}.warm") or require(cold, "path", f"{label}.cold") != require(warm, "path", f"{label}.warm"):\n                  raise SystemExit(f"{label} materialization identity mismatch")\n              if require(cold, "leaseId", f"{label}.cold") == "" or require(cold, "leaseReleased", f"{label}.cold") is not True:\n                  raise SystemExit(f"{label} lease evidence is incomplete")\n              compatibility = require(cold, "compatibility", f"{label}.cold")\n              worker = require(compatibility, "worker", f"{label}.cold.compatibility")\n              worker_os = require(worker, "os", f"{label}.cold.compatibility.worker")\n              worker_cpu = require(worker, "cpu", f"{label}.cold.compatibility.worker")\n              worker_python = require(worker, "python", f"{label}.cold.compatibility.worker")\n              worker_filesystem = require(worker, "filesystem", f"{label}.cold.compatibility.worker")\n              if not require(worker, "relocationVersions", f"{label}.cold.compatibility.worker") or not require(worker_os, "family", f"{label}.cold.compatibility.worker.os") or not require(worker_os, "nativeArchitecture", f"{label}.cold.compatibility.worker.os") or not require(worker_cpu, "architecture", f"{label}.cold.compatibility.worker.cpu") or require(worker_filesystem, "maxPath", f"{label}.cold.compatibility.worker.filesystem") <= 0 or require(worker_python, "artifactProvided", f"{label}.cold.compatibility.worker.python") is not True:\n                  raise SystemExit(f"{label} worker capability receipt is incomplete")\n              if require(warm, "providerDeadWarmReuse", f"{label}.warm") is not True:\n                  raise SystemExit(f"{label} provider-dead warm evidence is incomplete")\n              if require(mismatch, "rejected", f"{label}.mismatch") is not True or require(mismatch, "providerObjectGets", f"{label}.mismatch") != 0:\n                  raise SystemExit(f"{label} mismatch was not rejected before object fetch")\n              if require(cold, "nativeImport", f"{label}.cold") != "sqlite3" or not require(cold, "nativeExtension", f"{label}.cold") or not require(cold, "sqliteVersion", f"{label}.cold"):\n                  raise SystemExit(f"{label} native import evidence is incomplete")\n\n          def robot_lifecycle(evidence):\n              digest = require(evidence, "artifactDigest", "robotExactBinary")\n              cold = require(evidence, "cold", "robotExactBinary")\n              execute = require(evidence, "execute", "robotExactBinary")\n              warm = require(evidence, "warm", "robotExactBinary")\n              if any(require(item, "artifactDigest", "robotExactBinary") != digest for item in (cold, execute, warm)):\n                  raise SystemExit("Robot artifact identity mismatch")\n              if require(cold, "cacheHit", "robotExactBinary.cold") != "provider" or require(execute, "cacheHit", "robotExactBinary.execute") != "local-materialization" or require(warm, "cacheHit", "robotExactBinary.warm") != "local-materialization":\n                  raise SystemExit("Robot cache provenance mismatch")\n              if len({require(item, "materializationId", "robotExactBinary") for item in (cold, execute, warm)}) != 1 or len({require(item, "path", "robotExactBinary") for item in (cold, execute, warm)}) != 1:\n                  raise SystemExit("Robot materialization identity mismatch")\n              if require(execute, "leaseId", "robotExactBinary.execute") == "" or require(execute, "leaseReleased", "robotExactBinary.execute") is not True or require(execute, "exitCode", "robotExactBinary.execute") != 0:\n                  raise SystemExit("Robot lease/execute evidence is incomplete")\n              if require(warm, "providerDeadWarmReuse", "robotExactBinary.warm") is not True:\n                  raise SystemExit("Robot provider-dead warm evidence is incomplete")\n              native = require(evidence, "native", "robotExactBinary")\n              if require(native, "import", "robotExactBinary.native") != "sqlite3" or not require(native, "extension", "robotExactBinary.native") or not require(native, "sqliteVersion", "robotExactBinary.native"):\n                  raise SystemExit("Robot native import evidence is incomplete")\n\n          try:\n              data = json.loads(receipt.read_text())\n              _validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])\n              robot_evidence = json.loads(robot.read_text())\n              binary = require(data, "binary", "receipt")\n              exact = require(data, "exactBinaryCLI", "receipt")\n              source = require(data, "sourceAPI", "receipt")\n              if require(data, "artifactDigest", "receipt") != require(exact, "artifactDigest", "exactBinaryCLI"):\n                  raise SystemExit("receipt and exact CLI artifact identities differ")\n              platform_checks = require(exact, "platformChecks", "exactBinaryCLI")\n              platform = require(data, "platform", "receipt")\n              expected_checks = {\n                  "linux": {"runnerOS", "machine", "caseCollision", "executableSymlink", "filesystemType", "libc", "glibcMuslMismatch"},\n                  "darwin": {"runnerOS", "machine", "caseCollision", "executableSymlink", "rosetta", "machoRPath", "machoDependencies", "quarantineXattr", "codeSigning", "translationAllowed", "nativeOnlyOnRosetta"},\n                  "windows": {"runnerOS", "machine", "caseCollision", "executableSymlink", "longPath", "junction", "fileLock", "pathNormalization"},\n              }\n              platform_family = platform.split("_", 1)[0]\n              if not isinstance(platform_checks, dict) or set(platform_checks) != expected_checks.get(platform_family, set()):\n                  raise SystemExit(f"exact CLI platform probe key set is invalid for {platform}: {sorted(platform_checks)}")\n              for key, value in platform_checks.items():\n                  if not isinstance(value, str) or not value or value.startswith(("skipped:", "unavailable:", "failed")):\n                      if not (platform_family == "darwin" and key == "nativeOnlyOnRosetta" and value == "skipped:native-runner"):\n                          raise SystemExit(f"exact CLI platform probe {key} is not a passing or explicit fact: {value}")\n              if platform_checks["caseCollision"] not in {"case-insensitive-filesystem", "case-sensitive-filesystem"}:\n                  raise SystemExit(f"caseCollision is not a truthful filesystem fact: {platform_checks[\'caseCollision\']}")\n              if not isinstance(platform_checks, dict) or not platform_checks:\n                  raise SystemExit("exact CLI platform probe receipt is incomplete")\n              lifecycle("exactBinaryCLI", exact)\n              lifecycle("sourceAPI", source)\n              if require(robot_evidence, "binarySha256", "robotExactBinary") != require(binary, "sha256", "receipt"):\n                  raise SystemExit("Robot evidence binary does not match staged RCC binary")\n              robot_lifecycle(robot_evidence)\n              data["robotExactBinary"] = robot_evidence\n              receipt.write_text(json.dumps(data, indent=2) + "\\n")\n          except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:\n              raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")\n          PY\n      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n        if: success() || failure()\n        with:\n          name: ${{ matrix.platform }}-native-runtime-receipt\n          path: ./tmp/output/\n'
+
+----------------------------------------------------------------------
+Ran 87 tests in 0.620s
+
+FAILED (failures=1, errors=1)
+Release-candidate receipt: /home/runner/work/rcc/rcc-release-candidate-home/temp/118c6429d70fd826/tmpd45h7fza/release-candidate-v1.json
+Process 2760: exit status 1, command: /home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 [call_invoke.py releaseCandidate] [v18.19.5/2533]
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@  From rcc "v18.19.5" (controller: "user") point of view, "actual main robot run" was FAILURE, reason: "exit status 1". See details above.  @@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  |  "Build/Pre-run"  relative time allocation ratio:  1:0
+  |  "Setup/Run"  relative time allocation ratio:  205:306
+Error: exit status 1 (robot run exit)
+[rcc] exit status will be: 10!

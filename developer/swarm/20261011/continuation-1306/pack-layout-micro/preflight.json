@@ -1,0 +1,14 @@
+{
+  "mode": "read-only preflight; no pack created",
+  "offset_index_bytes": 525841,
+  "offset_index_sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+  "restore_state_absent": true,
+  "selected_count": 4649,
+  "selected_sha256_set_identity": "36ce0302399d2574ba899a346ee7c0009ec1e87069a40a3d8d37ef202a13e677",
+  "selected_total_bytes": 4484936,
+  "source_index_bytes": 1491800,
+  "source_index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "source_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+  "tmp_empty": true,
+  "verified_at_utc": "2026-10-11T12:28:12Z"
+}

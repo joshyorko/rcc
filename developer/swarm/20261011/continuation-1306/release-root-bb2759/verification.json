@@ -1,0 +1,28 @@
+{
+  "sourceSha": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+  "sourceTree": "75f1a13f81b932c4017973dcaa0642ba05758985",
+  "clean_before_after": true,
+  "command": [
+    "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts",
+    "-p",
+    "test_*.py",
+    "-v"
+  ],
+  "exitCode": 0,
+  "testCount": 131,
+  "started": "2026-10-11T12:57:43.029555+00:00",
+  "finished": "2026-10-11T12:57:43.889516+00:00",
+  "rawLogSha256": "0cafb9cd553877d66d51e265388ba8bf6c48d6f64b5422d40fffc2ee284e1de6",
+  "ignoredFixture": {
+    "sha256": "c384f5087f34a8ada73e63e2c2d491494b8c26733e95e9acb281d31975b620ec",
+    "not_executed": true,
+    "purpose": "existing mocked gate-sequence unit test hashes build/rcc",
+    "removed": true
+  },
+  "scope": "Python unit tests; not real CLI/full11/native acceptance"
+}

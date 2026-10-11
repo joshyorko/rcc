@@ -1,0 +1,18 @@
+{
+  "status": "INDEPENDENT_CURRENT_BYTES_AND_CONTROLS_VERIFIED",
+  "source_files": 4649,
+  "pack_bytes": 4484936,
+  "provider_original_bytes_metadata_unchanged": true,
+  "failed_original_archived": true,
+  "original_status": "FAILED_DISK_CAP; not retroactively accepted",
+  "controls": 10,
+  "medians_ms": {
+    "individual": 85.647464,
+    "pack": 10.153196
+  },
+  "allocated_before_root_proof": 5566464,
+  "free_bytes": 2778419200,
+  "runner_sha256": "bcc8ae6343abdfe7e7942fd1c3f2f855b56d5129e485d1c85c1c71dad2080e4f",
+  "result_sha256": "a08d67adc1e06b0d9f09897d57fbfd86bc7213a4e73091f1a1c6eb93b9ea4013",
+  "scope": "external Python warm-cache local layout component only; no end-to-end or production gain"
+}

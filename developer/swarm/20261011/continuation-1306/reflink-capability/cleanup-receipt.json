@@ -1,0 +1,44 @@
+{
+  "observed_at": "2026-10-11T12:53:33.320636+00:00",
+  "authorization": "root one-runtime admission explicitly authorized cleanup of four named owned scratch files after their receipts; only the two created files removed",
+  "scope": "cleanup only; NOT positive clone/COW functional unlink controls",
+  "verified_before_delete": [
+    {
+      "name": "source.bin",
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/scratch/source.bin",
+      "size": 488201,
+      "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+      "mode": 384,
+      "nlink": 1,
+      "dev": 27,
+      "ino": 444945,
+      "allocated_bytes": 491520
+    },
+    {
+      "name": "clone.bin",
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability/scratch/clone.bin",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": 384,
+      "nlink": 1,
+      "dev": 27,
+      "ino": 444947,
+      "allocated_bytes": 0
+    }
+  ],
+  "removed_names": [
+    "source.bin",
+    "clone.bin"
+  ],
+  "scratch_remaining": [],
+  "original_after_cleanup": {
+    "sha256": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "size": 488201,
+    "mode": 384,
+    "mtime_ns": 1791688986756382139,
+    "nlink": 1
+  },
+  "original_pre_post_equal": true,
+  "allocated_namespace_bytes": 57344,
+  "free_bytes": 2770542592
+}

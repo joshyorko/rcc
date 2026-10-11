@@ -1,0 +1,67 @@
+{
+  "pr": 235,
+  "run": 38138500683,
+  "job": 114467436423,
+  "artifact_id": 11701729841,
+  "api_digest": "sha256:f33de9a210cc4eae171025ccc892a6963513c6fdfa041d76f39adab142464022",
+  "zip_sha256": "f33de9a210cc4eae171025ccc892a6963513c6fdfa041d76f39adab142464022",
+  "zip_size": 185473,
+  "receipt_sha256": "4a0256c8a94df1d5beaff23fc69ac38938511cbb8cfcde9294015b2ed6a1addd",
+  "jat_receipt_sha256": "ba057116b379434d4c7111e5a756608d46f358744762476fbe21cb37782bc4dd",
+  "robot_xml_sha256": "e6b16adce7a3327270c975066263a88d42776d2e644dda8c8cb7be1efd175e2f",
+  "source_commit": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "platform": "linux_amd64",
+  "version": "v18.19.6",
+  "binary_sha256": "f4c4000b174e397c18260c967f9562e436a7bc88cc65bbdb9f5bfbe952310771",
+  "target": "linux/amd64",
+  "artifact_digest": "sha256:84047788c127403176e0da75b8fe16b4ea27ede2e388d104c5529854fc9ba4e1",
+  "objects": 5045,
+  "cold": {
+    "exitCode": 0,
+    "cacheHit": "provider",
+    "leaseReleased": true,
+    "nativeImport": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "warm": {
+    "exitCode": 0,
+    "cacheHit": "local-materialization",
+    "leaseReleased": true,
+    "providerDeadWarmReuse": true
+  },
+  "mismatch": {
+    "rejected": true,
+    "providerObjectGets": 0
+  },
+  "robot_stats": {
+    "total": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ],
+    "tag": [],
+    "suite": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "jat_summary": {
+    "source_commit": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+    "platform": "linux_amd64",
+    "binary_version": "v18.19.6",
+    "binary_sha256": "f4c4000b174e397c18260c967f9562e436a7bc88cc65bbdb9f5bfbe952310771",
+    "artifact_digest": "sha256:0d853bfdd60ea4311497359b7bdc1217fa95690f251b061301cc4b6a31535c9e",
+    "objects": 10121,
+    "cold_exit": 0,
+    "warm_exit": 0,
+    "provider_dead_warm": true,
+    "mismatch_rejected": true,
+    "mismatch_gets": 0
+  },
+  "root_rehash_pending": true
+}

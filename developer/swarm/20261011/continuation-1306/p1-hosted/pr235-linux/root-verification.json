@@ -1,0 +1,13 @@
+{
+  "status": "RAW_ZIP_RECEIPT_XML_JAT_REHASHED",
+  "source": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "platform": "linux_amd64",
+  "binary_sha256_claim": "f4c4000b174e397c18260c967f9562e436a7bc88cc65bbdb9f5bfbe952310771",
+  "actual_binary_bytes": "blocked: connector32MiB limit;gh artifact403",
+  "zip_sha256": "f33de9a210cc4eae171025ccc892a6963513c6fdfa041d76f39adab142464022",
+  "Robot": {
+    "pass": "1",
+    "fail": "0",
+    "skip": "0"
+  }
+}

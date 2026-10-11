@@ -1,0 +1,412 @@
+{
+  "codecs": {
+    "gzip_external": {
+      "context": "new independent codec context per object",
+      "implementation": "Python zlib.compress",
+      "level": 1,
+      "version": "1.3.2",
+      "wbits": 31
+    },
+    "identity": "gzip and zstd outputs have different stored digests. Only exact original logical SHA256+size retained; no existing Artifact digest reused for changed stored bytes.",
+    "legacy_gzip_decode": "gzip.decompress of exact unchanged original stored objects; external CPython/zlib decoder, not RCC Go runtime",
+    "zstd_external": {
+      "context": "new independent codec context per object",
+      "implementation": "Python zstandard.ZstdCompressor",
+      "level": 3,
+      "python_version": "0.25.0",
+      "threads": 0,
+      "write_checksum": true,
+      "write_content_size": true,
+      "zstd_version": [
+        1,
+        5,
+        7
+      ]
+    }
+  },
+  "dependencies": "already installed codecs; no dependency installation/build/toolchain fetch",
+  "fixture": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "index_descriptor": {
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "size": 1491800
+    },
+    "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "manifest_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "represents": "24 stratified size quantiles among eligible objects only, not entire package/runtime working set; no fixture file-kind/native-path attribution",
+    "sample_total_logical_bytes": 3276691,
+    "sample_total_stored_bytes": 1478176,
+    "sampling_algorithm": "Within each stored-size bucket:eligible0<logicalSize<=1048576;sort(storedSize,legacyObjectId);select positions round(i*(N-1)/7),i0..7,Python ties-to-even;no RNG/no seed. List frozen before timing. Excludes20over1MiB and1empty.",
+    "selected": [
+      {
+        "eligible_sorted_position": 0,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "logicalSize": 1,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:852666897ac81b7686ee97f544463d4528f6f70a96d42961dee955a93cf95f9b",
+        "storedSize": 29
+      },
+      {
+        "eligible_sorted_position": 664,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "e593781c3c4e2f470056268ae5d935d1437b7db356428b3d66e542a71f19b04e",
+        "logicalSize": 429,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:e2e50c88046c6464af73e60d775c6f3068c3e002ecb11d68a59ba3104bc94407",
+        "storedSize": 206
+      },
+      {
+        "eligible_sorted_position": 1328,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "e8c2f19f7047bfc7539fd78839929004d8fe0efba1fbcbd9d712d285e43834ba",
+        "logicalSize": 689,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:ce59c820f71d5b14664bb8e203adb52126144d7c6146246c748510186d0a1131",
+        "storedSize": 392
+      },
+      {
+        "eligible_sorted_position": 1992,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "86bd26a06fe3057b36cf29dd7a338f2524aff8116ef08d005aa2114ea6122869",
+        "logicalSize": 947,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:1f09984e6264a5b8abe7c3cf0f2dad9a3ca3915e110f61abcd1040b7dd89ea5b",
+        "storedSize": 545
+      },
+      {
+        "eligible_sorted_position": 2655,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "5a36d500cd869fc4383a7ef05859f0ab4e70412d18fb2550298554fef5d331f3",
+        "logicalSize": 2503,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:d07246748e035a390a1a3d6c7392804be524581579aef798e559318a3ce9e00f",
+        "storedSize": 780
+      },
+      {
+        "eligible_sorted_position": 3319,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "98de6b7f8de991b2de9515d330f515e5dce70369dc051f64ca8ef49f19c3d524",
+        "logicalSize": 2016,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:b02dc27c3343830c1c81aa45cd81d347b4c1a0752aebac1f9bf1dd5057f6b930",
+        "storedSize": 1051
+      },
+      {
+        "eligible_sorted_position": 3983,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "4048fc164881d03b736c0a46b1d14c8165154fb490cd2fcfc2c9269e6c1dc906",
+        "logicalSize": 3628,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:09aaba8fae14c5495eb2f8a5e81621c0974922cbe88f5ae93c805b75bb1a854b",
+        "storedSize": 1926
+      },
+      {
+        "eligible_sorted_position": 4647,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "50b39a21481850306c1cbec411511aadc33e52e6ca52082837c8526c3a27b051",
+        "logicalSize": 14672,
+        "sample_bucket": "under4KiB",
+        "storedDigest": "sha256:2819b322efa46e2939f091899e77fa4b4c81ad6a94f9fa04d83cabbd4c331675",
+        "storedSize": 4094
+      },
+      {
+        "eligible_sorted_position": 0,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "cc3683038fb489d2526fc28e25b9250c84bf0daf78ae37bb37dce7dca0c7d981",
+        "logicalSize": 11309,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:a1bb4dd2eafde082068b3a3c649f3e45845930bbe77a8cb629e40a046c6da321",
+        "storedSize": 4096
+      },
+      {
+        "eligible_sorted_position": 115,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7004f1ab2cfa5994e453f426507170ec37c1c4a5b9837ba319e5eaebf1a29c34",
+        "logicalSize": 16159,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:e06c0f0873eade817203286293a82a44dca4be6d75413c9b093ec3edd75d0f5a",
+        "storedSize": 4935
+      },
+      {
+        "eligible_sorted_position": 231,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "91170b060749d0b3c8f2ab31499104028bedf971e5575155d43392d5c8dae5d6",
+        "logicalSize": 20863,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:c0f58eb9c9fde36dc105334c1fb3be607d8960d7dbe5901ac1e63dcaef4a96cd",
+        "storedSize": 6195
+      },
+      {
+        "eligible_sorted_position": 346,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "53a676e6c704d905885b5ba81e86b34cf718e074a748f079dbb0320c3ca3ea1d",
+        "logicalSize": 23636,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:1952345e6a136490952faa991712a5e8bc3d3f063650e88c8553628cb53662ab",
+        "storedSize": 7609
+      },
+      {
+        "eligible_sorted_position": 461,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "7cc78ea166261b3dedf951cdd721051460851e6fcd96c12b8e3194cf25677f21",
+        "logicalSize": 18813,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:87fc7a701cf14f8d23ef198083040f965110095240fd38730dc3754821b682af",
+        "storedSize": 9763
+      },
+      {
+        "eligible_sorted_position": 576,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "668b37ab12835bdf8643a695a9f050551339b280742231f163fc575a925a1532",
+        "logicalSize": 42786,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:ee69cc2158f842a2eb99077fad61d0a5ef8cc83df560d279693d85ce8ac7029b",
+        "storedSize": 13495
+      },
+      {
+        "eligible_sorted_position": 692,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9587a95edc194a19513e8a8fa9a942cd9fe6217489697ee998a7ae544fb9d603",
+        "logicalSize": 77517,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:429dddeb3f1cc88c564278d2f5ee319c737aa868a3d79eb8509d75cae4c2d459",
+        "storedSize": 23984
+      },
+      {
+        "eligible_sorted_position": 807,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "69369d32340bb49fea5ff15c33f24caff748763605c56f7d92eaa0cf8ee53faa",
+        "logicalSize": 135224,
+        "sample_bucket": "4KiBto64KiB",
+        "storedDigest": "sha256:baf3d84f7d2431f66bce4239a9eecaef03779eec4d83b0852e994da417013683",
+        "storedSize": 63426
+      },
+      {
+        "eligible_sorted_position": 0,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "3c6fd78e248a60e45081bcc77031204a7cb64a88ff2e27fc786ef12ae7e91fca",
+        "logicalSize": 117168,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:85e7d59de5f6a67fbc0e4a1c778423f9336611e3a944be84a4d2b7aeeb2caa32",
+        "storedSize": 66033
+      },
+      {
+        "eligible_sorted_position": 8,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "2e282920bd953f4d888504ac9b4d545ebd77e1b95e80eab13b6db8e0222f7d09",
+        "logicalSize": 210392,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:5ef48083c09eba15a30b57e285734b9726e74a49ca171fae348555b6a4f594fc",
+        "storedSize": 85427
+      },
+      {
+        "eligible_sorted_position": 17,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "8b2f8454007de90ade4df9f87ee5275e446278273a5bd1fcbc0e29ac82bd6c42",
+        "logicalSize": 206672,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:f88dba68da4bb527fd3ccdf7dc878d48e6604574c3d81b5efd784e58f8942bd4",
+        "storedSize": 92332
+      },
+      {
+        "eligible_sorted_position": 25,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9b86e78264ca7c2e3ccb86047ff0b89017bd1d5e89531efcc89fabca4f6d8b2c",
+        "logicalSize": 220168,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:0210bc471b75ea9c790e9956b2269cb8eedc46293431676923c652e4302300e1",
+        "storedSize": 102931
+      },
+      {
+        "eligible_sorted_position": 34,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "f5670e1fe64e7ee9a32055db2634e7f6b1dea8605f74db5644a56158a69e22dd",
+        "logicalSize": 190352,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:a298ade1e0ebed1dc0b3e4ef155f4e1cbc293059246c877e856328708c6b8a4d",
+        "storedSize": 130532
+      },
+      {
+        "eligible_sorted_position": 42,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "b217cf3bf77b1b15f4577857c6b3bc2ec40e186a9b3abda555f16a7cd7f37a66",
+        "logicalSize": 273698,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:385f4456e394ee3fd2efa4c45514d3476938ea6cd6a0cc7f445db43fd80f3144",
+        "storedSize": 143019
+      },
+      {
+        "eligible_sorted_position": 51,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "cd20a2877bc82b94e36c1093b727dd87cfa3c1d581aac6e240925535cbd90166",
+        "logicalSize": 695737,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:621f2810571dc958d320fd8f24c19e95920b4850b613e9ad33bb9ff598412180",
+        "storedSize": 227175
+      },
+      {
+        "eligible_sorted_position": 59,
+        "encoding": "gzip",
+        "legacyLogicalDigestAlgorithm": "sha256",
+        "legacyObjectId": "9fa4807097fa47da1815765f0a43177c45e7ec7cc94e44cfa95a4c3a1a341ee6",
+        "logicalSize": 991312,
+        "sample_bucket": "atLeast64KiB",
+        "storedDigest": "sha256:c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+        "storedSize": 488201
+      }
+    ],
+    "strata": [
+      {
+        "all_count": 4649,
+        "bucket": "under4KiB",
+        "eligible_count": 4648,
+        "excluded_count": 1,
+        "sample_logical_bytes": 24885,
+        "sample_stored_bytes": 9023,
+        "selected_count": 8
+      },
+      {
+        "all_count": 808,
+        "bucket": "4KiBto64KiB",
+        "eligible_count": 808,
+        "excluded_count": 0,
+        "sample_logical_bytes": 346307,
+        "sample_stored_bytes": 133503,
+        "selected_count": 8
+      },
+      {
+        "all_count": 80,
+        "bucket": "atLeast64KiB",
+        "eligible_count": 60,
+        "excluded_count": 20,
+        "sample_logical_bytes": 2905499,
+        "sample_stored_bytes": 1335650,
+        "selected_count": 8
+      }
+    ]
+  },
+  "frozen_at": "2026-10-11T12:18:09.658825+00:00",
+  "limits": {
+    "concurrency": "one worker process, single-thread percodec, one lightweight supervisor; root said other quiet lanes edits only",
+    "disk_guard_interval_seconds": 0.2,
+    "minimum_filesystem_free_bytes": 2684354560,
+    "new_owned_allocated_bytes_max": 10485760,
+    "process_sampling_interval_seconds": 0.1,
+    "stage_timeout_seconds": 30,
+    "total_timeout_seconds": 120,
+    "worker_RSS_abort_bytes": 536870912
+  },
+  "logical_bytes_per_timed_sample": 65533820,
+  "passes_per_sample": 20,
+  "preserved_provider_component": {
+    "directory": "../provider-baseline-luna",
+    "flat_SHA256_percent": 5.71,
+    "flat_syscalls_percent": 30,
+    "profile_duration_seconds": 1.1,
+    "profile_sha256": "3e741e77e19750def5a05cd0acaf64b2f8d6c49771bd5edec24b7edd44f15e28",
+    "sampled_GoCPU_seconds": 0.7,
+    "scope": "short separate profile includes server request handling; no gzip/zstd codec work in GET; not dominant E2E bottleneck evidence"
+  },
+  "repetitions": 5,
+  "root_admission": "parent explicitly admitted exact proposed limits after independent provider component acceptance",
+  "schedule": [
+    [
+      "encode-gzip",
+      "encode-zstd",
+      "decode-legacy-gzip",
+      "decode-external-gzip",
+      "decode-zstd"
+    ],
+    [
+      "encode-zstd",
+      "encode-gzip",
+      "decode-zstd",
+      "decode-external-gzip",
+      "decode-legacy-gzip"
+    ],
+    [
+      "encode-gzip",
+      "encode-zstd",
+      "decode-legacy-gzip",
+      "decode-external-gzip",
+      "decode-zstd"
+    ],
+    [
+      "encode-zstd",
+      "encode-gzip",
+      "decode-zstd",
+      "decode-external-gzip",
+      "decode-legacy-gzip"
+    ],
+    [
+      "encode-gzip",
+      "encode-zstd",
+      "decode-legacy-gzip",
+      "decode-external-gzip",
+      "decode-zstd"
+    ]
+  ],
+  "scope": "independent per-object external gzip/zstd encode/decode CPU+size micro, no RCC production/Artifact write or materialization",
+  "source_reference": {
+    "actual_encoding": "Go gzip.NewWriterLevel(gzip.BestSpeed),lines239\u2013247. Python zliblevel1 is external codec control, not exact Go encoder reproduction.",
+    "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "path": "htfs/functions.go",
+    "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+    "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/htfs/functions.go#L223"
+  },
+  "status": "ROOT_ADMITTED_BOUNDED_MICRO_NOT_YET_RUN",
+  "storage": "logical and encoded/decoded payloads RAM only; files limited to plan/script/rawmetrics/debug/results/report/profile textual analysis; no provider/CAS/manifest/output format writes",
+  "timer": "perf_counter_ns and process_time_ns immediately around20passesx24objects; includes per-object context construction/call/allocation/retained output append, excludes original reads, initial decode/preparation, hash/roundtrip verification, reporting and RSS/disk sampling by separate supervisor",
+  "verification": "Before timing:originalstored SHA/size,originalgziplogical SHA/size andindex exactdescriptor. After EACH batch:every one of480 outputs verified by logical digest/size,encoded outputs roundtrip and decodeoutputs directly; no timing sample admitted if one output fails. No autoretry. Encoded stored byte SHA/size deterministic across480outputs, recorded perobject codec.",
+  "versions": {
+    "architecture": "x86_64",
+    "codec_file_hashes": [
+      {
+        "bytes": 30894944,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+      },
+      {
+        "bytes": 7235,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/__init__.py",
+        "sha256": "5dd909e0b60a946a0b08deaf57545d17dc044f5df4040beec55f7ef6c6fecd11"
+      },
+      {
+        "bytes": 11552544,
+        "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/zstandard/backend_c.cpython-312-x86_64-linux-gnu.so",
+        "sha256": "7eb41c8b36cd99ed6c67e39f8574e42472687a14c6038c512bb3a90b7082616d"
+      }
+    ],
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "python_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "visible_cpu_count": 5
+  }
+}

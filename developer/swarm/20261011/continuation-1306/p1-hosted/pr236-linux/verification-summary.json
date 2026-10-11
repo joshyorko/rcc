@@ -1,0 +1,70 @@
+{
+  "pr": 236,
+  "run": 38138538107,
+  "job": 114467557320,
+  "artifact_id": 11701553513,
+  "api_digest": "sha256:49cd674a16b753f934bac04675f0d315870095d96cb5b5621aaa705b18f08cf3",
+  "zip_sha256": "49cd674a16b753f934bac04675f0d315870095d96cb5b5621aaa705b18f08cf3",
+  "zip_size": 185388,
+  "native_receipt_sha256": "01168b13c27c1b1c8e2f60ac426e480f05bda96545486f684c04c25740d6200a",
+  "jat_receipt_sha256": "b47c24d35f5507135f05db8b6d709b7c75891a5c23f373e4d3ce6aa9d6a2c4bf",
+  "robot_xml_sha256": "84bd3c3c584af2c1cac4fbbdb0718c3782119c8b2c5b925be90addc57d186c87",
+  "source_commit": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+  "platform": "linux_amd64",
+  "binary_version": "v18.19.6",
+  "binary_sha256": "bc919205660e653606de8d8751b9ef7fac4d514b8318463bb64f80bf2acc47bd",
+  "runtime_target": "linux/amd64",
+  "native_artifact_digest": "sha256:dd44df78c0b1716ddb16a90cbd68954320d6f51119303edfab5796be8e027808",
+  "exact_cli_objects": 5045,
+  "cold": {
+    "exitCode": 0,
+    "cacheHit": "provider",
+    "leaseReleased": true,
+    "nativeImport": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "warm": {
+    "exitCode": 0,
+    "cacheHit": "local-materialization",
+    "leaseReleased": true,
+    "providerDeadWarmReuse": true
+  },
+  "mismatch": {
+    "rejected": true,
+    "providerObjectGets": 0
+  },
+  "robot_stats": {
+    "total": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ],
+    "tag": [],
+    "suite": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "jat_top_keys": [
+    "schemaVersion",
+    "commitSha",
+    "platform",
+    "producerHome",
+    "consumerHome",
+    "artifactDigest",
+    "binary",
+    "exactBinaryCLI",
+    "sourceAPI"
+  ],
+  "jat_summary": {
+    "commitSha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "platform": "linux_amd64",
+    "artifactDigest": "sha256:e880cfd83ca5b2e22aaefe0c729e889dc8fae2cdf728d0f0e17f2c13eb5973af"
+  },
+  "root_rehash_pending": true
+}

@@ -1,0 +1,98 @@
+{
+  "admission_dependencies": [
+    "root explicit admission and quiet CPU/disk window after worker226 pack controls",
+    "dynamic free floor and namespace/RSS limits",
+    "Actions owner checkpoint/qualified candidate repair still separate; current a0d strict version remains v18.19.3, no consumer acceptance from COW probe"
+  ],
+  "fixture": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "frozen_plan": "/workspace/work/rcc-swarm/evidence/continuation-20261011/encoding-micro/plan.json",
+    "frozen_plan_sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+    "index_descriptor": {
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "size": 1491800
+    },
+    "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "manifest_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "original_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/c5/01/c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+    "selected": {
+      "eligible_sorted_position": 59,
+      "encoding": "gzip",
+      "legacyLogicalDigestAlgorithm": "sha256",
+      "legacyObjectId": "9fa4807097fa47da1815765f0a43177c45e7ec7cc94e44cfa95a4c3a1a341ee6",
+      "logicalSize": 991312,
+      "sample_bucket": "atLeast64KiB",
+      "storedDigest": "sha256:c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+      "storedSize": 488201
+    },
+    "selection": "largest stored object among the already frozen/accepted 24 eligible objects (488201 stored bytes, 991312 logical bytes); deterministic no new workload sampling"
+  },
+  "guarantees": "No sourceCAS/otherhome mutation or reflink, no hardlinks/symlinks/mount/FUSE, no production/test source or adapter pin/default/format/storage changes, no provider requests/writes. Successful ioctl+byte isolation qualifies only this exact filesystem/path/kernel/tool; st_blocks cannot prove unique shared extent accounting. No timing comparison or materializer claim.",
+  "limits": {
+    "automatic_retries": 0,
+    "cleanup_scope": "only four explicitly named owned scratch files; preserve receipts and errors",
+    "estimated_regular_payload_allocated_bytes": 1966080,
+    "global_free_floor_bytes": 2684354560,
+    "namespace_allocated_bytes_max": 4194304,
+    "new_dependencies": 0,
+    "observer_interval_seconds": 0.1,
+    "payload_bytes_per_file_max": 1048576,
+    "payload_files_max": 4,
+    "process_tree_rss_bytes_max": 536870912,
+    "whole_experiment_seconds_max": 30
+  },
+  "namespace": "/workspace/work/rcc-swarm/evidence/continuation-20261011/reflink-capability",
+  "operations": [
+    {
+      "action": "Recheck frozen manifest/index/selected stored and gzip logical SHA256+size, original mode/mtime and free floor. Source/index/manifest reads only.",
+      "step": 1
+    },
+    {
+      "action": "Create own scratch/source.bin using explicit ordinary os.read/os.write <=64KiB chunks from original CAS, exclusive nonsymlink file, no link/clone from original, fsync, SHA256 identity.",
+      "step": 2
+    },
+    {
+      "action": "Create own scratch/clone.bin then fcntl.ioctl(FICLONE=0x40049409, own source fd). Record numeric return/errno. EOPNOTSUPP/EXDEV/ENOTTY/EINVAL are scoped clone-unavailable results on this exact path; any other error is probe failure. No fallback or ordinary-copy comparison if unavailable.",
+      "step": 3
+    },
+    {
+      "action": "Only after positive ioctl: GNU cp --reflink=never --sparse=never -- own source.bin ordinary.bin; GNU cp --reflink=always --sparse=never -- own source.bin cpclone.bin. Capture argv/numeric exits/stderr. Require four different (dev,inode), nlink=1, exact original bytes.",
+      "step": 4
+    },
+    {
+      "action": "Independently XOR one byte in clone offset0, own source offset4096, ordinary offset8192, cpclone offset12288; fsync and verify complete expected SHA256+size of all surviving own files after each mutation. Rehash original CAS. Mutated gzip payloads are opaque synthetic bytes, never used as RCC objects.",
+      "step": 5
+    },
+    {
+      "action": "Chmod own source0640/clone0400/ordinary0600/cpclone0440; verify independent inode modes and unchanged contents. Effective-root observation does not prove unprivileged access denial.",
+      "step": 6
+    },
+    {
+      "action": "Unlink clone and verify own source, ordinary and cpclone survive unchanged; then unlink own source and verify cpclone and ordinary survive unchanged; unlink remaining own payloads. Only owned scratch names deleted.",
+      "step": 7
+    },
+    {
+      "action": "Record original pre/post content,size,mode,mtime equality (atime excluded), exact limits, worker/supervisor numeric exits and resource peaks. Keep evidence metadata; no performance or unique-physical-space claim.",
+      "step": 8
+    }
+  ],
+  "owner": "/root/consumer_contract_125; root admits runtime; no branch changes",
+  "schema": "rcc-cow-capability-plan-v1",
+  "source": {
+    "binary": "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+    "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "binary_version": "v18.19.6; RCC not invoked by this experiment",
+    "checkout": "/workspace/work/rcc-swarm/final-main-727",
+    "dropfile_lines": [
+      259,
+      302
+    ],
+    "dropfile_link": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/htfs/functions.go#L259-L302",
+    "htfs_functions_sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd",
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+  },
+  "status": "PROPOSED; await root admission; no runtime payload writes yet"
+}

@@ -1,0 +1,41 @@
+{
+  "control_schedule": [
+    "individual",
+    "pack",
+    "pack",
+    "individual",
+    "individual",
+    "pack",
+    "pack",
+    "individual",
+    "individual",
+    "pack"
+  ],
+  "free_floor_bytes": 2684354560,
+  "memory_limit_bytes": 536870912,
+  "notes": [
+    "individual and pack modes both perform the same SHA256 and size checks inside each timed pass",
+    "pack mode opens one pack, seeks each selected entry and reads it with a buffer no larger than 65536 bytes",
+    "the pack and all negative-test copies remain in this owned namespace; original provider is immutable",
+    "this is a micro-layout component experiment, not a production format or remote HTTP engine"
+  ],
+  "offset_index_bytes": 525841,
+  "offset_index_path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+  "offset_index_sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+  "owned_allocated_budget_bytes": 10485760,
+  "pack_bytes": 4484936,
+  "pack_format": "concatenated exact original stored bytes; no padding/header/compression/transformation",
+  "per_phase_timeout_seconds": 30,
+  "preflight_original_bytes_verified": 4484936,
+  "preflight_original_hashes_verified": 4649,
+  "prepared_at_utc": "2026-10-11T12:28:12Z",
+  "repetitions_per_method": 5,
+  "selection_count": 4649,
+  "sort": "storedDigest ascending lexical",
+  "source_artifact": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+  "source_index_bytes": 1491800,
+  "source_index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "status": "FROZEN_AWAITING_EXECUTION_ALREADY_ADMITTED_BY_ROOT",
+  "stored_size_limit_exclusive": 4096,
+  "total_timeout_seconds": 120
+}

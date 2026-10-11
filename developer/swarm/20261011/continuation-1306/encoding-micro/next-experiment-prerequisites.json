@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-10-11T12:25:08.053232+00:00",
+  "tool_paths": {
+    "strace": "/usr/bin/strace",
+    "cp": "/usr/bin/cp",
+    "fusermount3": "/usr/bin/fusermount3",
+    "mksquashfs": null,
+    "squashfuse": null,
+    "mount": "/usr/bin/mount"
+  },
+  "scope": "path lookup only; no clone/mount/FUSE/image operation or installation executed; tool presence is not permission or runtime capability"
+}

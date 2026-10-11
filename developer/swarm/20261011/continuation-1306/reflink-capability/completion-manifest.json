@@ -1,0 +1,82 @@
+{
+  "verification": "Static/raw receipt consistency only; no timed runtime rerun. Executed harness/plan unchanged; source checkout clean; JSON/AST parsed. Root cannot independently rehash removed own payload. RSS sampler was defective and not validated.",
+  "files": [
+    {
+      "path": "cleanup-receipt.json",
+      "size": 1452,
+      "sha256": "9f49d366a5f95d9b6402fc0902832ba5bdc20a7ca31b03863ed2f5df389f3edf"
+    },
+    {
+      "path": "plan.json",
+      "size": 6404,
+      "sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca"
+    },
+    {
+      "path": "preflight.json",
+      "size": 3288,
+      "sha256": "b821aad917ca0120c8764b8635def682d9dd1c9ef7ad37d0287cf4246e8bd229"
+    },
+    {
+      "path": "reflink_capability.py",
+      "size": 14621,
+      "sha256": "525fe1f22c45e8e66c5db78999fa4767be908ca2dda2677c5eefa69daa7a3038"
+    },
+    {
+      "path": "report.md",
+      "size": 11166,
+      "sha256": "7ee441bcd2337f5d496ebe80b55d999670855258836ac25f4b510606b8591a46"
+    },
+    {
+      "path": "result.json",
+      "size": 1860,
+      "sha256": "5fc89d3b19ac8efe71e3b8ed9f373540b3ac8a743d5d4a5781e917123a5f95ce"
+    },
+    {
+      "path": "root-verification.json",
+      "size": 1104,
+      "sha256": "32ae2dca030c6280f806309a32701966f0084714659b9292a8aca23efb95d1a5"
+    },
+    {
+      "path": "rss-observer-diagnostic.json",
+      "size": 879,
+      "sha256": "003cd947e559d156f25cb6bb0eb32f3e05d403d6b07c25235ef14f942a8e3008"
+    },
+    {
+      "path": "run.log",
+      "size": 62,
+      "sha256": "3c0870ae58caeecef6e06f3e0b3df308c65e2e07fdd4e9a80c3d5fdbb5dfd021"
+    },
+    {
+      "path": "run.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "source-bound.json",
+      "size": 10583,
+      "sha256": "319fae806af161b33f72acfd508b9868a4ae9060f57103863042b5b55cc51b15"
+    },
+    {
+      "path": "static-review.json",
+      "size": 526,
+      "sha256": "92fa1cd12e98a837cac8d6d67063409153f9a845d89c6951bd81b3439f9ee368"
+    },
+    {
+      "path": "supervisor-result.json",
+      "size": 761,
+      "sha256": "48eecccc8a68e7e801a1d97ccd95754b947524d72370ae7ef7fd9b37ada4553c"
+    },
+    {
+      "path": "worker.stderr",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "worker.stdout",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "namespace_allocated_bytes_before_manifest": 90112,
+  "free_bytes_before_manifest": 2743476224
+}

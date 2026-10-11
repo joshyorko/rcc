@@ -1,0 +1,53 @@
+{
+  "snapshot_utc": "2026-10-11T12:53:45Z",
+  "repository": "joshyorko/rcc",
+  "source": "GitHub public REST + GitHub connector; raw failure archive downloaded through connector and stored locally",
+  "main": {
+    "sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+  },
+  "public_counts": {
+    "open_issues": 10,
+    "open_pull_requests": 5
+  },
+  "open_prs": [
+    {"number": 224, "state": "open", "draft": true, "head": "32d51bd00852b003fd0d82050f5fd6d281f362d5", "base": "47a60ea78c5d97c892177f5649a1c950399faa6a", "disposition": "old-base draft; NO-GO"},
+    {"number": 225, "state": "open", "draft": true, "head": "b24b29fffab4581456a313a240257d681ad744fd", "base": "47a60ea78c5d97c892177f5649a1c950399faa6a", "disposition": "old-base draft; NO-GO"},
+    {"number": 235, "state": "open", "draft": true, "head": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3", "tree": "ac1044edc1ede2a6fea6354eabf686af963bd4fa", "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071", "mergeable": true, "reviews": 0, "review_threads": 0, "checks": {"PR metrics": {"run_id": 38138500432, "conclusion": "success"}, "Lint": {"run_id": 38138500527, "conclusion": "success"}, "CodeQL": {"run_id": 38138500678, "conclusion": "success"}, "Coverage gate": {"run_id": 38138500520, "conclusion": "success"}, "Quality report": {"run_id": 38138500453, "conclusion": "success"}, "Rcc": {"run_id": 38138500683, "conclusion": "success"}}, "native_receipt_zips": "All four platform receipt ZIPs and JAT evidence independently root-verified; actual native-runtime-binaries ZIP remains unavailable and unverified."},
+    {"number": 236, "state": "open", "draft": true, "head": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3", "tree": "e7ced47ed46cdaa3c1d9b3128f0e8a078c32a960", "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071", "mergeable": true, "reviews": 0, "review_threads": 0, "checks": {"PR metrics": {"run_id": 38138538157, "conclusion": "success"}, "Lint": {"run_id": 38138538041, "conclusion": "success"}, "CodeQL": {"run_id": 38138538100, "conclusion": "success"}, "Quality report": {"run_id": 38138538099, "conclusion": "success"}, "Coverage gate": {"run_id": 38138538087, "conclusion": "success"}, "Rcc": {"run_id": 38138538107, "conclusion": "success"}}, "native_receipt_zips": "All four platform receipt ZIPs and JAT evidence independently root-verified; actual native-runtime-binaries ZIP remains unavailable and unverified."},
+    {"number": 237, "state": "open", "draft": true, "head": "83ddea8a8e8304692b53ffe38d9c6bd03ee1d370", "tree": "43366f51cf0871759edee7a81c80965d9e804531", "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071", "mergeable": true, "reviews": 0, "review_threads": 0, "checks": {"PR metrics": {"run_id": 38140659782, "conclusion": "success"}, "Lint": {"run_id": 38140659764, "conclusion": "success"}, "CodeQL": {"run_id": 38140659797, "conclusion": "success"}, "Coverage gate": {"run_id": 38140659807, "conclusion": "success"}, "Quality report": {"run_id": 38140659783, "conclusion": "success"}, "Rcc label run": {"run_id": 38140726296, "status": "in_progress", "build_job_id": 114473877594, "build_conclusion": "success", "release_candidate_job_id": 114473877678, "release_candidate_conclusion": "failure", "native_jobs": {"macos-arm64": {"job_id": 114474100491, "status": "in_progress"}, "windows-amd64": {"job_id": 114474100520, "status": "in_progress"}, "linux-amd64": {"job_id": 114474100531, "status": "in_progress"}, "macos-amd64": {"job_id": 114474100620, "status": "in_progress"}}}}, "prior_Rcc_run": {"run_id": 38140659820, "status": "in_progress", "release_candidate_job": "skipped", "note": "separate earlier PR-triggered run; do not conflate with label-triggered full-gate attempt"}}
+  ],
+  "pr237_failure": {
+    "job": "Release Candidate Verification",
+    "tests": [
+      {
+        "name": "test_release_validates_homebrew_handoff_before_publication",
+        "result": "ERROR",
+        "cause": "scripts/test_environment_artifact_tasks.py:756 expected the workflow text '- name: Validate Homebrew Update Token'; substring absent",
+        "raw_log_lines": [245, 250]
+      },
+      {
+        "name": "test_native_matrix_uses_exact_binary_and_test_produced_receipt",
+        "result": "FAIL",
+        "cause": "scripts/test_environment_artifact_tasks.py:324 expected the old RCC_SOURCE_SHA expression; actual workflow includes inputs.source_sha || github.event.pull_request.head.sha || github.sha",
+        "raw_log_lines": [253, 258]
+      }
+    ],
+    "result": "87 tests run; 1 failure, 1 error; gate numeric exit 10; evidence tee exit 0. Do not claim full 11-gate release acceptance.",
+    "evidence_dir": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/release-ci-failure",
+    "evidence": {
+      "zip": {"artifact_id": 11702607464, "name": "release-candidate-evidence", "size_bytes": 13208397, "api_digest": "sha256:4f8c3f700751e0f31452159ca1aad6989c95639d1e23f7a056e105aa9ade5270", "local_sha256": "4f8c3f700751e0f31452159ca1aad6989c95639d1e23f7a056e105aa9ade5270"},
+      "release_candidate_exit_json_sha256": "2c5465431afe7ca276f7bd2d8aee9db96b628c0e5d409fb5926cfbe131761785",
+      "release_candidate_log_sha256": "dc7b027e3407cbe59a1664d221f15b87b75443fae8fb114b3d54795dd0882978"
+    }
+  },
+  "binary_bundle_access": {
+    "status": "blocked; not a qualification pass",
+    "connector_limit": "github_download_workflow_artifact -> reusable file reference -> download_file rejected the native-runtime-binaries ZIP because it exceeds the executor transport cap of 32 MiB",
+    "normal_gh_api_attempt": "GET /repos/joshyorko/rcc/actions/artifacts/<id>/zip returned HTTP 403 and zero bytes; stopped without trying other credentials or a signed URL",
+    "pr235_and_pr236": "current-head native binary ZIPs are each about 49 MB; do not reuse or relabel binaries from main 727 or any older source head",
+    "pr237_current_head_artifact": {"artifact_id": 11702572379, "size_bytes": 49098249, "api_digest": "sha256:964f7a6fd29e2cd68e65600a0e8f8ba648de4e6945f77cde17b9c0887b91c465", "status": "not downloaded; actual per-platform binary bytes/compiler VCS binding unverified"}
+  },
+  "merge_readiness": "No merge-ready claim. #235/#236 have green hosted checks and independently verified small receipt evidence, but exact-head actual native binary bundles remain unverified. #237 has a failing exact-head full release gate and four native jobs still running.",
+  "runtime_scope_limit": "These workflows exercise the defined per-platform native A-to-B/Robot acceptance. They do not establish arbitrary external host deployment, listener reachability, generic startup readiness, or production network topology."
+}

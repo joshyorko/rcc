@@ -1,0 +1,34 @@
+{
+  "artifactDigest": "sha256:73000b4775c11b960bf1ae0a186d2dbe0091f3e6b85c3e6c2f1eae9568e6209c",
+  "binary": "/home/runner/work/rcc/rcc/build/rcc",
+  "binarySha256": "bc919205660e653606de8d8751b9ef7fac4d514b8318463bb64f80bf2acc47bd",
+  "binaryVersion": "v18.19.6",
+  "cold": {
+    "artifactDigest": "sha256:73000b4775c11b960bf1ae0a186d2dbe0091f3e6b85c3e6c2f1eae9568e6209c",
+    "cacheHit": "provider",
+    "materializationId": "62fb83f_5a1fac3_3d238619",
+    "path": "/home/runner/work/rcc/rcc/tmp/environment-artifacts-emcqk4i6/home-b/holotree/62fb83f_5a1fac3_3d238619"
+  },
+  "execute": {
+    "artifactDigest": "sha256:73000b4775c11b960bf1ae0a186d2dbe0091f3e6b85c3e6c2f1eae9568e6209c",
+    "cacheHit": "local-materialization",
+    "exitCode": 0,
+    "leaseId": "b5a72a8bb6496306f0bd32dac536e09b",
+    "leaseReleased": true,
+    "materializationId": "62fb83f_5a1fac3_3d238619",
+    "path": "/home/runner/work/rcc/rcc/tmp/environment-artifacts-emcqk4i6/home-b/holotree/62fb83f_5a1fac3_3d238619"
+  },
+  "native": {
+    "extension": "/home/runner/work/rcc/rcc/tmp/environment-artifacts-emcqk4i6/home-b/holotree/62fb83f_5a1fac3_3d238619/lib/python3.11/lib-dynload/_sqlite3.cpython-311-x86_64-linux-gnu.so",
+    "import": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "source": "robot_tests/environment_artifacts.robot",
+  "warm": {
+    "artifactDigest": "sha256:73000b4775c11b960bf1ae0a186d2dbe0091f3e6b85c3e6c2f1eae9568e6209c",
+    "cacheHit": "local-materialization",
+    "materializationId": "62fb83f_5a1fac3_3d238619",
+    "path": "/home/runner/work/rcc/rcc/tmp/environment-artifacts-emcqk4i6/home-b/holotree/62fb83f_5a1fac3_3d238619",
+    "providerDeadWarmReuse": true
+  }
+}

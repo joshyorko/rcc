@@ -1,0 +1,35 @@
+{
+  "scope": "read-only observation diagnostic after completed capability probe; no rerun/payload writes",
+  "pid": 8437,
+  "checks": [
+    {
+      "path": "/proc/8437/status",
+      "read": "success",
+      "selected_memory_identity_fields": [
+        "Name:\tpython",
+        "Tgid:\t8437",
+        "Pid:\t8437",
+        "VmSize:\t   36108 kB",
+        "VmRSS:\t    9480 kB"
+      ]
+    },
+    {
+      "path": "/proc/8437/task/8437/children",
+      "read": "failure",
+      "errno": 2,
+      "error": "[Errno 2] No such file or directory: '/proc/8437/task/8437/children'"
+    },
+    {
+      "path": "/proc/self/status",
+      "read": "success",
+      "selected_memory_identity_fields": [
+        "Name:\tpython",
+        "Tgid:\t8437",
+        "Pid:\t8437",
+        "VmSize:\t   36108 kB",
+        "VmRSS:\t    9492 kB"
+      ]
+    }
+  ],
+  "getrusage_self_maxrss_kib": 9344
+}

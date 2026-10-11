@@ -1,0 +1,40 @@
+{
+  "snapshot_utc": "2026-10-11T13:01:16Z",
+  "repository": "joshyorko/rcc",
+  "pull_request": {
+    "number": 237,
+    "url": "https://github.com/joshyorko/rcc/pull/237",
+    "state": "open",
+    "draft": true,
+    "mergeable": true,
+    "head": "bb2759e3fe9b2121e1ce8134a028d7d27d4d1936",
+    "tree": "75f1a13f81b932c4017973dcaa0642ba05758985",
+    "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "reviews": 0,
+    "review_threads": 0,
+    "publication_hold": true
+  },
+  "checks": {
+    "PR metrics": {"run_id": 38141317781, "conclusion": "success"},
+    "Lint": {"run_id": 38141317784, "conclusion": "success"},
+    "CodeQL": {"run_id": 38141317847, "conclusion": "success"},
+    "Quality report": {"run_id": 38141317893, "conclusion": "success"},
+    "Coverage gate": {"run_id": 38141317915, "conclusion": "success"},
+    "Rcc": {
+      "run_id": 38141317804,
+      "status": "in_progress",
+      "Build RCC": {"job_id": 114475607018, "conclusion": "success"},
+      "Release Candidate Verification": {"job_id": 114475606836, "status": "in_progress", "active_step": "Run contained release candidate gate"},
+      "Native Runtime (linux-amd64)": {"job_id": 114475821432, "status": "in_progress", "active_step": "Run real native A-to-B acceptance"},
+      "Native Runtime (windows-amd64)": {"job_id": 114475821408, "status": "in_progress", "active_step": "Download exact release-built RCC binary"},
+      "Native Runtime (macos-amd64)": {"job_id": 114475821424, "status": "queued"},
+      "Native Runtime (macos-arm64)": {"job_id": 114475821437, "status": "queued"}
+    }
+  },
+  "source_binding": {
+    "root_reported_clean_unit_tests": "131 Python script tests passed on exact bb2759e3 head; source/unit evidence only",
+    "prior_head_83ddea8": "Historical labelled run 38140726296 failed the full release gate (87 tests, 1 failure, 1 error; gate exit 10; tee exit 0). Its raw evidence is retained separately at evidence/continuation-20261011/p1-hosted/release-ci-failure/. No results are rebound to bb2759e3.",
+    "native_receipts_or_binaries_from_other_heads": "Not rebound."
+  },
+  "merge_or_release_claim": "No full release-gate outcome yet; four native jobs not complete. No merge, tag, release, or publication dispatch."
+}

@@ -1,0 +1,15 @@
+{
+  "status": "SOURCE_AND_RECORDED_CAPABILITY_RESULT_VERIFIED_WITH_LIMITATIONS",
+  "plan_sha256": "d61052a7ec7597b43173e8383d5f32b688ee66bd62f596cc80acf4f24ba8a1ca",
+  "runner_sha256": "525fe1f22c45e8e66c5db78999fa4767be908ca2dda2677c5eefa69daa7a3038",
+  "result_sha256": "5fc89d3b19ac8efe71e3b8ed9f373540b3ac8a743d5d4a5781e917123a5f95ce",
+  "source_digest": "c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+  "original_bytes_metadata_unchanged": true,
+  "ioctl_errno": 95,
+  "conditional_COW_controls": "NOT_RUN",
+  "worker_and_supervisor_exit": 0,
+  "worker_getrusage_maxrss_kib": 20084,
+  "RSS_limit_evidence": "RLIMIT_AS512MiB recorded in executed runner; invalid zero /proc RSS due missing children pseudo-file; not tree RSS proof",
+  "owned_copy_limitation": "initial root admission authorized own scratch cleanup after receipts; completed12:53:33 before later root keep request arrived. Worker receipts exist; root cannot rehash deleted owned copy. No recreation/rerun.",
+  "scope": "exact overlay path only; no portable viability, COW isolation or timing gain qualification"
+}

@@ -1,0 +1,62 @@
+{
+  "pr": 235,
+  "run": 38138500683,
+  "job": 114467436403,
+  "artifact_id": 11701879475,
+  "api_digest": "sha256:ff3c4b6efdb8b0e7ae07810353453d65f787f0cb8c7db95426e2bade617f81a2",
+  "zip_sha256": "ff3c4b6efdb8b0e7ae07810353453d65f787f0cb8c7db95426e2bade617f81a2",
+  "zip_size": 171869,
+  "receipt_sha256": "ad83afb48c72e1ebc7928ebf49f6c58b6c1514e9a37964899b0b548629a91b3d",
+  "robot_xml_sha256": "1a4811cdaec731f112472dc8c5b004977648cf77abf36b1cc48fa1b034f20aad",
+  "source_commit": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "platform": "darwin_arm64",
+  "version": "v18.19.6",
+  "binary_sha256": "712e3bb861657c835dec1a8a8b3c8bbdb0e1a1c3e222ece5fcfb8b7cec6c88a7",
+  "target": "darwin/arm64",
+  "artifact_digest": "sha256:c33a6110f3a8764fec20f530d5153e87d293b03d820b1f5862eaed922624ad8c",
+  "objects": 5007,
+  "cold": {
+    "exitCode": 0,
+    "cacheHit": "provider",
+    "leaseReleased": true,
+    "nativeImport": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "warm": {
+    "exitCode": 0,
+    "cacheHit": "local-materialization",
+    "leaseReleased": true,
+    "providerDeadWarmReuse": true
+  },
+  "mismatch": {
+    "rejected": true,
+    "providerObjectGets": 0
+  },
+  "robot": {
+    "source": "robot_tests/environment_artifacts.robot",
+    "binarySha256": "712e3bb861657c835dec1a8a8b3c8bbdb0e1a1c3e222ece5fcfb8b7cec6c88a7",
+    "version": "v18.19.6",
+    "executeExit": 0,
+    "providerDeadWarmReuse": true,
+    "nativeImport": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "robot_stats": {
+    "total": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ],
+    "tag": [],
+    "suite": [
+      [
+        "1",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "root_rehash_pending": true
+}

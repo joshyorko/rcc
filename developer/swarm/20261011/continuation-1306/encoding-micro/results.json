@@ -1,0 +1,649 @@
+{
+  "frame_details": [
+    {
+      "external_gzip_bytes": 21,
+      "external_gzip_sha256": "dcca39df764100f049c9333f28bc1565ad69d979480d8d1b38954fb4ac2a2649",
+      "legacyObjectId": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "original_gzip_bytes": 29,
+      "zstd_bytes": 14,
+      "zstd_sha256": "4def8c0fb00f7a993e0dbcf040d474a2dc0076e8e1b1eb231236d070403ef6ab"
+    },
+    {
+      "external_gzip_bytes": 198,
+      "external_gzip_sha256": "a693bf8ce38b7a3d8acfdce82dedda2ae64ea23f17d04a483a4ef84bf251296a",
+      "legacyObjectId": "e593781c3c4e2f470056268ae5d935d1437b7db356428b3d66e542a71f19b04e",
+      "original_gzip_bytes": 206,
+      "zstd_bytes": 204,
+      "zstd_sha256": "6bef49299e3e29f5a404e01689dbca59f6c314eb443116ac1215dbbb7ea4f029"
+    },
+    {
+      "external_gzip_bytes": 383,
+      "external_gzip_sha256": "36cf4f81f15dbfde6d0fdb8ef6033056fc805319bcdbf07efb87c05c30587ca8",
+      "legacyObjectId": "e8c2f19f7047bfc7539fd78839929004d8fe0efba1fbcbd9d712d285e43834ba",
+      "original_gzip_bytes": 392,
+      "zstd_bytes": 387,
+      "zstd_sha256": "f8f8d2fc11b33ad0bb7955467ccb0669d9c1d4b0aefd1db6e343c3cfed6ac4df"
+    },
+    {
+      "external_gzip_bytes": 540,
+      "external_gzip_sha256": "ac29192968361b8bec6959d44f3899cb96ec3ad8d534f8683e1ff076bbd1d42a",
+      "legacyObjectId": "86bd26a06fe3057b36cf29dd7a338f2524aff8116ef08d005aa2114ea6122869",
+      "original_gzip_bytes": 545,
+      "zstd_bytes": 470,
+      "zstd_sha256": "7dbb8231609aa0f52fc3d27e3fbae83a0520f8ac833c599b238d8f55f1edb91e"
+    },
+    {
+      "external_gzip_bytes": 764,
+      "external_gzip_sha256": "9aebf8b0a999cb493b695b5160364e15552dad302459e3e7770de9c52d65c9fa",
+      "legacyObjectId": "5a36d500cd869fc4383a7ef05859f0ab4e70412d18fb2550298554fef5d331f3",
+      "original_gzip_bytes": 780,
+      "zstd_bytes": 769,
+      "zstd_sha256": "cff22e49842fd2b5f414903e1138e3d9cb34f26a7a385fee7d3f7c65ec314b0c"
+    },
+    {
+      "external_gzip_bytes": 1026,
+      "external_gzip_sha256": "6e5c9a33fe4251849f1f9d8eb904cb551730c4c926ceaa75e73651d19b72a888",
+      "legacyObjectId": "98de6b7f8de991b2de9515d330f515e5dce70369dc051f64ca8ef49f19c3d524",
+      "original_gzip_bytes": 1051,
+      "zstd_bytes": 1032,
+      "zstd_sha256": "eb379a1597bea0d0a2a4675cef8e53cca857927602deeb2ea58e056c7e804879"
+    },
+    {
+      "external_gzip_bytes": 1881,
+      "external_gzip_sha256": "33c5d3074fa1ebc8b4be5063cdf59b903354e15e0e44dff37873031f8524304a",
+      "legacyObjectId": "4048fc164881d03b736c0a46b1d14c8165154fb490cd2fcfc2c9269e6c1dc906",
+      "original_gzip_bytes": 1926,
+      "zstd_bytes": 1800,
+      "zstd_sha256": "c771c191e71b8fa33d2691637efb554af150ee4d9599f98b4de1c2afcf19c317"
+    },
+    {
+      "external_gzip_bytes": 4098,
+      "external_gzip_sha256": "e1322008beea1d80e7f6d7f3e72acfc33e97e60ef11e5e8946fb1be06c8cb93e",
+      "legacyObjectId": "50b39a21481850306c1cbec411511aadc33e52e6ca52082837c8526c3a27b051",
+      "original_gzip_bytes": 4094,
+      "zstd_bytes": 3837,
+      "zstd_sha256": "b60e2a9d0f37974e2968881ac7fdbaaa8d8f6fa08369f4638fc57eaf2a87f9cc"
+    },
+    {
+      "external_gzip_bytes": 4120,
+      "external_gzip_sha256": "5aeae0989d7213ae3b3790b4bdcdc40af41d301547a3f01dfcb9fcf344fc807e",
+      "legacyObjectId": "cc3683038fb489d2526fc28e25b9250c84bf0daf78ae37bb37dce7dca0c7d981",
+      "original_gzip_bytes": 4096,
+      "zstd_bytes": 3857,
+      "zstd_sha256": "47e9ee881aa057d27b3aac947edc97f3a4fc47b460ee607315d5a1030b90b5fd"
+    },
+    {
+      "external_gzip_bytes": 4986,
+      "external_gzip_sha256": "d85ae9d3819511af104f2f0da74bbc14351f47ec9fbf7ed2c01b3d510c75a0c4",
+      "legacyObjectId": "7004f1ab2cfa5994e453f426507170ec37c1c4a5b9837ba319e5eaebf1a29c34",
+      "original_gzip_bytes": 4935,
+      "zstd_bytes": 4571,
+      "zstd_sha256": "2885bfbcc562df15095685b4d755783dc6515564dbe0a96a15e4d466e4c6b905"
+    },
+    {
+      "external_gzip_bytes": 6213,
+      "external_gzip_sha256": "ea0cbcada24dc351eb4bff1f59e17e120fcf4e1faf1ee967c7551c856e8608cc",
+      "legacyObjectId": "91170b060749d0b3c8f2ab31499104028bedf971e5575155d43392d5c8dae5d6",
+      "original_gzip_bytes": 6195,
+      "zstd_bytes": 5725,
+      "zstd_sha256": "e55e56a28562d7a01a8b6dc9b6240589d1c42499ee7adc8271931831438de19a"
+    },
+    {
+      "external_gzip_bytes": 7656,
+      "external_gzip_sha256": "cb9960eb1459b7a5f22051c79a0f1615b54ebeb811125a12d3f3f259abd07662",
+      "legacyObjectId": "53a676e6c704d905885b5ba81e86b34cf718e074a748f079dbb0320c3ca3ea1d",
+      "original_gzip_bytes": 7609,
+      "zstd_bytes": 7014,
+      "zstd_sha256": "2e228ddc00e1ca608033d4a6759a08083e62807d99c5c9e7d66c5b617f379ac5"
+    },
+    {
+      "external_gzip_bytes": 9720,
+      "external_gzip_sha256": "89240844beceabf4a19cae006f6f2050783d0f5a1de30262fb8577380b332e5a",
+      "legacyObjectId": "7cc78ea166261b3dedf951cdd721051460851e6fcd96c12b8e3194cf25677f21",
+      "original_gzip_bytes": 9763,
+      "zstd_bytes": 9543,
+      "zstd_sha256": "86c836f816c7c2adf0ceaef174b0aa19b9e10f025cd50f38742057f10cf7a300"
+    },
+    {
+      "external_gzip_bytes": 13547,
+      "external_gzip_sha256": "28409b387222724d238c575849fd5dd05a7cc3e115d9fffe7f0c6f85425c749e",
+      "legacyObjectId": "668b37ab12835bdf8643a695a9f050551339b280742231f163fc575a925a1532",
+      "original_gzip_bytes": 13495,
+      "zstd_bytes": 12154,
+      "zstd_sha256": "62f8902153efb1fd9b15e03c33960ec1e1b0ebffb32573ce65e8f934a4108693"
+    },
+    {
+      "external_gzip_bytes": 23997,
+      "external_gzip_sha256": "861f8c695d9063fc117d4688892d98867d641a0859e3fd009aa43d23090ccc0f",
+      "legacyObjectId": "9587a95edc194a19513e8a8fa9a942cd9fe6217489697ee998a7ae544fb9d603",
+      "original_gzip_bytes": 23984,
+      "zstd_bytes": 21419,
+      "zstd_sha256": "d901a904693e13418db67c8612d90fb640efb174c1afe11b9f66f30fe073d899"
+    },
+    {
+      "external_gzip_bytes": 61434,
+      "external_gzip_sha256": "a6d4f5bc93398a26c02f914e1f1f8fc50335db95f502299e0dd37db032c517b3",
+      "legacyObjectId": "69369d32340bb49fea5ff15c33f24caff748763605c56f7d92eaa0cf8ee53faa",
+      "original_gzip_bytes": 63426,
+      "zstd_bytes": 59934,
+      "zstd_sha256": "71de7640d9b15dc6e587d36078f738942ce88246fe403f09b7ccd5b1eba9fdc3"
+    },
+    {
+      "external_gzip_bytes": 61987,
+      "external_gzip_sha256": "1ebf2e154b03d9fe7a1f7286b32beccd9578e7ecc9bb4e87b4ed7586dd1f7de7",
+      "legacyObjectId": "3c6fd78e248a60e45081bcc77031204a7cb64a88ff2e27fc786ef12ae7e91fca",
+      "original_gzip_bytes": 66033,
+      "zstd_bytes": 62156,
+      "zstd_sha256": "793344eec7bc34c26b8fe20dca282976f244df508044f236995d86b919b2a260"
+    },
+    {
+      "external_gzip_bytes": 82736,
+      "external_gzip_sha256": "5f9ee46e35911c7fb1db97a87a1af1b273ed992a081c6a388c202e33897cef52",
+      "legacyObjectId": "2e282920bd953f4d888504ac9b4d545ebd77e1b95e80eab13b6db8e0222f7d09",
+      "original_gzip_bytes": 85427,
+      "zstd_bytes": 78523,
+      "zstd_sha256": "c54f1940307a08740f66e001887063b38758b7699eb7f3cf0b16b7b15106aecf"
+    },
+    {
+      "external_gzip_bytes": 89512,
+      "external_gzip_sha256": "39b48b1987a9247488e581cebcac0d8aa3abc452da7462690288b98acde01091",
+      "legacyObjectId": "8b2f8454007de90ade4df9f87ee5275e446278273a5bd1fcbc0e29ac82bd6c42",
+      "original_gzip_bytes": 92332,
+      "zstd_bytes": 84780,
+      "zstd_sha256": "1b50b9cf92031c37bf2cf1f7c11f528dc7aca62ce58d2b6a6e6bae9ace5938ea"
+    },
+    {
+      "external_gzip_bytes": 98376,
+      "external_gzip_sha256": "44a25d7ea96d4aaebabb15db7b5750c062cdeea198685ae19c224f1c3fbc7cb2",
+      "legacyObjectId": "9b86e78264ca7c2e3ccb86047ff0b89017bd1d5e89531efcc89fabca4f6d8b2c",
+      "original_gzip_bytes": 102931,
+      "zstd_bytes": 93640,
+      "zstd_sha256": "ed190a2e9a126360adbd8266082101394652808bb10471e871e524be47d19438"
+    },
+    {
+      "external_gzip_bytes": 115434,
+      "external_gzip_sha256": "2b05b0083cfc39a7683f23731eab5bf1b1c65d81597041781139f4a64fce044f",
+      "legacyObjectId": "f5670e1fe64e7ee9a32055db2634e7f6b1dea8605f74db5644a56158a69e22dd",
+      "original_gzip_bytes": 130532,
+      "zstd_bytes": 121452,
+      "zstd_sha256": "d152f0b99aa9fb2c3284c8e6a512ee7034e453bd0b3efebb5f20e19a1db380f1"
+    },
+    {
+      "external_gzip_bytes": 137020,
+      "external_gzip_sha256": "6eb0e776a455ea483aed4d2598d3ba3ce83c1a4c08739b8c753c243739d33d25",
+      "legacyObjectId": "b217cf3bf77b1b15f4577857c6b3bc2ec40e186a9b3abda555f16a7cd7f37a66",
+      "original_gzip_bytes": 143019,
+      "zstd_bytes": 129360,
+      "zstd_sha256": "be09e17a2f1cc775d31d572834620a7c3e51a08ad31821aced67a8441f1ebe1d"
+    },
+    {
+      "external_gzip_bytes": 224618,
+      "external_gzip_sha256": "edc4a0bd83038c7f8a8dd41c48b0d69c7978a1a4e845a0f1f56fd2662e4b60da",
+      "legacyObjectId": "cd20a2877bc82b94e36c1093b727dd87cfa3c1d581aac6e240925535cbd90166",
+      "original_gzip_bytes": 227175,
+      "zstd_bytes": 181172,
+      "zstd_sha256": "bf42192ded88cea22ce43222b1dd95f40823532b385c6537fe3d5c742d4b4cfb"
+    },
+    {
+      "external_gzip_bytes": 473402,
+      "external_gzip_sha256": "ef0dc25d665929b29f79b5e1306dec0bb2c9392cc5ad1c9d956b84541c1cd6b1",
+      "legacyObjectId": "9fa4807097fa47da1815765f0a43177c45e7ec7cc94e44cfa95a4c3a1a341ee6",
+      "original_gzip_bytes": 488201,
+      "zstd_bytes": 441034,
+      "zstd_sha256": "08a8a30136a887e705f312c1dda7b3b889b6d3217d8199b61abcfe404a512813"
+    }
+  ],
+  "limits": "external CPython codecs and <=1MiB eligible sample only; no Go encoder equivalence or E2E inference",
+  "original_validation": [
+    {
+      "legacyObjectId": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "logicalSize": 1,
+      "source_valid": true,
+      "storedDigest": "sha256:852666897ac81b7686ee97f544463d4528f6f70a96d42961dee955a93cf95f9b",
+      "storedSize": 29
+    },
+    {
+      "legacyObjectId": "e593781c3c4e2f470056268ae5d935d1437b7db356428b3d66e542a71f19b04e",
+      "logicalSize": 429,
+      "source_valid": true,
+      "storedDigest": "sha256:e2e50c88046c6464af73e60d775c6f3068c3e002ecb11d68a59ba3104bc94407",
+      "storedSize": 206
+    },
+    {
+      "legacyObjectId": "e8c2f19f7047bfc7539fd78839929004d8fe0efba1fbcbd9d712d285e43834ba",
+      "logicalSize": 689,
+      "source_valid": true,
+      "storedDigest": "sha256:ce59c820f71d5b14664bb8e203adb52126144d7c6146246c748510186d0a1131",
+      "storedSize": 392
+    },
+    {
+      "legacyObjectId": "86bd26a06fe3057b36cf29dd7a338f2524aff8116ef08d005aa2114ea6122869",
+      "logicalSize": 947,
+      "source_valid": true,
+      "storedDigest": "sha256:1f09984e6264a5b8abe7c3cf0f2dad9a3ca3915e110f61abcd1040b7dd89ea5b",
+      "storedSize": 545
+    },
+    {
+      "legacyObjectId": "5a36d500cd869fc4383a7ef05859f0ab4e70412d18fb2550298554fef5d331f3",
+      "logicalSize": 2503,
+      "source_valid": true,
+      "storedDigest": "sha256:d07246748e035a390a1a3d6c7392804be524581579aef798e559318a3ce9e00f",
+      "storedSize": 780
+    },
+    {
+      "legacyObjectId": "98de6b7f8de991b2de9515d330f515e5dce70369dc051f64ca8ef49f19c3d524",
+      "logicalSize": 2016,
+      "source_valid": true,
+      "storedDigest": "sha256:b02dc27c3343830c1c81aa45cd81d347b4c1a0752aebac1f9bf1dd5057f6b930",
+      "storedSize": 1051
+    },
+    {
+      "legacyObjectId": "4048fc164881d03b736c0a46b1d14c8165154fb490cd2fcfc2c9269e6c1dc906",
+      "logicalSize": 3628,
+      "source_valid": true,
+      "storedDigest": "sha256:09aaba8fae14c5495eb2f8a5e81621c0974922cbe88f5ae93c805b75bb1a854b",
+      "storedSize": 1926
+    },
+    {
+      "legacyObjectId": "50b39a21481850306c1cbec411511aadc33e52e6ca52082837c8526c3a27b051",
+      "logicalSize": 14672,
+      "source_valid": true,
+      "storedDigest": "sha256:2819b322efa46e2939f091899e77fa4b4c81ad6a94f9fa04d83cabbd4c331675",
+      "storedSize": 4094
+    },
+    {
+      "legacyObjectId": "cc3683038fb489d2526fc28e25b9250c84bf0daf78ae37bb37dce7dca0c7d981",
+      "logicalSize": 11309,
+      "source_valid": true,
+      "storedDigest": "sha256:a1bb4dd2eafde082068b3a3c649f3e45845930bbe77a8cb629e40a046c6da321",
+      "storedSize": 4096
+    },
+    {
+      "legacyObjectId": "7004f1ab2cfa5994e453f426507170ec37c1c4a5b9837ba319e5eaebf1a29c34",
+      "logicalSize": 16159,
+      "source_valid": true,
+      "storedDigest": "sha256:e06c0f0873eade817203286293a82a44dca4be6d75413c9b093ec3edd75d0f5a",
+      "storedSize": 4935
+    },
+    {
+      "legacyObjectId": "91170b060749d0b3c8f2ab31499104028bedf971e5575155d43392d5c8dae5d6",
+      "logicalSize": 20863,
+      "source_valid": true,
+      "storedDigest": "sha256:c0f58eb9c9fde36dc105334c1fb3be607d8960d7dbe5901ac1e63dcaef4a96cd",
+      "storedSize": 6195
+    },
+    {
+      "legacyObjectId": "53a676e6c704d905885b5ba81e86b34cf718e074a748f079dbb0320c3ca3ea1d",
+      "logicalSize": 23636,
+      "source_valid": true,
+      "storedDigest": "sha256:1952345e6a136490952faa991712a5e8bc3d3f063650e88c8553628cb53662ab",
+      "storedSize": 7609
+    },
+    {
+      "legacyObjectId": "7cc78ea166261b3dedf951cdd721051460851e6fcd96c12b8e3194cf25677f21",
+      "logicalSize": 18813,
+      "source_valid": true,
+      "storedDigest": "sha256:87fc7a701cf14f8d23ef198083040f965110095240fd38730dc3754821b682af",
+      "storedSize": 9763
+    },
+    {
+      "legacyObjectId": "668b37ab12835bdf8643a695a9f050551339b280742231f163fc575a925a1532",
+      "logicalSize": 42786,
+      "source_valid": true,
+      "storedDigest": "sha256:ee69cc2158f842a2eb99077fad61d0a5ef8cc83df560d279693d85ce8ac7029b",
+      "storedSize": 13495
+    },
+    {
+      "legacyObjectId": "9587a95edc194a19513e8a8fa9a942cd9fe6217489697ee998a7ae544fb9d603",
+      "logicalSize": 77517,
+      "source_valid": true,
+      "storedDigest": "sha256:429dddeb3f1cc88c564278d2f5ee319c737aa868a3d79eb8509d75cae4c2d459",
+      "storedSize": 23984
+    },
+    {
+      "legacyObjectId": "69369d32340bb49fea5ff15c33f24caff748763605c56f7d92eaa0cf8ee53faa",
+      "logicalSize": 135224,
+      "source_valid": true,
+      "storedDigest": "sha256:baf3d84f7d2431f66bce4239a9eecaef03779eec4d83b0852e994da417013683",
+      "storedSize": 63426
+    },
+    {
+      "legacyObjectId": "3c6fd78e248a60e45081bcc77031204a7cb64a88ff2e27fc786ef12ae7e91fca",
+      "logicalSize": 117168,
+      "source_valid": true,
+      "storedDigest": "sha256:85e7d59de5f6a67fbc0e4a1c778423f9336611e3a944be84a4d2b7aeeb2caa32",
+      "storedSize": 66033
+    },
+    {
+      "legacyObjectId": "2e282920bd953f4d888504ac9b4d545ebd77e1b95e80eab13b6db8e0222f7d09",
+      "logicalSize": 210392,
+      "source_valid": true,
+      "storedDigest": "sha256:5ef48083c09eba15a30b57e285734b9726e74a49ca171fae348555b6a4f594fc",
+      "storedSize": 85427
+    },
+    {
+      "legacyObjectId": "8b2f8454007de90ade4df9f87ee5275e446278273a5bd1fcbc0e29ac82bd6c42",
+      "logicalSize": 206672,
+      "source_valid": true,
+      "storedDigest": "sha256:f88dba68da4bb527fd3ccdf7dc878d48e6604574c3d81b5efd784e58f8942bd4",
+      "storedSize": 92332
+    },
+    {
+      "legacyObjectId": "9b86e78264ca7c2e3ccb86047ff0b89017bd1d5e89531efcc89fabca4f6d8b2c",
+      "logicalSize": 220168,
+      "source_valid": true,
+      "storedDigest": "sha256:0210bc471b75ea9c790e9956b2269cb8eedc46293431676923c652e4302300e1",
+      "storedSize": 102931
+    },
+    {
+      "legacyObjectId": "f5670e1fe64e7ee9a32055db2634e7f6b1dea8605f74db5644a56158a69e22dd",
+      "logicalSize": 190352,
+      "source_valid": true,
+      "storedDigest": "sha256:a298ade1e0ebed1dc0b3e4ef155f4e1cbc293059246c877e856328708c6b8a4d",
+      "storedSize": 130532
+    },
+    {
+      "legacyObjectId": "b217cf3bf77b1b15f4577857c6b3bc2ec40e186a9b3abda555f16a7cd7f37a66",
+      "logicalSize": 273698,
+      "source_valid": true,
+      "storedDigest": "sha256:385f4456e394ee3fd2efa4c45514d3476938ea6cd6a0cc7f445db43fd80f3144",
+      "storedSize": 143019
+    },
+    {
+      "legacyObjectId": "cd20a2877bc82b94e36c1093b727dd87cfa3c1d581aac6e240925535cbd90166",
+      "logicalSize": 695737,
+      "source_valid": true,
+      "storedDigest": "sha256:621f2810571dc958d320fd8f24c19e95920b4850b613e9ad33bb9ff598412180",
+      "storedSize": 227175
+    },
+    {
+      "legacyObjectId": "9fa4807097fa47da1815765f0a43177c45e7ec7cc94e44cfa95a4c3a1a341ee6",
+      "logicalSize": 991312,
+      "source_valid": true,
+      "storedDigest": "sha256:c501412946303fa0bdb6cd1e6e3e1fd9aa081488dc7610aeaf0d084cd69ff3a2",
+      "storedSize": 488201
+    }
+  ],
+  "plan_sha256": "0b335cdc43d1bfa3eff201e0f0690176f5d3f38d04319d190f33166d8b2a5e0d",
+  "ru_maxrss_kib_whole_worker": 95556,
+  "samples": [
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 28473380,
+      "phase": "encode-gzip",
+      "process_cpu_ns": 753729627,
+      "repetition": 0,
+      "verified_outputs": 480,
+      "wall_ns": 753765858
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 26496940,
+      "phase": "encode-zstd",
+      "process_cpu_ns": 304297904,
+      "repetition": 0,
+      "verified_outputs": 480,
+      "wall_ns": 304312009
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-legacy-gzip",
+      "process_cpu_ns": 242239755,
+      "repetition": 0,
+      "verified_outputs": 480,
+      "wall_ns": 242250003
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-external-gzip",
+      "process_cpu_ns": 239304170,
+      "repetition": 0,
+      "verified_outputs": 480,
+      "wall_ns": 239352069
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-zstd",
+      "process_cpu_ns": 73248333,
+      "repetition": 0,
+      "verified_outputs": 480,
+      "wall_ns": 73254808
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 26496940,
+      "phase": "encode-zstd",
+      "process_cpu_ns": 277052091,
+      "repetition": 1,
+      "verified_outputs": 480,
+      "wall_ns": 277054401
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 28473380,
+      "phase": "encode-gzip",
+      "process_cpu_ns": 756692455,
+      "repetition": 1,
+      "verified_outputs": 480,
+      "wall_ns": 756754458
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-zstd",
+      "process_cpu_ns": 72824903,
+      "repetition": 1,
+      "verified_outputs": 480,
+      "wall_ns": 72821359
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-external-gzip",
+      "process_cpu_ns": 237409291,
+      "repetition": 1,
+      "verified_outputs": 480,
+      "wall_ns": 237450375
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-legacy-gzip",
+      "process_cpu_ns": 239768260,
+      "repetition": 1,
+      "verified_outputs": 480,
+      "wall_ns": 239781059
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 28473380,
+      "phase": "encode-gzip",
+      "process_cpu_ns": 747246671,
+      "repetition": 2,
+      "verified_outputs": 480,
+      "wall_ns": 747318587
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 26496940,
+      "phase": "encode-zstd",
+      "process_cpu_ns": 265956529,
+      "repetition": 2,
+      "verified_outputs": 480,
+      "wall_ns": 265957917
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-legacy-gzip",
+      "process_cpu_ns": 238166908,
+      "repetition": 2,
+      "verified_outputs": 480,
+      "wall_ns": 238199401
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-external-gzip",
+      "process_cpu_ns": 240465666,
+      "repetition": 2,
+      "verified_outputs": 480,
+      "wall_ns": 240480820
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-zstd",
+      "process_cpu_ns": 71389939,
+      "repetition": 2,
+      "verified_outputs": 480,
+      "wall_ns": 71385082
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 26496940,
+      "phase": "encode-zstd",
+      "process_cpu_ns": 266567427,
+      "repetition": 3,
+      "verified_outputs": 480,
+      "wall_ns": 266569635
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 28473380,
+      "phase": "encode-gzip",
+      "process_cpu_ns": 740001825,
+      "repetition": 3,
+      "verified_outputs": 480,
+      "wall_ns": 740177340
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-zstd",
+      "process_cpu_ns": 74225084,
+      "repetition": 3,
+      "verified_outputs": 480,
+      "wall_ns": 74220942
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-external-gzip",
+      "process_cpu_ns": 237112138,
+      "repetition": 3,
+      "verified_outputs": 480,
+      "wall_ns": 237121466
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-legacy-gzip",
+      "process_cpu_ns": 235525108,
+      "repetition": 3,
+      "verified_outputs": 480,
+      "wall_ns": 235535272
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 28473380,
+      "phase": "encode-gzip",
+      "process_cpu_ns": 743579270,
+      "repetition": 4,
+      "verified_outputs": 480,
+      "wall_ns": 744524790
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 26496940,
+      "phase": "encode-zstd",
+      "process_cpu_ns": 272081720,
+      "repetition": 4,
+      "verified_outputs": 480,
+      "wall_ns": 272115953
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-legacy-gzip",
+      "process_cpu_ns": 236643862,
+      "repetition": 4,
+      "verified_outputs": 480,
+      "wall_ns": 236654679
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-external-gzip",
+      "process_cpu_ns": 235163600,
+      "repetition": 4,
+      "verified_outputs": 480,
+      "wall_ns": 235174134
+    },
+    {
+      "hash_and_roundtrip_verification_inside_timer": false,
+      "logical_bytes_processed": 65533820,
+      "operations": 480,
+      "output_bytes": 65533820,
+      "phase": "decode-zstd",
+      "process_cpu_ns": 71251443,
+      "repetition": 4,
+      "verified_outputs": 480,
+      "wall_ns": 71249353
+    }
+  ],
+  "script_sha256": "28b77a7325861b90f77811ea0389977d72b0c9c4452691d1c86192a16df6d93e",
+  "semantic_gate": "Every one of 12000 timed outputs verified outside its batch timer; encoded outputs roundtrip to exact original logical SHA256 and size",
+  "status": "PASS"
+}
