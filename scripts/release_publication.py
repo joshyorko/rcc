@@ -10,6 +10,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -61,6 +62,7 @@ ASSET_TARGETS = {
     "rccremote-macosarm64": ("darwin", "arm64"),
 }
 EXPECTED_GO_VERSION = "go1.26.9"
+MAX_REVIEW_ARTIFACT_BYTES = 24 * 1024 * 1024
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
 
@@ -382,6 +384,236 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
     _require(jat.get("exactBinaryCLI", {}).get("cold", {}).get("nativeImport") == "sqlite3",
              "Linux JAT receipt does not prove the native SQLite consumer import")
     return manifest
+
+
+def check_review_payload_size(root, max_bytes=None):
+    root = Path(root)
+    max_bytes = MAX_REVIEW_ARTIFACT_BYTES if max_bytes is None else max_bytes
+    _require(root.is_dir() and not root.is_symlink(), f"review artifact payload root is missing or unsafe: {root}")
+    total = 0
+    for path in root.rglob("*"):
+        mode = path.lstat().st_mode
+        _require(not stat.S_ISLNK(mode), f"review artifact payload contains a symlink: {path.relative_to(root)}")
+        _require(stat.S_ISDIR(mode) or stat.S_ISREG(mode),
+                 f"review artifact payload contains a nonregular entry: {path.relative_to(root)}")
+        if stat.S_ISREG(mode):
+            total += path.stat().st_size
+    _require(type(max_bytes) is int and max_bytes > 0, "review artifact size limit is invalid")
+    _require(total <= max_bytes,
+             f"review artifact payload exceeds {max_bytes} raw bytes: {total}")
+    return total
+
+
+def _parse_asset_checksums(path, expected_assets):
+    parsed = {}
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError as error:
+        raise ReleaseGateError(f"cannot read asset checksum file {path}: {error}") from error
+    for line in lines:
+        parts = line.split(maxsplit=1)
+        _require(len(parts) == 2 and re.fullmatch(r"[0-9a-f]{64}", parts[0]) is not None,
+                 "asset checksum file contains a malformed line")
+        _require(parts[1] not in parsed, "asset checksum file has a duplicate path")
+        parsed[parts[1]] = parts[0]
+    _require(set(parsed) == {f"assets/{name}" for name in expected_assets},
+             "asset checksum file has a missing or unexpected path")
+    return parsed
+
+
+def validate_review_assets(root, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha):
+    validate_inputs(expected_source_sha, expected_version)
+    _require(type(expected_run_id) is int and expected_run_id > 0, "invalid review artifact preparation run ID")
+    _require(isinstance(expected_manifest_sha, str) and re.fullmatch(r"[0-9a-f]{64}", expected_manifest_sha) is not None,
+             "invalid review artifact manifest SHA-256")
+    root = Path(root)
+    _require(root.is_dir() and not root.is_symlink(), "review artifact directory is missing or unsafe")
+    asset_dirs = list(root.iterdir())
+    _require({path.name for path in asset_dirs} == set(ASSET_NAMES),
+             f"review artifact asset directory set mismatch: {sorted(path.name for path in asset_dirs)}")
+
+    expected_manifest_bytes = None
+    for name in ASSET_NAMES:
+        artifact_dir = root / name
+        _require(artifact_dir.is_dir() and not artifact_dir.is_symlink(), f"review artifact is missing or unsafe: {name}")
+        check_review_payload_size(artifact_dir)
+        expected_files = {
+            f"assets/{name}",
+            "evidence/asset-manifest.json",
+            "evidence/SHA256SUMS",
+            "evidence/provenance.json",
+            "review-identity.json",
+        }
+        actual_files = {
+            str(path.relative_to(artifact_dir)).replace(os.sep, "/")
+            for path in artifact_dir.rglob("*") if path.is_file()
+        }
+        actual_directories = {
+            str(path.relative_to(artifact_dir)).replace(os.sep, "/")
+            for path in artifact_dir.rglob("*") if path.is_dir()
+        }
+        _require(actual_files == expected_files,
+                 f"review artifact file set mismatch for {name}: {sorted(actual_files)}")
+        _require(actual_directories == {"assets", "evidence"},
+                 f"review artifact directory layout mismatch for {name}: {sorted(actual_directories)}")
+        manifest_path = artifact_dir / "evidence" / "asset-manifest.json"
+        manifest_bytes = manifest_path.read_bytes()
+        if expected_manifest_bytes is None:
+            expected_manifest_bytes = manifest_bytes
+        _require(manifest_bytes == expected_manifest_bytes,
+                 f"review artifact manifest differs across assets: {name}")
+        _require(hashlib.sha256(manifest_bytes).hexdigest() == expected_manifest_sha,
+                 f"review artifact manifest SHA-256 mismatch: {name}")
+        manifest = _read_json(manifest_path)
+        _require(manifest.get("schemaVersion") == 1 and manifest.get("sourceSha") == expected_source_sha
+                 and manifest.get("version") == expected_version
+                 and manifest.get("preparationRunId") == expected_run_id,
+                 f"review artifact manifest identity mismatch: {name}")
+        records = manifest.get("assets")
+        _require(isinstance(records, dict) and set(records) == set(ASSET_NAMES),
+                 "review artifact manifest asset set mismatch")
+        sums = _parse_asset_checksums(artifact_dir / "evidence" / "SHA256SUMS", ASSET_NAMES)
+        _require(sums == {f"assets/{key}": value.get("sha256") for key, value in records.items()},
+                 f"review artifact checksum file differs from manifest: {name}")
+        provenance = _read_json(artifact_dir / "evidence" / "provenance.json")
+        _require(provenance.get("schemaVersion") == 1
+                 and provenance.get("sourceSha") == expected_source_sha
+                 and provenance.get("version") == expected_version
+                 and provenance.get("preparationRunId") == expected_run_id
+                 and provenance.get("assetManifestSha256") == expected_manifest_sha,
+                 f"review artifact provenance identity mismatch: {name}")
+        identity = _read_json(artifact_dir / "review-identity.json")
+        record = records[name]
+        asset_path = artifact_dir / "assets" / name
+        _require(asset_path.is_file() and not asset_path.is_symlink(), f"review asset is missing or unsafe: {name}")
+        actual_sha = _sha256(asset_path)
+        actual_size = asset_path.stat().st_size
+        _require(record.get("sha256") == actual_sha and record.get("size") == actual_size,
+                 f"review asset bytes differ from manifest: {name}")
+        _require(sums[f"assets/{name}"] == actual_sha, f"review asset checksum mismatch: {name}")
+        expected_identity = {
+            "schemaVersion": 1,
+            "sourceSha": expected_source_sha,
+            "version": expected_version,
+            "preparationRunId": expected_run_id,
+            "assetManifestSha256": expected_manifest_sha,
+            "assetName": name,
+            "assetSha256": actual_sha,
+            "assetSize": actual_size,
+        }
+        _require(identity == expected_identity, f"review artifact identity mismatch: {name}")
+    return True
+
+
+def stage_review_assets(root, output, expected_source_sha, expected_version, expected_run_id,
+                        expected_manifest_sha, go_binary="go"):
+    root = Path(root)
+    output = Path(output)
+    validate_prepared_bundle(root, expected_source_sha, expected_version, expected_manifest_sha, expected_run_id)
+    validate_actual_binary_metadata(root, expected_source_sha, go_binary)
+    _require(not output.exists(), f"review artifact output already exists: {output}")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=".rcc-review-assets-", dir=output.parent))
+    try:
+        manifest_bytes = (root / "evidence" / "asset-manifest.json").read_bytes()
+        sums_bytes = (root / "evidence" / "SHA256SUMS").read_bytes()
+        provenance_bytes = (root / "evidence" / "provenance.json").read_bytes()
+        manifest = _read_json(root / "evidence" / "asset-manifest.json")
+        for name in ASSET_NAMES:
+            artifact_dir = temporary / name
+            asset_dir = artifact_dir / "assets"
+            evidence_dir = artifact_dir / "evidence"
+            asset_dir.mkdir(parents=True)
+            evidence_dir.mkdir()
+            source = root / "assets" / name
+            destination = asset_dir / name
+            shutil.copyfile(source, destination)
+            (evidence_dir / "asset-manifest.json").write_bytes(manifest_bytes)
+            (evidence_dir / "SHA256SUMS").write_bytes(sums_bytes)
+            (evidence_dir / "provenance.json").write_bytes(provenance_bytes)
+            record = manifest["assets"][name]
+            identity = {
+                "schemaVersion": 1,
+                "sourceSha": expected_source_sha,
+                "version": expected_version,
+                "preparationRunId": expected_run_id,
+                "assetManifestSha256": expected_manifest_sha,
+                "assetName": name,
+                "assetSha256": record["sha256"],
+                "assetSize": record["size"],
+            }
+            (artifact_dir / "review-identity.json").write_text(
+                json.dumps(identity, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
+            )
+            check_review_payload_size(artifact_dir)
+        validate_review_assets(temporary, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha)
+        os.replace(temporary, output)
+        return {name: check_review_payload_size(output / name) for name in ASSET_NAMES}
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+
+
+def stage_native_review_binary(binary_path, receipt_path, output, asset_name, platform,
+                               source_sha, version, go_binary="go"):
+    validate_inputs(source_sha, version)
+    _require(asset_name in ASSET_TARGETS and NATIVE_RECEIPTS.get(platform) == asset_name,
+             "native review asset/platform mapping is invalid")
+    binary_path = Path(binary_path)
+    receipt_path = Path(receipt_path)
+    output = Path(output)
+    _require(binary_path.is_file() and not binary_path.is_symlink(), "native review binary is missing or unsafe")
+    _require(receipt_path.is_file() and not receipt_path.is_symlink(), "native runtime receipt is missing or unsafe")
+    receipt = _read_json(receipt_path)
+    goos, goarch = ASSET_TARGETS[asset_name]
+    receipt_binary = receipt.get("binary")
+    _require(receipt.get("commitSha") == source_sha and receipt.get("platform") == platform,
+             "native review receipt source/platform identity mismatch")
+    _require(isinstance(receipt_binary, dict)
+             and receipt_binary.get("sha256") == _sha256(binary_path)
+             and receipt_binary.get("version") == version
+             and receipt_binary.get("runtimeGOOS") == goos
+             and receipt_binary.get("runtimeGOARCH") == goarch,
+             "native review binary differs from the executed-binary receipt")
+    build_info = read_go_build_info(binary_path, go_binary)
+    _require(build_info.get("GOOS") == goos and build_info.get("GOARCH") == goarch
+             and build_info.get("vcs.revision") == source_sha
+             and build_info.get("vcs.modified") == "false",
+             "native review binary Go metadata differs from source/platform identity")
+    _require(not output.exists(), f"native review binary output already exists: {output}")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = Path(tempfile.mkdtemp(prefix=".rcc-native-review-", dir=output.parent))
+    try:
+        staged_asset_dir = temporary / "assets"
+        staged_asset_dir.mkdir()
+        staged_binary = staged_asset_dir / asset_name
+        shutil.copyfile(binary_path, staged_binary)
+        metadata = {
+            "schemaVersion": 1,
+            "sourceSha": source_sha,
+            "platform": platform,
+            "assetName": asset_name,
+            "version": version,
+            "binarySha256": _sha256(staged_binary),
+            "binarySize": staged_binary.stat().st_size,
+            "nativeReceiptSha256": _sha256(receipt_path),
+            "goBuildInfo": {
+                "goVersion": EXPECTED_GO_VERSION,
+                "goos": goos,
+                "goarch": goarch,
+                "vcsRevision": source_sha,
+                "vcsModified": False,
+            },
+        }
+        (temporary / "native-binary-review.json").write_text(
+            json.dumps(metadata, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        check_review_payload_size(temporary)
+        os.replace(temporary, output)
+        return metadata
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
 
 
 def _validate_native_receipt(receipt, platform, asset_name, asset_record, source_sha, version, require_robot=True):
@@ -756,6 +988,25 @@ def main():
     bundle.add_argument("--version", required=True)
     bundle.add_argument("--manifest-sha", required=True)
     bundle.add_argument("--run-id", type=int, required=True)
+    review = subparsers.add_parser("stage-review-assets")
+    review.add_argument("--root", type=Path, required=True)
+    review.add_argument("--output", type=Path, required=True)
+    review.add_argument("--source-sha", required=True)
+    review.add_argument("--version", required=True)
+    review.add_argument("--run-id", type=int, required=True)
+    review.add_argument("--manifest-sha", required=True)
+    review.add_argument("--go", default="go")
+    native_review = subparsers.add_parser("stage-native-review-binary")
+    native_review.add_argument("--binary", type=Path, required=True)
+    native_review.add_argument("--receipt", type=Path, required=True)
+    native_review.add_argument("--output", type=Path, required=True)
+    native_review.add_argument("--asset-name", required=True)
+    native_review.add_argument("--platform", required=True)
+    native_review.add_argument("--source-sha", required=True)
+    native_review.add_argument("--version", required=True)
+    native_review.add_argument("--go", default="go")
+    payload = subparsers.add_parser("check-review-payload")
+    payload.add_argument("--root", type=Path, required=True)
     assemble = subparsers.add_parser("assemble")
     assemble.add_argument("--assets", type=Path, required=True)
     assemble.add_argument("--release-candidate", type=Path, required=True)
@@ -793,6 +1044,17 @@ def main():
             validate_prepared_bundle(args.root, args.source_sha, args.version, args.manifest_sha, args.run_id)
             validate_actual_binary_metadata(args.root, args.source_sha, "go")
             print("prepared release artifact validated")
+        elif args.command == "stage-review-assets":
+            sizes = stage_review_assets(args.root, args.output, args.source_sha, args.version,
+                                        args.run_id, args.manifest_sha, args.go)
+            print("review-only release asset payloads validated: " + json.dumps(sizes, sort_keys=True))
+        elif args.command == "stage-native-review-binary":
+            metadata = stage_native_review_binary(args.binary, args.receipt, args.output, args.asset_name,
+                                                  args.platform, args.source_sha, args.version, args.go)
+            print("native binary review payload validated: " + json.dumps(metadata, sort_keys=True))
+        elif args.command == "check-review-payload":
+            size = check_review_payload_size(args.root)
+            print(f"review artifact payload size is within limit: {size} raw bytes")
         elif args.command == "assemble":
             digest = assemble_prepared_bundle(args.assets, args.release_candidate, args.native, args.output,
                                               args.source_sha, args.version, args.run_id, args.go)

@@ -768,6 +768,39 @@ class ArtifactTaskTests(unittest.TestCase):
         workflow.index("- name: Dispatch Homebrew update after release publication"),
     )
 
+  def test_manual_preparation_uploads_nine_review_only_asset_artifacts(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertIn("stage-review-assets", workflow)
+    self.assertEqual(workflow.count("name: Upload review-only release asset"), 9)
+    self.assertIn("rcc-release-preparation", workflow)
+    self.assertIn("check-review-payload", workflow)
+    self.assertNotIn("needs: assemble-release-preparation", workflow)
+    self.assertLess(workflow.index("name: Upload immutable release preparation artifact"),
+                    workflow.index("name: Upload review-only release asset"))
+    for asset in (
+      "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
+      "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64", "index.json",
+    ):
+      with self.subTest(asset=asset):
+        self.assertIn(f"rcc-release-review-assets/{asset}/", workflow)
+
+  def test_native_receipt_artifact_includes_guarded_exact_executable(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    job = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(job)
+    native_job = job.group(1)
+    self.assertIn("stage-native-review-binary", native_job)
+    self.assertIn("check-review-payload", native_job)
+    stage = native_job.index("stage-native-review-binary")
+    guard = native_job.index("check-review-payload")
+    upload = native_job.index("name: ${{ matrix.platform }}-native-runtime-receipt")
+    self.assertLess(stage, guard)
+    self.assertLess(guard, upload)
+    self.assertIn("--receipt \"$RCC_REAL_RECEIPT_FILE\"", native_job)
+    self.assertIn("--source-sha \"$RCC_CANDIDATE_SHA\"", native_job)
+    self.assertIn('--platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}"', native_job)
+    self.assertIn("path: ./tmp/output/", native_job)
+
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):
     commands = []
 

@@ -376,6 +376,92 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Stage review-only release asset payloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          RCC_ASSET_MANIFEST_SHA256="$(sha256sum rcc-release-preparation/evidence/asset-manifest.json | cut -d' ' -f1)"
+          python3 scripts/release_publication.py stage-review-assets \
+            --root rcc-release-preparation \
+            --output rcc-release-review-assets \
+            --source-sha "$RCC_CANDIDATE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --run-id "$GITHUB_RUN_ID" \
+            --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
+            --go "$(command -v go)"
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-linux64
+          path: rcc-release-review-assets/rcc-linux64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-linux64
+          path: rcc-release-review-assets/rccremote-linux64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-windows64.exe
+          path: rcc-release-review-assets/rcc-windows64.exe/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-windows64.exe
+          path: rcc-release-review-assets/rccremote-windows64.exe/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-macos64
+          path: rcc-release-review-assets/rcc-macos64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-macos64
+          path: rcc-release-review-assets/rccremote-macos64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-macosarm64
+          path: rcc-release-review-assets/rcc-macosarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-macosarm64
+          path: rcc-release-review-assets/rccremote-macosarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-index.json
+          path: rcc-release-review-assets/index.json/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
   robot:
     name: Native Runtime (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
@@ -490,6 +576,8 @@ jobs:
           )
           if version != expected_version:
               raise SystemExit(f"native RCC version differs: {version} != {expected_version}")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
+              env_file.write(f"RCC_BINARY_VERSION={expected_version}\n")
           print(f"verified {target} {expected} {version}")
           PY
           echo "RCC_REAL_BINARY=$(python -c 'from pathlib import Path; import os; print(Path(os.environ["RCC_NATIVE_BINARY"]).resolve())')" >> "$GITHUB_ENV"
@@ -642,8 +730,39 @@ jobs:
           except (json.JSONDecodeError, OSError, TypeError, ValueError) as error:
               raise SystemExit(f"malformed exact CLI receipt or Robot evidence: {error}")
           PY
+      - name: Stage exact native binary for review
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${RCC_REAL_BINARY:-}" || ! -f "${RCC_REAL_BINARY:-}" || \
+                -z "${RCC_REAL_RECEIPT_FILE:-}" || ! -f "${RCC_REAL_RECEIPT_FILE:-}" || \
+                -z "${RCC_BINARY_VERSION:-}" ]]; then
+            echo "Exact binary or native receipt is unavailable; no native binary sidecar is staged."
+            exit 0
+          fi
+          python3 scripts/release_publication.py stage-native-review-binary \
+            --binary "$RCC_REAL_BINARY" \
+            --receipt "$RCC_REAL_RECEIPT_FILE" \
+            --output tmp/output/native-binary-review \
+            --asset-name "$RCC_NATIVE_ASSET" \
+            --platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}" \
+            --source-sha "$RCC_CANDIDATE_SHA" \
+            --version "$RCC_BINARY_VERSION" \
+            --go "$(command -v go)"
+      - name: Validate native review payload size
+        id: native_payload_size
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${RCC_REAL_BINARY:-}" && -f "${RCC_REAL_BINARY:-}" && \
+                -n "${RCC_REAL_RECEIPT_FILE:-}" && -f "${RCC_REAL_RECEIPT_FILE:-}" ]]; then
+            test -f tmp/output/native-binary-review/native-binary-review.json
+          fi
+          python3 scripts/release_publication.py check-review-payload --root tmp/output
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        if: success() || failure()
+        if: always() && steps.native_payload_size.outcome == 'success'
         with:
           name: ${{ matrix.platform }}-native-runtime-receipt
           path: ./tmp/output/

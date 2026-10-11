@@ -28,6 +28,7 @@ from release_publication import (
     verify_downstream_workflow,
     _ArtifactRedirectHandler,
 )
+import release_publication as publication
 
 
 SOURCE = "a" * 40
@@ -37,7 +38,7 @@ VERSION = "v18.19.6"
 class ReleasePublicationTests(unittest.TestCase):
     def fixture(self, root):
         assets = root / "assets"
-        assets.mkdir()
+        assets.mkdir(parents=True)
         asset_hashes = {}
         for name in ASSET_NAMES:
             if name == "index.json":
@@ -177,6 +178,131 @@ class ReleasePublicationTests(unittest.TestCase):
                 jat = {key: value for key, value in native.items() if key != "robotExactBinary"}
                 (directory / "jat-class-consumer-receipt.json").write_text(json.dumps(jat))
         return manifest_digest
+
+    def fake_go(self, root):
+        executable = root / "fake-go"
+        targets = {
+            name: target for name, target in ASSET_TARGETS.items()
+        }
+        cases = "\n".join(
+            f"  {name}) goos={goos}; goarch={goarch} ;;"
+            for name, (goos, goarch) in targets.items()
+        )
+        executable.write_text(
+            "#!/bin/sh\n"
+            "name=${3##*/}\n"
+            "case \"$name\" in\n" + cases + "\n"
+            "  *) goos=linux; goarch=amd64 ;;\n"
+            "esac\n"
+            "printf '%s: go1.26.9\\n' \"$3\"\n"
+            "printf '\\tbuild\\tGOOS=%s\\n' \"$goos\"\n"
+            "printf '\\tbuild\\tGOARCH=%s\\n' \"$goarch\"\n"
+            f"printf '\\tbuild\\tvcs.revision={SOURCE}\\n'\n"
+            "printf '\\tbuild\\tvcs.modified=false\\n'\n",
+            encoding="utf-8",
+        )
+        executable.chmod(0o755)
+        return executable
+
+    def test_review_asset_staging_binds_nine_small_exact_payloads(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "bundle"
+            digest = self.fixture(bundle)
+            output = root / "review-assets"
+            staged = publication.stage_review_assets(bundle, output, SOURCE, VERSION, 123, digest,
+                                                      str(self.fake_go(root)))
+            self.assertEqual(set(staged), set(ASSET_NAMES))
+            self.assertTrue(publication.validate_review_assets(output, SOURCE, VERSION, 123, digest))
+            for name in ASSET_NAMES:
+                self.assertLessEqual(staged[name], publication.MAX_REVIEW_ARTIFACT_BYTES)
+                self.assertEqual(
+                    {path.relative_to(output / name).as_posix()
+                     for path in (output / name).rglob("*") if path.is_file()},
+                    {f"assets/{name}", "evidence/asset-manifest.json", "evidence/SHA256SUMS",
+                     "evidence/provenance.json", "review-identity.json"},
+                )
+
+    def test_review_assets_reject_mismatched_identity_extra_layout_and_oversize(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "bundle"
+            digest = self.fixture(bundle)
+            output = root / "review-assets"
+            publication.stage_review_assets(bundle, output, SOURCE, VERSION, 123, digest,
+                                             str(self.fake_go(root)))
+            identity_path = output / "rcc-linux64" / "review-identity.json"
+            identity = json.loads(identity_path.read_text())
+            identity["preparationRunId"] = 124
+            identity_path.write_text(json.dumps(identity))
+            with self.assertRaisesRegex(ReleaseGateError, "identity mismatch"):
+                publication.validate_review_assets(output, SOURCE, VERSION, 123, digest)
+            identity["preparationRunId"] = 123
+            identity_path.write_text(json.dumps(identity))
+            (output / "rcc-linux64" / "unexpected").mkdir()
+            with self.assertRaisesRegex(ReleaseGateError, "layout mismatch"):
+                publication.validate_review_assets(output, SOURCE, VERSION, 123, digest)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "bundle"
+            digest = self.fixture(bundle)
+            output = root / "review-assets"
+            with patch.object(publication, "MAX_REVIEW_ARTIFACT_BYTES", 1):
+                with self.assertRaisesRegex(ReleaseGateError, "exceeds 1 raw bytes"):
+                    publication.stage_review_assets(bundle, output, SOURCE, VERSION, 123, digest,
+                                                    str(self.fake_go(root)))
+            self.assertFalse(output.exists())
+
+    def test_native_binary_review_payload_binds_executed_binary_and_rejects_tampering(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "rcc-linux64"
+            binary.write_bytes(b"tiny-linux-binary")
+            receipt = root / "native-runtime-receipt.json"
+            receipt.write_text(json.dumps({
+                "schemaVersion": 1,
+                "commitSha": SOURCE,
+                "platform": "linux_amd64",
+                "binary": {
+                    "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+                    "version": VERSION, "runtimeGOOS": "linux", "runtimeGOARCH": "amd64",
+                },
+            }))
+            go = self.fake_go(root)
+            output = root / "native-review"
+            metadata = publication.stage_native_review_binary(
+                binary, receipt, output, "rcc-linux64", "linux_amd64", SOURCE, VERSION, str(go)
+            )
+            self.assertEqual(metadata["binarySha256"], hashlib.sha256(binary.read_bytes()).hexdigest())
+            self.assertEqual(metadata["nativeReceiptSha256"], hashlib.sha256(receipt.read_bytes()).hexdigest())
+            self.assertEqual(publication.check_review_payload_size(output), len(binary.read_bytes()) +
+                             (output / "native-binary-review.json").stat().st_size)
+
+            bad_receipt = dict(json.loads(receipt.read_text()))
+            bad_receipt["binary"]["sha256"] = "0" * 64
+            receipt.write_text(json.dumps(bad_receipt))
+            with self.assertRaisesRegex(ReleaseGateError, "differs from the executed-binary receipt"):
+                publication.stage_native_review_binary(
+                    binary, receipt, root / "rejected", "rcc-linux64", "linux_amd64", SOURCE, VERSION, str(go)
+                )
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "rcc-linux64"
+            binary.write_bytes(b"tiny-linux-binary")
+            receipt = root / "native-runtime-receipt.json"
+            receipt.write_text(json.dumps({"commitSha": SOURCE, "platform": "linux_amd64", "binary": {
+                "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "version": VERSION,
+                "runtimeGOOS": "linux", "runtimeGOARCH": "amd64",
+            }}))
+            with patch.object(publication, "MAX_REVIEW_ARTIFACT_BYTES", 1):
+                with self.assertRaisesRegex(ReleaseGateError, "exceeds 1 raw bytes"):
+                    publication.stage_native_review_binary(
+                        binary, receipt, root / "rejected", "rcc-linux64", "linux_amd64", SOURCE, VERSION,
+                        str(self.fake_go(root)),
+                    )
+            self.assertFalse((root / "rejected").exists())
 
     def test_accepts_complete_bundle_and_exact_prep_run(self):
         with tempfile.TemporaryDirectory() as directory:
