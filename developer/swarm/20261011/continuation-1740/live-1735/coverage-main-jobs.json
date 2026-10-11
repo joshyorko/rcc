@@ -1,0 +1,145 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 114529775592,
+      "run_id": 38159675142,
+      "workflow_name": "Coverage gate",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675142",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoGv6A",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114529775592",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675142/job/114529775592",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-11T17:26:51Z",
+      "started_at": "2026-10-11T17:26:54Z",
+      "completed_at": "2026-10-11T17:28:19Z",
+      "name": "coverage",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:26:55Z",
+          "completed_at": "2026-10-11T17:26:56Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:26:56Z",
+          "completed_at": "2026-10-11T17:26:57Z"
+        },
+        {
+          "name": "Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:26:57Z",
+          "completed_at": "2026-10-11T17:27:06Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:27:06Z",
+          "completed_at": "2026-10-11T17:27:06Z"
+        },
+        {
+          "name": "Install Linux build-boundary dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:27:06Z",
+          "completed_at": "2026-10-11T17:27:15Z"
+        },
+        {
+          "name": "Install asset tool",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:27:15Z",
+          "completed_at": "2026-10-11T17:27:16Z"
+        },
+        {
+          "name": "Generate embedded assets",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:27:16Z",
+          "completed_at": "2026-10-11T17:27:37Z"
+        },
+        {
+          "name": "Run mandatory Linux confinement tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:27:37Z",
+          "completed_at": "2026-10-11T17:27:52Z"
+        },
+        {
+          "name": "Run tests with coverage",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:27:52Z",
+          "completed_at": "2026-10-11T17:28:15Z"
+        },
+        {
+          "name": "Enforce configured line coverage",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:28:15Z",
+          "completed_at": "2026-10-11T17:28:15Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-11T17:28:15Z",
+          "completed_at": "2026-10-11T17:28:15Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-11T17:28:15Z",
+          "completed_at": "2026-10-11T17:28:16Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-11T17:28:16Z",
+          "completed_at": "2026-10-11T17:28:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-11T17:28:16Z",
+          "completed_at": "2026-10-11T17:28:16Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114529775592",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000140186,
+      "runner_name": "GitHub Actions 1000140186",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

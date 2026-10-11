@@ -1,0 +1,327 @@
+{
+  "arm64ScopeErratum": "The original peer receipt was preserved byte-for-byte; separate erratum corrects its helper-generated wording to say PR240 post-release source, not shipping7945 source.",
+  "checks": {
+    "allActualBinaryBytesMatchReceiptAndGoMetadata": true,
+    "allArtifactApiSizesAndShaMatchedActualZIPs": true,
+    "allNativeReceiptCommitShasMatchHead": true,
+    "goMetadataExactGo1_26_9AndVCSClean": true,
+    "linuxJatReceiptBoundToSameActualBinary": true,
+    "nativeColdWarmDeadProviderLeaseAndSQLiteLifecycleValidated": true,
+    "robotXmlCountsAllOnePassZeroFailZeroSkip": true,
+    "syntheticCpuMismatchRejectedWithZeroProviderGets": true
+  },
+  "platforms": [
+    {
+      "artifactApiSha256": "719ec2fd3e18474d7710e74ef68f7f0b7cf1b0030da3815f33edf0e0245d7b4d",
+      "artifactBytes": 13386463,
+      "artifactId": 11709268812,
+      "artifactName": "linux-amd64-native-runtime-receipt",
+      "binaryBytes": 22392994,
+      "binaryPath": "/dev/shm/rcc-p1-240-current-native-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+      "binarySha256": "7cd41bf4f19e0a0aa51bcdccdefdc335051b67cf13cbf9fe4e6881726de295cb",
+      "cold": {
+        "artifactDigest": "sha256:8d69c13e8ea71ab673aa74cb7fe843385a515499ce647f52307242b8851aba74",
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "sqliteImport": "sqlite3"
+      },
+      "cpuMismatch": {
+        "providerObjectGets": 0,
+        "rejected": true
+      },
+      "evidenceFiles": {
+        "native-runtime-receipt.json": {
+          "sha256": "d8ce16aef3eae7d34ab789c3a8612d5ead065e95be505ad720b33037b2790e81",
+          "size": 110231
+        },
+        "native-runtime-robot-evidence.json": {
+          "sha256": "4f4e713752c8e4ae64fdd278c011baa786759b93c4c6993c076d5cb76098422f",
+          "size": 1679
+        },
+        "output.xml": {
+          "sha256": "597ae57c5500636d37cd295353ac2201a6bfc510e3b22467c283940e5d475d54",
+          "size": 128497
+        }
+      },
+      "goMetadataChecks": {
+        "cgoDisabled": true,
+        "goVersion1.26.9": true,
+        "runtimeTarget": "linux/amd64",
+        "vcsModifiedFalse": true,
+        "vcsRevision": true
+      },
+      "goMetadataExit": 0,
+      "goMetadataSha256": "eade58f9e593e8e997e48c7bc3587359a0d0c6178768e2f26b6dfe62cd1b8c10",
+      "jatClassReceiptValidated": true,
+      "jobConclusion": "success",
+      "jobId": 114524469958,
+      "peerVerifierResult": "PEER_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "platform": "linux_amd64",
+      "platformProbes": {
+        "caseCollision": "case-sensitive-filesystem",
+        "executableSymlink": "pass",
+        "filesystemType": "ext2/ext3",
+        "glibcMuslMismatch": "pass",
+        "libc": "glibc",
+        "machine": "x86_64",
+        "runnerOS": "linux"
+      },
+      "robotXml": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      },
+      "zipPath": "/dev/shm/rcc-p1-240-current-native-root/linux-amd64-native-runtime-receipt.zip",
+      "zipSha256Actual": "719ec2fd3e18474d7710e74ef68f7f0b7cf1b0030da3815f33edf0e0245d7b4d"
+    },
+    {
+      "artifactApiSha256": "f42d78c7a5e467887a08dd3e936a4cd203881e474ad75a1599121f9029456ea0",
+      "artifactBytes": 10850441,
+      "artifactId": 11709723223,
+      "artifactName": "windows-amd64-native-runtime-receipt",
+      "binaryBytes": 20118528,
+      "binaryPath": "/dev/shm/rcc-p1-240-current-native-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+      "binarySha256": "ac5eff86dba6f4c795f94b0cbca457d9eec56f7aecd3ba7f2a2efa578c2aca03",
+      "cold": {
+        "artifactDigest": "sha256:1266149b34ba9107a24eb54d88f78bc1fe486bc1ad1a7714010388b73b86e691",
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "sqliteImport": "sqlite3"
+      },
+      "cpuMismatch": {
+        "providerObjectGets": 0,
+        "rejected": true
+      },
+      "evidenceFiles": {
+        "native-runtime-receipt.json": {
+          "sha256": "c3daab6a5cda17045422add94a53d49b9648712577466c3feb0fb94113ce94e2",
+          "size": 15997
+        },
+        "native-runtime-robot-evidence.json": {
+          "sha256": "69c9f6596e63c5da9096a05aba5333a7778f65b790e0ff73c50207f6b2276de6",
+          "size": 1641
+        },
+        "output.xml": {
+          "sha256": "6d8e04225169fa4e11418581d2dc947df91f87f190fd671a974c68f7f5b50f0d",
+          "size": 135832
+        }
+      },
+      "goMetadataChecks": {
+        "cgoDisabled": true,
+        "goVersion1.26.9": true,
+        "runtimeTarget": "windows/amd64",
+        "vcsModifiedFalse": true,
+        "vcsRevision": true
+      },
+      "goMetadataExit": 0,
+      "goMetadataSha256": "3339d139776c18824079c16a32413356fc16d253b746c432501ffe027c369643",
+      "jatClassReceiptValidated": false,
+      "jobConclusion": "success",
+      "jobId": 114524469816,
+      "peerVerifierResult": "PEER_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "platform": "windows_amd64",
+      "platformProbes": {
+        "caseCollision": "case-insensitive-filesystem",
+        "executableSymlink": "pass",
+        "fileLock": "pass",
+        "junction": "pass",
+        "longPath": "pass",
+        "machine": "AMD64",
+        "pathNormalization": "pass",
+        "runnerOS": "win32"
+      },
+      "robotXml": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      },
+      "zipPath": "/dev/shm/rcc-p1-240-current-native-root/windows-amd64-native-runtime-receipt.zip",
+      "zipSha256Actual": "f42d78c7a5e467887a08dd3e936a4cd203881e474ad75a1599121f9029456ea0"
+    },
+    {
+      "artifactApiSha256": "002c5af5acaea752fdb3a679d2269aac702b6854317adcef73173f5cd633a269",
+      "artifactBytes": 13072558,
+      "artifactId": 11708799067,
+      "artifactName": "macos-amd64-native-runtime-receipt",
+      "binaryBytes": 22233024,
+      "binaryPath": "/dev/shm/rcc-p1-240-current-native-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+      "binarySha256": "746b53291e0c8ec9a15fc006d63843abce0e827bd88761cd2279138050678140",
+      "cold": {
+        "artifactDigest": "sha256:325d655a1fb228c205c3e9be2d0fb04331e315425909af25a8a0a2357df3d143",
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "sqliteImport": "sqlite3"
+      },
+      "cpuMismatch": {
+        "providerObjectGets": 0,
+        "rejected": true
+      },
+      "evidenceFiles": {
+        "native-runtime-receipt.json": {
+          "sha256": "f50404cf2e76155fca1cad151be6e1f8017207f039146114c61ffe225820ee5e",
+          "size": 15456
+        },
+        "native-runtime-robot-evidence.json": {
+          "sha256": "9c99bb0eb5115a72af5358fd00eaf41dc53c68b51ab490bc35164e6c9ee2b8cf",
+          "size": 1674
+        },
+        "output.xml": {
+          "sha256": "672ce9d390810ea2f463f5f59e97cf4e000f230c622838e6a9fa1869b9561815",
+          "size": 128880
+        }
+      },
+      "goMetadataChecks": {
+        "cgoDisabled": true,
+        "goVersion1.26.9": true,
+        "runtimeTarget": "darwin/amd64",
+        "vcsModifiedFalse": true,
+        "vcsRevision": true
+      },
+      "goMetadataExit": 0,
+      "goMetadataSha256": "c2326744a9b64405cb8f94eeb53c14dfc49420aa73d5846fc79e034b1adf5162",
+      "jatClassReceiptValidated": false,
+      "jobConclusion": "success",
+      "jobId": 114524469818,
+      "peerVerifierResult": "PEER_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "platform": "darwin_amd64",
+      "platformProbes": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "unsigned-or-unverified",
+        "executableSymlink": "pass",
+        "machine": "x86_64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robotXml": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      },
+      "zipPath": "/dev/shm/rcc-p1-240-current-native-root/macos-amd64-native-runtime-receipt.zip",
+      "zipSha256Actual": "002c5af5acaea752fdb3a679d2269aac702b6854317adcef73173f5cd633a269"
+    },
+    {
+      "artifactApiSha256": "c0088f7d7c268830c66bca1f2873717cd53d1070064bd9b13e349252a63d77c1",
+      "artifactBytes": 12498457,
+      "artifactId": 11708874673,
+      "artifactName": "macos-arm64-native-runtime-receipt",
+      "binaryBytes": 20986322,
+      "binaryPath": "/dev/shm/rcc-p1-240-current-native-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+      "binarySha256": "a76e5a37a3e9533dc06f5d10554c9a453430579b38d28bb527cd2cbb451dfe9f",
+      "cold": {
+        "artifactDigest": "sha256:95aa279b8066d858085c76c556e6dedef2c82537aee4e63795ef6d9b96c3f6fe",
+        "cacheHit": "provider",
+        "exitCode": 0,
+        "leaseReleased": true,
+        "sqliteImport": "sqlite3"
+      },
+      "cpuMismatch": {
+        "providerObjectGets": 0,
+        "rejected": true
+      },
+      "evidenceFiles": {
+        "native-runtime-receipt.json": {
+          "sha256": "9f55b72ceb578382a3109afcd3a17d303ed61c559f6432c4936f55e70d033555",
+          "size": 15441
+        },
+        "native-runtime-robot-evidence.json": {
+          "sha256": "04a1afd63981374c8946c27d057e1f98d7b165388d1eb555dec0673f4cf245fa",
+          "size": 1674
+        },
+        "output.xml": {
+          "sha256": "86bacbe048dc3da17317996f4b512bf3d79e3baebdbfc00bb2fbf92a78b3e823",
+          "size": 128974
+        }
+      },
+      "goMetadataChecks": {
+        "cgoDisabled": true,
+        "goVersion1.26.9": true,
+        "runtimeTarget": "darwin/arm64",
+        "vcsModifiedFalse": true,
+        "vcsRevision": true
+      },
+      "goMetadataExit": 0,
+      "goMetadataSha256": "2a9a819f07ef03ef4b72e79d38d9bf47fb6bf0606e0dc30a44ff0eccf6049ee6",
+      "jatClassReceiptValidated": false,
+      "jobConclusion": "success",
+      "jobId": 114524469802,
+      "peerVerifierResult": "PEER_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "platform": "darwin_arm64",
+      "platformProbes": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "verified",
+        "executableSymlink": "pass",
+        "machine": "arm64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robotXml": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "warm": {
+        "cacheHit": "local-materialization",
+        "providerDeadWarmReuse": true
+      },
+      "zipPath": "/dev/shm/rcc-p1-240-current-native-root/macos-arm64-native-runtime-receipt.zip",
+      "zipSha256Actual": "c0088f7d7c268830c66bca1f2873717cd53d1070064bd9b13e349252a63d77c1"
+    }
+  ],
+  "reviewResult": "PASS",
+  "rootIndependentReviewPaths": {
+    "peerReceipts": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-240-current-native-bytes",
+    "rawZipRamDirectory": "/dev/shm/rcc-p1-240-current-native-root",
+    "safeExtractionsUnder": "/dev/shm/rcc-p1-240-current-native-root",
+    "scopeErratum": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-240-current-native-bytes/darwin_arm64-scope-erratum.json"
+  },
+  "run": {
+    "buildJob": {
+      "conclusion": "success",
+      "id": 114523943124
+    },
+    "headSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+    "nativeJobsAllSuccessful": true,
+    "releaseCandidateJob": {
+      "conclusion": "skipped",
+      "id": 114523943855,
+      "reason": "PR workflow; not a manual release preparation run"
+    },
+    "repository": "joshyorko/rcc",
+    "runId": 38157690344
+  },
+  "scope": "Read-only verification of the four small native-runtime-receipt ZIP artifacts from PR240 current head. Binaries were hash-inspected and Go metadata read with official Go 1.26.9; no foreign-platform binary execution, distribution publication, signing, or release qualification is claimed. PR240 contains journal-only tests; binary evidence binds exactly to its head and does not rebind the shipping source."
+}

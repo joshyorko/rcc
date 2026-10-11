@@ -1,0 +1,278 @@
+{
+  "timestamp": "2026-10-11T17:43:49.376549+00:00",
+  "source_checkpoint": "4f370746ef02869a0f0a34e2571693ead90db432",
+  "nodes": [
+    {
+      "issue": 98,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 118,
+      "status": "open",
+      "lane": "architecture"
+    },
+    {
+      "issue": 125,
+      "status": "open",
+      "lane": "research"
+    },
+    {
+      "issue": 131,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 132,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 133,
+      "status": "closed",
+      "lane": "accepted docs236 integrated64dcc; explicitreconciledscope"
+    },
+    {
+      "issue": 135,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 181,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 182,
+      "status": "closed completed",
+      "lane": "Accepted deterministic persistence/lifecycle/error tests and reproducible actual full Go coverage; PR240 integrated, full tree independently verified."
+    },
+    {
+      "issue": 185,
+      "status": "open",
+      "lane": "governance hold"
+    },
+    {
+      "pr": 240,
+      "status": "MERGED7d17122",
+      "lane": "existing182test-only integration"
+    }
+  ],
+  "edges": [
+    {
+      "from": "118",
+      "to": "124",
+      "state": "identity foundation accepted/closed"
+    },
+    {
+      "from": "118",
+      "to": "208",
+      "state": "serving accepted/closed; broader platform contract remains"
+    },
+    {
+      "from": "125",
+      "to": "229",
+      "state": "benchmark harness merged; source-bound observations retained"
+    },
+    {
+      "from": "125",
+      "to": "64",
+      "state": "historical closed/unmerged claims not accepted current gains"
+    },
+    {
+      "from": "125",
+      "to": "Actions221",
+      "state": "Publice4 approved TEST_ONLY newer selectors unchanged. Target advanced toe2c81 without RCC changes. Owner reports corrected private396925 source-light267/1; public lookup422 prevents independent source/controller qualification. Current3 corrected control and newer5/7276 actual receipts not yet qualified; shipping7945 separatetuple; six workload benchmarks waiting. Not permanent version incompatibility."
+    },
+    {
+      "from": "Actions133",
+      "to": "Actions134/139/143",
+      "state": "same-subject Runtime/adapter/conformance contracts"
+    },
+    {
+      "from": "133",
+      "to": "PR236",
+      "state": "MERGED64dcc264 aftercurrentbdeffactualroot+Luna4nativebyteproof;133closed; frozen7945releaseunchanged"
+    },
+    {
+      "from": "181",
+      "to": "PR235",
+      "state": "MERGEDba2c904/root+Lunaactual4native/fresh6contexts/focusedGorace0; wrapperFAILobserverbugpreserved/rootquiescenceproved; residual181OPEN/frozenshipping7945unchanged"
+    },
+    {
+      "from": "two-phase-release",
+      "to": "release-qualification",
+      "state": "SOURCE-PREPARED frozen7945; all9assets/all4native/all11numeric0/Robot171/0/1/trust/offline/N1 independently accepted; PUBLICATION HOLD; Policy/signing verification403, shipping5970/6629 risk decisions, separateoperatorGO and later tagged/remote release verification"
+    },
+    {
+      "from": "release-qualification",
+      "to": "operator-GO",
+      "state": "explicit PUBLICATION HOLD; no tag/no publication"
+    },
+    {
+      "from": "125",
+      "to": "release-qualification",
+      "state": "not a mandatory technical gate"
+    },
+    {
+      "from": "PR237",
+      "to": "release-qualification",
+      "state": "SOURCE-PREPARED frozen7945; all9assets/all4native/all11numeric0/Robot171/0/1/trust/offline/N1 independently accepted; PUBLICATION HOLD; Policy/signing verification403, shipping5970/6629 risk decisions, separateoperatorGO and later tagged/remote release verification"
+    },
+    {
+      "from": "182",
+      "to": "PR240",
+      "state": "PR240 merged at7d171224; all four current native receipts and actual coverage/quality accepted. Issue182 closed with completed criteria, not percentage floor alone. Shipping7945 unchanged."
+    },
+    {
+      "from": "125",
+      "to": "compression/pack/COWcomponent",
+      "state": "measuredcomponents/scopedcapability;nooptimizationwinnerorE2Erecommendation"
+    },
+    {
+      "from": "125",
+      "to": "large-byte-coverage-codec",
+      "state": "500 raw external codec samples on20objects/65.524% stored bytes root verified; whole wrapper FAILED inferredouter1 notcaptured; no timed retry or E2E winner."
+    },
+    {
+      "from": "125",
+      "to": "Go-gzip-component",
+      "state": "ONE actual300 Go9 stdlibcodec calls/20objects/30events outer/build/runtime0; root actualbytes/metadata/schedule verified0, allcanonicalframes equaloriginalstored20. No directRCC/Actions/pairedgain/defaultwinner."
+    },
+    {
+      "from": "PR238",
+      "to": "release-qualification",
+      "state": "SOURCE-PREPARED frozen7945; all9assets/all4native/all11numeric0/Robot171/0/1/trust/offline/N1 independently accepted; PUBLICATION HOLD; Policy/signing verification403, shipping5970/6629 risk decisions, separateoperatorGO and later tagged/remote release verification"
+    },
+    {
+      "from": "PR239",
+      "to": "release-qualification",
+      "state": "MERGED239 at3fe after allhostedchecks/current4actualnative ROOT+peer; exporter38155612008SUCCESS actualrawfullgate0 independently accepted"
+    },
+    {
+      "from": "125",
+      "to": "Go-FS-object-vs-pack-component",
+      "state": "Root and Sol independently accepted all10 raw component passes, source/binary/fixture identities. Entire invocation remains FAILED1 due post-run home0700\u21920750 guard. Same warm tmpfs median GetObject60.253ms vs private indexed ReadAt6.283ms; not full pack-format parity or Actions/E2E/default gain."
+    },
+    {
+      "from": "shipping-strict-consumer",
+      "to": "release-qualification",
+      "state": "ROOT+peer accepted actual7945/5a strictcold/offline: sixcommandexits0; all5049actualCAS zero mismatch; leases0; intact entireOWNstate preserved; all25old324files restored"
+    },
+    {
+      "from": "132",
+      "to": "125/Actions-fixture-home-contract",
+      "state": "Observed actualfrozen7945 import-timeHTFSprivate0750parentchmod duringGoAPI measurement; outer0700boundaries stable, supervisorhomeguardFAILED. Architectureevidence/sourcechain only; no releasegate or implicit refactor. ExistingActionsowner0750/0700fixture issue crossrepo attribution awaitsownqualifiedsource/controller."
+    },
+    {
+      "from": "125",
+      "to": "inode-allocation-census",
+      "state": "Actualread-only5537full/4649small +directoryallocation accepted ROOTverifier0. Blocksaccounting notphysicaluniquedisk, objectfilesretained, no defaultformat orperformancegain."
+    }
+  ],
+  "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "continuation_1630": {
+    "main": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+    "239": "MERGED;readonlyfullgateexport38155612008running",
+    "shipping7945strict": "ROOTacceptedactual5049/0mismatch/0lease intactpreserved",
+    "actionscompatibility": "publice4actualsourceadmissionimplemented;runtimeownerfixtureblocked;shipping7945tuplemissing",
+    "performance": "isolatedexact7945GoGetObjectpackcomponentprep, notreleasegate",
+    "openissues": [
+      98,
+      118,
+      125,
+      131,
+      132,
+      135,
+      181,
+      182,
+      185
+    ],
+    "draftNO_GO": [
+      224,
+      225
+    ],
+    "publication": "HOLD NO TAG/RELEASE"
+  },
+  "continuation_1655": {
+    "main": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+    "239": "MERGED/read-onlyexport and all11raw accepted",
+    "strict": "accepted/intactpreserved/all25restored",
+    "performance": "onecomponentattemptadmitted",
+    "actions": "ownerqualificationblockedfixture/controller, source repair actualverified",
+    "publication": "HOLD/no6tagrelease; PatchRaptor38157407365 publisherstepsSKIPPED"
+  },
+  "continuation_1707": {
+    "performance": {
+      "owner": "workers_226 LunaHigh; consumer_contract_125 SolExtraHigh independentreview; rootresource/sourceadmission",
+      "scope": "Actual7945GoFilesystem.GetObject vsisolatedindexedpack4649sameframes; componentwarmonly",
+      "status": "MEASURED dataROOTverified; postrunhomeguardFAIL retained; peer review active",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "original_harness": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4 unchanged",
+      "requirements": "sameownedRAMmountbotharms,failclosedIO/RSS,partialreceipts+passdeadline,sourceexactembeds/offlinecache/boundedresources beforecompile",
+      "six_directions": "compression;packfiles;prewarming/reuse;reflinks/clonefile;lazy/FUSE;compressedimages/COW allpreserved, no defaultwinner",
+      "supervisor": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4",
+      "admission": "performance-admission/go-object-pack-native-root-preexecution-1637/root-admission-native-v6.json",
+      "limits": {
+        "workspace": 33554432,
+        "ram": 1073741824,
+        "rss": 2147483648,
+        "combined": 180,
+        "build_phase_allocation": 90,
+        "pass": 30,
+        "floor": 2688548864
+      },
+      "binary": "38c84cf54b637f170591e96fbd70f7acac955f57f37b5384459f40e5e82d952c",
+      "numeric": {
+        "build": 0,
+        "harness": 0,
+        "supervisor": 1,
+        "direct_outer": 1,
+        "root_independent_verifier": 0
+      },
+      "results": "actual-v8-root-acceptance.json",
+      "comparative_scope": "Warm same tmpfs actualRCC GetObject versus isolatedReadAt privatecomponent. Pack layout removes currentperobjectsecurepathopen/size/read/allocation bookkeeping; not fullRCC packformat parity. No disk/HTTP/materialization/Actions/portable/default gain; supervisor homeguardFAIL remains, no timedrerun. RSS samples not absolutepeak. CPU containsobserver andGC overhead, mayexceedwall. Readsyscalls not fileopens."
+    },
+    "native240": "all4jobsINPROGRESS",
+    "publication": "HOLD"
+  },
+  "continuation_1730": {
+    "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+    "240": "MERGED allhosted/all4actual ROOT+Luna0",
+    "125": "Nativecomponentraw accepted withwholeguardFAIL; readonlyallocationcensus accepted; Actionsownerfixturepathstillunqualified",
+    "182": "Closurecriteriaactualcoverage reviewactive",
+    "publication": "HOLD no6tagrelease"
+  },
+  "continuation_1735": {
+    "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+    "open_issues": [
+      98,
+      118,
+      125,
+      131,
+      132,
+      135,
+      181,
+      185
+    ],
+    "182": "Closed after actual criterion, raw-log and complete-tree review.",
+    "125": "All six directions preserved; native read component and allocation evidence accepted with stated guard/storage limits. Actions admission freshness review active.",
+    "publication": "SOURCE-PREPARED / PUBLICATION HOLD. No v18.19.6 tag or release."
+  },
+  "continuation_1740": {
+    "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+    "open_issues": [
+      98,
+      118,
+      125,
+      131,
+      132,
+      135,
+      181,
+      185
+    ],
+    "240": "Merged after all actual4native and hostedchecks;182 closed complete; actualmaincoverage independently reviewed.",
+    "125": "Scoped actual Go read component and readonly allocation accepted; all6 investigations retained; no default winner; Actions refreshed owner repair progress tracked, admission external.",
+    "publication": "SOURCE-PREPARED and PUBLICATION HOLD. Policy/signing/security and separate operator GO still required."
+  }
+}

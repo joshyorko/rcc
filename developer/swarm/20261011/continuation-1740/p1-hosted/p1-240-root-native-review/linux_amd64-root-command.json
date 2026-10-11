@@ -1,0 +1,12 @@
+{
+  "command": [
+    "python3",
+    "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-240-root-native-review/verify_native_bundle_246.py",
+    "linux_amd64",
+    "/dev/shm/rcc-p1-240-independent-root/linux-amd64-native-runtime-receipt.zip",
+    "11709268812",
+    "719ec2fd3e18474d7710e74ef68f7f0b7cf1b0030da3815f33edf0e0245d7b4d"
+  ],
+  "numeric_exit": 0,
+  "stderr": ""
+}

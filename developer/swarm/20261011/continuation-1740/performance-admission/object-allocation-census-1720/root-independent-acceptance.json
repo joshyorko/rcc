@@ -1,0 +1,50 @@
+{
+  "status": "ROOT_ACTUAL_METADATA_CENSUS_VERIFIED",
+  "utc": "2026-10-11T17:27:45.447001+00:00",
+  "numeric_census_exit": 0,
+  "numeric_root_verifier_exit": 0,
+  "earlier_unlaunched_time_wrapper_exit": 127,
+  "whole_object_inode_count": 5537,
+  "small_inode_count": 4649,
+  "whole_stored_file_bytes": 69466848,
+  "index_declared_uncompressed_bytes": 170590205,
+  "whole_object_file_allocation_bytes": 86028288,
+  "small_stored_bytes": 4484936,
+  "small_object_file_allocation_bytes": 19042304,
+  "full_directories": {
+    "unique_paths": 5565,
+    "allocated_bytes": 22794240
+  },
+  "small_ancestor_directories": {
+    "unique_paths": 4745,
+    "allocated_bytes": 19435520
+  },
+  "large_ancestor_directories": {
+    "unique_paths": 1132,
+    "allocated_bytes": 4636672
+  },
+  "shared_small_large_ancestor_directories": {
+    "unique_paths": 312,
+    "allocated_bytes": 1277952
+  },
+  "small_only_ancestor_directories": {
+    "unique_paths": 4433,
+    "allocated_bytes": 18157568
+  },
+  "large_only_ancestor_directories": {
+    "unique_paths": 820,
+    "allocated_bytes": 3358720
+  },
+  "actual_pack_plus_offset_allocation_bytes": 5013504,
+  "output_allocated_before_root_receipt": 1495040,
+  "caveats": [
+    "st_blocks*512 allocatedaccounting, notphysicalunique/reflink/loweroverlaydisk orremoval/savings proof",
+    "Directoryancestors reusedbetweenlarge/small; selecteddir allocation cannotallbe attributedexclusive smallobjects",
+    "No originalobjectpayload files opened. Index/offset/pack inputverification DID read6,502,577bytes plus repeatedmetadataJSONreads; workerzeroPayloadBytes claim scopedtoindividualCASfiles only",
+    "file_records logical is indexdeclareduncompressedsize; actualfilelogicalsize is stored",
+    "Actualcensus.exit0; originalouter.exit127is firstunlaunchedtimewrapper. Erratum outer_numeric_exit_file0 is notactualouter.exit contents",
+    "Script printedFAIL SystemExit0 afterPASS. Preservedoriginalscript/raws/erratum; no measuredrerun",
+    "ru_maxrss33861632 wasread beforeJSONserialization; notindependentlyobservedfinalprocess-treepeak orhardquota",
+    "No defaultformat/materializer/Actions/sixwaywinner orperformancegain follows"
+  ]
+}

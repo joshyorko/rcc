@@ -1,0 +1,24 @@
+[
+  {
+    "url": "https://github.com/joshyorko/rcc/issues/182#issuecomment-6109478587",
+    "body": "Existing journal quality lane advanced on isolated branch `codex/rcc-182-journal-tests-20261011`, pushed source `36a84430083b3af6f9758408b94054e5197b7f8b` (tree `2fa0167aa679a4d60c7a5c0002801dc4bdb94ff7`, accepted main727 ancestor). The diff is only 114 lines in journal/coverage_test.go: run-journal lifecycle/stop, warranty suppression, missing-journal error and persisted/reloaded build statistics. Root reviewed the actual diff and receipts.\n\nOfficial Go1.26.9 with CGO passed `go test -p 1 -count=1 -cover ./journal`, exit0, 82.5% coverage (accepted prior focused baseline11.6%). Observed elapsed1.466s; sampled process-tree RSS77,058,048 B; sampled RAMtemp maximum9,293,824 B; cachegrowth5,922,816 B; free space remained above2.5GiB. An explicit erratum preserves the original receipt: its temp-peak field4096 was the final sample; actual sample maximum is9,293,824. RSS sampling does not establish an absolute transient maximum.\n\nNo PR or main merge yet: repository-wide and hosted acceptance remain outstanding. PR admission is deferred while release-critical CI is queued, preserving v18.19.6 source isolation. This issue remains open. Raw source-bound receipts will accompany the next durable checkpoint.\n",
+    "user": {
+      "login": "joshyorko",
+      "name": "joshyorko",
+      "email": null,
+      "avatar_url": "https://avatars.githubusercontent.com/u/54248591?v=4",
+      "id": 54248591
+    },
+    "id": 6109478587,
+    "pull_request_review_id": null,
+    "in_reply_to_id": null,
+    "created_at": null,
+    "updated_at": null,
+    "review": null,
+    "side": null,
+    "line": null,
+    "start_line": null,
+    "path": null,
+    "body_html": "<p dir=\"auto\">Existing journal quality lane advanced on isolated branch <code class=\"notranslate\">codex/rcc-182-journal-tests-20261011</code>, pushed source <code class=\"notranslate\">36a84430083b3af6f9758408b94054e5197b7f8b</code> (tree <code class=\"notranslate\">2fa0167aa679a4d60c7a5c0002801dc4bdb94ff7</code>, accepted main727 ancestor). The diff is only 114 lines in journal/coverage_test.go: run-journal lifecycle/stop, warranty suppression, missing-journal error and persisted/reloaded build statistics. Root reviewed the actual diff and receipts.</p>\n<p dir=\"auto\">Official Go1.26.9 with CGO passed <code class=\"notranslate\">go test -p 1 -count=1 -cover ./journal</code>, exit0, 82.5% coverage (accepted prior focused baseline11.6%). Observed elapsed1.466s; sampled process-tree RSS77,058,048 B; sampled RAMtemp maximum9,293,824 B; cachegrowth5,922,816 B; free space remained above2.5GiB. An explicit erratum preserves the original receipt: its temp-peak field4096 was the final sample; actual sample maximum is9,293,824. RSS sampling does not establish an absolute transient maximum.</p>\n<p dir=\"auto\">No PR or main merge yet: repository-wide and hosted acceptance remain outstanding. PR admission is deferred while release-critical CI is queued, preserving v18.19.6 source isolation. This issue remains open. Raw source-bound receipts will accompany the next durable checkpoint.</p>"
+  }
+]

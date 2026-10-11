@@ -1,0 +1,28 @@
+--- frozen1610
+
++++ current1737
+
+@@ -1,2 +1,13 @@
+
++Live engineering target: `e2c81adce7858d5a952991ba9a8b7f72e902038a` on `integration/community-release-20261008`. PR #282 was normally integrated after all 25 hosted jobs, original Windows source/integration evidence, and its exact published Core 1.0.3/browser artifact were accepted. Actual merge tree `afe2679cc93bf27fa5021c7698ee7ad3ee21a1b9` and parents `a54c982462d1e7ad011d8152bfc299d997503fb3` + `1299cc4bb6586f467d36ca124faaaaa77362695f` are verified. Earlier accepted integrations and receipts remain retained.
++
++Engineering continues through the existing ownership graph. RCC compatibility is isolated and test-only: source `396925cb3d6527af1768b7f5333f9653c005fc55` passed current SOURCE_LIGHT (267 passes, one opt-in skip; all 47 cache and 10 shutdown controls pass), and will be refreshed onto the new target before SOURCEFULL. The original control3 capacity/cleanup failure and later home-mode failure remain failures. The public mode fix is reviewed; private V8 source controls pass, but no newer RCC binary has executed or qualified. Production RCC pins/downloads remain 18.19.3.
++
++PR #305 source `5306eeb26595da4ce571b99812eb50f047cfc903` and PR #313 source `12dd3ec5c4d2a582b192ba11c5f13736757aba16` retain their source/preexecution checkpoints; their current full suites have NOT_RUN and need target/isolated-basetemp successors. Exact B28 storage preservation is preparation only; no new infrastructure is authorized. Devsy remains disabled.
++
++The retained acceptance graph remains 54 contracts: 53 open plus accepted/closed #210. No additional issue closure or full product/private/platform/native/backend acceptance is claimed. Runtime 1.0.3 publication remains held under #221.
++
++<details>
++<summary>Retained previous engineering lead and audit history</summary>
++
+ ## Actions Convergence & Closure Readiness
+ 
+@@ -27,4 +38,7 @@
+
+ 
+ The [1,180-original engineering checkpoint](https://github.com/joshyorko/actions/tree/62f4e180f6c894777ebc8ed3a729e88d2f6531d6/docs/program/evidence/wave11/current-engineering-20261011) is normally committed/pushed on the existing handoff branch, retaining all644 prior originals unchanged and536 new safe originals after staged independent GO05a681ba. Independent committed remote readback1dd30550 passed. Completed scratch now has38 verified private archives across17 batches on existing mounts; failed563d remains failed and retained. Raw logs, ZIPs, original artifact member payloads, private code and archive indices stay outside Git. The inherited22,524-byte manifest alias remains unrecovered. Devsy is disabled; no Dakota writers or replacement infrastructure. The full54-contract graph and four close-ready recommendations remain open, with293–296 human-review-only. The audited snapshot below retains its exact text and final newline.
++
++
++</details>
+ 
+ 

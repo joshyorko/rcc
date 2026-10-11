@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-10-11T17:40:06.358934+00:00",
+  "shipping_source": "7945f956b428359928908a9f42e36417b113dafd",
+  "shipping_tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "current_main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "current_main_tree": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+  "changed_paths": 7,
+  "production_go_source_changes": [],
+  "scope": "Main has later accepted test/docs/workflow changes. Production Go files unchanged, but embedded documentation and workflows differ; do not rebuild/rebind frozen release artifacts from current main. Shipping assets remain attributed only to7945."
+}

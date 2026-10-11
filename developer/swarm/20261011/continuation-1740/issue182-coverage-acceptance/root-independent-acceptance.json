@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-10-11T17:34:50.244302+00:00",
+  "root_verifier_exit": 0,
+  "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "tested_synthetic_commit": "b55dd76837b60df1498a1b8c83310d00d3266970",
+  "actual_identical_complete_tree": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+  "all_preserved_raw_hashes_verified": true,
+  "actual_quality_zip_hash_and_contents_verified": true,
+  "issue_body_acceptance": "All stated journal persistence, malformed/unavailable storage, lifecycle/error and reproducible repository-wide post-asset coverage criteria satisfied. No journal numeric threshold in issue body.",
+  "journal_coverage": 83.8,
+  "full_go_statement_coverage": 47.4,
+  "confinement": "Three mandatory root-only tests passed separately before instrumented whole-repository suite.",
+  "limits": "Full tree equivalence independently verified, but hosted run did not use post-merge SHA; shipping7945 unaffected."
+}

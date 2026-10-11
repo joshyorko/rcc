@@ -1,0 +1,46 @@
+{
+  "issue": 182,
+  "mergedMain": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "pullRequestHead": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "pullRequestMergeCheckCommit": "b55dd76837b60df1498a1b8c83310d00d3266970",
+  "compare": {
+    "base": "b55dd76837b60df1498a1b8c83310d00d3266970",
+    "head": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+    "status": "diverged",
+    "ahead_by": 1,
+    "behind_by": 1,
+    "merge_base": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+    "files": []
+  },
+  "coverageRun": 38157690454,
+  "coverageJob": 114523943491,
+  "coverageConclusion": "success",
+  "qualityRun": 38157690369,
+  "qualityJob": 114523943768,
+  "qualityConclusion": "success",
+  "qualityArtifact": {
+    "id": 11709232051,
+    "name": "quality-report",
+    "sizeBytes": 519,
+    "digest": "sha256:f4755f6ea6f0a8734064331245e43d27ba52649d72394c6853e3cca8e55ab321",
+    "expired": false,
+    "headSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c"
+  },
+  "observed": {
+    "go": "1.26.9",
+    "goos": "linux",
+    "goarch": "amd64",
+    "cgoEnabled": 1,
+    "cc": "gcc",
+    "assetGeneration": "passed",
+    "confinementTests": "passed",
+    "fullRepositoryCoveragePct": 47.4,
+    "configuredLineThresholdPct": 20,
+    "journalCoveragePct": 83.8
+  },
+  "limits": [
+    "Runs checked out synthetic PR merge commit b55dd768..., not later main commit 7d171...; GitHub compare reports no changed files, but merge commit identities diverge. Evidence proves tested PR merge candidate tree equivalence, not a test run on post-merge SHA.",
+    "Coverage workflow generated embedded assets, ran mandatory Linux confinement tests separately, then measured repository coverage with three confinement tests explicitly skipped in the instrumented go test command.",
+    "Coverage workflow covers Go packages, not non-Go surfaces."
+  ]
+}

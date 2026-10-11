@@ -1,0 +1,195 @@
+{
+  "utc": "2026-10-11T17:43:23.404966+00:00",
+  "lane_status": "COMPLETED_PARKED",
+  "result": "First qualified newer RCC NONE; owner source/controller/fixture/runtime path pending. Reported396 source controls acknowledged separately from publice4 source and public422 lookup.",
+  "numeric_readonly_verification_exit": 0,
+  "root_independent_review_present": true,
+  "files": [
+    {
+      "name": "checks-current.json",
+      "bytes": 90148,
+      "sha256": "bb7b44620005bb01e6326da33f720e9ee02ec2c5c554be29296680832651f943"
+    },
+    {
+      "name": "combined-status.json",
+      "bytes": 4492,
+      "sha256": "a97e236e1990b65023ccf3f6ec6f55e9b7826295486e60701612418f253db22a"
+    },
+    {
+      "name": "compatibility396-commit.json",
+      "bytes": 174,
+      "sha256": "aa09bdfd854c7b9ff128c32f6135d90722e616092b60ad1d7656dbda7b3d85f7"
+    },
+    {
+      "name": "fetch-stage1.json",
+      "bytes": 3820,
+      "sha256": "4cca138a8b6600da98341f41c0d3b9f157bdeac901ff76690f1679c153fe5e60"
+    },
+    {
+      "name": "fetch-stage2-pagination.json",
+      "bytes": 3745,
+      "sha256": "a095dec7d7a3baf7a281a144cc7e99567b5e3f88a7d2108e85b936c4df849c4b"
+    },
+    {
+      "name": "fetch-stage3-source-delta.json",
+      "bytes": 1152,
+      "sha256": "77bcacbcba06b210d4eb13e01d3570d64161232bef2f04c48576577408eed423"
+    },
+    {
+      "name": "issue101-body-delta.diff",
+      "bytes": 2878,
+      "sha256": "97a3502278c3d4a214ba8a59ab101feab19e60f9661c6edd132bc4932747b665"
+    },
+    {
+      "name": "issue101-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "c35e2463febe58752854ec3fc02e5f98e9727de1413b1a22e19889dd7bdff036"
+    },
+    {
+      "name": "issue101-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "issue101.json",
+      "bytes": 42130,
+      "sha256": "82cb546847009636ab5fedd53d3bd8d21a6e06e6558723e439f9aec9f6777f07"
+    },
+    {
+      "name": "issue133-updated-comments-headers.txt",
+      "bytes": 1525,
+      "sha256": "88ae7dc7e8c3b2ae8c5ec551764085c6e6fd0e6bf504fe64466a0afaef5a24bd"
+    },
+    {
+      "name": "issue133-updated-comments-page1.json",
+      "bytes": 10961,
+      "sha256": "7cc8848a1745e3bba676b7f408db6e8707b61e0f4501fe0c8bbc570f210c8545"
+    },
+    {
+      "name": "issue133.json",
+      "bytes": 18321,
+      "sha256": "2b62c9f65efd49069909e1f50666d203a97f6a1e4ac589166e0768478ec85e44"
+    },
+    {
+      "name": "issue134-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "d9b7c210a0ee62f651205e1dd48ea51d59cd72a75f64e1a9180fecb7f64eb4ef"
+    },
+    {
+      "name": "issue134-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "issue134.json",
+      "bytes": 17421,
+      "sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398"
+    },
+    {
+      "name": "issue139-updated-comments-headers.txt",
+      "bytes": 1542,
+      "sha256": "c18b6a6fb8be9357528ce6d455b6f5c5ec1f94667853c42ac6fc8256c6c7fd49"
+    },
+    {
+      "name": "issue139-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "issue139.json",
+      "bytes": 21147,
+      "sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c"
+    },
+    {
+      "name": "issue143-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "c26684cbcba0edfc63a84df361c6d9533a2a9e22c0b011166ea6581821d28c45"
+    },
+    {
+      "name": "issue143-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "issue143.json",
+      "bytes": 22229,
+      "sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8"
+    },
+    {
+      "name": "issue221-body-delta.diff",
+      "bytes": 2271,
+      "sha256": "b05e28fa768560ee16827cb1453489a6af2732843c6de2bef20b3568833ba7eb"
+    },
+    {
+      "name": "issue221-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "244c5991d2902b03397a886062c5b494d1dea1c8fcec4c41aa2ea0fd27817124"
+    },
+    {
+      "name": "issue221-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "issue221.json",
+      "bytes": 26090,
+      "sha256": "d7476b7e06fc4868497981206ca174d2198b1c5def6e5d5165f2bedf7bade57b"
+    },
+    {
+      "name": "issue308-updated-comments-headers.txt",
+      "bytes": 1542,
+      "sha256": "9907b4438d1c79c8d4c0509d1eeea7b01e2a7f1629e74fb5a89d47d386f470c5"
+    },
+    {
+      "name": "issue308-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "owner125-current.json",
+      "bytes": 10789,
+      "sha256": "850958f5ebff49fd022ee445732f946c39182995375fbfb326476a2066f7bafb"
+    },
+    {
+      "name": "pr221-current.json",
+      "bytes": 37705,
+      "sha256": "a5f11c3b41c6e0a03eb5f02ceb3f49a35b6de18364d05dbb8005cac6b9e74d2c"
+    },
+    {
+      "name": "pr308-fetch-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "pr308-files-current.json",
+      "bytes": 120810,
+      "sha256": "8b075c134be2608a1d59e467b614bf9730ed5e458603b18f5dc74fd0724a9a5d"
+    },
+    {
+      "name": "pr308.json",
+      "bytes": 29146,
+      "sha256": "e4ed0a49b6635cc7fba02fa3b546383177d0649ef0ea5ed1a6fddf8777db96af"
+    },
+    {
+      "name": "report.md",
+      "bytes": 9803,
+      "sha256": "0b48f163d6b540b73dc3752d54b0f785975ff38f32c3d8276f0b29c87abe2115"
+    },
+    {
+      "name": "root-independent-acceptance.json",
+      "bytes": 1225,
+      "sha256": "2f8aafda473d53d75b292bdf037ee9447ae6d929c1e7c958661e22e0c8b68d28"
+    },
+    {
+      "name": "target-e2-delta.json",
+      "bytes": 327690,
+      "sha256": "3659f2b69f30166339445f3095c60d81e8b3d9f3c1ae0d7899b904a6312b5316"
+    },
+    {
+      "name": "verification.json",
+      "bytes": 16096,
+      "sha256": "a9cfee57674505b38df76011bac3d69cc2ef0657def35fe7334291ca76d0139c"
+    }
+  ],
+  "no_further_source_or_runtime_work": true
+}

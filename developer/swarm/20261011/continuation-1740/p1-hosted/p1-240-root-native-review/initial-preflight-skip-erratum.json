@@ -1,0 +1,9 @@
+{
+  "numeric_preflight_exit": 1,
+  "merge_attempted": false,
+  "cause": "Initial check filter allowed RCVerification skip but omitted AssembleReleasePreparation skip. Exactheadworkflow line281 manualworkflow_dispatch/main-only means assemble intentionallyskipped onthis unlabeledpull_request. Bothjobs notpublication/PRgates. No source/workflow change.",
+  "expected_skips": [
+    "Release Candidate Verification",
+    "Assemble Release Preparation"
+  ]
+}

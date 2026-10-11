@@ -1,0 +1,15 @@
+# v18.19.6 preparation and publication gates
+
+Status: source-prepared and independently verified; PUBLICATION HOLD. No v18.19.6 tag, GitHub release or publisher dispatch is authorized. Latest remote stable remains v18.19.5. Frozen shipping source is7945f956b428359928908a9f42e36417b113dafd, tree49baf943b9d64ef79af56ec8f34eebe0385477b1. Later main7d171224 must not replace this source attribution.
+
+Accepted preparation: two-phase workflow changes are integrated (#237), followed by readonly review exporter corrections (#238/#239). Frozen source’s actual nine assets/checksums/index/compiler/provenance and four native-platform artifacts were independently checked by root and workers. All11 actual raw release gates and tee exited0, Robot171/0/1, signed acquisition/offline CAS5049/0 mismatches and zero active leases, released5 archive rollback/legacy consumption accepted. Exact receipts and original failed attempts are retained in prior checkpoints. Large canonical270MB/full156MB ZIPs were not locally downloaded; the readonly hosted validation plus locally verified bounded raw sidecar chain are explicitly scoped in the evidence.
+
+Outstanding mandatory gates:
+
+1. Verify the deployed protected rcc-production approval environment and permissions, including reviewer/approval bypass policy. Static workflow guards are reviewed; administration/environment reads returned403. Repository code alone cannot prove deployed protection.
+2. Confirm required signing scope and actual signing credentials/authorization. Apple ARM ad-hoc signature evidence is not Intel notarization or Rosetta acceptance. Artifact trust fixtures are not production signing authority. No alternate credentials or policy relaxation.
+3. Resolve shipping dependency risk disposition for unremediated GO-2026-5970 and GO-2026-6629. Stripped shipping binary scans process successfully but fall back to imported-symbol/module evidence; caller reachability remains unproved. Dashboard15alerts cannot be mapped because details403. Seven allowed vet findings remain separate. Do not claim these cleared or automatically nonblocking.
+4. After mandatory preparation/policy/security evidence is complete, obtain separate explicit operator GO. Current decision is HOLD; successful CI/preparation supplies no implicit authorization.
+5. Only after that decision, verify exact frozen tag identity and actual tagged-source requirements before the protected publication phase. No tag is created during the hold. After authorized publication, independently verify remote tag, actual GitHub release and all nine downloadable assets, source/compiler/checksums/signatures/index/architecture/archive contents and installation/acquisition behavior. These future gates have not run and cannot be reported as complete.
+
+Performance #125, broader #118 platform architecture, residual #181 quality acceptance and experimental draft PRs are separate workstreams. They are not automatic technical publication prerequisites. #185 governance promotion remains independently hold-gated.

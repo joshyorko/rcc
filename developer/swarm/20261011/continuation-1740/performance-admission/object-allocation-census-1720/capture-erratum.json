@@ -1,0 +1,18 @@
+{
+  "census_numeric_exit_file": "0",
+  "census_stderr_sha256": "13554ed4ea1607a1a96ae244b11983606f7bc6d72fbb6508aa85bfc6ba598d1e",
+  "census_stdout_sha256": "0d6266a00c1b42552eced713a4f1602244a2c4419ab7b3e65ea09091e6c6bcf4",
+  "corrected_census_command": "timeout --foreground --signal=TERM --kill-after=1 30s python3 -B census.py",
+  "inner_result_status": "PASS",
+  "no_reexecution_or_source_mutation": true,
+  "outer_numeric_exit_file": "0",
+  "prior_launcher_attempt": {
+    "description": "A preliminary measurement wrapper attempt exited 127 because /usr/bin/time was unavailable; timeout/Python census was not launched in that attempt. It is separate from the subsequent successful census command.",
+    "numeric_exit": "127",
+    "stderr_sha256": "6933a7e0df95783acf93ed90af942334f7d1619d9a6a1f897c79ed256537f3c9"
+  },
+  "record_type": "capture erratum; all original raw files preserved",
+  "result_sha256": "818397300b02f76b49513c6b18cf639a19e88c83d0c2c2a7d33dae9ddefb38bf",
+  "source_script_sha256": "b730c936e76723a4e4588585f539d6709dd82314c99cc78e70eaa290155a10b2",
+  "stderr_discrepancy": "The script entrypoint catches BaseException around raise SystemExit(main()), so SystemExit(0) is printed as a misleading FAIL diagnostic after main wrote a PASS result and returned 0. The captured timeout command exit is 0; census.json status is PASS. No result or raw log was edited. This is a harness diagnostic defect, not a census acceptance failure."
+}

@@ -1,0 +1,45 @@
+{
+  "url": "https://github.com/joshyorko/rcc/issues/182",
+  "title": "[quality] Increase journal package coverage beyond 11.3%",
+  "issue_number": 182,
+  "body": "## Finding\n\nThe runnable coverage report shows only 11.3% statement coverage for `journal`. Persistence, lifecycle, and error-handling paths are largely untested.\n\n## Recommendation\n\nAdd deterministic unit tests covering journal creation/opening, record persistence and reload, malformed or unavailable storage, and lifecycle/error branches. Include the package in a reproducible repository-wide coverage run once embedded assets are available.\n\n## Priority\n- Impact: high\n- Effort: medium\n\n---\n*Filed by quality agent (hold-gated mode)*\n---\n🐝 **Hive Agent**: `quality` | **Instance:** `hive-loud-hen` | **SHA:** `0e3a5e4`\n\n— hive: agent=quality backend=codex model=gpt-5.6-luna codex=0.146.0\n\n## October 10 evidence reconciliation\n\nFresh focused journal coverage on assessment source `47a60ea78c5d97c892177f5649a1c950399faa6a` was 11.6% (`CC=/usr/bin/gcc go test -cover ./journal`), versus the issue's historical 11.3%. Create/append/reload, malformed records, unavailable location and forced-home cleanup tests exist, but persistence/lifecycle/error-path coverage remains incomplete. Embedded prerequisites now work (#130/#180 closed); this does not close the journal testing scope.\n\nThe root-reviewed assessment and raw focused coverage are retained under `work/rcc-swarm/evidence/remaining-triage.md` and `remaining-focus-coverage.log`. This reconciliation adds current disposition evidence; it leaves the issue open and does not promote #185 governance authority.\n",
+  "state": "open",
+  "user": {
+    "login": "josh-actions-rcc-hive[bot]",
+    "name": "josh-actions-rcc-hive[bot]",
+    "email": null,
+    "avatar_url": "https://avatars.githubusercontent.com/u/54248591?v=4",
+    "id": 319619423
+  },
+  "assignees": null,
+  "labels": [
+    {
+      "name": "hive/hive-loud-hen",
+      "color": "8250df",
+      "description": "Approved by a Hive merger/owner for auto-merge on green CI"
+    },
+    {
+      "name": "quality",
+      "color": "8250df",
+      "description": "Approved by a Hive merger/owner for auto-merge on green CI"
+    },
+    {
+      "name": "testing",
+      "color": "8250df",
+      "description": "Approved by a Hive merger/owner for auto-merge on green CI"
+    },
+    {
+      "name": "agent/quality",
+      "color": "8250df",
+      "description": "Approved by a Hive merger/owner for auto-merge on green CI"
+    }
+  ],
+  "milestone": null,
+  "state_reason": null,
+  "comments": 1,
+  "created_at": "2026-08-22T20:56:21Z",
+  "updated_at": "2026-10-11T13:23:03Z",
+  "closed_at": null,
+  "display_url": "https://github.com/joshyorko/rcc/issues/182",
+  "display_title": "[quality] Increase journal package coverage beyond 11.3%"
+}

@@ -1,0 +1,1124 @@
+{
+  "total_count": 6,
+  "jobs": [
+    {
+      "id": 114529775724,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoGwbA",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114529775724",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114529775724",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-11T17:26:51Z",
+      "started_at": "2026-10-11T17:26:53Z",
+      "completed_at": "2026-10-11T17:28:02Z",
+      "name": "Build RCC",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:26:54Z",
+          "completed_at": "2026-10-11T17:26:56Z"
+        },
+        {
+          "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:26:56Z",
+          "completed_at": "2026-10-11T17:26:57Z"
+        },
+        {
+          "name": "Assert exact candidate checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:26:57Z",
+          "completed_at": "2026-10-11T17:26:58Z"
+        },
+        {
+          "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:26:58Z",
+          "completed_at": "2026-10-11T17:27:16Z"
+        },
+        {
+          "name": "Set up Python 3.10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:27:16Z",
+          "completed_at": "2026-10-11T17:27:17Z"
+        },
+        {
+          "name": "Install invoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:27:17Z",
+          "completed_at": "2026-10-11T17:27:21Z"
+        },
+        {
+          "name": "Show commit info",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:27:21Z",
+          "completed_at": "2026-10-11T17:27:21Z"
+        },
+        {
+          "name": "Debug Build Job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:27:21Z",
+          "completed_at": "2026-10-11T17:27:21Z"
+        },
+        {
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:27:21Z",
+          "completed_at": "2026-10-11T17:27:50Z"
+        },
+        {
+          "name": "Prepare Artifacts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:27:50Z",
+          "completed_at": "2026-10-11T17:27:50Z"
+        },
+        {
+          "name": "Upload RCC Binaries",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-11T17:27:50Z",
+          "completed_at": "2026-10-11T17:27:54Z"
+        },
+        {
+          "name": "Prepare native runtime binaries",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-11T17:27:54Z",
+          "completed_at": "2026-10-11T17:27:54Z"
+        },
+        {
+          "name": "Upload native runtime binaries",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-11T17:27:54Z",
+          "completed_at": "2026-10-11T17:27:58Z"
+        },
+        {
+          "name": "Post Set up Python 3.10",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-10-11T17:27:58Z",
+          "completed_at": "2026-10-11T17:27:58Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-11T17:27:58Z",
+          "completed_at": "2026-10-11T17:27:58Z"
+        },
+        {
+          "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-10-11T17:27:58Z",
+          "completed_at": "2026-10-11T17:27:58Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-10-11T17:27:58Z",
+          "completed_at": "2026-10-11T17:27:58Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114529775724",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000140187,
+      "runner_name": "GitHub Actions 1000140187",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114529776681,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoG0KQ",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114529776681",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114529776681",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-11T17:26:52Z",
+      "started_at": "2026-10-11T17:26:52Z",
+      "completed_at": "2026-10-11T17:26:51Z",
+      "name": "Release Candidate Verification",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114529776681",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 114530012569,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoVNmQ",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114530012569",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114530012569",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T17:28:02Z",
+      "started_at": "2026-10-11T17:28:06Z",
+      "completed_at": null,
+      "name": "Native Runtime (windows-amd64)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:28:07Z",
+          "completed_at": "2026-10-11T17:28:11Z"
+        },
+        {
+          "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:28:11Z",
+          "completed_at": "2026-10-11T17:28:18Z"
+        },
+        {
+          "name": "Assert exact candidate checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:28:18Z",
+          "completed_at": "2026-10-11T17:28:18Z"
+        },
+        {
+          "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:28:18Z",
+          "completed_at": "2026-10-11T17:28:48Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:28:48Z",
+          "completed_at": "2026-10-11T17:28:49Z"
+        },
+        {
+          "name": "Download exact release-built RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:28:49Z",
+          "completed_at": "2026-10-11T17:28:51Z"
+        },
+        {
+          "name": "Stage and assert native RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:28:51Z",
+          "completed_at": "2026-10-11T17:28:53Z"
+        },
+        {
+          "name": "Install invoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:28:53Z",
+          "completed_at": "2026-10-11T17:28:57Z"
+        },
+        {
+          "name": "Setup Robot Environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:28:57Z",
+          "completed_at": "2026-10-11T17:29:21Z"
+        },
+        {
+          "name": "Run UV Python prefix symlink containment tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:29:21Z",
+          "completed_at": "2026-10-11T17:29:33Z"
+        },
+        {
+          "name": "Show commit info",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-11T17:29:33Z",
+          "completed_at": "2026-10-11T17:29:34Z"
+        },
+        {
+          "name": "Run Windows process supervision and artifact lock acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-11T17:29:34Z",
+          "completed_at": "2026-10-11T17:29:43Z"
+        },
+        {
+          "name": "Run Windows Robot binary spelling acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-11T17:29:43Z",
+          "completed_at": "2026-10-11T17:29:44Z"
+        },
+        {
+          "name": "Run macOS system-alias no-follow acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-10-11T17:29:44Z",
+          "completed_at": "2026-10-11T17:29:44Z"
+        },
+        {
+          "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-11T17:29:44Z",
+          "completed_at": "2026-10-11T17:31:53Z"
+        },
+        {
+          "name": "Run real native A-to-B acceptance",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 16,
+          "started_at": "2026-10-11T17:31:53Z",
+          "completed_at": null
+        },
+        {
+          "name": "Run JAT-class real consumer A-to-B acceptance",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Run Environment Artifact Robot acceptance against exact binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Bind Robot evidence into native runtime receipt",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Stage exact native binary for review",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Validate native review payload size",
+          "status": "pending",
+          "conclusion": null,
+          "number": 21,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "pending",
+          "conclusion": null,
+          "number": 22,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "pending",
+          "conclusion": null,
+          "number": 42,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "pending",
+          "conclusion": null,
+          "number": 43,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 44,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114530012569",
+      "labels": [
+        "windows-latest"
+      ],
+      "runner_id": 1000140195,
+      "runner_name": "GitHub Actions 1000140195",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114530012571,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoVNmw",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114530012571",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114530012571",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-11T17:28:02Z",
+      "started_at": "2026-10-11T17:28:07Z",
+      "completed_at": null,
+      "name": "Native Runtime (macos-amd64)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:28:07Z",
+          "completed_at": "2026-10-11T17:28:11Z"
+        },
+        {
+          "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:28:11Z",
+          "completed_at": "2026-10-11T17:28:13Z"
+        },
+        {
+          "name": "Assert exact candidate checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:28:13Z",
+          "completed_at": "2026-10-11T17:28:14Z"
+        },
+        {
+          "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:28:14Z",
+          "completed_at": "2026-10-11T17:29:20Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:29:20Z",
+          "completed_at": "2026-10-11T17:29:21Z"
+        },
+        {
+          "name": "Download exact release-built RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:29:21Z",
+          "completed_at": "2026-10-11T17:29:39Z"
+        },
+        {
+          "name": "Stage and assert native RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:29:39Z",
+          "completed_at": "2026-10-11T17:29:40Z"
+        },
+        {
+          "name": "Install invoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:29:40Z",
+          "completed_at": "2026-10-11T17:29:42Z"
+        },
+        {
+          "name": "Setup Robot Environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:29:42Z",
+          "completed_at": "2026-10-11T17:30:16Z"
+        },
+        {
+          "name": "Run UV Python prefix symlink containment tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:30:16Z",
+          "completed_at": "2026-10-11T17:30:20Z"
+        },
+        {
+          "name": "Show commit info",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-11T17:30:20Z",
+          "completed_at": "2026-10-11T17:30:22Z"
+        },
+        {
+          "name": "Run Windows process supervision and artifact lock acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-10-11T17:30:22Z",
+          "completed_at": "2026-10-11T17:30:22Z"
+        },
+        {
+          "name": "Run Windows Robot binary spelling acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-10-11T17:30:22Z",
+          "completed_at": "2026-10-11T17:30:22Z"
+        },
+        {
+          "name": "Run macOS system-alias no-follow acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-11T17:30:22Z",
+          "completed_at": "2026-10-11T17:30:36Z"
+        },
+        {
+          "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-10-11T17:30:36Z",
+          "completed_at": "2026-10-11T17:30:36Z"
+        },
+        {
+          "name": "Run real native A-to-B acceptance",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 16,
+          "started_at": "2026-10-11T17:30:36Z",
+          "completed_at": null
+        },
+        {
+          "name": "Run JAT-class real consumer A-to-B acceptance",
+          "status": "pending",
+          "conclusion": null,
+          "number": 17,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Run Environment Artifact Robot acceptance against exact binary",
+          "status": "pending",
+          "conclusion": null,
+          "number": 18,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Bind Robot evidence into native runtime receipt",
+          "status": "pending",
+          "conclusion": null,
+          "number": 19,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Stage exact native binary for review",
+          "status": "pending",
+          "conclusion": null,
+          "number": 20,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Validate native review payload size",
+          "status": "pending",
+          "conclusion": null,
+          "number": 21,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "pending",
+          "conclusion": null,
+          "number": 22,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "pending",
+          "conclusion": null,
+          "number": 42,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "pending",
+          "conclusion": null,
+          "number": 43,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "pending",
+          "conclusion": null,
+          "number": 44,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114530012571",
+      "labels": [
+        "macos-15-intel"
+      ],
+      "runner_id": 1000140197,
+      "runner_name": "GitHub Actions 1000140197",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114530012576,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoVNoA",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114530012576",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114530012576",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-11T17:28:02Z",
+      "started_at": "2026-10-11T17:28:04Z",
+      "completed_at": "2026-10-11T17:37:22Z",
+      "name": "Native Runtime (linux-amd64)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:28:05Z",
+          "completed_at": "2026-10-11T17:28:07Z"
+        },
+        {
+          "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:28:07Z",
+          "completed_at": "2026-10-11T17:28:08Z"
+        },
+        {
+          "name": "Assert exact candidate checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:28:08Z",
+          "completed_at": "2026-10-11T17:28:08Z"
+        },
+        {
+          "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:28:08Z",
+          "completed_at": "2026-10-11T17:28:19Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:28:19Z",
+          "completed_at": "2026-10-11T17:28:20Z"
+        },
+        {
+          "name": "Download exact release-built RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:28:20Z",
+          "completed_at": "2026-10-11T17:28:22Z"
+        },
+        {
+          "name": "Stage and assert native RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:28:22Z",
+          "completed_at": "2026-10-11T17:28:22Z"
+        },
+        {
+          "name": "Install invoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:28:22Z",
+          "completed_at": "2026-10-11T17:28:23Z"
+        },
+        {
+          "name": "Setup Robot Environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:28:23Z",
+          "completed_at": "2026-10-11T17:28:43Z"
+        },
+        {
+          "name": "Run UV Python prefix symlink containment tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:28:43Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Show commit info",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Run Windows process supervision and artifact lock acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Run Windows Robot binary spelling acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Run macOS system-alias no-follow acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:28:52Z"
+        },
+        {
+          "name": "Run real native A-to-B acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-11T17:28:52Z",
+          "completed_at": "2026-10-11T17:31:12Z"
+        },
+        {
+          "name": "Run JAT-class real consumer A-to-B acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-11T17:31:12Z",
+          "completed_at": "2026-10-11T17:35:34Z"
+        },
+        {
+          "name": "Run Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-11T17:35:34Z",
+          "completed_at": "2026-10-11T17:37:17Z"
+        },
+        {
+          "name": "Bind Robot evidence into native runtime receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-11T17:37:17Z",
+          "completed_at": "2026-10-11T17:37:18Z"
+        },
+        {
+          "name": "Stage exact native binary for review",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-11T17:37:18Z",
+          "completed_at": "2026-10-11T17:37:18Z"
+        },
+        {
+          "name": "Validate native review payload size",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-11T17:37:18Z",
+          "completed_at": "2026-10-11T17:37:18Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-11T17:37:18Z",
+          "completed_at": "2026-10-11T17:37:20Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 42,
+          "started_at": "2026-10-11T17:37:20Z",
+          "completed_at": "2026-10-11T17:37:20Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 43,
+          "started_at": "2026-10-11T17:37:20Z",
+          "completed_at": "2026-10-11T17:37:20Z"
+        },
+        {
+          "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 44,
+          "started_at": "2026-10-11T17:37:20Z",
+          "completed_at": "2026-10-11T17:37:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 45,
+          "started_at": "2026-10-11T17:37:20Z",
+          "completed_at": "2026-10-11T17:37:20Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114530012576",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000140196,
+      "runner_name": "GitHub Actions 1000140196",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114530012622,
+      "run_id": 38159675144,
+      "workflow_name": "Rcc",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/rcc/actions/runs/38159675144",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOPqaJu88AAAAaqoVNzg",
+      "head_sha": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/jobs/114530012622",
+      "html_url": "https://github.com/joshyorko/rcc/actions/runs/38159675144/job/114530012622",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-11T17:28:02Z",
+      "started_at": "2026-10-11T17:28:09Z",
+      "completed_at": "2026-10-11T17:37:15Z",
+      "name": "Native Runtime (macos-arm64)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-11T17:28:09Z",
+          "completed_at": "2026-10-11T17:28:12Z"
+        },
+        {
+          "name": "Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-11T17:28:12Z",
+          "completed_at": "2026-10-11T17:28:14Z"
+        },
+        {
+          "name": "Assert exact candidate checkout",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-11T17:28:14Z",
+          "completed_at": "2026-10-11T17:28:15Z"
+        },
+        {
+          "name": "Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-11T17:28:15Z",
+          "completed_at": "2026-10-11T17:28:37Z"
+        },
+        {
+          "name": "Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-11T17:28:37Z",
+          "completed_at": "2026-10-11T17:28:59Z"
+        },
+        {
+          "name": "Download exact release-built RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-11T17:28:59Z",
+          "completed_at": "2026-10-11T17:29:02Z"
+        },
+        {
+          "name": "Stage and assert native RCC binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-11T17:29:02Z",
+          "completed_at": "2026-10-11T17:29:04Z"
+        },
+        {
+          "name": "Install invoke",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-11T17:29:04Z",
+          "completed_at": "2026-10-11T17:29:05Z"
+        },
+        {
+          "name": "Setup Robot Environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-11T17:29:05Z",
+          "completed_at": "2026-10-11T17:29:23Z"
+        },
+        {
+          "name": "Run UV Python prefix symlink containment tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-11T17:29:23Z",
+          "completed_at": "2026-10-11T17:29:26Z"
+        },
+        {
+          "name": "Show commit info",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-11T17:29:26Z",
+          "completed_at": "2026-10-11T17:29:27Z"
+        },
+        {
+          "name": "Run Windows process supervision and artifact lock acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-10-11T17:29:27Z",
+          "completed_at": "2026-10-11T17:29:27Z"
+        },
+        {
+          "name": "Run Windows Robot binary spelling acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-10-11T17:29:27Z",
+          "completed_at": "2026-10-11T17:29:27Z"
+        },
+        {
+          "name": "Run macOS system-alias no-follow acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-11T17:29:27Z",
+          "completed_at": "2026-10-11T17:29:33Z"
+        },
+        {
+          "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-10-11T17:29:33Z",
+          "completed_at": "2026-10-11T17:29:33Z"
+        },
+        {
+          "name": "Run real native A-to-B acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-10-11T17:29:33Z",
+          "completed_at": "2026-10-11T17:34:14Z"
+        },
+        {
+          "name": "Run JAT-class real consumer A-to-B acceptance",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17,
+          "started_at": "2026-10-11T17:34:14Z",
+          "completed_at": "2026-10-11T17:34:14Z"
+        },
+        {
+          "name": "Run Environment Artifact Robot acceptance against exact binary",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-11T17:34:14Z",
+          "completed_at": "2026-10-11T17:37:04Z"
+        },
+        {
+          "name": "Bind Robot evidence into native runtime receipt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-11T17:37:04Z",
+          "completed_at": "2026-10-11T17:37:05Z"
+        },
+        {
+          "name": "Stage exact native binary for review",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-10-11T17:37:05Z",
+          "completed_at": "2026-10-11T17:37:05Z"
+        },
+        {
+          "name": "Validate native review payload size",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-10-11T17:37:05Z",
+          "completed_at": "2026-10-11T17:37:05Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22,
+          "started_at": "2026-10-11T17:37:05Z",
+          "completed_at": "2026-10-11T17:37:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 42,
+          "started_at": "2026-10-11T17:37:07Z",
+          "completed_at": "2026-10-11T17:37:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 43,
+          "started_at": "2026-10-11T17:37:07Z",
+          "completed_at": "2026-10-11T17:37:08Z"
+        },
+        {
+          "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 44,
+          "started_at": "2026-10-11T17:37:08Z",
+          "completed_at": "2026-10-11T17:37:08Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 45,
+          "started_at": "2026-10-11T17:37:08Z",
+          "completed_at": "2026-10-11T17:37:12Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/rcc/check-runs/114530012622",
+      "labels": [
+        "macos-latest"
+      ],
+      "runner_id": 1000140198,
+      "runner_name": "GitHub Actions 1000140198",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

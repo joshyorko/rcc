@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-11T17:28:51.130607+00:00",
+  "main": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "tree": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+  "only_diff": "114\t0\tjournal/coverage_test.go\n",
+  "shipping_source_unchanged": "7945f956b428359928908a9f42e36417b113dafd",
+  "all4actualnative_root_peer_verified": true,
+  "no6tag_or_release": true
+}

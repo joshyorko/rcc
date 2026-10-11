@@ -1,0 +1,7 @@
+A	.github/workflows/export-release-evidence.yml
+M	CONTRIBUTING.md
+M	anywork/worker_test.go
+M	docs/release-process.md
+M	journal/coverage_test.go
+M	scripts/release_publication.py
+M	scripts/test_release_publication.py

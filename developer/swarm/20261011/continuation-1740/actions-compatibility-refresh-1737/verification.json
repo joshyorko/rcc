@@ -1,0 +1,352 @@
+{
+  "schema": 1,
+  "utc": "2026-10-11T17:42:42.576601+00:00",
+  "verdict": "READONLY_PUBLIC_REFRESH_VERIFIED; FIRST_QUALIFIED_NEWER_NONE; RUNTIME_ADMISSION_PENDING",
+  "numeric_metadata_verification_exit": 0,
+  "actions_pr308_head": "e4ff080375a8422bb656e52d218f198521dda078",
+  "actions_pr308_tree": "973ff38f49a17a896e4d90f829a72e2ea0ea15e8",
+  "actions_pr308_base": "e3c29cde8878307912e55ed09b6436c0f91d06d5",
+  "current_target": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+  "current_target_tree": "afe2679cc93bf27fa5021c7698ee7ad3ee21a1b9",
+  "new_reported_compatibility_source": "396925cb3d6527af1768b7f5333f9653c005fc55",
+  "reported_source_public_lookup": {
+    "gh_numeric_exit": 1,
+    "http": 422,
+    "raw": {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/compatibility396-commit.json",
+      "bytes": 174,
+      "sha256": "aa09bdfd854c7b9ff128c32f6135d90722e616092b60ad1d7656dbda7b3d85f7"
+    },
+    "scope": "owner-reported SOURCE_LIGHT267pass/1opt-in skip; no inspectable commit/tree/controller/raw source controls here"
+  },
+  "checks": {
+    "total": 25,
+    "success": 24,
+    "failure": 1,
+    "all_terminal": true,
+    "failures": [
+      {
+        "name": "build (windows-py3.12-devmode)",
+        "url": "https://github.com/joshyorko/actions/actions/runs/38152707366/job/114509262982",
+        "head_sha": "e4ff080375a8422bb656e52d218f198521dda078"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "number": 101,
+      "url": "https://github.com/joshyorko/actions/issues/101",
+      "state": "open",
+      "updated_at": "2026-10-11T16:57:38Z",
+      "comments": 174,
+      "body_changed": true,
+      "body_sha256": "103b27008e39d17f1d2ef76531a596561b9e2bfce822b294dbf1aff3862c32d8"
+    },
+    {
+      "number": 133,
+      "url": "https://github.com/joshyorko/actions/issues/133",
+      "state": "open",
+      "updated_at": "2026-10-11T17:17:15Z",
+      "comments": 7,
+      "body_changed": false,
+      "body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c"
+    },
+    {
+      "number": 134,
+      "url": "https://github.com/joshyorko/actions/issues/134",
+      "state": "open",
+      "updated_at": "2026-10-11T01:44:42Z",
+      "comments": 5,
+      "body_changed": false,
+      "body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d"
+    },
+    {
+      "number": 139,
+      "url": "https://github.com/joshyorko/actions/issues/139",
+      "state": "open",
+      "updated_at": "2026-09-07T14:43:49Z",
+      "comments": 0,
+      "body_changed": false,
+      "body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21"
+    },
+    {
+      "number": 143,
+      "url": "https://github.com/joshyorko/actions/issues/143",
+      "state": "open",
+      "updated_at": "2026-09-07T14:43:25Z",
+      "comments": 0,
+      "body_changed": false,
+      "body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959"
+    },
+    {
+      "number": 221,
+      "url": "https://github.com/joshyorko/actions/pull/221",
+      "state": "open",
+      "updated_at": "2026-10-11T16:57:40Z",
+      "comments": 2,
+      "body_changed": true,
+      "body_sha256": "06281ac1eb5ff61c82b80c54c538a6fdf7f6f9cb3a00b3d3dc81d341be5a1633"
+    }
+  ],
+  "pagination": {
+    "cutoff": "2026-10-11T15:59:14Z",
+    "strategy": "updated-comment since query with per_page100 and terminal response Link headers, includes edited old comments",
+    "all_seven_endpoints_terminal": true,
+    "new_comment_ids": [
+      6111162766,
+      6111606204
+    ],
+    "new_comment_scope": "RCC coordination; no new Actions runtime admission response"
+  },
+  "candidate_tuples": {
+    "released5": {
+      "source": "d1aec7d0bb897a81274423c7a6bb747233f9c263",
+      "version": "v18.19.5",
+      "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "modified": true,
+      "scope": "TEST_ONLY; not run or qualified"
+    },
+    "candidate7276": {
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "modified": false,
+      "scope": "TEST_ONLY; not run or qualified"
+    },
+    "shipping7945": {
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "scope": "RCC root-qualified shipping tuple; absent from Actions approved tuples; never rebound as7276"
+    }
+  },
+  "frozen_public_fixture": {
+    "source": "e4ff080375a8422bb656e52d218f198521dda078",
+    "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+    "git_blob": "9dcf5df9b2d7c21825b226b425027bcb8094828d",
+    "case_names": [
+      "test_published_artifact_details_preserves_one_rcc_identity_pair",
+      "test_staged_package_executes_in_managed_rcc_runtime"
+    ],
+    "python": "3.12.15",
+    "client_mode_required": "0700",
+    "last_control_config_sha256": "1411879501e1ef2bd5aec7fbf9627457aa840badc8e86be980c25b207ee9d5dc",
+    "last_failure_receipt_sha256": "61506cf064896dc750ccf47450d440170861cef4cf9a5c68060ac3ea3bedf5b1",
+    "actual_receipt_accessible": false,
+    "last_results": "owner-reported both guardFAIL before acquire/Action/lease; next5/7276 NOT_RUN"
+  },
+  "precise_blockers": [
+    "Inspectable corrected source/controller/fixture checkpoint on current e2 target and completed required source gates.",
+    "Fresh exact once-run configuration with owner mode/UID/GID/symlink/containment/cache/capacity/reader/census/cleanup guards.",
+    "Distinct current3 control acceptance before released5 then exact7276, preserving original failures.",
+    "Separate approved shipping7945/5a tuple if tested, never rebinding727/be55.",
+    "Six actual consumer workload qualification receipts; no source/CI/component inference."
+  ],
+  "authorization": "Isolated newer-version testing authorized; current blockers are conditional owner qualification, not a permanent version prohibition.",
+  "publication": "HOLD",
+  "workspace_free_before_final_evidence": 2735349760,
+  "new_evidence_allocated_before_final_evidence": 913408,
+  "budget_bytes": 4194304,
+  "floor_bytes": 2688548864,
+  "raw_files": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/checks-current.json",
+      "bytes": 90148,
+      "sha256": "bb7b44620005bb01e6326da33f720e9ee02ec2c5c554be29296680832651f943"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/combined-status.json",
+      "bytes": 4492,
+      "sha256": "a97e236e1990b65023ccf3f6ec6f55e9b7826295486e60701612418f253db22a"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/compatibility396-commit.json",
+      "bytes": 174,
+      "sha256": "aa09bdfd854c7b9ff128c32f6135d90722e616092b60ad1d7656dbda7b3d85f7"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/fetch-stage1.json",
+      "bytes": 3820,
+      "sha256": "4cca138a8b6600da98341f41c0d3b9f157bdeac901ff76690f1679c153fe5e60"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/fetch-stage2-pagination.json",
+      "bytes": 3745,
+      "sha256": "a095dec7d7a3baf7a281a144cc7e99567b5e3f88a7d2108e85b936c4df849c4b"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/fetch-stage3-source-delta.json",
+      "bytes": 1152,
+      "sha256": "77bcacbcba06b210d4eb13e01d3570d64161232bef2f04c48576577408eed423"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue101-body-delta.diff",
+      "bytes": 2878,
+      "sha256": "97a3502278c3d4a214ba8a59ab101feab19e60f9661c6edd132bc4932747b665"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue101-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "c35e2463febe58752854ec3fc02e5f98e9727de1413b1a22e19889dd7bdff036"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue101-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue101.json",
+      "bytes": 42130,
+      "sha256": "82cb546847009636ab5fedd53d3bd8d21a6e06e6558723e439f9aec9f6777f07"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue133-updated-comments-headers.txt",
+      "bytes": 1525,
+      "sha256": "88ae7dc7e8c3b2ae8c5ec551764085c6e6fd0e6bf504fe64466a0afaef5a24bd"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue133-updated-comments-page1.json",
+      "bytes": 10961,
+      "sha256": "7cc8848a1745e3bba676b7f408db6e8707b61e0f4501fe0c8bbc570f210c8545"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue133.json",
+      "bytes": 18321,
+      "sha256": "2b62c9f65efd49069909e1f50666d203a97f6a1e4ac589166e0768478ec85e44"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue134-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "d9b7c210a0ee62f651205e1dd48ea51d59cd72a75f64e1a9180fecb7f64eb4ef"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue134-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue134.json",
+      "bytes": 17421,
+      "sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue139-updated-comments-headers.txt",
+      "bytes": 1542,
+      "sha256": "c18b6a6fb8be9357528ce6d455b6f5c5ec1f94667853c42ac6fc8256c6c7fd49"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue139-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue139.json",
+      "bytes": 21147,
+      "sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue143-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "c26684cbcba0edfc63a84df361c6d9533a2a9e22c0b011166ea6581821d28c45"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue143-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue143.json",
+      "bytes": 22229,
+      "sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue221-body-delta.diff",
+      "bytes": 2271,
+      "sha256": "b05e28fa768560ee16827cb1453489a6af2732843c6de2bef20b3568833ba7eb"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue221-updated-comments-headers.txt",
+      "bytes": 1541,
+      "sha256": "244c5991d2902b03397a886062c5b494d1dea1c8fcec4c41aa2ea0fd27817124"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue221-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue221.json",
+      "bytes": 26090,
+      "sha256": "d7476b7e06fc4868497981206ca174d2198b1c5def6e5d5165f2bedf7bade57b"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue308-updated-comments-headers.txt",
+      "bytes": 1542,
+      "sha256": "9907b4438d1c79c8d4c0509d1eeea7b01e2a7f1629e74fb5a89d47d386f470c5"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/issue308-updated-comments-page1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/owner125-current.json",
+      "bytes": 10789,
+      "sha256": "850958f5ebff49fd022ee445732f946c39182995375fbfb326476a2066f7bafb"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/pr221-current.json",
+      "bytes": 37705,
+      "sha256": "a5f11c3b41c6e0a03eb5f02ceb3f49a35b6de18364d05dbb8005cac6b9e74d2c"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/pr308-fetch-stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/pr308-files-current.json",
+      "bytes": 120810,
+      "sha256": "8b075c134be2608a1d59e467b614bf9730ed5e458603b18f5dc74fd0724a9a5d"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/pr308.json",
+      "bytes": 29146,
+      "sha256": "e4ed0a49b6635cc7fba02fa3b546383177d0649ef0ea5ed1a6fddf8777db96af"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/report.md",
+      "bytes": 9803,
+      "sha256": "0b48f163d6b540b73dc3752d54b0f785975ff38f32c3d8276f0b29c87abe2115"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/root-independent-acceptance.json",
+      "bytes": 1225,
+      "sha256": "2f8aafda473d53d75b292bdf037ee9447ae6d929c1e7c958661e22e0c8b68d28"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/actions-compatibility-refresh-1737/target-e2-delta.json",
+      "bytes": 327690,
+      "sha256": "3659f2b69f30166339445f3095c60d81e8b3d9f3c1ae0d7899b904a6312b5316"
+    }
+  ],
+  "prior_verified_source_reference": {
+    "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-owner-e4-readonly-1610/source-bound-proof.json",
+    "bytes": 32852,
+    "sha256": "1669b26f78bf938931a288f04154f8587581ad16edd733f9b88e18a897c66064"
+  },
+  "performed": [
+    "ordinary existing gh read API calls",
+    "terminal updated-comment pagination",
+    "metadata/body/delta/identity comparison",
+    "raw hashing"
+  ],
+  "not_performed": [
+    "Actions mutation",
+    "alternate credentials",
+    "worktree or home writes",
+    "runtime launch",
+    "compile",
+    "new fixtures or pin changes",
+    "new source controls or benchmarks"
+  ]
+}

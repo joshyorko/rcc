@@ -1,0 +1,11 @@
+{
+  "scopeErratum": "The reviewed binaries and receipts bind to PR240 post-release source 246fc372e517f4e9c20ea98196071e8b7439bf4c. They do not bind to shipping source 7945f956b428359928908a9f42e36417b113dafd; matching v18.19.6 version strings do not rebind source identity.",
+  "artifactId": 11708874673,
+  "artifactApiSha256": "c0088f7d7c268830c66bca1f2873717cd53d1070064bd9b13e349252a63d77c1",
+  "retainedZip": "/dev/shm/rcc-p1-240-current-native-root/macos-arm64-native-runtime-receipt.zip",
+  "retainedZipSha256": "c0088f7d7c268830c66bca1f2873717cd53d1070064bd9b13e349252a63d77c1",
+  "pr240SourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "peerReceiptPath": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-240-current-native-bytes/darwin_arm64-byte-verification.json",
+  "peerReceiptUnmodified": true,
+  "futureHelperScopeCorrected": true
+}

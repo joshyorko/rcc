@@ -1,0 +1,40 @@
+{
+  "mounts": {
+    "current_tmpfs_dev_shm": {
+      "device": "0:26",
+      "filesystem_type": "tmpfs",
+      "mount_id": 56,
+      "mount_options": "rw,relatime",
+      "mount_point": "/dev/shm",
+      "source": "shm",
+      "statvfs": {
+        "available_blocks": 1354223,
+        "available_bytes": 5546897408,
+        "block_size": 4096,
+        "blocks": 2305017,
+        "free_blocks": 1354223,
+        "total_bytes": 9441349632
+      },
+      "super_options": "rw"
+    },
+    "workspace_overlay": {
+      "device": "0:27",
+      "filesystem_type": "overlay",
+      "mount_id": 52,
+      "mount_options": "rw,relatime",
+      "mount_point": "/",
+      "source": "overlay",
+      "statvfs": {
+        "available_blocks": 668817,
+        "available_bytes": 2739474432,
+        "block_size": 4096,
+        "blocks": 8244676,
+        "free_blocks": 1092343,
+        "total_bytes": 33770192896
+      },
+      "super_options": "rw,lowerdir=/run/kata-containers/erofs-multi-layer/b44b189511464428acb7fc90f484bcf5/lower-0,upperdir=/run/kata-containers/erofs-multi-layer/b44b189511464428acb7fc90f484bcf5/upper/upper,workdir=/run/kata-containers/erofs-multi-layer/b44b189511464428acb7fc90f484bcf5/upper/work,index=off,metacopy=off"
+    }
+  },
+  "source": "read-only post-census mount-context addendum; does not rerun or alter object census",
+  "status": "PASS"
+}

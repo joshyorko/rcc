@@ -1,0 +1,489 @@
+﻿2026-10-11T16:59:16.2125161Z Current runner version: '2.337.0'
+2026-10-11T16:59:16.2153714Z ##[group]Runner Image Provisioner
+2026-10-11T16:59:16.2154813Z Hosted Compute Agent
+2026-10-11T16:59:16.2155481Z Version: 20261002.596
+2026-10-11T16:59:16.2156181Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T16:59:16.2156940Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T16:59:16.2157635Z Worker ID: {72081bde-daf2-4ea8-b7ac-19a8da45ba3b}
+2026-10-11T16:59:16.2158391Z Region: eastus
+2026-10-11T16:59:16.2158984Z Cloud: Azure
+2026-10-11T16:59:16.2159563Z ##[endgroup]
+2026-10-11T16:59:16.2161514Z ##[group]Operating System
+2026-10-11T16:59:16.2162244Z Ubuntu
+2026-10-11T16:59:16.2162916Z 24.04.5
+2026-10-11T16:59:16.2163495Z LTS
+2026-10-11T16:59:16.2164057Z ##[endgroup]
+2026-10-11T16:59:16.2164648Z ##[group]Runner Image
+2026-10-11T16:59:16.2165287Z Image: ubuntu-24.04
+2026-10-11T16:59:16.2165927Z Version: 20261004.327.1
+2026-10-11T16:59:16.2167300Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T16:59:16.2168988Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T16:59:16.2169988Z ##[endgroup]
+2026-10-11T16:59:16.2171598Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T16:59:16.2173528Z Contents: read
+2026-10-11T16:59:16.2174323Z Metadata: read
+2026-10-11T16:59:16.2174954Z ##[endgroup]
+2026-10-11T16:59:16.2177172Z Secret source: Actions
+2026-10-11T16:59:16.2178291Z Cache mode: write
+2026-10-11T16:59:16.2179086Z Prepare workflow directory
+2026-10-11T16:59:16.2532262Z Prepare all required actions
+2026-10-11T16:59:16.2582115Z Getting action download info
+2026-10-11T16:59:16.4803206Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-11T16:59:16.5835253Z Download action repository 'actions/setup-go@v5' (SHA:40f1582b2485089dde7abd97c1529aa768e1baff)
+2026-10-11T16:59:16.7588681Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-11T16:59:16.8343771Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-11T16:59:17.0434062Z Complete job name: report
+2026-10-11T16:59:17.1228947Z ##[group]Run actions/checkout@v4
+2026-10-11T16:59:17.1230191Z with:
+2026-10-11T16:59:17.1230881Z   repository: joshyorko/rcc
+2026-10-11T16:59:17.1234843Z   token: ***
+2026-10-11T16:59:17.1235288Z   ssh-strict: true
+2026-10-11T16:59:17.1235728Z   ssh-user: git
+2026-10-11T16:59:17.1236193Z   persist-credentials: true
+2026-10-11T16:59:17.1236717Z   clean: true
+2026-10-11T16:59:17.1237202Z   sparse-checkout-cone-mode: true
+2026-10-11T16:59:17.1237728Z   fetch-depth: 1
+2026-10-11T16:59:17.1238161Z   fetch-tags: false
+2026-10-11T16:59:17.1238604Z   show-progress: true
+2026-10-11T16:59:17.1239051Z   lfs: false
+2026-10-11T16:59:17.1239461Z   submodules: false
+2026-10-11T16:59:17.1239911Z   set-safe-directory: true
+2026-10-11T16:59:17.1240421Z   allow-unsafe-pr-checkout: false
+2026-10-11T16:59:17.1241579Z ##[endgroup]
+2026-10-11T16:59:17.2387439Z Syncing repository: joshyorko/rcc
+2026-10-11T16:59:17.2389446Z ##[group]Getting Git version info
+2026-10-11T16:59:17.2390919Z Working directory is '/home/runner/work/rcc/rcc'
+2026-10-11T16:59:17.2392648Z [command]/usr/bin/git version
+2026-10-11T16:59:17.2499589Z git version 2.55.0
+2026-10-11T16:59:17.2522493Z ##[endgroup]
+2026-10-11T16:59:17.2540444Z Temporarily overriding HOME='/home/runner/work/_temp/11194db5-91eb-4ce2-9c55-b19fd402d2ff' before making global git config changes
+2026-10-11T16:59:17.2543148Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T16:59:17.2547421Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-11T16:59:17.2607799Z Deleting the contents of '/home/runner/work/rcc/rcc'
+2026-10-11T16:59:17.2625021Z ##[group]Initializing the repository
+2026-10-11T16:59:17.2627654Z [command]/usr/bin/git init /home/runner/work/rcc/rcc
+2026-10-11T16:59:17.2759626Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T16:59:17.2761732Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T16:59:17.2762730Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T16:59:17.2763964Z hint: call:
+2026-10-11T16:59:17.2764525Z hint:
+2026-10-11T16:59:17.2765062Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T16:59:17.2765681Z hint:
+2026-10-11T16:59:17.2766282Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T16:59:17.2767373Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T16:59:17.2769318Z hint:
+2026-10-11T16:59:17.2769855Z hint: 	git branch -m <name>
+2026-10-11T16:59:17.2770367Z hint:
+2026-10-11T16:59:17.2771353Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T16:59:17.2772350Z Initialized empty Git repository in /home/runner/work/rcc/rcc/.git/
+2026-10-11T16:59:17.2775751Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-10-11T16:59:17.2892949Z ##[endgroup]
+2026-10-11T16:59:17.2894481Z ##[group]Disabling automatic garbage collection
+2026-10-11T16:59:17.2896038Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T16:59:17.2900029Z ##[endgroup]
+2026-10-11T16:59:17.2901093Z ##[group]Setting up auth
+2026-10-11T16:59:17.2901852Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T16:59:17.2913767Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T16:59:17.3298582Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T16:59:17.3329484Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T16:59:17.3546505Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T16:59:17.3578031Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T16:59:17.3794758Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T16:59:17.3830971Z ##[endgroup]
+2026-10-11T16:59:17.3831843Z ##[group]Fetching the repository
+2026-10-11T16:59:17.3839637Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b55dd76837b60df1498a1b8c83310d00d3266970:refs/remotes/pull/240/merge
+2026-10-11T16:59:17.7543691Z From https://github.com/joshyorko/rcc
+2026-10-11T16:59:17.7544991Z  * [new ref]         b55dd76837b60df1498a1b8c83310d00d3266970 -> pull/240/merge
+2026-10-11T16:59:17.7548448Z ##[endgroup]
+2026-10-11T16:59:17.7549898Z ##[group]Determining the checkout info
+2026-10-11T16:59:17.7553102Z ##[endgroup]
+2026-10-11T16:59:17.7559474Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T16:59:17.7615331Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T16:59:17.7650455Z ##[group]Checking out the ref
+2026-10-11T16:59:17.7654934Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/240/merge
+2026-10-11T16:59:17.8141112Z Note: switching to 'refs/remotes/pull/240/merge'.
+2026-10-11T16:59:17.8142616Z 
+2026-10-11T16:59:17.8143662Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T16:59:17.8146040Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T16:59:17.8148325Z state without impacting any branches by switching back to a branch.
+2026-10-11T16:59:17.8149294Z 
+2026-10-11T16:59:17.8149936Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T16:59:17.8152172Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T16:59:17.8153541Z 
+2026-10-11T16:59:17.8153930Z   git switch -c <new-branch-name>
+2026-10-11T16:59:17.8154550Z 
+2026-10-11T16:59:17.8154937Z Or undo this operation with:
+2026-10-11T16:59:17.8155514Z 
+2026-10-11T16:59:17.8155824Z   git switch -
+2026-10-11T16:59:17.8156509Z 
+2026-10-11T16:59:17.8157339Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T16:59:17.8158437Z 
+2026-10-11T16:59:17.8159685Z HEAD is now at b55dd76 Merge 246fc372e517f4e9c20ea98196071e8b7439bf4c into 3fe6e200c0acc06d5920544a3bd5c3c036096855
+2026-10-11T16:59:17.8164099Z ##[endgroup]
+2026-10-11T16:59:17.8197195Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T16:59:17.8220007Z b55dd76837b60df1498a1b8c83310d00d3266970
+2026-10-11T16:59:17.8596784Z ##[group]Run actions/setup-go@v5
+2026-10-11T16:59:17.8598089Z with:
+2026-10-11T16:59:17.8599080Z   go-version-file: go.mod
+2026-10-11T16:59:17.8600231Z   check-latest: false
+2026-10-11T16:59:17.8611503Z   token: ***
+2026-10-11T16:59:17.8612502Z   cache: true
+2026-10-11T16:59:17.8613466Z ##[endgroup]
+2026-10-11T16:59:17.9924750Z Setup go version spec 1.26.9
+2026-10-11T16:59:17.9935465Z Attempting to download 1.26.9...
+2026-10-11T16:59:18.0044995Z (node:2278) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T16:59:18.0048173Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T16:59:18.2919796Z matching 1.26.9...
+2026-10-11T16:59:18.2972698Z Acquiring 1.26.9 from https://github.com/actions/go-versions/releases/download/1.26.9-37875104533/go-1.26.9-linux-x64.tar.gz
+2026-10-11T16:59:18.7306975Z Extracting Go...
+2026-10-11T16:59:18.7428984Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/5e063c89-c164-403d-8e79-78d80d9c501f -f /home/runner/work/_temp/86816ddd-c633-426f-bdd9-504944ec4dbf
+2026-10-11T16:59:20.3848609Z Successfully extracted go to /home/runner/work/_temp/5e063c89-c164-403d-8e79-78d80d9c501f
+2026-10-11T16:59:20.3849664Z Adding to the cache ...
+2026-10-11T16:59:26.4625610Z Successfully cached go to /opt/hostedtoolcache/go/1.26.9/x64
+2026-10-11T16:59:26.4627254Z Added go to the path
+2026-10-11T16:59:26.4630027Z Successfully set up Go version 1.26.9
+2026-10-11T16:59:26.4860269Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOMODCACHE
+2026-10-11T16:59:26.4898699Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOCACHE
+2026-10-11T16:59:26.4943536Z /home/runner/go/pkg/mod
+2026-10-11T16:59:26.4962869Z /home/runner/.cache/go-build
+2026-10-11T16:59:26.5506956Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.26.9-b8fc5c2db29e09ceef75b6409c8e97801e5f83194849e917367ac7f311f81d58
+2026-10-11T16:59:26.5616822Z (node:2278) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-11T16:59:27.1097318Z Received 92906198 of 92906198 (100.0%), 176.5 MBs/sec
+2026-10-11T16:59:27.1098270Z Cache Size: ~89 MB (92906198 B)
+2026-10-11T16:59:27.1220098Z [command]/usr/bin/tar -xf /home/runner/work/_temp/d2dd2683-9d31-4bfc-abb5-9e8f587d09c1/cache.tzst -P -C /home/runner/work/rcc/rcc --use-compress-program unzstd
+2026-10-11T16:59:27.7876815Z Cache restored successfully
+2026-10-11T16:59:27.7953177Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.26.9-b8fc5c2db29e09ceef75b6409c8e97801e5f83194849e917367ac7f311f81d58
+2026-10-11T16:59:27.7980879Z go version go1.26.9 linux/amd64
+2026-10-11T16:59:27.7981522Z 
+2026-10-11T16:59:27.7982211Z ##[group]go env
+2026-10-11T16:59:27.8159956Z AR='ar'
+2026-10-11T16:59:27.8161434Z CC='gcc'
+2026-10-11T16:59:27.8161922Z CGO_CFLAGS='-O2 -g'
+2026-10-11T16:59:27.8162361Z CGO_CPPFLAGS=''
+2026-10-11T16:59:27.8162747Z CGO_CXXFLAGS='-O2 -g'
+2026-10-11T16:59:27.8163132Z CGO_ENABLED='1'
+2026-10-11T16:59:27.8163499Z CGO_FFLAGS='-O2 -g'
+2026-10-11T16:59:27.8164415Z CGO_LDFLAGS='-O2 -g'
+2026-10-11T16:59:27.8165466Z CXX='g++'
+2026-10-11T16:59:27.8166019Z GCCGO='gccgo'
+2026-10-11T16:59:27.8166564Z GO111MODULE=''
+2026-10-11T16:59:27.8167115Z GOAMD64='v1'
+2026-10-11T16:59:27.8167645Z GOARCH='amd64'
+2026-10-11T16:59:27.8168178Z GOAUTH='netrc'
+2026-10-11T16:59:27.8168789Z GOBIN=''
+2026-10-11T16:59:27.8169369Z GOCACHE='/home/runner/.cache/go-build'
+2026-10-11T16:59:27.8170044Z GOCACHEPROG=''
+2026-10-11T16:59:27.8173952Z GODEBUG=''
+2026-10-11T16:59:27.8174733Z GOENV='/home/runner/.config/go/env'
+2026-10-11T16:59:27.8175408Z GOEXE=''
+2026-10-11T16:59:27.8175969Z GOEXPERIMENT=''
+2026-10-11T16:59:27.8176607Z GOFIPS140='off'
+2026-10-11T16:59:27.8177209Z GOFLAGS=''
+2026-10-11T16:59:27.8179080Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build3776607078=/tmp/go-build -gno-record-gcc-switches'
+2026-10-11T16:59:27.8180883Z GOHOSTARCH='amd64'
+2026-10-11T16:59:27.8181576Z GOHOSTOS='linux'
+2026-10-11T16:59:27.8182243Z GOINSECURE=''
+2026-10-11T16:59:27.8182920Z GOMOD='/home/runner/work/rcc/rcc/go.mod'
+2026-10-11T16:59:27.8183745Z GOMODCACHE='/home/runner/go/pkg/mod'
+2026-10-11T16:59:27.8184499Z GONOPROXY=''
+2026-10-11T16:59:27.8185129Z GONOSUMDB=''
+2026-10-11T16:59:27.8185736Z GOOS='linux'
+2026-10-11T16:59:27.8186351Z GOPATH='/home/runner/go'
+2026-10-11T16:59:27.8187002Z GOPRIVATE=''
+2026-10-11T16:59:27.8187685Z GOPROXY='https://proxy.golang.org,direct'
+2026-10-11T16:59:27.8188511Z GOROOT='/opt/hostedtoolcache/go/1.26.9/x64'
+2026-10-11T16:59:27.8189254Z GOSUMDB='sum.golang.org'
+2026-10-11T16:59:27.8189736Z GOTELEMETRY='local'
+2026-10-11T16:59:27.8190222Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+2026-10-11T16:59:27.8191086Z GOTMPDIR=''
+2026-10-11T16:59:27.8191688Z GOTOOLCHAIN='auto'
+2026-10-11T16:59:27.8192362Z GOTOOLDIR='/opt/hostedtoolcache/go/1.26.9/x64/pkg/tool/linux_amd64'
+2026-10-11T16:59:27.8192930Z GOVCS=''
+2026-10-11T16:59:27.8193152Z GOVERSION='go1.26.9'
+2026-10-11T16:59:27.8193416Z GOWORK=''
+2026-10-11T16:59:27.8193664Z PKG_CONFIG='pkg-config'
+2026-10-11T16:59:27.8193826Z 
+2026-10-11T16:59:27.8194200Z ##[endgroup]
+2026-10-11T16:59:27.8453528Z ##[group]Run actions/setup-python@v5
+2026-10-11T16:59:27.8453847Z with:
+2026-10-11T16:59:27.8454063Z   python-version: 3.10
+2026-10-11T16:59:27.8454301Z   check-latest: false
+2026-10-11T16:59:27.8456938Z   token: ***
+2026-10-11T16:59:27.8457165Z   update-environment: true
+2026-10-11T16:59:27.8457432Z   allow-prereleases: false
+2026-10-11T16:59:27.8457674Z   freethreaded: false
+2026-10-11T16:59:27.8457907Z ##[endgroup]
+2026-10-11T16:59:28.0214271Z ##[group]Installed versions
+2026-10-11T16:59:28.4776155Z (node:2348) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T16:59:28.4777409Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T16:59:28.4778146Z Successfully set up CPython (3.10.22)
+2026-10-11T16:59:28.4778897Z ##[endgroup]
+2026-10-11T16:59:28.5086748Z ##[group]Run set -euo pipefail
+2026-10-11T16:59:28.5087133Z [36;1mset -euo pipefail[0m
+2026-10-11T16:59:28.5087398Z [36;1msudo apt-get update[0m
+2026-10-11T16:59:28.5087761Z [36;1msudo apt-get install --no-install-recommends -y bubblewrap[0m
+2026-10-11T16:59:28.5088147Z [36;1mcommand -v bwrap[0m
+2026-10-11T16:59:28.5088389Z [36;1mbwrap --version[0m
+2026-10-11T16:59:29.0507551Z shell: /usr/bin/bash -e {0}
+2026-10-11T16:59:29.0507895Z env:
+2026-10-11T16:59:29.0508223Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:29.0508776Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T16:59:29.0509313Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:29.0509787Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:29.0510255Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:29.0510993Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T16:59:29.0511396Z ##[endgroup]
+2026-10-11T16:59:29.1330454Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-11T16:59:29.1641096Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-11T16:59:29.2373340Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-11T16:59:29.2379375Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-11T16:59:29.2468573Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-11T16:59:29.2501655Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-11T16:59:29.2511970Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [492 kB]
+2026-10-11T16:59:29.2721942Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [548 kB]
+2026-10-11T16:59:29.2852371Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.3 kB]
+2026-10-11T16:59:29.2896319Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main all Packages [640 B]
+2026-10-11T16:59:29.3726485Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1375 kB]
+2026-10-11T16:59:29.3808130Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [306 kB]
+2026-10-11T16:59:29.3829695Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-11T16:59:29.3923492Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-11T16:59:29.3951870Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1761 kB]
+2026-10-11T16:59:29.4050352Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [401 kB]
+2026-10-11T16:59:29.4085295Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.0 kB]
+2026-10-11T16:59:29.4098712Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-10-11T16:59:29.4733882Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1121 kB]
+2026-10-11T16:59:29.4788332Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [228 kB]
+2026-10-11T16:59:29.5220177Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1220 kB]
+2026-10-11T16:59:29.5277508Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [245 kB]
+2026-10-11T16:59:29.5295231Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1669 kB]
+2026-10-11T16:59:29.5367967Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [383 kB]
+2026-10-11T16:59:29.5390202Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [49.8 kB]
+2026-10-11T16:59:29.5400719Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
+2026-10-11T16:59:32.4240503Z Fetched 12.3 MB in 1s (9684 kB/s)
+2026-10-11T16:59:33.2528055Z Reading package lists...
+2026-10-11T16:59:33.2829227Z Reading package lists...
+2026-10-11T16:59:33.4672990Z Building dependency tree...
+2026-10-11T16:59:33.4680544Z Reading state information...
+2026-10-11T16:59:33.6246196Z The following NEW packages will be installed:
+2026-10-11T16:59:33.6252051Z   bubblewrap
+2026-10-11T16:59:33.6418963Z 0 upgraded, 1 newly installed, 0 to remove and 23 not upgraded.
+2026-10-11T16:59:33.6419605Z Need to get 50.4 kB of archives.
+2026-10-11T16:59:33.6420227Z After this operation, 133 kB of additional disk space will be used.
+2026-10-11T16:59:33.6421235Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-11T16:59:33.7700446Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 bubblewrap amd64 0.9.0-1ubuntu0.3 [50.4 kB]
+2026-10-11T16:59:34.0127969Z Fetched 50.4 kB in 0s (363 kB/s)
+2026-10-11T16:59:34.0366435Z Selecting previously unselected package bubblewrap.
+2026-10-11T16:59:34.0694816Z (Reading database ... 
+2026-10-11T16:59:34.0696135Z (Reading database ... 5%
+2026-10-11T16:59:34.0696671Z (Reading database ... 10%
+2026-10-11T16:59:34.0697230Z (Reading database ... 15%
+2026-10-11T16:59:34.0697790Z (Reading database ... 20%
+2026-10-11T16:59:34.0698356Z (Reading database ... 25%
+2026-10-11T16:59:34.0698941Z (Reading database ... 30%
+2026-10-11T16:59:34.0699470Z (Reading database ... 35%
+2026-10-11T16:59:34.0699962Z (Reading database ... 40%
+2026-10-11T16:59:34.0700878Z (Reading database ... 45%
+2026-10-11T16:59:34.0701266Z (Reading database ... 50%
+2026-10-11T16:59:34.0761206Z (Reading database ... 55%
+2026-10-11T16:59:34.1855631Z (Reading database ... 60%
+2026-10-11T16:59:34.3740301Z (Reading database ... 65%
+2026-10-11T16:59:34.5788342Z (Reading database ... 70%
+2026-10-11T16:59:34.7752658Z (Reading database ... 75%
+2026-10-11T16:59:34.9147501Z (Reading database ... 80%
+2026-10-11T16:59:35.0750288Z (Reading database ... 85%
+2026-10-11T16:59:35.2198478Z (Reading database ... 90%
+2026-10-11T16:59:35.3730934Z (Reading database ... 95%
+2026-10-11T16:59:35.3731695Z (Reading database ... 100%
+2026-10-11T16:59:35.3732319Z (Reading database ... 203191 files and directories currently installed.)
+2026-10-11T16:59:35.3772556Z Preparing to unpack .../bubblewrap_0.9.0-1ubuntu0.3_amd64.deb ...
+2026-10-11T16:59:35.4203469Z Unpacking bubblewrap (0.9.0-1ubuntu0.3) ...
+2026-10-11T16:59:35.4638368Z Setting up bubblewrap (0.9.0-1ubuntu0.3) ...
+2026-10-11T16:59:35.4684822Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-11T16:59:35.4706178Z Not building database; man-db/auto-update is not 'true'.
+2026-10-11T16:59:36.1101917Z 
+2026-10-11T16:59:36.1102476Z Running kernel seems to be up-to-date.
+2026-10-11T16:59:36.1102777Z 
+2026-10-11T16:59:36.1102923Z No services need to be restarted.
+2026-10-11T16:59:36.1103123Z 
+2026-10-11T16:59:36.1103256Z No containers need to be restarted.
+2026-10-11T16:59:36.1103464Z 
+2026-10-11T16:59:36.1103654Z No user sessions are running outdated binaries.
+2026-10-11T16:59:36.1103902Z 
+2026-10-11T16:59:36.1104169Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-11T16:59:37.0293732Z /usr/bin/bwrap
+2026-10-11T16:59:37.0303143Z bubblewrap 0.9.0
+2026-10-11T16:59:37.0347776Z ##[group]Run python -m pip install invoke==2.2.0
+2026-10-11T16:59:37.0348181Z [36;1mpython -m pip install invoke==2.2.0[0m
+2026-10-11T16:59:37.0411119Z shell: /usr/bin/bash -e {0}
+2026-10-11T16:59:37.0411383Z env:
+2026-10-11T16:59:37.0411664Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:37.0412128Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T16:59:37.0412581Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:37.0412986Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:37.0413417Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:37.0413844Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T16:59:37.0414185Z ##[endgroup]
+2026-10-11T16:59:39.4876186Z Collecting invoke==2.2.0
+2026-10-11T16:59:39.6030118Z   Downloading invoke-2.2.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-11T16:59:39.6228705Z Downloading invoke-2.2.0-py3-none-any.whl (160 kB)
+2026-10-11T16:59:39.7888820Z Installing collected packages: invoke
+2026-10-11T16:59:39.8756887Z Successfully installed invoke-2.2.0
+2026-10-11T16:59:39.9174051Z ##[group]Run inv assets
+2026-10-11T16:59:39.9174343Z [36;1minv assets[0m
+2026-10-11T16:59:39.9236545Z shell: /usr/bin/bash -e {0}
+2026-10-11T16:59:39.9236807Z env:
+2026-10-11T16:59:39.9237097Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:39.9237552Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T16:59:39.9237985Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:39.9238375Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:39.9238778Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:39.9239361Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T16:59:39.9239687Z ##[endgroup]
+2026-10-11T16:59:58.8912322Z Using micromamba version v2.5.0
+2026-10-11T16:59:58.8913141Z Downloading from official source: https://micro.mamba.pm/api/micromamba/linux-64/2.5.0
+2026-10-11T16:59:58.8913989Z Compressing blobs/assets/micromamba.linux_amd64
+2026-10-11T16:59:58.8914787Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-64/2.5.0
+2026-10-11T16:59:58.8915514Z Compressing blobs/assets/micromamba.darwin_amd64
+2026-10-11T16:59:58.8916265Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-arm64/2.5.0
+2026-10-11T16:59:58.8917002Z Compressing blobs/assets/micromamba.darwin_arm64
+2026-10-11T16:59:58.8917725Z Downloading from official source: https://micro.mamba.pm/api/micromamba/win-64/2.5.0
+2026-10-11T16:59:58.8918510Z Compressing blobs/assets/micromamba.windows_amd64
+2026-10-11T16:59:58.8919215Z Directory templates/python/ => /home/runner/work/rcc/rcc/blobs/assets/python.zip
+2026-10-11T16:59:58.8920097Z Directory templates/standard/ => /home/runner/work/rcc/rcc/blobs/assets/standard.zip
+2026-10-11T16:59:58.8921353Z Directory templates/extended/ => /home/runner/work/rcc/rcc/blobs/assets/extended.zip
+2026-10-11T16:59:58.8922117Z Copying assets/externally_managed.txt to blobs/assets/
+2026-10-11T16:59:58.8922733Z Copying assets/micromamba_version.txt to blobs/assets/
+2026-10-11T16:59:58.8923325Z Copying assets/robocorp_settings.yaml to blobs/assets/
+2026-10-11T16:59:58.8923872Z Copying assets/speedtest.yaml to blobs/assets/
+2026-10-11T16:59:58.8924396Z Copying assets/templates.yaml to blobs/assets/
+2026-10-11T16:59:58.8924913Z Copying assets/netdiag.yaml to blobs/assets/
+2026-10-11T16:59:58.8925429Z Copying assets/depxtraction.py to blobs/assets/
+2026-10-11T16:59:58.8925975Z Copying assets/man/tutorial.txt to blobs/assets/man/
+2026-10-11T16:59:58.8926549Z Copying assets/man/LICENSE.txt to blobs/assets/man/
+2026-10-11T16:59:58.8927093Z Copying docs/roadmap.md to blobs/docs/
+2026-10-11T16:59:58.8927557Z Copying docs/features.md to blobs/docs/
+2026-10-11T16:59:58.8928068Z Copying docs/troubleshooting.md to blobs/docs/
+2026-10-11T16:59:58.8928568Z Copying docs/recipes.md to blobs/docs/
+2026-10-11T16:59:58.8929111Z Copying docs/environment-artifact-trust.md to blobs/docs/
+2026-10-11T16:59:58.8929740Z Copying docs/change-classification.md to blobs/docs/
+2026-10-11T16:59:58.8930272Z Copying docs/holotree.md to blobs/docs/
+2026-10-11T16:59:58.8931010Z Copying docs/history.md to blobs/docs/
+2026-10-11T16:59:58.8931502Z Copying docs/v18-compatibility.md to blobs/docs/
+2026-10-11T16:59:58.8932051Z Copying docs/maintenance.md to blobs/docs/
+2026-10-11T16:59:58.8932667Z Copying docs/environment-artifact-compatibility.md to blobs/docs/
+2026-10-11T16:59:58.8933278Z Copying docs/BUILD.md to blobs/docs/
+2026-10-11T16:59:58.8933737Z Copying docs/ai-ops-runbook.md to blobs/docs/
+2026-10-11T16:59:58.8934267Z Copying docs/profile_configuration.md to blobs/docs/
+2026-10-11T16:59:58.8934815Z Copying docs/cloud-commands.md to blobs/docs/
+2026-10-11T16:59:58.8935305Z Copying docs/venv.md to blobs/docs/
+2026-10-11T16:59:58.8935794Z Copying docs/agent-boundaries.md to blobs/docs/
+2026-10-11T16:59:58.8936300Z Copying docs/changelog.md to blobs/docs/
+2026-10-11T16:59:58.8936768Z Copying docs/vocabulary.md to blobs/docs/
+2026-10-11T16:59:58.8937567Z Copying docs/usecases.md to blobs/docs/
+2026-10-11T16:59:58.8938034Z Copying docs/README.md to blobs/docs/
+2026-10-11T16:59:58.8938608Z Copying docs/environment-build-coordination.md to blobs/docs/
+2026-10-11T16:59:58.8939212Z Copying docs/review-rubric.md to blobs/docs/
+2026-10-11T16:59:58.8939730Z Copying docs/release-process.md to blobs/docs/
+2026-10-11T16:59:58.8940233Z Copying docs/metrics.md to blobs/docs/
+2026-10-11T16:59:58.8940944Z Copying docs/environment-caching.md to blobs/docs/
+2026-10-11T16:59:58.9144826Z ##[group]Run set -euo pipefail
+2026-10-11T16:59:58.9145415Z [36;1mset -euo pipefail[0m
+2026-10-11T16:59:58.9145888Z [36;1mgo_bin="$(command -v go)"[0m
+2026-10-11T16:59:58.9146649Z [36;1msudo env \[0m
+2026-10-11T16:59:58.9147054Z [36;1m  PATH="$PATH" \[0m
+2026-10-11T16:59:58.9147543Z [36;1m  HOME="$RUNNER_TEMP/rcc-root-home" \[0m
+2026-10-11T16:59:58.9148150Z [36;1m  GOPATH="$RUNNER_TEMP/rcc-root-gopath" \[0m
+2026-10-11T16:59:58.9148774Z [36;1m  GOCACHE="$RUNNER_TEMP/rcc-root-gocache" \[0m
+2026-10-11T16:59:58.9149342Z [36;1m  "$go_bin" test ./buildcoord \[0m
+2026-10-11T16:59:58.9151271Z [36;1m    -run '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \[0m
+2026-10-11T16:59:58.9152891Z [36;1m    -count=1[0m
+2026-10-11T16:59:58.9232005Z shell: /usr/bin/bash -e {0}
+2026-10-11T16:59:58.9232271Z env:
+2026-10-11T16:59:58.9232593Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:58.9233047Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T16:59:58.9233496Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:58.9233889Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:58.9234273Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T16:59:58.9234684Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T16:59:58.9235073Z ##[endgroup]
+2026-10-11T16:59:58.9612325Z go: downloading golang.org/x/sys v0.47.0
+2026-10-11T17:00:14.2370238Z ok  	github.com/joshyorko/rcc/buildcoord	0.051s
+2026-10-11T17:00:14.3065283Z ##[group]Run set -o pipefail
+2026-10-11T17:00:14.3065632Z [36;1mset -o pipefail[0m
+2026-10-11T17:00:14.3065870Z [36;1m{[0m
+2026-10-11T17:00:14.3066085Z [36;1m  echo "## RCC quality report"[0m
+2026-10-11T17:00:14.3066359Z [36;1m  echo[0m
+2026-10-11T17:00:14.3066566Z [36;1m  echo '```text'[0m
+2026-10-11T17:00:14.3066795Z [36;1m  test_status=0[0m
+2026-10-11T17:00:14.3067024Z [36;1m  go test ./... \[0m
+2026-10-11T17:00:14.3067851Z [36;1m    -skip '^(TestCommandExecutorEnforcesRuntimePolicyAndProvesStagingUse|TestCommandExecutorRestrictsHostPathsAndKeepsStagingWritable|TestCommandExecutorHonorsTimeout)$' \[0m
+2026-10-11T17:00:14.3068739Z [36;1m    -count=1 || test_status=$?[0m
+2026-10-11T17:00:14.3069013Z [36;1m  echo '```'[0m
+2026-10-11T17:00:14.3069238Z [36;1m  exit "$test_status"[0m
+2026-10-11T17:00:14.3069548Z [36;1m} | tee quality-report.txt >> "$GITHUB_STEP_SUMMARY"[0m
+2026-10-11T17:00:14.3132769Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T17:00:14.3133165Z env:
+2026-10-11T17:00:14.3133443Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:14.3133884Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T17:00:14.3134326Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:14.3134707Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:14.3135097Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:14.3135494Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T17:00:14.3135827Z ##[endgroup]
+2026-10-11T17:00:37.9131226Z ##[group]Run actions/upload-artifact@v4
+2026-10-11T17:00:37.9131555Z with:
+2026-10-11T17:00:37.9131762Z   name: quality-report
+2026-10-11T17:00:37.9132003Z   path: quality-report.txt
+2026-10-11T17:00:37.9132252Z   if-no-files-found: warn
+2026-10-11T17:00:37.9132495Z   compression-level: 6
+2026-10-11T17:00:37.9132712Z   overwrite: false
+2026-10-11T17:00:37.9132931Z   include-hidden-files: false
+2026-10-11T17:00:37.9133168Z env:
+2026-10-11T17:00:37.9133438Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:37.9133894Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-11T17:00:37.9134333Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:37.9134728Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:37.9135124Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-11T17:00:37.9135729Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-11T17:00:37.9136097Z ##[endgroup]
+2026-10-11T17:00:38.0842981Z (node:7738) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T17:00:38.0843791Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T17:00:38.0888754Z With the provided path, there will be 1 file uploaded
+2026-10-11T17:00:38.0894133Z Artifact name is valid!
+2026-10-11T17:00:38.0895104Z Root directory input is valid!
+2026-10-11T17:00:38.2812676Z Beginning upload of artifact content to blob storage
+2026-10-11T17:00:38.2999866Z (node:7738) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-11T17:00:38.3257800Z Uploaded bytes 519
+2026-10-11T17:00:38.3402210Z Finished uploading artifact content to blob storage!
+2026-10-11T17:00:38.3403225Z SHA256 digest of uploaded artifact zip is f4755f6ea6f0a8734064331245e43d27ba52649d72394c6853e3cca8e55ab321
+2026-10-11T17:00:38.3405311Z Finalizing artifact upload
+2026-10-11T17:00:38.5282266Z Artifact quality-report.zip successfully finalized. Artifact ID 11709232051
+2026-10-11T17:00:38.5283615Z Artifact quality-report has been successfully uploaded! Final size is 519 bytes. Artifact ID is 11709232051
+2026-10-11T17:00:38.5290010Z Artifact download URL: https://github.com/joshyorko/rcc/actions/runs/38157690369/artifacts/11709232051
+2026-10-11T17:00:38.5472739Z Post job cleanup.
+2026-10-11T17:00:38.6691193Z (node:7750) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T17:00:38.6692576Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T17:00:38.6826981Z Post job cleanup.
+2026-10-11T17:00:38.8130225Z (node:7758) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T17:00:38.8132279Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T17:00:38.8207559Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOMODCACHE
+2026-10-11T17:00:38.8251941Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOCACHE
+2026-10-11T17:00:38.8296375Z /home/runner/go/pkg/mod
+2026-10-11T17:00:38.8309979Z /home/runner/.cache/go-build
+2026-10-11T17:00:38.8311433Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.26.9-b8fc5c2db29e09ceef75b6409c8e97801e5f83194849e917367ac7f311f81d58, not saving cache.
+2026-10-11T17:00:38.8448800Z Post job cleanup.
+2026-10-11T17:00:38.9347905Z [command]/usr/bin/git version
+2026-10-11T17:00:38.9389492Z git version 2.55.0
+2026-10-11T17:00:38.9462978Z Temporarily overriding HOME='/home/runner/work/_temp/3ce71498-d220-45c0-8449-2ff0912f20dc' before making global git config changes
+2026-10-11T17:00:38.9464612Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T17:00:38.9468032Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-11T17:00:38.9507917Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T17:00:38.9544689Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T17:00:38.9797691Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T17:00:38.9829352Z http.https://github.com/.extraheader
+2026-10-11T17:00:38.9842929Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-11T17:00:38.9876662Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T17:00:39.0101747Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T17:00:39.0132149Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T17:00:39.0486426Z Cleaning up orphan processes
+2026-10-11T17:00:39.0895820Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-go@v5, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

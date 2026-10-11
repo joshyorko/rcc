@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-10-11T17:42:39.966725+00:00",
+  "root_verifier_exit": 0,
+  "actual_public_head": "e4ff080375a8422bb656e52d218f198521dda078",
+  "all9_changed_git_blobs_match_actual_prior_review": true,
+  "public_target": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+  "target_compare_changed_files": 26,
+  "target_compare_commits": 27,
+  "target_has_no_rcc_adapter_or_acceptance_changes": true,
+  "actual_all25_checks_terminal": {
+    "success": 24,
+    "failure": 1
+  },
+  "owner_reported_source": "396925cb3d6527af1768b7f5333f9653c005fc55",
+  "public_commit_lookup": "gh1/HTTP422 No commit found; not publicly independently inspectable",
+  "owner_267_source_light_controls": "Owner-reported, not actual raw reviewed runtime acceptance",
+  "first_functionally_qualified_newer_rcc": "NONE",
+  "runtime_admission": "WAITING for existing owner exact corrected source/controller/fixture/current control qualification; shipping7945/5a distinct tuple not in publice4 selector",
+  "mutation": "No Actions source/pin/home/worktree/runtime/controller change or launch",
+  "all_preserved_fetch_bytes_hashed": true,
+  "comment_pagination": "All seven since-cutoff endpoints terminal; new133 comments are RCC coordination only."
+}

@@ -1,0 +1,17 @@
+{
+  "assetName": "rcc-linux64",
+  "binarySha256": "7cd41bf4f19e0a0aa51bcdccdefdc335051b67cf13cbf9fe4e6881726de295cb",
+  "binarySize": 22392994,
+  "goBuildInfo": {
+    "goVersion": "go1.26.9",
+    "goarch": "amd64",
+    "goos": "linux",
+    "vcsModified": false,
+    "vcsRevision": "246fc372e517f4e9c20ea98196071e8b7439bf4c"
+  },
+  "nativeReceiptSha256": "d8ce16aef3eae7d34ab789c3a8612d5ead065e95be505ad720b33037b2790e81",
+  "platform": "linux_amd64",
+  "schemaVersion": 1,
+  "sourceSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "version": "v18.19.6"
+}

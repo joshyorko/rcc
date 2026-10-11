@@ -1,0 +1,40 @@
+{
+  "sha": "b55dd76837b60df1498a1b8c83310d00d3266970",
+  "node_id": "C_kwDOPqaJu9oAKGI1NWRkNzY4MzdiNjBkZjE0OThhMWI4YzgzMzEwZDAwZDMyNjY5NzA",
+  "url": "https://api.github.com/repos/joshyorko/rcc/git/commits/b55dd76837b60df1498a1b8c83310d00d3266970",
+  "html_url": "https://github.com/joshyorko/rcc/commit/b55dd76837b60df1498a1b8c83310d00d3266970",
+  "author": {
+    "name": "Josh Yorko",
+    "email": "54248591+joshyorko@users.noreply.github.com",
+    "date": "2026-10-11T16:58:35Z"
+  },
+  "committer": {
+    "name": "GitHub",
+    "email": "noreply@github.com",
+    "date": "2026-10-11T16:58:35Z"
+  },
+  "tree": {
+    "sha": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+    "url": "https://api.github.com/repos/joshyorko/rcc/git/trees/9850f238059a168ddf57011d2cde7446c04e1ed1"
+  },
+  "message": "Merge 246fc372e517f4e9c20ea98196071e8b7439bf4c into 3fe6e200c0acc06d5920544a3bd5c3c036096855",
+  "parents": [
+    {
+      "sha": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+      "url": "https://api.github.com/repos/joshyorko/rcc/git/commits/3fe6e200c0acc06d5920544a3bd5c3c036096855",
+      "html_url": "https://github.com/joshyorko/rcc/commit/3fe6e200c0acc06d5920544a3bd5c3c036096855"
+    },
+    {
+      "sha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "url": "https://api.github.com/repos/joshyorko/rcc/git/commits/246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "html_url": "https://github.com/joshyorko/rcc/commit/246fc372e517f4e9c20ea98196071e8b7439bf4c"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqy8A7CRC1aQ7uu5UhlAAANOkQALD2ivh8Xj8EzK7/iSGlGBza\nQ6S9miGzHc+OJGG1k3KZdN8qw8AoZa9pS9+dE+m9NW5+GELsfi4K9JQ1a6adRlB7\nrx0ckMjjQmPUMEhnZdE4/Ild91CeQd+QYkt+ogpNYWRPrlz44E7BW6k7JaB+ZdMJ\nPZTjnRI2u/BrmoyjILVd5M9G2Ud1QtXJo7s0KfA4eSZrILAaCpDFsA4XZbMWXiRy\nye4KhBXqp7uJ3JxnHQef7z3HZOGk14pm9nAnNepMwI+mZnq0dRfE31ZaPrxY/Rr1\nliGY3b6QXkZQa7mycHoNst/gcnUOTg8FS3uAY2F/UAk6Ve6HUqNn3pGPjQCsNuxg\niJ6QobMDAIt9qo4tphB2mZsXrQE1w00bOeH+ah3lVRDymAJnK4+i5yeewhF1c1cO\nvwIA36T4PJfuktePXuPL6h00TROF01klLqLwj7N0Lx/hWPD6fZxbqR22r6ucOHCX\nM9B5GwyIxMNqOXri+WQ+Peqlpd+slPDZX2uq1ULuccRIicerWRpdJiAjoJ0yHPG/\nLIZbeL90cG4AHNoex1wkDzw5ZQaUGjGR/UgeE7D2gG2dqBT4q1/Z1wYD/IM53uP8\nDMNnbVXO9QRwQY58tlQv/sTIrSKJggVkOEh5aEnMWrBOjXtn551J7GzFf/kRNWho\n7To0surTdeyIlHcb6VJG\n=gNw1\n-----END PGP SIGNATURE-----\n",
+    "payload": "tree 9850f238059a168ddf57011d2cde7446c04e1ed1\nparent 3fe6e200c0acc06d5920544a3bd5c3c036096855\nparent 246fc372e517f4e9c20ea98196071e8b7439bf4c\nauthor Josh Yorko <54248591+joshyorko@users.noreply.github.com> 1791737915 -0400\ncommitter GitHub <noreply@github.com> 1791737915 -0400\n\nMerge 246fc372e517f4e9c20ea98196071e8b7439bf4c into 3fe6e200c0acc06d5920544a3bd5c3c036096855\n",
+    "verified_at": "2026-10-11T16:58:36Z"
+  }
+}

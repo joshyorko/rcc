@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-10-11T17:39:11.447971+00:00",
+  "root_verifier_exit": 0,
+  "source": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "workflow_run": 38159675142,
+  "job": 114529775592,
+  "actual_checkout_source_observed": true,
+  "actual_log_sha256": "6e30bbae083ac383ee18d2f8c4a231648286252dd93ead9a5dabfd94b7eb3883",
+  "log_bytes": 38140,
+  "journal_statement_coverage": 83.8,
+  "repository_go_statement_coverage": 47.4,
+  "mandatory_root_confinement_tests": "passed separately before instrumented full suite",
+  "go": "1.26.9",
+  "CGO_ENABLED": 1,
+  "CC": "gcc",
+  "scope": "Newly observed automatic post-merge main run. No local or hosted rerun was requested. Adds exact post-merge-SHA coverage evidence to previously accepted complete-tree-equivalent PR evidence."
+}

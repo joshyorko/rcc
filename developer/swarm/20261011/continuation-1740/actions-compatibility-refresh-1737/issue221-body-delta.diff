@@ -1,0 +1,24 @@
+--- frozen1610
+
++++ current1737
+
+@@ -1,2 +1,11 @@
+
++Live engineering target: `e2c81adce7858d5a952991ba9a8b7f72e902038a` on `integration/community-release-20261008`. PR #282 was normally integrated after all 25 hosted jobs, original Windows source/integration evidence, and its exact published Core 1.0.3/browser artifact were accepted. Actual merge tree `afe2679cc93bf27fa5021c7698ee7ad3ee21a1b9` and parents `a54c982462d1e7ad011d8152bfc299d997503fb3` + `1299cc4bb6586f467d36ca124faaaaa77362695f` are verified. Earlier accepted integrations and receipts remain retained.
++
++Runtime 1.0.3 publication remains HOLD. New target CI, exact producer checkout/tree, original artifact bytes and content, isolated installed consumers, OAuth content authority and all retained release gates must qualify independently. The previous a54 producer had 33 successful checks plus its expected tag-only skip and aggregate artifact `11707021540` (78,972,874 bytes, API SHA256 `9d2f6717a6a8a6da12dfed34b984e815f5ec2a75e4622330ab8f06109868775c`); its bytes have NOT been acquired and its actual producer checkout is UNKNOWN. That older tuple does not qualify the new e2 target.
++
++Canvas published Core 1.0.3/browser acceptance is scoped template evidence, not a current Runtime wheel consumer. RCC production pins remain 18.19.3; approved RCC 18.19.5 and source candidate 727c1ff8 have not executed. No registry publication, release tag, native promotion or gate waiver occurred.
++
++<details>
++<summary>Retained previous release engineering description and evidence history</summary>
++
+ Actual integration is `e3c29cde8878307912e55ed09b6436c0f91d06d5`, tree `2238ed312babba9fd5ad89a3a1cc581ca6ad2dcf`, after normal #300 merge with ordered `a0d258a1` / `74beef4d` parents. Independent actual receipt SHA256 `51e944e9dc6117e924b2ee8f6c448b6ab93dea318d7efe28611a535eabc7d40b` verifies all1,423 typed source entries and normal GitHub policy admission. The #299→#300 stack is integrated; premerge6workflows/19jobs succeeded. Linux1325passed/13skipped; original Windows1166passed/172skipped and integration131passed/19skipped. All30new transport cases were explicitly skipped on Windows. Earlier failures and accepted scopes remain retained.
+ 
+@@ -88,2 +97,5 @@
+
+ 
+ </details>
++
++
++</details>

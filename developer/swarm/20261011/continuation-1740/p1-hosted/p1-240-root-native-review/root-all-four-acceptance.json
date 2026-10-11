@@ -1,0 +1,270 @@
+{
+  "status": "ROOT_ALL4_ACTUAL_NATIVE_ZIP_BINARY_COMPILER_RECEIPT_ROBOT_VERIFIED",
+  "source": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "numeric_individual_verifiers": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "platforms": [
+    {
+      "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "source": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "platform": "linux_amd64",
+      "artifactId": 11709268812,
+      "zipBytes": 13386463,
+      "zipSha256": "719ec2fd3e18474d7710e74ef68f7f0b7cf1b0030da3815f33edf0e0245d7b4d",
+      "actualZipPath": "/dev/shm/rcc-p1-240-independent-root/linux-amd64-native-runtime-receipt.zip",
+      "actualBinaryPath": "/dev/shm/rcc-p1-240-independent-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+      "binaryBytes": 22392994,
+      "binarySha256": "7cd41bf4f19e0a0aa51bcdccdefdc335051b67cf13cbf9fe4e6881726de295cb",
+      "metadataExitCode": 0,
+      "robot": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "linuxJatActualReceiptValidated": true,
+      "scope": "Exact PR240 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+      "memberInventory": [
+        {
+          "path": "jat-class-consumer-receipt.json",
+          "bytes": 108602,
+          "sha256": "8a07bed3b50e908684fdd572a7169b28f0868c9ae8cc3288a586181fde64b205"
+        },
+        {
+          "path": "log.html",
+          "bytes": 272367,
+          "sha256": "97b0f56225440a902326709f0a3c4a6f33d4816ea1c5393e43a3353d6ab83690"
+        },
+        {
+          "path": "native-binary-review/assets/rcc-linux64",
+          "bytes": 22392994,
+          "sha256": "7cd41bf4f19e0a0aa51bcdccdefdc335051b67cf13cbf9fe4e6881726de295cb"
+        },
+        {
+          "path": "native-binary-review/native-binary-review.json",
+          "bytes": 558,
+          "sha256": "d3321fc87b31462b712a52303b8eacfb5f3b2f132b62ba962e45c8cc1187a9c6"
+        },
+        {
+          "path": "native-runtime-receipt.json",
+          "bytes": 110231,
+          "sha256": "d8ce16aef3eae7d34ab789c3a8612d5ead065e95be505ad720b33037b2790e81"
+        },
+        {
+          "path": "native-runtime-robot-evidence.json",
+          "bytes": 1679,
+          "sha256": "4f4e713752c8e4ae64fdd278c011baa786759b93c4c6993c076d5cb76098422f"
+        },
+        {
+          "path": "native-runtime-robot-phases.log",
+          "bytes": 1556,
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+        },
+        {
+          "path": "output.xml",
+          "bytes": 128497,
+          "sha256": "597ae57c5500636d37cd295353ac2201a6bfc510e3b22467c283940e5d475d54"
+        },
+        {
+          "path": "report.html",
+          "bytes": 232407,
+          "sha256": "d4ea546bd063dc60fd626078896348aee697693eb708b81acf0a7adc465c6e73"
+        }
+      ]
+    },
+    {
+      "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "source": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "platform": "windows_amd64",
+      "artifactId": 11709723223,
+      "zipBytes": 10850441,
+      "zipSha256": "f42d78c7a5e467887a08dd3e936a4cd203881e474ad75a1599121f9029456ea0",
+      "actualZipPath": "/dev/shm/rcc-p1-240-independent-root/windows-amd64-native-runtime-receipt.zip",
+      "actualBinaryPath": "/dev/shm/rcc-p1-240-independent-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+      "binaryBytes": 20118528,
+      "binarySha256": "ac5eff86dba6f4c795f94b0cbca457d9eec56f7aecd3ba7f2a2efa578c2aca03",
+      "metadataExitCode": 0,
+      "robot": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "linuxJatActualReceiptValidated": false,
+      "scope": "Exact PR240 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+      "memberInventory": [
+        {
+          "path": "log.html",
+          "bytes": 277308,
+          "sha256": "c2655af80b6447681d44f1899b6be67cf78fb9c4082ff1ad3d907e54856216bf"
+        },
+        {
+          "path": "native-binary-review/assets/rcc-windows64.exe",
+          "bytes": 20118528,
+          "sha256": "ac5eff86dba6f4c795f94b0cbca457d9eec56f7aecd3ba7f2a2efa578c2aca03"
+        },
+        {
+          "path": "native-binary-review/native-binary-review.json",
+          "bytes": 585,
+          "sha256": "6552c54d5e5631615805f2cef78a93795ef054d9af8fe8b26d5445d50595afcb"
+        },
+        {
+          "path": "native-runtime-receipt.json",
+          "bytes": 15997,
+          "sha256": "c3daab6a5cda17045422add94a53d49b9648712577466c3feb0fb94113ce94e2"
+        },
+        {
+          "path": "native-runtime-robot-evidence.json",
+          "bytes": 1641,
+          "sha256": "69c9f6596e63c5da9096a05aba5333a7778f65b790e0ff73c50207f6b2276de6"
+        },
+        {
+          "path": "native-runtime-robot-phases.log",
+          "bytes": 1606,
+          "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4"
+        },
+        {
+          "path": "output.xml",
+          "bytes": 135832,
+          "sha256": "6d8e04225169fa4e11418581d2dc947df91f87f190fd671a974c68f7f5b50f0d"
+        },
+        {
+          "path": "report.html",
+          "bytes": 234860,
+          "sha256": "511dc209d9b166c34712ce0f651e1451ba034d9f56714745ec53c5649e2cda33"
+        }
+      ]
+    },
+    {
+      "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "source": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "platform": "darwin_arm64",
+      "artifactId": 11708874673,
+      "zipBytes": 12498457,
+      "zipSha256": "c0088f7d7c268830c66bca1f2873717cd53d1070064bd9b13e349252a63d77c1",
+      "actualZipPath": "/dev/shm/rcc-p1-240-independent-root/macos-arm64-native-runtime-receipt.zip",
+      "actualBinaryPath": "/dev/shm/rcc-p1-240-independent-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+      "binaryBytes": 20986322,
+      "binarySha256": "a76e5a37a3e9533dc06f5d10554c9a453430579b38d28bb527cd2cbb451dfe9f",
+      "metadataExitCode": 0,
+      "robot": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "linuxJatActualReceiptValidated": false,
+      "scope": "Exact PR240 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+      "memberInventory": [
+        {
+          "path": "log.html",
+          "bytes": 272785,
+          "sha256": "1ba7b4aecebf93c7710dd9451ced8ea23dd80b71bfea974755be5907083c456c"
+        },
+        {
+          "path": "native-binary-review/native-binary-review.json",
+          "bytes": 563,
+          "sha256": "f0e9fee4aacde06532540693a6a0f4a6d6b74563d41c2c04c93a1bc6d339348f"
+        },
+        {
+          "path": "native-binary-review/assets/rcc-macosarm64",
+          "bytes": 20986322,
+          "sha256": "a76e5a37a3e9533dc06f5d10554c9a453430579b38d28bb527cd2cbb451dfe9f"
+        },
+        {
+          "path": "native-runtime-receipt.json",
+          "bytes": 15441,
+          "sha256": "9f55b72ceb578382a3109afcd3a17d303ed61c559f6432c4936f55e70d033555"
+        },
+        {
+          "path": "native-runtime-robot-evidence.json",
+          "bytes": 1674,
+          "sha256": "04a1afd63981374c8946c27d057e1f98d7b165388d1eb555dec0673f4cf245fa"
+        },
+        {
+          "path": "native-runtime-robot-phases.log",
+          "bytes": 1556,
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+        },
+        {
+          "path": "report.html",
+          "bytes": 232408,
+          "sha256": "1f63a3d2364bb54d33661a595c76a377fd0445990fffb9c1576645610fa997d3"
+        },
+        {
+          "path": "output.xml",
+          "bytes": 128974,
+          "sha256": "86bacbe048dc3da17317996f4b512bf3d79e3baebdbfc00bb2fbf92a78b3e823"
+        }
+      ]
+    },
+    {
+      "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+      "source": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+      "version": "v18.19.6",
+      "platform": "darwin_amd64",
+      "artifactId": 11708799067,
+      "zipBytes": 13072558,
+      "zipSha256": "002c5af5acaea752fdb3a679d2269aac702b6854317adcef73173f5cd633a269",
+      "actualZipPath": "/dev/shm/rcc-p1-240-independent-root/macos-amd64-native-runtime-receipt.zip",
+      "actualBinaryPath": "/dev/shm/rcc-p1-240-independent-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+      "binaryBytes": 22233024,
+      "binarySha256": "746b53291e0c8ec9a15fc006d63843abce0e827bd88761cd2279138050678140",
+      "metadataExitCode": 0,
+      "robot": {
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "linuxJatActualReceiptValidated": false,
+      "scope": "Exact PR240 source executed-native binary and receipts; not frozen shipping7945; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+      "memberInventory": [
+        {
+          "path": "log.html",
+          "bytes": 273104,
+          "sha256": "aa8cfd01e4c2e17d5d97012709b2e987779ce7eebc979396597b3b6bf78fa6d4"
+        },
+        {
+          "path": "native-binary-review/assets/rcc-macos64",
+          "bytes": 22233024,
+          "sha256": "746b53291e0c8ec9a15fc006d63843abce0e827bd88761cd2279138050678140"
+        },
+        {
+          "path": "native-binary-review/native-binary-review.json",
+          "bytes": 560,
+          "sha256": "322c14e5d5b686d238d8da9288d04a97d12adf5a891cd8da53e9c911819c80d5"
+        },
+        {
+          "path": "native-runtime-receipt.json",
+          "bytes": 15456,
+          "sha256": "f50404cf2e76155fca1cad151be6e1f8017207f039146114c61ffe225820ee5e"
+        },
+        {
+          "path": "native-runtime-robot-evidence.json",
+          "bytes": 1674,
+          "sha256": "9c99bb0eb5115a72af5358fd00eaf41dc53c68b51ab490bc35164e6c9ee2b8cf"
+        },
+        {
+          "path": "native-runtime-robot-phases.log",
+          "bytes": 1556,
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+        },
+        {
+          "path": "output.xml",
+          "bytes": 128880,
+          "sha256": "672ce9d390810ea2f463f5f59e97cf4e000f230c622838e6a9fa1869b9561815"
+        },
+        {
+          "path": "report.html",
+          "bytes": 232409,
+          "sha256": "45e951df63be97f3903cdad1b8e66a11a4b234018a95e9a22ed1eb7ccbe74dd9"
+        }
+      ]
+    }
+  ],
+  "scope": "PostreleasePR240. No rebindshipping7945; no nativeforeignbinaryexecutionhere; no signing/Rosetta claims beyondreceipts."
+}
