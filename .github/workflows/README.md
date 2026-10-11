@@ -37,7 +37,10 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 ### Triggers
 - **Push** to `main` branch
 - **Version tags** matching `v*` pattern
-- **Pull requests** to `main` branch
+- **Pull requests** to `main` branch; the release-candidate gate is opt-in through
+  the `release-candidate` label. Adding the label runs it, and later PR commits
+  rerun it while the label remains. This is the full release acceptance suite,
+  so apply the label when that hosted-runner cost is useful.
 
 > Note: Changes to `.github/workflows/` and `.dagger/` directories are ignored.
 
@@ -45,7 +48,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 #### 1. Build (`build`)
 - **Runner:** `ubuntu-latest`
-- **Condition:** Only runs on trusted version tag pushes
+- **Condition:** Runs on pushes and pull requests to `main`
 - **Steps:**
   - Checkout code
   - Set up Go 1.26.9 and Python 3.10
@@ -55,13 +58,16 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 #### 2. Release Candidate Verification (`release-candidate`)
 - **Runner:** `ubuntu-latest`
-- **Condition:** Only runs on trusted version tag pushes
+- **Condition:** Runs for version-tag pushes and pull requests labeled
+  `release-candidate`. The PR gate checks out the exact PR head and does not
+  publish a release or use publication credentials.
 - **Steps:**
-  - Download and checksum the pinned N-1 RCC v18.19.3 binary
+  - Download and checksum the pinned N-1 RCC v18.19.5 binary
   - Run `releaseCandidate` through `developer/toolkit.yaml`
   - Prove the real A/B artifact vertical, full Robot suite, binary inventory,
     race tests, and two-generation self-host
-  - Upload the self-host and acceptance receipts
+  - Upload the built candidate binary, gate exit/log, N-1 archive, Robot output,
+    and reviewable self-host and acceptance receipts (never private homes)
 
 #### 3. Robot Tests (`robot`)
 - **Matrix:** Ubuntu, macOS, and Windows runners
@@ -73,6 +79,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 
 #### 4. Release (`release`)
 - **Condition:** Runs after successful tag-push build and release-candidate verification
+- **Publication:** Version-tag pushes only; labeling a PR never publishes.
 - **Steps:**
   - Download built RCC binaries
   - Generate `index.json` with version metadata

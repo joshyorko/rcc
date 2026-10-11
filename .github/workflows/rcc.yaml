@@ -13,6 +13,11 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
     paths-ignore:
       - ".github/workflows/**"
       - ".dagger/**"
@@ -95,9 +100,12 @@ jobs:
   release-candidate:
     name: Release Candidate Verification
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: >-
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'release-candidate'))
     env:
       RCC_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      GOTOOLCHAIN: auto
       ROBOCORP_HOME: ${{ github.workspace }}/../rcc-release-candidate-home
       RCC_SELF_HOST_EXPECTED_VERSION: v18.19.5
       RCC_N1_BINARY: ${{ github.workspace }}/tmp/released-rcc/rcc
@@ -141,19 +149,105 @@ jobs:
           bwrap --version
           bwrap --unshare-user --unshare-net --ro-bind / / -- /bin/true
       - name: Run contained release candidate gate
-        run: rcc run -r developer/toolkit.yaml --dev -t releaseCandidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tmp
+          set +e
+          rcc run -r developer/toolkit.yaml --dev -t releaseCandidate 2>&1 | tee tmp/release-candidate.log
+          pipeline_status=("${PIPESTATUS[@]}")
+          gate_exit="${pipeline_status[0]}"
+          tee_exit="${pipeline_status[1]}"
+          set -e
+          set +e
+          python3 - "$gate_exit" "$tee_exit" <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          receipt = {
+              "sourceSha": os.environ["RCC_CANDIDATE_SHA"],
+              "gateExitCode": int(sys.argv[1]),
+              "teeExitCode": int(sys.argv[2]),
+          }
+          Path("tmp/release-candidate-exit.json").write_text(json.dumps(receipt, indent=2) + "\n")
+
+          staged = Path("tmp/self-host-metadata-v1.json")
+          staged.unlink(missing_ok=True)
+          self_host_path = Path("tmp/self-host-v1.json")
+          if self_host_path.is_symlink():
+              raise SystemExit("self-host receipt must not be a symlink")
+          if self_host_path.is_file():
+              self_host = json.loads(self_host_path.read_text(encoding="utf-8"))
+              evidence_paths = self_host.get("evidencePaths") if isinstance(self_host, dict) else None
+              if not isinstance(evidence_paths, list):
+                  raise SystemExit("completed self-host receipt has no evidencePaths list")
+              homes = self_host.get("homes")
+              home_b_value = homes.get("b") if isinstance(homes, dict) else None
+              if not isinstance(home_b_value, str):
+                  raise SystemExit("completed self-host receipt has no home-b path")
+              home_b = Path(home_b_value).resolve(strict=True)
+              if home_b.name != "home-b" or not home_b.parent.name.startswith(".rcc-self-host-homes-"):
+                  raise SystemExit("self-host home-b path is outside its per-run home directory")
+              matches = [
+                  value for value in evidence_paths
+                  if isinstance(value, str) and value.replace("\\", "/").endswith("artifacts/v1/metadata.json")
+              ]
+              if len(matches) != 1:
+                  raise SystemExit(f"expected one self-host metadata evidence path, found {len(matches)}")
+              source = Path(matches[0])
+              if source.is_symlink():
+                  raise SystemExit("self-host metadata evidence must not be a symlink")
+              source = source.resolve(strict=True)
+              expected_source = home_b / "artifacts" / "v1" / "metadata.json"
+              if source != expected_source:
+                  raise SystemExit("self-host metadata path differs from the receipt's home-b fixture")
+              content = source.read_bytes()
+              metadata = json.loads(content)
+              if metadata != {"schemaVersion": 1} or type(metadata.get("schemaVersion")) is not int:
+                  raise SystemExit("self-host metadata fixture has an unexpected schema")
+              staged.write_bytes(content)
+          PY
+          evidence_exit=$?
+          set -e
+          if (( gate_exit != 0 )); then
+            exit "$gate_exit"
+          fi
+          if (( evidence_exit != 0 )); then
+            exit "$evidence_exit"
+          fi
+          exit "$tee_exit"
       - name: Upload release candidate evidence
         if: success() || failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: release-candidate-evidence
+          if-no-files-found: warn
           path: |
+            build/rcc
+            build/self-host/released/rcc
+            build/self-host/released/rccremote
+            build/self-host/promoted/rcc
+            build/self-host/candidate/rcc
+            build/self-host/candidate/rccremote
+            tmp/release-candidate.log
+            tmp/release-candidate-exit.json
             tmp/self-host-v1.json
-            tmp/rcc-self-host-*/
             tmp/release-candidate-v1.json
             tmp/native-runtime-receipt.json
+            tmp/jat-class-consumer-receipt.json
             tmp/coordination-blackbox-v1.json
             tmp/large-stream-receipt.json
+            tmp/rcc-n1-environment.rcca
+            tmp/rcc-self-host-*/*-v12*.json
+            tmp/rcc-self-host-*/robot.yaml
+            tmp/rcc-self-host-*/conda.yaml
+            tmp/self-host-metadata-v1.json
+            tmp/rcc-self-host-*/candidate-archive-upgrade.json
+            tmp/rcc-self-host-*/released-archive-rollback-attempt.json
+            tmp/rcc-self-host-*/n1-archive-sha256.txt
+            tmp/rcc-self-host-*/n1-rollback-state.json
             tmp/environment-artifacts-robot/
             tmp/output/
 

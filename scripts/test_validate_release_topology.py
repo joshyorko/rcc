@@ -83,6 +83,81 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertEqual(validator(workflow), [])
 
+    def test_release_candidate_is_label_opt_in_and_publication_stays_tag_only(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        self.assertEqual(topology.validate_release_candidate_event_policy(workflow), [])
+
+        mutations = (
+            ("contains(github.event.pull_request.labels.*.name, 'release-candidate')", "github.event_name == 'pull_request'"),
+            ("      - labeled\n", ""),
+            ("(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))", "(github.event_name == 'push' || github.event_name == 'pull_request')"),
+            ("if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')", "if: github.event_name == 'push' || github.event_name == 'pull_request'"),
+        )
+        for old, replacement in mutations:
+            with self.subTest(mutation=old):
+                self.assertIn(old, workflow)
+                self.assertTrue(topology.validate_release_candidate_event_policy(workflow.replace(old, replacement, 1)))
+
+    def test_release_candidate_stages_only_validated_self_host_metadata(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        script = re.search(
+            r"(?ms)^          python3 - \"\$gate_exit\" \"\$tee_exit\" <<'PY'\n(.*?)^          PY\s*$",
+            workflow,
+        )
+        self.assertIsNotNone(script, "release-candidate exit receipt/staging script is missing")
+        python_source = textwrap.dedent(script.group(1))
+        expected_sha = "a" * 40
+
+        def run_stage(metadata, evidence_paths=None, alternate_source=False):
+            with tempfile.TemporaryDirectory() as directory:
+                outer = Path(directory)
+                root = outer / "checkout"
+                root.mkdir()
+                (root / "tmp").mkdir()
+                home_b = outer / "private" / ".rcc-self-host-homes-123" / "home-b"
+                fixture = home_b / "artifacts" / "v1" / "metadata.json"
+                fixture.parent.mkdir(parents=True)
+                fixture.write_text(json.dumps(metadata) + "\n")
+                if alternate_source:
+                    alternate = outer / "private" / ".rcc-self-host-homes-124" / "home-b" / "artifacts" / "v1" / "metadata.json"
+                    alternate.parent.mkdir(parents=True)
+                    alternate.write_text(json.dumps(metadata) + "\n")
+                    evidence_paths = [str(alternate)]
+                receipt = {
+                    "homes": {"b": str(home_b)},
+                    "evidencePaths": [str(fixture)] if evidence_paths is None else evidence_paths,
+                }
+                (root / "tmp/self-host-v1.json").write_text(json.dumps(receipt))
+                result = subprocess.run(
+                    [sys.executable, "-c", python_source, "0", "0"],
+                    cwd=root,
+                    env=dict(os.environ, RCC_CANDIDATE_SHA=expected_sha),
+                    text=True,
+                    capture_output=True,
+                )
+                staged = root / "tmp/self-host-metadata-v1.json"
+                staged_content = staged.read_bytes() if staged.is_file() else None
+                exit_receipt = root / "tmp/release-candidate-exit.json"
+                source_sha = json.loads(exit_receipt.read_text())["sourceSha"] if exit_receipt.is_file() else None
+                return result, staged_content, source_sha
+
+        result, staged_content, source_sha = run_stage({"schemaVersion": 1})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(staged_content, b'{"schemaVersion": 1}\n')
+        self.assertEqual(source_sha, expected_sha)
+
+        for metadata, evidence_paths in (
+            ({"schemaVersion": 2}, None),
+            ({"schemaVersion": 1}, []),
+        ):
+            with self.subTest(metadata=metadata, evidence_paths=evidence_paths):
+                result, staged_content, _ = run_stage(metadata, evidence_paths)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIsNone(staged_content)
+        result, staged_content, _ = run_stage({"schemaVersion": 1}, alternate_source=True)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIsNone(staged_content)
+
     def test_generated_index_changelog_fragment_resolves_to_release_heading(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         generator = re.search(r"(?ms)^          python3 << 'PYEOF'\n(.*?)^          PYEOF\s*$", workflow)
