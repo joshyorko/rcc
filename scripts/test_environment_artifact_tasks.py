@@ -2,6 +2,7 @@ import json
 import gzip
 import hashlib
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -315,7 +316,9 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_native_matrix_uses_exact_binary_and_test_produced_receipt(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
-    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  assemble-release-preparation:\n", 1)[0]
+    match = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(match, "native robot job is missing")
+    native_job = match.group(1)
     self.assertIn("needs: build", native_job)
     self.assertIn("actions/download-artifact", native_job)
     self.assertIn("RCC_REAL_BINARY", native_job)
@@ -758,6 +761,10 @@ class ArtifactTaskTests(unittest.TestCase):
     )
     self.assertLess(
         workflow.index("- name: Create the new version tag without replacement"),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
+    )
+    self.assertLess(
+        workflow.index('gh release create "$RCC_RELEASE_VERSION"'),
         workflow.index("- name: Dispatch Homebrew update after release publication"),
     )
 
