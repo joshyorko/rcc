@@ -1,6 +1,7 @@
 import json
 import gzip
 import hashlib
+import inspect
 import os
 import re
 import subprocess
@@ -22,6 +23,26 @@ from robot_tests.environment_artifacts import library as artifact_robot_library 
 
 
 class ArtifactTaskTests(unittest.TestCase):
+  def test_build_source_guard_rejects_tracked_edits_and_precedes_compilation(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tasks._assert_clean_tracked_workspace(root)
+      (root / "untracked-generated-file.txt").write_text("generated\n")
+      tasks._assert_clean_tracked_workspace(root)
+      tracked.write_text("modified\n")
+      with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+        tasks._assert_clean_tracked_workspace(root)
+
+    build_source = inspect.getsource(tasks.build.body)
+    self.assertLess(build_source.index("_assert_clean_tracked_workspace"), build_source.index('c.run(f"go build'))
+
   def test_self_host_uses_the_archive_legacy_blueprint(self):
     with tempfile.TemporaryDirectory() as directory:
       archive = Path(directory) / "fixture.rcca"

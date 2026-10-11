@@ -217,6 +217,16 @@ def _exact_commit_sha():
     return commit
 
 
+def _assert_clean_tracked_workspace(root="."):
+    """Fail before compilation if generated prerequisites changed tracked source."""
+    root = Path(root)
+    status = subprocess.check_output(
+        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"], text=True
+    )
+    if status.strip():
+        raise RuntimeError(f"tracked source tree is not clean before Go build:\n{status.rstrip()}")
+
+
 _PROMOTION_RECEIPT_FILES = (
     "native-runtime-receipt.json",
     "self-host-v1.json",
@@ -1443,6 +1453,7 @@ def build(c, platform="all"):
         os.environ["GOARCH"] = goarch
         output = f"build/{output_dir}/"
 
+        _assert_clean_tracked_workspace()
         c.run(f"go build -ldflags -s -o {output} ./cmd/...")
 
         ext = ".exe" if goos == "windows" else ""

@@ -32,6 +32,7 @@ This workflow verifies source, version, target architecture, checksums, and runt
 
 - **Guidance added:** manual exact-source preparation, independent artifact review, protected publication, token permissions, and the current signing limits.
 - **Review access:** preparation emits nine manifest-bound per-asset sidecars for reviewers with a 32 MiB artifact-download interface cap; native receipt artifacts also include the exact runner binary. These capped sidecars are review-only and never replace the publisher's canonical preparation bundle.
+- **Build cleanliness:** generated documentation is committed with its source, and the build task checks tracked files immediately before each Go compilation so a prerequisite cannot silently produce a binary with dirty-source metadata.
 - **Durable lesson:** a successful tag-triggered CI run is not a publication authorization; the publisher must consume an independently reviewed preparation artifact and enforce protection before creating a new tag.
 - **Evidence:** workflow and helper validation bind the preparation run, ZIP digest, nine asset hashes, compiler metadata, source/version, full11 exit, and four native receipts.
 - **Stale guidance replaced:** the old automatic tag-to-release and tag-recreation path is disabled; it must not be used as an alternate route.

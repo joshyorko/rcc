@@ -179,15 +179,24 @@ class ReleasePublicationTests(unittest.TestCase):
                 (directory / "jat-class-consumer-receipt.json").write_text(json.dumps(jat))
         return manifest_digest
 
-    def fake_go(self, root):
+    def fake_go(self, root, overrides=None):
         executable = root / "fake-go"
-        targets = {
-            name: target for name, target in ASSET_TARGETS.items()
-        }
+        targets = ASSET_TARGETS
+        overrides = overrides or {}
         cases = "\n".join(
             f"  {name}) goos={goos}; goarch={goarch} ;;"
             for name, (goos, goarch) in targets.items()
         )
+        build_overrides = {
+            "GOOS": overrides.get("GOOS"),
+            "GOARCH": overrides.get("GOARCH"),
+            "vcs.revision": overrides.get("vcs.revision", SOURCE),
+            "vcs.modified": overrides.get("vcs.modified", "false"),
+        }
+        goos_line = ("printf '\\tbuild\\tGOOS=%s\\n' \"$goos\"\n" if build_overrides["GOOS"] is None
+                     else f"printf '\\tbuild\\tGOOS=%s\\n' '{build_overrides['GOOS']}'\n")
+        goarch_line = ("printf '\\tbuild\\tGOARCH=%s\\n' \"$goarch\"\n" if build_overrides["GOARCH"] is None
+                       else f"printf '\\tbuild\\tGOARCH=%s\\n' '{build_overrides['GOARCH']}'\n")
         executable.write_text(
             "#!/bin/sh\n"
             "name=${3##*/}\n"
@@ -195,10 +204,9 @@ class ReleasePublicationTests(unittest.TestCase):
             "  *) goos=linux; goarch=amd64 ;;\n"
             "esac\n"
             "printf '%s: go1.26.9\\n' \"$3\"\n"
-            "printf '\\tbuild\\tGOOS=%s\\n' \"$goos\"\n"
-            "printf '\\tbuild\\tGOARCH=%s\\n' \"$goarch\"\n"
-            f"printf '\\tbuild\\tvcs.revision={SOURCE}\\n'\n"
-            "printf '\\tbuild\\tvcs.modified=false\\n'\n",
+            + goos_line + goarch_line
+            + f"printf '\\tbuild\\tvcs.revision=%s\\n' '{build_overrides['vcs.revision']}'\n"
+            + f"printf '\\tbuild\\tvcs.modified=%s\\n' '{build_overrides['vcs.modified']}'\n",
             encoding="utf-8",
         )
         executable.chmod(0o755)
@@ -303,6 +311,29 @@ class ReleasePublicationTests(unittest.TestCase):
                         str(self.fake_go(root)),
                     )
             self.assertFalse((root / "rejected").exists())
+
+    def test_native_review_reports_each_go_metadata_mismatch(self):
+        cases = (
+            ("GOOS", "darwin"),
+            ("GOARCH", "arm64"),
+            ("vcs.revision", "b" * 40),
+            ("vcs.modified", "true"),
+        )
+        for field, actual in cases:
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                binary = root / "rcc-linux64"
+                binary.write_bytes(b"tiny-linux-binary")
+                receipt = root / "native-runtime-receipt.json"
+                receipt.write_text(json.dumps({"commitSha": SOURCE, "platform": "linux_amd64", "binary": {
+                    "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "version": VERSION,
+                    "runtimeGOOS": "linux", "runtimeGOARCH": "amd64",
+                }}))
+                with self.assertRaisesRegex(ReleaseGateError, field.replace(".", r"\.")):
+                    publication.stage_native_review_binary(
+                        binary, receipt, root / "rejected", "rcc-linux64", "linux_amd64", SOURCE, VERSION,
+                        str(self.fake_go(root, {field: actual})),
+                    )
 
     def test_accepts_complete_bundle_and_exact_prep_run(self):
         with tempfile.TemporaryDirectory() as directory:

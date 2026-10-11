@@ -576,10 +576,20 @@ def stage_native_review_binary(binary_path, receipt_path, output, asset_name, pl
              and receipt_binary.get("runtimeGOARCH") == goarch,
              "native review binary differs from the executed-binary receipt")
     build_info = read_go_build_info(binary_path, go_binary)
-    _require(build_info.get("GOOS") == goos and build_info.get("GOARCH") == goarch
-             and build_info.get("vcs.revision") == source_sha
-             and build_info.get("vcs.modified") == "false",
-             "native review binary Go metadata differs from source/platform identity")
+    expected_build_info = {
+        "GOOS": goos,
+        "GOARCH": goarch,
+        "vcs.revision": source_sha,
+        "vcs.modified": "false",
+    }
+    metadata_mismatches = {
+        key: {"expected": expected, "actual": build_info.get(key)}
+        for key, expected in expected_build_info.items()
+        if build_info.get(key) != expected
+    }
+    _require(not metadata_mismatches,
+             "native review binary Go metadata mismatch: " +
+             json.dumps(metadata_mismatches, sort_keys=True, separators=(",", ":")))
     _require(not output.exists(), f"native review binary output already exists: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = Path(tempfile.mkdtemp(prefix=".rcc-native-review-", dir=output.parent))
