@@ -48,7 +48,7 @@ The primary workflow for building, testing, and releasing RCC across multiple pl
 - **Condition:** Only runs on trusted version tag pushes
 - **Steps:**
   - Checkout code
-  - Set up Go 1.26.5 and Python 3.10
+  - Set up Go 1.26.9 and Python 3.10
   - Install Invoke build tool
   - Build RCC using `inv build`
   - Upload the eight `rcc` and `rccremote` binaries for Linux, Windows, and macOS
@@ -155,7 +155,7 @@ Container-based testing using [Dagger](https://dagger.io/), a portable CI/CD eng
 - **Steps:**
   - Checkout code
   - Run Dagger pipeline: `dagger call run-robot-tests --source .`
-  - Uses Dagger engine v0.21.3 from `dagger.json` and Go 1.26.5
+  - Uses Dagger engine v0.21.3 from `dagger.json` and Go 1.26.9
 
 ### Enabling Automatic Runs
 To enable automatic testing, uncomment the push/PR triggers in the workflow file:
@@ -264,7 +264,7 @@ The recommended release process uses these workflows:
 
 | Requirement | Version | Used By |
 |-------------|---------|---------|
-| Go | 1.26.5 | rcc.yaml and Dagger |
+| Go | 1.26.9 | rcc.yaml and Dagger |
 | Python | 3.10 | rcc.yaml |
 | Invoke | 2.2.0 | rcc.yaml |
 | Dagger | v0.21.3 | `dagger.json` |

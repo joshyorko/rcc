@@ -42,7 +42,16 @@ func copyPythonPrefix(uvPythonCache, pythonVersion, targetFolder string, planWri
 	if len(matches) > 1 {
 		return fmt.Errorf("multiple Python %s installations found in UV cache at %s", pythonVersion, uvPythonCache)
 	}
-	prefixDir := matches[0]
+	prefixDir, err := filepath.Abs(matches[0])
+	if err != nil {
+		return fmt.Errorf("failed to resolve Python prefix path: %w", err)
+	}
+	prefixDir, err = filepath.EvalSymlinks(prefixDir)
+	if err != nil {
+		return fmt.Errorf("failed to resolve Python prefix: %w", err)
+	}
+	// Resolve the root before walking so EvalSymlinks results for relative links
+	// use the same physical path namespace as the containment check below.
 
 	common.Debug("Copying Python prefix from %s to %s", prefixDir, targetFolder)
 	fmt.Fprintf(planWriter, "Copying Python %s from %s\n", pythonVersion, prefixDir)
