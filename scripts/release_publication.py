@@ -17,6 +17,8 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree
 
+from validate_release_topology import validate as validate_release_topology
+
 
 ASSET_NAMES = (
     "rcc-linux64",
@@ -211,6 +213,21 @@ def validate_source_checkout(source_root, expected_source_sha, expected_version,
              "source legacy tag workflow is not a read-only manual hold")
     for marker in ("push:", "contents: write", "git push", "gh release", "refs/tags/"):
         _require(marker not in tag_text, f"source legacy tag workflow can mutate release state: {marker}")
+    recovery_path = source_root / ".github" / "workflows" / "recover-rcc-185.yml"
+    _require(recovery_path.is_file() and not recovery_path.is_symlink(),
+             "source historical recovery workflow is missing or unsafe")
+    recovery_text = recovery_path.read_text(encoding="utf-8")
+    _require("workflow_dispatch:" in recovery_text and "contents: read" in recovery_text,
+             "source historical recovery workflow is not a read-only manual hold")
+    for marker in (
+        "push:", "pull_request:", "contents: write", "actions: write", "git push", "gh api", "gh release",
+        "github.rest", "createRelease", "uploadReleaseAsset", "repository_dispatch", "workflow run",
+        "refs/tags/", "HOMEBREW_TOOLS_PAT", "GITHUB_TOKEN", "GH_TOKEN", "github.token", "recover_rcc_185.py",
+    ):
+        _require(marker not in recovery_text,
+                 f"source historical recovery workflow can still mutate or publish release state: {marker}")
+    _require("exit 1" in recovery_text and "retired" in recovery_text.lower(),
+             "source historical recovery workflow does not explicitly refuse publication")
     publisher_path = source_root / ".github" / "workflows" / "publish-release.yml"
     _require(publisher_path.is_file() and not publisher_path.is_symlink(), "source manual publisher workflow is missing or unsafe")
     publisher_text = publisher_path.read_text(encoding="utf-8")
@@ -292,6 +309,11 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
         actual_sha = _sha256(path)
         _require(recorded.get("size") == actual_size, f"release asset size mismatch: {name}")
         _require(recorded.get("sha256") == actual_sha, f"release asset checksum mismatch: {name}")
+
+    index_errors = validate_release_topology(
+        None, None, assets_dir / "index.json", asset_root=assets_dir, expected_version=expected_version
+    )
+    _require(not index_errors, "release index semantics are invalid: " + "; ".join(index_errors))
 
     sums_path = evidence_dir / "SHA256SUMS"
     _require(sums_path.is_file() and not sums_path.is_symlink(), "asset checksum file is missing or unsafe")

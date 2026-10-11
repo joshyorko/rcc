@@ -116,7 +116,9 @@ jobs:
             --workflow release-source/.github/workflows/rcc.yaml \
             --index rcc-release-preparation/assets/index.json \
             --tag-workflow release-source/.github/workflows/create-release-tag.yml \
-            --publisher-workflow release-source/.github/workflows/publish-release.yml
+            --publisher-workflow release-source/.github/workflows/publish-release.yml \
+            --recovery-workflow release-source/.github/workflows/recover-rcc-185.yml \
+            --version "$RCC_RELEASE_VERSION"
       - name: Create the new version tag without replacement
         env:
           GH_TOKEN: ${{ github.token }}

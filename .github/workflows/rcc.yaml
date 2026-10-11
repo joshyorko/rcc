@@ -353,8 +353,10 @@ jobs:
             --asset-root downloaded-assets \
             --workflow .github/workflows/rcc.yaml \
             --tag-workflow .github/workflows/create-release-tag.yml \
+            --recovery-workflow .github/workflows/recover-rcc-185.yml \
             --publication-workflow .github/workflows/publish-release.yml \
-            --index downloaded-assets/index.json
+            --index downloaded-assets/index.json \
+            --version "$RCC_RELEASE_VERSION"
       - name: Assemble checksummed assets and source-bound evidence
         run: |
           python3 scripts/release_publication.py assemble \

@@ -39,7 +39,17 @@ class ReleasePublicationTests(unittest.TestCase):
         assets.mkdir()
         asset_hashes = {}
         for name in ASSET_NAMES:
-            content = f"asset:{name}".encode()
+            if name == "index.json":
+                base = f"https://github.com/joshyorko/rcc/releases/download/{VERSION}"
+                content = (json.dumps({"tested": [{
+                    "version": VERSION,
+                    "windows": f"{base}/rcc-windows64.exe",
+                    "linux": f"{base}/rcc-linux64",
+                    "macos": f"{base}/rcc-macos64",
+                    "macosarm64": f"{base}/rcc-macosarm64",
+                }]}, separators=(",", ":")) + "\n").encode()
+            else:
+                content = f"asset:{name}".encode()
             (assets / name).write_bytes(content)
             asset_hashes[name] = {"sha256": hashlib.sha256(content).hexdigest(), "size": len(content)}
 
@@ -197,6 +207,35 @@ class ReleasePublicationTests(unittest.TestCase):
             (root / "assets" / "rcc-linux64").write_bytes(b"tampered")
             with self.assertRaisesRegex(ReleaseGateError, "size mismatch|checksum mismatch"):
                 validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+
+    def test_bundle_validation_independently_rejects_wrong_index_version_and_release_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            digest = self.fixture(root)
+            index = root / "assets" / "index.json"
+            data = json.loads(index.read_text())
+            data["tested"][0]["version"] = "v0.0.0"
+            for key in ("windows", "linux", "macos", "macosarm64"):
+                data["tested"][0][key] = data["tested"][0][key].replace(
+                    "https://github.com/joshyorko/rcc/releases/download/v18.19.6",
+                    "https://attacker.invalid/releases/download/v0.0.0",
+                )
+            index.write_text(json.dumps(data, separators=(",", ":")) + "\n")
+
+            manifest_path = root / "evidence" / "asset-manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            content = index.read_bytes()
+            manifest["assets"]["index.json"] = {"sha256": hashlib.sha256(content).hexdigest(), "size": len(content)}
+            manifest_bytes = (json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            manifest_path.write_bytes(manifest_bytes)
+            sums = root / "evidence" / "SHA256SUMS"
+            lines = sums.read_text().splitlines()
+            lines = [line for line in lines if not line.endswith("  assets/index.json")]
+            lines.append(f"{hashlib.sha256(content).hexdigest()}  assets/index.json")
+            sums.write_text("\n".join(sorted(lines)) + "\n")
+
+            with self.assertRaisesRegex(ReleaseGateError, "release index semantics are invalid"):
+                validate_prepared_bundle(root, SOURCE, VERSION, hashlib.sha256(manifest_bytes).hexdigest(), 123)
 
     def test_checks_compiler_revision_and_target_for_all_eight_binaries(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -421,6 +460,17 @@ jobs:
   hold:
     steps: []
 """)
+            recovery_workflow = root / ".github" / "workflows" / "recover-rcc-185.yml"
+            recovery_workflow.write_text("""name: Retired RCC v18.19.5 Recovery Hold
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  retired:
+    steps:
+      - run: echo retired; exit 1
+""")
             publisher = root / ".github" / "workflows" / "publish-release.yml"
             publisher.write_text("""name: Publish RCC Release
 on:
@@ -442,6 +492,10 @@ jobs:
             subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
             source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
             self.assertTrue(validate_source_checkout(root, source_sha, VERSION))
+            recovery_workflow.write_text(recovery_workflow.read_text().replace("contents: read", "contents: write"))
+            with self.assertRaisesRegex(ReleaseGateError, "historical recovery workflow"):
+                validate_source_checkout(root, source_sha, VERSION)
+            recovery_workflow.write_text(recovery_workflow.read_text().replace("contents: write", "contents: read"))
             workflow.write_text(workflow.read_text().replace("branches: [main]", 'branches: [main]\n    tags: ["v*"]'))
             subprocess.run(["git", "add", ".github/workflows/rcc.yaml"], cwd=root, check=True)
             subprocess.run(["git", "commit", "-qm", "legacy tag trigger"], cwd=root, check=True)

@@ -12,6 +12,16 @@ Before dispatching preparation, confirm that the selected `main` commit has the 
 
 The legacy `Create Release Tag` entry is intentionally disabled and exits with a migration message. The new publisher is a proposal in this change and must be reviewed and merged before it can be used; do not use a release tag as a test trigger. This change has not created a tag, release, or Homebrew dispatch.
 
+The historical `recover-rcc-185.yml` workflow is also retired: manual dispatch
+only reaches a read-only hold that exits nonzero, with no tag, release, or
+Homebrew write. The old `recovery/recover_rcc_185.py` implementation and its
+tests are retained as historical evidence, but the workflow no longer invokes
+them. `patchraptor-release.yml` may still make its automated version-bump commit
+and dispatch the retired `Create Release Tag` entry after its configured
+qualifying main push; it cannot create a tag or publish a release, and that
+dispatch now stops at the explicit hold. Treat that bot path as a version-bump
+automation only, not as release authorization.
+
 ## Signing limits
 
 This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified signature. Existing platform signing behavior remains whatever the platform build currently produces; in particular, the current evidence has ARM signing but does not establish universal signing coverage. Review signing requirements and platform-specific signature evidence separately before publication.

@@ -15,6 +15,7 @@ INDEX_ASSETS = {
     "macos": "rcc-macos64",
     "macosarm64": "rcc-macosarm64",
 }
+RELEASE_REPOSITORY = "joshyorko/rcc"
 TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
 CANDIDATE_SHA_EXPRESSION = "${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}"
@@ -110,13 +111,24 @@ def validate_release_identity_topology(workflow_text):
     return errors
 
 
-def validate_two_phase_release_topology(rcc_workflow, tag_workflow, publisher_workflow):
+def validate_two_phase_release_topology(rcc_workflow, tag_workflow, publisher_workflow, recovery_workflow):
     errors = validate_release_identity_topology(rcc_workflow)
     if not tag_workflow or "contents: read" not in tag_workflow:
         errors.append("legacy tag workflow must be read-only")
     for marker in ("git push", "contents: write", "gh release", "refs/tags/"):
         if marker in tag_workflow:
             errors.append(f"legacy tag workflow can still mutate release state: {marker}")
+    if "workflow_dispatch:" not in recovery_workflow or "contents: read" not in recovery_workflow:
+        errors.append("historical recovery workflow must be a read-only manual hold")
+    for marker in (
+        "push:", "pull_request:", "contents: write", "actions: write", "git push", "gh api", "gh release",
+        "github.rest", "createRelease", "uploadReleaseAsset", "repository_dispatch", "workflow run",
+        "refs/tags/", "HOMEBREW_TOOLS_PAT", "GITHUB_TOKEN", "GH_TOKEN", "github.token", "recover_rcc_185.py",
+    ):
+        if marker in recovery_workflow:
+            errors.append(f"historical recovery workflow can still mutate or publish release state: {marker}")
+    if "exit 1" not in recovery_workflow or "retired" not in recovery_workflow.lower():
+        errors.append("historical recovery workflow must fail with an explicit retirement message")
     if "workflow_dispatch" not in publisher_workflow:
         errors.append("publisher must require an explicit workflow_dispatch")
     for input_name in ("preparation_run_id", "source_sha", "expected_version", "asset_manifest_sha256"):
@@ -172,7 +184,7 @@ def validate_release_runtime_roots(workflow_text):
     return errors
 
 
-def validate(root, workflow, index, asset_root=None):
+def validate(root, workflow, index, asset_root=None, expected_version=None):
     errors = []
     if asset_root:
         asset_root = Path(asset_root)
@@ -202,15 +214,24 @@ def validate(root, workflow, index, asset_root=None):
         if not tested:
             errors.append("index has no tested release entry")
         else:
+            if expected_version is None and root is not None:
+                version_source = Path(root) / "common" / "version.go"
+                if version_source.is_file() and not version_source.is_symlink():
+                    match = re.search(r"(?m)^\s*(?:const\s+)?Version\s*=\s*`([^`]+)`", version_source.read_text())
+                    expected_version = match.group(1) if match else None
+            if not isinstance(expected_version, str) or re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", expected_version) is None:
+                errors.append("expected release version is required to validate index semantics")
             entry = tested[0]
+            if expected_version and entry.get("version") != expected_version:
+                errors.append(f"index tested entry version must be {expected_version}: {entry.get('version')!r}")
             for key, expected in INDEX_ASSETS.items():
                 if key not in entry:
                     errors.append(f"index entry missing required {key} URL")
                     continue
                 value = entry[key]
-                basename = value.rsplit("/", 1)[-1]
-                if basename != expected:
-                    errors.append(f"index {key} URL basename must be {expected}: {basename}")
+                canonical = f"https://github.com/{RELEASE_REPOSITORY}/releases/download/{expected_version}/{expected}"
+                if value != canonical:
+                    errors.append(f"index {key} URL must be the canonical release URL {canonical}: {value!r}")
     return errors
 
 
@@ -222,17 +243,20 @@ def main():
     parser.add_argument("--workflow", type=Path)
     parser.add_argument("--tag-workflow", type=Path)
     parser.add_argument("--publication-workflow", type=Path)
+    parser.add_argument("--recovery-workflow", type=Path)
     parser.add_argument("--index", type=Path)
+    parser.add_argument("--version")
     args = parser.parse_args()
     root = args.root or (args.build_root.parent if args.build_root else None)
     if root is None and args.asset_root is None:
         parser.error("a repository root, --build-root, or --asset-root is required")
-    errors = validate(root, args.workflow, args.index, args.asset_root)
-    if args.workflow and args.tag_workflow and args.publication_workflow:
+    errors = validate(root, args.workflow, args.index, args.asset_root, args.version)
+    if args.workflow and args.tag_workflow and args.publication_workflow and args.recovery_workflow:
         errors.extend(validate_two_phase_release_topology(
             Path(args.workflow).read_text(),
             Path(args.tag_workflow).read_text(),
             Path(args.publication_workflow).read_text(),
+            Path(args.recovery_workflow).read_text(),
         ))
     for error in errors:
         print(error)
