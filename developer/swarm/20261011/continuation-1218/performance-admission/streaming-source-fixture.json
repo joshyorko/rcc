@@ -1,0 +1,107 @@
+{
+  "observed_at": "2026-10-11T12:05:29.927841+00:00",
+  "read_scope": "two named metadata files and four named preflight paths; no recursive private-home or full-CAS scan, no binary/server executed",
+  "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+  "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+  "manifest_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+  "manifest_raw_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+  "manifest_raw_bytes": 2175,
+  "manifest_identity_reimplemented": false,
+  "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "index_descriptor": {
+    "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+    "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "size": 1491800
+  },
+  "index_raw_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "indexed_content_count": 5537,
+  "indexed_content_total_stored_bytes": 69466848,
+  "indexed_content_total_logical_bytes": 170590205,
+  "unique_stored_digests": 5537,
+  "stored_size_buckets": {
+    "under_4KiB": 4649,
+    "4KiB_to_64KiB": 808,
+    "64KiB_and_over": 80
+  },
+  "preflight_paths": {
+    "objects/sha256": {
+      "exists": true,
+      "is_symlink": false,
+      "is_directory": true
+    },
+    "manifests/sha256": {
+      "exists": true,
+      "is_symlink": false,
+      "is_directory": true
+    },
+    "tmp": {
+      "exists": true,
+      "is_symlink": false,
+      "is_directory": true
+    },
+    ".restore-state": {
+      "exists": false,
+      "is_symlink": false,
+      "is_directory": false
+    }
+  },
+  "source_files": [
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "cmd/cacheServe.go",
+      "sha256": "2eae5a9d6a5d544afe1d66a4b88fb3cac7a4727090c270529f14dd593be6d00e",
+      "git_blob_sha1": "11f9ed192a248dc896645723ff8ad1b40c15fde9",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/cmd/cacheServe.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "cmd/root.go",
+      "sha256": "e8444945dc26e79dc60250e2515d0ac2ad585d5f92cfae48bccd8d3c19c202d3",
+      "git_blob_sha1": "f1e4fc16badd4a33afd0e2df1222a29ae9168dcd",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/cmd/root.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "artifactprovider/http.go",
+      "sha256": "3439f851151ded9e410ff9f67b74e169028c47ec59bfb5835843ac41a5b1e0cb",
+      "git_blob_sha1": "90621baedb55bd7e22ef0383a48f78c996a945cc",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/http.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "artifactprovider/filesystem.go",
+      "sha256": "c6936f4b7ee10cd7c78255d8b5c2f26c18a88d353f5c5770f6471b335630d1b8",
+      "git_blob_sha1": "b270696605138aab9a991153b925f8137b94fb81",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/filesystem.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "artifactprovider/filesystem_unix.go",
+      "sha256": "b6b7074c1ffa8987c71a8dd062cf3367dcd27a10f0a32d3d06ddb57689e4cdf1",
+      "git_blob_sha1": "38f26ab0b8e2753705840a693339fe5ed7b17caf",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/filesystem_unix.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/manifest.go",
+      "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+      "git_blob_sha1": "5da39dc0a255911c0f2a7a2c4747b9f3715cc3b5",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/manifest.go"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "environmentartifact/index.go",
+      "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+      "git_blob_sha1": "c9461111b2076d4f35c0d1d6a4ad335617b9068f",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/index.go"
+    }
+  ],
+  "full_CAS_hashes": "root-verified retained c49 receipt; not independently repeated in this lane; future untimed admission validation must read/hash complete selected closure"
+}

@@ -1,0 +1,712 @@
+{
+  "created_at": "2026-10-11T12:11:20.989846+00:00",
+  "lane": "consumer_contract_125 read-only P2 delta",
+  "performed": [
+    "public GET snapshots",
+    "eight raw source byte/Git blob identity checks",
+    "three RCC benchmark source committed-byte checks",
+    "seven RCC provider source committed-byte checks",
+    "two named provider metadata file reads/hash/index count+size validation",
+    "four named provider path preflight checks",
+    "existing root receipts read and retained hashes checked",
+    "existing owned main727 binary SHA256 read only"
+  ],
+  "not_performed": [
+    "binary invocation",
+    "server startup",
+    "full CAS rehash",
+    "runtime or Action acceptance",
+    "benchmark or optimization",
+    "repository or GitHub mutation",
+    "private-home recursive scan",
+    "format/default/pin change"
+  ],
+  "actions": {
+    "source": {
+      "retrieved_at": "2026-10-11T12:01:40.914336+00:00",
+      "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+      "files": [
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+          "git_blob_sha1": "09234363409bf979016a970c34b8b38ff642fb1f",
+          "sha256": "64f70563e9aaf2fa1a3a12006ae26e513b51be3bf465dac3d2b3bba76c1c669a",
+          "bytes": 27382,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/action_server/src/actions/server/_rcc_runtime_adapter.py",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "action_server/src/actions/server/_actions_process_pool.py",
+          "git_blob_sha1": "af261b4d40870ecf5415980ae1b3e2923f0734b1",
+          "sha256": "3552bf39d0dc93f94ed3a4ab056de870ae460ed709f36d3d3a37dc043c349da8",
+          "bytes": 58538,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/action_server/src/actions/server/_actions_process_pool.py",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_actions_process_pool.py"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+          "git_blob_sha1": "026ac648b2a99454597b3010aca85681a8f5adfa",
+          "sha256": "a14ed3fab48f607d2e572644bd60b334a068405ade3381e58120d474f31399a8",
+          "bytes": 66983,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/tests/action_server_tests/test_rcc_runtime_adapter.py"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+          "git_blob_sha1": "6bb84ba5d78aeb200be4fae46155fc082bb8eb31",
+          "sha256": "0edc5d092dba9415f552ee1f666edac8f3ce9e833bea1ef73f8370ed2d446e6a",
+          "bytes": 19214,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/tests/action_server_tests/test_source_staging_rcc_consumer.py"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": ".github/workflows/actions_runtime_rcc_provider_rollback.yml",
+          "git_blob_sha1": "ec7a6df7762394beeaf1125d424c9de9109c8db7",
+          "sha256": "9bf4533d94eac31ad2dc1f193f1a53441a64e19de2b2466c1631c5203f79d3d2",
+          "bytes": 51234,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/.github/workflows/actions_runtime_rcc_provider_rollback.yml",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/.github/workflows/actions_runtime_rcc_provider_rollback.yml"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "docs/program/evidence/runtime-frozen-current-source-20261011/README.md",
+          "git_blob_sha1": "c31b3905544a358ac1006bbfd421932c67078a28",
+          "sha256": "1aaaf686697807ec66f3a02e42711a14e59caafdee6563273219c347fb982327",
+          "bytes": 1427,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/docs/program/evidence/runtime-frozen-current-source-20261011/README.md",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/docs/program/evidence/runtime-frozen-current-source-20261011/README.md"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "docs/program/evidence/runtime-frozen-current-source-20261011/current-control-independent-review.json",
+          "git_blob_sha1": "9cc98457a5090495eca08b54cee1650f65a997cf",
+          "sha256": "3f27b4a2c0c548fa459a97fdad769a020079e536a0b7871302d0831e6b63221d",
+          "bytes": 1637,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/docs/program/evidence/runtime-frozen-current-source-20261011/current-control-independent-review.json",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/docs/program/evidence/runtime-frozen-current-source-20261011/current-control-independent-review.json"
+        },
+        {
+          "repository": "joshyorko/actions",
+          "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+          "tree": "1181b35b11e4904405ca1a9a3a398e6c1c3abfd0",
+          "path": "docs/program/evidence/runtime-frozen-current-source-20261011/selected-test-inventory.json",
+          "git_blob_sha1": "53998b890502490ba63d31ee016c8d24022a3296",
+          "sha256": "8a87d39c2f197234da0de0535d6fd2e249d29b0a20943f1f31da47248970ade6",
+          "bytes": 1333,
+          "local_file": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-a0d-source/docs/program/evidence/runtime-frozen-current-source-20261011/selected-test-inventory.json",
+          "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/docs/program/evidence/runtime-frozen-current-source-20261011/selected-test-inventory.json"
+        }
+      ]
+    },
+    "issues": [
+      {
+        "repository": "joshyorko/actions",
+        "number": 101,
+        "state": "open",
+        "updated_at": "2026-10-11T09:12:17Z",
+        "title": "Run the Actions Runtime product, runtime-adapter, and control-room factory",
+        "assignees": [],
+        "body_sha256": "a08e591f978217cc6f746b60c06494b9db4ce7fe7b1ccf5e926d04b3eb046d42",
+        "body_snapshot": "actions-101-issue.json",
+        "comments_snapshot": "actions-101-comments-latest.json",
+        "total_comments": 174,
+        "retained_page_count": 74,
+        "latest_comments": [
+          {
+            "id": 6105231845,
+            "author": "joshyorko",
+            "updated_at": "2026-10-11T03:59:13Z",
+            "url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105231845",
+            "body_sha256": "88c77f89188aa37abe519927a3eb004d6db92a5cee6d7bfdf8656b9fa0cc59d2"
+          },
+          {
+            "id": 6105422819,
+            "author": "joshyorko",
+            "updated_at": "2026-10-11T04:26:50Z",
+            "url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105422819",
+            "body_sha256": "114933fb2b42b74dd8375539527be6e82fdf1b36be55dd8735aadf1301c7fec2"
+          },
+          {
+            "id": 6105710480,
+            "author": "joshyorko",
+            "updated_at": "2026-10-11T05:09:50Z",
+            "url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105710480",
+            "body_sha256": "19c1a769235909152c9d38fd5351716f1e9bcd12d3a91ea52286648da7efbf90"
+          }
+        ]
+      },
+      {
+        "repository": "joshyorko/actions",
+        "number": 133,
+        "state": "open",
+        "updated_at": "2026-09-07T14:44:24Z",
+        "title": "Use RCC/Holotree as the first full environment and execution adapter for Actions workers",
+        "assignees": [],
+        "body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+        "body_snapshot": "actions-133-issue.json",
+        "comments_snapshot": "actions-133-comments-latest.json",
+        "total_comments": 3,
+        "retained_page_count": 3,
+        "latest_comments": [
+          {
+            "id": 5327623118,
+            "author": "joshyorko",
+            "updated_at": "2026-08-18T11:39:12Z",
+            "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-5327623118",
+            "body_sha256": "6547a74075c7e2b9615d6f72b22d9e85183222512e43f0d7635b128d96fc6b25"
+          },
+          {
+            "id": 5328133003,
+            "author": "joshyorko",
+            "updated_at": "2026-08-18T12:25:50Z",
+            "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-5328133003",
+            "body_sha256": "2b83a99de566320ec8ec235dc8e44707e60238422d6904cc75cd602393810533"
+          },
+          {
+            "id": 5335428231,
+            "author": "joshyorko",
+            "updated_at": "2026-08-18T23:21:53Z",
+            "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-5335428231",
+            "body_sha256": "54e3e4f11b78515ea59b578e101b72196d81f9871752d8f19b9c7bef7430de69"
+          }
+        ]
+      },
+      {
+        "repository": "joshyorko/actions",
+        "number": 134,
+        "state": "open",
+        "updated_at": "2026-10-11T01:44:42Z",
+        "title": "Integrate RCC Environment Artifacts and execution as the first local Runtime Adapter",
+        "assignees": [],
+        "body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d",
+        "body_snapshot": "actions-134-issue.json",
+        "comments_snapshot": "actions-134-comments-latest.json",
+        "total_comments": 5,
+        "retained_page_count": 5,
+        "latest_comments": [
+          {
+            "id": 5417818374,
+            "author": "joshyorko",
+            "updated_at": "2026-08-25T22:39:04Z",
+            "url": "https://github.com/joshyorko/actions/issues/134#issuecomment-5417818374",
+            "body_sha256": "a2248b437ecf96f18bfd5122f1c42d415d6c16382ed02657fe330373c68c8621"
+          },
+          {
+            "id": 5417893010,
+            "author": "joshyorko",
+            "updated_at": "2026-08-25T22:45:51Z",
+            "url": "https://github.com/joshyorko/actions/issues/134#issuecomment-5417893010",
+            "body_sha256": "f54ce1f73c5299f15114b7799a097bb4200ace2687306cf9e425f2e7bc4b5fd4"
+          },
+          {
+            "id": 6104310927,
+            "author": "joshyorko",
+            "updated_at": "2026-10-11T01:44:42Z",
+            "url": "https://github.com/joshyorko/actions/issues/134#issuecomment-6104310927",
+            "body_sha256": "73f3e80c92497c44e582c24c8cf3ddb5fd20d0ba54729d3d52d41e51f9301d31"
+          }
+        ]
+      },
+      {
+        "repository": "joshyorko/actions",
+        "number": 139,
+        "state": "open",
+        "updated_at": "2026-09-07T14:43:49Z",
+        "title": "Build exact-subject capability, runtime-adapter, admission, Deployment, and worker conformance",
+        "assignees": [],
+        "body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21",
+        "body_snapshot": "actions-139-issue.json",
+        "comments_snapshot": "actions-139-comments-latest.json",
+        "total_comments": 0,
+        "retained_page_count": 0,
+        "latest_comments": []
+      },
+      {
+        "repository": "joshyorko/actions",
+        "number": 143,
+        "state": "open",
+        "updated_at": "2026-09-07T14:43:25Z",
+        "title": "Define pluggable capability runtime adapters, shared admission, execution requirements, and preflight",
+        "assignees": [],
+        "body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959",
+        "body_snapshot": "actions-143-issue.json",
+        "comments_snapshot": "actions-143-comments-latest.json",
+        "total_comments": 0,
+        "retained_page_count": 0,
+        "latest_comments": []
+      },
+      {
+        "repository": "joshyorko/actions",
+        "number": 221,
+        "state": "open",
+        "updated_at": "2026-10-11T11:30:33Z",
+        "title": "Integrate Actions Runtime 1.0.3 security, execution, and native acceptance work",
+        "assignees": [],
+        "body_sha256": "5e2341fb7b8423d57c1e34c9d7f4a2ba124bf088976adf230f0b2913e6c0e7b2",
+        "body_snapshot": "actions-221-issue.json",
+        "comments_snapshot": "actions-221-comments-latest.json",
+        "total_comments": 1,
+        "retained_page_count": 1,
+        "latest_comments": [
+          {
+            "id": 6103058210,
+            "author": "joshyorko",
+            "updated_at": "2026-10-10T22:54:24Z",
+            "url": "https://github.com/joshyorko/actions/pull/221#issuecomment-6103058210",
+            "body_sha256": "1586fe4373fd4be68ad4a7912cfe7a15ec10078ff97c7b688b895da933d800b0"
+          }
+        ]
+      }
+    ],
+    "source_claims": [
+      {
+        "claim": "exact RCC pin",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "first_line": 24,
+        "last_line": 24,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L24",
+        "excerpt": "RCC_VERSION = \"v18.19.3\"",
+        "excerpt_sha256": "41c394399a6bff6a3527ac1ada01d633d0235140d0f1e50ab4e5f626fc3da752"
+      },
+      {
+        "claim": "canonical publish details",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "first_line": 204,
+        "last_line": 263,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L204",
+        "excerpt": "def parse_published_artifact_details(payload: object) -> RccPublishedArtifactDetails:\n    \"\"\"Require RCC's canonical publish fields and reject identity conflicts.\"\"\"\n\n    if not isinstance(payload, dict):\n        raise RccRuntimeError(\"publish\", \"RCC publish details are not an object\")\n\n    specification_digest = payload.get(\"specificationDigest\")\n    artifact_digest = payload.get(\"artifactDigest\")\n    if not isinstance(specification_digest, str) or not _DIGEST_RE.fullmatch(\n        specification_digest\n    ):\n        raise RccRuntimeError(\"publish\", \"missing or malformed specification digest\")\n    if not isinstance(artifact_digest, str) or not _DIGEST_RE.fullmatch(\n        artifact_digest\n    ):\n        raise RccRuntimeError(\"publish\", \"missing or malformed artifact digest\")\n\n    # RCC v18.19.3 emits these camel-case fields. If older artifact aliases are\n    # also present, require them to identify the same artifact.\n    artifact_values: list[object] = []\n    for key in (\"artifact_digest\", \"digest\"):\n        if key in payload:\n            artifact_values.append(payload[key])\n    if \"artifact\" in payload:\n        value = payload[\"artifact\"]\n        if isinstance(value, dict) and \"digest\" in value:\n            artifact_values.append(value[\"digest\"])\n        else:\n            artifact_values.append(value)\n    if \"environment_artifact\" in payload:\n        value = payload[\"environment_artifact\"]\n        if isinstance(value, dict) and \"digest\" in value:\n            artifact_values.append(value[\"digest\"])\n        else:\n            artifact_values.append(value)\n    if any(\n        not isinstance(value, str)\n        or not _DIGEST_RE.fullmatch(value)\n        or value != artifact_digest\n        for value in artifact_values\n    ):\n        raise RccRuntimeError(\"publish\", \"conflicting or malformed artifact identities\")\n\n    if (\n        \"specification_digest\" in payload\n        and payload[\"specification_digest\"] != specification_digest\n    ):\n        raise RccRuntimeError(\"publish\", \"conflicting specification identities\")\n\n    return RccPublishedArtifactDetails(\n        specification_digest=specification_digest,\n        artifact_digest=artifact_digest,\n    )\n\n\nRunner = Callable[..., tuple[int, str, str]]\n\n\ndef environment_spec_fingerprint(environment: Path) -> str:\n    \"\"\"Return a deterministic fingerprint of package environment inputs.\"\"\"",
+        "excerpt_sha256": "1046226ca043fda343659672ef256c47a063bfceac178642098447b2ff7c4e30"
+      },
+      {
+        "claim": "one publication",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "first_line": 349,
+        "last_line": 397,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L349",
+        "excerpt": "def _publish_artifact_payload(\n    environment: Path,\n    rcc_location: Path,\n    *,\n    provider: str | None,\n    runner: Runner,\n) -> dict:\n    provider = _validate_provider_reference(provider)\n    args = [\n        str(rcc_location),\n        \"env\",\n        \"publish\",\n        \"--environment\",\n        str(environment),\n        \"--json\",\n    ]\n    if provider:\n        args.extend([\"--provider\", provider])\n    return _run_json(\"publish\", args, runner)\n\n\ndef publish_artifact(\n    environment: Path,\n    rcc_location: Path,\n    *,\n    provider: str | None = None,\n    runner: Runner = _subprocess_runner,\n) -> str:\n    return parse_artifact_digest(\n        _publish_artifact_payload(\n            environment, rcc_location, provider=provider, runner=runner\n        )\n    )\n\n\ndef publish_artifact_details(\n    environment: Path,\n    rcc_location: Path,\n    *,\n    provider: str | None = None,\n    runner: Runner = _subprocess_runner,\n) -> RccPublishedArtifactDetails:\n    \"\"\"Publish once and return RCC's unmodified specification/artifact digests.\"\"\"\n\n    return parse_published_artifact_details(\n        _publish_artifact_payload(\n            environment, rcc_location, provider=provider, runner=runner\n        )\n    )",
+        "excerpt_sha256": "f2abbc0d978a514567cfc79a5e6e1e41aa1142d06068bd6431cf43d4c353071b"
+      },
+      {
+        "claim": "provider forwarding",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "first_line": 575,
+        "last_line": 602,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L575",
+        "excerpt": "def build_exec_command(\n    rcc_location: Path,\n    descriptor: RccRuntimeDescriptor,\n    command: Sequence[str],\n    *,\n    receipt_file: Path | None,\n    json_output: bool = True,\n) -> list[str]:\n    if not descriptor.provider_context_bound:\n        raise RccRuntimeError(\n            \"exec\", \"descriptor lacks provider trust context; reprepare required\"\n        )\n    args = [\n        str(rcc_location),\n        \"env\",\n        \"exec\",\n        \"--artifact\",\n        descriptor.artifact_digest,\n        \"--permissive-local\",\n    ]\n    if descriptor.provider_reference:\n        args.extend([\"--provider\", descriptor.provider_reference])\n    if receipt_file is None and json_output:\n        args.append(\"--json\")\n    elif receipt_file is not None:\n        args.extend([\"--inherit-streams\", \"--receipt-file\", str(receipt_file)])\n    args.extend([\"--\", *map(str, command)])\n    return args",
+        "excerpt_sha256": "f36906662ffa56f7faa087d88e11ba708743bfd4c84d13649b54b956e095fc49"
+      },
+      {
+        "claim": "override and verifier",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/src/actions/server/_rcc_runtime_adapter.py",
+        "first_line": 681,
+        "last_line": 707,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/src/actions/server/_rcc_runtime_adapter.py#L681",
+        "excerpt": "def get_rcc_location() -> Path:\n    override = os.environ.get(\"ACTIONS_RUNTIME_RCC_BINARY\")\n    if override:\n        path = Path(override)\n        if not path.is_file() or not os.access(path, os.X_OK):\n            raise RccRuntimeError(\"rcc\", \"ACTIONS_RUNTIME_RCC_BINARY is not executable\")\n        verify_rcc_version(path)\n        return path\n    from actions.server._download_rcc import get_default_rcc_location\n\n    path = get_default_rcc_location()\n    if not path.is_file() or not os.access(path, os.X_OK):\n        raise RccRuntimeError(\"rcc\", f\"RCC executable unavailable for {RCC_VERSION}\")\n    verify_rcc_version(path)\n    return path\n\n\ndef verify_rcc_version(rcc_location: Path, runner: Runner = _subprocess_runner) -> str:\n    \"\"\"Require the selected executable to be the released RCC contract.\"\"\"\n\n    code, stdout, stderr = runner(str(rcc_location), \"--version\")\n    if code:\n        raise RccRuntimeError(\"rcc\", \"unable to verify RCC version\")\n    version = stdout.strip()\n    if version != RCC_VERSION:\n        raise RccRuntimeError(\"rcc\", f\"unsupported RCC version {version!r}\")\n    return version",
+        "excerpt_sha256": "f1901a582c74773f6d2e163dc2b9180492e42e7147ade0bbe4b4b56083822fa0"
+      },
+      {
+        "claim": "current real fixture",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "action_server/tests/action_server_tests/test_rcc_runtime_adapter.py",
+        "first_line": 1911,
+        "last_line": 1988,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/action_server/tests/action_server_tests/test_rcc_runtime_adapter.py#L1911",
+        "excerpt": "def test_real_rcc_artifact_action_vertical(tmp_path):\n    import os\n\n    if not os.environ.get(\"ACTIONS_REAL_RCC_ARTIFACT_TEST\"):\n        pytest.skip(\"set ACTIONS_REAL_RCC_ARTIFACT_TEST=1\")\n    provider = os.environ.get(\"ACTIONS_RUNTIME_RCC_PROVIDER\")\n    if not provider:\n        pytest.fail(\n            \"ACTIONS_RUNTIME_RCC_PROVIDER must name the cache provider for real proof\"\n        )\n\n    import actions.server._models as models\n    from actions.server._actions_import import import_action_package\n    from actions.server._actions_process_pool import ActionsProcessPool\n    from actions.server._database import Database\n    from actions.server._models import (\n        Action,\n        ActionPackage,\n        Run,\n        RunStatus,\n        get_model_db_rules,\n    )\n    from actions.server._rcc_runtime_adapter import read_receipt\n    from actions.server._settings import Settings\n\n    package_dir = tmp_path / \"package\"\n    package_dir.mkdir()\n    package_yaml = package_dir / \"package.yaml\"\n    package_yaml.write_text(\n        \"\"\"version: 0.1\nspec-version: v2\ndependencies:\n  conda-forge:\n    - python=3.11.11\n  pypi:\n    - actions-core=1.0.2\n\"\"\"\n    )\n    action_file = package_dir / \"action.py\"\n    action_file.write_text(\n        \"from actions import action\\n\\n@action\\ndef answer() -> str:\\n    return 'rcc-v18.19.3'\\n\"\n    )\n    db = Database(tmp_path / \"server.db\")\n    with db.connect():\n        db.initialize([ActionPackage, Action])\n        db.create_tables(get_model_db_rules())\n        models._global_db = db\n        try:\n            import_action_package(\n                datadir=tmp_path / \"data\",\n                action_package_dir=str(package_dir),\n                disable_not_imported=False,\n                skip_lint=True,\n                whitelist=\"\",\n            )\n            package = db.all(ActionPackage)[0]\n            action = db.all(Action)[0]\n            descriptor = json.loads(package.env_json)[\"runtime\"]\n            expected_artifact_digest = descriptor[\"artifact_digest\"]\n            assert expected_artifact_digest.startswith(\"sha256:\")\n            assert len(expected_artifact_digest) == len(\"sha256:\") + 64\n            assert descriptor[\"kind\"] == \"rcc\"\n            assert descriptor[\"rcc_version\"] == \"v18.19.3\"\n            for forbidden in (\n                \"PYTHON_EXE\",\n                \"CONDA_PREFIX\",\n                \"ROBOCORP_HOME\",\n                \"holotree\",\n                \"materialization\",\n            ):\n                assert forbidden not in package.env_json\n            settings = Settings(\n                datadir=tmp_path / \"data\", artifacts_dir=tmp_path / \"artifacts\"\n            )\n            settings.reuse_processes = False\n            settings.min_processes = 0\n            settings.max_processes = 1\n            pool = ActionsProcessPool(settings, {package.id: package}, [action])",
+        "excerpt_sha256": "1bff1054dff9b537cf4fc511757af53883c6d0b0ea26e916b9e63afc83f885c8"
+      },
+      {
+        "claim": "byte source admission explicitly not execution",
+        "commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+        "path": "docs/program/evidence/runtime-frozen-current-source-20261011/README.md",
+        "first_line": 1,
+        "last_line": 7,
+        "url": "https://github.com/joshyorko/actions/blob/a0d258a16095b95b1bf9000cb1201cddfaff4779/docs/program/evidence/runtime-frozen-current-source-20261011/README.md#L1",
+        "excerpt": "# Current-source frozen artifact admission\n\nRead-only byte and source inspection accepts the sibling Build Unauthenticated run 38098225250, attempt 1, Linux artifact pair. Accepted candidate `ba85aac7` and synthetic native producer `92498aff` have the identical complete tree `80e5c775`; PR292 source head `2f631e54` has a different complete tree and is retained separately. The control's 268 source/dependency entries and all five selected test files match the accepted candidate exactly. No source-difference exclusion applies.\n\nThe combined `byte-source-review.json` is the native and wrapper measurement receipt. Both verification summaries identify its SHA256. Its complete archive/member/inventory measurements and limits are retained here. The inspector ran read-only with the recorded diagnostic Python; this is artifact inspection, not canonical package or Runtime execution. No binary was run by that inspection. The manifest checks Git HEAD, not clean build input attestation; published dependency origins and independent assets.zip reconstruction remain unproved by this record.\n\nThe historical a47 and staging-only controls remain immutable evidence in earlier commits. New eleven-case frozen and eleven-case Go-wrapper execution must produce their own exact-control JUnit, provenance and lifecycle receipts. This source/byte admission does not establish execution, Windows/macOS acceptance, or release readiness.",
+        "excerpt_sha256": "720adff7aa35b995d9bd36cb02e6902ea96d72097d6d797b92d12c49a0974b5a"
+      }
+    ],
+    "compare": {
+      "base": "ba85aac7324ea4463bfba8c5f8586e27706dc2fe",
+      "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "ahead_by": 78,
+      "behind_by": 0,
+      "changed_file_count": 63,
+      "process_pool_changed": false
+    },
+    "final_refresh": {
+      "observed_at": "2026-10-11T12:08:19.021950+00:00",
+      "head": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "draft": true,
+      "comments_count": 1,
+      "source_read_commit": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "mutation": "none"
+    }
+  },
+  "rcc_harness_source": [
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/lifecycle.py",
+      "git_blob_sha1": "4f2942329700c86484417bca59f7a828fe7eff1f",
+      "sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/developer/benchmarks/lifecycle.py"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/holotree.py",
+      "git_blob_sha1": "4377068138ec105c40e1e39d4a8b86b2bb739235",
+      "sha256": "1d2fb4083d4ec7a57d332e2b5b026300a787c7e2d4913c1fb7848ce80557b9bc",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/developer/benchmarks/holotree.py"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "path": "developer/benchmarks/README.md",
+      "git_blob_sha1": "12f88b93a830719d43bf1f44fe15c4882f803f81",
+      "sha256": "87b76e21432491a3517876b90ce81616a4ab73e3e7e0fbfc74fa9672a0527f80",
+      "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/developer/benchmarks/README.md"
+    }
+  ],
+  "streaming_source_fixture": {
+    "observed_at": "2026-10-11T12:05:29.927841+00:00",
+    "read_scope": "two named metadata files and four named preflight paths; no recursive private-home or full-CAS scan, no binary/server executed",
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/manifests/sha256/ec/37/ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_raw_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "manifest_raw_bytes": 2175,
+    "manifest_identity_reimplemented": false,
+    "index_file": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "index_descriptor": {
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "size": 1491800
+    },
+    "index_raw_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "indexed_content_count": 5537,
+    "indexed_content_total_stored_bytes": 69466848,
+    "indexed_content_total_logical_bytes": 170590205,
+    "unique_stored_digests": 5537,
+    "stored_size_buckets": {
+      "under_4KiB": 4649,
+      "4KiB_to_64KiB": 808,
+      "64KiB_and_over": 80
+    },
+    "preflight_paths": {
+      "objects/sha256": {
+        "exists": true,
+        "is_symlink": false,
+        "is_directory": true
+      },
+      "manifests/sha256": {
+        "exists": true,
+        "is_symlink": false,
+        "is_directory": true
+      },
+      "tmp": {
+        "exists": true,
+        "is_symlink": false,
+        "is_directory": true
+      },
+      ".restore-state": {
+        "exists": false,
+        "is_symlink": false,
+        "is_directory": false
+      }
+    },
+    "source_files": [
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "cmd/cacheServe.go",
+        "sha256": "2eae5a9d6a5d544afe1d66a4b88fb3cac7a4727090c270529f14dd593be6d00e",
+        "git_blob_sha1": "11f9ed192a248dc896645723ff8ad1b40c15fde9",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/cmd/cacheServe.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "cmd/root.go",
+        "sha256": "e8444945dc26e79dc60250e2515d0ac2ad585d5f92cfae48bccd8d3c19c202d3",
+        "git_blob_sha1": "f1e4fc16badd4a33afd0e2df1222a29ae9168dcd",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/cmd/root.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "artifactprovider/http.go",
+        "sha256": "3439f851151ded9e410ff9f67b74e169028c47ec59bfb5835843ac41a5b1e0cb",
+        "git_blob_sha1": "90621baedb55bd7e22ef0383a48f78c996a945cc",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/http.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "artifactprovider/filesystem.go",
+        "sha256": "c6936f4b7ee10cd7c78255d8b5c2f26c18a88d353f5c5770f6471b335630d1b8",
+        "git_blob_sha1": "b270696605138aab9a991153b925f8137b94fb81",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/filesystem.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "artifactprovider/filesystem_unix.go",
+        "sha256": "b6b7074c1ffa8987c71a8dd062cf3367dcd27a10f0a32d3d06ddb57689e4cdf1",
+        "git_blob_sha1": "38f26ab0b8e2753705840a693339fe5ed7b17caf",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/artifactprovider/filesystem_unix.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "environmentartifact/manifest.go",
+        "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8",
+        "git_blob_sha1": "5da39dc0a255911c0f2a7a2c4747b9f3715cc3b5",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/manifest.go"
+      },
+      {
+        "repository": "joshyorko/rcc",
+        "commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+        "path": "environmentartifact/index.go",
+        "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd",
+        "git_blob_sha1": "c9461111b2076d4f35c0d1d6a4ad335617b9068f",
+        "url": "https://github.com/joshyorko/rcc/blob/727c1ff8b679cdbbe12836e53c87734a1edb0071/environmentartifact/index.go"
+      }
+    ],
+    "full_CAS_hashes": "root-verified retained c49 receipt; not independently repeated in this lane; future untimed admission validation must read/hash complete selected closure"
+  },
+  "retained_data_hashes": {
+    "observed_at": "2026-10-11T12:03:03.381563+00:00",
+    "files": [
+      {
+        "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/lifecycle.py",
+        "bytes": 15750,
+        "sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/holotree.py",
+        "bytes": 3191,
+        "sha256": "1d2fb4083d4ec7a57d332e2b5b026300a787c7e2d4913c1fb7848ce80557b9bc"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/README.md",
+        "bytes": 3473,
+        "sha256": "87b76e21432491a3517876b90ce81616a4ab73e3e7e0fbfc74fa9672a0527f80"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/reconciliation.md",
+        "bytes": 27672,
+        "sha256": "6e5374820f1bcdb0279d8f581102f46691802a9c8cfaba0a4d9d915bdb5f4dc6"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/root-runtime-checkpoint.json",
+        "bytes": 5290,
+        "sha256": "1afd8716d3eb7336e0d70669d707118d84b5333b62d733292f7ec6a2a79ae8b2"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/root-independent-warm-reuse-verification.json",
+        "bytes": 5164,
+        "sha256": "4ece3c653a0f436acc3e927058ecec3c824cf836eb616a815113e6aa52196173"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/public-checkpoint/evidence/performance-steer-20261011/root-performance-checkpoint.md",
+        "bytes": 9757,
+        "sha256": "4de6c80742545c7c217d9cf6dccbb9b5f5a0ad6e762308fbd83d3fc101f3929f"
+      },
+      {
+        "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/root-public-checkpoint-c49-verification.json",
+        "bytes": 10741,
+        "sha256": "336190eb2af68cdde3eeaeccbf3806c61cc351cf3235f9314cc8061f173dcfa4"
+      }
+    ],
+    "resources": {
+      "free_bytes": 2830024704,
+      "conservative_floor_bytes": 2684354560,
+      "headroom_above_floor_bytes": 145670144,
+      "visible_cpu_count": 5,
+      "note": "statvfs is a point observation; no quiet-host reservation, benchmark lease, or private-home inventory was taken"
+    }
+  },
+  "c49": {
+    "commit": "c49e9026455635fe32f4d747a166ebc52fd0ea58",
+    "tree": "0ca2652a8cbe62588e45383a90e932b31aae72d6",
+    "warm_root_receipt_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/root-independent-warm-reuse-verification.json",
+    "warm_root_receipt_sha256": "4ece3c653a0f436acc3e927058ecec3c824cf836eb616a815113e6aa52196173",
+    "warm_receipt_preserved": {
+      "checkedAt": "2026-10-11T03:44:41Z",
+      "result": "verified_stable3_warm_reuse_single_control",
+      "source": {
+        "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+        "actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+        "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+        "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+        "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+        "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+        "rcc_path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+        "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428"
+      },
+      "rawEvidenceHashes": {
+        "consumer_worker.py": "1968712a8988404bad8cc797520766117739e05039d727b4d56884a5eeeea092",
+        "run_consumer.py": "cdbdd76ea7880a2cd0f07eaabbc6fd90ed058f7fe61b56d15a5960f62def7c36",
+        "consumer-result.json": "47d57ed016e1ab6135530d8b04469b514b79aecab51dc842821754404a0dcaa9",
+        "supervisor-result.json": "e284447ecde940cdb85305c87468befa3810e0926c5c540b0bec3e88c285af57",
+        "consumer-events.jsonl": "84ab7182f7e256d036f2b5b9323cd173bf3da6c947f230cb8edc9a3eecfedfb3",
+        "harness-manifest.json": "f81211337f48757c48ced35f6c7bf7a0032adb89f0a38eed5160e6d43538c349",
+        "preflight.json": "9b88ae21fbd40ecb16447315d3dae7b1b01aeb92f965352f5801940e594c69a8"
+      },
+      "actualResults": [
+        {
+          "call": 1,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        },
+        {
+          "call": 2,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        },
+        {
+          "call": 3,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        },
+        {
+          "call": 4,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        },
+        {
+          "call": 5,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        },
+        {
+          "call": 6,
+          "bytes": 59,
+          "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+        }
+      ],
+      "numericWorkerAndSupervisorExit": 0,
+      "poolConstructorPrewarmWallNs": 800145839,
+      "runActionApiWallsNs": [
+        682014011,
+        13637661,
+        12835514,
+        12285249,
+        12506936,
+        12496951
+      ],
+      "fiveWarmApiMedianNs": 12506936,
+      "instrumentedContextWallsNs": [
+        726972056,
+        64584778,
+        55219427,
+        54255234,
+        55573803,
+        55959577
+      ],
+      "contextIncludes": "obtain, diagnostic identity/lease checks, run_action and return; not pure API latency",
+      "sameWorkerAcrossSixCalls": {
+        "wrapperPid": 264639,
+        "wrapperCreateTime": 1791690163.71,
+        "pythonPid": 264655,
+        "pythonCreateTime": 1791690164.37,
+        "generation": 0,
+        "handleObjectId": 140516205375856,
+        "leaseId": "ad77a4d62614e3f65026a4b82bb8c895",
+        "leaseObservedRawHash": "e97533fa4144a7af2f3be20f0b2b72736152fc1c4dd877c44011ca3c02f17e2b",
+        "leaseOwnerStartTicksReconstructedFromSampledCreateTime": 2645971
+      },
+      "leaseEvidenceLimit": "live lease metadata/hash was captured by source-checked observer; raw live JSON was not separately preserved and cannot be independently rehashed by root. Actual disposal receipt and result files were independently read.",
+      "actualReceiptSha256": "5bc72941f9689b681ee8a094138d8dfa097bfab28dc9771d953744c3a8b413dc",
+      "receiptStatus": "failed",
+      "receiptExitCode": -1,
+      "teardownScope": "intentional dispose after six successful calls; wrapper return 0, lease gone, every sampled identity gone",
+      "remainingRecordedProcesses": [],
+      "sampledTreeRssSumBytes": 146882560,
+      "sampledIndividualRssBytes": 52645888,
+      "rssLimit": "sampled, not peak; tree sum may double-count shared pages",
+      "cpuLimit": "stage deltas cover surviving/new processes and observer; exited child CPU omitted",
+      "outerWallNsIncludingSetupAndCleanup": 8962302050,
+      "ownedFootprintBytes": {
+        "checkout": 1805776433,
+        "combined": 2411292739,
+        "complete_runtime_prerequisites_evidence": 583233904,
+        "rcc_binary": 22282402
+      },
+      "finalFreeBytes": 2879393792,
+      "limits": {
+        "disk_scan_interval_seconds": 0.2,
+        "disk_scan_scope": "run directory plus shared attempt-12 consumer home, with fixed checkout+entire evidence tree+RCC binary baseline measured before run",
+        "hard_total_bytes": 2576980377,
+        "minimum_free_bytes": 2684354560,
+        "process_sample_interval_seconds": 0.1,
+        "stage_timeout_seconds": 180,
+        "stop_total_bytes": 2523293286,
+        "total_timeout_seconds": 300
+      },
+      "sourceMutationRootGitDiff": false,
+      "qualification": "warm-only supported external community control, not current221 controller or candidate6 acceptance; no controlled optimization comparison",
+      "rootVerificationSetupCorrection": "Initial root literal source-pattern assertion used run_action_start_ns; actual source uses action_started. Source was inspected and the correct immediate timer boundary verified; runtime files were not changed."
+    },
+    "publication_baseline": {
+      "source": "e9a597c8a901e4c0e303acb606223ec2f0745b1b",
+      "toolchain": "Go1.26.5",
+      "wall_seconds": 34.550615,
+      "count": 1
+    },
+    "separate_profile": {
+      "source": "680f96638f0450dc79110dabd296e948713eb613",
+      "toolchain": "Go1.26.9",
+      "wall_seconds": 32.076819,
+      "sampled_Go_CPU_seconds": 14.44,
+      "count": 1,
+      "comparable_to_baseline": false
+    }
+  },
+  "six_directions_retained": [
+    "zstd versus gzip",
+    "small-object packfiles",
+    "prewarming/persistent workers",
+    "safe reflinks/clonefile",
+    "lazy/virtual/FUSE",
+    "immutable compressed filesystem image with per-execution COW"
+  ],
+  "crossrepo_owner_repair": {
+    "authorization": "root relay of new user steer permits existing Actions owner exact-version restriction repair including candidate6",
+    "current_source_still_exact3": true,
+    "owner_checkpoint_changed_assumed": false,
+    "runtime_support_claimed": false,
+    "publication": "HOLD: no tag/no publish"
+  },
+  "execution_admission": {
+    "status": "parent admitted separate workers_226 streaming component lane after P0/P1 and required preflight; this static lane did not execute",
+    "parameters_file": "execution-parameters.json",
+    "actions_owner_fixture_matrix": "held pending existing controller/source/runtime admission",
+    "optimization_selected": false
+  }
+}

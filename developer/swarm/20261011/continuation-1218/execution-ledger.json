@@ -1,0 +1,136 @@
+{
+  "timestamp": "2026-10-11T12:18:41.623906+00:00",
+  "repository": "joshyorko/rcc",
+  "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "accepted_candidate": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "prior_checkpoint": "c49e9026455635fe32f4d747a166ebc52fd0ea58",
+  "release": {
+    "status": "source-prepared; independently accepted candidate/source evidence; publication HOLD",
+    "no_tag": true,
+    "no_release": true,
+    "mandatory_gates": [
+      "accepted two-phase release correction with tag auto-publication removed",
+      "protected approval policy configured/readable and independent actual nine-asset review",
+      "fresh full11/four native acceptance for corrected source; no reattribution of727/324",
+      "compiler/architecture/archive/checksum/index/signing-scope/install/strict acquire/offline/N1 rollback proof",
+      "security finding disposition and distribution credentials",
+      "separate explicit operator GO before tag/publication; independent remote verification after GO"
+    ]
+  },
+  "lanes": [
+    {
+      "id": "two-phase-release",
+      "owner": "native_acceptance Luna High",
+      "branch": "codex/rcc-two-phase-release-20261011",
+      "base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "status": "implementing proposed workflow correction; not dispatched or integrated",
+      "independent_review": "root pending; pr_readiness reserved for review",
+      "blocker": "current workflow auto-publishes from tag; approval settings/secret API403; operator publication HOLD"
+    },
+    {
+      "id": "issue181-tests",
+      "owner": "root / workers_226 completed review",
+      "branch": "codex/rcc-181-scale-acceptance-20261011",
+      "sha": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+      "preserved_checkpoint": "3e57fde849398ea69954b4c09d5dad9ca0111361",
+      "pr": 235,
+      "status": "draft PR; exact-head hosted/native checks pending",
+      "independent_review": "root full diff + four race regressions exit0 2.020s; worker coverage91.2/race/shuffle20 pass",
+      "remaining": "residual issue181 remains open; no production change"
+    },
+    {
+      "id": "issue133-docs",
+      "owner": "graph_inventory Luna High completed / root",
+      "branch": "codex/rcc-133-contributor-map-20261011",
+      "sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+      "preserved_checkpoint": "012703c2474dd8585972edba0695bad4633d9230",
+      "pr": 236,
+      "status": "draft PR; exact-head hosted/native checks pending",
+      "independent_review": "root reviewed four rows; git diff check0 and directory/link verification0",
+      "remaining": "keep issue133 open until integrated"
+    },
+    {
+      "id": "provider-stream-baseline",
+      "owner": "workers_226 Luna High completed / root verified",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "status": "accepted component evidence only",
+      "tests": "six controls+separate profile exit0;33222 GETs/416801088 B;full CAS5541 rehash0 mismatch",
+      "independent_review": "root all5543 actual files plus raw runner/controls/profile verified",
+      "remaining": "not materialization/Actions/E2E; startup URL unpersisted/unprofiled session wait4 omitted"
+    },
+    {
+      "id": "compression-micro",
+      "owner": "consumer_contract_125 Sol Extra High",
+      "status": "admitted; actual receipt pending",
+      "scope": "24 immutable <=1MiB logical objects; external Python gzip1/zstd3; five interleaved reps; roundtrip/hash outside timed batches",
+      "remaining": "micro only; no RCC format/default change/no recommendation"
+    },
+    {
+      "id": "shipping-security",
+      "owner": "pr_readiness Luna High completed / root verified",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "status": "four fresh target scans exit0/no call-traced findings; focused trust tests0",
+      "remaining": "GO-2026-5970 package/GO-2026-6629 module untraced; Dependabot403; no dashboard cleared"
+    },
+    {
+      "id": "actions-owner-compatibility",
+      "owner": "existing Actions101/133/134/139/143/221 owners",
+      "source": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "status": "owner restriction repair authorized, implementation/qualification pending",
+      "coordination": "https://github.com/joshyorko/actions/pull/221#issuecomment-6108894271",
+      "remaining": "qualified adapter checkpoint+same-subject fixture/controller admission; no Actions mutations by RCC"
+    }
+  ],
+  "issues_open": [
+    98,
+    118,
+    125,
+    131,
+    132,
+    133,
+    135,
+    181,
+    182,
+    185
+  ],
+  "no_go_drafts": [
+    224,
+    225
+  ],
+  "governance185": "L5 HOLD unchanged",
+  "six_way": [
+    {
+      "direction": "compression",
+      "status": "bounded codec micro admitted; no optimization selected"
+    },
+    {
+      "direction": "small-object packs",
+      "status": "provider operation profile obtained; identity/index/range/corruption/platform experiment prerequisite remains"
+    },
+    {
+      "direction": "prewarm/persistent reuse",
+      "status": "historical Actions3 actual six calls same worker/generation; newer-version owner qualification and lifecycle matrix pending"
+    },
+    {
+      "direction": "reflinks/clonefile",
+      "status": "safe COW/mutation/platform fixtures required; no implementation selected"
+    },
+    {
+      "direction": "lazy/FUSE",
+      "status": "access/touched-file/lifecycle/relocation/permission qualification required; no mounts or implementation"
+    },
+    {
+      "direction": "compressed images/COW",
+      "status": "working-set/storage/overlay/identity/platform qualification required; no new format"
+    }
+  ],
+  "resources": {
+    "minimum_free_bytes": 2684354560,
+    "runtime_no_overlap": true,
+    "no_unowned_cache_deletion": true,
+    "remaining_consumer_space": "~110MiB headroom; new320MB consumer cannot be admitted",
+    "archive_proposal": "read-only cache preservation estimate does not fit; no archive/delete occurred"
+  }
+}

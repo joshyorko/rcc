@@ -1,0 +1,32 @@
+{
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "verified_scans": [
+    {
+      "target": "linux/amd64",
+      "exit": 0,
+      "log_sha256": "48ab322771f4007ef3c698ff5d95331ddc85e1f29e671b10882f1950b4a454c6",
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b"
+    },
+    {
+      "target": "darwin/amd64",
+      "exit": 0,
+      "log_sha256": "48ab322771f4007ef3c698ff5d95331ddc85e1f29e671b10882f1950b4a454c6",
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b"
+    },
+    {
+      "target": "darwin/arm64",
+      "exit": 0,
+      "log_sha256": "48ab322771f4007ef3c698ff5d95331ddc85e1f29e671b10882f1950b4a454c6",
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b"
+    },
+    {
+      "target": "windows/amd64",
+      "exit": 0,
+      "log_sha256": "b3c575e5b6ea69c8f56eef78794872233e179dc845d843f75ad52359c4893e98",
+      "stdout_sha256": "9d2f8a528c7ede21cba3c8f21967f3ac29e29168585b0dcf0980196a4b6711be"
+    }
+  ],
+  "tool_sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "scope": "root rehashed raw wrapper logs and extracted captured stdout; independently read symbol/package/module results; no repeat scan"
+}

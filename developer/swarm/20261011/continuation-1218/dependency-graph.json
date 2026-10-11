@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-10-11T12:18:41.623906+00:00",
+  "source_checkpoint": "c49e9026455635fe32f4d747a166ebc52fd0ea58",
+  "nodes": [
+    {
+      "issue": 98,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 118,
+      "status": "open",
+      "lane": "architecture"
+    },
+    {
+      "issue": 125,
+      "status": "open",
+      "lane": "research"
+    },
+    {
+      "issue": 131,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 132,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 133,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 135,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 181,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 182,
+      "status": "open",
+      "lane": "existing quality/acceptance backlog"
+    },
+    {
+      "issue": 185,
+      "status": "open",
+      "lane": "governance hold"
+    }
+  ],
+  "edges": [
+    {
+      "from": "118",
+      "to": "124",
+      "state": "identity foundation accepted/closed"
+    },
+    {
+      "from": "118",
+      "to": "208",
+      "state": "serving accepted/closed; broader platform contract remains"
+    },
+    {
+      "from": "125",
+      "to": "229",
+      "state": "benchmark harness merged; source-bound observations retained"
+    },
+    {
+      "from": "125",
+      "to": "64",
+      "state": "historical closed/unmerged claims not accepted current gains"
+    },
+    {
+      "from": "125",
+      "to": "Actions221",
+      "state": "version repair owner-authorized; qualification pending"
+    },
+    {
+      "from": "Actions133",
+      "to": "Actions134/139/143",
+      "state": "same-subject Runtime/adapter/conformance contracts"
+    },
+    {
+      "from": "133",
+      "to": "PR236",
+      "state": "accepted docs; hosted gates pending"
+    },
+    {
+      "from": "181",
+      "to": "PR235",
+      "state": "accepted regressions; hosted gates pending"
+    },
+    {
+      "from": "two-phase-release",
+      "to": "release-qualification",
+      "state": "corrected exact source/9actual assets/approval guard must be accepted"
+    },
+    {
+      "from": "release-qualification",
+      "to": "operator-GO",
+      "state": "explicit PUBLICATION HOLD; no tag/no publication"
+    },
+    {
+      "from": "125",
+      "to": "release-qualification",
+      "state": "not a mandatory technical gate"
+    }
+  ]
+}

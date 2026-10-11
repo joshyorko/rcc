@@ -1,0 +1,6 @@
+argv=["/workspace/work/rcc-swarm/final-main-727/build/rcc", "--version"]
+exit=0
+stdout:
+v18.19.6
+
+stderr:

@@ -1,0 +1,39 @@
+Source/reconciliation
+- Frozen main source: 727c1ff8b679cdbbe12836e53c87734a1edb0071 (tree cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152)
+- Existing issue branch commit: 3e57fde849398ea69954b4c09d5dad9ca0111361 (tree 76a02d87b2e20543e9b7991fe0db04b9ad2e20f1)
+- Owned local branch commit: a87a67dd65a5415372d2df28c7403047cf4a490a (same tree 76a02d87b2e20543e9b7991fe0db04b9ad2e20f1)
+- Merge base: 07db6221a3540d227f2106eccf69fe0e7c11fee0
+- Three-dot comparison against frozen main: only anywork/worker_test.go, +200 lines.
+- `git diff --check 727...3e57`: exit 0.
+- `git merge-tree --write-tree 727 3e57`: exit 0, merged tree ac1044edc1ede2a6fea6354eabf686af963bd4fa (no conflict output).
+- `git diff 07db..727 -- anywork`: empty; accepted main added no production/test changes in this package after the PR's base.
+
+Test execution: exact 3e57 test file injected via Go -overlay (same tree bytes as 3e57); package production files from the owned checkout have no differences from frozen main in anywork. Toolchain executable: /home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go
+Toolchain version: go version go1.26.9 linux/amd64
+GOROOT=/home/agent/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64
+GOCACHE=/workspace/work/rcc-swarm/evidence/resume-acceptance/release-proposal/gocache
+GOTOOLCHAIN=auto CC=/usr/bin/gcc CGO_ENABLED=1
+Overlay: /tmp/rcc181-3e57-overlay.json maps the checkout's anywork/worker_test.go to exact bytes from `git show 3e57:anywork/worker_test.go`.
+
+$ go test -overlay=/tmp/rcc181-3e57-overlay.json ./anywork -count=1 -coverprofile=/tmp/rcc181-pr.cover
+ok  github.com/joshyorko/rcc/anywork  0.005s  coverage: 91.2% of statements
+exit=0
+$ go test -overlay=/tmp/rcc181-3e57-overlay.json -race ./anywork -count=1
+ok  github.com/joshyorko/rcc/anywork  3.024s
+exit=0
+$ go test -overlay=/tmp/rcc181-3e57-overlay.json ./anywork -count=20 -shuffle=on
+ok  github.com/joshyorko/rcc/anywork  0.053s
+exit=0
+
+Cross-check on owned exact tree (a87a67d, same Git tree as 3e57):
+$ go test ./anywork -count=1 -coverprofile=/tmp/rcc181-current.cover
+ok  github.com/joshyorko/rcc/anywork  0.005s  coverage: 91.2% of statements
+exit=0
+$ go test -race ./anywork -count=1
+ok  github.com/joshyorko/rcc/anywork  3.026s
+exit=0
+$ go test ./anywork -count=20 -shuffle=on
+ok  github.com/joshyorko/rcc/anywork  0.051s
+exit=0
+
+Repository state: codex/rcc-181-scale-acceptance-20261011 at a87a67dd65a5415372d2df28c7403047cf4a490a; clean. No branch reset/rebase/push, source edits, issue writes, or PR operations.

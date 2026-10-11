@@ -1,0 +1,64 @@
+{
+  "binary": "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+  "binary_sha256": "daf9143e7caf0fc2dcf59e999396c5168d4148c7d1bae4fa59ccbbe620018998",
+  "commands": [
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "cli-01.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "c4b0fab926d0b9479dbacbbd2801213dab5631f25974cbaedcd3c9ac82c400aa"
+    },
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-02.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b15c113e6d1231e48cb92c4b602ec5e61cb6de77470ad1d2ef889f24a605f555"
+    },
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+        "env",
+        "acquire",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-03.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "63bd24ec90c3fba91a0ba6bca1889ff471cb4d055c6b35e046ac58df2986dad9"
+    },
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+        "env",
+        "exec",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-04.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a6f8a79676c21c5cf06aa52e48fdb035e18b6a9fba0ef6b04a1f3e568d9c0384"
+    },
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/final-main-727/build/rcc",
+        "env",
+        "trust",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "cli-05.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "27ec39dc89f2df3dcf188f58a99ec1127325e71624511b859bdd3ff646401f36"
+    }
+  ],
+  "source_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "version": "v18.19.6"
+}

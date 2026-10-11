@@ -1,0 +1,4 @@
+ok  	github.com/joshyorko/rcc/cmd	0.184s
+ok  	github.com/joshyorko/rcc/artifacttrust	0.013s
+ok  	github.com/joshyorko/rcc/environmentartifact	0.396s
+ok  	github.com/joshyorko/rcc/environmentlifecycle	9.955s

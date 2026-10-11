@@ -1,0 +1,9 @@
+COMMAND: GOTOOLCHAIN=local PATH=/workspace/work/rcc-swarm/tools/go1.26.9/bin:$PATH /workspace/work/rcc-swarm/tools/govulncheck-go1.26.9 -scan=module -show verbose
+EXIT: 1
+STDOUT:
+govulncheck: loading packages: 
+There are errors with the provided package patterns:
+
+-: no Go files in /workspace/work/rcc-swarm/final-main-727
+
+For details on package patterns, see https://pkg.go.dev/cmd/go#hdr-Package_lists_and_patterns.

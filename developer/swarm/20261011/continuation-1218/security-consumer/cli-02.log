@@ -1,0 +1,67 @@
+argv=["/workspace/work/rcc-swarm/final-main-727/build/rcc", "--help"]
+exit=0
+stdout:
+rcc provides support for creating and managing tasks,
+communicating with Robocorp Control Room, and managing virtual environments where
+tasks can be developed, debugged, and run.
+
+Usage:
+  rcc [flags]
+  rcc [command]
+
+Available Commands:
+  assistant      Group of commands related to `robot assistant`.
+  cache          Serve immutable RCC cache content.
+  cloud          Group of commands related to `Robocorp Control Room`.
+  community      Group of commands related to `Robocorp Community`.
+  completion     Generate the autocompletion script for the specified shell
+  configuration  Group of commands related to `rcc configuration`.
+  create         Create a directory structure for a robot interactively.
+  diagnostics    Run system diagnostics to help resolve rcc issues.
+  env            Publish, acquire, and execute portable environments.
+  help           Help about any command
+  holotree       Group of holotree commands.
+  interactive    Group of interactive commands. For human users. Do not use in automation.
+  man            Group of commands related to `rcc documentation`.
+  netdiagnostics Run additional diagnostics to help resolve network issues.
+  provider       Manage environment artifact providers.
+  pull           Pull a robot from URL or community sources.
+  robot          Group of commands related to `robot`.
+  run         Run task in place, to debug current setup.
+  task           Group of commands related to `task`.
+  tutorial       Show the rcc tutorial.
+  venv              Create user managed virtual python environment inside automation folder.
+  version        Show rcc version number.
+
+Flags:
+      --anything string        freeform string value that can be set without any effect, for example CLI versioning/reference
+      --bundled                used to tell rcc, that this is bundled use (do not use, unless you know what you are doing)
+      --colorless              do not use colors in CLI UI
+      --config string          config file (default is $ROBOCORP_HOME/rcc.yaml)
+      --controller string      internal, DO NOT USE (unless you know what you are doing) (default "user")
+      --debug                  to get debug output where available (not for normal production use; also RCC_VERBOSITY=debug)
+  -h, --help                   help for rcc
+      --liveonly               do not create base environment from live ... DANGER! For containers only!
+      --lockless               do not use file locking ... DANGER!
+      --log-hide stringArray   hide logging output that matches given text fragment and this option can be given multiple times
+      --no-build               never allow building new environments, only use what exists already in hololib (also RCC_NO_BUILD=1)
+      --no-pyc-management      rcc wont do any .pyc file management ... DO NOT USE (unless you know what you are doing)
+      --no-retry-build         no retry in case of first environment build fails, just report error immediately
+      --no-temp-management     rcc wont do any temp directory management ... DO NOT USE (unless you know what you are doing)
+      --nocache                do not use cache for credentials and tokens, always request them from cloud
+      --numbers                put line numbers on rcc produced log output
+      --pprof string           Filename to save profiling information.
+      --robocorp               Select Robocorp toolset strategy.
+      --silent                 be less verbose on output (also RCC_VERBOSITY=silent)
+      --strict                 be more strict on environment creation and handling
+      --tag string             semantic reason/context, why are you invoking rcc (default "transient")
+      --timeline               print timeline at the end of run
+      --trace                  to get trace output where available (not for normal production use; also RCC_VERBOSITY=trace)
+      --unmanaged              work with unmanaged holotree spaces, DO NOT USE (unless you know what you are doing)
+  -v, --version                Show rcc version and exit.
+      --warranty-voided        experimental, warranty voided, dangerous mode ... DO NOT USE (unless you know what you are doing)
+      --workers int            scale background workers manually (do not use, unless you know what you are doing)
+
+Use "rcc [command] --help" for more information about a command.
+
+stderr:

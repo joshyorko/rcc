@@ -1,0 +1,221 @@
+{
+  "captured_at": "2026-10-11T12:15:43Z",
+  "scope": "read-only independent review of the already-published branch against frozen accepted main",
+  "repository": "joshyorko/rcc",
+  "live_github_refs_confirmed": {
+    "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "branch": "012703c2474dd8585972edba0695bad4633d9230"
+  },
+  "local_remote_ref_identity": {
+    "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "branch": "012703c2474dd8585972edba0695bad4633d9230",
+    "main_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "branch_tree": "884db3fd157fb540e4d48261d164e36896c20a01",
+    "published_head_matches": true,
+    "published_tree_matches": true,
+    "main_head_matches": true,
+    "main_tree_matches": true
+  },
+  "published_commit": "012703c2474dd8585972edba0695bad4633d9230",
+  "published_tree": "884db3fd157fb540e4d48261d164e36896c20a01",
+  "main_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "main_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "merge_base": "07db6221a3540d227f2106eccf69fe0e7c11fee0",
+  "diff_since_merge_base": {
+    "changed_paths": [
+      "CONTRIBUTING.md"
+    ],
+    "numstat": [
+      "4\t0\tCONTRIBUTING.md"
+    ],
+    "diff_check_exit": 0
+  },
+  "four_added_rows": {
+    "conda": {
+      "main_directory_exists": true,
+      "branch_directory_exists": true,
+      "main_map_rows": 0,
+      "candidate_map_rows": 1,
+      "purpose_exact": true
+    },
+    "htfs": {
+      "main_directory_exists": true,
+      "branch_directory_exists": true,
+      "main_map_rows": 0,
+      "candidate_map_rows": 1,
+      "purpose_exact": true
+    },
+    "remotree": {
+      "main_directory_exists": true,
+      "branch_directory_exists": true,
+      "main_map_rows": 0,
+      "candidate_map_rows": 1,
+      "purpose_exact": true
+    },
+    "settings": {
+      "main_directory_exists": true,
+      "branch_directory_exists": true,
+      "main_map_rows": 0,
+      "candidate_map_rows": 1,
+      "purpose_exact": true
+    }
+  },
+  "all_four_exist_in_current_main": true,
+  "all_four_added_once_and_exact": true,
+  "all_preexisting_map_paths_exist_in_current_main": true,
+  "existing_map_paths_checked": {
+    "cmd/": true,
+    "operations/": true,
+    "common/": true,
+    "pathlib/": true,
+    "shell/": true,
+    "assets/": true,
+    "blobs/": true,
+    "templates/": true,
+    "robot_tests/": true,
+    "developer/": true,
+    ".dagger/": true
+  },
+  "readme_setup_link": {
+    "README_contains_repo_build_link": true,
+    "target_exists": true
+  },
+  "version_claim": {
+    "docs_venv_keeps_17_17_0_floor": true,
+    "changelog_records_feature_in_17_17_0": true,
+    "floor_was_not_changed": true
+  },
+  "acceptance": {
+    "only_changed_path_CONTRIBUTING": true,
+    "exactly_four_insertions_no_deletions": true,
+    "diff_check_exit_zero": true,
+    "no_tests_required_for_documentation_only": true
+  },
+  "review_caveat": "The contributor map is not exhaustive: artifactpolicy/, artifactprovider/, artifacttrust/, environmentartifact/, and environmentlifecycle/ exist on current main but are outside this bounded four-row correction; maintainer may scope a later map expansion.",
+  "no_repository_or_github_writes": true,
+  "existing_map_path_rows_unique": true,
+  "existing_map_duplicate_paths": {},
+  "existing_map_path_count": 11,
+  "existing_map_unique_path_count": 11,
+  "issue_snapshot": {
+    "number": 133,
+    "state": "open",
+    "title": "[guide] Update stale setup guidance and repository structure references",
+    "updated_at": "2026-10-11T02:32:55Z",
+    "comments": 0,
+    "mutated": false
+  },
+  "publication": {
+    "original_branch_head": "012703c2474dd8585972edba0695bad4633d9230",
+    "original_branch_tree": "884db3fd157fb540e4d48261d164e36896c20a01",
+    "merge_base": "07db6221a3540d227f2106eccf69fe0e7c11fee0",
+    "prepublication_merge_tree": "e7ced47ed46cdaa3c1d9b3128f0e8a078c32a960",
+    "blob_sha": "513bc00647d4926be2492c4a7079da34b1de18c9",
+    "tree_api_sha": "e7ced47ed46cdaa3c1d9b3128f0e8a078c32a960",
+    "commit_sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "commit_tree": "e7ced47ed46cdaa3c1d9b3128f0e8a078c32a960",
+    "ordered_parents": [
+      "012703c2474dd8585972edba0695bad4633d9230",
+      "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    ],
+    "dco_signoff_trailer": "Signed-off-by: Josh Yorko <joshua.yorko@gmail.com>",
+    "ref_update": {
+      "expected_old_head": "012703c2474dd8585972edba0695bad4633d9230",
+      "force": false,
+      "success": true
+    },
+    "final_branch_head": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "final_main_head": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "github_compare": {
+      "status": "ahead",
+      "ahead_by": 2,
+      "behind_by": 0,
+      "merge_base": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "changed_files": 1,
+      "additions": 4,
+      "deletions": 0
+    }
+  },
+  "pull_request": {
+    "number": 236,
+    "url": "https://github.com/joshyorko/rcc/pull/236",
+    "title": "docs: complete contributor repository map",
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "mergeable": true,
+    "base": "main",
+    "base_sha": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "head": "codex/rcc-133-contributor-map-20261011",
+    "head_sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "changed_files": 1,
+    "additions": 4,
+    "deletions": 0,
+    "refs_issue_133_without_closing_keyword": true,
+    "auto_merge_enabled": false
+  },
+  "exact_head_ci": {
+    "head_sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "observed_at": "2026-10-11T12:15:13Z",
+    "checks": [
+      {
+        "workflow": "Lint",
+        "run_id": 38138538041,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "workflow": "Rcc",
+        "run_id": 38138538107,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "workflow": "CodeQL",
+        "run_id": 38138538100,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "workflow": "Quality report",
+        "run_id": 38138538099,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "workflow": "Coverage gate",
+        "run_id": 38138538087,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "workflow": "PR metrics",
+        "run_id": 38138538157,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "other_workflows_pending": true
+  },
+  "main_version_and_release_state": {
+    "main_source_version": "v18.19.6",
+    "latest_published_release": "v18.19.5",
+    "v18_19_6_tag_ref": "404 Not Found (absent)",
+    "v18_19_6_release_present": false,
+    "release_or_tag_mutation_performed": false
+  },
+  "root_review_evidence": {
+    "path": "evidence/issue133-doc-audit-20261011/root-publication-verification.json",
+    "sha256": "fd8ee7b4a7265077dc0ccde9fdb41965c0dea4b7513bea642e7e64e6d66e864a",
+    "reviewed_content_tree": "884db3fd157fb540e4d48261d164e36896c20a01",
+    "new_merge_tree_preserves_same_contributing_blob": "513bc00647d4926be2492c4a7079da34b1de18c9"
+  },
+  "github_writes": {
+    "branch_ref_update": "codex/rcc-133-contributor-map-20261011 only; expected old head guarded, fast-forward only",
+    "draft_pull_request": 236,
+    "issue_state_or_body_changed": false,
+    "other_branches_or_settings_changed": false,
+    "tag_or_release_created": false,
+    "auto_merge_enabled": false
+  }
+}

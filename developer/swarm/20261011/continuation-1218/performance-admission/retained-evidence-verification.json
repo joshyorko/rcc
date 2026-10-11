@@ -1,0 +1,52 @@
+{
+  "observed_at": "2026-10-11T12:03:03.381563+00:00",
+  "files": [
+    {
+      "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/lifecycle.py",
+      "bytes": 15750,
+      "sha256": "f4152df8495f7d75b91011d60d6b5805c4cefc5a13f8e536d48c74bb780c28f2"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/holotree.py",
+      "bytes": 3191,
+      "sha256": "1d2fb4083d4ec7a57d332e2b5b026300a787c7e2d4913c1fb7848ce80557b9bc"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/final-main-727/developer/benchmarks/README.md",
+      "bytes": 3473,
+      "sha256": "87b76e21432491a3517876b90ce81616a4ab73e3e7e0fbfc74fa9672a0527f80"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/reconciliation.md",
+      "bytes": 27672,
+      "sha256": "6e5374820f1bcdb0279d8f581102f46691802a9c8cfaba0a4d9d915bdb5f4dc6"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/root-runtime-checkpoint.json",
+      "bytes": 5290,
+      "sha256": "1afd8716d3eb7336e0d70669d707118d84b5333b62d733292f7ec6a2a79ae8b2"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/root-independent-warm-reuse-verification.json",
+      "bytes": 5164,
+      "sha256": "4ece3c653a0f436acc3e927058ecec3c824cf836eb616a815113e6aa52196173"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/public-checkpoint/evidence/performance-steer-20261011/root-performance-checkpoint.md",
+      "bytes": 9757,
+      "sha256": "4de6c80742545c7c217d9cf6dccbb9b5f5a0ad6e762308fbd83d3fc101f3929f"
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/resume-acceptance/root-public-checkpoint-c49-verification.json",
+      "bytes": 10741,
+      "sha256": "336190eb2af68cdde3eeaeccbf3806c61cc351cf3235f9314cc8061f173dcfa4"
+    }
+  ],
+  "resources": {
+    "free_bytes": 2830024704,
+    "conservative_floor_bytes": 2684354560,
+    "headroom_above_floor_bytes": 145670144,
+    "visible_cpu_count": 5,
+    "note": "statvfs is a point observation; no quiet-host reservation, benchmark lease, or private-home inventory was taken"
+  }
+}

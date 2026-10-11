@@ -1,0 +1,8 @@
+{
+  "command": "GOTOOLCHAIN=local CC=/usr/bin/gcc GOARCH=amd64 CGO_ENABLED=1 go test -count=1 ./cmd ./artifacttrust ./environmentartifact ./environmentlifecycle",
+  "exit_code": 0,
+  "go": "go1.26.9",
+  "log_sha256": "9d4dfb041cd971cddd18a02e56ca151b59e2a61fcdd52a1a0b31f1720c2e0217",
+  "source_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "source_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+}

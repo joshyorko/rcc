@@ -1,0 +1,90 @@
+{
+  "scans": [
+    {
+      "cgo_enabled": "1",
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-show",
+        "traces,verbose",
+        "./..."
+      ],
+      "exit_code": 0,
+      "goarch": "amd64",
+      "goos": "linux",
+      "log": "govulncheck-linux-amd64.log",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2872,
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbol_no_vulnerabilities": true,
+      "timestamp_utc": "2026-10-11T11:57:43.241906+00:00",
+      "tool": "govulncheck v1.1.4 built Go1.26.9",
+      "tool_sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "cgo_enabled": "0",
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-show",
+        "traces,verbose",
+        "./..."
+      ],
+      "exit_code": 0,
+      "goarch": "amd64",
+      "goos": "darwin",
+      "log": "govulncheck-darwin-amd64.log",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2872,
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbol_no_vulnerabilities": true,
+      "timestamp_utc": "2026-10-11T11:57:47.310445+00:00",
+      "tool": "govulncheck v1.1.4 built Go1.26.9",
+      "tool_sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "cgo_enabled": "0",
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-show",
+        "traces,verbose",
+        "./..."
+      ],
+      "exit_code": 0,
+      "goarch": "arm64",
+      "goos": "darwin",
+      "log": "govulncheck-darwin-arm64.log",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2872,
+      "stdout_sha256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbol_no_vulnerabilities": true,
+      "timestamp_utc": "2026-10-11T11:57:51.308272+00:00",
+      "tool": "govulncheck v1.1.4 built Go1.26.9",
+      "tool_sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    },
+    {
+      "cgo_enabled": "0",
+      "command": [
+        "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+        "-show",
+        "traces,verbose",
+        "./..."
+      ],
+      "exit_code": 0,
+      "goarch": "amd64",
+      "goos": "windows",
+      "log": "govulncheck-windows-amd64.log",
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2918,
+      "stdout_sha256": "9d2f8a528c7ede21cba3c8f21967f3ac29e29168585b0dcf0980196a4b6711be",
+      "symbol_no_vulnerabilities": true,
+      "timestamp_utc": "2026-10-11T11:57:55.354030+00:00",
+      "tool": "govulncheck v1.1.4 built Go1.26.9",
+      "tool_sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3"
+    }
+  ],
+  "source_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "source_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+}

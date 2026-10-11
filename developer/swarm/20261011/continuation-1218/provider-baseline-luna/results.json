@@ -1,0 +1,364 @@
+{
+  "caveats": [
+    "no drop_caches; full untimed closure hashing warms OS cache; explicit OS-cache warm/uncontrolled, steady stored-object component only",
+    "The client is Python http.client; transport is loopback without TLS/auth.",
+    "GET-only loopback provider component; not full materialization, RCC consumer, Actions concurrency, or end-to-end runtime"
+  ],
+  "controls": [
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 581227624,
+      "connections": 1,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 12,
+      "label": "control-01-workers-1",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 21635072,
+      "server_cpu_ticks_delta": 101,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139775118,
+        "read_bytes": 0,
+        "syscr": 37362,
+        "syscw": 10571,
+        "wchar": 70128212,
+        "write_bytes": 0
+      },
+      "wall_ns": 1125365807,
+      "wall_parent_s": 1.1998192910000398,
+      "worker_results": [
+        {
+          "body_bytes": 69466848,
+          "connections": 1,
+          "gets_completed": 5537,
+          "gets_started": 5537,
+          "worker": 0
+        }
+      ],
+      "workers": 1
+    },
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 868065365,
+      "connections": 4,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 9,
+      "label": "control-02-workers-4",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 20889600,
+      "server_cpu_ticks_delta": 88,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139771030,
+        "read_bytes": 0,
+        "syscr": 36599,
+        "syscw": 10069,
+        "wchar": 70124124,
+        "write_bytes": 0
+      },
+      "wall_ns": 805296321,
+      "wall_parent_s": 0.8732182460000786,
+      "worker_results": [
+        {
+          "body_bytes": 21539912,
+          "connections": 1,
+          "gets_completed": 1385,
+          "gets_started": 1385,
+          "worker": 0
+        },
+        {
+          "body_bytes": 8041734,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 1
+        },
+        {
+          "body_bytes": 19227564,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 2
+        },
+        {
+          "body_bytes": 20657638,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 3
+        }
+      ],
+      "workers": 4
+    },
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 926733330,
+      "connections": 4,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 9,
+      "label": "control-03-workers-4",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 21037056,
+      "server_cpu_ticks_delta": 90,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139770942,
+        "read_bytes": 0,
+        "syscr": 36731,
+        "syscw": 10058,
+        "wchar": 70124036,
+        "write_bytes": 0
+      },
+      "wall_ns": 832378106,
+      "wall_parent_s": 0.9135378119999586,
+      "worker_results": [
+        {
+          "body_bytes": 21539912,
+          "connections": 1,
+          "gets_completed": 1385,
+          "gets_started": 1385,
+          "worker": 0
+        },
+        {
+          "body_bytes": 8041734,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 1
+        },
+        {
+          "body_bytes": 19227564,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 2
+        },
+        {
+          "body_bytes": 20657638,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 3
+        }
+      ],
+      "workers": 4
+    },
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 548046644,
+      "connections": 1,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 11,
+      "label": "control-04-workers-1",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 20688896,
+      "server_cpu_ticks_delta": 92,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139774102,
+        "read_bytes": 0,
+        "syscr": 37575,
+        "syscw": 10447,
+        "wchar": 70127196,
+        "write_bytes": 0
+      },
+      "wall_ns": 1044369529,
+      "wall_parent_s": 1.1144457809998585,
+      "worker_results": [
+        {
+          "body_bytes": 69466848,
+          "connections": 1,
+          "gets_completed": 5537,
+          "gets_started": 5537,
+          "worker": 0
+        }
+      ],
+      "workers": 1
+    },
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 551066516,
+      "connections": 1,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 11,
+      "label": "control-05-workers-1",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 20705280,
+      "server_cpu_ticks_delta": 93,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139773630,
+        "read_bytes": 0,
+        "syscr": 37674,
+        "syscw": 10387,
+        "wchar": 70126724,
+        "write_bytes": 0
+      },
+      "wall_ns": 1052746941,
+      "wall_parent_s": 1.1149266250001801,
+      "worker_results": [
+        {
+          "body_bytes": 69466848,
+          "connections": 1,
+          "gets_completed": 5537,
+          "gets_started": 5537,
+          "worker": 0
+        }
+      ],
+      "workers": 1
+    },
+    {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 887038359,
+      "connections": 4,
+      "free_bytes_min_sampled": 2804604928,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 9,
+      "label": "control-06-workers-4",
+      "owned_allocated_bytes_peak_sampled": 2252800,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 21381120,
+      "server_cpu_ticks_delta": 86,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139771582,
+        "read_bytes": 0,
+        "syscr": 36676,
+        "syscw": 10138,
+        "wchar": 70124676,
+        "write_bytes": 0
+      },
+      "wall_ns": 797698568,
+      "wall_parent_s": 0.8765305570000237,
+      "worker_results": [
+        {
+          "body_bytes": 21539912,
+          "connections": 1,
+          "gets_completed": 1385,
+          "gets_started": 1385,
+          "worker": 0
+        },
+        {
+          "body_bytes": 8041734,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 1
+        },
+        {
+          "body_bytes": 19227564,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 2
+        },
+        {
+          "body_bytes": 20657638,
+          "connections": 1,
+          "gets_completed": 1384,
+          "gets_started": 1384,
+          "worker": 3
+        }
+      ],
+      "workers": 4
+    }
+  ],
+  "final_guards": {
+    "free_bytes": 2804527104,
+    "owned_allocated_bytes": 2330624
+  },
+  "fixture": {
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "atime_claim": "not compared; reads may update atime",
+    "content_bytes": 69466848,
+    "content_objects": 5537,
+    "full_CAS_bytes": 71664362,
+    "full_CAS_objects": 5541,
+    "index_sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+    "manifest_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "provider_closure_unchanged": true
+  },
+  "profile_separate_run": {
+    "client": {
+      "body_bytes": 69466848,
+      "client_cpu_ns": 513051634,
+      "connections": 1,
+      "free_bytes_min_sampled": 2804539392,
+      "gets_completed": 5537,
+      "gets_started": 5537,
+      "guard_sample_count": 11,
+      "label": "profile-sequential-full-pass",
+      "owned_allocated_bytes_peak_sampled": 2318336,
+      "ru_maxrss_kib": 40020,
+      "sampled_client_peak_rss_bytes": 40980480,
+      "sampled_server_peak_rss_bytes": 22732800,
+      "server_cpu_ticks_delta": 87,
+      "server_io_delta": {
+        "cancelled_write_bytes": 0,
+        "rchar": 139775094,
+        "read_bytes": 0,
+        "syscr": 37496,
+        "syscw": 10569,
+        "wchar": 70128188,
+        "write_bytes": 0
+      },
+      "wall_ns": 1008821796,
+      "wall_parent_s": 1.0784312259997932,
+      "worker_results": [
+        {
+          "body_bytes": 69466848,
+          "connections": 1,
+          "gets_completed": 5537,
+          "gets_started": 5537,
+          "worker": 0
+        }
+      ],
+      "workers": 1
+    },
+    "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/provider-cpu.pprof",
+    "sha256": "3e741e77e19750def5a05cd0acaf64b2f8d6c49771bd5edec24b7edd44f15e28",
+    "size": 10528
+  },
+  "provider_before_after_equal": true,
+  "scope": "RCC-only provider stored-object GET+verification component using actual historical Actions-produced Artifact; no materialization/Action/pool benchmark",
+  "server_final_wait4": {
+    "exit_code": 0,
+    "forced": false,
+    "ru_maxrss_kib": 32712,
+    "ru_stime_s": 0.418967,
+    "ru_utime_s": 0.506267,
+    "wall_from_spawn_s": 1.1290889879999213
+  },
+  "source": {
+    "binary": "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+    "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "binary_version": "v18.19.6",
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "source_qualification": "root accepted actual main727 native binary; no attribution to later main/source or source324"
+  },
+  "status": "PASS",
+  "total_wall_s": 9.380190292999941
+}

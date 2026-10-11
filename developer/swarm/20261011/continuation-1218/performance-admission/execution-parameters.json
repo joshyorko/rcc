@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "status": "PROPOSED_NOT_EXECUTED_ROOT_ADMISSION_REQUIRED",
+  "scope": "RCC-only provider stored-object GET+verification component using actual historical Actions-produced Artifact; no materialization/Action/pool benchmark",
+  "source": {
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "binary": "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+    "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "binary_version": "v18.19.6",
+    "source_qualification": "root accepted actual main727 native binary; no attribution to later main/source or source324"
+  },
+  "fixture": {
+    "provider_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+    "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+    "manifest_raw_sha256": "bcc37ca0f4a46ead52d6ec2f68b877a07579ba1563a75be991d52e63472fa0c0",
+    "index": {
+      "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+      "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "size": 1491800
+    },
+    "content_objects": 5537,
+    "stored_content_bytes": 69466848,
+    "metadata_objects": [
+      {
+        "mediaType": "application/vnd.rcc.environment.specification.v1+json",
+        "digest": "sha256:b03ab9f7518e059403a664604fc91042d74ee933f2ce0b203ea9b1be8fd6948c",
+        "size": 1112
+      },
+      {
+        "mediaType": "application/vnd.rcc.environment.legacy-blueprint.v1+yaml",
+        "digest": "sha256:fca57403b30af764afa80c74e59833ae7d785e9d1678316239ed5c8939287c9b",
+        "size": 85
+      },
+      {
+        "mediaType": "application/vnd.rcc.holotree.catalog.v12+gzip",
+        "digest": "sha256:237cfd0b8c4f4048a267f659ff5a7f78a2959910feca73cb55a5371e1afd2ed6",
+        "size": 704517
+      },
+      {
+        "mediaType": "application/vnd.rcc.environment.object-index.v1+json",
+        "digest": "sha256:e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+        "size": 1491800
+      }
+    ],
+    "full_CAS_objects": 5541,
+    "full_CAS_stored_bytes": 71664362,
+    "selection": "all indexed content entries in exact index order; descriptor set frozen before execution",
+    "history": "c49 stable3 actual producer fixture, Python3.11.11/actions-core1.0.0; no current221/core1.0.2 inference"
+  },
+  "ownership": {
+    "run_root": "ROOT_TO_ASSIGN_NEW_DISPOSABLE_OWNED_NAMESPACE",
+    "private_RCC_home": "<run_root>/rcc-home",
+    "original_provider_root": "only GET serving after targeted preflight; no original modes/content/logs/temp changes; no hardlinks/symlinks/mounts",
+    "binary": "reuse existing strict-consumer owned copy read-only; no original artifact chmod",
+    "source": "read-only; no production/source/default/format/pin changes"
+  },
+  "server": {
+    "argv": [
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+      "cache",
+      "serve",
+      "--root",
+      "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+      "--listen",
+      "127.0.0.1:0",
+      "--backend",
+      "filesystem",
+      "--json"
+    ],
+    "environment": {
+      "ROBOCORP_HOME": "<run_root>/rcc-home",
+      "RCC_HOLOTREE_MODE": "private"
+    },
+    "startup": "one bounded JSON startup line; require exact returned root and loopback URL; no HTTP proxy; no unrelated client",
+    "qualification": "CLI is mutable-capable, not configured read-only; admitted client uses GET-only fixed routes. NewFilesystem initializes dirs and can recover/delete restore-marker paths. Required dirs already exist, no restore marker; recheck just before launch and verify original full file hashset before/after.",
+    "startup_timeout_seconds": 15,
+    "shutdown": "SIGTERM with normal Shutdown; wait numeric0 within10s, then owner-scoped escalation/reap if needed, recording failure; no parent-worker signals"
+  },
+  "request": {
+    "method": "GET",
+    "path_template": "/v1/objects/sha256/<storedDigest hex>",
+    "headers": {
+      "Accept-Encoding": "identity"
+    },
+    "required_status": 200,
+    "required_content_type": "application/octet-stream",
+    "required_content_length": "descriptor storedSize",
+    "body_buffer_bytes": 65536,
+    "body_destination": "streamed SHA256 and discarded; no object staging/extraction/decompression/materialization",
+    "require_EOF_digest_size": true,
+    "redirects": false,
+    "retries": 0,
+    "range_requests": false,
+    "timeout_seconds": 30,
+    "connection_policy": "one persistent HTTP/1.1 http.client connection per worker, equal policy at1 and4workers; close response only after full EOF; record reconnect counts"
+  },
+  "controls": {
+    "repetitions_each": 3,
+    "worker_counts": [
+      1,
+      4
+    ],
+    "schedule": [
+      1,
+      4,
+      4,
+      1,
+      1,
+      4
+    ],
+    "requests_per_control": 5537,
+    "response_body_bytes_per_control": 69466848,
+    "total_timed_GETs": 33222,
+    "total_timed_response_body_bytes": 416801088,
+    "timer": "perf_counter_ns immediately before first scheduled GET through last full EOF and digest/size verification; metadata/hash preflight, server startup/shutdown and report serialization excluded",
+    "cache_policy": "no drop_caches; full untimed closure hashing warms OS cache; explicit OS-cache warm/uncontrolled, steady stored-object component only",
+    "client_CPU": "process_time_ns covers main+client threads; separate process rusage for whole client",
+    "server_CPU": "/proc/<pid>/stat utime+stime tick delta per whole control, SC_CLK_TCK recorded; wait4 server whole-session CPU separately, no summing overlapped scopes"
+  },
+  "metrics": {
+    "wall_cpu_RSS": "control wall and clientCPU; server process CPU ticks; server/client sampled VmRSS every0.1s; final wait4 server ru_maxrss whole-session highwater, not per-control/treeRSS",
+    "IO": "/proc/<server pid>/io before/after controls rchar,wchar,syscr,syscw,read_bytes,write_bytes,cancelled_write_bytes, qualified process counters; client counters separately; syscall counts require separate tracing not claimed",
+    "GET_and_bytes": "client actual started/completed GET counts and returned body byte totals with descriptor hash/size gates; server Filesystem.requests Health delta can cross-check object GET count if sampled before/after consistently, subtract diagnostics; no wire-byte assertion",
+    "disk": "statvfs every0.2s and owned new namespace allocated/logical bytes; original provider frozen pre/post content+size hashset and directory/member census outside timers; kernel atime from reads may change and is recorded, no claim of immutable atime",
+    "objects": "stored size histogram, index descriptor and counts; gzip logical hash already retained root evidence, no decompression in measured client"
+  },
+  "limits": {
+    "minimum_filesystem_free_bytes": 2684354560,
+    "maximum_new_owned_data_bytes": 10485760,
+    "client_RSS_abort_bytes": 536870912,
+    "resource_sampling_interval_seconds": 0.1,
+    "disk_guard_interval_seconds": 0.2,
+    "per_control_timeout_seconds": 60,
+    "total_timeout_seconds": 300,
+    "reserve_cpu": "WAIT for root confirms P0/P1 tests finished and quiet exclusive component-measurement window; one server plus client up to4threads, visibleCPU5; no parallel archiving/test/build/install",
+    "full_lifecycle_harness": "NOT admitted; would build producer+five fresh consumers; historical producer/consumer homes remain frozen"
+  },
+  "profile": {
+    "status": "OPTIONAL_SEPARATE_RUN_ONLY_AFTER_UNPROFILED_CONTROLS_AND_BUDGET_CHECK",
+    "supported_source_flag": "cmd/root.go115 and145\u2013151 --pprof",
+    "argv": [
+      "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+      "--pprof",
+      "<run_root>/provider-cpu.pprof",
+      "cache",
+      "serve",
+      "--root",
+      "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+      "--listen",
+      "127.0.0.1:0",
+      "--backend",
+      "filesystem",
+      "--json"
+    ],
+    "control": "one separate uncounted sequential full-content GET pass; same fixture/digest checks; sampled GoCPU scope only, no comparison to unprofiled timing",
+    "budget": "shared <=10MiB total including profile; stop if guard exceeded; no go build or network tools install",
+    "flush": "SIGTERM followed by numeric0; root.go93\u2013100 StopCPUProfile+Sync+Close; preserve profile hash/source/timer interval"
+  },
+  "admission_requirements": [
+    "root explicit later execution admission and assigned namespace/owner",
+    "P0/P1 tests complete; quiet CPU and no concurrent archive activity",
+    "source/hash/version preflight of existing binary, no new build",
+    "frozen provider preflight required dirs no marker no symlinks; full original CAS+manifest hashset baseline before and after",
+    "strict GET-only routes; no publish, admin cleanup/GC/restore, missing-object POST, acquire, exec, or private Actions state",
+    "10MiB owned-data and2.5GiB free guards active, numeric exits and complete owner-only cleanup"
+  ],
+  "crossrepo_owner_decision_still_missing": [
+    "existing Actions101/134 controller must recover/qualify frozen-v6 subject and admit full real fixture/matrix",
+    "existing Actions owner must supply supported candidate6 adapter version/features/trust-carrier semantics before candidate6 Action comparison",
+    "currenta0d source/control/native provider fixture requires its own exact-subject runtime proof; historicala709 stable3 acceptance stays frozen"
+  ],
+  "interpretation": [
+    "no optimization selected; 1vs4 is a bounded component concurrency control, not production concurrency/default change",
+    "sequential/four-thread timing may expose request/verification/hash cost but cannot rank compression/packs/reflink/FUSE/images/end-to-end Action performance",
+    "client Python HTTP differs from RCC Go consumer; loopback excludes real remote transport/TLS/auth",
+    "source proves server hashes then seeks and streams stored file; procIO rchar may reflect both reads but wall/CPU are measured facts only after actual execution"
+  ]
+}

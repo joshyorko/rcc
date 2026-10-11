@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "scope": "root independent rehash of all retained provider file bytes and metadata; source runner/request/digest/timer/shutdown checks read; raw results recalculated; no workload rerun",
+  "source": {
+    "binary": "/workspace/work/rcc-swarm/evidence/continuation-20261011/strict-consumer/rcc-main727",
+    "binary_sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+    "binary_version": "v18.19.6",
+    "rcc_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+    "rcc_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+    "source_qualification": "root accepted actual main727 native binary; no attribution to later main/source or source324"
+  },
+  "actual_files": 5543,
+  "actual_bytes": 73516903,
+  "cas_objects": 5541,
+  "cas_bytes": 71664362,
+  "controls": 6,
+  "timed_gets": 33222,
+  "timed_body_bytes": 416801088,
+  "median_seconds": {
+    "1": 1.052746941,
+    "4": 0.805296321
+  },
+  "profile_sha256": "3e741e77e19750def5a05cd0acaf64b2f8d6c49771bd5edec24b7edd44f15e28",
+  "limitations": [
+    "warm OS cache; external Python HTTP client; loopback",
+    "server RSS sampled at 0.1s, not true peak",
+    "only profile-session wait4 retained; unprofiled per-control proc counters present",
+    "startup URL validated by executed runner but not serialized",
+    "not Actions/current adapter/materialization/full acquisition"
+  ],
+  "file_sha256": {
+    "results.json": "65cb60ffe5adc9c77df8890650c909b7cd520339cf408a258d63ae8121a0bda8",
+    "preflight.json": "dd29b088b2cc026e64034d403bffaa2b67db7d7ed4ca4e5d0be73a8df72ea22d",
+    "postflight.json": "ec5f28624e27a9124f0d38afe74faa2e77353351175e12e591efc144b73f5f0b",
+    "stream_baseline.py": "89d15715e7a50e66e9851469d3e04fa996e50fd0b2d277ffb973b85f9c1c0aaa",
+    "run.log": "7ae3be1ed48fb51b976b4ff7ad238d51795d5f63494128da8c45df97dbee6b02"
+  }
+}

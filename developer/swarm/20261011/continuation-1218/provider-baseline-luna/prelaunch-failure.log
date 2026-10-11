@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/stream_baseline.py", line 614, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/stream_baseline.py", line 609, in main
+    result = main_run()
+             ^^^^^^^^^^
+  File "/workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna/stream_baseline.py", line 505, in main_run
+    raise RuntimeError(f'owned namespace has unexpected pre-existing entries: {RUN_ROOT}')
+RuntimeError: owned namespace has unexpected pre-existing entries: /workspace/work/rcc-swarm/evidence/continuation-20261011/provider-baseline-luna

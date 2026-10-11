@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+    "-C",
+    "cmd",
+    "-scan=module",
+    "-show",
+    "verbose"
+  ],
+  "exit_code": 3,
+  "finding_count": 2,
+  "findings": [
+    {
+      "fixed": "v0.41.0",
+      "found": "v0.28.0",
+      "id": "GO-2026-6629",
+      "module": "golang.org/x/text",
+      "reachability": "module-only; no source call trace"
+    },
+    {
+      "fixed": "v0.39.0",
+      "found": "v0.28.0",
+      "id": "GO-2026-5970",
+      "module": "golang.org/x/text",
+      "reachability": "module-only; no source call trace"
+    }
+  ],
+  "log_sha256": "495baf12812826edfab4bc3049a7a1eee53b63a9181dabc654a9b1089292d264",
+  "source_commit": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "source_tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152"
+}
