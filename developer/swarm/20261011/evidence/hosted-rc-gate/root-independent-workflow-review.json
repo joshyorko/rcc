@@ -1,0 +1,37 @@
+{
+  "sourceWorkerCommit": "2f8be3b3ac260497ab17d7a4d9fa679a6004461b",
+  "sourceWorkerTree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "workflowSHA256": "3d22e6e2ef10d126064c6771d413783109a50d751dd7138044f57aa6e4dc77a1",
+  "at": "2026-10-11T01:56:36.385532+00:00",
+  "actualEmbeddedShellPipelineControls": [
+    {
+      "externalProcessExit": 0,
+      "actualShellExit": 0,
+      "actualReceipt": {
+        "sourceSha": "2de5f3747f711ab6be0d27be469c0111167a205e",
+        "gateExitCode": 0,
+        "teeExitCode": 0
+      }
+    },
+    {
+      "externalProcessExit": 7,
+      "actualShellExit": 7,
+      "actualReceipt": {
+        "sourceSha": "2de5f3747f711ab6be0d27be469c0111167a205e",
+        "gateExitCode": 7,
+        "teeExitCode": 0
+      }
+    },
+    {
+      "externalProcessExit": 10,
+      "actualShellExit": 10,
+      "actualReceipt": {
+        "sourceSha": "2de5f3747f711ab6be0d27be469c0111167a205e",
+        "gateExitCode": 10,
+        "teeExitCode": 0
+      }
+    }
+  ],
+  "publicationTagOnlyReadPermissionAndExactHeadSourceReviewed": true,
+  "scope": "External process fixture proves shell exit propagation; not a release-candidate run."
+}

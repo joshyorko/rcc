@@ -1,0 +1,59 @@
+{
+  "verifiedAtUtc": "2026-10-11T01:53:49.919243+00:00",
+  "actualArchives": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/candidate-09796-strict-trust-consumer-home.tar.gz",
+      "sha256": "52b0c5af79f408cdfa832b9abb147daf6bf112580deabac06d35329e76f0acb0",
+      "bytes": 208789070
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/candidate-09796-strict-trust-provider-root.tar.gz",
+      "sha256": "14e8cd884b7a35be6b5984f35c26407392d9606622ea01ec44e075e1bf59991e",
+      "bytes": 71892894
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/candidate-09796-strict-trust-trust-carrier.tar.gz",
+      "sha256": "52c87a61fabbe9f06c9020a017c4d1172933a3ad7e98ed1af44fa181009ee7c9",
+      "bytes": 449059
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/consumer-contract-125-probe-consumer-home.tar.gz",
+      "sha256": "44b25c8aa186337af92158d061d6ccc14de6b8258699c01133d9035a01c7c197",
+      "bytes": 208875120
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-next/preserved-historical-homes/consumer-contract-125-probe-provider-copy.tar.gz",
+      "sha256": "2a21e3a01259b2231798af9c3cb6473b2f56f619225f1a53dcbbb3f285e8e6ce",
+      "bytes": 71104957
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/selfhost-home-kt9zgdlf-09796.tar.gz",
+      "sha256": "8915e0451cce45232bbf6be0932dc4a8bd3baa159dc1d085016e0779f5861084",
+      "bytes": 1077101370
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/candidate-next-tmp-09796.tar.gz",
+      "sha256": "bc57f34e932a5a93627cdef060f699be3033cfbcb4163d23da139a8d0e21509f",
+      "bytes": 301329713
+    }
+  ],
+  "nestedProbeReceiptSha256": "a6f1aac9f3b954329f864e36b3c746d034b2bea32c4ff45eff2e465b45bdb507",
+  "actualSelectedToolchainFiles": [
+    {
+      "label": "goExecutable",
+      "sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+      "bytes": 15456232
+    },
+    {
+      "label": "compiler",
+      "sha256": "b9ca04cdacb7c98120b5d84cf5a9cc9f2e8f6316bc12b147411464baa6a997c2",
+      "bytes": 25787733
+    },
+    {
+      "label": "linker",
+      "sha256": "4922bd0bd8fea29f7177cebe7591a8ce94470cd2f8378e4443b5781c571625bc",
+      "bytes": 6684577
+    }
+  ],
+  "scope": "Archive bytes and toolchain selection probe; no complete 2de release-candidate run."
+}

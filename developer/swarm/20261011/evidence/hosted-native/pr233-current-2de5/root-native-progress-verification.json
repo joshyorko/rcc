@@ -1,0 +1,29 @@
+{
+  "pr": 233,
+  "source": "2de5f3747f711ab6be0d27be469c0111167a205e",
+  "at": "2026-10-11T01:54:12.233171+00:00",
+  "platforms": [
+    {
+      "platform": "linux_amd64",
+      "actualBinarySha256": "3de00a031509b6b734797cdb78ed682d430bc099737b58e61cfc4cd00aa54e74",
+      "artifact": 11688846139,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "not-attested",
+      "jatPass": true
+    },
+    {
+      "platform": "darwin_arm64",
+      "actualBinarySha256": "62122e5f65660c164e3578eeeebe0c8c4f385ccca48ab92c18af777246bca614",
+      "artifact": 11688646533,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "verified"
+    }
+  ],
+  "allFourPlatformsVerified": false
+}

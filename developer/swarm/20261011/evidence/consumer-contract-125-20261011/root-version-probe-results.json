@@ -1,0 +1,70 @@
+{
+  "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+  "adapter_source_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+  "adapter_required_version": "v18.19.3",
+  "performed": "Unmodified stdlib-only adapter import, actual --version verifier and override probes. No environment build/acquire/exec or performance measurement.",
+  "results": [
+    {
+      "label": "hosted097",
+      "path": "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+      "binary_sha256": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+      "direct_version": {
+        "exit_code": 0,
+        "stdout": "v18.19.6\n",
+        "stderr": ""
+      },
+      "verify_rcc_version": {
+        "accepted": false,
+        "error_type": "RccRuntimeError",
+        "phase": "rcc",
+        "error": "RCC rcc failed: unsupported RCC version 'v18.19.6'"
+      },
+      "get_rcc_location_override": {
+        "accepted": false,
+        "error_type": "RccRuntimeError",
+        "phase": "rcc",
+        "error": "RCC rcc failed: unsupported RCC version 'v18.19.6'"
+      }
+    },
+    {
+      "label": "released-n1-18.19.5",
+      "path": "/workspace/work/rcc-swarm/tools/rcc",
+      "binary_sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "direct_version": {
+        "exit_code": 0,
+        "stdout": "v18.19.5\n",
+        "stderr": ""
+      },
+      "verify_rcc_version": {
+        "accepted": false,
+        "error_type": "RccRuntimeError",
+        "phase": "rcc",
+        "error": "RCC rcc failed: unsupported RCC version 'v18.19.5'"
+      },
+      "get_rcc_location_override": {
+        "accepted": false,
+        "error_type": "RccRuntimeError",
+        "phase": "rcc",
+        "error": "RCC rcc failed: unsupported RCC version 'v18.19.5'"
+      }
+    },
+    {
+      "label": "supported18.19.3-control",
+      "path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+      "binary_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+      "direct_version": {
+        "exit_code": 0,
+        "stdout": "v18.19.3\n",
+        "stderr": "Note: Now running rcc v18.19.3. There is newer rcc version v18.19.5 available, released at 07.09.2026.\n"
+      },
+      "verify_rcc_version": {
+        "accepted": true,
+        "value": "v18.19.3"
+      },
+      "get_rcc_location_override": {
+        "accepted": true,
+        "value": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3"
+      }
+    }
+  ]
+}

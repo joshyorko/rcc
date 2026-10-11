@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-11T01:17:10.903981+00:00",
+  "rootActualFreshSourceLogsChecked": [
+    {
+      "target": "darwin_amd64",
+      "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+      "numericExit": 0,
+      "actualLogSHA256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbolNoVulnerabilities": true,
+      "dependencyFindingsRemainAtPackageAndModuleScope": true
+    },
+    {
+      "target": "darwin_arm64",
+      "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+      "numericExit": 0,
+      "actualLogSHA256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbolNoVulnerabilities": true,
+      "dependencyFindingsRemainAtPackageAndModuleScope": true
+    },
+    {
+      "target": "linux_amd64",
+      "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+      "numericExit": 0,
+      "actualLogSHA256": "26c96deb182f2d783139a9d9dbecc384257e99487872d15d36c75d0a8bad1f3b",
+      "symbolNoVulnerabilities": true,
+      "dependencyFindingsRemainAtPackageAndModuleScope": true
+    },
+    {
+      "target": "windows_amd64",
+      "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+      "numericExit": 0,
+      "actualLogSHA256": "9d2f8a528c7ede21cba3c8f21967f3ac29e29168585b0dcf0980196a4b6711be",
+      "symbolNoVulnerabilities": true,
+      "dependencyFindingsRemainAtPackageAndModuleScope": true
+    }
+  ],
+  "rootGovulncheckBinarySha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "scope": "Default-tag source call graph across four native targets; no claim optional tags, dependency remediation or private Dependabot clearance."
+}

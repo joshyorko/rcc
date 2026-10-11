@@ -1,0 +1,24 @@
+{
+  "publishedSource": "324524fffa4bd0f76c618f9fbb6ede30e733b2ff",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "parent": "2de5f3747f711ab6be0d27be469c0111167a205e",
+  "reviewedLocalCommit": "2f8be3b3ac260497ab17d7a4d9fa679a6004461b",
+  "reviewedTreeMatches": true,
+  "prospectiveMergeTreeAgainstMain": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "main": "07db6221a3540d227f2106eccf69fe0e7c11fee0",
+  "files": [
+    ".github/workflows/README.md",
+    ".github/workflows/rcc.yaml",
+    "scripts/test_validate_release_topology.py",
+    "scripts/validate_release_topology.py"
+  ],
+  "at": "2026-10-11T01:57:06.015819+00:00",
+  "rootNumericPipelineFixtureExits": [
+    0,
+    7,
+    10
+  ],
+  "rootFocusedTopologyTests": 23,
+  "publicationStillTagOnly": true,
+  "fullHostedRunPending": true
+}

@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-11T01:32:51.478573+00:00",
+  "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "actualBinaryHashesVerified": {
+    "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+    "/workspace/work/rcc-swarm/tools/rcc": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e"
+  },
+  "actualNumericExitsAndRawStdoutStderrDigestsChecked": 17,
+  "namedProviderWithoutExplicitCarrierFailsStableAndCandidate": true,
+  "providerDeadHttpTrustFailsClosedStableAndCandidate": true,
+  "providerDeadFilesystemCarrierSamePolicyAndEvidencePasses": true,
+  "providerAbsentPermissiveSuccessChangesTrustInputs": true,
+  "interpretation": "Existing118 alias trust-carrier inference gap, not a233 regression. Configured HTTP trust unavailability correctly fails closed; dropping provider/carrier is not same-policy outage acceptance.",
+  "rawResultSHA256": "6b8a5a89d3ce7e40f57ab49941040c05e8b348d6039ee3a0ae4d3fbe5e032b21",
+  "serverExit": 0
+}

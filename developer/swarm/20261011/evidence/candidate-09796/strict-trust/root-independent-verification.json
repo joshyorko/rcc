@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-11T01:31:57.485359+00:00",
+  "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "tree": "4f1338a5de382c313edef39cfbc57c2374afea0f",
+  "actualHostedBinarySHA256": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+  "embeddedVcsClean": true,
+  "actualCommandNumericExits": {
+    "offline-trust-verify": 0,
+    "strict-cold-acquire": 0,
+    "strict-exec-lease": 0,
+    "provider": 0
+  },
+  "originalSignedAttachmentsAndProviderFilesRehashed": true,
+  "paddedRootByteIdentityVerified": "aae748c9408f911d7a94f9010e68b12249aa95c80b954fffc3082b5537404d64",
+  "freshRevocationSnapshotSHA256": "c14ed19763069d46c00ec9d668341d40f76a5e9328eee08414c76d6558d86d32",
+  "freshSnapshotSigned": false,
+  "actualIndexedObjectsRehashed": 5045,
+  "actualConsumerCASFilesRehashed": 5049,
+  "zeroMismatches": true,
+  "actualCompletedLease": "fb6e6f013d6f8d2773804ef250e70790",
+  "leaseFileAbsentAfterCompletedExecution": true,
+  "rawFinalReceiptSHA256": "5ff9597d4d5fcd7168c096cf55515b1773edc012434eeb4030923a236c99f4f6",
+  "scope": "Single signed Linux fixture and unsigned empty refreshed fixture revocation snapshot; no publisher authority or cross-platform acceptance implied."
+}

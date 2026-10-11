@@ -1,0 +1,211 @@
+{
+  "sourceCommit": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "sourceTree": "4f1338a5de382c313edef39cfbc57c2374afea0f",
+  "sourceStatus": "clean",
+  "version": "package common\n\nconst (\n\tVersion = `v18.19.6`\n)",
+  "branch": "codex/rcc-final-candidate-acceptance-20261011",
+  "startedAtUtc": "2026-10-11T01:15:26.729987+00:00",
+  "go": "go version go1.26.9 linux/amd64",
+  "python": "Python 3.10.15",
+  "cc": "/usr/bin/gcc",
+  "gotoToolchain": "local",
+  "minimumLaunchFreeBytes": 10000000000,
+  "initialDiskFreeBytes": 10468339712,
+  "launchScriptSha256": "699d514283fc5705e099ea18fdc130bebf34cbba9312510eb1d804d2afb805ea",
+  "priorC9BinaryBackup": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/candidate-binary-c9-attempt2",
+  "priorC9BinarySha256": "73b3c6d10e2ef0434c9499c204129722afbf5305dd48d3d7ddc0037475f270dc",
+  "tmpdir": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/tmpdir",
+  "gotmpdir": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/gotmp",
+  "productHome": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/product-home",
+  "selfHostRoot": "unset",
+  "n1Binary": "/workspace/work/rcc-swarm/tools/rcc",
+  "n1Version": "v18.19.5",
+  "n1BinarySha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+  "n1Archive": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/n1-release-candidate.rcca",
+  "receiptRoot": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/receipts",
+  "phases": [
+    {
+      "name": "assets",
+      "command": [
+        "inv",
+        "assets"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.106,
+      "log": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/assets.log",
+      "diskFreeAfterBytes": 10445938688,
+      "goEnvironment": {
+        "GOTOOLCHAIN": "local",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0",
+        "CC": "/usr/bin/gcc"
+      }
+    },
+    {
+      "name": "fullGo",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "./..."
+      ],
+      "exitCode": 0,
+      "durationSeconds": 19.477,
+      "log": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/full-go.log",
+      "diskFreeAfterBytes": 10385268736,
+      "goEnvironment": {
+        "GOTOOLCHAIN": "local",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "1",
+        "CC": "/usr/bin/gcc"
+      }
+    },
+    {
+      "name": "allPythonScripts",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_*.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.306,
+      "log": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/python-scripts.log",
+      "diskFreeAfterBytes": 10383921152,
+      "goEnvironment": {
+        "GOTOOLCHAIN": "local",
+        "GOARCH": null,
+        "CGO_ENABLED": null,
+        "CC": "/usr/bin/gcc"
+      }
+    },
+    {
+      "name": "releaseCandidate",
+      "command": [
+        "inv",
+        "releaseCandidate"
+      ],
+      "exitCode": 1,
+      "durationSeconds": 1269.863,
+      "log": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/release-candidate.log",
+      "diskFreeAfterBytes": 5391446016,
+      "goEnvironment": {
+        "GOTOOLCHAIN": "local",
+        "GOARCH": "amd64",
+        "CGO_ENABLED": "0",
+        "CC": "/usr/bin/gcc"
+      }
+    }
+  ],
+  "freeBytesBeforeReleaseCandidate": 10383921152,
+  "candidateBinaryAfterSha256": "e39be5c39fd0b70a80a48ba2264b406431897ca0bbe9f3041049344eafafec1b",
+  "publicStateCopy": {
+    "sourceCommit": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+    "sourceTree": "4f1338a5de382c313edef39cfbc57c2374afea0f",
+    "sourceRoot": "/workspace/work/rcc-swarm/candidate-next/tmp",
+    "copyRoot": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/publicstate/candidate-next-tmp",
+    "copiedFiles": 18,
+    "copiedBytes": 5704532,
+    "allSourceAndDestinationHashesVerified": true,
+    "files": [
+      {
+        "relativePath": "environment-artifacts-robot/log.html",
+        "sizeBytes": 273542,
+        "sha256": "091da9fae2d1078c9805608d3e95913398b6ab98bae06799ee4a4814278f510f"
+      },
+      {
+        "relativePath": "environment-artifacts-robot/output.xml",
+        "sizeBytes": 130595,
+        "sha256": "1d1fac2a6d9124622956c5b143a7a0c4433466f22e0782abf7226d7c7f2f31ef"
+      },
+      {
+        "relativePath": "environment-artifacts-robot/report.html",
+        "sizeBytes": 232418,
+        "sha256": "a25a9e7457ebe1da9d789beac4b4f75224f37c2c8b5b655d3c4742ee209e1319"
+      },
+      {
+        "relativePath": "extendedi/output/log.html",
+        "sizeBytes": 227603,
+        "sha256": "169bb1a0b83dd482771e4b3f665b1dbab265ebb7da523f97b0b7b233d6b7dee8"
+      },
+      {
+        "relativePath": "extendedi/output/output.xml",
+        "sizeBytes": 2024,
+        "sha256": "cd850e3c3f34e9a6efa435dfecc82ffa3027f31ae386a3fde95d0ae9cf8428ce"
+      },
+      {
+        "relativePath": "fluffy/output/log.html",
+        "sizeBytes": 227585,
+        "sha256": "0b46232807a2a4f55c202b7e1316e83089dc20ad88a50221486f24916b4049c7"
+      },
+      {
+        "relativePath": "fluffy/output/output.xml",
+        "sizeBytes": 2006,
+        "sha256": "0de2cbf7f6795117455e4dec345526175ff46330a01450a69e887491bb2239d9"
+      },
+      {
+        "relativePath": "fluffy/testrun/2026-10-11_01_29_53/output/log.html",
+        "sizeBytes": 227691,
+        "sha256": "7fbce46b7f47dcae2ad60462023eb56f1f9c342cdc3c9f4909f3fc7a8cbed0cd"
+      },
+      {
+        "relativePath": "fluffy/testrun/2026-10-11_01_29_53/output/output.xml",
+        "sizeBytes": 2112,
+        "sha256": "56c2afcc2b9d1c7fcbb65bec422a1dee6747e3f6169f924527f32a06db4199fd"
+      },
+      {
+        "relativePath": "jat-class-consumer-receipt.json",
+        "sizeBytes": 357685,
+        "sha256": "c21249069a3e4c4aee8fe49d1b9d55af6af4ec5c73288f8330df19139e537d94"
+      },
+      {
+        "relativePath": "native-runtime-receipt.json",
+        "sizeBytes": 357546,
+        "sha256": "7f14d71a139066f2d202b1390d2dff1ddb102ab0527a6a5d795cbd7077e48e8a"
+      },
+      {
+        "relativePath": "output/log.html",
+        "sizeBytes": 905736,
+        "sha256": "172acdd003d8eb0b7256fb5eeba405fdcceb5ef027e09fb020478176edc8efba"
+      },
+      {
+        "relativePath": "output/native-runtime-robot-evidence.json",
+        "sizeBytes": 1754,
+        "sha256": "1d6556474c265d22bd91d6bac576bdc4a2382c67631828001295eaf808ce8b7d"
+      },
+      {
+        "relativePath": "output/native-runtime-robot-phases.log",
+        "sizeBytes": 3112,
+        "sha256": "8448dfcaacfe507cfdca517071b0d34b9c2bc776b838a5645ce1610f7bbc4a61"
+      },
+      {
+        "relativePath": "output/output.xml",
+        "sizeBytes": 2273779,
+        "sha256": "c8cd73d3993a7867d0560940f4b2bb247aed92beb34342b5660616474a1866e7"
+      },
+      {
+        "relativePath": "output/report.html",
+        "sizeBytes": 251234,
+        "sha256": "0cd449112968471c834bc312c6d6731e8925f69731877b3916e18784d58c3fd8"
+      },
+      {
+        "relativePath": "standardi/output/log.html",
+        "sizeBytes": 227078,
+        "sha256": "42c1d53aa96f6e1556f5e81445d9b68173e61a9ed27f847c4215212306e9457d"
+      },
+      {
+        "relativePath": "standardi/output/output.xml",
+        "sizeBytes": 1032,
+        "sha256": "6681e19038fd343180e2c7d4380f0aef5a323e6a89274f171e563eba0c556f3c"
+      }
+    ]
+  },
+  "n1ArchiveSha256": "b348d108848b38db86f57e9b287966e6849b05b44e4fc29694e7cbbf8cfc8dba",
+  "worktreeStatusAfter": "",
+  "finishedAtUtc": "2026-10-11T01:36:56.645714+00:00",
+  "overallExitCode": 1
+}

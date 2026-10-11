@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-11T01:19:18.582511+00:00",
+  "rootRetrievedImmutableSource": "https://raw.githubusercontent.com/joshyorko/actions/a70993fafc99a9f94041485542d5a720797ca394/action_server/src/actions/server/_rcc_runtime_adapter.py",
+  "actualSourceBytesMatch": true,
+  "adapterSHA256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+  "numericProbeExit": 0,
+  "unmodifiedFullStdlibAdapterImported": true,
+  "actualHosted097AndReleasedStable5Rejected": true,
+  "actualVersion3ControlAccepted": true,
+  "scope": "Existing opt-in exact-version contract; not a candidate regression, full Actions workload or performance measurement. No Actions state changed."
+}

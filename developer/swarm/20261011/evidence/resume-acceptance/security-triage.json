@@ -1,0 +1,256 @@
+{
+  "schema_version": "triage-finding/v0",
+  "repository": {
+    "path": "/workspace/work/rcc-swarm/integration-release-pin",
+    "revision": "680f96638f0450dc79110dabd296e948713eb613"
+  },
+  "findings": [
+    {
+      "triage_item_id": "triage-001",
+      "input_id": "GO-2026-5970",
+      "source_type": "advisory",
+      "title": "Infinite loop on invalid UTF-8 in x/text Unicode normalization",
+      "normalized_input": {
+        "vulnerable_component": "golang.org/x/text/unicode/norm",
+        "claimed_source": "invalid UTF-8 bytes",
+        "claimed_sink": "norm.Iter loop via affected normalization symbols",
+        "claimed_control": "unknown",
+        "affected_version_or_path": "golang.org/x/text v0.28.0; fixed v0.39.0",
+        "preconditions": [
+          "An RCC shipped entrypoint must call an affected normalization symbol on attacker-controlled invalid UTF-8"
+        ],
+        "impact": "denial of service",
+        "references": [
+          "https://vuln.go.dev/ID/GO-2026-5970.json",
+          "https://go.dev/issue/80142"
+        ]
+      },
+      "verdict": "not_actionable",
+      "confidence": "medium",
+      "affected_locations": [
+        {
+          "label": "dependency",
+          "path": "go.mod",
+          "lines": "45",
+          "detail": "affected indirect x/text version"
+        },
+        {
+          "label": "root dependency entrypoint",
+          "path": "xviper/wrapper.go",
+          "lines": "10-28",
+          "detail": "Viper configuration dependency reaches afero as a package dependency; no affected-symbol RCC call established"
+        }
+      ],
+      "reachable_path": [
+        "RCC xviper -> Viper -> afero package dependency -> x/text/unicode/norm import",
+        "afero v1.15.0 util.go:161-163 NeuterAccents constructs norm.NFD/norm.NFC transformers",
+        "No RCC/Viper caller of NeuterAccents was found in inspected source"
+      ],
+      "boundary_assessment": {
+        "product_surface": "CLI and provider service",
+        "source_trust": "unknown",
+        "boundary_crossed": null,
+        "policy_basis": "Repository product documentation and agent boundaries; no root or scoped SECURITY.md located; packaged policy resolver reference could not be read"
+      },
+      "exploitability_stack_rank": {
+        "rank_queue": "not_actionable",
+        "rank": 1,
+        "rationale": "Affected dependency advisory is valid, but no affected-symbol call exists in inspected RCC/Viper call sites or any of four shipping-target static call graphs; disposition is limited to reviewed shipped graph.",
+        "drivers": [
+          "affected package imported",
+          "potential invalid-input DoS",
+          "no call-traced scanner finding"
+        ]
+      },
+      "evidence": [
+        "Static advisory lists affected norm functions and fixed version 0.39.0",
+        "Candidate go.mod pins indirect x/text 0.28.0",
+        "Retained Go1.26.9 govulncheck report on 1cb lists package-level finding but no affected-symbol call",
+        "1cb-to-680f delta contains only workflow YAML/changelog"
+      ],
+      "counterevidence": [
+        "govulncheck reports zero symbol findings across 29 root packages",
+        "No direct x/text imports in root Go source",
+        "Inspected Viper source does not call NeuterAccents",
+        "Fresh e3 integrated-main static call graphs on linux/amd64, windows/amd64, darwin/amd64, darwin/arm64 each exited 0 and reported no vulnerable symbol calls across 29 root packages; advisory scope unchanged"
+      ],
+      "proof_gaps": [
+        "Security skill's shared policy/static-assessment references and resolver were inaccessible through skills.read; no resolver execution claimed",
+        "Final v18.19.6 tagged-source and optional build-tag coverage not certified; dashboard inaccessible"
+      ],
+      "recommended_next_step": "Keep affected dependency maintenance visible and re-evaluate when final shipping targets, build tags, imports or dependency versions change. Obtain private alert inventory for broader dashboard audit; this advisory is not evidence of a reachable RCC defect.",
+      "fix_finding_handoff": null
+    },
+    {
+      "triage_item_id": "triage-002",
+      "input_id": "GO-2026-6629",
+      "source_type": "advisory",
+      "title": "Panic in x/text/secure/precis Nickname transformation",
+      "normalized_input": {
+        "vulnerable_component": "golang.org/x/text/secure/precis",
+        "claimed_source": "crafted Nickname profile input and short destination buffer",
+        "claimed_sink": "out-of-bounds slice panic in Nickname transform",
+        "claimed_control": "unknown",
+        "affected_version_or_path": "golang.org/x/text v0.28.0; fixed v0.41.0",
+        "preconditions": [
+          "A shipped RCC entrypoint must invoke the affected precis Nickname transformation with crafted input and short destination buffer"
+        ],
+        "impact": "denial of service",
+        "references": [
+          "https://vuln.go.dev/ID/GO-2026-6629.json",
+          "https://go.dev/issue/80112"
+        ]
+      },
+      "verdict": "not_actionable",
+      "confidence": "high",
+      "affected_locations": [
+        {
+          "label": "dependency",
+          "path": "go.mod",
+          "lines": "45",
+          "detail": "affected module required; precis package not reported as imported"
+        }
+      ],
+      "reachable_path": [
+        "RCC module requires x/text indirectly",
+        "No root-source precis import or affected-symbol call established"
+      ],
+      "boundary_assessment": {
+        "product_surface": "CLI and provider service",
+        "source_trust": "unknown",
+        "boundary_crossed": null,
+        "policy_basis": "Repository product documentation; no applicable SECURITY.md located and resolver unavailable"
+      },
+      "exploitability_stack_rank": {
+        "rank_queue": "not_actionable",
+        "rank": 2,
+        "rationale": "Affected dependency advisory is valid, but no affected-symbol call exists in inspected RCC/Viper call sites or any of four shipping-target static call graphs; disposition is limited to reviewed shipped graph.",
+        "drivers": [
+          "affected module version required",
+          "affected package not reported imported",
+          "no root precis import found"
+        ]
+      },
+      "evidence": [
+        "Static advisory specifies Nickname profile/short-buffer preconditions and fixed version 0.41.0",
+        "Retained govulncheck report lists this only at module scope"
+      ],
+      "counterevidence": [
+        "No affected precis package or symbol in the retained scanner's root-package results",
+        "No direct root-source precis import found",
+        "Fresh e3 integrated-main static call graphs on linux/amd64, windows/amd64, darwin/amd64, darwin/arm64 each exited 0 and reported no vulnerable symbol calls across 29 root packages; advisory scope unchanged"
+      ],
+      "proof_gaps": [
+        "No applicable security policy resolved; shared skill references unavailable",
+        "Final v18.19.6 tagged-source and optional build-tag coverage not certified; dashboard inaccessible"
+      ],
+      "recommended_next_step": "Keep affected dependency maintenance visible and re-evaluate when final shipping targets, build tags, imports or dependency versions change. Obtain private alert inventory for broader dashboard audit; this advisory is not evidence of a reachable RCC defect.",
+      "fix_finding_handoff": null
+    }
+  ],
+  "release_target_scan_counterevidence": {
+    "source": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+    "targets": [
+      {
+        "source": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+        "GOOS": "darwin",
+        "GOARCH": "amd64",
+        "tool": "govulncheck v1.1.4 built Go1.26.9",
+        "toolSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+        "command": [
+          "/workspace/work/rcc-swarm/security-scan/gocache-1269/11/119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3-d/govulncheck",
+          "-show",
+          "traces,verbose",
+          "./..."
+        ],
+        "exitCode": 0,
+        "at": "2026-10-10T23:36:14.128794+00:00",
+        "symbolNoVulnerabilities": true,
+        "report": "/workspace/work/rcc-swarm/evidence/resume-acceptance/security-targets/darwin_amd64.log"
+      },
+      {
+        "source": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+        "GOOS": "darwin",
+        "GOARCH": "arm64",
+        "tool": "govulncheck v1.1.4 built Go1.26.9",
+        "toolSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+        "command": [
+          "/workspace/work/rcc-swarm/security-scan/gocache-1269/11/119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3-d/govulncheck",
+          "-show",
+          "traces,verbose",
+          "./..."
+        ],
+        "exitCode": 0,
+        "at": "2026-10-10T23:36:14.055472+00:00",
+        "symbolNoVulnerabilities": true,
+        "report": "/workspace/work/rcc-swarm/evidence/resume-acceptance/security-targets/darwin_arm64.log"
+      },
+      {
+        "source": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+        "GOOS": "linux",
+        "GOARCH": "amd64",
+        "tool": "govulncheck v1.1.4 built Go1.26.9",
+        "toolSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+        "command": [
+          "/workspace/work/rcc-swarm/security-scan/gocache-1269/11/119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3-d/govulncheck",
+          "-show",
+          "traces,verbose",
+          "./..."
+        ],
+        "exitCode": 0,
+        "at": "2026-10-10T23:36:15.358605+00:00",
+        "symbolNoVulnerabilities": true,
+        "report": "/workspace/work/rcc-swarm/evidence/resume-acceptance/security-targets/linux_amd64.log"
+      },
+      {
+        "source": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+        "GOOS": "windows",
+        "GOARCH": "amd64",
+        "tool": "govulncheck v1.1.4 built Go1.26.9",
+        "toolSha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+        "command": [
+          "/workspace/work/rcc-swarm/security-scan/gocache-1269/11/119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3-d/govulncheck",
+          "-show",
+          "traces,verbose",
+          "./..."
+        ],
+        "exitCode": 0,
+        "at": "2026-10-10T23:36:14.032988+00:00",
+        "symbolNoVulnerabilities": true,
+        "report": "/workspace/work/rcc-swarm/evidence/resume-acceptance/security-targets/windows_amd64.log"
+      }
+    ],
+    "scope": "default build tags; static call graphs of all 29 root packages including RCCremote; CGO_ENABLED=0; Go1.26.9",
+    "not_claimed": [
+      "runtime exploit proof",
+      "every optional build tag",
+      "Dependabot dashboard clearance",
+      "successful policy resolver execution"
+    ]
+  },
+  "release_disposition": {
+    "at": "2026-10-10T23:45:36.096619+00:00",
+    "reviewer": "root orchestrator, static inline review",
+    "scanSource": "e3b693a4d339a16c04218ae437f64dc21934f6df",
+    "actualIntegratedSource": "11155e58f7bc1604532bc0b15bc220651bac30dd",
+    "goSourceDeltaScanToMain": [
+      ".dagger/main.go"
+    ],
+    "rootModuleProductionGoDelta": [],
+    "daggerScope": "Separate build module compiler default changed1.26.5 to1.26.9; no generated Dagger SDK/runtime certification claimed",
+    "proposalSource": "652892ab1e16f1db557fc97fd36d6b5f7a620117",
+    "proposalDelta": [
+      "common/version.go",
+      "docs/changelog.md"
+    ],
+    "scope": "Four shipped default-tag CGO0 targets per tasks.build; all29 root packages including both commands; selected official Go1.26.9.",
+    "decision": "No actionable RCC affected-symbol path established for either imported advisory under the reviewed shipping graph. Retain affected dependency version and maintenance tracking. No dependency upgrade selected without a demonstrated shipped path or compatibility evidence.",
+    "limitations": [
+      "Package/module advisory facts remain valid; this is not a fixed dependency claim",
+      "No shared security-policy resolver was available",
+      "Private Dependabot16-alert inventory remains inaccessible403 and cannot be declared cleared",
+      "Optional build tags and future dependencies/imports require fresh analysis",
+      "Final tagged build must match reviewed target/compiler/dependency contracts"
+    ]
+  }
+}

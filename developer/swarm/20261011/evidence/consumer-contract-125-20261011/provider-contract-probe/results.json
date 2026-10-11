@@ -1,0 +1,510 @@
+{
+  "artifact": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+  "candidate_source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "binaries": {
+    "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+    "/workspace/work/rcc-swarm/tools/rcc": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e"
+  },
+  "commands": [
+    {
+      "label": "01-candidate-version",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "--version"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "c4b0fab926d0b9479dbacbbd2801213dab5631f25974cbaedcd3c9ac82c400aa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "02-stable-version",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "--version"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "2e380a5d7f110e3cbd068b23080843c8fb80311ff15c021e0c0e58d22f8ddb02",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "03-provider-add-office",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "provider",
+        "add",
+        "office",
+        "--type",
+        "http",
+        "--url",
+        "http://127.0.0.1:44211",
+        "--json"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "ed47fae8a4d9acaf8a27a8b7a22b2861435f0b02e9c371da1daa4f95a94c5da8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {}
+    },
+    {
+      "label": "04-candidate-office-default-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "1720de37d5618fcf4dab2f309423b8d58eb92bbfefa80a2b93ffaf0f994461fc",
+      "diagnostic": "Error: artifact trust attachment verification failed\nError: [rcc v18.19.6] artifact trust attachment verification failed\n[rcc] exit status will be: 1!"
+    },
+    {
+      "label": "05-candidate-url-default-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "172dcbae03ed3182ce3ce94f6f55ac61777fd41f8293351fb508c381d0ade2f5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "provider"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:17a528d736468b6e2b1cab4c6edb98c80317949ffe0b9fa8a32435ebc9bd6c9d",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "06-candidate-office-http-carrier-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office",
+        "--trust-carrier",
+        "http://127.0.0.1:44211",
+        "--trust-carrier-type",
+        "http"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "038b4b80b07b38183f8ec5dd205e580bc1ca146a6c0cb3ca1ae1305de0257734",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:26178371f05962f40314330529a55856dc4b370fc5335d89900466ddf4cffe8f",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "07-candidate-office-filesystem-carrier-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office",
+        "--trust-carrier",
+        "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/provider-copy/trust",
+        "--trust-carrier-type",
+        "filesystem"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "2cac08cd5330946c219f8451b4407cc71da52c976aa952faa09b3f06e16d9986",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:112fb5d13762d2a7216f5979a38ae05d64dc7fe7d3834f3d8fd0d07c9cd11f98",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "08-stable-url-default-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "fc2847792ff4f90d5ee52116e62057769563ec0a6bedfc5b4102b164438417d5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:14f559e649e2dd20b780dbe2e74bb35fcdd30298f7c051c281f067f4fe13768a",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "09-stable-office-default-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ea212de4ffb03b2215de20c0372581d3416bc1e17507922cfe2d73a498a2232a",
+      "diagnostic": "Error: artifact trust attachment verification failed\nError: [rcc v18.19.5] artifact trust attachment verification failed\n[rcc] exit status will be: 1!"
+    },
+    {
+      "label": "10-stable-office-http-carrier-online",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office",
+        "--trust-carrier",
+        "http://127.0.0.1:44211",
+        "--trust-carrier-type",
+        "http"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "2897ecfdbd28804782fd8a4d3ee00eea83bcfeb2351931003dc93b5336558b4b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:57ebe4c51635c27de9715053810b1b12b92fdd9747006797865b5e90c2e0e6c4",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "11-candidate-url-default-provider-dead",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "1720de37d5618fcf4dab2f309423b8d58eb92bbfefa80a2b93ffaf0f994461fc",
+      "diagnostic": "Error: artifact trust attachment verification failed\nError: [rcc v18.19.6] artifact trust attachment verification failed\n[rcc] exit status will be: 1!"
+    },
+    {
+      "label": "12-candidate-office-default-provider-dead",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "office"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "1720de37d5618fcf4dab2f309423b8d58eb92bbfefa80a2b93ffaf0f994461fc",
+      "diagnostic": "Error: artifact trust attachment verification failed\nError: [rcc v18.19.6] artifact trust attachment verification failed\n[rcc] exit status will be: 1!"
+    },
+    {
+      "label": "13-candidate-provider-absent-local",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "0ece87a06a89966b3aea47d2f3b26f785e42bedb37cd98b56c0136f5b9448de8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:120e528f9513a07cc1e062fadc0fc935b2c915b304eac4fedc4fc3607f3a4f3d",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": null,
+        "sbomDigest": null,
+        "revocationSource": null
+      }
+    },
+    {
+      "label": "14-candidate-url-retained-filesystem-carrier-provider-dead",
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/hosted-native/pr233-current-09796/native-runtime-binaries-extracted/rcc-linux64",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211",
+        "--trust-carrier",
+        "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/provider-copy/trust",
+        "--trust-carrier-type",
+        "filesystem"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "fab46e3b042b5c6865c4fdcd342f96ad35ce55dffb25e1f0d4be0f878accdba3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:4865cfe1a0aaa956b928a8277659027a4bb81b85ee37f6308a5fdffe8ff4ae95",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    },
+    {
+      "label": "15-stable-url-default-provider-dead",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ea212de4ffb03b2215de20c0372581d3416bc1e17507922cfe2d73a498a2232a",
+      "diagnostic": "Error: artifact trust attachment verification failed\nError: [rcc v18.19.5] artifact trust attachment verification failed\n[rcc] exit status will be: 1!"
+    },
+    {
+      "label": "16-stable-provider-absent-local",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "c4d32fca0f76efce2fd814292c7d87d89c81148327a74c8a121300d832875154",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:e88ff93e5f359d314efba5cee8b5c54db78fbaeaa11e53400b531efa263e95fd",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": null,
+        "sbomDigest": null,
+        "revocationSource": null
+      }
+    },
+    {
+      "label": "17-stable-url-retained-filesystem-carrier-provider-dead",
+      "argv": [
+        "/workspace/work/rcc-swarm/tools/rcc",
+        "env",
+        "acquire",
+        "--artifact",
+        "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "--permissive-local",
+        "--json",
+        "--provider",
+        "http://127.0.0.1:44211",
+        "--trust-carrier",
+        "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/provider-copy/trust",
+        "--trust-carrier-type",
+        "filesystem"
+      ],
+      "environment": {
+        "ROBOCORP_HOME": "/workspace/work/rcc-swarm/evidence/consumer-contract-125-20261011/provider-contract-probe/consumer-home",
+        "RCC_HOLOTREE_MODE": "private"
+      },
+      "exit_code": 0,
+      "stdout_sha256": "c3351282ff973780728ec742be9988a1612c3a35e41f48ea0764aeccdfe7642d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receipt": {
+        "artifactDigest": "sha256:900e160d10da65d2f33ed06a240ec78fb67ac049e8c6881954893ce061d194db",
+        "materializationId": "c2fd1aa_5a1fac3_22f261c1",
+        "cacheHit": "local-materialization"
+      },
+      "verification": {
+        "valid": true,
+        "code": "valid",
+        "policyMode": "permissive-local",
+        "decisionID": "sha256:2033de6ecd305680cfe6f2dc3c1fba6998212c71338b33c26eccfd3615c0d2b2",
+        "policyDigest": "sha256:7252b27a0266abd2c3a688e89326e739aed446c3418a8a2248ef01d1b740b6ae",
+        "provenanceDigest": "sha256:ac6261841c42bb74a04ac31067bb62c0a371b26130bbd7f9bc417e854c51ecb4",
+        "sbomDigest": "sha256:6ea1904c8e26ebecfa4ac5fff7c955510aeb0dc44d7fe90709507f80a0b4723f",
+        "revocationSource": "rcc-publish"
+      }
+    }
+  ]
+}

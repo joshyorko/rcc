@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-11T01:38:29.606134+00:00",
+  "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "tree": "4f1338a5de382c313edef39cfbc57c2374afea0f",
+  "numericOverallExit": 1,
+  "numericReleaseCandidateExit": 1,
+  "sourceBoundLocalBinarySHA256": "e39be5c39fd0b70a80a48ba2264b406431897ca0bbe9f3041049344eafafec1b",
+  "candidateBinaryPreserved": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/candidate-binary-09796",
+  "all18PublicFilesIndependentlyRehashed": true,
+  "actualRobot": {
+    "PASS": 171,
+    "FAIL": 0,
+    "SKIP": 1
+  },
+  "gatesPassed": 8,
+  "failedGate": "selfHost",
+  "notRun": [
+    "goVet",
+    "coordinationAcceptance"
+  ],
+  "cause": "Root wrapper imposed GOTOOLCHAIN=local on nested Conda Go1.26.5; go.mod requires1.26.9. Harness configuration failure; no production fix inferred.",
+  "actualProducedArchiveSHA256": "b348d108848b38db86f57e9b287966e6849b05b44e4fc29694e7cbbf8cfc8dba",
+  "archiveN1SelfHostConsumed": false,
+  "actualResultSHA256": "703412850a1e074987ccafd7869764a8c53c209dbbf0418146b8bff4622f58ff",
+  "actualLogSHA256": "a3645c5bcacb0127589559d1cde51abe27dc2d8bf3e33edbd4514374421018ef",
+  "actualRobotXMLSHA256": "c8cd73d3993a7867d0560940f4b2bb247aed92beb34342b5660616474a1866e7",
+  "fullRCCompleted": false
+}

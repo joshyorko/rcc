@@ -1,0 +1,66 @@
+{
+  "sourceCommit": "2de5f3747f711ab6be0d27be469c0111167a205e",
+  "sourceTree": "b4b56296793bc3459120758c2c6c0944cc3d015d",
+  "sourceStatus": "clean",
+  "archive": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/selfhost-home-kt9zgdlf-09796.tar.gz",
+  "archiveSha256": "8915e0451cce45232bbf6be0932dc4a8bd3baa159dc1d085016e0779f5861084",
+  "extractedPackage": "Go 1.26.5 Conda package from exact failed-097 bootstrap home",
+  "packageFiles": 16763,
+  "containedGoBinary": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/go-1.26.5-h282a287_0/bin/go",
+  "containedGoVersionBeforeModuleSelection": "go1.26.5 linux/amd64",
+  "effectiveGOTOOLCHAIN": "auto",
+  "moduleGoDirective": "1.26.9",
+  "commands": [
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/go-1.26.5-h282a287_0/bin/go",
+        "version"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 6.292,
+      "combinedOutput": "go: downloading go1.26.9 (linux/amd64)\ngo version go1.26.9 linux/amd64\n"
+    },
+    {
+      "argv": [
+        "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/go-1.26.5-h282a287_0/bin/go",
+        "env",
+        "GOTOOLCHAIN",
+        "GOVERSION"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.006,
+      "combinedOutput": "auto\ngo1.26.9\n"
+    }
+  ],
+  "toolchainCachePath": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64",
+  "toolchainCacheExists": true,
+  "compilerBuildInvoked": false,
+  "completedAtUtc": "2026-10-11T01:44:04.013055+00:00",
+  "selectedGoToolchainFiles": {
+    "goExecutable": {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+      "sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+      "sizeBytes": 15456232
+    },
+    "compiler": {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/pkg/tool/linux_amd64/compile",
+      "sha256": "b9ca04cdacb7c98120b5d84cf5a9cc9f2e8f6316bc12b147411464baa6a997c2",
+      "sizeBytes": 25787733
+    },
+    "linker": {
+      "path": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/pkg/tool/linux_amd64/link",
+      "sha256": "4922bd0bd8fea29f7177cebe7591a8ce94470cd2f8378e4443b5781c571625bc",
+      "sizeBytes": 6684577
+    }
+  },
+  "goVersionBuildInfo": {
+    "command": [
+      "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+      "version",
+      "-m",
+      "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go"
+    ],
+    "exitCode": 0,
+    "output": "/workspace/work/rcc-swarm/evidence/candidate-09796/full-gate/nested-toolchain-probe/gomodcache/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go: go1.26.9\n\tpath\tcmd/go\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-gcflags=cmd/...=-dwarf=false\n\tbuild\t-trimpath=true\n\tbuild\tCGO_ENABLED=0\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n"
+  }
+}

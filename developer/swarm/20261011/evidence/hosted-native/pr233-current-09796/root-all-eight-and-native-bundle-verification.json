@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-11T01:17:56.834028+00:00",
+  "source": "09796bf78ab4d79ef91dc7fa4bbb23be7aa14033",
+  "actualZIPDigestsChecked": true,
+  "actualBinaryEntries": [
+    {
+      "bundle": "native-runtime-binaries",
+      "binary": "rcc-linux64",
+      "sha256": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "binary": "rcc-macos64",
+      "sha256": "9b10851241c3845f0349b062516a72e8e1c8a265f7f3a166793a7060049a7bfc",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "binary": "rcc-macosarm64",
+      "sha256": "7939f268cb03315cebd73fe7d620dd579ddaea5fc948021179db22defa726758",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "native-runtime-binaries",
+      "binary": "rcc-windows64.exe",
+      "sha256": "f4c2ab01291ca55bb472e6fdc1fc151ffe4b82c0ff2f6a2ad268431d13f01692",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rcc-linux64",
+      "sha256": "b5aa13f0921abd7c4b459c12b3042e58fecb8b7220756ad76ed7d651d74dbfd1",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rcc-macosarm64",
+      "sha256": "7939f268cb03315cebd73fe7d620dd579ddaea5fc948021179db22defa726758",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rcc-macos64",
+      "sha256": "9b10851241c3845f0349b062516a72e8e1c8a265f7f3a166793a7060049a7bfc",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rcc-windows64.exe",
+      "sha256": "f4c2ab01291ca55bb472e6fdc1fc151ffe4b82c0ff2f6a2ad268431d13f01692",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rccremote-linux64",
+      "sha256": "98de21d57c942b35b011371568f2f49ea38127b3113f9706fdf8908a0d0ffcd4",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rccremote-macos64",
+      "sha256": "3c7d3f2a6d048ecc1350f11d6b8ffeba27dfda8e50823e91907510f8d727d867",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rccremote-macosarm64",
+      "sha256": "1ac861de7240e0a4fa06ad266352f05879658fdcc306336f36347a68e391d8d0",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    },
+    {
+      "bundle": "RCC-Binaries",
+      "binary": "rccremote-windows64.exe",
+      "sha256": "cb147b265fdc809681b3ea8cb167eaf80aceff739b5989a423a1802ec7e22fd7",
+      "compiler": "go1.26.9",
+      "vcsClean": true
+    }
+  ],
+  "linuxCoreVersion": "v18.19.6",
+  "nativeRuntimeProof": "Pending receipts; bundle/build identity alone is not runtime acceptance."
+}
