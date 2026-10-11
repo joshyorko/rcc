@@ -1,0 +1,26 @@
+network:
+    dns-lookup:
+    - github.com
+    - pypi.org
+    - conda.anaconda.org
+    tls-verify:
+    - github.com
+    - pypi.org
+    head-request:
+    - url: https://github.com
+      codes: [200]
+    - url: https://api.github.com
+      codes: [200]
+    - url: https://raw.githubusercontent.com
+      codes: [200, 400]
+    - url: https://pypi.org/simple/pip/
+      codes: [200]
+    - url: https://pypi.org/simple/jupyterlab-pygments/
+      codes: [200]
+    - url: https://conda.anaconda.org/conda-forge/linux-64/repodata.json
+      codes: [200]
+    - url: https://files.pythonhosted.org
+      codes: [200]
+    get-request:
+    - url: https://api.github.com/zen
+      codes: [200]

@@ -1,0 +1,10 @@
+{
+  "numericExit": 0,
+  "expectedHashes": {
+    "supervise_native.py": "66b28aa8c7627342c68c719ce4cc25a76c4dd33cbb774da0652f55809bb832e4",
+    "test_supervise_native.py": "06251c8e5abb6dc3faf38bfa0e08dae033ca886d7867257144f85cdb52383405"
+  },
+  "syntheticOnly": true,
+  "noRCCGoFixtureExecution": true,
+  "scope": "Rootindependent6controls forv1; actualrunawaitsaddiv2 ownership/finalsource/resource/binary/JSONLproof"
+}

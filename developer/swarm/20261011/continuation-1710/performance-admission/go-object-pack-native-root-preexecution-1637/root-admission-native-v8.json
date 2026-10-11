@@ -1,0 +1,49 @@
+{
+  "source_root": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+  "index_path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+  "offset_index_path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+  "pack_path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/small-objects.concat",
+  "root_admission": "ROOT direct launch ONE actualbuild+measurement; phaseallocation90 withinexisting180; all14independentcontrols0 and v7\u2192v8oneconstantdiff verified; alluserbudgets unchanged; noautomaticretry",
+  "utc": "2026-10-11T17:01:24.383669+00:00",
+  "source_sha": "7945f956b428359928908a9f42e36417b113dafd",
+  "supervisor_sha256": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4",
+  "harness_sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+  "workspace_free": 2760957952,
+  "verified_inputs": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "size": 1491800,
+      "sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "uid": 1000
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+      "size": 525841,
+      "sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+      "uid": 1000
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/small-objects.concat",
+      "size": 4484936,
+      "sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+      "uid": 1000
+    }
+  ],
+  "synthetic_control_exit": 0,
+  "limits": {
+    "workspace": 33554432,
+    "ram": 1073741824,
+    "sampled_rss": 2147483648,
+    "floor": 2688548864,
+    "combined_seconds": 180,
+    "build_seconds": 90,
+    "pass_seconds": 30
+  },
+  "scope": "same tmpfs verified4649frames GetObject versus indexed ReadAt component; no E2E gain or default recommendation",
+  "attempt": "Explicit distinct run-native-02 after preserved v6packcopyfailure BEFOREcompile; notanautomaticretry",
+  "launcher_sha256": "3a66f4ccc0f64a949d58b4f7efcceb8a57d447e98aaec32a307fd6cb658c6af8",
+  "inherited_rlimit_fsize": [
+    -1,
+    -1
+  ]
+}

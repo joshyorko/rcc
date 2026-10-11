@@ -1,0 +1,48 @@
+endpoints:
+  # Cloud endpoints - override via RCC_ENDPOINT_* env vars or local settings.yaml
+  cloud-api: # https://api.example.com/
+  cloud-linking: # https://cloud.example.com/link/
+  cloud-ui: # https://cloud.example.com/
+  pypi: # https://pypi.org/simple/
+  pypi-trusted: # https://pypi.org/
+  conda: # https://conda.anaconda.org/
+  downloads: # https://downloads.example.com/
+  docs: # https://docs.example.com/
+  telemetry: # disabled by default
+  issues: # disabled by default
+
+diagnostics-hosts:
+  - files.pythonhosted.org
+  - github.com
+  - conda.anaconda.org
+  - pypi.org
+
+autoupdates:
+  assistant: https://github.com/yorko-io/assistant/releases/
+  workforce-agent: https://github.com/yorko-io/workforce-agent/releases/
+  setup-utility: https://github.com/yorko-io/setup-utility/releases/
+  templates: https://github.com/joshyorko/robot-templates/releases/latest/download/templates.yaml
+  rcc-index: https://github.com/joshyorko/rcc/releases/latest/download/index.json
+
+certificates:
+  verify-ssl: true
+  ssl-no-revoke: false
+  legacy-renegotiation-allowed: false
+
+options:
+  no-build: false
+
+network:
+  no-proxy: # no no proxy by default
+  https-proxy: # no proxy by default
+  http-proxy: # no proxy by default
+
+branding:
+  logo: # https://github.com/yorko-io/.github/blob/main/logo.svg
+  theme-color: FF0000
+
+meta:
+  name: default
+  description: yorko-io default settings.yaml internal to rcc
+  source: builtin
+  version: 2025.12

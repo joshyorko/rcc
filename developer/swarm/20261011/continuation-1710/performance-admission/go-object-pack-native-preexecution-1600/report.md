@@ -1,0 +1,23 @@
+# Preparation receipt
+
+This is a read-only proposal package for the #125 native small-object component comparison. It is not an admitted experiment: no Go build, test, `go list`, provider initialization, fixture read/write, timed pass, cache creation, module download, Actions run, GitHub write, or source branch change occurred. The only Go utility used was official Go 1.26.9 `gofmt` on the standalone harness.
+
+The real Linux path is `artifactprovider.Filesystem.GetObject` → `getObjectBytes` → `readVerifiedAt`: it traverses provider directories with `openat`, checks regular-file type and exact size, reads the object, validates stored SHA256, then returns a reader. The paired proposal compares that API with a bounded indexed `ReadAt` over the same stored gzip frames; the pack path retains exact size/SHA checks. It is a local component measurement and cannot establish remote, Actions, materializer, end-to-end, or default-format performance.
+
+Exact source is RCC `7945f956b428359928908a9f42e36417b113dafd` (tree `49baf943b9d64ef79af56ec8f34eebe0385477b1`). A read-only static import walk identifies 19 RCC packages / 134 production Go files. The owned `source-7945/` projection contains 227 tracked source/input files totaling 1,541,402 bytes, all copied from immutable Git blobs and made read-only. A second comparison found all 134 production Go files byte-identical to final-main-727; it was used only as source-drift evidence, not as the proposed build root. The exact source manifest is `source-manifest.json`.
+
+Compilation is intentionally blocked pending a provenance decision for ignored `//go:embed` outputs. The 7945 Git tree contains tracked source inputs and `tasks.py` but no generated `blobs/assets` or `blobs/docs` payloads. The Linux build requires copied docs/assets, three template ZIPs, and `blobs/assets/micromamba.linux_amd64.gz`. No payload was copied or generated. The latter is selected from an official external archive by the exact-7945 task; absent a locally verified exact payload, the admitted run must stop without fetching it. A 727 worktree asset-size observation (7,466,245 bytes for Linux embed inputs) is sizing context only, not an input or provenance receipt.
+
+Frozen workload tuple: source Artifact `sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e`; source index 1,491,800 B / SHA256 `e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6`; offset index 525,841 B / SHA256 `e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2`; pack 4,484,936 B / SHA256 `44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9`; selection is all 4,649 index entries with `storedSize < 4096`, sorted by stored digest. The original provider root remains read-only and was not accessed during preparation.
+
+The harness is [harness.go](harness.go), SHA256 `329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4`, 21,091 bytes. It verifies inputs and source closure before/after, stages only an owned RAM provider root, runs corruption/missing/size/range/overflow/wrong-digest/non-aliasing controls untimed, then records five counterbalanced pairs. It reports wall/user/system CPU, application-level `GetObject`/`ReadAt` call counts, `/proc/self/io` read counters, and sampled RSS; it explicitly does not claim syscall-level open counts. An external root-reviewed supervisor must enforce 30 seconds per pass, 180 seconds total, 32 MiB workspace, 1 GiB owned RAM, 2 GiB process-tree RSS, and the 2,688,548,864-byte free-space floor.
+
+Plan SHA256: `05e8771be5ca114dca293b922c0bb2468ca7f31f8a547fccdfadc9bb4273937d`. Source manifest SHA256: `c1bc6f5c00a96c9e1e3dc4bcf4bb39b832ef525bc2795f570af61765f17246e6`. The complete proposal namespace occupied 2,621,440 allocated bytes at final receipt, below the 32 MiB proposal cap. `/workspace` free space was 2,778,066,944 bytes, 89,518,080 above the required floor; this is a point-in-time observation, not an execution reservation.
+
+Validation completed:
+
+- Official `/workspace/work/rcc-swarm/tools/go1.26.9/bin/gofmt -d …/harness.go`: exit 0, no diff.
+- Python manifest verifier: exit 0; 227 snapshot entries matched their Git blobs, sizes, SHA256s and read-only modes; all 134 production Go files matched the 727 projection.
+- Source snapshot uses exact 7945 blob identities; namespace evidence contains no branch, PR, issue, or release edits.
+
+All experiment acceptance remains pending: embed provenance, root resource restoration/admission, dependency availability with offline `GOPROXY=off`, actual compile, negative controls, ten timed passes, source/input post-closure, and resource supervision. Nothing from this proposal supports a #125 direction choice or closure.

@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-11T17:01:46Z",
+  "numeric_outer_exit": 1,
+  "elapsed_s": 21.818909435001842,
+  "parent_rlimit_fsize": [
+    -1,
+    -1
+  ],
+  "reader_threads_joined": true,
+  "errors": [],
+  "supervisor_sha256": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4",
+  "admission_sha256": "200a900a60438bb19b35f5633b26add980a3a775e20d334bac38b17436de77e4",
+  "outer_raw": {
+    "stdout": {
+      "bytes": 167,
+      "sha256": "dfcb5cfa1bfe5f77fc253d0c5264ce1c95051a83a21e51c5a34f091517e8433b"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

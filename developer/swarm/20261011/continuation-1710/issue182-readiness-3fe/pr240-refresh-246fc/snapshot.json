@@ -1,0 +1,40 @@
+{
+  "observedAtUtc": "2026-10-11T16:59:15Z",
+  "repository": "joshyorko/rcc",
+  "pullRequest": 240,
+  "url": "https://github.com/joshyorko/rcc/pull/240",
+  "state": "open",
+  "draft": false,
+  "mergeable": true,
+  "base": "main",
+  "baseSha": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+  "headRef": "codex/rcc-182-journal-tests-20261011",
+  "headSha": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "headTree": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+  "changedFiles": 1,
+  "additions": 114,
+  "deletions": 0,
+  "changedPath": "journal/coverage_test.go",
+  "reviewSubmissions": [],
+  "inlineReviewThreads": [],
+  "combinedCommitStatuses": [],
+  "workflowRuns": [
+    {"id": 38157690454, "name": "Coverage gate", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690454"},
+    {"id": 38157690448, "name": "PR metrics", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690448"},
+    {"id": 38157690396, "name": "CodeQL", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690396"},
+    {"id": 38157690338, "name": "Lint", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690338"},
+    {"id": 38157690344, "name": "Rcc", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690344"},
+    {"id": 38157690369, "name": "Quality report", "event": "pull_request", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690369"}
+  ],
+  "checkRuns": [
+    {"name": "Release Candidate Verification", "status": "completed", "conclusion": "skipped", "url": "https://github.com/joshyorko/rcc/actions/runs/38157690344/job/114523943855", "interpretation": "Expected skip for an unlabeled PR; not a failure."},
+    {"name": "report", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690369/job/114523943768"},
+    {"name": "Analyze (go)", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690396/job/114523943722"},
+    {"name": "golangci-lint", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690338/job/114523943686"},
+    {"name": "coverage", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690454/job/114523943491"},
+    {"name": "metrics", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690448/job/114523943350"},
+    {"name": "Build RCC", "status": "queued", "conclusion": null, "url": "https://github.com/joshyorko/rcc/actions/runs/38157690344/job/114523943124"}
+  ],
+  "failureCount": 0,
+  "mergeOrIssueClosurePerformed": false
+}

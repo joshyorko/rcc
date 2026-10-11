@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-11T16:58:31.661663+00:00",
+  "previous_head": "36a84430083b3af6f9758408b94054e5197b7f8b",
+  "main": "3fe6e200c0acc06d5920544a3bd5c3c036096855",
+  "new_head": "246fc372e517f4e9c20ea98196071e8b7439bf4c",
+  "tree": "9850f238059a168ddf57011d2cde7446c04e1ed1",
+  "diff": "114\t0\tjournal/coverage_test.go\n",
+  "scope": "114lines test-only; productiontree currentmain unchanged; shipping7945 unchanged"
+}

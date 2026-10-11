@@ -1,0 +1,24 @@
+{
+  "actual_partial_pack": {
+    "mode": "0o600",
+    "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-01/pack.bin",
+    "sha256": "25bf65dccbc60bf8187defd81bbb7dd09f4774560c35ca1e06f2924bdeaa3bc2",
+    "size_bytes": 1048576,
+    "uid": 1000
+  },
+  "failure_attribution": {
+    "attribution": "Inherited file-size limit is consistent with the 1,048,576-byte partial staged pack and EFBIG. The exact effective limit is not recorded; no exact limit value is asserted.",
+    "child_build_or_harness_started": false,
+    "command_wrapper_used": "ulimit -f 1024",
+    "effective_hard_limit_at_launch_bytes": "not recorded",
+    "effective_soft_limit_at_launch_bytes": "not recorded",
+    "observed_error": "OSError: [Errno 27] File too large",
+    "stage": "supervisor pack staging before child process launch"
+  },
+  "no_cleanup_or_retry_performed": true,
+  "preserved_original_erratum_sha256": "608c172b39ecd6955f09a264ab6f6e2d59e36c77ce809903d5cb494e879b906d",
+  "record_type": "additive_correction_to_execution-failure-erratum-v6.json",
+  "source_run_receipt_sha256": "07dc6dce306f3b9522f963c756c58d8bb4cd512458c19c6e0e1d917881146410",
+  "supersedes_claim_only": "capture_wrapper_rlimit_file_size_bytes=524288 is not supported by captured launch evidence and must not be treated as observed.",
+  "v6_supervisor_source_sha256": "058fc5c6918daad888e83e102454aed464c7845896dbf26772631e4d5030fe7a"
+}

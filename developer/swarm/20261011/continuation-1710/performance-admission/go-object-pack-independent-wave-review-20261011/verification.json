@@ -1,0 +1,481 @@
+{
+  "status": "INDEPENDENT_RAW_COMPONENT_VERIFIED_WITH_SUPERVISOR_GUARD_FAIL_PRESERVED",
+  "utc": "2026-10-11T17:10:24.240622+00:00",
+  "actual_numeric": {
+    "direct_outer": 1,
+    "supervisor": 1,
+    "build": 0,
+    "harness": 0
+  },
+  "actual_supervisor_error": "GuardFailure: private RCC runtime home permissions changed",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "original_inputs": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "bytes": 1491800
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+      "sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+      "bytes": 525841
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/small-objects.concat",
+      "sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+      "bytes": 4484936
+    },
+    {
+      "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02/pack.bin",
+      "sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+      "bytes": 4484936
+    }
+  ],
+  "ordered_oracle": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162",
+  "actual_selected_source_closure": "77113f012ac2e63d68c3c61bd4f36b590650be309b563f6d26c492e13de04f57",
+  "build_input_binding": {
+    "tracked_count": 227,
+    "tracked_bytes": 1541402,
+    "tracked_tree_sha256": "6b103fab86c1bd3b3190b1f10f7d11b5ac0b008331fdecb9ca41ab69fec1d10b",
+    "generated_count": 39,
+    "generated_bytes": 7474027,
+    "generated_tree_sha256": "07e3c5978f32cbf9889bb24461e8cb2beee0b3f5358c4a6674b2337bc235e9e8",
+    "actual_git_tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+    "current_module_caches": [
+      {
+        "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/gomodcache",
+        "files": 1930,
+        "bytes": 55499478,
+        "canonical_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+        "actual_modes_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+        "readonly_projection": false
+      },
+      {
+        "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/gomodcache-run-native-02",
+        "files": 1930,
+        "bytes": 55499478,
+        "canonical_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+        "actual_modes_sha256": "0c928ad144d205a72b17b59151a554ff5723d2349ebe288114cf20904f886ec5",
+        "readonly_projection": true
+      }
+    ],
+    "temporal_scope": "current bytes equal frozen pre-run manifests; supervisory post-run verification was skipped at home guard"
+  },
+  "home_state": {
+    "ancestors": [
+      {
+        "path": "/dev",
+        "mode": "0o755",
+        "uid": 0,
+        "gid": 0,
+        "device": 31
+      },
+      {
+        "path": "/dev/shm",
+        "mode": "0o1777",
+        "uid": 0,
+        "gid": 0,
+        "device": 26
+      },
+      {
+        "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000,
+        "device": 26
+      },
+      {
+        "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000,
+        "device": 26
+      },
+      {
+        "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02/rcc-home",
+        "mode": "0o750",
+        "uid": 1000,
+        "gid": 1000,
+        "device": 26
+      }
+    ],
+    "immediate_children": [
+      {
+        "name": "bin",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "hololib",
+        "mode": "0o750",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "journals",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "pipcache",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "pkgs",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "robots",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "templates",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "uv",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "uvcache",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "uvpython",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      },
+      {
+        "name": "wheels",
+        "mode": "0o700",
+        "uid": 1000,
+        "gid": 1000
+      }
+    ],
+    "postcondition": "FAILED: RCC home0750 instead of required0700; enclosing owned directories0700"
+  },
+  "resources": {
+    "sample_count": 151,
+    "max_sampled_group_plus_supervisor_RSS": 352739328,
+    "min_observed_free": 2750656512,
+    "max_observed_RAM": 466542592,
+    "max_observed_workspace": 12865536,
+    "census_scope": "supervisor observed process-group members; not proof against arbitrary escaped descendants",
+    "sampling_scope": "finite sampled observations, not a continuous hard quota or peak-RSS proof",
+    "missing_supervisor_final_guard": "Home-mode guard interrupted remaining post-run checks; root subsequently verified current bytes/resources separately."
+  },
+  "raw_passes": [
+    {
+      "arm": "filesystem",
+      "replicate": 1,
+      "wall_ns": 60252518,
+      "cpu_user_ns": 37634000,
+      "cpu_system_ns": 45400000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 4649,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 0,
+      "proc_io_rchar_delta": 4485049,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 16526,
+      "rss_bytes_sampled_after_pass": 14622720,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "pack",
+      "replicate": 1,
+      "wall_ns": 6283063,
+      "cpu_user_ns": 5474000,
+      "cpu_system_ns": 1512000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 0,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 4649,
+      "proc_io_rchar_delta": 4485049,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 4651,
+      "rss_bytes_sampled_after_pass": 14770176,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "pack",
+      "replicate": 2,
+      "wall_ns": 6391823,
+      "cpu_user_ns": 6414000,
+      "cpu_system_ns": 0,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 0,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 4649,
+      "proc_io_rchar_delta": 4485050,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 4651,
+      "rss_bytes_sampled_after_pass": 15257600,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "filesystem",
+      "replicate": 2,
+      "wall_ns": 57932860,
+      "cpu_user_ns": 41940000,
+      "cpu_system_ns": 33760000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 4649,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 0,
+      "proc_io_rchar_delta": 4485050,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 16526,
+      "rss_bytes_sampled_after_pass": 14901248,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "filesystem",
+      "replicate": 3,
+      "wall_ns": 63561160,
+      "cpu_user_ns": 28318000,
+      "cpu_system_ns": 39322000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 4649,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 0,
+      "proc_io_rchar_delta": 4485050,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 16526,
+      "rss_bytes_sampled_after_pass": 16203776,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "pack",
+      "replicate": 3,
+      "wall_ns": 5667434,
+      "cpu_user_ns": 4718000,
+      "cpu_system_ns": 971000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 0,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 4649,
+      "proc_io_rchar_delta": 4485050,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 4651,
+      "rss_bytes_sampled_after_pass": 14536704,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "pack",
+      "replicate": 4,
+      "wall_ns": 5861598,
+      "cpu_user_ns": 5333000,
+      "cpu_system_ns": 1329000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 0,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 4649,
+      "proc_io_rchar_delta": 4485050,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 4651,
+      "rss_bytes_sampled_after_pass": 14983168,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "filesystem",
+      "replicate": 4,
+      "wall_ns": 57567741,
+      "cpu_user_ns": 22419000,
+      "cpu_system_ns": 41798000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 4649,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 0,
+      "proc_io_rchar_delta": 4485051,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 16526,
+      "rss_bytes_sampled_after_pass": 14835712,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "filesystem",
+      "replicate": 5,
+      "wall_ns": 71707829,
+      "cpu_user_ns": 38354000,
+      "cpu_system_ns": 44977000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 4649,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 0,
+      "proc_io_rchar_delta": 4485051,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 16526,
+      "rss_bytes_sampled_after_pass": 14856192,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    },
+    {
+      "arm": "pack",
+      "replicate": 5,
+      "wall_ns": 9655452,
+      "cpu_user_ns": 3406000,
+      "cpu_system_ns": 8325000,
+      "objects": 4649,
+      "bytes": 4484936,
+      "provider_getobject_calls": 0,
+      "pack_file_opens_during_pass": 0,
+      "read_at_calls": 4649,
+      "proc_io_rchar_delta": 4485051,
+      "proc_io_read_bytes_delta": 0,
+      "proc_io_syscr_delta": 4651,
+      "rss_bytes_sampled_after_pass": 14856192,
+      "ordered_result_sha256": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162"
+    }
+  ],
+  "pairs": [
+    {
+      "pair": 1,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "filesystem_ns": 60252518,
+      "pack_ns": 6283063,
+      "difference_ns": 53969455,
+      "ratio": 9.589672744010366
+    },
+    {
+      "pair": 2,
+      "order": [
+        "pack",
+        "filesystem"
+      ],
+      "filesystem_ns": 57932860,
+      "pack_ns": 6391823,
+      "difference_ns": 51541037,
+      "ratio": 9.063589526806359
+    },
+    {
+      "pair": 3,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "filesystem_ns": 63561160,
+      "pack_ns": 5667434,
+      "difference_ns": 57893726,
+      "ratio": 11.21515662996693
+    },
+    {
+      "pair": 4,
+      "order": [
+        "pack",
+        "filesystem"
+      ],
+      "filesystem_ns": 57567741,
+      "pack_ns": 5861598,
+      "difference_ns": 51706143,
+      "ratio": 9.821168391281695
+    },
+    {
+      "pair": 5,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "filesystem_ns": 71707829,
+      "pack_ns": 9655452,
+      "difference_ns": 62052377,
+      "ratio": 7.426667234221661
+    }
+  ],
+  "statistics": {
+    "filesystem": {
+      "wall_ns_median": 60252518,
+      "wall_ns_range": [
+        57567741,
+        71707829
+      ],
+      "cpu_ns_median": 75700000
+    },
+    "pack": {
+      "wall_ns_median": 6283063,
+      "wall_ns_range": [
+        5667434,
+        9655452
+      ],
+      "cpu_ns_median": 6662000
+    }
+  },
+  "receipt_hashes": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/supervisor-result.json",
+      "sha256": "bdb185d87d7ceefd3e33775744c885c7d4837e515d218a73378d43c2efbb67ab",
+      "bytes": 58969
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/results.jsonl",
+      "sha256": "448015d02fc300de96eb8eb2010b4ea859b9004e8cfb048fadffd8b16027013b",
+      "bytes": 11838
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/rcc-go-packprobe",
+      "sha256": "38c84cf54b637f170591e96fbd70f7acac955f57f37b5384459f40e5e82d952c",
+      "bytes": 10277531
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-outer-result.json",
+      "sha256": "8f71408cf4a401aa2d6936344937d0a42d5f456b08c9dfe4d3a077a7e6c85de5",
+      "bytes": 646
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-binary-metadata.txt",
+      "sha256": "b8d3488e1614e0882d69ed9f50b09908839dc957c96482633e2caf674e62dada",
+      "bytes": 1973
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-root-preexecution-1637/root-admission-native-v8.json",
+      "sha256": "200a900a60438bb19b35f5633b26add980a3a775e20d334bac38b17436de77e4",
+      "bytes": 2643
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v8.py",
+      "sha256": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4",
+      "bytes": 42387
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/harness-successor-v2.go",
+      "sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+      "bytes": 25247
+    }
+  ],
+  "limitations": [
+    "Whole invocation FAILED; independent raw-data validation does not waive or repair the home0700 postcondition.",
+    "Component comparison only; no Actions/native materialization/end-to-end or default-format winner.",
+    "API calls are not measured filesystem-open syscall counts.",
+    "Five pairs are threeAB/twoBA with shared warm OS and Go allocator/GC state.",
+    "Wall excludes setup and receipt flushing; CPU includes observer overhead and concurrent Go threads/GC; post-passRSS is not peak.",
+    "Negative-control receipts bind to reviewed source but no independent corruption rerun is performed.",
+    "Root actual build-metadata observation is cited; this verifier hashes the binary but does not independently parse Go buildinfo."
+  ],
+  "numeric_exit": 0
+}

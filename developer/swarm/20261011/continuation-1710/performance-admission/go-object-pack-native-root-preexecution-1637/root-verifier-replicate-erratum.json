@@ -1,0 +1,7 @@
+{
+  "initial_numeric_exit": 1,
+  "initial_source_sha256": "195747119f88ee869b19bba93a2274c7b9623a5461cc053ec7d8453027372155",
+  "cause": "ROOT incorrectly equated per-arm replicate with overallposition; actual frozenharness armReplicates[arm] increments separately",
+  "corrected_source_sha256": "68f7f795173b647135d082e30dd059587245dd43c13b8acf6b5af85b3854309c",
+  "benchmark_rerun": false
+}

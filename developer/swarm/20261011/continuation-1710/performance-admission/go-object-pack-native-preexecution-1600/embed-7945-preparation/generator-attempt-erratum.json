@@ -1,0 +1,38 @@
+{
+  "corrects": "preparation-summary.json failed_generator_attempts_preserved and accepted_generator attribution",
+  "note": "The original preparation summary misattributed two failure modes and incorrectly marked generate_embeds_03.py as failed. No source output was rerun or regenerated for this correction.",
+  "attempts": [
+    {
+      "path": "generate_embeds.py",
+      "source_sha256_at_creation_from_tool_output": "e62dfd75bcc6370098262d2d6b58e76faaf802b622b650b8f9a17118a97d4627",
+      "source_bytes_preserved": false,
+      "numeric_exit": 1,
+      "failure": "source manifest identity mismatch",
+      "raw_traceback_durably_preserved": false
+    },
+    {
+      "path": "generate_embeds.py",
+      "source_sha256": "0cbe415eb546a7527a6a3cef7f10f6ba5b01097d3cfce57574054a46bd6b8633",
+      "source_bytes_preserved": true,
+      "numeric_exit": 1,
+      "failure": "PermissionError while opening generated template ZIP because copied source directories remained read-only",
+      "raw_traceback_durably_preserved": false
+    },
+    {
+      "path": "generate_embeds_02.py",
+      "source_sha256": "5576ad14d8925aefdfa6cd4d33cc03c427164dbef7c624caf053080ef88b4240",
+      "source_bytes_preserved": true,
+      "numeric_exit": 1,
+      "failure": "AttributeError: PosixPath has no read method; ZIP generator called f.read()",
+      "raw_traceback_durably_preserved": false
+    },
+    {
+      "path": "generate_embeds_03.py",
+      "source_sha256": "e6b125b3da6964b4da53d464784063d1d64c4b8e15351f2ae9430758c25c0e12",
+      "source_bytes_preserved": true,
+      "numeric_exit": 0,
+      "status": "accepted preparation-only generation; generated-inputs-receipt.json binds outputs"
+    }
+  ],
+  "build_or_benchmark_run": false
+}

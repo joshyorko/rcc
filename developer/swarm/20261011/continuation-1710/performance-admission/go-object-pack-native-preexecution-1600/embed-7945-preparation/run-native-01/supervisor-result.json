@@ -1,0 +1,21 @@
+{
+  "elapsed_total_s": 0.4198,
+  "error": "OSError: [Errno 27] File too large",
+  "limits": {
+    "build_seconds": 30,
+    "floor_bytes": 2688548864,
+    "pass_seconds": 30,
+    "ram_bytes": 1073741824,
+    "sampled_rss_bytes": 2147483648,
+    "total_seconds": 180,
+    "workspace_bytes": 33554432
+  },
+  "numeric_build_exit": null,
+  "numeric_harness_exit": null,
+  "numeric_outer_exit": 1,
+  "owned_ram_allocated_bytes_at_receipt": 85512192,
+  "source_commit": "7945f956b428359928908a9f42e36417b113dafd",
+  "stages": [],
+  "status": "FAIL",
+  "workspace_allocated_bytes_before_final_receipt": 1310720
+}

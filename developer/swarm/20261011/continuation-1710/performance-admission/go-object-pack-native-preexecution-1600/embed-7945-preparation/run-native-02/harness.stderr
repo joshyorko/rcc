@@ -1,0 +1,20 @@
+PASS_START 1/10 arm=filesystem replicate=1
+PASS_DONE 1/10 arm=filesystem replicate=1 wall_ns=60252518
+PASS_START 2/10 arm=pack replicate=1
+PASS_DONE 2/10 arm=pack replicate=1 wall_ns=6283063
+PASS_START 3/10 arm=pack replicate=2
+PASS_DONE 3/10 arm=pack replicate=2 wall_ns=6391823
+PASS_START 4/10 arm=filesystem replicate=2
+PASS_DONE 4/10 arm=filesystem replicate=2 wall_ns=57932860
+PASS_START 5/10 arm=filesystem replicate=3
+PASS_DONE 5/10 arm=filesystem replicate=3 wall_ns=63561160
+PASS_START 6/10 arm=pack replicate=3
+PASS_DONE 6/10 arm=pack replicate=3 wall_ns=5667434
+PASS_START 7/10 arm=pack replicate=4
+PASS_DONE 7/10 arm=pack replicate=4 wall_ns=5861598
+PASS_START 8/10 arm=filesystem replicate=4
+PASS_DONE 8/10 arm=filesystem replicate=4 wall_ns=57567741
+PASS_START 9/10 arm=filesystem replicate=5
+PASS_DONE 9/10 arm=filesystem replicate=5 wall_ns=71707829
+PASS_START 10/10 arm=pack replicate=5
+PASS_DONE 10/10 arm=pack replicate=5 wall_ns=9655452

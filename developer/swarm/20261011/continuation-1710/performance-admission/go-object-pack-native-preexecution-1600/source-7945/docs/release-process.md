@@ -1,0 +1,39 @@
+# RCC release preparation and publication
+
+RCC releases use two separate operations. A tag push never publishes a release. The `Rcc` workflow's manual preparation path builds and tests an exact `main` commit, then uploads one immutable `rcc-release-preparation` artifact. A maintainer reviews that artifact and its evidence. A separate, manually dispatched `Publish RCC Release` workflow accepts the preparation run ID, full source SHA, version, and asset-manifest SHA-256. It rejects a source that is not in current `main` history, an unsuccessful or incomplete preparation run, a changed archive or asset, an existing tag/release, or missing release-environment protection.
+
+The preparation workflow waits for the cross-platform build, full release-candidate gate, four native runtime receipts, Linux JAT consumer receipt, and assembly job. It packages exactly eight Go binaries and `index.json`, plus the full11 and native evidence. Its manifest and checksums bind each asset's size and SHA-256 to the source SHA, version, and preparation run. Compiler provenance records `go version -m` for each binary and requires Go 1.26.9, expected GOOS/GOARCH, the exact source revision, and a clean VCS build. The publisher downloads the GitHub artifact ZIP through the API, checks the downloaded ZIP digest against GitHub's artifact metadata, rejects unsafe ZIP paths and symlinks, then validates the extracted bundle before making a tag.
+
+For independent review, manual preparation also emits nine auxiliary per-asset CI artifacts: one for each binary and `index.json`. Each contains that asset, the shared manifest, checksum list, provenance, and an identity record tying source SHA, version, run ID, manifest SHA, asset SHA, and byte size together. Each raw payload is capped at 24 MiB. These sidecars are for reviewers who cannot fetch the larger canonical ZIP through their artifact interface; they are not accepted by the publisher and do not change the release asset set. Each native runtime receipt artifact also carries the exact executable used by its runner plus source/platform/version/hash and Go metadata linked to its native receipt, with the same 24 MiB raw-payload cap. The canonical `rcc-release-preparation` bundle remains the publisher's sole artifact input.
+
+Publication requires the `rcc-production` environment to exist and have exactly one required-reviewers rule, at least one reviewer, self-review prevention, and admin bypass disabled. The publisher queries that policy and fails closed if it cannot read it. Configure `RCC_RELEASE_POLICY_AUDIT_TOKEN` as a repository secret containing a fine-grained token or GitHub App token with repository **Administration: read** permission so the environment API can be inspected. The workflow job itself must remain attached to the protected environment; the API check does not replace GitHub's approval gate. The person dispatching publication cannot approve their own run, so a different authorized reviewer must review and approve the pending job. A missing token, insufficient permission, absent environment, or unreadable protection configuration blocks publication.
+
+The publisher also requires a separate `HOMEBREW_TOOLS_PAT` secret that can dispatch `tap-auto-update.yml` in `homebrew-tools`. Its current preflight proves only that the downstream workflow is readable and active; it does not prove the token has dispatch permission. Confirm that access separately before any publication. The repository's configured `GITHUB_TOKEN` must also be allowed to create a new tag and release. The publisher never deletes or replaces a tag or release and does not edit an existing release.
+
+Before dispatching preparation, confirm that the selected `main` commit has the intended `common/version.go` value and a matching `docs/changelog.md` heading. Start `Rcc` with `workflow_dispatch`, selecting the exact current `main` SHA and version. Review the preparation job's full receipts, native receipt ZIPs, `assets/index.json`, `evidence/asset-manifest.json`, `evidence/SHA256SUMS`, `evidence/provenance.json`, and the GitHub artifact's published digest. After independent review, configure the protected environment and required secrets, then dispatch `Publish RCC Release` from `main` with the same run ID, source SHA, version, and manifest SHA. Review the artifact identity in the workflow summary before approving the environment. The workflow's tag creation and release publication occur only after that approval and all preflight checks.
+
+The legacy `Create Release Tag` entry is intentionally disabled and exits with a migration message. The new publisher is a proposal in this change and must be reviewed and merged before it can be used; do not use a release tag as a test trigger. This change has not created a tag, release, or Homebrew dispatch.
+
+The historical `recover-rcc-185.yml` workflow is also retired: manual dispatch
+only reaches a read-only hold that exits nonzero, with no tag, release, or
+Homebrew write. The old `recovery/recover_rcc_185.py` implementation and its
+tests are retained as historical evidence, but the workflow no longer invokes
+them. `patchraptor-release.yml` may still make its automated version-bump commit
+and dispatch the retired `Create Release Tag` entry after its configured
+qualifying main push; it cannot create a tag or publish a release, and that
+dispatch now stops at the explicit hold. Treat that bot path as a version-bump
+automation only, not as release authorization.
+
+## Signing limits
+
+This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified signature. Existing platform signing behavior remains whatever the platform build currently produces; in particular, the current evidence has ARM signing but does not establish universal signing coverage. Review signing requirements and platform-specific signature evidence separately before publication.
+
+## Documentation receipt
+
+- **Guidance added:** manual exact-source preparation, independent artifact review, protected publication, token permissions, and the current signing limits.
+- **Review access:** preparation emits nine manifest-bound per-asset sidecars for reviewers with a 32 MiB artifact-download interface cap; native receipt artifacts also include the exact runner binary. These capped sidecars are review-only and never replace the publisher's canonical preparation bundle.
+- **Build cleanliness:** generated documentation is committed with its source, and the build task checks tracked files immediately before each Go compilation so a prerequisite cannot silently produce a binary with dirty-source metadata.
+- **Durable lesson:** a successful tag-triggered CI run is not a publication authorization; the publisher must consume an independently reviewed preparation artifact and enforce protection before creating a new tag.
+- **Evidence:** workflow and helper validation bind the preparation run, ZIP digest, nine asset hashes, compiler metadata, source/version, full11 exit, and four native receipts.
+- **Stale guidance replaced:** the old automatic tag-to-release and tag-recreation path is disabled; it must not be used as an alternate route.
+- **Uncertainty retained:** downstream dispatch permission and platform-wide signing coverage require separate operator verification.

@@ -1,0 +1,40 @@
+from pathlib import Path
+import json,hashlib,os,stat,subprocess,statistics,importlib.util,sys,datetime
+p=Path(__file__).parent;w=Path('/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation');run=w/'run-native-02';ram=Path('/dev/shm/rcc-125-exact7945-embedprep-workers226');cfg=json.loads((p/'root-admission-native-v8.json').read_text());supervisor=json.loads((run/'supervisor-result.json').read_text());outer=json.loads((p/'actual-v8-outer-result.json').read_text());events=[json.loads(v) for v in (run/'results.jsonl').read_text().splitlines()];final=events[-1]['result'];passes=[e['pass'] for e in events[1:-1]]
+assert len(events)==12 and events[0]['event']=='run_start' and events[-1]['event']=='run_complete';assert all(e['event']=='pass_complete' and e['position']==i for i,e in enumerate(events[1:-1],1));assert final['status']=='PASS' and final['passes']==passes
+assert supervisor['numeric_build_exit']==supervisor['numeric_harness_exit']==0 and supervisor['numeric_outer_exit']==outer['numeric_outer_exit']==1;assert supervisor['error']=='GuardFailure: private RCC runtime home permissions changed';assert outer['errors']==[] and outer['reader_threads_joined']
+for stage in supervisor['stages']:
+ assert stage['numeric_exit']==0 and stage['stop_reason'] is None and stage['reader_threads_joined'] and stage['process_group_quiescent'];assert stage['max_sampled_rss_bytes']<2147483648 and stage['max_owned_ram_allocated_bytes']<1073741824 and stage['min_workspace_free_bytes']>=2688548864
+ # Fresh actual captured PGIDs, not a summary-only acceptance.
+ r=subprocess.run(['ps','-eo','pid=,pgid='],capture_output=True,text=True,check=True)
+ assert not any(int(line.split()[1])==stage['process_group'] for line in r.stdout.splitlines()),stage['process_group']
+assert outer['elapsed_s']<180
+h=lambda b:hashlib.sha256(b).hexdigest();offset=json.loads(Path(cfg['offset_index_path']).read_text());pack=Path(cfg['pack_path']).read_bytes();rp=(ram/'run-native-02/pack.bin').read_bytes();assert pack==rp and h(pack)==final['pack_sha256']==final['pack_after_sha256'];assert h(Path(cfg['index_path']).read_bytes())==final['index_sha256']==final['index_after_sha256'];assert h(Path(cfg['offset_index_path']).read_bytes())==final['offset_index_sha256']==final['offset_index_after_sha256'];assert len(offset['entries'])==4649
+identity=hashlib.sha256();closure=hashlib.sha256();rows=[];cursor=0
+for e in offset['entries']:
+ d=e['digest'].split(':')[1];size=e['size'];assert e['offset']==cursor;cursor+=size
+ original=Path(cfg['source_root'])/'objects/sha256'/d[:2]/d[2:4]/d
+ owned=ram/'run-native-02/provider/objects/sha256'/d[:2]/d[2:4]/d
+ st=original.lstat();assert stat.S_ISREG(st.st_mode) and not original.is_symlink();data=original.read_bytes();copy=owned.read_bytes();slice=pack[e['offset']:cursor];assert len(data)==size and h(data)==d and copy==data and slice==data
+ item=f'{d}:{size}\n'.encode();identity.update(item);closure.update(item);closure.update(f'{d}:{stat.S_IMODE(st.st_mode)}:{st.st_mtime_ns}:{original}\n'.encode());rows.append(f'{d}\t{size}\t{h(copy)}\n')
+assert cursor==4484936;assert identity.hexdigest()==final['untimed_pack_ordered_sha256'];assert closure.hexdigest()==final['source_closure_before_sha256']==final['source_closure_after_sha256'];assert len(final['untimed_controls_passed'])==6
+schedule=['filesystem','pack','pack','filesystem','filesystem','pack','pack','filesystem','filesystem','pack'];assert final['schedule']==schedule
+arm_reps={}
+for i,r in enumerate(passes):
+ arm_reps[r['arm']]=arm_reps.get(r['arm'],0)+1
+ assert r['arm']==schedule[i] and r['replicate']==arm_reps[r['arm']] and r['objects']==4649 and r['bytes']==4484936 and r['ordered_result_sha256']==identity.hexdigest();assert r['provider_getobject_calls']==(4649 if r['arm']=='filesystem' else 0);assert r['read_at_calls']==(4649 if r['arm']=='pack' else 0) and r['pack_file_opens_during_pass']==0;assert r['wall_ns']>0 and r['cpu_user_ns']>=0 and r['cpu_system_ns']>=0 and r['proc_io_read_bytes_delta']==0 and r['rss_bytes_sampled_after_pass']>0
+spec=importlib.util.spec_from_file_location('sup',w/'supervise_native_v8.py');sup=importlib.util.module_from_spec(spec);sys.modules['sup']=sup;spec.loader.exec_module(sup)
+source_proof=sup.verify_source_and_embeds(ram/'source-run-native-02');cache_original=sup.verify_module_cache(ram/'gomodcache',w/'offline-gomodcache-manifest.json');cache_readonly=sup.verify_module_cache(ram/'gomodcache-run-native-02',w/'offline-gomodcache-manifest.json',readonly_projection=True);finalguards=sup.final_resources(sup.Budget());jsonl_proof=sup.validate_result_jsonl(run/'results.jsonl')
+binary=run/'rcc-go-packprobe';info=subprocess.run([str(sup.GO),'version','-m',str(binary)],capture_output=True,text=True,check=True);sup.verify_binary_build_metadata(info.stdout);(p/'actual-v8-binary-metadata.txt').write_text(info.stdout)
+ancestors=[]
+for f,mode in [(ram,0o700),(ram/'run-native-02',0o700),(ram/'run-native-02/rcc-home',0o750)]:
+ st=f.lstat();assert stat.S_ISDIR(st.st_mode) and not f.is_symlink() and stat.S_IMODE(st.st_mode)==mode and st.st_uid==os.getuid();ancestors.append({'path':str(f),'mode':oct(mode),'uid':st.st_uid})
+(p/'actual-v8-object-proof.tsv').write_text('digest\tsize\towned_copy_sha256\n'+''.join(rows))
+summary={}
+for arm in ['filesystem','pack']:
+ group=[r for r in passes if r['arm']==arm];wall=[r['wall_ns']/1e6 for r in group];cpu=[(r['cpu_user_ns']+r['cpu_system_ns'])/1e6 for r in group];summary[arm]={'wall_ms':wall,'wall_median_ms':statistics.median(wall),'wall_min_ms':min(wall),'wall_max_ms':max(wall),'cpu_ms':cpu,'cpu_median_ms':statistics.median(cpu),'rchar_bytes':[r['proc_io_rchar_delta'] for r in group],'read_syscalls':[r['proc_io_syscr_delta'] for r in group],'disk_read_bytes':[r['proc_io_read_bytes_delta'] for r in group],'rss_postpass_bytes':[r['rss_bytes_sampled_after_pass'] for r in group]}
+pairs=[]
+for j in range(5):
+ a,b=passes[2*j:2*j+2];fs=a if a['arm']=='filesystem' else b;pk=b if a['arm']=='filesystem' else a;pairs.append({'pair':j+1,'order':[a['arm'],b['arm']],'wall_saved_ms':(fs['wall_ns']-pk['wall_ns'])/1e6,'wall_ratio':fs['wall_ns']/pk['wall_ns'],'cpu_saved_ms':(fs['cpu_user_ns']+fs['cpu_system_ns']-pk['cpu_user_ns']-pk['cpu_system_ns'])/1e6})
+proof={'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'status':'ROOT_SCOPED_MEASUREMENT_DATA_VERIFIED_WITH_POSTRUN_HOME_GUARD_FAILURE_PRESERVED','source':cfg['source_sha'],'binary_sha256':h(binary.read_bytes()),'binary_bytes':binary.stat().st_size,'harness_sha256':h((w/'harness-successor-v2.go').read_bytes()),'jsonl_sha256':h((run/'results.jsonl').read_bytes()),'supervisor_sha256':cfg['supervisor_sha256'],'numeric':{'build':0,'harness':0,'supervisor':1,'direct_outer':1,'root_independent_verifier':0},'objects_verified':4649,'stored_bytes':cursor,'ordered_identity':identity.hexdigest(),'original_source_closure':closure.hexdigest(),'original_source_unchanged':True,'raw_events':12,'verified_passes':10,'negative_controls':final['untimed_controls_passed'],'source_projection_binding':source_proof,'original_module_cache':cache_original,'readonly_module_cache':cache_readonly,'final_resources':finalguards,'private_enclosing_boundaries':ancestors,'summary':summary,'paired_results':pairs,'scope':'Warm same tmpfs actualRCC GetObject versus isolatedReadAt privatecomponent. Pack layout removes currentperobjectsecurepathopen/size/read/allocation bookkeeping; not fullRCC packformat parity. No disk/HTTP/materialization/Actions/portable/default gain; supervisor homeguardFAIL remains, no timedrerun. RSS samples not absolutepeak. CPU containsobserver andGC overhead, mayexceedwall. Readsyscalls not fileopens.'}
+(p/'actual-v8-root-acceptance.json').write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps({k:proof[k] for k in ['status','binary_sha256','binary_bytes','numeric','summary','paired_results']},indent=2))

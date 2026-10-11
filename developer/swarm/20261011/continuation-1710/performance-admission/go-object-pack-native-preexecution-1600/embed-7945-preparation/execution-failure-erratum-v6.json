@@ -1,0 +1,54 @@
+{
+  "actual_inputs_after": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "role": "object index",
+      "sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "size_bytes": 1491800
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+      "role": "offset index",
+      "sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+      "size_bytes": 525841
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/small-objects.concat",
+      "role": "concatenated pack",
+      "sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+      "size_bytes": 4484936
+    }
+  ],
+  "binary_created": false,
+  "capture_wrapper_rlimit_file_size_bytes": 524288,
+  "elapsed_seconds": 0.4198,
+  "external_capture": {
+    "exit_bytes": 2,
+    "exit_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.exit",
+    "exit_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+    "exit_text": "1\n",
+    "stderr_bytes": 0,
+    "stderr_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 149,
+    "stdout_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.stdout",
+    "stdout_sha256": "6da0911085db6c1f32511b34b8cf380f23089677b5a6b38c917d747f3a007e5c"
+  },
+  "harness_sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+  "internal_error": "OSError: [Errno 27] File too large",
+  "internal_receipt_bytes": 605,
+  "internal_receipt_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-01/supervisor-result.json",
+  "internal_receipt_sha256": "07dc6dce306f3b9522f963c756c58d8bb4cd512458c19c6e0e1d917881146410",
+  "likely_failure_cause": "The shell-level ulimit -f cap was inherited by the supervisor/build subprocess. This likely caused the internal OSError before any stage record; no build-child numeric exit was captured.",
+  "numeric_build_exit": null,
+  "numeric_harness_exit": null,
+  "numeric_outer_exit": 1,
+  "owned_state_cleanup_performed": false,
+  "process_match_after": false,
+  "retry_performed": false,
+  "root_admission_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-root-preexecution-1637/root-admission-native-v6.json",
+  "root_admission_sha256": "7672d843d022f4f79250ceb35b752f1953430a73ac274ff5229812da062857c9",
+  "stages": [],
+  "status": "FAILURE_PRESERVED_NO_RETRY",
+  "supervisor_sha256": "058fc5c6918daad888e83e102454aed464c7845896dbf26772631e4d5030fe7a"
+}

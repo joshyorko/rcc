@@ -1,0 +1,49 @@
+{
+  "actual_benchmark": false,
+  "actual_fixture_read": false,
+  "actual_go_build": false,
+  "build_or_benchmark_run": false,
+  "changes_after_v1": [
+    "read1 makes short PASS markers visible before EOF",
+    "actual Go -version -m metadata parser matches observed official Go 1.26.9 line format",
+    "owned UID/symlink/ancestor containment checks",
+    "module cache exact file-set and before/after hash verification",
+    "JSONL validates all 12 events, all 10 per-pass identities, source/index/offset/pack closure and ordered digest equality",
+    "final workspace/RAM/RSS guard and process census failures fail closed",
+    "bounded process wait after kill"
+  ],
+  "go_version_invocation_in_synthetic_tests": false,
+  "harness_sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+  "limits": {
+    "build_seconds": 30,
+    "combined_seconds": 180,
+    "owned_ram_bytes": 1073741824,
+    "per_pass_seconds": 30,
+    "sampled_rss_bytes": 2147483648,
+    "workspace_bytes": 33554432,
+    "workspace_free_floor_bytes": 2688548864
+  },
+  "numeric_results": {
+    "py_compile_exit": 0,
+    "synthetic_tests_exit": 0,
+    "synthetic_tests_passed": 10
+  },
+  "status": "PREPARATION_ONLY_AWAITING_ROOT_REVIEW",
+  "supervisor_v1_sha256": "66b28aa8c7627342c68c719ce4cc25a76c4dd33cbb774da0652f55809bb832e4",
+  "supervisor_v2_sha256": "d87ed4e388a0eed0f70e497aaa01b0a6febb6b0fc0973157659161730e7939c3",
+  "supervisor_v3_sha256": "16ff58c1d12304c1d9a1dbd9b94ed55040b7b287e49a6467e3bc2a04db5ef0df",
+  "synthetic_test_scope": [
+    "ten PASS marker ordering",
+    "exit between poll and ps preserves numeric status",
+    "persistent PASS_START watchdog termination",
+    "bounded raw output cap",
+    "workspace prewrite reservation cap",
+    "missing-live-PID fail-closed",
+    "final process census failure does not claim quiescence",
+    "owned path rejects symlink ancestor",
+    "Go binary metadata parser exact tuple and negative versions/platforms",
+    "12-event harness JSONL identity and closure validation"
+  ],
+  "test_log_sha256": "35ca70876072976c1d4854cdc479626c1ab5d1a68f64077c62ccd9647d62f44c",
+  "tests_v3_sha256": "50d4a74faf0d48aa22583d3e8adb29cabcc172a4cc18b6f7f9fe9a04351497ff"
+}

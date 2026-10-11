@@ -1,0 +1,72 @@
+{
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "source_files": [
+    {
+      "path": "environmentartifact/inventory.go",
+      "sha256": "b9cc03d125061b2c84ea6d230c5ee9033356bb1f2114e0db61406619e65bf820",
+      "bytes": 5638,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "environmentartifact/catalog.go",
+      "sha256": "0a61f1ac7f7513c60e2cb13b7ae082bb025aa1adae21e3e6f8828043d247ab34",
+      "bytes": 5671,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "htfs/directory.go",
+      "sha256": "8b3cf1f1c233e4f6a447e588ade54e04ec49b33e2fd93abbbd2b15a6e6d1ba3d",
+      "bytes": 11301,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "pathlib/variables.go",
+      "sha256": "0e0a3a4c65e4849486254b08484f340f674729ebb235ef1354ceee7352a28d52",
+      "bytes": 249,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "pathlib/shared.go",
+      "sha256": "c5ff4f0eb3096425ac2654e136f66efab2f76df0e832158b7ca8e251d58af951",
+      "bytes": 791,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "pathlib/functions.go",
+      "sha256": "ba1e7697dcd2b1a239292def345391d0d5fcaf1d49f326dcc988728807f04dcc",
+      "bytes": 8304,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "common/strategies.go",
+      "sha256": "19375a7ff79d22212fd0f99ad00424f4f1a2dba8388a56317b034da925aaa8cd",
+      "bytes": 1426,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "common/variables.go",
+      "sha256": "8ce23972affbbca0006436a6e35c03d7c05cf26bac41f163e62cbf4b7410ee6f",
+      "bytes": 9877,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "settings/settings.go",
+      "sha256": "787dcf0438cf93a530f9624d3040cf0f302b236f7e857b4ccd4737386a406cab",
+      "bytes": 11019,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "artifactprovider/filesystem.go",
+      "sha256": "c6936f4b7ee10cd7c78255d8b5c2f26c18a88d353f5c5770f6471b335630d1b8",
+      "bytes": 9020,
+      "immutable_git_bytes_equal": true
+    },
+    {
+      "path": "artifactprovider/filesystem_unix.go",
+      "sha256": "b6b7074c1ffa8987c71a8dd062cf3367dcd27a10f0a32d3d06ddb57689e4cdf1",
+      "bytes": 14784,
+      "immutable_git_bytes_equal": true
+    }
+  ],
+  "numeric_exit": 0
+}

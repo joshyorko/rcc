@@ -1,0 +1,50 @@
+{
+  "build_or_benchmark_run": false,
+  "fixture_payload_read_for_this_correction": false,
+  "frozen_input_tuple": [
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "role": "object index",
+      "sha256": "e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+      "size_bytes": 1491800
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+      "role": "offset index",
+      "sha256": "e8dca8fa7d069883441bd8616e49234d338ab5707b3cc05d6b3a5693b2ba99e2",
+      "size_bytes": 525841
+    },
+    {
+      "path": "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/small-objects.concat",
+      "role": "concatenated pack",
+      "sha256": "44d2341ac7cecf8a407e881bd4514e1f4fb6dd59530a4d172049d5c7e40f39a9",
+      "size_bytes": 4484936
+    }
+  ],
+  "go_invoked": false,
+  "limits_unchanged": {
+    "build_seconds": 30,
+    "combined_seconds": 180,
+    "owned_ram_bytes": 1073741824,
+    "per_pass_seconds": 30,
+    "sampled_rss_bytes": 2147483648,
+    "workspace_bytes": 33554432,
+    "workspace_free_floor_bytes": 2688548864
+  },
+  "numeric_results": {
+    "py_compile_exit": 0,
+    "synthetic_tests_exit": 0,
+    "synthetic_tests_passed": 13
+  },
+  "original_provider_tree_write": false,
+  "preserved_v5_sha256": "03aed9b75b9f8f69f91897aec5d60d36bce257ae31964a06f662e4b745179479",
+  "status": "PREPARATION_ONLY_AWAITING_ROOT_ADMISSION",
+  "supervisor_v6_sha256": "058fc5c6918daad888e83e102454aed464c7845896dbf26772631e4d5030fe7a",
+  "synthetic_scope": [
+    "exact frozen input paths accepted",
+    "wrong pack path rejected",
+    "all inherited 12 synthetic supervisor controls pass"
+  ],
+  "test_log_sha256": "b08d52d1cfbf1a5970a085d60b9f4cd66fab3ab0b840b8c18980666cf74bef64",
+  "tests_v6_sha256": "c835c29d8871fb1748c79ea13f091c20c93356031efd5959cda0c3872ea58457"
+}

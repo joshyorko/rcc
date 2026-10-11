@@ -1,0 +1,1526 @@
+import os
+import base64
+import json
+import gzip
+import hashlib
+import ntpath
+import posixpath
+import re
+import shutil
+import shlex
+import stat
+import subprocess
+import sys
+import tempfile
+import zipfile
+from pathlib import Path
+
+from invoke import task
+
+
+MICROMAMBA_MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
+MICROMAMBA_HASH_CHUNK_BYTES = 1024 * 1024
+
+
+def _binary_inventory_targets():
+    return [
+        ("linux", "amd64", "linux64", ""),
+        ("darwin", "amd64", "macos64", ""),
+        ("darwin", "arm64", "macosarm64", ""),
+        ("windows", "amd64", "windows64", ".exe"),
+    ]
+
+
+def _require_linux(task_name):
+    if sys.platform != "linux":
+        raise RuntimeError(f"Linux-only task unsupported on {sys.platform}: {task_name}")
+
+
+def _state_digests(root):
+    """Return exact relative-file digests for one self-host state boundary."""
+    root = Path(root)
+    if not root.exists():
+        return {}
+    state = {}
+    for path in sorted(root.rglob("*")):
+        if path.is_file() and not path.is_symlink():
+            state[str(path.relative_to(root))] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return state
+
+
+def _state_entries(root):
+    """Return every artifact-tree entry and type, including symlinks and empty directories."""
+    root = Path(root)
+    if not root.exists():
+        return {}
+    entries = {}
+    for path in root.rglob("*"):
+        info = path.lstat()
+        relative = str(path.relative_to(root))
+        if stat.S_ISDIR(info.st_mode):
+            entries[relative] = "directory"
+        elif stat.S_ISREG(info.st_mode):
+            entries[relative] = "file"
+        elif stat.S_ISLNK(info.st_mode):
+            entries[relative] = "symlink:" + os.readlink(path)
+        else:
+            entries[relative] = f"special:{info.st_mode}"
+    return entries
+
+
+_MATERIALIZATION_RECORD_FIELDS = {
+    "artifactDigest", "legacyBlueprintKey", "materializationId", "path",
+    "state", "createdAt", "verifiedAt",
+}
+
+
+def _read_regular_artifact_file(path, description):
+    """Read one regular artifact file without following a final-component symlink."""
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(path, flags)
+    except FileNotFoundError:
+        return None
+    except OSError as error:
+        raise RuntimeError(f"{description} is not a regular file: {path}") from error
+    if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+        os.close(descriptor)
+        raise RuntimeError(f"{description} is not a regular file: {path}")
+    with os.fdopen(descriptor, "rb") as stream:
+        return stream.read()
+
+
+def _decode_materialization_record(content, description, expected_state):
+    try:
+        record = json.loads(content)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(f"{description} is invalid JSON") from error
+    if not isinstance(record, dict) or set(record) != _MATERIALIZATION_RECORD_FIELDS:
+        raise RuntimeError(f"{description} has unknown or missing fields")
+    if any(not isinstance(record[field], str) or not record[field] for field in _MATERIALIZATION_RECORD_FIELDS):
+        raise RuntimeError(f"{description} has invalid identity or timestamp fields")
+    if record["state"] != expected_state:
+        raise RuntimeError(f"{description} has unexpected state {record['state']!r}")
+    return record
+
+
+def _capture_archive_rollback_provisional_records(artifact_root, candidate_receipt):
+    """Validate and snapshot this candidate's provisional records before N-1 import."""
+    if not isinstance(candidate_receipt, dict):
+        raise RuntimeError("candidate archive receipt is not an object")
+    artifact_digest = candidate_receipt.get("artifactDigest")
+    materialization_id = candidate_receipt.get("materializationId")
+    materialization_path = candidate_receipt.get("path")
+    if (not isinstance(artifact_digest, str)
+            or re.fullmatch(r"sha256:[0-9a-f]{64}", artifact_digest) is None
+            or not isinstance(materialization_id, str) or not materialization_id
+            or not isinstance(materialization_path, str) or not materialization_path):
+        raise RuntimeError("candidate archive receipt has invalid materialization identity")
+
+    digest_hex = artifact_digest.removeprefix("sha256:")
+    digest_dir = Path(artifact_root) / "materializations" / digest_hex
+    ready_relative = str(Path("materializations") / digest_hex / "ready.json")
+    ready_content = _read_regular_artifact_file(digest_dir / "ready.json", "authoritative ready record")
+    if ready_content is None:
+        raise RuntimeError("authoritative ready record is missing")
+    ready = _decode_materialization_record(ready_content, "authoritative ready record", "ready")
+    if (ready["artifactDigest"] != artifact_digest
+            or ready["materializationId"] != materialization_id
+            or ready["path"] != materialization_path):
+        raise RuntimeError("authoritative ready record differs from candidate receipt")
+
+    references_relative = str(Path("materializations") / digest_hex / "references.json")
+    references_content = _read_regular_artifact_file(digest_dir / "references.json", "authoritative references record")
+    if references_content is None:
+        raise RuntimeError("authoritative references record is missing")
+
+    paths = {}
+    for state in ("verified-content", "materializing"):
+        relative = str(Path("materializations") / digest_hex / f"{state}.json")
+        content = _read_regular_artifact_file(Path(artifact_root) / relative, "provisional materialization record")
+        paths[relative] = content
+        if content is None:
+            continue
+        record = _decode_materialization_record(content, f"provisional {state} record", state)
+        if any(record[field] != ready[field] for field in (
+                "artifactDigest", "legacyBlueprintKey", "materializationId", "path")):
+            raise RuntimeError(f"provisional {state} record differs from candidate and ready identity")
+
+    return {
+        "paths": paths,
+        "ready_path": ready_relative,
+        "ready_content": ready_content,
+        "references_path": references_relative,
+        "references_content": references_content,
+        "entries": _state_entries(artifact_root),
+    }
+
+
+def _validate_archive_rollback_state(before, after, artifact_root, rollback_status,
+                                     provisional_snapshot, mutable_paths=()):
+    """Allow only validated candidate intent-record cleanup during N-1 import."""
+    if rollback_status not in ("imported", "unsupported"):
+        raise RuntimeError(f"unknown N-1 archive rollback state: {rollback_status!r}")
+
+    def content_hash(content):
+        return hashlib.sha256(content).hexdigest()
+
+    ready_path = provisional_snapshot["ready_path"]
+    ready_hash = content_hash(provisional_snapshot["ready_content"])
+    if before.get(ready_path) != ready_hash or after.get(ready_path) != ready_hash:
+        raise RuntimeError("N-1 archive rollback changed authoritative ready state")
+    references_path = provisional_snapshot["references_path"]
+    references_hash = content_hash(provisional_snapshot["references_content"])
+    if before.get(references_path) != references_hash or after.get(references_path) != references_hash:
+        raise RuntimeError("N-1 archive rollback changed authoritative reference state")
+
+    allowed_removed = set()
+    for relative, original_content in provisional_snapshot["paths"].items():
+        original_hash = content_hash(original_content) if original_content is not None else None
+        if before.get(relative) != original_hash:
+            raise RuntimeError(f"pre-import provisional record snapshot differs: {relative}")
+        current_content = _read_regular_artifact_file(
+            Path(artifact_root) / relative, "post-import provisional materialization record"
+        )
+        if original_content is None:
+            if current_content is not None or relative in after:
+                raise RuntimeError(f"N-1 archive rollback added provisional state: {relative}")
+            continue
+        if current_content is None:
+            if rollback_status != "imported":
+                raise RuntimeError(f"unsupported N-1 attempt removed provisional state: {relative}")
+            if relative in after:
+                raise RuntimeError(f"provisional record disappeared after state snapshot: {relative}")
+            allowed_removed.add(relative)
+            continue
+        if current_content != original_content or after.get(relative) != original_hash:
+            raise RuntimeError(f"N-1 archive rollback mutated provisional state: {relative}")
+
+    expected_entries = dict(provisional_snapshot["entries"])
+    actual_entries = _state_entries(artifact_root)
+    for relative in allowed_removed:
+        expected_entries.pop(relative, None)
+    if expected_entries != actual_entries:
+        raise RuntimeError("N-1 archive rollback changed artifact entries outside candidate provisional cleanup")
+
+    ignored = set(mutable_paths) | allowed_removed
+    before_stable = {key: value for key, value in before.items() if key not in ignored}
+    after_stable = {key: value for key, value in after.items() if key not in ignored}
+    if before_stable != after_stable:
+        raise RuntimeError("N-1 archive rollback changed artifact content or materialization state")
+
+
+def _exact_commit_sha():
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    if len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
+        raise RuntimeError(f"git returned a non-exact commit SHA: {commit!r}")
+    return commit
+
+
+def _assert_clean_tracked_workspace(root="."):
+    """Fail before compilation if generated prerequisites changed tracked source."""
+    root = Path(root)
+    status = subprocess.check_output(
+        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"], text=True
+    )
+    if status.strip():
+        raise RuntimeError(f"tracked source tree is not clean before Go build:\n{status.rstrip()}")
+
+
+def _assert_clean_source_if_required(root="."):
+    """Enforce the clean-source contract only in release CI builds."""
+    if os.environ.get("RCC_REQUIRE_CLEAN_SOURCE") == "1":
+        _assert_clean_tracked_workspace(root)
+
+
+_PROMOTION_RECEIPT_FILES = (
+    "native-runtime-receipt.json",
+    "self-host-v1.json",
+    "large-stream-receipt.json",
+    "coordination-blackbox-v1.json",
+)
+
+
+def _validate_receipt_commit(payload, candidate):
+    if not isinstance(payload, dict) or "commitSha" not in payload:
+        raise ValueError("promotion receipt is missing commitSha")
+    commit = payload["commitSha"]
+    if not isinstance(commit, str) or re.fullmatch(r"[0-9a-f]{40}", commit) is None:
+        raise ValueError(f"promotion receipt has malformed commitSha: {commit!r}")
+    if commit != candidate:
+        raise ValueError(f"promotion receipt commitSha differs: {commit} != {candidate}")
+    return commit
+
+
+def _validate_promotion_receipts(root, candidate):
+    root = Path(root)
+    for name in _PROMOTION_RECEIPT_FILES:
+        path = root / name
+        try:
+            payload = json.loads(path.read_text())
+            _validate_receipt_commit(payload, candidate)
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            raise ValueError(f"{name}: {error}") from error
+
+
+def _write_json_atomic(path, payload):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent,
+        prefix=f".{path.name}.", delete=False,
+    )
+    temporary = Path(handle.name)
+    try:
+        with handle:
+            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return path
+
+
+def _legacy_closure_state(home, archive):
+    """Hash only the v12 catalog and exact legacy objects named by an archive."""
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        object_index = json.loads(carrier.read("rcc-environment/object-index.json"))
+    hololib = Path(home) / "hololib"
+    paths = {
+        "catalog": hololib / "catalog" / manifest["catalogs"][0]["legacyName"],
+    }
+    for entry in object_index["entries"]:
+        legacy_id = entry["legacyObjectId"]
+        paths[f"object:{legacy_id}"] = hololib / "library" / legacy_id[:2] / legacy_id[2:4] / legacy_id[4:6] / legacy_id
+    state = {}
+    for label, path in sorted(paths.items()):
+        if not path.is_file() or path.is_symlink():
+            raise RuntimeError(f"legacy v12 closure member is missing: {path}")
+        content = path.read_bytes()
+        state[label] = {"path": str(path), "size": len(content), "sha256": hashlib.sha256(content).hexdigest()}
+    return state
+
+
+def _validate_rebased_legacy_closure(before, after, home):
+    """Require immutable v12 objects and a consumer-local derived catalog."""
+    before_objects = {key: value for key, value in before.items() if key.startswith("object:")}
+    after_objects = {key: value for key, value in after.items() if key.startswith("object:")}
+    if after_objects != before_objects:
+        raise RuntimeError("candidate archive upgrade changed legacy v12 object bytes")
+    catalog_path = Path(after["catalog"]["path"])
+    try:
+        catalog = json.loads(gzip.decompress(catalog_path.read_bytes()))
+    except (OSError, ValueError, KeyError) as error:
+        raise RuntimeError(f"candidate legacy catalog is unreadable: {error}") from error
+    expected_base = (Path(home) / "holotree").resolve()
+    catalog_root = Path(catalog.get("path", "")).resolve()
+    if catalog_root.parent != expected_base or catalog_root.name != catalog.get("identity"):
+        raise RuntimeError(
+            f"candidate legacy catalog is not rooted in consumer home: {catalog_root} != {expected_base}"
+        )
+    return catalog
+
+
+def _archive_legacy_blueprint(archive):
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        digest = manifest["legacyBlueprint"]["digest"].split(":", 1)[1]
+        return carrier.read(f"rcc-environment/legacy-blueprints/{digest}")
+
+
+def _install_archive_legacy_closure(home, archive):
+    home = Path(home)
+    with zipfile.ZipFile(archive) as carrier:
+        manifest = json.loads(carrier.read("rcc-environment/manifest.json"))
+        object_index = json.loads(carrier.read("rcc-environment/object-index.json"))
+        catalog = manifest["catalogs"][0]
+        catalog_digest = catalog["digest"].split(":", 1)[1]
+        catalog_bytes = carrier.read(f"rcc-environment/catalogs/{catalog_digest}")
+        if hashlib.sha256(catalog_bytes).hexdigest() != catalog_digest:
+            raise RuntimeError("archive catalog digest mismatch")
+        catalog_path = home / "hololib" / "catalog" / catalog["legacyName"]
+        catalog_path.parent.mkdir(parents=True, exist_ok=True)
+        catalog_path.write_bytes(catalog_bytes)
+        for entry in object_index["entries"]:
+            stored_digest = entry["storedDigest"].split(":", 1)[1]
+            content = carrier.read(f"rcc-environment/objects/{stored_digest}")
+            if len(content) != entry["storedSize"] or hashlib.sha256(content).hexdigest() != stored_digest:
+                raise RuntimeError(f"archive object verification failed: {stored_digest}")
+            legacy_id = entry["legacyObjectId"]
+            path = home / "hololib" / "library" / legacy_id[:2] / legacy_id[2:4] / legacy_id[4:6] / legacy_id
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+
+
+def _write_self_host_receipt(root, *, released_binary, candidate_binary, home_a, home_b, commands,
+                             binary_metadata=None, evidence_paths=None):
+    if not binary_metadata or not evidence_paths:
+        raise ValueError("self-host receipt requires binary metadata and evidence paths")
+    required_generations = {"released", "generationA", "candidate", "generationB"}
+    missing_generations = sorted(required_generations - binary_metadata.keys())
+    if missing_generations:
+        raise ValueError(f"self-host receipt missing binary metadata: {missing_generations}")
+    missing = [str(path) for path in evidence_paths if not Path(path).exists()]
+    if missing:
+        raise ValueError(f"self-host evidence paths do not exist: {missing}")
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    receipt = _write_json_atomic(root / "self-host-v1.json", {
+        "schemaVersion": 1,
+        "commitSha": _exact_commit_sha(),
+        "releasedBinary": str(released_binary),
+        "candidateBinary": str(candidate_binary),
+        "homes": {"a": str(home_a), "b": str(home_b)},
+        "commands": commands,
+        "binaries": binary_metadata,
+        "evidencePaths": [str(path) for path in evidence_paths],
+    })
+    return receipt
+
+
+def _self_host_command_plan(released, candidate, fixture):
+    conda = Path(fixture).with_name("conda.yaml")
+    return [
+        {"step": "released-build", "argv": [released, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostBuild"]},
+        {"step": "candidate-probe", "argv": [candidate, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostProbe"]},
+        {"step": "candidate-build", "argv": [candidate, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostBuild"]},
+        {"step": "released-probe", "argv": [released, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", "selfHostProbe"]},
+        {"step": "released-v12", "argv": [released, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]},
+        {"step": "candidate-v12", "argv": [candidate, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]},
+    ]
+
+
+def _binary_metadata(path):
+    path = Path(path).resolve()
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    output = subprocess.check_output([str(path), "--version"], text=True, stderr=subprocess.STDOUT).strip()
+    return {"path": str(path), "sha256": digest, "version": output}
+
+
+def _promote_self_host_generation(source, candidate):
+    source, candidate = Path(source).resolve(), Path(candidate).resolve()
+    if not source.is_file():
+        raise RuntimeError(f"generation-A RCC output is missing: {source}")
+    candidate.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, candidate)
+    source_digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    candidate_digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
+    if source_digest != candidate_digest:
+        raise RuntimeError("candidate RCC differs from released generation-A output")
+    return {"source": str(source), "candidate": str(candidate),
+            "sourceSha256": source_digest, "candidateSha256": candidate_digest}
+
+
+def _write_release_candidate_receipt(root, *, source, commands, gates=None):
+    """Write a stable, machine-readable receipt for one release-candidate run."""
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    source = Path(source).resolve()
+    source_record = {"path": str(source)}
+    if source.is_file():
+        source_record["sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
+    receipt = _write_json_atomic(root / "release-candidate-v1.json", {
+        "schemaVersion": 1,
+        "commitSha": _exact_commit_sha(),
+        "source": source_record,
+        "commands": list(commands),
+        "gates": dict(gates or {}),
+    })
+    return receipt
+
+
+def _run_checked(argv, env=None):
+    subprocess.run([str(part) for part in argv], check=True, env=env)
+
+
+def _invoke_command(task_name):
+    executable = subprocess.list2cmdline([sys.executable]) if sys.platform == "win32" else shlex.quote(sys.executable)
+    return f"{executable} -m invoke {task_name}"
+
+
+def _contained_go_env():
+    return {"CGO_ENABLED": "0", "GOARCH": "amd64"}
+
+
+def _contained_race_env():
+    if shutil.which("gcc") is None:
+        raise RuntimeError("artifactRace requires gcc available on PATH")
+    return {"CGO_ENABLED": "1", "GOARCH": "amd64", "CC": "gcc"}
+
+
+def _new_self_host_homes():
+    root = Path(os.environ.get("RCC_SELF_HOST_ROOT", Path.cwd().resolve().parent)).resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    parent = Path(tempfile.mkdtemp(dir=str(root), prefix=".rcc-self-host-homes-"))
+    home_a, home_b = parent / "home-a", parent / "home-b"
+    home_a.mkdir()
+    home_b.mkdir()
+    return home_a, home_b
+
+
+def _artifact_race_packages():
+    return ["./common", "./environmentartifact", "./artifactprovider", "./environmentlifecycle", "./htfs", "./cmd"]
+
+
+def _known_go_vet_findings():
+    return [
+        "htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)",
+        "htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used",
+        "operations/tlscheck.go:247:11: the cancel function returned by context.WithTimeout should be called, not discarded, to avoid a context leak",
+        "operations/pull.go:67:2: unreachable code",
+    ]
+
+
+def _validate_go_vet_result(returncode, output):
+    findings = [line.strip() for line in output.splitlines() if line.strip()]
+    if returncode == 0 and not findings:
+        return
+    if sorted(findings) != sorted(_known_go_vet_findings()):
+        raise RuntimeError(f"unexpected go vet findings: {findings}")
+
+# Determine OS-specific commands
+if sys.platform == "win32":
+    PYTHON = "python"
+    LS = "dir"
+    WHICH = "where"
+else:
+    PYTHON = "python3"
+    LS = "ls -l"
+    WHICH = "which -a"
+
+
+@task
+def what(c):
+    """Show latest HEAD with stats"""
+    c.run("go version")
+    c.run("git --no-pager log -2 --stat HEAD")
+
+
+@task
+def tooling(c):
+    """Display tooling information"""
+    print(f"PATH is {os.environ['PATH']}")
+    print(f"GOPATH is {os.environ.get('GOPATH', 'Not set')}")
+    print(f"GOROOT is {os.environ.get('GOROOT', 'Not set')}")
+    print("git info:")
+    c.run(f"{WHICH} git || echo NA")
+
+
+@task
+def noassets(c):
+    """Remove asset files"""
+    import glob
+
+    patterns = [
+        "blobs/assets/micromamba.*",
+        "blobs/assets/*.zip",
+        "blobs/assets/*.yaml",
+        "blobs/assets/*.py",
+        "blobs/assets/man/*.txt",
+        "blobs/docs/*.md",
+    ]
+    for pattern in patterns:
+        for file_path in glob.glob(pattern, recursive=True):
+            try:
+                os.remove(file_path)
+                print(f"Removed: {file_path}")
+            except OSError as e:
+                print(f"Error removing {file_path}: {e}")
+
+
+def get_official_micromamba_url(version, platform):
+    """
+    Get the official micromamba download URL from micro.mamba.pm (conda-forge).
+
+    This uses the official mamba-org distribution instead of Robocorp's mirror.
+    The binaries are identical (verified by SHA256), but using the official source
+    eliminates dependency on Robocorp's CDN for this open-source fork.
+    """
+    # Map our platform names to conda-forge platform names
+    platform_map = {
+        "linux64": "linux-64",
+        "macos64": "osx-64",
+        "macosarm64": "osx-arm64",
+        "windows64": "win-64",
+    }
+    conda_platform = platform_map.get(platform)
+    if not conda_platform:
+        raise ValueError(f"Unknown platform: {platform}")
+
+    # Strip 'v' prefix if present - official API uses bare version numbers (e.g., "1.5.8" not "v1.5.8")
+    if version.startswith("v"):
+        version = version[1:]
+
+    # Allow override via environment variable for custom mirrors
+    base = os.environ.get("RCC_MICROMAMBA_BASE", "https://micro.mamba.pm/api/micromamba")
+    base = base.rstrip("/")
+    return f"{base}/{conda_platform}/{version}"
+
+
+def _get_official_micromamba_fallback(version, platform):
+    """Return the immutable official release archive and its GitHub-reported digest."""
+    version = version.removeprefix("v")
+    release = "2.5.0-2"
+    assets = {
+        "linux64": (
+            "micromamba-linux-64.tar.bz2",
+            "cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6",
+        ),
+        "macos64": (
+            "micromamba-osx-64.tar.bz2",
+            "2d6ab968ba08c003e43642f55afded1f0fc4247387f04e340cdc6a0129d9c550",
+        ),
+        "macosarm64": (
+            "micromamba-osx-arm64.tar.bz2",
+            "74d1f250b1505cd4d78728bd8b0b7f0ffbaa660b18042f15f7b610c16102d201",
+        ),
+        "windows64": (
+            "micromamba-win-64.tar.bz2",
+            "8a53345b37016e4303d3ecf243ff620380971dbe24d71ea849ec1d6957d15883",
+        ),
+    }
+    if version != "2.5.0" or platform not in assets:
+        raise ValueError(
+            f"no integrity-bound micromamba fallback for version {version!r}, platform {platform!r}"
+        )
+    filename, digest = assets[platform]
+    url = (
+        "https://github.com/mamba-org/micromamba-releases/releases/download/"
+        f"{release}/{filename}"
+    )
+    return url, digest
+
+
+def _sha256_file(path, maximum_bytes):
+    """Hash a bounded file with fixed-size reads."""
+    size = path.stat().st_size
+    if size > maximum_bytes:
+        raise ValueError(f"archive size {size} exceeds maximum {maximum_bytes}")
+    digest = hashlib.sha256()
+    counted = 0
+    with path.open("rb") as stream:
+        while True:
+            chunk = stream.read(MICROMAMBA_HASH_CHUNK_BYTES)
+            if not chunk:
+                break
+            counted += len(chunk)
+            if counted > maximum_bytes:
+                raise ValueError(f"archive size {counted} exceeds maximum {maximum_bytes}")
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _validate_micromamba_archive_members(tar, expected_member):
+    """Allow only safe directories/files and require one exact executable member."""
+    expected = []
+    for member in tar.getmembers():
+        portable_name = member.name.replace("\\", "/")
+        normalized = posixpath.normpath(portable_name)
+        drive, _ = ntpath.splitdrive(portable_name)
+        if drive:
+            raise ValueError(f"Unsafe archive drive-relative path: {member.name}")
+        if portable_name.startswith("/") or ntpath.isabs(portable_name):
+            raise ValueError(f"Unsafe archive absolute path: {member.name}")
+        if normalized == ".." or normalized.startswith("../"):
+            raise ValueError(f"Unsafe archive path traversal: {member.name}")
+        if not (member.isdir() or member.isreg()):
+            raise ValueError(f"Unsafe archive member type: {member.name}")
+        if member.name == expected_member:
+            expected.append(member)
+
+    if len(expected) != 1 or not expected[0].isreg():
+        raise ValueError(
+            f"archive expected executable member is missing or non-regular: {expected_member}"
+        )
+
+
+def _download_micromamba_archive(
+        url, destination, *, expected_sha256, fallback_url=None,
+        run=None, sleep=None, attempts=3):
+    """Download and validate a micromamba bzip2 tar archive with bounded retries."""
+    import tarfile
+    import time
+
+    run = run or subprocess.run
+    sleep = sleep or time.sleep
+    destination = Path(destination)
+    failures = []
+
+    for source_url in (url, fallback_url):
+        if source_url is None:
+            continue
+        last_error = "unknown download error"
+        for attempt in range(1, attempts + 1):
+            result = run(
+                ["curl", "--fail", "--silent", "--show-error", "--location",
+                 source_url, "--max-filesize", str(MICROMAMBA_MAX_ARCHIVE_BYTES),
+                 "-o", str(destination)],
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode:
+                last_error = (result.stderr or f"curl exited with status {result.returncode}").strip()
+            else:
+                try:
+                    actual_sha256 = _sha256_file(destination, MICROMAMBA_MAX_ARCHIVE_BYTES)
+                except (OSError, ValueError) as error:
+                    last_error = f"{error} for {source_url}"
+                else:
+                    if actual_sha256 != expected_sha256:
+                        last_error = (
+                            f"SHA-256 mismatch: expected {expected_sha256}, got {actual_sha256}"
+                        )
+                    else:
+                        try:
+                            with tarfile.open(destination, "r:bz2") as archive:
+                                archive.getmembers()
+                            return destination
+                        except (OSError, tarfile.TarError):
+                            last_error = "downloaded payload is not a valid bzip2 tar archive"
+
+            if attempt < attempts:
+                sleep(10 * attempt)
+        failures.append(f"{source_url}: {last_error}")
+
+    raise RuntimeError(
+        f"micromamba download failed after {attempts} attempts per source: "
+        + "; ".join(failures)
+    )
+
+
+@task
+def micromamba(c):
+    """Download micromamba files from official conda-forge source"""
+    import gzip
+    import tempfile
+    import tarfile
+
+    with open("assets/micromamba_version.txt", "r", encoding="utf-8") as f:
+        version = f.read().strip()
+    print(f"Using micromamba version {version}")
+
+    platforms = {
+        "linux64": "linux_amd64",
+        "macos64": "darwin_amd64",
+        "macosarm64": "darwin_arm64",
+        "windows64": "windows_amd64",
+    }
+
+    for platform, arch in platforms.items():
+        output = f"blobs/assets/micromamba.{arch}"
+        output_gz = output + ".gz"
+        if os.path.exists(output_gz):
+            print(f"Asset {output_gz} already exists, skipping")
+            continue
+
+        url = get_official_micromamba_url(version, platform)
+        fallback_url, expected_sha256 = _get_official_micromamba_fallback(version, platform)
+        print(f"Downloading from official source: {url}")
+
+        # Create unique extraction directory
+        extract_dir = tempfile.mkdtemp(prefix="rcc_micromamba_extract_")
+
+        # Download the archive
+        archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
+        _download_micromamba_archive(
+            url, archive_path,
+            expected_sha256=expected_sha256,
+            fallback_url=fallback_url,
+        )
+
+        # Extract the binary from the archive
+        # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
+        with tarfile.open(archive_path, "r:bz2") as tar:
+            expected_member = (
+                "Library/bin/micromamba.exe" if platform == "windows64" else "bin/micromamba"
+            )
+            _validate_micromamba_archive_members(tar, expected_member)
+            tar.extractall(path=extract_dir)
+
+        # Find and move the binary
+        if platform == "windows64":
+            # Windows archive has binary at Library/bin/micromamba.exe
+            src_binary = os.path.join(extract_dir, "Library", "bin", "micromamba.exe")
+        else:
+            # Unix archives have binary at bin/micromamba
+            src_binary = os.path.join(extract_dir, "bin", "micromamba")
+
+        shutil.move(src_binary, output)
+
+        # Compress using Python's gzip module (cross-platform)
+        print(f"Compressing {output}")
+        with open(output, "rb") as f_in:
+            with gzip.open(output_gz, "wb", compresslevel=9) as f_out:
+                shutil.copyfileobj(f_in, f_out)
+        os.remove(output)
+
+        # Cleanup
+        shutil.rmtree(extract_dir, ignore_errors=True)
+
+
+@task(pre=[micromamba])
+def assets(c):
+    """Prepare asset files"""
+    import glob
+    from zipfile import ZIP_DEFLATED, ZipFile
+
+    # Process template directories
+    for directory in glob.glob("templates/*/"):
+        basename = os.path.basename(os.path.dirname(directory))
+        assetname = os.path.abspath(f"blobs/assets/{basename}.zip")
+
+        if os.path.exists(assetname):
+            print(f"Asset {assetname} already exists, skipping")
+            continue
+
+        print(f"Directory {directory} => {assetname}")
+
+        with ZipFile(assetname, "w", ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(directory):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, directory)
+                    zipf.write(file_path, arcname)
+
+    # Copy asset files
+    asset_patterns = ["assets/*.txt", "assets/*.yaml", "assets/*.py"]
+    for pattern in asset_patterns:
+        for file in glob.glob(pattern):
+            print(f"Copying {file} to blobs/assets/")
+            shutil.copy(file, "blobs/assets/")
+
+    # Copy man pages
+    os.makedirs("blobs/assets/man", exist_ok=True)
+    for file in glob.glob("assets/man/*.txt"):
+        print(f"Copying {file} to blobs/assets/man/")
+        shutil.copy(file, "blobs/assets/man/")
+
+    # Copy docs
+    os.makedirs("blobs/docs", exist_ok=True)
+    for file in glob.glob("docs/*.md"):
+        print(f"Copying {file} to blobs/docs/")
+        shutil.copy(file, "blobs/docs/")
+
+
+@task(pre=[noassets])
+def clean(c):
+    """Remove build directory"""
+    shutil.rmtree("build", ignore_errors=True)
+    print("Removed build directory")
+
+
+@task
+def toc(c):
+    """Update table of contents on docs/ directory"""
+    c.run(f"{PYTHON} scripts/toc.py")
+    print("Ran scripts/toc.py")
+
+@task
+def deadcode(c):
+    """Report Go functions unreachable in this build configuration"""
+    c.run(f"{PYTHON} scripts/deadcode.py")
+
+
+@task
+def format(c):
+    """Format tracked Go files"""
+    output = subprocess.check_output(["git", "ls-files", "-z", "--", "*.go"])
+    files = [path for path in output.decode().split("\0") if path]
+    subprocess.run(["gofmt", "-w", *files], check=True)
+
+
+@task
+def lint(c):
+    """Lint changed Go code"""
+    c.run("golangci-lint run --new", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintAll(c):
+    """Report all Go lint findings"""
+    c.run("golangci-lint run", env={"CGO_ENABLED": "0"})
+
+
+@task
+def lintFix(c):
+    """Apply supported lint fixes to changed Go code"""
+    c.run("golangci-lint run --new --fix", env={"CGO_ENABLED": "0"})
+
+
+@task
+def agentdocs(c):
+    """Run tests and structural validation for repository-local agent guidance"""
+    c.run(f"{PYTHON} -m unittest scripts/test_validate_agent_docs.py")
+    c.run(f"{PYTHON} scripts/validate_agent_docs.py")
+
+
+@task(pre=[toc])
+def support(c):
+    """Create necessary directories"""
+    for dir in ["tmp", "build/linux64", "build/macos64", "build/macosarm64", "build/windows64"]:
+        os.makedirs(dir, exist_ok=True)
+
+
+@task(pre=[support, assets])
+def test(c, cover=False):
+    """Run tests"""
+    os.environ["GOARCH"] = "amd64"
+    os.environ["CGO_ENABLED"] = "0"
+    if cover:
+        c.run("go test -cover -coverprofile=tmp/cover.out ./...")
+        c.run("go tool cover -func=tmp/cover.out")
+    else:
+        c.run("go test ./...")
+
+
+@task
+def artifactFocused(c):
+    """Run the focused Environment Artifacts v1 package tests."""
+    c.run("go test -count=1 ./artifacttrust ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
+    c.run(f"{PYTHON} -m unittest scripts/test_environment_artifact_tasks.py scripts/test_validate_release_topology.py")
+
+
+@task
+def artifactRace(c):
+    """Run focused package tests with the race detector on Linux."""
+    _require_linux("artifactRace")
+    c.run(f"go test -race -count=1 {' '.join(_artifact_race_packages())}", env=_contained_race_env())
+
+
+@task
+def goVet(c):
+    """Run go vet and reject any finding outside the documented legacy baseline."""
+    env = os.environ.copy()
+    env.update(_contained_go_env())
+    result = subprocess.run(["go", "vet", "./..."], env=env, text=True, capture_output=True)
+    output = result.stdout + result.stderr
+    if output:
+        print(output, end="", file=sys.stderr)
+    _validate_go_vet_result(result.returncode, output)
+    if result.returncode:
+        print("go vet reported only the documented unchanged baseline")
+
+
+@task
+def artifactVertical(c):
+    """Run the real RCC A/B vertical lifecycle test."""
+    _require_linux("artifactVertical")
+    local(c, do_test=False)
+    env = _contained_go_env()
+    env.update({
+        "RCC_REAL_ARTIFACT_TEST": "1",
+        "RCC_SOURCE_SHA": _exact_commit_sha(),
+        "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
+        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "native-runtime-receipt.json").resolve()),
+    })
+    if os.environ.get("RCC_N1_ARCHIVE"):
+        env["RCC_N1_ARCHIVE_OUTPUT"] = str(Path(os.environ["RCC_N1_ARCHIVE"]).resolve())
+    c.run("go test -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$'", env=env)
+
+
+@task
+def artifactConsumerVertical(c):
+    """Run the real Linux JAT-class portable consumer lifecycle test."""
+    _require_linux("artifactConsumerVertical")
+    local(c, do_test=False)
+    env = _contained_go_env()
+    env.update({
+        "RCC_REAL_JAT_CLASS_TEST": "1",
+        "RCC_SOURCE_SHA": _exact_commit_sha(),
+        "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
+        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "jat-class-consumer-receipt.json").resolve()),
+    })
+    c.run("go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$'", env=env)
+
+
+@task
+def artifactRobot(c):
+    """Build and run only the Environment Artifacts robot acceptance suite."""
+    _require_linux("artifactRobot")
+    local(c, do_test=False)
+    os.makedirs("tmp/environment-artifacts-robot", exist_ok=True)
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/environment-artifacts-robot robot_tests/environment_artifacts.robot")
+
+
+@task
+def binaryInventory(c):
+    """Build the release matrix and validate its exact binary topology."""
+    build(c)
+    expected = []
+    for _, _, directory, extension in _binary_inventory_targets():
+        expected.append(Path("build") / directory / f"rcc{extension}")
+        expected.append(Path("build") / directory / f"rccremote{extension}")
+    actual = sorted(path for path in Path("build").glob("*/rcc*") if path.is_file())
+    if sorted(expected) != actual:
+        raise RuntimeError(f"binary inventory mismatch: expected {sorted(expected)}, found {actual}")
+    c.run(f"{PYTHON} scripts/validate_release_topology.py --build-root build --workflow .github/workflows/rcc.yaml")
+
+
+@task
+def selfHostBuild(c):
+    """Build RCC and RCC remote in an isolated self-host generation."""
+    generation = os.environ.get("RCC_SELF_HOST_GENERATION", "current")
+    output = Path("build") / "self-host" / generation
+    output.mkdir(parents=True, exist_ok=True)
+    c.run("go test ./...", env=_contained_go_env())
+    c.run(f"go build -o {output / 'rcc'} ./cmd/rcc", env=_contained_go_env())
+    c.run(f"go build -o {output / 'rccremote'} ./cmd/rccremote", env=_contained_go_env())
+
+
+@task
+def selfHostProbe(c):
+    """Prove the candidate toolkit can resolve and compile without host mutation."""
+    c.run("go test ./environmentartifact ./artifactprovider ./environmentlifecycle ./htfs ./cmd/...", env=_contained_go_env())
+
+
+def _validate_archive_rollback(attempt, expected_receipt):
+    """Accept matching archive imports or the precise pre-feature CLI rejection."""
+    old_error = (attempt.stdout + "\n" + attempt.stderr).lower()
+    if attempt.returncode != 0:
+        unsupported = (
+            ("unknown flag" in old_error and "archive" in old_error)
+            or ("unknown command" in old_error and ('"env"' in old_error or "archive" in old_error))
+        )
+        if unsupported:
+            return "unsupported"
+        raise RuntimeError(f"released N-1 archive rollback failed (exit {attempt.returncode}); see released-archive-rollback-attempt.json")
+    try:
+        receipt = json.loads(attempt.stdout)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError("released N-1 archive rollback returned invalid JSON") from error
+    for key in ("artifactDigest", "materializationId"):
+        if not isinstance(receipt, dict) or not expected_receipt.get(key) or receipt.get(key) != expected_receipt[key]:
+            raise RuntimeError(f"released N-1 archive rollback {key} differs from candidate")
+    return "imported"
+
+
+@task
+def selfHost(c):
+    """Exercise released-to-candidate and candidate-to-released self-hosting."""
+    _require_linux("selfHost")
+    released = os.environ.get("RCC_N1_BINARY") or os.environ.get("RCC_SELF_HOST_RELEASED_BINARY") or shutil.which("rcc")
+    if not released:
+        raise RuntimeError("RCC_SELF_HOST_RELEASED_BINARY or PATH rcc is required")
+    released = str(Path(released).resolve())
+    released_info = _binary_metadata(released)
+    expected_version = os.environ.get("RCC_SELF_HOST_EXPECTED_VERSION", "v18.18.1")
+    if expected_version not in released_info["version"]:
+        raise RuntimeError(f"released RCC must be {expected_version}: {released_info['version']}")
+    root = (Path("tmp") / f"rcc-self-host-{os.getpid()}").resolve()
+    root.mkdir(parents=True, exist_ok=False)
+    home_a, home_b = _new_self_host_homes()
+    candidate = Path("build/self-host/candidate/rcc").resolve()
+    commands = []
+    fixture = root / "robot.yaml"
+    fixture.write_text(
+        "tasks:\n  proof:\n    command: [python, -c, \"print('n1-old-task-ok')\"]\n"
+        "condaConfigFile: conda.yaml\nartifactsDir: output\n"
+    )
+    n1_archive = os.environ.get("RCC_N1_ARCHIVE")
+    conda = root / "conda.yaml"
+    if n1_archive:
+        conda.write_bytes(_archive_legacy_blueprint(Path(n1_archive).resolve()))
+    else:
+        conda.write_text("channels:\n  - conda-forge\ndependencies:\n  - python=3.10\n")
+
+    def invoke(binary, home, step, generation=None):
+        env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
+        if generation: env["RCC_SELF_HOST_GENERATION"] = generation
+        argv = [binary, "run", "-r", "developer/toolkit.yaml", "--dev", "-t", step]
+        _run_checked(argv, env)
+        commands.append({"step": step, "argv": argv, "env": {"ROBOCORP_HOME": str(home)}})
+
+    invoke(released, home_a, "selfHostBuild", "released")
+    generation_a = Path("build/self-host/released/rcc")
+    promotion = _promote_self_host_generation(generation_a, Path("build") / "self-host" / "promoted" / "rcc")
+    candidate = Path(promotion["candidate"])
+    candidate_info = _binary_metadata(candidate)
+    invoke(str(candidate), home_a, "selfHostProbe")
+    invoke(str(candidate), home_b, "selfHostBuild", "candidate")
+    generation_b = Path("build/self-host/candidate/rcc").resolve()
+    generation_b_remote = Path("build/self-host/candidate/rccremote").resolve()
+    generation_b_info = _binary_metadata(generation_b)
+    invoke(str(generation_b), home_b, "selfHostProbe")
+    (home_b / "artifacts" / "v1").mkdir(parents=True, exist_ok=True)
+    (home_b / "artifacts" / "v1" / "metadata.json").write_text('{"schemaVersion":1}\n')
+    invoke(released, home_b, "selfHostProbe")
+    v12_evidence = []
+    artifact_evidence = []
+    def v12(binary, home, label):
+        env = os.environ.copy(); env["ROBOCORP_HOME"] = str(home)
+        argv = [binary, "holotree", "variables", str(conda), "--robot", str(fixture), "--json"]
+        completed = subprocess.run([str(part) for part in argv], check=True, env=env,
+                                   capture_output=True, text=True)
+        variables = json.loads(completed.stdout)
+        keys = {entry.get("key") for entry in variables if isinstance(entry, dict)}
+        if not {"RCC_INSTALLATION_ID", "RCC_HOLOTREE_SPACE_ROOT"}.issubset(keys):
+            raise RuntimeError(f"{label} did not return the required v12 identity variables")
+        evidence_path = root / f"{label}.json"
+        evidence_path.write_text(json.dumps(variables, indent=2, sort_keys=True) + "\n")
+        v12_evidence.append(evidence_path)
+        commands.append({"step": label, "argv": argv, "env": {"ROBOCORP_HOME": str(home)},
+                         "evidencePath": str(evidence_path)})
+    v12(released, home_a, "released-v12")
+    v12(str(generation_b), home_a, "candidate-v12")
+    v12(released, home_b, "released-v12-compatibility")
+    if os.environ.get("RCC_N1_BINARY") and not n1_archive:
+        raise RuntimeError("RCC_N1_ARCHIVE is required when RCC_N1_BINARY is supplied")
+    if n1_archive:
+        archive = Path(n1_archive).resolve()
+        if not archive.is_file():
+            raise RuntimeError(f"RCC_N1_ARCHIVE is not a file: {archive}")
+        _install_archive_legacy_closure(home_a, archive)
+        v12(released, home_a, "released-v12-archive-closure")
+        legacy_before = _legacy_closure_state(home_a, archive)
+        artifact_before = _state_digests(home_a / "artifacts" / "v1")
+        archive_digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        archive_hash_path = root / "n1-archive-sha256.txt"
+        archive_hash_path.write_text(archive_digest + "\n")
+        artifact_evidence.append(archive_hash_path)
+        # N-1 acceptance is deliberately one home: the released binary first
+        # creates the v12 closure, the candidate imports the archive, and the
+        # old binary then consumes that same home through its legacy command.
+        candidate_env = os.environ.copy(); candidate_env["ROBOCORP_HOME"] = str(home_a)
+        trust_root = home_a / "artifacts" / "v1" / "trust"
+        candidate_command = [str(generation_b), "env", "acquire", "--archive", str(archive),
+                             "--trust-carrier", str(trust_root), "--trust-carrier-type", "filesystem",
+                             "--permissive-local", "--json"]
+        candidate_result = subprocess.run(
+            candidate_command, check=True, env=candidate_env, capture_output=True, text=True
+        )
+        candidate_receipt = json.loads(candidate_result.stdout)
+        artifact_digest = candidate_receipt.get("artifactDigest")
+        if not artifact_digest or not candidate_receipt.get("materializationId"):
+            raise RuntimeError(f"candidate archive receipt lacks artifact identity: {candidate_receipt}")
+        candidate_path = root / "candidate-archive-upgrade.json"
+        candidate_path.write_text(candidate_result.stdout); artifact_evidence.append(candidate_path)
+        commands.append({"step": "candidate-archive-upgrade", "argv": candidate_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(candidate_path)})
+        legacy_after_upgrade = _legacy_closure_state(home_a, archive)
+        artifact_after_upgrade = _state_digests(home_a / "artifacts" / "v1")
+        artifact_root = home_a / "artifacts" / "v1"
+        rollback_provisional = _capture_archive_rollback_provisional_records(
+            artifact_root, candidate_receipt
+        )
+        _validate_rebased_legacy_closure(legacy_before, legacy_after_upgrade, home_a)
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
+            raise RuntimeError("candidate archive upgrade changed canonical archive bytes")
+        # Use the same explicit local fixture trust policy for both versions.
+        old_command = [released, *candidate_command[1:]]
+        verification_name = artifact_digest.replace(":", "_")
+        audit_paths = ("content/.audit", f"verification/{verification_name}.history.jsonl")
+        audit_before = {name: (artifact_root / name).read_bytes() for name in audit_paths}
+        old_attempt = subprocess.run(old_command, env=candidate_env, capture_output=True, text=True)
+        old_attempt_path = root / "released-archive-rollback-attempt.json"
+        old_attempt_path.write_text(json.dumps({
+            "argv": old_command,
+            "returncode": old_attempt.returncode,
+            "stdout": old_attempt.stdout,
+            "stderr": old_attempt.stderr,
+        }, indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(old_attempt_path)
+        commands.append({"step": "released-archive-rollback-attempt", "argv": old_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(old_attempt_path)})
+        archive_rollback = _validate_archive_rollback(old_attempt, candidate_receipt)
+        artifact_after_archive = _state_digests(artifact_root)
+        # Supported import appends audit history, refreshes its verification receipt,
+        # and reconciles only this candidate's two validated provisional records.
+        refreshed = {*audit_paths, f"verification/{verification_name}.json"} if archive_rollback == "imported" else set()
+        _validate_archive_rollback_state(
+            artifact_after_upgrade, artifact_after_archive, artifact_root,
+            archive_rollback, rollback_provisional, refreshed,
+        )
+        for name, original in audit_before.items():
+            if not (artifact_root / name).read_bytes().startswith(original):
+                raise RuntimeError("N-1 archive rollback rewrote audit history")
+        if archive_rollback == "imported":
+            verification = json.loads((artifact_root / f"verification/{verification_name}.json").read_text())
+            if verification.get("valid") is not True or verification.get("artifactDigest") != artifact_digest or verification.get("policyMode") != "permissive-local":
+                raise RuntimeError("N-1 archive rollback did not persist a valid local trust receipt")
+        legacy_command = [released, "task", "testrun", "--robot", str(fixture), "--task", "proof", "--no-outputs"]
+        legacy = subprocess.run(legacy_command, check=True, env=candidate_env, capture_output=True, text=True)
+        legacy_output = legacy.stdout + "\n" + legacy.stderr
+        if "n1-old-task-ok" not in legacy_output:
+            raise RuntimeError(f"released N-1 task did not execute the imported v12 closure: {legacy_output[-2000:]}")
+        legacy_receipt_path = root / "released-v12-rollback-consumption.json"
+        legacy_receipt_path.write_text(json.dumps({"argv": legacy_command, "returncode": legacy.returncode,
+                                                   "stdout": legacy.stdout, "stderr": legacy.stderr},
+                                                  indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(legacy_receipt_path)
+        commands.append({"step": "released-v12-rollback-consumption", "argv": legacy_command,
+                         "env": {"ROBOCORP_HOME": str(home_a)}, "evidencePath": str(legacy_receipt_path)})
+        legacy_after_rollback = _legacy_closure_state(home_a, archive)
+        artifact_after_rollback = _state_digests(home_a / "artifacts" / "v1")
+        _validate_rebased_legacy_closure(legacy_before, legacy_after_rollback, home_a)
+        if legacy_after_rollback != legacy_after_upgrade:
+            raise RuntimeError("N-1 legacy v12 consumption changed the rebased consumer closure")
+        if artifact_after_rollback != artifact_after_archive:
+            raise RuntimeError("N-1 artifact state was not stable after rollback consumption")
+        rollback_receipt = root / "n1-rollback-state.json"
+        if hashlib.sha256(archive.read_bytes()).hexdigest() != archive_digest:
+            raise RuntimeError("N-1 archive rollback changed canonical archive bytes")
+        rollback_receipt.write_text(json.dumps({"archiveSha256": archive_digest, "artifactDigest": artifact_digest,
+                                                "archiveRollback": archive_rollback,
+                                                "materializationId": candidate_receipt["materializationId"],
+                                                "legacyBefore": legacy_before,
+                                                "legacyAfterUpgrade": legacy_after_upgrade,
+                                                "legacyAfterRollback": legacy_after_rollback,
+                                                "artifactBefore": artifact_before,
+                                                "artifactAfterArchiveRollback": artifact_after_archive,
+                                                "artifactAfterRollback": artifact_after_rollback},
+                                               indent=2, sort_keys=True) + "\n")
+        artifact_evidence.append(rollback_receipt)
+    evidence = [fixture, generation_a, candidate, generation_b, generation_b_remote,
+                home_b / "artifacts" / "v1" / "metadata.json", *v12_evidence, *artifact_evidence]
+    receipt = _write_self_host_receipt("tmp", released_binary=released, candidate_binary=candidate,
+                                       home_a=home_a, home_b=home_b, commands=commands,
+                                       binary_metadata={"released": released_info, "candidate": candidate_info,
+                                                         "generationA": promotion,
+                                                         "generationB": generation_b_info},
+                                       evidence_paths=evidence)
+    print(f"Self-host receipt: {receipt}")
+
+
+@task
+def largeStream(c):
+    """Run the mandatory multi-gigabyte bounded HTTP streaming acceptance gate."""
+    _require_linux("largeStream")
+    receipt = Path(os.environ.get("RCC_LARGE_STREAM_RECEIPT", "tmp/large-stream-receipt.json")).resolve()
+    receipt.parent.mkdir(parents=True, exist_ok=True)
+    env = _contained_go_env()
+    env.update({"RCC_REAL_LARGE_STREAM": "1", "RCC_LARGE_STREAM_RECEIPT": str(receipt),
+                "RCC_SOURCE_SHA": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()})
+    c.run("go test -count=1 ./artifactprovider -run '^TestHTTPMultiGiByteStreamingAcceptance$' -timeout 30m", env=env)
+    if not receipt.is_file():
+        raise RuntimeError(f"largeStream did not produce receipt: {receipt}")
+
+
+@task
+def releaseCandidate(c):
+    """Run the complete Environment Artifacts v1 release-candidate gate."""
+    _require_linux("releaseCandidate")
+    receipt_root = Path(os.environ.get("RCC_RELEASE_CANDIDATE_RECEIPT_ROOT", "tmp"))
+    (receipt_root / "release-candidate-v1.json").unlink(missing_ok=True)
+    task_names = (
+        "artifactFocused",
+        "artifactRace",
+        "artifactVertical",
+        "artifactConsumerVertical",
+        "artifactRobot",
+        "binaryInventory",
+        "largeStream",
+        "robot",
+        "selfHost",
+        "goVet",
+        "coordinationAcceptance",
+    )
+    candidate_build_command = "go build -ldflags -s -o build/ ./cmd/..."
+    commands = [_invoke_command("assets"), candidate_build_command]
+    gates = {}
+    c.run(commands[0])
+    Path("build").mkdir(exist_ok=True)
+    c.run(candidate_build_command, env=_contained_go_env())
+    for task_name in task_names:
+        command = _invoke_command(task_name)
+        commands.append(command)
+        c.run(command)
+        gates[task_name] = "passed"
+    candidate_sha = _exact_commit_sha()
+    _validate_promotion_receipts(receipt_root, candidate_sha)
+    source_binary = Path("build/rcc")
+    coordination_receipt = json.loads((receipt_root / "coordination-blackbox-v1.json").read_text())
+    if coordination_receipt.get("binarySha256") != hashlib.sha256(source_binary.read_bytes()).hexdigest():
+        raise RuntimeError("coordination receipt binary does not match the exact release binary")
+    receipt = _write_release_candidate_receipt(
+        receipt_root, source=Path("build/rcc"),
+        commands=commands, gates=gates)
+    print(f"Release-candidate receipt: {receipt}")
+
+
+@task
+def coordinationAcceptance(c):
+    """Run the exact-binary coordination CLI gate and black-box scenarios."""
+    _require_linux("coordinationAcceptance")
+    binary = Path("build/rcc").resolve()
+    if not binary.is_file():
+        raise RuntimeError(f"exact RCC binary is missing: {binary}")
+    receipt = Path("tmp/coordination-blackbox-v1.json").resolve()
+    fixture_source = Path("tmp/coordination-fixture.go")
+    fixture_source.write_text(
+        r'''package main
+
+import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
+	"os"
+	"strings"
+
+	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/buildcoord"
+)
+
+func main() {
+	public, private, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil { panic(err) }
+	artifact := buildcoord.Artifact{
+		Digest: "sha256:" + strings.Repeat("a", 64), Verified: true,
+		ClosureDigest: "sha256:" + strings.Repeat("b", 64), Provider: "fixture",
+		ProviderAuthorization: "environment:RCC_PROVIDER_AUTHORIZATION", Source: "coordination-cli",
+		Completion: &buildcoord.CompletionReceipt{ArtifactDigest: "sha256:" + strings.Repeat("a", 64), Provider: "fixture", ManifestCommitted: true, ObjectsVerified: true, Lifecycle: "cli"},
+	}
+	signature, err := artifacttrust.Sign(buildcoord.ArtifactTrustDigest(artifact), "build-key", private)
+	if err != nil { panic(err) }
+	artifact.Signatures = []artifacttrust.Signature{signature}
+	if err := json.NewEncoder(os.Stdout).Encode(map[string]any{
+		"publicKey": base64.RawStdEncoding.EncodeToString(public),
+		"signature": signature.Signature,
+		"artifact": artifact,
+	}); err != nil { panic(err) }
+}
+'''
+    )
+    try:
+        go_env = os.environ.copy()
+        go_env.update(_contained_go_env())
+        fixture = json.loads(subprocess.check_output(
+            ["go", "run", str(fixture_source)], text=True, env=go_env
+        ))
+    finally:
+        fixture_source.unlink(missing_ok=True)
+
+    artifact = fixture["artifact"]
+    sentinel = "Bearer coordination-secret"
+    env = os.environ.copy()
+    env["RCC_PROVIDER_AUTHORIZATION"] = sentinel
+    with tempfile.TemporaryDirectory(prefix="coordination-cli-", dir="tmp") as state:
+        root = Path(state).resolve()
+
+        def common(specification, owner):
+            return [
+                "--root", str(root), "--specification", specification,
+                "--platform", "linux_amd64", "--builder", "v12-gzip-sha256",
+                "--owner", owner, "--ttl", "30s", "--trust-key-id", "build-key",
+                "--trust-public-key", fixture["publicKey"], "--json",
+            ]
+
+        def run_cli(arguments):
+            completed = subprocess.run(
+                [str(binary), "env", "coordinate", *arguments],
+                env=env, capture_output=True, text=True,
+            )
+            combined = completed.stdout + "\n" + completed.stderr
+            if sentinel in combined:
+                raise RuntimeError("coordination CLI leaked provider authorization")
+            if completed.returncode != 0:
+                raise RuntimeError(f"coordination CLI failed: {combined[-4000:]}")
+            try:
+                payload = json.loads(completed.stdout)
+            except json.JSONDecodeError as error:
+                raise RuntimeError(f"coordination CLI returned invalid JSON: {completed.stdout!r}") from error
+            if payload.get("schemaVersion") != 1 or payload.get("operation") != arguments[0] or not payload.get("status") or not isinstance(payload.get("key"), dict):
+                raise RuntimeError(f"coordination CLI returned incomplete machine contract: {payload}")
+            return payload
+
+        scenarios = {}
+        artifact_spec = "sha256:" + "1" * 64
+        claimed = run_cli([
+            "claim", *common(artifact_spec, "worker-a"),
+            "--artifact-digest", artifact["digest"],
+            "--closure-digest", artifact["closureDigest"],
+            "--provider", artifact["provider"],
+            "--provider-authorization-env", "RCC_PROVIDER_AUTHORIZATION",
+            "--trust-signature", fixture["signature"],
+        ])
+        if claimed.get("status") != "claimed":
+            raise RuntimeError(f"exact CLI claim was not accepted: {claimed}")
+        scenarios["cli-claim"] = "published"
+
+        waited = run_cli(["wait", *common(artifact_spec, "waiter"), "--interval", "1ms"])
+        if waited.get("status") != "existing-artifact" or waited.get("artifact", {}).get("digest") != artifact["digest"]:
+            raise RuntimeError(f"exact CLI artifact-backed wait was not authoritative: {waited}")
+        scenarios["cli-wait"] = "artifact-backed"
+
+        lease_spec = "sha256:" + "2" * 64
+        lease_claim = run_cli(["claim", *common(lease_spec, "worker-b")])
+        claim = lease_claim.get("claim") or {}
+        epoch = claim.get("epoch")
+        if lease_claim.get("status") != "claimed" or not epoch:
+            raise RuntimeError(f"exact CLI lease claim was not accepted: {lease_claim}")
+        heartbeat = run_cli(["heartbeat", *common(lease_spec, "worker-b"), "--epoch", str(epoch)])
+        if heartbeat.get("status") != "ok":
+            raise RuntimeError(f"exact CLI heartbeat was not accepted: {heartbeat}")
+        scenarios["cli-heartbeat"] = "renewed"
+        released = run_cli(["release", *common(lease_spec, "worker-b"), "--epoch", str(epoch)])
+        if released.get("status") != "ok":
+            raise RuntimeError(f"exact CLI release was not accepted: {released}")
+        scenarios["cli-release"] = "released"
+
+        prewarm_a = "sha256:" + "3" * 64
+        prewarm_b = "sha256:" + "4" * 64
+        encoded_artifact = base64.b64encode(json.dumps(artifact, separators=(",", ":")).encode()).decode()
+        build_script = f"printf %s {shlex.quote(encoded_artifact)} | base64 -d"
+        prewarmed = run_cli([
+            "prewarm", *common(prewarm_a, "prewarm"),
+            "--key", prewarm_a, "--key", prewarm_b, "--capacity", "1",
+            "--build-command=/bin/sh", "--build-command=-c", f"--build-command={build_script}",
+        ])
+        statuses = [item.get("status") for item in prewarmed.get("items", [])]
+        if statuses != ["ready", "capacity-limited"] or prewarmed.get("status") != "capacity-limited":
+            raise RuntimeError(f"exact CLI prewarm status/evidence is incomplete: {prewarmed}")
+        scenarios["cli-prewarm"] = "ready-and-capacity-limited"
+
+        invalid = subprocess.run(
+            [str(binary), "cache", "serve", "--listen", "0.0.0.0", "--json"],
+            env={**env, "ROBOCORP_HOME": str(root / "home")},
+            capture_output=True, text=True,
+        )
+        invalid_output = invalid.stdout + "\n" + invalid.stderr
+        if invalid.returncode == 0 or sentinel in invalid_output:
+            raise RuntimeError("exact CLI accepted a non-loopback cache listener")
+        scenarios["cli-loopback-rejection"] = "rejected"
+
+        for path in root.rglob("*"):
+            if path.is_file() and sentinel.encode() in path.read_bytes():
+                raise RuntimeError(f"coordination state leaked provider authorization: {path}")
+
+    required = {"cli-claim", "cli-wait", "cli-heartbeat", "cli-release", "cli-prewarm", "cli-loopback-rejection"}
+    if set(scenarios) != required:
+        raise RuntimeError("coordination receipt is missing required exact-CLI outcomes")
+    payload = {
+        "schemaVersion": 1,
+        "scenarios": scenarios,
+        "commitSha": _exact_commit_sha(),
+        "binarySha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+    }
+    _write_json_atomic(receipt, payload)
+    print(f"Coordination black-box receipt: {receipt}")
+
+
+def version() -> str:
+    import re
+
+    with open("common/version.go", "r") as file:
+        content = file.read()
+        match = re.search(r"Version\s*=\s*`v([^`]+)`", content)
+        if match:
+            return match.group(1)
+        else:
+            raise ValueError("Version not found in common/version.go")
+
+
+@task
+def version_txt(c):
+    """Create version.txt file"""
+    support(c)
+    target = "build/version.txt"
+    v = version()
+    with open(target, "w") as f:
+        f.write(f"v{v}")
+    print(f"Created {target} with version {v}")
+
+
+@task(pre=[support, version_txt, assets])
+def build(c, platform="all"):
+    """Build executables"""
+    from pathlib import Path
+
+    os.environ["CGO_ENABLED"] = "0"
+
+    # Define platform-arch combinations
+    build_targets = [
+        ("linux", "amd64", "linux64"),
+        ("darwin", "amd64", "macos64"),
+        ("darwin", "arm64", "macosarm64"),
+        ("windows", "amd64", "windows64"),
+    ]
+
+    if platform == "all":
+        targets = build_targets
+    elif platform == "linux":
+        targets = [t for t in build_targets if t[0] == "linux"]
+    elif platform == "darwin":
+        targets = [t for t in build_targets if t[0] == "darwin"]
+    elif platform == "windows":
+        targets = [t for t in build_targets if t[0] == "windows"]
+    else:
+        raise ValueError(f"Invalid platform: {platform}")
+
+    for goos, goarch, output_dir in targets:
+        os.environ["GOOS"] = goos
+        os.environ["GOARCH"] = goarch
+        output = f"build/{output_dir}/"
+
+        _assert_clean_source_if_required()
+        c.run(f"go build -ldflags -s -o {output} ./cmd/...")
+
+        ext = ".exe" if goos == "windows" else ""
+        f = f"{output}rcc{ext}"
+        assert Path(f).exists(), f"File {f} does not exist"
+        print(f"Built: {f} ({goos}/{goarch})")
+
+
+@task
+def windows64(c):
+    """Build windows64 executable"""
+    build(c, platform="windows")
+
+
+@task
+def linux64(c):
+    """Build linux64 executable"""
+    build(c, platform="linux")
+
+
+@task
+def macos64(c):
+    """Build macos64 executable"""
+    build(c, platform="darwin")
+
+
+@task
+def robotsetup(c):
+    """Setup build environment"""
+    if not os.path.exists("robot_requirements.txt"):
+        raise RuntimeError(
+            f"robot_requirements.txt not found. Current directory: {os.path.abspath(os.getcwd())}"
+        )
+    c.run(f"{PYTHON} -m pip install --upgrade -r robot_requirements.txt")
+    c.run(f"{PYTHON} -m pip freeze")
+
+
+@task
+def local(c, do_test=True):
+    """Build local, operating system specific rcc"""
+    os.environ["CGO_ENABLED"] = "0"
+    tooling(c)
+    if do_test:
+        test(c)
+    c.run("go build -ldflags -s -o build/ ./cmd/...")
+
+
+@task(pre=[robotsetup, assets, local])
+def robot(c):
+    """Run robot tests on local application"""
+    print("Running robot tests...")
+    executable = Path("build") / ("rcc.exe" if os.name == "nt" else "rcc")
+    c.run(
+        f"{PYTHON} -m unittest robot_tests.development_process_acceptance -v",
+        env={"RCC_ACCEPTANCE_BINARY": str(executable.resolve())},
+    )
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests")
+
+
+@task(pre=[robotsetup, assets, local])
+def unpackTest(c):
+    """Run unpack robot tests"""
+    print("Running unpack robot tests...")
+    c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests/robot_bundle.robot")

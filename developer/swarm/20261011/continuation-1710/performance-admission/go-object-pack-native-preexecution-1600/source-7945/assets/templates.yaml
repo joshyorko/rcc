@@ -1,0 +1,4 @@
+templates:
+  standard: Standard Robot Framework template
+  extended: Extended Robot Framework template
+  python: Basic Python template

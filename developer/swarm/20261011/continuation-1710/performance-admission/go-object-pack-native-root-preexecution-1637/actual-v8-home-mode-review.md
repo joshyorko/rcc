@@ -1,0 +1,5 @@
+The component build and harness exited 0; supervisor and root launcher exited 1 after the home-mode guard. Preserve both statuses. No timed rerun occurred.
+
+Exact shipping source 7945 imports HTFS initialization, which creates its missing hololib hierarchy through `pathlib.MakeSharedDir`. Private directory creation uses 0750 and recursively ensures its existing parent includes that mode. An existing 0700 home fails the expected permission-bit mask and is changed to 0750. This matches the actual isolated home observation. Both enclosing owned RAM/run directories remained 0700 with UID1000 and no symlink, so the observed change did not remove those outer containment protections. The supervisor contract still failed; this is not a waiver or a green whole invocation.
+
+The owner-reported Actions0750/0700 fixture failure is a useful comparison, not independently proven to have this exact native syscall cause. Share the exact source chain and observed modes with its existing owner; do not change their fixture, pins or source. A supported home-mode contract and enclosing-boundary assertions require their controller qualification.

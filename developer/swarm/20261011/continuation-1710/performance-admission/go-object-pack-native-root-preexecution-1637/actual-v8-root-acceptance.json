@@ -1,0 +1,229 @@
+{
+  "utc": "2026-10-11T17:05:50.757173+00:00",
+  "status": "ROOT_SCOPED_MEASUREMENT_DATA_VERIFIED_WITH_POSTRUN_HOME_GUARD_FAILURE_PRESERVED",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "binary_sha256": "38c84cf54b637f170591e96fbd70f7acac955f57f37b5384459f40e5e82d952c",
+  "binary_bytes": 10277531,
+  "harness_sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+  "jsonl_sha256": "448015d02fc300de96eb8eb2010b4ea859b9004e8cfb048fadffd8b16027013b",
+  "supervisor_sha256": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4",
+  "numeric": {
+    "build": 0,
+    "harness": 0,
+    "supervisor": 1,
+    "direct_outer": 1,
+    "root_independent_verifier": 0
+  },
+  "objects_verified": 4649,
+  "stored_bytes": 4484936,
+  "ordered_identity": "91d18d983dde778f5b1816abb941c287c26b5e1d6c49ac0ecd991acf27ed4162",
+  "original_source_closure": "77113f012ac2e63d68c3c61bd4f36b590650be309b563f6d26c492e13de04f57",
+  "original_source_unchanged": true,
+  "raw_events": 12,
+  "verified_passes": 10,
+  "negative_controls": [
+    "corrupted provider object rejected by RCC digest verifier; owned copy restored",
+    "missing provider object rejected; owned copy restored",
+    "wrong declared object size rejected",
+    "out-of-range and overflowing pack slices rejected",
+    "wrong stored digest rejected",
+    "pack output buffers and provider readers are independent"
+  ],
+  "source_projection_binding": {
+    "source_tracked_count": 227,
+    "source_tracked_bytes": 1541402,
+    "source_tracked_tree_sha256": "6b103fab86c1bd3b3190b1f10f7d11b5ac0b008331fdecb9ca41ab69fec1d10b",
+    "generated_count": 39,
+    "generated_bytes": 7474027,
+    "generated_tree_sha256": "07e3c5978f32cbf9889bb24461e8cb2beee0b3f5358c4a6674b2337bc235e9e8",
+    "source_manifest_sha256": "c1bc6f5c00a96c9e1e3dc4bcf4bb39b832ef525bc2795f570af61765f17246e6"
+  },
+  "original_module_cache": {
+    "file_count": 1930,
+    "logical_bytes": 55499478,
+    "tree_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+    "observed_modes_tree_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+    "readonly_projection": false
+  },
+  "readonly_module_cache": {
+    "file_count": 1930,
+    "logical_bytes": 55499478,
+    "tree_sha256": "57a5f811603b86df1c2cc2cdf64bdca47eaca0ced8cca6bb8382caa776729e43",
+    "observed_modes_tree_sha256": "0c928ad144d205a72b17b59151a554ff5723d2349ebe288114cf20904f886ec5",
+    "readonly_projection": true
+  },
+  "final_resources": {
+    "workspace_free_bytes": 2750541824,
+    "owned_ram_allocated_bytes": 329478144,
+    "workspace_allocated_bytes": 12931072,
+    "supervisor_rss_bytes_sampled": 34070528
+  },
+  "private_enclosing_boundaries": [
+    {
+      "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226",
+      "mode": "0o700",
+      "uid": 1000
+    },
+    {
+      "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02",
+      "mode": "0o700",
+      "uid": 1000
+    },
+    {
+      "path": "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02/rcc-home",
+      "mode": "0o750",
+      "uid": 1000
+    }
+  ],
+  "summary": {
+    "filesystem": {
+      "wall_ms": [
+        60.252518,
+        57.93286,
+        63.56116,
+        57.567741,
+        71.707829
+      ],
+      "wall_median_ms": 60.252518,
+      "wall_min_ms": 57.567741,
+      "wall_max_ms": 71.707829,
+      "cpu_ms": [
+        83.034,
+        75.7,
+        67.64,
+        64.217,
+        83.331
+      ],
+      "cpu_median_ms": 75.7,
+      "rchar_bytes": [
+        4485049,
+        4485050,
+        4485050,
+        4485051,
+        4485051
+      ],
+      "read_syscalls": [
+        16526,
+        16526,
+        16526,
+        16526,
+        16526
+      ],
+      "disk_read_bytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "rss_postpass_bytes": [
+        14622720,
+        14901248,
+        16203776,
+        14835712,
+        14856192
+      ]
+    },
+    "pack": {
+      "wall_ms": [
+        6.283063,
+        6.391823,
+        5.667434,
+        5.861598,
+        9.655452
+      ],
+      "wall_median_ms": 6.283063,
+      "wall_min_ms": 5.667434,
+      "wall_max_ms": 9.655452,
+      "cpu_ms": [
+        6.986,
+        6.414,
+        5.689,
+        6.662,
+        11.731
+      ],
+      "cpu_median_ms": 6.662,
+      "rchar_bytes": [
+        4485049,
+        4485050,
+        4485050,
+        4485050,
+        4485051
+      ],
+      "read_syscalls": [
+        4651,
+        4651,
+        4651,
+        4651,
+        4651
+      ],
+      "disk_read_bytes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "rss_postpass_bytes": [
+        14770176,
+        15257600,
+        14536704,
+        14983168,
+        14856192
+      ]
+    }
+  },
+  "paired_results": [
+    {
+      "pair": 1,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "wall_saved_ms": 53.969455,
+      "wall_ratio": 9.589672744010366,
+      "cpu_saved_ms": 76.048
+    },
+    {
+      "pair": 2,
+      "order": [
+        "pack",
+        "filesystem"
+      ],
+      "wall_saved_ms": 51.541037,
+      "wall_ratio": 9.063589526806359,
+      "cpu_saved_ms": 69.286
+    },
+    {
+      "pair": 3,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "wall_saved_ms": 57.893726,
+      "wall_ratio": 11.21515662996693,
+      "cpu_saved_ms": 61.951
+    },
+    {
+      "pair": 4,
+      "order": [
+        "pack",
+        "filesystem"
+      ],
+      "wall_saved_ms": 51.706143,
+      "wall_ratio": 9.821168391281695,
+      "cpu_saved_ms": 57.555
+    },
+    {
+      "pair": 5,
+      "order": [
+        "filesystem",
+        "pack"
+      ],
+      "wall_saved_ms": 62.052377,
+      "wall_ratio": 7.426667234221661,
+      "cpu_saved_ms": 71.6
+    }
+  ],
+  "scope": "Warm same tmpfs actualRCC GetObject versus isolatedReadAt privatecomponent. Pack layout removes currentperobjectsecurepathopen/size/read/allocation bookkeeping; not fullRCC packformat parity. No disk/HTTP/materialization/Actions/portable/default gain; supervisor homeguardFAIL remains, no timedrerun. RSS samples not absolutepeak. CPU containsobserver andGC overhead, mayexceedwall. Readsyscalls not fileopens."
+}

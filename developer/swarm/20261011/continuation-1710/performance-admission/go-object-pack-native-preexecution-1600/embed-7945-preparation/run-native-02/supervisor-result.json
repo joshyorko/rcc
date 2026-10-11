@@ -1,0 +1,2030 @@
+{
+  "elapsed_total_s": 21.5758,
+  "error": "GuardFailure: private RCC runtime home permissions changed",
+  "inherited_rlimit_fsize": {
+    "checked_without_changing_parent_limits": true,
+    "hard_limit_bytes": null,
+    "required_bytes": 29360128,
+    "soft_limit_bytes": null
+  },
+  "limits": {
+    "build_seconds": 90,
+    "floor_bytes": 2688548864,
+    "pass_seconds": 30,
+    "ram_bytes": 1073741824,
+    "sampled_rss_bytes": 2147483648,
+    "total_seconds": 180,
+    "workspace_bytes": 33554432
+  },
+  "numeric_build_exit": 0,
+  "numeric_harness_exit": 0,
+  "numeric_outer_exit": 1,
+  "owned_ram_allocated_bytes_at_receipt": 329478144,
+  "source_commit": "7945f956b428359928908a9f42e36417b113dafd",
+  "stages": [
+    {
+      "command": [
+        "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+        "build",
+        "-p=1",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=false",
+        "-o",
+        "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/rcc-go-packprobe",
+        "./prep-probe"
+      ],
+      "elapsed_s": 19.1002,
+      "max_owned_ram_allocated_bytes": 466542592,
+      "max_sampled_rss_bytes": 352739328,
+      "min_workspace_free_bytes": 2760949760,
+      "numeric_exit": 0,
+      "phase": "build",
+      "process_group": 48144,
+      "process_group_quiescent": true,
+      "progress_events": [],
+      "reader_threads_joined": true,
+      "samples": [
+        {
+          "elapsed_s": 0.0027,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 160378880,
+          "pgid": 48144,
+          "rss_bytes_sampled": 35065856,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.1103,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 163045376,
+          "pgid": 48144,
+          "rss_bytes_sampled": 48250880,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.2269,
+          "live_group_pids": [
+            48144,
+            48179
+          ],
+          "owned_ram_allocated_bytes": 165179392,
+          "pgid": 48144,
+          "rss_bytes_sampled": 105799680,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.3503,
+          "live_group_pids": [
+            48144,
+            48271
+          ],
+          "owned_ram_allocated_bytes": 165941248,
+          "pgid": 48144,
+          "rss_bytes_sampled": 75845632,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.4822,
+          "live_group_pids": [
+            48144,
+            48349
+          ],
+          "owned_ram_allocated_bytes": 167153664,
+          "pgid": 48144,
+          "rss_bytes_sampled": 72609792,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.625,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 168767488,
+          "pgid": 48144,
+          "rss_bytes_sampled": 53870592,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.7609,
+          "live_group_pids": [
+            48144,
+            48449
+          ],
+          "owned_ram_allocated_bytes": 170409984,
+          "pgid": 48144,
+          "rss_bytes_sampled": 65454080,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 0.8813,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 123494400,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.005,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 142110720,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.1226,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 149565440,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.2399,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 184733696,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.3658,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 169340928,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.4923,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 165036032,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.6426,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 164077568,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.7644,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 164085760,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.8787,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 172146688,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 1.9973,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 175591424,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 2.1126,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 182956032,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 2.2297,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 220602368,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 2.3394,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 239394816,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 2.5721,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 288395264,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 2.8399,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 170696704,
+          "pgid": 48144,
+          "rss_bytes_sampled": 332820480,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.0486,
+          "live_group_pids": [
+            48144,
+            48471
+          ],
+          "owned_ram_allocated_bytes": 174039040,
+          "pgid": 48144,
+          "rss_bytes_sampled": 352739328,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.159,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 184287232,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55193600,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.2886,
+          "live_group_pids": [
+            48144,
+            48585
+          ],
+          "owned_ram_allocated_bytes": 199036928,
+          "pgid": 48144,
+          "rss_bytes_sampled": 78901248,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.4032,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 201674752,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55869440,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.5213,
+          "live_group_pids": [
+            48144,
+            48653
+          ],
+          "owned_ram_allocated_bytes": 203612160,
+          "pgid": 48144,
+          "rss_bytes_sampled": 70131712,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.6526,
+          "live_group_pids": [
+            48144,
+            48670
+          ],
+          "owned_ram_allocated_bytes": 203784192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 134172672,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.7743,
+          "live_group_pids": [
+            48144,
+            48684
+          ],
+          "owned_ram_allocated_bytes": 207241216,
+          "pgid": 48144,
+          "rss_bytes_sampled": 80023552,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.8819,
+          "live_group_pids": [
+            48144,
+            48684
+          ],
+          "owned_ram_allocated_bytes": 207241216,
+          "pgid": 48144,
+          "rss_bytes_sampled": 147656704,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 3.9972,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 211320832,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55885824,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.1095,
+          "live_group_pids": [
+            48144,
+            48733
+          ],
+          "owned_ram_allocated_bytes": 212201472,
+          "pgid": 48144,
+          "rss_bytes_sampled": 77139968,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.224,
+          "live_group_pids": [
+            48144,
+            48741
+          ],
+          "owned_ram_allocated_bytes": 213663744,
+          "pgid": 48144,
+          "rss_bytes_sampled": 101003264,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.3423,
+          "live_group_pids": [
+            48144,
+            48773
+          ],
+          "owned_ram_allocated_bytes": 215805952,
+          "pgid": 48144,
+          "rss_bytes_sampled": 75915264,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.4629,
+          "live_group_pids": [
+            48144,
+            48849
+          ],
+          "owned_ram_allocated_bytes": 216899584,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71979008,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.583,
+          "live_group_pids": [
+            48144,
+            48906
+          ],
+          "owned_ram_allocated_bytes": 218333184,
+          "pgid": 48144,
+          "rss_bytes_sampled": 80277504,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.7074,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 219619328,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55066624,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.8229,
+          "live_group_pids": [
+            48144,
+            48973
+          ],
+          "owned_ram_allocated_bytes": 220635136,
+          "pgid": 48144,
+          "rss_bytes_sampled": 104103936,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 4.9543,
+          "live_group_pids": [
+            48144,
+            48992
+          ],
+          "owned_ram_allocated_bytes": 222597120,
+          "pgid": 48144,
+          "rss_bytes_sampled": 104423424,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.0679,
+          "live_group_pids": [
+            48144,
+            48992
+          ],
+          "owned_ram_allocated_bytes": 222597120,
+          "pgid": 48144,
+          "rss_bytes_sampled": 152653824,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.2057,
+          "live_group_pids": [
+            48144,
+            49020
+          ],
+          "owned_ram_allocated_bytes": 228036608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 87732224,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.3202,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 229720064,
+          "pgid": 48144,
+          "rss_bytes_sampled": 52690944,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.4355,
+          "live_group_pids": [
+            48144,
+            49091
+          ],
+          "owned_ram_allocated_bytes": 229720064,
+          "pgid": 48144,
+          "rss_bytes_sampled": 119394304,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.5504,
+          "live_group_pids": [
+            48144,
+            49091
+          ],
+          "owned_ram_allocated_bytes": 229720064,
+          "pgid": 48144,
+          "rss_bytes_sampled": 144273408,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.7039,
+          "live_group_pids": [
+            48144,
+            49091
+          ],
+          "owned_ram_allocated_bytes": 233046016,
+          "pgid": 48144,
+          "rss_bytes_sampled": 179658752,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.8276,
+          "live_group_pids": [
+            48144,
+            49115
+          ],
+          "owned_ram_allocated_bytes": 236998656,
+          "pgid": 48144,
+          "rss_bytes_sampled": 88264704,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 5.9474,
+          "live_group_pids": [
+            48144,
+            49135
+          ],
+          "owned_ram_allocated_bytes": 239403008,
+          "pgid": 48144,
+          "rss_bytes_sampled": 68804608,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.0742,
+          "live_group_pids": [
+            48144,
+            49149
+          ],
+          "owned_ram_allocated_bytes": 239804416,
+          "pgid": 48144,
+          "rss_bytes_sampled": 107847680,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.1989,
+          "live_group_pids": [
+            48144,
+            49149
+          ],
+          "owned_ram_allocated_bytes": 241958912,
+          "pgid": 48144,
+          "rss_bytes_sampled": 151441408,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.3148,
+          "live_group_pids": [
+            48144,
+            49171
+          ],
+          "owned_ram_allocated_bytes": 245780480,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71110656,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.4515,
+          "live_group_pids": [
+            48144,
+            49191
+          ],
+          "owned_ram_allocated_bytes": 247562240,
+          "pgid": 48144,
+          "rss_bytes_sampled": 76800000,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.56,
+          "live_group_pids": [
+            48144,
+            49191
+          ],
+          "owned_ram_allocated_bytes": 247562240,
+          "pgid": 48144,
+          "rss_bytes_sampled": 133734400,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.6937,
+          "live_group_pids": [
+            48144,
+            49219
+          ],
+          "owned_ram_allocated_bytes": 251240448,
+          "pgid": 48144,
+          "rss_bytes_sampled": 86667264,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.8069,
+          "live_group_pids": [
+            48144,
+            49219
+          ],
+          "owned_ram_allocated_bytes": 252100608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 148148224,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 6.9439,
+          "live_group_pids": [
+            48144,
+            49236
+          ],
+          "owned_ram_allocated_bytes": 252985344,
+          "pgid": 48144,
+          "rss_bytes_sampled": 115564544,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.0639,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 254701568,
+          "pgid": 48144,
+          "rss_bytes_sampled": 54308864,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.1847,
+          "live_group_pids": [
+            48144,
+            49291
+          ],
+          "owned_ram_allocated_bytes": 256143360,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71352320,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.3107,
+          "live_group_pids": [
+            48144,
+            49310
+          ],
+          "owned_ram_allocated_bytes": 257523712,
+          "pgid": 48144,
+          "rss_bytes_sampled": 94294016,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.4224,
+          "live_group_pids": [
+            48144,
+            49310
+          ],
+          "owned_ram_allocated_bytes": 257527808,
+          "pgid": 48144,
+          "rss_bytes_sampled": 148811776,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.5952,
+          "live_group_pids": [
+            48144,
+            49341
+          ],
+          "owned_ram_allocated_bytes": 262324224,
+          "pgid": 48144,
+          "rss_bytes_sampled": 76136448,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.7282,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 264630272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 54587392,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.8473,
+          "live_group_pids": [
+            48144,
+            49406
+          ],
+          "owned_ram_allocated_bytes": 266280960,
+          "pgid": 48144,
+          "rss_bytes_sampled": 70594560,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 7.9876,
+          "live_group_pids": [
+            48144,
+            49415
+          ],
+          "owned_ram_allocated_bytes": 267579392,
+          "pgid": 48144,
+          "rss_bytes_sampled": 103858176,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.1237,
+          "live_group_pids": [
+            48144,
+            49424
+          ],
+          "owned_ram_allocated_bytes": 271400960,
+          "pgid": 48144,
+          "rss_bytes_sampled": 76050432,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.238,
+          "live_group_pids": [
+            48144,
+            49445
+          ],
+          "owned_ram_allocated_bytes": 272715776,
+          "pgid": 48144,
+          "rss_bytes_sampled": 95186944,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.3724,
+          "live_group_pids": [
+            48144,
+            49482
+          ],
+          "owned_ram_allocated_bytes": 275935232,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71692288,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.4938,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 278499328,
+          "pgid": 48144,
+          "rss_bytes_sampled": 54636544,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.6199,
+          "live_group_pids": [
+            48144,
+            49553
+          ],
+          "owned_ram_allocated_bytes": 279629824,
+          "pgid": 48144,
+          "rss_bytes_sampled": 81252352,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.7427,
+          "live_group_pids": [
+            48144,
+            49596
+          ],
+          "owned_ram_allocated_bytes": 281796608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 74752000,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.882,
+          "live_group_pids": [
+            48144,
+            49622
+          ],
+          "owned_ram_allocated_bytes": 283713536,
+          "pgid": 48144,
+          "rss_bytes_sampled": 60493824,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 8.9985,
+          "live_group_pids": [
+            48144,
+            49651
+          ],
+          "owned_ram_allocated_bytes": 284528640,
+          "pgid": 48144,
+          "rss_bytes_sampled": 88141824,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.1399,
+          "live_group_pids": [
+            48144,
+            49670
+          ],
+          "owned_ram_allocated_bytes": 287576064,
+          "pgid": 48144,
+          "rss_bytes_sampled": 96268288,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.2679,
+          "live_group_pids": [
+            48144,
+            49679
+          ],
+          "owned_ram_allocated_bytes": 290017280,
+          "pgid": 48144,
+          "rss_bytes_sampled": 139976704,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.4022,
+          "live_group_pids": [
+            48144,
+            49687
+          ],
+          "owned_ram_allocated_bytes": 291758080,
+          "pgid": 48144,
+          "rss_bytes_sampled": 116981760,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.5126,
+          "live_group_pids": [
+            48144,
+            49687
+          ],
+          "owned_ram_allocated_bytes": 291758080,
+          "pgid": 48144,
+          "rss_bytes_sampled": 140984320,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.6516,
+          "live_group_pids": [
+            48144,
+            49687
+          ],
+          "owned_ram_allocated_bytes": 291758080,
+          "pgid": 48144,
+          "rss_bytes_sampled": 183545856,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.8268,
+          "live_group_pids": [
+            48144,
+            49700
+          ],
+          "owned_ram_allocated_bytes": 300568576,
+          "pgid": 48144,
+          "rss_bytes_sampled": 103817216,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 9.9474,
+          "live_group_pids": [
+            48144,
+            49708
+          ],
+          "owned_ram_allocated_bytes": 300568576,
+          "pgid": 48144,
+          "rss_bytes_sampled": 121102336,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.0721,
+          "live_group_pids": [
+            48144,
+            49708
+          ],
+          "owned_ram_allocated_bytes": 300568576,
+          "pgid": 48144,
+          "rss_bytes_sampled": 158851072,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.2192,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 87072768,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.3399,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 140763136,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.4661,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 143089664,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.5827,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 178106368,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.7021,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 190054400,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 10.8721,
+          "live_group_pids": [
+            48144,
+            49725
+          ],
+          "owned_ram_allocated_bytes": 306102272,
+          "pgid": 48144,
+          "rss_bytes_sampled": 209317888,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.0257,
+          "live_group_pids": [
+            48144,
+            49749
+          ],
+          "owned_ram_allocated_bytes": 316129280,
+          "pgid": 48144,
+          "rss_bytes_sampled": 82694144,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.1701,
+          "live_group_pids": [
+            48144,
+            49774
+          ],
+          "owned_ram_allocated_bytes": 317636608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 94625792,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.2958,
+          "live_group_pids": [
+            48144,
+            49782
+          ],
+          "owned_ram_allocated_bytes": 321155072,
+          "pgid": 48144,
+          "rss_bytes_sampled": 74801152,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.4241,
+          "live_group_pids": [
+            48144,
+            49807
+          ],
+          "owned_ram_allocated_bytes": 322195456,
+          "pgid": 48144,
+          "rss_bytes_sampled": 90812416,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.5502,
+          "live_group_pids": [
+            48144,
+            49821
+          ],
+          "owned_ram_allocated_bytes": 323309568,
+          "pgid": 48144,
+          "rss_bytes_sampled": 112168960,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.6745,
+          "live_group_pids": [
+            48144,
+            49830
+          ],
+          "owned_ram_allocated_bytes": 324943872,
+          "pgid": 48144,
+          "rss_bytes_sampled": 93655040,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.791,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 326909952,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55447552,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 11.9235,
+          "live_group_pids": [
+            48144,
+            49863
+          ],
+          "owned_ram_allocated_bytes": 327725056,
+          "pgid": 48144,
+          "rss_bytes_sampled": 103448576,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.0738,
+          "live_group_pids": [
+            48144,
+            49884
+          ],
+          "owned_ram_allocated_bytes": 331587584,
+          "pgid": 48144,
+          "rss_bytes_sampled": 75870208,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.2089,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 105693184,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.3464,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 143024128,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.4596,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 151814144,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.5839,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 156098560,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.7011,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 188338176,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 12.8193,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 208523264,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.0804,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 332296192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 240541696,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.272,
+          "live_group_pids": [
+            48144,
+            49910
+          ],
+          "owned_ram_allocated_bytes": 339570688,
+          "pgid": 48144,
+          "rss_bytes_sampled": 268562432,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.3918,
+          "live_group_pids": [
+            48144,
+            49934
+          ],
+          "owned_ram_allocated_bytes": 349945856,
+          "pgid": 48144,
+          "rss_bytes_sampled": 90816512,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.5058,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 352940032,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55549952,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.6271,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 354746368,
+          "pgid": 48144,
+          "rss_bytes_sampled": 55910400,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.7437,
+          "live_group_pids": [
+            48144,
+            49997
+          ],
+          "owned_ram_allocated_bytes": 354746368,
+          "pgid": 48144,
+          "rss_bytes_sampled": 147447808,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 13.8579,
+          "live_group_pids": [
+            48144,
+            49997
+          ],
+          "owned_ram_allocated_bytes": 354746368,
+          "pgid": 48144,
+          "rss_bytes_sampled": 169091072,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.0264,
+          "live_group_pids": [
+            48144,
+            50018
+          ],
+          "owned_ram_allocated_bytes": 363450368,
+          "pgid": 48144,
+          "rss_bytes_sampled": 80396288,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.1519,
+          "live_group_pids": [
+            48144,
+            50026
+          ],
+          "owned_ram_allocated_bytes": 364044288,
+          "pgid": 48144,
+          "rss_bytes_sampled": 122449920,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.2783,
+          "live_group_pids": [
+            48144,
+            50041
+          ],
+          "owned_ram_allocated_bytes": 367284224,
+          "pgid": 48144,
+          "rss_bytes_sampled": 73535488,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.3953,
+          "live_group_pids": [
+            48144,
+            50056
+          ],
+          "owned_ram_allocated_bytes": 369631232,
+          "pgid": 48144,
+          "rss_bytes_sampled": 73519104,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.5216,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 385912832,
+          "pgid": 48144,
+          "rss_bytes_sampled": 56127488,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.6497,
+          "live_group_pids": [
+            48144,
+            50106
+          ],
+          "owned_ram_allocated_bytes": 386719744,
+          "pgid": 48144,
+          "rss_bytes_sampled": 104804352,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.7794,
+          "live_group_pids": [
+            48144,
+            50106
+          ],
+          "owned_ram_allocated_bytes": 386719744,
+          "pgid": 48144,
+          "rss_bytes_sampled": 155475968,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 14.9137,
+          "live_group_pids": [
+            48144,
+            50117
+          ],
+          "owned_ram_allocated_bytes": 390164480,
+          "pgid": 48144,
+          "rss_bytes_sampled": 116322304,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.0453,
+          "live_group_pids": [
+            48144,
+            50138
+          ],
+          "owned_ram_allocated_bytes": 392409088,
+          "pgid": 48144,
+          "rss_bytes_sampled": 96555008,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.1595,
+          "live_group_pids": [
+            48144,
+            50152
+          ],
+          "owned_ram_allocated_bytes": 393261056,
+          "pgid": 48144,
+          "rss_bytes_sampled": 135200768,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.2923,
+          "live_group_pids": [
+            48144,
+            50194
+          ],
+          "owned_ram_allocated_bytes": 396988416,
+          "pgid": 48144,
+          "rss_bytes_sampled": 75599872,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.41,
+          "live_group_pids": [
+            48144,
+            50220
+          ],
+          "owned_ram_allocated_bytes": 398368768,
+          "pgid": 48144,
+          "rss_bytes_sampled": 91574272,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.5257,
+          "live_group_pids": [
+            48144,
+            50229
+          ],
+          "owned_ram_allocated_bytes": 399986688,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71024640,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.6413,
+          "live_group_pids": [
+            48144,
+            50229
+          ],
+          "owned_ram_allocated_bytes": 399986688,
+          "pgid": 48144,
+          "rss_bytes_sampled": 139608064,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.7618,
+          "live_group_pids": [
+            48144,
+            50251
+          ],
+          "owned_ram_allocated_bytes": 405254144,
+          "pgid": 48144,
+          "rss_bytes_sampled": 87187456,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.8785,
+          "live_group_pids": [
+            48144,
+            50266
+          ],
+          "owned_ram_allocated_bytes": 407748608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 71610368,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 15.9953,
+          "live_group_pids": [
+            48144,
+            50266
+          ],
+          "owned_ram_allocated_bytes": 409284608,
+          "pgid": 48144,
+          "rss_bytes_sampled": 144568320,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.1284,
+          "live_group_pids": [
+            48144,
+            50276
+          ],
+          "owned_ram_allocated_bytes": 410841088,
+          "pgid": 48144,
+          "rss_bytes_sampled": 121806848,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.2467,
+          "live_group_pids": [
+            48144,
+            50284
+          ],
+          "owned_ram_allocated_bytes": 413466624,
+          "pgid": 48144,
+          "rss_bytes_sampled": 100995072,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.3689,
+          "live_group_pids": [
+            48144,
+            50293
+          ],
+          "owned_ram_allocated_bytes": 416436224,
+          "pgid": 48144,
+          "rss_bytes_sampled": 81809408,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.4919,
+          "live_group_pids": [
+            48144,
+            50293
+          ],
+          "owned_ram_allocated_bytes": 416436224,
+          "pgid": 48144,
+          "rss_bytes_sampled": 150978560,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.6668,
+          "live_group_pids": [
+            48144,
+            50326
+          ],
+          "owned_ram_allocated_bytes": 424153088,
+          "pgid": 48144,
+          "rss_bytes_sampled": 75206656,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.7875,
+          "live_group_pids": [
+            48144,
+            50363
+          ],
+          "owned_ram_allocated_bytes": 425787392,
+          "pgid": 48144,
+          "rss_bytes_sampled": 99504128,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 16.914,
+          "live_group_pids": [
+            48144,
+            50377
+          ],
+          "owned_ram_allocated_bytes": 426582016,
+          "pgid": 48144,
+          "rss_bytes_sampled": 111554560,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.0493,
+          "live_group_pids": [
+            48144,
+            50391
+          ],
+          "owned_ram_allocated_bytes": 429064192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 86523904,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.1696,
+          "live_group_pids": [
+            48144,
+            50391
+          ],
+          "owned_ram_allocated_bytes": 429064192,
+          "pgid": 48144,
+          "rss_bytes_sampled": 150147072,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.3603,
+          "live_group_pids": [
+            48144,
+            50423
+          ],
+          "owned_ram_allocated_bytes": 433209344,
+          "pgid": 48144,
+          "rss_bytes_sampled": 91373568,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.5087,
+          "live_group_pids": [
+            48144,
+            50431
+          ],
+          "owned_ram_allocated_bytes": 435859456,
+          "pgid": 48144,
+          "rss_bytes_sampled": 98529280,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.6387,
+          "live_group_pids": [
+            48144,
+            50450
+          ],
+          "owned_ram_allocated_bytes": 439324672,
+          "pgid": 48144,
+          "rss_bytes_sampled": 76832768,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.7661,
+          "live_group_pids": [
+            48144
+          ],
+          "owned_ram_allocated_bytes": 441487360,
+          "pgid": 48144,
+          "rss_bytes_sampled": 56647680,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 17.891,
+          "live_group_pids": [
+            48144,
+            50471
+          ],
+          "owned_ram_allocated_bytes": 441487360,
+          "pgid": 48144,
+          "rss_bytes_sampled": 142155776,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.0624,
+          "live_group_pids": [
+            48144,
+            50486
+          ],
+          "owned_ram_allocated_bytes": 445460480,
+          "pgid": 48144,
+          "rss_bytes_sampled": 85262336,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.1859,
+          "live_group_pids": [
+            48144,
+            50486
+          ],
+          "owned_ram_allocated_bytes": 447447040,
+          "pgid": 48144,
+          "rss_bytes_sampled": 154329088,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.3325,
+          "live_group_pids": [
+            48144,
+            50496
+          ],
+          "owned_ram_allocated_bytes": 451473408,
+          "pgid": 48144,
+          "rss_bytes_sampled": 131141632,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.4567,
+          "live_group_pids": [
+            48144,
+            50504
+          ],
+          "owned_ram_allocated_bytes": 451473408,
+          "pgid": 48144,
+          "rss_bytes_sampled": 130232320,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.5784,
+          "live_group_pids": [
+            48144,
+            50504
+          ],
+          "owned_ram_allocated_bytes": 453476352,
+          "pgid": 48144,
+          "rss_bytes_sampled": 166342656,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.7138,
+          "live_group_pids": [
+            48144,
+            50526
+          ],
+          "owned_ram_allocated_bytes": 456261632,
+          "pgid": 48144,
+          "rss_bytes_sampled": 127328256,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.8351,
+          "live_group_pids": [
+            48144,
+            50526
+          ],
+          "owned_ram_allocated_bytes": 456261632,
+          "pgid": 48144,
+          "rss_bytes_sampled": 205778944,
+          "workspace_allocated_bytes": 2572288,
+          "workspace_free_bytes": 2760949760
+        },
+        {
+          "elapsed_s": 18.9695,
+          "live_group_pids": [
+            48144,
+            50526
+          ],
+          "owned_ram_allocated_bytes": 466542592,
+          "pgid": 48144,
+          "rss_bytes_sampled": 241438720,
+          "workspace_allocated_bytes": 12853248,
+          "workspace_free_bytes": 2760949760
+        }
+      ],
+      "stderr_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/build.stderr",
+      "stdout_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/build.stdout",
+      "stop_reason": null
+    },
+    {
+      "command": [
+        "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/rcc-go-packprobe",
+        "-source-root",
+        "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content",
+        "-index",
+        "/workspace/work/rcc-swarm/evidence/performance-steer-20261011/runtime-prerequisites/attempt-10/attempt-10/provider-content/objects/sha256/e5/87/e587078b0b8d8bce38d4e665999b9a3a0d4d9fb1de1b87a8c3a4b223e71e50f6",
+        "-offset-index",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/pack-layout-micro/offset-index.json",
+        "-pack",
+        "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02/pack.bin",
+        "-provider-root",
+        "/dev/shm/rcc-125-exact7945-embedprep-workers226/run-native-02/provider",
+        "-out",
+        "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/results.jsonl"
+      ],
+      "elapsed_s": 0.8633,
+      "max_owned_ram_allocated_bytes": 329478144,
+      "max_sampled_rss_bytes": 47689728,
+      "min_workspace_free_bytes": 2750656512,
+      "numeric_exit": 0,
+      "phase": "harness",
+      "process_group": 50544,
+      "process_group_quiescent": true,
+      "progress_events": [
+        {
+          "arm": "filesystem",
+          "event": "PASS_START",
+          "monotonic_s": 18856.803763436,
+          "position": 1,
+          "replicate": 1
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_DONE",
+          "monotonic_s": 18856.865449903,
+          "position": 1,
+          "replicate": 1,
+          "wall_ns": 60252518
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_START",
+          "monotonic_s": 18856.865474,
+          "position": 2,
+          "replicate": 1
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_DONE",
+          "monotonic_s": 18856.873146464,
+          "position": 2,
+          "replicate": 1,
+          "wall_ns": 6283063
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_START",
+          "monotonic_s": 18856.873160545,
+          "position": 3,
+          "replicate": 2
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_DONE",
+          "monotonic_s": 18856.880210656,
+          "position": 3,
+          "replicate": 2,
+          "wall_ns": 6391823
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_START",
+          "monotonic_s": 18856.880221282,
+          "position": 4,
+          "replicate": 2
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_DONE",
+          "monotonic_s": 18856.944915085,
+          "position": 4,
+          "replicate": 2,
+          "wall_ns": 57932860
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_START",
+          "monotonic_s": 18856.944940513,
+          "position": 5,
+          "replicate": 3
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.002504554,
+          "position": 5,
+          "replicate": 3,
+          "wall_ns": 63561160
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_START",
+          "monotonic_s": 18857.002527208,
+          "position": 6,
+          "replicate": 3
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.00879318,
+          "position": 6,
+          "replicate": 3,
+          "wall_ns": 5667434
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_START",
+          "monotonic_s": 18857.008802274,
+          "position": 7,
+          "replicate": 4
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.015075687,
+          "position": 7,
+          "replicate": 4,
+          "wall_ns": 5861598
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_START",
+          "monotonic_s": 18857.01508436,
+          "position": 8,
+          "replicate": 4
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.076942948,
+          "position": 8,
+          "replicate": 4,
+          "wall_ns": 57567741
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_START",
+          "monotonic_s": 18857.076964721,
+          "position": 9,
+          "replicate": 5
+        },
+        {
+          "arm": "filesystem",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.147676244,
+          "position": 9,
+          "replicate": 5,
+          "wall_ns": 71707829
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_START",
+          "monotonic_s": 18857.147700921,
+          "position": 10,
+          "replicate": 5
+        },
+        {
+          "arm": "pack",
+          "event": "PASS_DONE",
+          "monotonic_s": 18857.158176477,
+          "position": 10,
+          "replicate": 5,
+          "wall_ns": 9655452
+        }
+      ],
+      "reader_threads_joined": true,
+      "samples": [
+        {
+          "elapsed_s": 0.0016,
+          "live_group_pids": [
+            50544
+          ],
+          "owned_ram_allocated_bytes": 310435840,
+          "pgid": 50544,
+          "rss_bytes_sampled": 33505280,
+          "workspace_allocated_bytes": 12853248,
+          "workspace_free_bytes": 2750668800
+        },
+        {
+          "elapsed_s": 0.1358,
+          "live_group_pids": [
+            50544
+          ],
+          "owned_ram_allocated_bytes": 310435840,
+          "pgid": 50544,
+          "rss_bytes_sampled": 47689728,
+          "workspace_allocated_bytes": 12853248,
+          "workspace_free_bytes": 2750668800
+        },
+        {
+          "elapsed_s": 0.25,
+          "live_group_pids": [
+            50544
+          ],
+          "owned_ram_allocated_bytes": 321777664,
+          "pgid": 50544,
+          "rss_bytes_sampled": 42188800,
+          "workspace_allocated_bytes": 12853248,
+          "workspace_free_bytes": 2750668800
+        },
+        {
+          "elapsed_s": 0.4356,
+          "live_group_pids": [
+            50544
+          ],
+          "owned_ram_allocated_bytes": 329478144,
+          "pgid": 50544,
+          "rss_bytes_sampled": 40869888,
+          "workspace_allocated_bytes": 12861440,
+          "workspace_free_bytes": 2750660608
+        },
+        {
+          "elapsed_s": 0.6369,
+          "live_group_pids": [
+            50544
+          ],
+          "owned_ram_allocated_bytes": 329478144,
+          "pgid": 50544,
+          "rss_bytes_sampled": 44015616,
+          "workspace_allocated_bytes": 12865536,
+          "workspace_free_bytes": 2750656512
+        }
+      ],
+      "stderr_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/harness.stderr",
+      "stdout_path": "/workspace/work/rcc-swarm/evidence/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/harness.stdout",
+      "stop_reason": null
+    }
+  ],
+  "status": "FAIL",
+  "workspace_allocated_bytes_before_final_receipt": 12869632
+}

@@ -1,0 +1,47 @@
+{
+  "actual_benchmark": false,
+  "actual_fixture_read": false,
+  "actual_go_build": false,
+  "build_or_benchmark_run": false,
+  "changes_after_v3": [
+    "module cache readonly copy validates original manifest mode identity separately from actual read-only projected file modes",
+    "returns actual observed mode tree digest while leaving frozen source manifest and source cache untouched"
+  ],
+  "go_version_invocation_in_synthetic_tests": false,
+  "harness_sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37",
+  "known_review_correction": "v3 expected copied module-cache modes to equal original modes; v4 models the intentional removal of write bits and adds a synthetic control.",
+  "limits": {
+    "build_seconds": 30,
+    "combined_seconds": 180,
+    "owned_ram_bytes": 1073741824,
+    "per_pass_seconds": 30,
+    "sampled_rss_bytes": 2147483648,
+    "workspace_bytes": 33554432,
+    "workspace_free_floor_bytes": 2688548864
+  },
+  "numeric_results": {
+    "py_compile_exit": 0,
+    "synthetic_tests_exit": 0,
+    "synthetic_tests_passed": 11
+  },
+  "status": "PREPARATION_ONLY_AWAITING_ROOT_REVIEW",
+  "supervisor_v1_sha256": "66b28aa8c7627342c68c719ce4cc25a76c4dd33cbb774da0652f55809bb832e4",
+  "supervisor_v2_sha256": "d87ed4e388a0eed0f70e497aaa01b0a6febb6b0fc0973157659161730e7939c3",
+  "supervisor_v3_sha256": "16ff58c1d12304c1d9a1dbd9b94ed55040b7b287e49a6467e3bc2a04db5ef0df",
+  "supervisor_v4_sha256": "d5401ae6a6711b9ceaa83fd544bf4a1b65a29bf02d1937207d90143efdea8371",
+  "synthetic_test_scope": [
+    "ten PASS marker ordering",
+    "exit between poll and ps preserves numeric status",
+    "persistent PASS_START watchdog termination",
+    "bounded raw output cap",
+    "workspace prewrite reservation cap",
+    "missing-live-PID fail-closed",
+    "final process census failure does not claim quiescence",
+    "owned path rejects symlink ancestor",
+    "Go binary metadata parser exact tuple and negative versions/platforms",
+    "12-event harness JSONL identity and closure validation",
+    "readonly Go module cache mode projection preserving original manifest identity"
+  ],
+  "test_log_sha256": "dcf88d29a8ac0edb63041ad5b8acd867ed46e3cff42d1aa93917510d60ff689f",
+  "tests_v4_sha256": "ca87f77c264d5f5e76c1a9eb2f45f6d49e23d66f12fdbb8bb0e3ef6d4a3b83aa"
+}

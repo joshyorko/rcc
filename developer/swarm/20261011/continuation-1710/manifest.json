@@ -1,0 +1,1767 @@
+{
+  "parent": "a571261a67a27097422e21fb844204f6735828d1",
+  "timestamp": "2026-10-11T17:14:05.399582+00:00",
+  "all2371PriorEntriesPreserved": true,
+  "entries": [
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/actions125owner.json",
+      "bytes": 10789,
+      "sha256": "850958f5ebff49fd022ee445732f946c39182995375fbfb326476a2066f7bafb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/actions133comments.json",
+      "bytes": 30998,
+      "sha256": "d984e7fa34451edcc5080d71184afb50d362a492f5a99c64dfd669e11b36239c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/issues.json",
+      "bytes": 184000,
+      "sha256": "35f867a969e1a770f2daed1cad34edac6161442ea0ba2970eb041a7e8a260f27"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/main.json",
+      "bytes": 5196,
+      "sha256": "6d191d6f3c9d094172be04086d1df0968997d1673135330c3d6d24d227bfa65f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/observed-at.json",
+      "bytes": 43,
+      "sha256": "2e5272c5bc3c31336a21305afb85059693524a03015058bdef7bd51373ad7b54"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/patchraptor-jobs.json",
+      "bytes": 2072,
+      "sha256": "a0dba9a7cc4f1aa92f3bc51da38b1c4dc54cd7e27cd5ec97cd28fe03a4bb6994"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/patchraptor-run.json",
+      "bytes": 11608,
+      "sha256": "eaf15f8921eefde3f383f40e4768410a7091d823acc8bfd73108334509b32971"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/pr240-checks-1706.json",
+      "bytes": 40990,
+      "sha256": "c94437255990453e56e6123abf2524b2fef4151b69454d999bae471523e73278"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/pulls.json",
+      "bytes": 35944,
+      "sha256": "aa0749f35adef7a01555056fa28edd1853a8aadfe4877b8b975c035f2d7d5efa"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/releases.json",
+      "bytes": 395835,
+      "sha256": "7c5fa8cd39b0f793af8f71b12f5fd7efa1c2f1bd3a3eae4a55b46507d169d3f1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/runs.json",
+      "bytes": 69789,
+      "sha256": "ec014f301228f00d4dd9f6e2d6d57cdbf68ae0acfa2f78c04d44cc3231f2d7ac"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/live-1655/tags.json",
+      "bytes": 13397,
+      "sha256": "1cd345d360358087816ba6a48b42aedb5bd29a036c3e90b80cd8eeb7c1280580"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/pr240-refresh-246fc/report-1701.md",
+      "bytes": 1090,
+      "sha256": "08d6fd3c1d62a2127bc9043fe00d141a0cbdd6476cbbd3e779d0d7c2eb8da605"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/pr240-refresh-246fc/report.md",
+      "bytes": 1058,
+      "sha256": "f94fc8efae4f7f11c9901c57be94e9176532c3e7a2fde0e2185c7b5682016f29"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/pr240-refresh-246fc/snapshot-1701.json",
+      "bytes": 3607,
+      "sha256": "b807faccc92558b0541e26fbecd4ec04219e35300b956e239a633387f9b6cc6d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/pr240-refresh-246fc/snapshot.json",
+      "bytes": 2990,
+      "sha256": "6b5147172873229f63bba20feda4931572fcb08b04014d175bc2e1cd1de701cc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/pr240.json",
+      "bytes": 15716,
+      "sha256": "fe154044b261bd54397c5625457ecc8713a4970e8ef397530a308bfc2472a947"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/proposed-pr-description.md",
+      "bytes": 841,
+      "sha256": "a3bb39de8ebe6106676c0ded672dfc3f87561fc74489e56d0ff7f672b534adf3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/report.md",
+      "bytes": 6536,
+      "sha256": "b28b357bb6c59e024226b99ca3d299f293476a09eb701c92cdc75fc26a14e859"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/root-current-main-composition.json",
+      "bytes": 420,
+      "sha256": "a483aa41ee9e75c6e1bb144fedcb8f307eebb87c8b82b31ba41d81202bb8c6ee"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/root-pr-body.md",
+      "bytes": 619,
+      "sha256": "d615f6b44ff886ec28ac8283b638000f8be75e8ef8c54c6d957b351e05439592"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/root-pr-create.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/issue182-readiness-3fe/root-pr-create.stdout",
+      "bytes": 42,
+      "sha256": "7ce9f157693f96a551ba99a2a29e967b22221a4d600aace502bfbb0e3b2d6f41"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/coordination-1628/actions133-body.md",
+      "bytes": 2490,
+      "sha256": "2b0bd2c4357ac155b1c9be1611cefcbf7c256f0e4029d0938b06a2f9fb750871"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/coordination-1628/actions133-result.json",
+      "bytes": 139,
+      "sha256": "bbc5b43cf450de50dc706745e40863e2643d1fd230f0d817376d6043358e3146"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/coordination-1628/rcc125-body.md",
+      "bytes": 4366,
+      "sha256": "f39023ae2e40c854ac1fd75b8172ae3accf0ca275205dae08e90b5fd82325b65"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/coordination-1628/rcc125-result.json",
+      "bytes": 135,
+      "sha256": "b417de7f09f36982f17e6e38d99849c4ab71a48af45ab5f4bd0da97341b01456"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/execution-ledger.json",
+      "bytes": 37731,
+      "sha256": "e3dc335fb7e89e92576665e97d446fc5a65af443d7cc1bc04c1079ba3b796b7b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/dependency-graph.json",
+      "bytes": 9551,
+      "sha256": "8f595853de879751d4b13dd8a710df9235622dc72f239a1f41332800296298dd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/checkpoint-1640/remote-verification.json",
+      "bytes": 319,
+      "sha256": "17804a537716288009ce30041c9c66b972c5c2303c81013722046cdd0badea5a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/execution-failure-erratum-v6-rlimit-correction.json",
+      "bytes": 1414,
+      "sha256": "71734af86763c58fe334ae92e8ec506e06ff7af2d30f79c198303c76477b960f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/execution-failure-erratum-v6.json",
+      "bytes": 3223,
+      "sha256": "608c172b39ecd6955f09a264ab6f6e2d59e36c77ce809903d5cb494e879b906d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/failed-v6-ram-inventory.json",
+      "bytes": 1106091,
+      "sha256": "a99a7c8e1f65a9439ef0cc1e04ba81a9e7eb1e22f2652e087947b9004d75e0ff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generate_embeds.py",
+      "bytes": 6900,
+      "sha256": "0cbe415eb546a7527a6a3cef7f10f6ba5b01097d3cfce57574054a46bd6b8633"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generate_embeds_02.py",
+      "bytes": 7030,
+      "sha256": "5576ad14d8925aefdfa6cd4d33cc03c427164dbef7c624caf053080ef88b4240"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generate_embeds_03.py",
+      "bytes": 7036,
+      "sha256": "e6b125b3da6964b4da53d464784063d1d64c4b8e15351f2ae9430758c25c0e12"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generated-inputs-receipt.json",
+      "bytes": 34023,
+      "sha256": "1ee3d5557fd16f89d461fc447932dac2d0ecbb14f865a902fe1a54cd624e9de2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/generator-attempt-erratum.json",
+      "bytes": 1733,
+      "sha256": "62356098ea60ca8cef03e8c707f61449d6c95e7c4cb831eea3c17652189047cf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/harness-successor-draft.go",
+      "bytes": 24615,
+      "sha256": "a192bdc1d5bb0e2c87c06e461944e3ecfde9de0aed6056f766c5a50a6405d14b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/harness-successor-v2.go",
+      "bytes": 25247,
+      "sha256": "79cab09b35028beac804dde357bd789a0654d9e487b6960b63e0230cc8eb5f37"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/offline-go-list-result.json",
+      "bytes": 11023,
+      "sha256": "78b19731ec0b610158818742ba3a004004bfce59c47b1b5343225bbc4c96b60e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/offline-go-list.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/offline-go-list.stdout.txt",
+      "bytes": 5877,
+      "sha256": "942b87af627b7596abe12937f0c7da7ec4733d47ae624050069b5b81110a9706"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/offline-gomodcache-manifest.json",
+      "bytes": 316455,
+      "sha256": "a4ddfcba5046cfa50375b4f9cd34cda92c55d42564c54860c4d29905be4634fe"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/preparation-summary.json",
+      "bytes": 2427,
+      "sha256": "e1471e22e9115fac420d35444d50cab3cd6ceef72f7466643d005479eb5d0cbb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-01/supervisor-result.json",
+      "bytes": 605,
+      "sha256": "07dc6dce306f3b9522f963c756c58d8bb4cd512458c19c6e0e1d917881146410"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/build.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/harness.stderr",
+      "bytes": 957,
+      "sha256": "e29d857e570a6c229bbfbfdac0291cb75e47b7b5ef8f09601aef9df04e072e71"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/harness.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/rcc-go-packprobe",
+      "bytes": 10277531,
+      "sha256": "38c84cf54b637f170591e96fbd70f7acac955f57f37b5384459f40e5e82d952c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/results.jsonl",
+      "bytes": 11838,
+      "sha256": "448015d02fc300de96eb8eb2010b4ea859b9004e8cfb048fadffd8b16027013b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run-native-02/supervisor-result.json",
+      "bytes": 58969,
+      "sha256": "bdb185d87d7ceefd3e33775744c885c7d4837e515d218a73378d43c2efbb67ab"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/run_go_list.py",
+      "bytes": 7751,
+      "sha256": "43769360e18d673efac9dd08bf880a7b0ef5a6cc8885bfab222156ad5dc614b6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/successor-plan.md",
+      "bytes": 4870,
+      "sha256": "b1d421e7546d51280c8898475a4e40b557a1791b88c906fa00696c8500380ae0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/successor-review-notes.md",
+      "bytes": 1838,
+      "sha256": "2bbec4f9d742b307c87bbee28ed0754a24701eb4ee95b786ce1e0584767b8a44"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native.py",
+      "bytes": 25669,
+      "sha256": "66b28aa8c7627342c68c719ce4cc25a76c4dd33cbb774da0652f55809bb832e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v1.py",
+      "bytes": 25669,
+      "sha256": "66b28aa8c7627342c68c719ce4cc25a76c4dd33cbb774da0652f55809bb832e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v2.py",
+      "bytes": 36744,
+      "sha256": "d87ed4e388a0eed0f70e497aaa01b0a6febb6b0fc0973157659161730e7939c3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v3.py",
+      "bytes": 38219,
+      "sha256": "16ff58c1d12304c1d9a1dbd9b94ed55040b7b287e49a6467e3bc2a04db5ef0df"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v4.py",
+      "bytes": 38882,
+      "sha256": "d5401ae6a6711b9ceaa83fd544bf4a1b65a29bf02d1937207d90143efdea8371"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v5.py",
+      "bytes": 40084,
+      "sha256": "03aed9b75b9f8f69f91897aec5d60d36bce257ae31964a06f662e4b745179479"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v6.py",
+      "bytes": 41029,
+      "sha256": "058fc5c6918daad888e83e102454aed464c7845896dbf26772631e4d5030fe7a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v7.py",
+      "bytes": 42387,
+      "sha256": "bd506015dafae6a2d6cf52cca9e7e9b0c567698febbbfc943b3c2863b877b4aa"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervise_native_v8.py",
+      "bytes": 42387,
+      "sha256": "b39fe8994f2e1df5ed0f948aa03e15eef97b01691a3eddc2e8fbadb5f27453c4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v3-static-review.json",
+      "bytes": 2217,
+      "sha256": "0f7fc463646d46e89947231ad3a2228dff67b23b10e60752a6d14f002eccf009"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v4-static-review.json",
+      "bytes": 2296,
+      "sha256": "34fa27abbf7d6549ea14937074af59824cb6078a6110fb9af8c922acb5b2f02c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v5-static-review.json",
+      "bytes": 1324,
+      "sha256": "01ac8517fb57bcb9d89f08a7b9ba4c5d353473cc538175625e80057c132b64c1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.exit",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-outer.stdout",
+      "bytes": 149,
+      "sha256": "6da0911085db6c1f32511b34b8cf380f23089677b5a6b38c917d747f3a007e5c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/supervisor-v6-static-review.json",
+      "bytes": 2062,
+      "sha256": "87ac88c23f7f1784ada2988bd35c264543d34b9bbc6bca4afa669d386fbd8b56"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-final.log",
+      "bytes": 990,
+      "sha256": "b7e4a09de943f68ba9022fc7570b8ea3522de1b3ce85c2b962adbd5d234e28ca"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-v3.log",
+      "bytes": 1601,
+      "sha256": "35ca70876072976c1d4854cdc479626c1ab5d1a68f64077c62ccd9647d62f44c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-v4.log",
+      "bytes": 1786,
+      "sha256": "dcf88d29a8ac0edb63041ad5b8acd867ed46e3cff42d1aa93917510d60ff689f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-v5.log",
+      "bytes": 1965,
+      "sha256": "736261e420506e69d7e18aa5013279d6e5ea287671b4d46dcecc9288bfc1a32c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-v6.log",
+      "bytes": 2140,
+      "sha256": "b08d52d1cfbf1a5970a085d60b9f4cd66fab3ab0b840b8c18980666cf74bef64"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/synthetic-tests-v7.log",
+      "bytes": 2535,
+      "sha256": "617b19e246a2a576d2dcca09644394030fb5043db471f0bc546ace8aa64fa1cc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native.py",
+      "bytes": 5424,
+      "sha256": "06251c8e5abb6dc3faf38bfa0e08dae033ca886d7867257144f85cdb52383405"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v2.py",
+      "bytes": 8342,
+      "sha256": "f8ffa7c9cc7a6986a3b25434f0aced1776e281778688653cfa20bf12b7fc1fe8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v3.py",
+      "bytes": 9575,
+      "sha256": "50d4a74faf0d48aa22583d3e8adb29cabcc172a4cc18b6f7f9fe9a04351497ff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v4.py",
+      "bytes": 11238,
+      "sha256": "ca87f77c264d5f5e76c1a9eb2f45f6d49e23d66f12fdbb8bb0e3ef6d4a3b83aa"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v5.py",
+      "bytes": 12174,
+      "sha256": "fcefe5f4e8c8f38416adf813041291cb3692d84024234c2f10e4da5cd11f62e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v6.py",
+      "bytes": 12719,
+      "sha256": "c835c29d8871fb1748c79ea13f091c20c93356031efd5959cda0c3872ea58457"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v7.py",
+      "bytes": 13564,
+      "sha256": "72414a2e2ccf443c02ee8c5ab3b4d840422432f082464880082e26d0e4d740a3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-7945-preparation/test_supervise_native_v8.py",
+      "bytes": 13564,
+      "sha256": "46d2bc7fcd1db593048c6e82c4ff671ba98a3cd4435daef9ee2dae21971b9c73"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/embed-provenance-readonly-assessment.md",
+      "bytes": 4958,
+      "sha256": "91f1214ff81b0d822102f3a50de0c436a1e1a476c874d03cbb92361afe4eb9a3"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/harness.go",
+      "bytes": 21091,
+      "sha256": "329246f5ba513124ff4603c9fa1a7072b06f4776979206e1a5c3db6135573af4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/plan.md",
+      "bytes": 8580,
+      "sha256": "05e8771be5ca114dca293b922c0bb2468ca7f31f8a547fccdfadc9bb4273937d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/repo-source-comparison.json",
+      "bytes": 168253,
+      "sha256": "3c33df0064b3c0b28805e6f5d04cf757c0f6a62db5c10885039beb1ff8cb421d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/report.md",
+      "bytes": 4720,
+      "sha256": "d6788e9f6753127889e16e101eeae8eb3f273d3e8a40f0bba33b95977ba13032"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/anywork/pending.go",
+      "bytes": 1141,
+      "sha256": "65ecea37cbd82928d74bd92489825d6dca1572bdc6a95ae855698b2afe68ddfd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/anywork/worker.go",
+      "bytes": 2151,
+      "sha256": "052570be5f628226a670859dfa6e8c21d65eaaaf85dc9a9ff28d22a98d6bbd4d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactpolicy/http.go",
+      "bytes": 1227,
+      "sha256": "4389b8938ceb04768272563c20e30bbc4bb55f00cc2e2c3dcbc3cd356c3d4472"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/admin.go",
+      "bytes": 11157,
+      "sha256": "62dc406888b1c752eb9cbdf9bf2fcc42867e413046f31b913a182c75f74f477e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/deferred.go",
+      "bytes": 4462,
+      "sha256": "54166aaf6254cb689769460231da1ebe505d6369a87ed1ba520e74bfe8dffcd2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/filesystem.go",
+      "bytes": 9020,
+      "sha256": "c6936f4b7ee10cd7c78255d8b5c2f26c18a88d353f5c5770f6471b335630d1b8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/filesystem_other.go",
+      "bytes": 1079,
+      "sha256": "e01c6b8f2f3d50e71f2abe09406a53958c3bfeeaaa8ede38b47ef9d62cdf7581"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/filesystem_unix.go",
+      "bytes": 14784,
+      "sha256": "b6b7074c1ffa8987c71a8dd062cf3367dcd27a10f0a32d3d06ddb57689e4cdf1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/filesystem_windows.go",
+      "bytes": 10045,
+      "sha256": "b2d3a5a18adab4a133d3a4d1081cb6631b5b3f0b4e6e0ea1233a78874404e48b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/http.go",
+      "bytes": 34141,
+      "sha256": "3439f851151ded9e410ff9f67b74e169028c47ec59bfb5835843ac41a5b1e0cb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/http_policy.go",
+      "bytes": 175,
+      "sha256": "522685545253df670fe3acf869ce9ece5ed267e708553a4142da6b9da9fad576"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/journal.go",
+      "bytes": 27972,
+      "sha256": "a5dc6971dc608320a840183c3734e5db8c25f73737e9e884f390b4fd2a76f611"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/policy.go",
+      "bytes": 10680,
+      "sha256": "fee3db6f19ba2424ce0fff89f758d9a04923f5efcdebbc1c2c4372b6ff049de6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/provider.go",
+      "bytes": 8241,
+      "sha256": "feb8ae5c6f96c4c5aaf08d9e8ceba17d8229e8a81dac4dc9f55a7059f5d5590e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/publish_darwin.go",
+      "bytes": 623,
+      "sha256": "2525e1960c1a1d558273c73c82bcabd0b4f018028ec523731287d311a364eddf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifactprovider/publish_linux.go",
+      "bytes": 378,
+      "sha256": "e58116d0c87bfe154fe70424a04c8f302dd2080d5739d0cb2bc6c5461ac05c65"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifacttrust/carrier.go",
+      "bytes": 12935,
+      "sha256": "9bdbfefa0aeee043f6248addfc2216ee301844955e0e072d96dd9d0d85962264"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifacttrust/receipt.go",
+      "bytes": 3580,
+      "sha256": "c7920797b32c27da3ba3ee8986ed09852e568f82fd8c1c31686adbf54fbb9ef8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/artifacttrust/trust.go",
+      "bytes": 33217,
+      "sha256": "c10b01c92564f36c20cba06cb1bbafdc2a0815d9713aafb2969deeeb2f9d5e4c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/.gitignore",
+      "bytes": 6,
+      "sha256": "15093ccf76e1aa623e0fe9d23172fa6cdf29131a772d2eb49bae10708e1e6434"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/depxtraction.py",
+      "bytes": 2836,
+      "sha256": "c98e9f4a75c141f0988a61aadcafaff2ffef5cad35224942a7499cd47d5d0dd9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/externally_managed.txt",
+      "bytes": 1054,
+      "sha256": "065120c24ea9b035c4648c78e87d4410612ed4e397218a06bf82a2bf743e4d30"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/index.json",
+      "bytes": 3441,
+      "sha256": "0e18e8966b2f9aae6431e06869eea631cf8318ad1b7bfb90a4999231549ac19d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/man/LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "0d11304c49e51507076a4c4426041347a3936197793e2bca483028ab3b1d24b7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/man/tutorial.txt",
+      "bytes": 2241,
+      "sha256": "13a56924f8caf5f75671e3aaae8a4af2799164dca28d18cdd8e9b7e9f5a57351"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/micromamba_version.txt",
+      "bytes": 7,
+      "sha256": "af2e71d1a9783ed42afb476ffa6354e0693fb13007628a5d28e426756ca7f991"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/netdiag.yaml",
+      "bytes": 680,
+      "sha256": "18fcca87740649fcfa501c9bb66d7ecd515ba7a20acc41cf52c443f0fdc11462"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/robocorp_settings.yaml",
+      "bytes": 1442,
+      "sha256": "c2f44ba48ec2610ab4189ed2f5e2fcecb333de157927cbea91d8366a88edfd00"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/speedtest.yaml",
+      "bytes": 102,
+      "sha256": "7a6425649fde628c7fc7bb3dfb21d8dc37d8f6b8c16d9c524b9b7599a657e9c9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/assets/templates.yaml",
+      "bytes": 135,
+      "sha256": "42daa1de4770032e8899af70fef9dad033af9b71f43b8fbabf0bca6cd4e40680"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/assets/.gitignore",
+      "bytes": 36,
+      "sha256": "c84b36c1a91bbcfa455a2de3bf67236731349c201fe188be837412a5ed1b1b8b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/assets/man/.gitignore",
+      "bytes": 6,
+      "sha256": "a41dcbdfa6856c6da8afa74cfe2a98a6234a827494f17cd91b15e5fd93d14ad7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/doc.go",
+      "bytes": 77,
+      "sha256": "3cf854cc323edf4536b0945b2394c11e38802c790edfe25285db04816a52b84b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/docs/.gitignore",
+      "bytes": 5,
+      "sha256": "8bf5a385c929e31553fda850fc06940106c8ba2a9ad2f7429fc642f8902918ff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/embedded.go",
+      "bytes": 864,
+      "sha256": "0eefbcfd3a2a6641e50ace58e9371552f2c17f389bc7858851c662f733bb52c8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/micromamba_darwin_amd64.go",
+      "bytes": 163,
+      "sha256": "b6a68f12115836e8a9bc9b8f88389570cc12a07536ade3c79c8448ba001f01f0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/micromamba_darwin_arm64.go",
+      "bytes": 163,
+      "sha256": "29dc6d618c20bc3af0d7fbbb20f972a0c6296be151d6a837e9b15cca765cf04a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/micromamba_linux.go",
+      "bytes": 161,
+      "sha256": "7fcd84aa7c7cfbc63453bdf83ae5a6260273e594e4bb837dd46748e047333c9f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/blobs/micromamba_windows.go",
+      "bytes": 165,
+      "sha256": "910e9251fe7772d1688e890256e462b06ab739e18244e0b49e9d4bc0891bf67a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/cloud/client.go",
+      "bytes": 6665,
+      "sha256": "ca9434320f1779ef5069643ca374d2c9af7f26b6d619af88f2c619e82fbc6b17"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/cloud/doc.go",
+      "bytes": 74,
+      "sha256": "5d36446f6e733d1d8702349d9aaac9233d8d7568d6292904100a3497a18c10e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/cloud/metrics.go",
+      "bytes": 4058,
+      "sha256": "7f7d643933088d0fe62bde21440d665316ba44a08b159f5382b5f3ea607d8c74"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/cloud/readfile.go",
+      "bytes": 682,
+      "sha256": "14adefe0f207f2cbe86c4b8754f16d52bfd045cb7a866da4878a8ea6576f43a6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/algorithms.go",
+      "bytes": 1842,
+      "sha256": "2ba6091fd652b0f95eaf33d709e40c82beaac5c978198db7e62eda9563850ad0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/categories.go",
+      "bytes": 618,
+      "sha256": "24621630b394bb876e5c6c67b96eb59593de09ee220341eed2b44ee01768a5ca"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/commander.go",
+      "bytes": 559,
+      "sha256": "70e8d89254302532415c84e9f1d70b65c0f0579bb1db507844e3139131f4a1be"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/diagnostics.go",
+      "bytes": 2585,
+      "sha256": "7bf56ec995f6eeced57185125fb24e04560c9f8faca276f7a95f05cd73e70622"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/doc.go",
+      "bytes": 121,
+      "sha256": "13d21bf961ceffac5b66e038291eff842bded8b90f6c85edf108888683d883e9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/elapsed.go",
+      "bytes": 1581,
+      "sha256": "e86af6786ee9507cf5d215861c68eb2c6bbcf45805b291ac8f82e20f1dd416df"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/exit.go",
+      "bytes": 346,
+      "sha256": "230b2bf98617080509c3746d4bce9a511052251d420f7172074138c53b6be8b8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/identities.go",
+      "bytes": 336,
+      "sha256": "5818bb233b6830fd374acb7d4b854c81083a19c9fc4f0844452590535b00eb9e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/journal.go",
+      "bytes": 379,
+      "sha256": "aed3b3e6accb9e83d74dde4d63784fea856ea904c946d42e0b3c6204a97515df"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/logger.go",
+      "bytes": 2216,
+      "sha256": "8a081f06ed93bb86a2fcb58f7dd6c4b67ad3bb41c7b5bdd08d2581b4e9a71509"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/platform_darwin.go",
+      "bytes": 629,
+      "sha256": "3b21f277d6670d336642dcb977229c2ff1e5d29fdf1064e72821ef734b4b6304"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/platform_linux.go",
+      "bytes": 620,
+      "sha256": "ad41f69fc682b074a4472978b78c5915bb45257977d92c96e7aac2738c0a6938"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/platform_windows.go",
+      "bytes": 1026,
+      "sha256": "78d1e5304044cd8408407cb0cf89b74636e79a4de8c8c3fc8f5c547071ce592a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/scorecard.go",
+      "bytes": 1331,
+      "sha256": "a60107c9ca4b06e20a62aa08cebd5d41ab100568be13fde25d1643a7666af51d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/strategies.go",
+      "bytes": 1426,
+      "sha256": "19375a7ff79d22212fd0f99ad00424f4f1a2dba8388a56317b034da925aaa8cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/timeline.go",
+      "bytes": 1712,
+      "sha256": "71dc25bafd25ca0ce542f01a1003c081ad74a6d135609aff088d17a255b0982f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/variables.go",
+      "bytes": 9877,
+      "sha256": "8ce23972affbbca0006436a6e35c03d7c05cf26bac41f163e62cbf4b7410ee6f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/common/version.go",
+      "bytes": 48,
+      "sha256": "38bd449305ec225fea5bbf5df9ce4f6c996fc38e84a9e61f7ba77e8dbce7414e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/activate.go",
+      "bytes": 4210,
+      "sha256": "f3baae8b0b8f33ef9d6a8b4c52a255508d413678bcfd0a31915ce4314498cd6f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/cleanup.go",
+      "bytes": 6023,
+      "sha256": "34739e7295ff82d6086bf5d43d8304612314c0feca50ce216ea384e4ce6d0d1c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/condayaml.go",
+      "bytes": 18567,
+      "sha256": "fbcb2d84e723fee9e4ce0498341015555b78532fc832fd48ba16ec70f678a1bd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/config.go",
+      "bytes": 825,
+      "sha256": "ce08b7dd3be45df3ea195411bf85f89b974180e7d6e61d266af8aad5784cd631"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/dependencies.go",
+      "bytes": 7564,
+      "sha256": "bd10c822d0d6aa5bb725e286ea481450a07600420ad09ced1c87e5b852026cbc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/diagnosis.go",
+      "bytes": 2697,
+      "sha256": "67c2b275133ab5a600d3094eaefe017e8472bfc1090aaea1370f5d30d08e04e6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/extarnallymanaged.go",
+      "bytes": 1439,
+      "sha256": "c8f3807ff467cb9ad49ef55f3074a0350b5d788a644b2e04587019f24ae8c687"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/installing.go",
+      "bytes": 1822,
+      "sha256": "bff04b37eab93da805517d1870de53d24e4746462ee0db8eb34277d92b34ac79"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/packageyaml.go",
+      "bytes": 3367,
+      "sha256": "cdec3bd89348295c357e22e07abce2d9df09e0a04a1c807a784c4be4246ace30"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/plananalyzer.go",
+      "bytes": 4184,
+      "sha256": "f8a339c4605c16d36086b4206bf88a1cd1066d4462d80c654a2880e92c210597"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/platform_darwin.go",
+      "bytes": 1756,
+      "sha256": "7e3d9607b901163ed917e0c8bde32f06965a2bf91ab3485ec89c7332c8bfd2dc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/platform_linux.go",
+      "bytes": 1768,
+      "sha256": "d3178649ee70de8bb4b08ccefb659f844d85d1dd0764e3d1072c4e1f8b4d7114"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/platform_windows.go",
+      "bytes": 3465,
+      "sha256": "8dbacaa6da25afcd2524950fd634356e9300b63e15a094307dc4624c5645109a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/robocorp.go",
+      "bytes": 9916,
+      "sha256": "3631a1eab4f7e89f700821caf9bcb451b68b6963c90a7779cef87b8587d09b65"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/uvbootstrap.go",
+      "bytes": 12196,
+      "sha256": "ac34077b4c3b66df4d84915524413ca45857197a3bb98fc394f386500900371c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/uvnative.go",
+      "bytes": 16108,
+      "sha256": "adc8ee6c936ec779d58c9febf5ea296cac65ce52ef13c84a7b8eb20045bc5fb6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/validate.go",
+      "bytes": 1207,
+      "sha256": "be1975352043541c677a6415a8f0c26b85d664e2fea7d94e5d284e1d18910e78"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/conda/workflows.go",
+      "bytes": 25856,
+      "sha256": "0e0390bf4930645a1d3819fd5ecb99aa9892c281846923c0952d0b19ed93e694"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/BUILD.md",
+      "bytes": 805,
+      "sha256": "a50e4cf4484f9e9bd075509cf348414b729f9825a44cc14f72d56edebfbe29fd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/README.md",
+      "bytes": 37064,
+      "sha256": "9dee86172b87513d7b8e73fab81e5bda95ab73509cbce5ec740737a1b2f17e3d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/agent-boundaries.md",
+      "bytes": 2837,
+      "sha256": "fcc70d7b636485df678e11d8178ab9abd0806130682509e68692a5188be342e8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/ai-ops-runbook.md",
+      "bytes": 1158,
+      "sha256": "4199e9838aee4e7600497c132ddc7568ef23b024e5aad55d4e813969cdae3898"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/change-classification.md",
+      "bytes": 928,
+      "sha256": "820362c0b9a35747ffa07a104013303c84b6f551300b2ea1f4e732fbb6b27a15"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/changelog.md",
+      "bytes": 116658,
+      "sha256": "e1d7bb7a3d320f2730155e3e1fd4d94c7d224a10a93e884a88f62a678bbce008"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/cloud-commands.md",
+      "bytes": 9487,
+      "sha256": "abf060c668851d3144f6a5b78a2f6c4eeb0815094d94d4243057348b856338cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/environment-artifact-compatibility.md",
+      "bytes": 2473,
+      "sha256": "320297e26afc9f2e3bbcb4f1fa8c39df3d96ced98b5364459bbbfb1b91fa2224"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/environment-artifact-trust.md",
+      "bytes": 3632,
+      "sha256": "ed2c9311c671e8a57036112e960d9296d0c5022dfbf3fb60f0d27f64ef41672b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/environment-build-coordination.md",
+      "bytes": 8039,
+      "sha256": "11497f0d229bcf4c9f97c1c31f9e08f8f736d70809e59e94d5a33af390eef994"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/environment-caching.md",
+      "bytes": 8702,
+      "sha256": "f11228b45b22399f7f83e21a67af3a5dd5a8f7383fa830ab841c9fef754696c1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/features.md",
+      "bytes": 2013,
+      "sha256": "820f64c36cb8dc898592a37d74504383e06add7b0821a2ac900c17885f1cbf3c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/history.md",
+      "bytes": 16572,
+      "sha256": "a03071e7ee5666bef034426fa7f94b9dc735790404e9db78bbdbbbffb338c10a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree.md",
+      "bytes": 44150,
+      "sha256": "722f809054e4ad1d7d1a1e84b817c6312867a78f1182d48c94c7645e5bcbd30d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/API_REFERENCE_SYSCALLS.md",
+      "bytes": 14627,
+      "sha256": "747bc9621d999ce6b96df201a7767a21871276bb3220344124c9e3fc1d7e6367"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/BLAZINGLY_FAST_SPEC.md",
+      "bytes": 35786,
+      "sha256": "86eea153ffc0eea09c76432d778f5105170b9571fc0840f59816a7234b850e3e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FAST_FILE_COPY_QUICKREF.md",
+      "bytes": 4757,
+      "sha256": "65fca4f2a157f7bd297546aa0e42fbe930fcebf12dff3f189b163d451d6b9794"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FAST_FILE_COPY_RESEARCH.md",
+      "bytes": 25236,
+      "sha256": "6ca9b0f60288cdd786613822a3000d7ac29f5e009f661b939a67c940a9845c45"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILESYSTEM_COMPRESSION_IMPLEMENTATION_PLAN.md",
+      "bytes": 20194,
+      "sha256": "3c21a8d7c61e6a5ad57c92cfb95e8d1e14ceaf307b98acc3f2cc4cdbf279c176"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILESYSTEM_COMPRESSION_INDEX.md",
+      "bytes": 12101,
+      "sha256": "0d6cb3fd291cbb9bde8ed767e325bc983abac59b9274d297fc7d50cea0aac2f6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILESYSTEM_COMPRESSION_QUICK_ANSWERS.md",
+      "bytes": 17774,
+      "sha256": "83ed13ea5ada6343b6d715b2019bb86d93811804d179d17600f3c72fa8543623"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILESYSTEM_COMPRESSION_RESEARCH.md",
+      "bytes": 23561,
+      "sha256": "80200fc76633c082a4c7173c5ae677ea8d348257279ba90e237d71a7370a2b73"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILESYSTEM_COMPRESSION_VISUAL_SUMMARY.md",
+      "bytes": 37067,
+      "sha256": "ea98ef6deb887205570368dd0184800d762ed717cc5d5b22461131fc86130118"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/FILE_COPY_OPTIMIZATION_SUMMARY.md",
+      "bytes": 7464,
+      "sha256": "ed82d4d4773f8ad4ee3edf8a173b0b7c792e78689ef1bfdbf401154d4084bac6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/GO_REFLINK_LIBRARIES.md",
+      "bytes": 8718,
+      "sha256": "3a9ab3853b10814368d6240c41c17c370c2f4c9185ec48829f6e093b908137ab"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/HOLOTREE_IMPROVEMENTS_SPEC.md",
+      "bytes": 13155,
+      "sha256": "501f5aded9293a1e9daee6129798a8dc080bff87db4f9a886a8e1ea8086c4120"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/README_FILE_COPY_OPTIMIZATION.md",
+      "bytes": 10523,
+      "sha256": "c886eeb680949ea864ebfe49ca9e026a358f48746e1e669d0c949cfe1f9a9194"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/REFLINKS_RESEARCH.md",
+      "bytes": 18345,
+      "sha256": "7a839bb4e7108edc810af18ac7737ca68ce20993fc145f34222331ad97f69952"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/REFLINKS_SUMMARY.md",
+      "bytes": 13027,
+      "sha256": "73778ddb39a5063e2b87a23c3ecf86e07418e8933f197ceaf929cb967ae46ee0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/REFLINK_INTEGRATION_GUIDE.md",
+      "bytes": 15553,
+      "sha256": "2d26cae074548f3c5113bf339baf8ba96799771190c5a9e21c809c34e50248ee"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/REFLINK_QUICK_START.md",
+      "bytes": 7420,
+      "sha256": "a3204059ae7bfd10df9264d82e42d33b984546611f1d9c487f2f464e0a7e01a0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/holotree_specs/STARTING_POINT.md",
+      "bytes": 9230,
+      "sha256": "f7806054d82726fe79b8ff4d4c62c41f71c49a6026524f0ef726ca0d9c8913aa"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/maintenance.md",
+      "bytes": 3920,
+      "sha256": "2adc953cab1f129ff5df2bf139b1db881755538dee3264fc939b07438cf48143"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/metrics/README.md",
+      "bytes": 321,
+      "sha256": "f84b5d505bd2ba9d290bf019013fbe22e44ace07d7b4b3c2aed294f6be5e2425"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/metrics.md",
+      "bytes": 1069,
+      "sha256": "9f4b9b820f1376664e6a7d8c6a8689adf7f0e196cb5f277d14a28e12118f5b3c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/profile_configuration.md",
+      "bytes": 2346,
+      "sha256": "31ae93c2533f6b8882f20a0a61e25ba425a221b3b5f981892fa7dc7776d0d411"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/recipes.md",
+      "bytes": 40549,
+      "sha256": "271ff993b92c4ce1710ee0fdda4aa6398b19ad4735f3114396681c3bd649d4b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/release-process.md",
+      "bytes": 7417,
+      "sha256": "23899789d352c68fe7ce8e7e0920d702a3033299adcfe941d2bcc45b821f7b6f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/review-rubric.md",
+      "bytes": 1187,
+      "sha256": "b3a1d1cfd00310bf9c6ea5a9dee57c57d251aafa939c606fe19859340bc940f4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/roadmap.md",
+      "bytes": 8701,
+      "sha256": "14b42446fe633a31b3062921edf90b725360956d6b58cc79ec90229111a2d615"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/skills/README.md",
+      "bytes": 1798,
+      "sha256": "d79669f306d5e488d0e42923778f7a9267779ce659e3bbae2df8ff85de7adb9f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/skills/meta-skill-improvement/SKILL.md",
+      "bytes": 3619,
+      "sha256": "90a64dc859a07feb0736ab45a31363b659faa5645363c3a938309a739c8a3266"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/skills/rcc-development/SKILL.md",
+      "bytes": 4409,
+      "sha256": "681e9dc4a89e92854a86134547a3e96dafe8902e19757963c531d64bc75eec93"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-08-18-environment-artifact-provider-profiles.md",
+      "bytes": 22778,
+      "sha256": "aaa4dc10a3dd2eaa3331755ca7d9c72baa2b39372e5c3970f2f758eb2e226add"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-08-18-environment-artifacts-v1.md",
+      "bytes": 34008,
+      "sha256": "a0c51f1cfcc992f8a1b31316530c448e61440d5c50ceeced2d13a9b75c367dc9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-08-22-environment-artifacts-program-reconciliation.md",
+      "bytes": 14898,
+      "sha256": "de521afabf0a7644740ad6d0e2d03ee3f5e1a5e2af974d706cf0fd6b97da00bd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-08-23-actions-consumer-benchmark-bridge.md",
+      "bytes": 6222,
+      "sha256": "d1fb0664cc0a628d3907b2946879de3ac2f1f5111ca041fd4571bfcc17bb2121"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-08-28-portable-linux-artifact-kernel-floor.md",
+      "bytes": 5147,
+      "sha256": "e1a10ad02c8e6796e0b62794b72cb7d05c264b2985329a72ee8a14dd0c93cc0d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/plans/2026-09-07-rcc-122-convergence.md",
+      "bytes": 6884,
+      "sha256": "165e2d2aee27d016ff872330eae15829e68a15654039609719d988f31679b858"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/specs/2026-08-18-environment-artifact-provider-profiles-design.md",
+      "bytes": 18625,
+      "sha256": "cf043ce4e8d9ca3881214adad1bd15a0a06d6021aba531a04ab73e794576c727"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/superpowers/specs/2026-08-18-environment-artifacts-v1-design.md",
+      "bytes": 23433,
+      "sha256": "808cbaab4b73747873e7ab124f69b74fd779d6526f8532074e1d6b2df12534fb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/troubleshooting.md",
+      "bytes": 5862,
+      "sha256": "9197479def091ea2862f9915ca36213ce51582d75dfc7ac2020384fc04ab6ade"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/usecases.md",
+      "bytes": 1415,
+      "sha256": "cf6ac2024e199efa7a3ecd2d6948a002f5ce67e450e15fb39367ba4d73959f4e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/v18-compatibility.md",
+      "bytes": 3512,
+      "sha256": "279b0ccde66546fd65a7fca3575b45c9116009204217478715676bd34c897d4e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/venv.md",
+      "bytes": 4348,
+      "sha256": "2492f1125d8366d26681d04354f7b0fedd019964fc9b2c191210d63f28a12e78"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/docs/vocabulary.md",
+      "bytes": 5114,
+      "sha256": "6e88e40700c766b964b8d68d98beee9d5d7ca87a36b3b8666d76b08455b7f168"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/archive.go",
+      "bytes": 12670,
+      "sha256": "542a1f8d5bfda65938464c78112fe56c23c81bde5424ece495efcd437e61f4d4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/canonical.go",
+      "bytes": 2686,
+      "sha256": "4c0434e48677dc56630b7691b9594bc27bbd3b13eb229177194d0bd784c782bf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/catalog.go",
+      "bytes": 5671,
+      "sha256": "0a61f1ac7f7513c60e2cb13b7ae082bb025aa1adae21e3e6f8828043d247ab34"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/compatibility.go",
+      "bytes": 12254,
+      "sha256": "9e939af280e3216d4285216c108df6d913a21636dd553f28639e7c0945e71096"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/digest.go",
+      "bytes": 2259,
+      "sha256": "cdb0332c6b31a02a1386e58ddec923bc2cc96e62db5048f2d8a58ee244af9242"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/index.go",
+      "bytes": 3485,
+      "sha256": "205504ab7bd998d8ac53970b470849f2d39664d1baab56d50abb6efb5c2961cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/inventory.go",
+      "bytes": 5638,
+      "sha256": "b9cc03d125061b2c84ea6d230c5ee9033356bb1f2114e0db61406619e65bf820"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/legacy.go",
+      "bytes": 2809,
+      "sha256": "44130ad5cafc591e5f941e55ef5f72dd8e07dc8fe6bb9327e9132ada4f23f30a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/manifest.go",
+      "bytes": 7438,
+      "sha256": "18d8737ec8d08e74bba94a81ecb844d0be8db3b528bd3c526a5e0726ca3c75b8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/platform.go",
+      "bytes": 1340,
+      "sha256": "0f1759abd7c3aea88655d58dfe1eeb8355af5bcc3ee80119673dcc8a4d0e1014"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/environmentartifact/platform_index.go",
+      "bytes": 2343,
+      "sha256": "08a70db196eb39a4414aa2ffa758ece5460f821ffeff1c2b986af3f16ab57c99"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/fail/handling.go",
+      "bytes": 627,
+      "sha256": "cb22d17b1f20fa87cc853235d9e3924a35e3517a9b46a25e5aa71d7b22071c53"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/go.mod",
+      "bytes": 1689,
+      "sha256": "eae3d866a96c296d0cdcb4e9729b4f872abf54dab331993cf717a971ac5b46d0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/go.sum",
+      "bytes": 56257,
+      "sha256": "a3c5da16de56297fd887a186b6e8fcbe33ceefd4726ded0936b858e63659f7b4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/commands.go",
+      "bytes": 9943,
+      "sha256": "e210cdd9d7978c530212b0bba8db0f5eb59fb437eaa19dce70b85c0135fc9b03"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/delegates.go",
+      "bytes": 860,
+      "sha256": "bc492a868c5274a5212a386562ef50121d7a14d5a2ff2c270bac2115f7f387b9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/directory.go",
+      "bytes": 11301,
+      "sha256": "8b3cf1f1c233e4f6a447e588ade54e04ec49b33e2fd93abbbd2b15a6e6d1ba3d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/functions.go",
+      "bytes": 14426,
+      "sha256": "e75f6470a79d181e31f6c175bcff945c4b64fabcbdea33f4857083c1a2a544cd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/library.go",
+      "bytes": 13645,
+      "sha256": "29a9771414b8ebbd31b687838ba62cccf4718f1e7f029e16720397ae9784e86d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/portable.go",
+      "bytes": 4011,
+      "sha256": "1e317c2e86ff7d1a829353caa8a1abaf366605a4333baf01961b645bc3f16b5b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/relocator.go",
+      "bytes": 1681,
+      "sha256": "f0f3571b6f4f2681f1b1cbc7b2a90be28c13938934da9a13dcc2768749bd0704"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/unmanaged.go",
+      "bytes": 3923,
+      "sha256": "40bdb7949fc0b6782a95d3d09d9fcb33b410c0c7dc704489ee822dc954fc5d9f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/virtual.go",
+      "bytes": 5072,
+      "sha256": "703fc0c1dc4e3741b58a10ef178a257ef4aeeb98b83437306a98d9de0679c766"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/htfs/ziplibrary.go",
+      "bytes": 5140,
+      "sha256": "6b8d3276d48f1809b5ead3651de111a913d23415d2c308dba4e525884944d970"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/journal/buildstats.go",
+      "bytes": 16019,
+      "sha256": "7b03dbbdebbafe0c32a9720655b5908dd52860c9c7370b05a9a7c8ed01ed2d2f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/journal/journal.go",
+      "bytes": 3035,
+      "sha256": "10936915ad01c2f940cbf825a57ab7041787cbcbf69b6088ae01f5de8d16393a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/copyfile.go",
+      "bytes": 1079,
+      "sha256": "5d73acf577445cc7aef1f66c98a6888a2de1e0be948acc666311feb7d309b6a7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/doc.go",
+      "bytes": 85,
+      "sha256": "acaaf8ec151665c5c6d9be9c67c6a8515aa68822d3906e7d1ad3228919fe9202"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/finder.go",
+      "bytes": 1228,
+      "sha256": "63fde0aa5ebfa6846311c61cd46e59bd50bfccd0875adc71e197d56452e05590"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/functions.go",
+      "bytes": 8304,
+      "sha256": "ba1e7697dcd2b1a239292def345391d0d5fcaf1d49f326dcc988728807f04dcc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/lock.go",
+      "bytes": 1162,
+      "sha256": "1202a961a1ec570cf31e6290b40c10f21db407019daff90652d3263e87a49eb9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/lock_unix.go",
+      "bytes": 1328,
+      "sha256": "aec407ce8baaa586f81f4110790f9591ed39c7a6f1b271b84842f27068b0742c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/lock_windows.go",
+      "bytes": 2502,
+      "sha256": "926b624a91f7d89679c7c48890f104c0fa71ffa2cbcc0d12a3d8fb9e99bca064"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/lockpids.go",
+      "bytes": 4571,
+      "sha256": "bf2441a44a5a270eff668045f5592dd25c79dcb67f9159408c6185a143eaff6d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/md5.go",
+      "bytes": 345,
+      "sha256": "c131452c289398a9faf819d4fdc874d6b5cefb95669d0a8329f0f3765a8bd263"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/sha256.go",
+      "bytes": 354,
+      "sha256": "9a188e2595c0ae7773f4352436a72d6713d3dd729d619e22ffe13605d0e6d23f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/shared.go",
+      "bytes": 791,
+      "sha256": "c5ff4f0eb3096425ac2654e136f66efab2f76df0e832158b7ca8e251d58af951"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/targetpath.go",
+      "bytes": 3073,
+      "sha256": "c92adf7b8ff36896d9065f5a58359805410d7377aaa29993559cad0ac51c9ce4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/touch.go",
+      "bytes": 543,
+      "sha256": "963a752ee5e4f45aa653736cd7539ed55db670b9fb44f1daeff8fa48f7171818"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/validators.go",
+      "bytes": 1490,
+      "sha256": "4a25b7bcfe27623148ec63b24c0f04beb20e708b1451a53b3e1ba26701858f7b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/variables.go",
+      "bytes": 249,
+      "sha256": "0e0a3a4c65e4849486254b08484f340f674729ebb235ef1354ceee7352a28d52"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pathlib/walk.go",
+      "bytes": 5110,
+      "sha256": "8c12dea2da43d4547dbf07e0bc4c058a2fbac809f886faecc3f719527685d53a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/functions.go",
+      "bytes": 3231,
+      "sha256": "04eb4b94cff48868d743de47e7b9f9f9bb5737ce4d51b282ac29d8f8d5279b32"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/internal.go",
+      "bytes": 234,
+      "sha256": "bbe5f61a8907df1467932b13efbba6ad9a9e47fe67b5dcb9424cf618979b2045"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/pager.go",
+      "bytes": 1239,
+      "sha256": "390e00c84c66cc7f79a2dc53901da6d016bd77cba8ad193af63ef7dfe34999b0"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/setup_darwin.go",
+      "bytes": 75,
+      "sha256": "d7b39dde286e7f2f980a44a24ea37e9112c8faea9ef8072400feccf70a2c272f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/setup_linux.go",
+      "bytes": 76,
+      "sha256": "99b61d303f2804c75da5a7361819c777d293e7816342115abc281a13584edf72"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/setup_windows.go",
+      "bytes": 1039,
+      "sha256": "59d3df0371b2e83a74e93c75c738e19d70b56d5ed11c12301f59bacc523e7bcb"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/pretty/variables.go",
+      "bytes": 1334,
+      "sha256": "c082c6b47a5de6192b517f21993de879c1d33641106120f1b5cae450ec8441b7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/robot/doc.go",
+      "bytes": 71,
+      "sha256": "b26b3feadae3cbe3f07ef1de53beee6e9b8df2d46694c6695bfebf51471df887"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/robot/robot.go",
+      "bytes": 15065,
+      "sha256": "3cccbd21a5aa54c27eedd40dfdc798bcc726ef6365356aa83fefe50cd32634cf"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/robot/setup.go",
+      "bytes": 882,
+      "sha256": "1e8ff17aa2b7ba05044bf9242aadac50aa6125c25caed8ce20e89cde90946120"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/set/functions.go",
+      "bytes": 2008,
+      "sha256": "0478ebfd5dd0a8132303f6c5412841499204ac74004e3effdc91a56e2b1fa7f8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/api.go",
+      "bytes": 825,
+      "sha256": "ef6a10146eda3c35d0fc9c24d678d47fce2b5cf1d9e438de792853983d18c173"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/data.go",
+      "bytes": 9147,
+      "sha256": "ac0a267d646f977b3d5def7dab3943a791b5d0696dd6ff92ed754f676aec594e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/platform.go",
+      "bytes": 3290,
+      "sha256": "4c2a0a05b977f3b837282b96318a34092ce21919ac572003a59bb68b6c3829f1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/platform_darwin.go",
+      "bytes": 63,
+      "sha256": "a2743d32989779e90ee23e4aaf72c6c0013b2ab5a1c9110a8ecaee8f1d2f4550"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/platform_linux.go",
+      "bytes": 73,
+      "sha256": "40e99f306458b3d0ef61f22d4d1b7e8fe44a40edace22395bcf1095ad8e9ac6d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/platform_windows.go",
+      "bytes": 76,
+      "sha256": "7282ef84f74ac46cfa9eb38e8af17fe2509bdbcd90eabce73c2be4f45d91224a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/profile.go",
+      "bytes": 2936,
+      "sha256": "a5e23acc664e0d726db947f2bac6a62359ddb29fb0b09b64a2b04fb4efc831a6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/provider.go",
+      "bytes": 3388,
+      "sha256": "633f349380c9ff68d84d02db6647b07b43391dbfdd326a58e681b3d97815b4c5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/provider_store.go",
+      "bytes": 2927,
+      "sha256": "97766916b59a164700c9021a918a1b7b3881b264f9c79615a7c74c9e726ad5cc"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/provider_store_other.go",
+      "bytes": 1928,
+      "sha256": "e6a13eabfc9aafd163a8b3c76a1681d20967de5b8d6c294e7675e7119df77379"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/provider_store_unix.go",
+      "bytes": 6084,
+      "sha256": "5f35ef0b23a62fc88aa54e9d5b63a4a97dac5ffcbcf80f3804b6a73900f37c76"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/provider_store_windows.go",
+      "bytes": 3683,
+      "sha256": "f977036ebc11b0a4aaff16e57b18708a3c9f83b1d232497f34abea55104c38e1"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/settings/settings.go",
+      "bytes": 11019,
+      "sha256": "787dcf0438cf93a530f9624d3040cf0f302b236f7e857b4ccd4737386a406cab"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/shell/doc.go",
+      "bytes": 76,
+      "sha256": "f28040b0d50f23629287d6d213f1f8f26997d067397f8a5f46092a9531fb0705"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/shell/task.go",
+      "bytes": 4207,
+      "sha256": "4242982c24bc7c29b1ececba84cfe1db0d223de3f9f6847a95af14357c5dc30a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/tasks.py",
+      "bytes": 66889,
+      "sha256": "4e6666dfedc95d3d6bbbdb012bdeff838957d9a070e3e82917bcc7bf26a404b7"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/.gitignore",
+      "bytes": 135,
+      "sha256": "2ff44d3bb0ab6598f2b2f6b111125c9071240258679d9faff63a80244a849208"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/README.md",
+      "bytes": 2112,
+      "sha256": "d27383828f2779099332567ed7684d3782ab2286318ce920d5d2c39a6d9c5cd6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/conda.yaml",
+      "bytes": 425,
+      "sha256": "29b5cb08766676e1a8c41605936f07fffd370be468c2d636888cd3013e682489"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/devdata/env.json",
+      "bytes": 96,
+      "sha256": "992df20074c2f4de5385bb55adf8d477d791e8b7068f8b70fdf13621638f0555"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/keywords/keywords.robot",
+      "bytes": 133,
+      "sha256": "8a1206a8ec8d42f5bcd69b302375954b98f095dceedef89186bb0ea4ab2ee9bd"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/libraries/MyLibrary.py",
+      "bytes": 185,
+      "sha256": "ee713a5da5cf29fedd821db10b1e14615a10bdfcbb98334d998135f071729143"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/libraries/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/robot.yaml",
+      "bytes": 316,
+      "sha256": "f7d3db6e15b708adddfe9b3491c17c7076fd6f16fca2bfc5cd83fe17796fbbf8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/tasks.robot",
+      "bytes": 275,
+      "sha256": "6b1e536beb8948d54b88183a8135f024fc4b36d5b707b4df2b647e58c7259b0e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/variables/MyVariables.py",
+      "bytes": 54,
+      "sha256": "e2331d5fca2d2e96c1fe67c704db80462785bff3da99b42cf3b426d9ab8d4a38"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/variables/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/extended/variables/variables.py",
+      "bytes": 54,
+      "sha256": "e2331d5fca2d2e96c1fe67c704db80462785bff3da99b42cf3b426d9ab8d4a38"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/python/.gitignore",
+      "bytes": 135,
+      "sha256": "2ff44d3bb0ab6598f2b2f6b111125c9071240258679d9faff63a80244a849208"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/python/conda.yaml",
+      "bytes": 425,
+      "sha256": "29b5cb08766676e1a8c41605936f07fffd370be468c2d636888cd3013e682489"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/python/robot.yaml",
+      "bytes": 155,
+      "sha256": "2c8ef52bad27c31063d43c3372ff87ba11092fbe7841b65938725945d93b275e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/python/task.py",
+      "bytes": 123,
+      "sha256": "47f90b537cb91c3a7888275b03a15cd4be5e8196f4ca55220d026003f350054d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/standard/.gitignore",
+      "bytes": 135,
+      "sha256": "2ff44d3bb0ab6598f2b2f6b111125c9071240258679d9faff63a80244a849208"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/standard/conda.yaml",
+      "bytes": 425,
+      "sha256": "29b5cb08766676e1a8c41605936f07fffd370be468c2d636888cd3013e682489"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/standard/robot.yaml",
+      "bytes": 226,
+      "sha256": "45809f617204660181d90e1c16abb5bdadea59f617f28331411b086df84ab38c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/templates/standard/tasks.robot",
+      "bytes": 104,
+      "sha256": "28207cd7b38c149854b3a2d5b86fa82fb46d9ee3d23db21e4bc144507cadba84"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/xviper/doc.go",
+      "bytes": 101,
+      "sha256": "0aedc633095d154e6c52817b9267fd6bdf81f07fc20f6954d226e0d0618ca8b8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/xviper/tracking.go",
+      "bytes": 1298,
+      "sha256": "23d9d4b7218a4facadd2fbebdc725ecf77d9d5c41a031d2506fe637061e32c9d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-7945/xviper/wrapper.go",
+      "bytes": 3900,
+      "sha256": "5d78fbc58be5ed483ece3ea769e92686cd6e2214d51647336abb419855e92c02"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-manifest-v1-preliminary.json",
+      "bytes": 42557,
+      "sha256": "28c95a2f6cafd2e9db360fe30b33d1d3e210a75f2cf1dda4d251a971ccbb318f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-preexecution-1600/source-manifest.json",
+      "bytes": 60045,
+      "sha256": "c1bc6f5c00a96c9e1e3dc4bcf4bb39b832ef525bc2795f570af61765f17246e6"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-binary-metadata.txt",
+      "bytes": 1973,
+      "sha256": "b8d3488e1614e0882d69ed9f50b09908839dc957c96482633e2caf674e62dada"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-home-mode-review.md",
+      "bytes": 1140,
+      "sha256": "06368dcb0688c5c624fc8472979c936254407c15bc9c6667b6c16bb0a43f6b35"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-home-mode-source-proof.json",
+      "bytes": 1760,
+      "sha256": "d27407f9100f85af2748b83b606de3006badb734e030f6427266bb01614ee453"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-object-proof.tsv",
+      "bytes": 624284,
+      "sha256": "e0b4fef10e2d23a672636d8ede58766956f7dc355eddceb2c39ce925d051c55e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-outer-result.json",
+      "bytes": 646,
+      "sha256": "8f71408cf4a401aa2d6936344937d0a42d5f456b08c9dfe4d3a077a7e6c85de5"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-outer.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-outer.stdout",
+      "bytes": 167,
+      "sha256": "dfcb5cfa1bfe5f77fc253d0c5264ce1c95051a83a21e51c5a34f091517e8433b"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/actual-v8-root-acceptance.json",
+      "bytes": 6194,
+      "sha256": "4ccadd1cf2712d8da97ac0e499bdd55d708612f7fb41e64712c49c2f48329869"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/root-admission-native-v6.json",
+      "bytes": 2309,
+      "sha256": "7672d843d022f4f79250ceb35b752f1953430a73ac274ff5229812da062857c9"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/root-admission-native-v8.json",
+      "bytes": 2643,
+      "sha256": "200a900a60438bb19b35f5633b26add980a3a775e20d334bac38b17436de77e4"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/root-input-acceptance.json",
+      "bytes": 1010,
+      "sha256": "d61602ec59d950b1bad0d13368c375c549f0eca72ddb4284a61e75726c7cbd91"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/root-launch-v8.py",
+      "bytes": 2511,
+      "sha256": "3a66f4ccc0f64a949d58b4f7efcceb8a57d447e98aaec32a307fd6cb658c6af8"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/root-verifier-replicate-erratum.json",
+      "bytes": 393,
+      "sha256": "5a2a0ac5693e416227adaa9f8b2173ba220ed2bc6bd8b0e41e4460f9f687cbff"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v1-review/result.json",
+      "bytes": 421,
+      "sha256": "d1166045fa082b647c65866597b068fc3056ffc6e314b7c55c5f1570b353032f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v1-review/tests.stderr",
+      "bytes": 990,
+      "sha256": "475fe2643c077f2efa75a0281b2f6a42de38950d7b85b62b908f67f804e0c18d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v1-review/tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v5-root-result.json",
+      "bytes": 557,
+      "sha256": "9788cc8c87bc82b311a8edf3218b6a891b78a58077845c9154420be2683c330a"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v5-tests.stderr",
+      "bytes": 1965,
+      "sha256": "f86a092e8b75104823c2176631ffb206feedca9da2fcff74070f67e81523ae9e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v5-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v6-tests.stderr",
+      "bytes": 2140,
+      "sha256": "6e39aec89e7dd8085b98126095b3cae9e44f7e4d0530204b195ff673b0b3005d"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v6-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v8-tests.stderr",
+      "bytes": 2311,
+      "sha256": "63af52a2ef2fcda150e43eed31231b28c8cd33edfc476aeade8942d89c3f0627"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/supervisor-v8-tests.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/verify_actual_v8.py",
+      "bytes": 7868,
+      "sha256": "195747119f88ee869b19bba93a2274c7b9623a5461cc053ec7d8453027372155"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/verify_actual_v8_corrected.py",
+      "bytes": 7942,
+      "sha256": "68f7f795173b647135d082e30dd059587245dd43c13b8acf6b5af85b3854309c"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-native-root-preexecution-1637/verify_inputs.py",
+      "bytes": 3009,
+      "sha256": "609fadaaf9560733aa8d7561ddfd21cafdec87497260dd7dbf9cd4d7c505c084"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-independent-wave-review-20261011/mode-causal-source-proof.json",
+      "bytes": 2301,
+      "sha256": "82472fe74654b20d46de5ff511749a555e64db86bf02cea450e9357812cb0b72"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-independent-wave-review-20261011/report.md",
+      "bytes": 12564,
+      "sha256": "60183f3bb7e658835b7cc95797645eb33a85a80befd19a39ce8259e0df604cb2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-independent-wave-review-20261011/verification.json",
+      "bytes": 15809,
+      "sha256": "525712f71feb0c7c926ee7f54587f2595906f78341446e371b06cd3e1e12578e"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/performance-admission/go-object-pack-independent-wave-review-20261011/verify_wave.py",
+      "bytes": 22566,
+      "sha256": "935f48b3a1cf0a89e348f972e05eb287e4041bfdf27e8572b885b99f36170c9f"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/actual-v6-failed-partial-pack.bin",
+      "bytes": 1048576,
+      "sha256": "25bf65dccbc60bf8187defd81bbb7dd09f4774560c35ca1e06f2924bdeaa3bc2"
+    },
+    {
+      "path": "developer/swarm/20261011/continuation-1710/restart.md",
+      "bytes": 9126,
+      "sha256": "b639a2b27f11cd4bd77679c5bc7d98fe145b77fce8b58f1b93d215df90e7d59e"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-11T16:48:47.327017+00:00",
+  "sourceHashes": {
+    "supervise_native_v5.py": "03aed9b75b9f8f69f91897aec5d60d36bce257ae31964a06f662e4b745179479",
+    "test_supervise_native_v5.py": "fcefe5f4e8c8f38416adf813041291cb3692d84024234c2f10e4da5cd11f62e4"
+  },
+  "numericExit": 0,
+  "rootReviewed": "Rootv1throughv5 code actualdiff all; sameFS/privatehome/readonlymodulemodeprojection/Go9 metadata/partialJSONL strictidentity/finalresourceclosure/checkownedpaths; rootsource227/39 previouslyverified; NO compile orruntime yet",
+  "controls": 12
+}

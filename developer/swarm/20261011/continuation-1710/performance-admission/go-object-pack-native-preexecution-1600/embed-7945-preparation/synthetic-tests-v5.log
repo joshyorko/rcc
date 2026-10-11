@@ -1,0 +1,17 @@
+test_binary_metadata_parser_accepts_exact_tuple_and_rejects_wrong_go (__main__.SupervisorSyntheticTests.test_binary_metadata_parser_accepts_exact_tuple_and_rejects_wrong_go) ... ok
+test_combined_raw_output_cap_fails_before_overflow (__main__.SupervisorSyntheticTests.test_combined_raw_output_cap_fails_before_overflow) ... ok
+test_exit_between_poll_and_ps_preserves_numeric_exit (__main__.SupervisorSyntheticTests.test_exit_between_poll_and_ps_preserves_numeric_exit) ... ok
+test_failed_final_census_does_not_claim_quiescence (__main__.SupervisorSyntheticTests.test_failed_final_census_does_not_claim_quiescence) ... ok
+test_final_jsonl_validator_checks_all_events_and_closures (__main__.SupervisorSyntheticTests.test_final_jsonl_validator_checks_all_events_and_closures) ... ok
+test_missing_live_pid_snapshot_is_fail_closed (__main__.SupervisorSyntheticTests.test_missing_live_pid_snapshot_is_fail_closed) ... ok
+test_owned_path_rejects_symlink_ancestor (__main__.SupervisorSyntheticTests.test_owned_path_rejects_symlink_ancestor) ... ok
+test_pass_markers_success_numeric_exit_and_quiescence (__main__.SupervisorSyntheticTests.test_pass_markers_success_numeric_exit_and_quiescence) ... ok
+test_per_pass_deadline_kills_child_and_joins_readers (__main__.SupervisorSyntheticTests.test_per_pass_deadline_kills_child_and_joins_readers) ... ok
+test_readonly_module_cache_mode_projection_preserves_manifest_identity (__main__.SupervisorSyntheticTests.test_readonly_module_cache_mode_projection_preserves_manifest_identity) ... ok
+test_runtime_home_is_private_and_inherited_rcc_controls_are_removed (__main__.SupervisorSyntheticTests.test_runtime_home_is_private_and_inherited_rcc_controls_are_removed) ... ok
+test_workspace_reservation_rejects_before_artifact_creation (__main__.SupervisorSyntheticTests.test_workspace_reservation_rejects_before_artifact_creation) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 1.206s
+
+OK
