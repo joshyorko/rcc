@@ -1,0 +1,34 @@
+{
+  "runId": 38148406741,
+  "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "artifacts": [
+    {
+      "platform": "darwin_arm64",
+      "artifactId": 11706636128,
+      "name": "macos-arm64-native-runtime-receipt",
+      "bytes": 12497966,
+      "digest": "sha256:0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213"
+    },
+    {
+      "platform": "linux_amd64",
+      "artifactId": 11706526381,
+      "name": "linux-amd64-native-runtime-receipt",
+      "bytes": 13385953,
+      "digest": "sha256:065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935"
+    },
+    {
+      "platform": "darwin_amd64",
+      "artifactId": 11706013157,
+      "name": "macos-amd64-native-runtime-receipt",
+      "bytes": 13072743,
+      "digest": "sha256:3ebb38d6d5888d332919bb325de2c545cd73d25aed79ebf136a8593057261533"
+    },
+    {
+      "platform": "windows_amd64",
+      "artifactId": 11705647535,
+      "name": "windows-amd64-native-runtime-receipt",
+      "bytes": 10850290,
+      "digest": "sha256:11ed43eabaad48afb7e8e1ab158eb62aa724f61ca4b6a0c16d5a7c74044d5a54"
+    }
+  ]
+}

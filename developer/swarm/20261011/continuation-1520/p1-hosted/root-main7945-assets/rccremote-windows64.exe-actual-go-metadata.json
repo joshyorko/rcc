@@ -1,0 +1,13 @@
+{
+  "-buildmode": "exe",
+  "-compiler": "gc",
+  "-ldflags": "-s",
+  "CGO_ENABLED": "0",
+  "GOARCH": "amd64",
+  "GOOS": "windows",
+  "GOAMD64": "v1",
+  "vcs": "git",
+  "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+  "vcs.time": "2026-10-11T14:25:33Z",
+  "vcs.modified": "false"
+}

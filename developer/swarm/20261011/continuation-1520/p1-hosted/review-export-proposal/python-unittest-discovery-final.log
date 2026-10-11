@@ -1,0 +1,165 @@
+test_analyzer_failure_is_an_analysis_error (test_deadcode.DeadcodeTests) ... ok
+test_cli_ignores_inherited_cross_target_overrides (test_deadcode.DeadcodeTests) ... ok
+test_cli_uses_repo_root_build_configuration_and_disables_telemetry (test_deadcode.DeadcodeTests) ... ok
+test_detailed_report_is_deterministic_and_grouped_by_package (test_deadcode.DeadcodeTests) ... ok
+test_malformed_analyzer_json_is_an_analysis_error (test_deadcode.DeadcodeTests) ... ok
+test_missing_go_has_actionable_error (test_deadcode.DeadcodeTests) ... ok
+test_parse_findings_normalizes_paths_and_sorts_results (test_deadcode.DeadcodeTests) ... ok
+test_removed_heuristic_flags_are_usage_errors (test_deadcode.DeadcodeTests) ... ok
+test_summary_report_omits_individual_findings (test_deadcode.DeadcodeTests) ... ok
+test_zero_findings_has_an_explicit_result (test_deadcode.DeadcodeTests) ... ok
+test_archive_rollback_accepts_verified_same_identity_import (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_allows_only_candidate_provisional_record_removal (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_does_not_allow_new_provisional_records (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_only_allows_provisional_cleanup_after_supported_import (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_rejects_preexisting_nonregular_provisional_records (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_rejects_provisional_mutation_addition_and_symlink_replacement (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_rejects_unrelated_errors_and_wrong_identity (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_rejects_unrelated_state_changes (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_archive_rollback_retains_pre_feature_cli_compatibility (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_and_self_host_go_tasks_use_contained_safe_environment (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_consumer_vertical_builds_candidate_and_runs_jat_class_proof (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_focused_runs_task_and_release_contract_tests (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_race_scope_is_pinned_to_non_legacy_subpackages (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_tasks_are_registered_in_invoke_and_toolkit (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_artifact_vertical_builds_candidate_and_enables_real_a_b_proof (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_binary_inventory_matrix_is_exact (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_build_source_guard_is_release_ci_opt_in (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_build_source_guard_rejects_tracked_edits_and_precedes_compilation (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_coordination_acceptance_uses_exact_binary_cli (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_coordination_receipt_binds_source_and_binary (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_dagger_workflow_calls_pinned_module_entrypoint (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_generation_a_output_is_promoted_byte_for_byte_to_candidate (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_go_vet_accepts_only_clean_or_exact_known_baseline (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_job_level_environment_uses_only_planning_contexts (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_large_stream_gate_is_release_wired_and_receipt_backed (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_linux_only_tasks_fail_explicitly (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_local_binary_matches_release_build_flags (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_manual_preparation_uploads_nine_review_only_asset_artifacts (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_multi_platform_index_includes_the_native_runner_platform (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_acceptance_fixture_exercises_sqlite_extension (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_matrix_uses_exact_binary_and_test_produced_receipt (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_receipt_aggregation_checks_candidate_commit (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_receipt_artifact_includes_guarded_exact_executable (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_receipt_binds_robot_exact_binary_evidence (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_receipt_records_platform_specific_runtime_probes (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_robot_binary_uses_the_platform_executable_suffix (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_robot_environment_preserves_windows_home_identity (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_native_robot_matrix_has_explicit_platform_receipts (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_offline_environment_artifact_environment_overrides_all_proxy_casing (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_online_environment_artifact_environment_preserves_proxy_configuration (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_promotion_receipt_commit_validation_rejects_unbound_receipts (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_real_receipt_separates_exact_binary_cli_from_source_api (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_real_vertical_receipt_is_evidence_backed (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_binds_coordination_to_release_binary (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_fails_before_dispatch_on_non_linux (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_provisions_linux_sandbox_before_contained_gate (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_receipt_records_exact_source_sha (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_removes_stale_receipt_before_running_gates (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_runs_complete_gate_sequence_via_invoke (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_uploads_complete_promotion_receipt_closure (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_candidate_validates_complete_promotion_receipt_closure (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_validates_homebrew_handoff_before_publication (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_workflow_documentation_declares_homebrew_token (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_release_workflow_gates_publication_on_contained_release_candidate (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_accepts_only_consumer_rebased_catalog_with_unchanged_objects (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_archive_uses_explicit_local_trust_policy (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_homes_are_outside_the_module_root (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_installs_verified_archive_legacy_closure (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_legacy_fixture_declares_artifacts_directory (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_plan_contains_two_v12_compatibility_consumers (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_preserves_release_binary_path (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_receipt_records_isolated_homes_and_checked_sequence (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_receipt_requires_binary_identity_and_evidence (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_receipt_requires_both_candidate_generations (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_self_host_uses_the_archive_legacy_blueprint (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_wrong_platform_index_excludes_the_native_runner_platform (test_environment_artifact_tasks.ArtifactTaskTests) ... ok
+test_all_sources_exhaustion_reports_primary_and_fallback (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: fallback failure hides which integrity-bound sources failed. ... ok
+test_archive_hashing_streams_without_reading_the_whole_file (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: archive hashing regresses to Path.read_bytes materialization. ... ok
+test_archive_validation_accepts_legitimate_relative_regular_members (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: drive checks accidentally reject valid relative archive members. ... ok
+test_archive_validation_rejects_unsafe_paths_and_special_entries (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: Python 3.10 tar extraction accepts unsafe or special members. ... ok
+test_archive_validation_rejects_windows_drive_absolute_paths (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: drive-qualified absolute names must not reach extraction. ... ok
+test_archive_validation_rejects_windows_drive_relative_paths (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: D:escape can resolve outside the extraction root on Windows. ... ok
+test_archive_validation_requires_regular_expected_executable (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: extraction proceeds without the exact regular executable member. ... ok
+test_checksum_mismatch_rejects_valid_archive_from_every_source (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: structurally valid but untrusted archive content is accepted. ... ok
+test_download_rejects_oversized_payload_at_curl_and_local_boundaries (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: configured sources can force unbounded archive resource use. ... ok
+test_exhausted_http_failures_report_url_and_attempt_count (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: HTTP errors are accepted as archives or fail unclearly. ... ok
+test_fallback_metadata_is_bound_to_exact_release_archives (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: a mutable or wrong-version fallback bypasses integrity binding. ... ok
+test_malformed_success_payload_is_retried_then_reported_as_invalid_archive (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: an HTTP 200 text payload reaches extraction as a bzip2 error. ... ok
+test_micromamba_base_override_remains_the_primary_url (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: fallback hardening silently discards RCC_MICROMAMBA_BASE. ... ok
+test_primary_exhaustion_uses_checksum_validated_fallback_without_post_success_sleep (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: exhausted primary retries never try the trusted fallback. ... ok
+test_transient_http_failure_is_retried_until_valid_archive_arrives (test_micromamba_tasks.MicromambaDownloadTests)
+Break caught: one transient HTTP failure aborts instead of retrying. ... ok
+test_accepts_complete_bundle_and_exact_prep_run (test_release_publication.ReleasePublicationTests) ... ok
+test_artifact_redirect_drops_bearer_on_cross_origin_and_requires_https (test_release_publication.ReleasePublicationTests) ... ok
+test_bundle_validation_independently_rejects_wrong_index_version_and_release_path (test_release_publication.ReleasePublicationTests) ... ok
+test_checks_compiler_revision_and_target_for_all_eight_binaries (test_release_publication.ReleasePublicationTests) ... ok
+test_download_checks_github_zip_digest_and_rejects_unsafe_members (test_release_publication.ReleasePublicationTests) ... ok
+test_evidence_export_checks_ancestor_and_full_artifact_digest (test_release_publication.ReleasePublicationTests) ... ok
+test_homebrew_lookup_uses_owner_of_current_repository (test_release_publication.ReleasePublicationTests) ... ok
+test_native_binary_review_payload_binds_executed_binary_and_rejects_tampering (test_release_publication.ReleasePublicationTests) ... ok
+test_native_review_reports_each_go_metadata_mismatch (test_release_publication.ReleasePublicationTests) ... ok
+test_prepared_bundle_checks_actual_go_metadata_against_provenance (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_boolean_or_float_zero_exit_receipts (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_failed_preparation_or_missing_native_job (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_legacy_auto_tag_workflow_and_accepts_corrected_source (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_missing_or_unprotected_environment (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_source_or_version_mismatch (test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_tampered_or_missing_asset (test_release_publication.ReleasePublicationTests) ... ok
+test_review_asset_staging_binds_nine_small_exact_payloads (test_release_publication.ReleasePublicationTests) ... ok
+test_review_assets_reject_mismatched_identity_extra_layout_and_oversize (test_release_publication.ReleasePublicationTests) ... ok
+test_review_evidence_export_contains_only_bound_small_receipts (test_release_publication.ReleasePublicationTests) ... ok
+test_review_evidence_export_rejects_missing_symlinked_and_oversize_inputs (test_release_publication.ReleasePublicationTests) ... ok
+test_review_export_workflow_is_manual_read_only_and_source_bound (test_release_publication.ReleasePublicationTests) ... ok
+test_shuffled_glob_order_has_stable_output_and_keeps_priorities (test_toc.TocOrderingTests) ... ok
+test_current_guidance_is_valid (test_validate_agent_docs.ValidateAgentDocsTests) ... ok
+test_missing_required_files_are_stable_errors (test_validate_agent_docs.ValidateAgentDocsTests) ... ok
+test_missing_skill_during_traversal_is_an_error (test_validate_agent_docs.ValidateAgentDocsTests) ... ok
+test_reports_invalid_frontmatter_and_missing_receipt_fields (test_validate_agent_docs.ValidateAgentDocsTests) ... ok
+test_reports_unlisted_skill_and_broken_link (test_validate_agent_docs.ValidateAgentDocsTests) ... ok
+test_accepts_historical_darwin_asset_name (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_accepts_historical_entry_without_macosarm64 (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_candidate_identity_resolves_pr_main_push_and_manual_dispatch_but_rejects_tags (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_generated_index_changelog_fragment_resolves_to_release_heading (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_legacy_tag_workflow_is_read_only_deprecation (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_preparation_artifact_waits_for_all_four_native_platforms (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_rejects_any_runtime_root_beneath_checkout (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_rejects_darwin_index_and_extra_asset (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_rejects_extra_workflow_asset (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_rejects_index_urls_for_the_wrong_product_or_platform (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_rejects_wrong_index_version_host_path_and_architecture_mapping (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_candidate_is_label_or_manual_opt_in_and_never_tag_triggered (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_candidate_stages_only_validated_self_host_metadata (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_identity_topology_rejects_merge_checkout_and_sha_drift (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_job_rejects_symlinked_asset (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_job_rejects_unexpected_asset_directory (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_release_job_validates_downloaded_assets_without_build_tree (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_release_runtime_roots_are_outside_checkout (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_two_phase_release_paths_are_fail_closed (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_workflow_closes_release_identity_topology (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_workflow_has_no_tag_triggered_publisher (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_workflow_runs_all_release_platforms_natively (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_repository_workflow_stages_exact_current_assets (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_requires_macosarm64_index_asset (test_validate_release_topology.ReleaseTopologyTests) ... ok
+test_valid_fixture (test_validate_release_topology.ReleaseTopologyTests) ... ok
+
+----------------------------------------------------------------------
+Ran 143 tests in 0.886s
+
+OK
+Built: build/linux64/rcc (linux/amd64)
+Release-candidate receipt: /tmp/tmp6gnznwns/release-candidate-v1.json

@@ -1,0 +1,437 @@
+{
+  "admission": {
+    "fresh_runtime_in_this_delta": 0,
+    "independent_warm_RCC_component": "existing accepted provider/codec/pack observations remain; no new warm native/Actions run admitted by this delta",
+    "newer6_functionally_qualified": false,
+    "next_actions_execution": "BLOCKED by owner original STOP, missing independently reviewable source/controller/fixture/failure receipts and guarded capacity",
+    "next_required": [
+      "owner normally publishes immutable b614/source successor plus actual selectors/provenance predicate and negative source controls",
+      "owner shares original config8c5/publication2212/failure-reviewd14 and failed supervisor/cleanup evidence with raw hashes",
+      "owner independently reviews successor fixture/controller with bounded package-cache sharing and strict cleanup metadata while preserving original failed state",
+      "owner states conditional once-each3\u21925\u21927276 admission and complete terminal/cleanup/capacity acceptance",
+      "root confirms guarded capacity and quiet lease; no fresh320MB acquisition while only~23MiB abovefloor",
+      "separate measured six-workload owner/controller fixtures; two-case wave cannot prove reuse/reload/drain/concurrency/recovery"
+    ],
+    "owners": [
+      "Actions133",
+      "Actions134",
+      "Actions139",
+      "Actions143",
+      "PR221",
+      "PR308"
+    ],
+    "production_publication": "HOLD perroot; publication is not a prerequisite for isolated owner-qualified testing",
+    "real_six_workload_admission": false,
+    "without_new_consumer_home": "read-only metadata/version proof cannot establish warm materialization/Action; frozen historical homes cannot be mutated/reused without root and owner admission"
+  },
+  "campaign_bodies": [
+    {
+      "author": "joshyorko",
+      "bytes": 35993,
+      "created_at": "2026-08-13T16:29:17Z",
+      "file": "issue-101-body.md",
+      "id": 5143587553,
+      "sha256": "28c1ab4e6293e45ce3af6ed2f738424bd7689bfcfc3f52aa91eff74562d85a89",
+      "updated_at": "2026-10-11T14:23:08Z",
+      "url": "https://github.com/joshyorko/actions/issues/101"
+    },
+    {
+      "author": "joshyorko",
+      "bytes": 20305,
+      "created_at": "2026-10-08T20:03:47Z",
+      "file": "issue-221-body.md",
+      "id": 5768150126,
+      "sha256": "73543167daa75d217d7374666425814e443e30d58781b8b5f70340dcb15bf3c0",
+      "updated_at": "2026-10-11T14:23:10Z",
+      "url": "https://github.com/joshyorko/actions/pull/221"
+    }
+  ],
+  "claim_citations": [
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 1,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 3,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 5,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 7,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 13,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 15,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 17,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 21,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 22,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 24,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "file": "owner-rcc125-6109416621.md",
+      "line": 26,
+      "scope": "independently retained public owner assertion; underlying source/receipts not independently obtained"
+    },
+    {
+      "body_sha256": "28c1ab4e6293e45ce3af6ed2f738424bd7689bfcfc3f52aa91eff74562d85a89",
+      "file": "issue-101-body.md",
+      "line": 7,
+      "scope": "fresh coordinator lead reports completed full source tests"
+    }
+  ],
+  "conditional_binaries_owner_reported": [
+    {
+      "asset": 549249380,
+      "bytes": 22360226,
+      "clean_source_equivalence": "UNKNOWN; production promotion blocker",
+      "embedded_source": "d1aec7d0bb897a81274423c7a6bb747233f9c263",
+      "functional_run": "NOT_RUN",
+      "go": "1.26.5",
+      "sha256": "1a617ad7c736fa67c605e20e5ebe3c7d54b02cd548f733e05c809cf49a48db1e",
+      "vcs_modified": true,
+      "version": "v18.19.5"
+    },
+    {
+      "bytes": 22384802,
+      "functional_run": "NOT_RUN",
+      "go": "1.26.9",
+      "native_artifact": 11689755940,
+      "newer_7945_source_qualification_inferred": false,
+      "receipt_artifact": 11689851536,
+      "run": 38105340592,
+      "sha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+      "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+      "vcs_modified": false,
+      "version": "v18.19.6"
+    }
+  ],
+  "current_public_integration": {
+    "adapter_and_acceptance_files_changed": false,
+    "base": "a70993fafc99a9f94041485542d5a720797ca394",
+    "commit": "e3c29cde8878307912e55ed09b6436c0f91d06d5",
+    "compare_changed_files": [
+      "action_server/src/actions/server/_server.py",
+      "action_server/src/actions/server/run_outputs/transport.py",
+      "action_server/tests/action_server_tests/run_outputs/test_transport.py",
+      "docs/skills/provenance-observability.md",
+      "docs/skills/repository-operations.md"
+    ],
+    "compare_total_commits": 9,
+    "draft": true,
+    "merged": false,
+    "parents": [
+      "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "74beef4d220c3a1e8f983cecd42b9bb84ac75e79"
+    ],
+    "proof_files": [
+      "integration-e3c-git.json",
+      "compare-a0d-e3c.json"
+    ],
+    "tree": "2238ed312babba9fd5ad89a3a1cc581ca6ad2dcf"
+  },
+  "newer_test_support": {
+    "commit": "b614864ba9da55c13662894b6ef3c8515d9fdb25",
+    "contract": [
+      "explicit isolated test selector",
+      "operator-approved immutable provenance tuple",
+      "native SHA256 before probe/cache/acquire/execute",
+      "observed version/platform and required features",
+      "unknown selector/missing binary/wrong bytes or platform/stale or co-mutated descriptor fail closed before fallback or artifact access"
+    ],
+    "production_download_build_default": "v18.19.3 unchanged perowner and inherited public integration source",
+    "public_full_commit_http": 422,
+    "public_git_commit_http": 404,
+    "reported_current_full": {
+      "passed": 1363,
+      "skipped": 13,
+      "source": "current101/221lead; older preserved comment says inprogress"
+    },
+    "reported_focused": {
+      "deselected": 3,
+      "lint_types": "pass",
+      "passed": 180,
+      "skipped": 1
+    },
+    "selector_name_cli_env_and_descriptor_schema_received": false,
+    "source_locally_or_remotely_reviewed_in_this_delta": false,
+    "status": "OWNER_REPORTED_IMPLEMENTED_SOURCE_AND_SOURCE_TESTS; RAW_SOURCE_NOT_PUBLICLY_OBTAINED",
+    "tree": "6fa4f5c1e9837a0d893868255575b355b3977fae"
+  },
+  "open_prs": [
+    {
+      "base": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "branch": "fix/captured-child-cleanup-deadline-20261011",
+      "draft": true,
+      "head": "499a83d802ca9a0e2ebe3d77071af10625879297",
+      "number": 313,
+      "updated_at": "2026-10-11T13:24:28Z"
+    },
+    {
+      "base": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "branch": "fix/runtime-checkout-eol-20261011",
+      "draft": true,
+      "head": "77065131a0aee63d2b1f8621476374bdde3c7b65",
+      "number": 312,
+      "updated_at": "2026-10-11T12:09:09Z"
+    },
+    {
+      "base": "6181b044c75de35386f1ae30e71725398b6a7feb",
+      "branch": "fix/rcc-candidate-wheel-identities-20261010",
+      "draft": true,
+      "head": "d5a3d2f53737f4f5380b6ecb7fb93d1a651f005d",
+      "number": 308,
+      "updated_at": "2026-10-11T10:40:10Z"
+    },
+    {
+      "base": "fbde0d3a248c47c9964851355f96575c89a87329",
+      "branch": "fix/runtime-release-changelog-selection-20261010",
+      "draft": false,
+      "head": "87e412f89b201c697d3e6bd4bd34031cdbd14df3",
+      "number": 307,
+      "updated_at": "2026-10-11T04:21:26Z"
+    },
+    {
+      "base": "6181b044c75de35386f1ae30e71725398b6a7feb",
+      "branch": "fix/database-savepoint-admission-20261010",
+      "draft": true,
+      "head": "fada8e068f61f6e0e380ec4685eed2f4cf0b9ade",
+      "number": 306,
+      "updated_at": "2026-10-11T10:02:26Z"
+    },
+    {
+      "base": "6181b044c75de35386f1ae30e71725398b6a7feb",
+      "branch": "test/canvas-runtime-cache-isolation-20261010",
+      "draft": true,
+      "head": "519a0beb7451cb6e4410f0bee18c826fc493086e",
+      "number": 305,
+      "updated_at": "2026-10-11T09:47:14Z"
+    },
+    {
+      "base": "6181b044c75de35386f1ae30e71725398b6a7feb",
+      "branch": "feat/canvas-template-20261010",
+      "draft": true,
+      "head": "e736f846557ed1d603348e97c5eb80060d62e3e2",
+      "number": 282,
+      "updated_at": "2026-10-11T10:23:37Z"
+    },
+    {
+      "base": "a70993fafc99a9f94041485542d5a720797ca394",
+      "branch": "integration/community-release-20261008",
+      "draft": true,
+      "head": "e3c29cde8878307912e55ed09b6436c0f91d06d5",
+      "number": 221,
+      "updated_at": "2026-10-11T14:23:10Z"
+    }
+  ],
+  "original_current_control_owner_reported": {
+    "RCC3_binary_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428",
+    "capacity_threshold_gib": 2.35,
+    "cleanup": "ProcessTreeCleanupError; final descendants/readers absent",
+    "failure_review_decision": "STOP",
+    "failure_review_sha256": "d14c888b448f5ad59dcfc5ae26b75bda80901b297f8735902146fc6536227fc3",
+    "fix_state": "prospective once-owned package-cache sharing plus failure-metadata retention; preserve frozen helper and original failure",
+    "frozen_two_case_config_sha256": "8c5da5be25ebfcf86f286ee9f93ddad328c68b3243b0935ec5937c93376bb948",
+    "publication_details": "PASS once; raw receipt not independently obtained here",
+    "publication_receipt_sha256": "22121727f88ac95fbbef644231efb93884cff54f8ca7281e79b089c67eafa6bd",
+    "raw_failure_review_and_config_obtained_here": false,
+    "sampled_namespace_bytes": 2529735510,
+    "source": "b614864ba9da55c13662894b6ef3c8515d9fdb25",
+    "staged_action": "STARTED_WITHOUT_TERMINAL_RESULT",
+    "stop_target": "recorded pytest PID/create-time only",
+    "tree": "6fa4f5c1e9837a0d893868255575b355b3977fae",
+    "version_incompatibility_inferred": false
+  },
+  "owner_contract_bodies": [
+    {
+      "author": "joshyorko",
+      "bytes": 5027,
+      "created_at": "2026-10-11T13:15:49Z",
+      "file": "owner-rcc125-6109416621.md",
+      "id": 6109416621,
+      "sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "updated_at": "2026-10-11T14:19:31Z",
+      "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-6109416621"
+    },
+    {
+      "author": "joshyorko",
+      "bytes": 5027,
+      "created_at": "2026-10-11T13:15:50Z",
+      "file": "owner-rcc118-6109416839.md",
+      "id": 6109416839,
+      "sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae",
+      "updated_at": "2026-10-11T14:19:33Z",
+      "url": "https://github.com/joshyorko/rcc/issues/118#issuecomment-6109416839"
+    }
+  ],
+  "pagination": {
+    "actions_comment_counts_in_delta": {
+      "101": 0,
+      "133": 1,
+      "134": 0,
+      "139": 0,
+      "143": 0,
+      "221": 0
+    },
+    "all_delta_comment_pages_terminal_short": true,
+    "old174comments_refetched": false,
+    "open_pr_pages": 1,
+    "open_pr_terminal_count": 8,
+    "semantics": "updated-since includes edits to existing comments",
+    "since": "2026-10-11T13:55:15Z"
+  },
+  "prior_frozen_reference": {
+    "hashes": {
+      "immutable-source-proof.json": {
+        "bytes": 3487,
+        "sha256": "121ef3a5d96c3216afba70ec2c18176733ab0e72abd2ee23a83ed33fa6d510a9"
+      },
+      "owner-evidence-proof.json": {
+        "bytes": 7982,
+        "sha256": "bfda1ce3dabfc7a4870a302dfbe447322b52d18913900b3e742d568953e21645"
+      },
+      "report.md": {
+        "bytes": 12226,
+        "sha256": "b9bf49c496ff9665654e9ee6f8313b2568e012dec96041134893f9453894ebc9"
+      },
+      "source-bound.json": {
+        "bytes": 26147,
+        "sha256": "eca7b275691badd8371a71e7129b03a38fd02d05a88253c8e7d45d235b841ed8"
+      }
+    },
+    "namespace": "/workspace/work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-owner-refresh-1350",
+    "old_source_blobs_refetched": false,
+    "original_threecase_receipt_refetched": false
+  },
+  "resource_at_derivation": {
+    "dependency_installs": 0,
+    "global_free_bytes": 2701914112,
+    "minimum_global_free_bytes": 2684354560,
+    "new_runtime_processes": 0
+  },
+  "root_coordination": {
+    "author": "joshyorko",
+    "bytes": 2763,
+    "created_at": "2026-10-11T14:09:13Z",
+    "file": "coordination-actions133-6109883396.md",
+    "id": 6109883396,
+    "sha256": "0256252166c17a50d94459ae4e0299e3723b94a6a9bf30abd2f61c45304221de",
+    "updated_at": "2026-10-11T14:09:13Z",
+    "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6109883396"
+  },
+  "scope": "read-only delta since frozen1350 observation13:55:15Z; no Actions/runtime mutations",
+  "snapshot_times": {
+    "comments_compare": "2026-10-11T14:40:01Z",
+    "exact_source_availability": "2026-10-11T14:43:27Z",
+    "metadata": "2026-10-11T14:38:44Z"
+  },
+  "thread_delta": [
+    {
+      "body_changed": true,
+      "body_sha256": "28c1ab4e6293e45ce3af6ed2f738424bd7689bfcfc3f52aa91eff74562d85a89",
+      "new_comments": 174,
+      "new_updated_at": "2026-10-11T14:23:08Z",
+      "number": 101,
+      "old_body_sha256": "6d131365dada2059ba190fa50c9b45ac329c75fd6356c80d95582fb008a9762e",
+      "old_comments": 174,
+      "old_updated_at": "2026-10-11T12:00:41Z",
+      "state": "open"
+    },
+    {
+      "body_changed": false,
+      "body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+      "new_comments": 4,
+      "new_updated_at": "2026-10-11T14:09:13Z",
+      "number": 133,
+      "old_body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+      "old_comments": 3,
+      "old_updated_at": "2026-09-07T14:44:24Z",
+      "state": "open"
+    },
+    {
+      "body_changed": false,
+      "body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d",
+      "new_comments": 5,
+      "new_updated_at": "2026-10-11T01:44:42Z",
+      "number": 134,
+      "old_body_sha256": "d4160af19d7a80b467f101d7414134406fa051d6ed4ad935accd1fe51252369d",
+      "old_comments": 5,
+      "old_updated_at": "2026-10-11T01:44:42Z",
+      "state": "open"
+    },
+    {
+      "body_changed": false,
+      "body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21",
+      "new_comments": 0,
+      "new_updated_at": "2026-09-07T14:43:49Z",
+      "number": 139,
+      "old_body_sha256": "f522d635575963ab26eaf73c66bbdd438cb199a9a2d92820e374dd8e9da73d21",
+      "old_comments": 0,
+      "old_updated_at": "2026-09-07T14:43:49Z",
+      "state": "open"
+    },
+    {
+      "body_changed": false,
+      "body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959",
+      "new_comments": 0,
+      "new_updated_at": "2026-09-07T14:43:25Z",
+      "number": 143,
+      "old_body_sha256": "a7a0bbc131ae212e7cd1c0cc7a8a37249ad26e65d2ea553857fb565bc1431959",
+      "old_comments": 0,
+      "old_updated_at": "2026-09-07T14:43:25Z",
+      "state": "open"
+    },
+    {
+      "body_changed": true,
+      "body_sha256": "73543167daa75d217d7374666425814e443e30d58781b8b5f70340dcb15bf3c0",
+      "new_comments": 2,
+      "new_updated_at": "2026-10-11T14:23:10Z",
+      "number": 221,
+      "old_body_sha256": "ddf4dcfdfadd2d1db53f889e9dfb023463643aed86001972ccc71b30c9790771",
+      "old_comments": 2,
+      "old_updated_at": "2026-10-11T12:12:50Z",
+      "state": "open"
+    }
+  ]
+}

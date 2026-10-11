@@ -1,0 +1,307 @@
+{
+  "executionScope": "Foreign-platform binaries were not executed on this Linux host; go version -m read their embedded metadata only.",
+  "goVersion": "go1.26.9",
+  "platforms": {
+    "darwin_amd64": {
+      "artifact": {
+        "actualZipSha256": "3ebb38d6d5888d332919bb325de2c545cd73d25aed79ebf136a8593057261533",
+        "bytes": 13072743,
+        "githubDigest": "sha256:3ebb38d6d5888d332919bb325de2c545cd73d25aed79ebf136a8593057261533",
+        "id": 11706013157,
+        "name": "macos-amd64-native-runtime-receipt",
+        "zipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-amd64-native-runtime-receipt.zip"
+      },
+      "binary": {
+        "bytes": 22228928,
+        "goMetadataExit": 0,
+        "goVersion": "go1.26.9",
+        "path": "/dev/shm/rcc-p1-236-current-native-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+        "runtimeGOARCH": "amd64",
+        "runtimeGOOS": "darwin",
+        "sha256": "a5530cdfc64df97438dfa292562424ab58157ba8671a8db013397e14bacde4e6",
+        "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+        "vcsModified": false,
+        "version": "v18.19.6"
+      },
+      "exactBinaryCLI": {
+        "artifactDigest": "sha256:9ccab370a8387fb7b6338f4b595df62647aa7548e00e6c7276cbb4457a585a95",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": 5005,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      },
+      "linuxJAT": false,
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "unsigned-or-unverified",
+        "executableSymlink": "pass",
+        "machine": "x86_64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robot": {
+        "fail": 0,
+        "pass": 1,
+        "robotColdProviderHit": "provider",
+        "robotExactBinaryExecutedHashMatchesReceipt": true,
+        "robotExecuteLeaseReleased": true,
+        "robotWarmProviderDeadReuse": true,
+        "skip": 0,
+        "sqliteImport": "sqlite3"
+      },
+      "sourceAPI": {
+        "artifactDigest": "sha256:9ccab370a8387fb7b6338f4b595df62647aa7548e00e6c7276cbb4457a585a95",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": null,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      }
+    },
+    "darwin_arm64": {
+      "artifact": {
+        "actualZipSha256": "0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213",
+        "bytes": 12497966,
+        "githubDigest": "sha256:0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213",
+        "id": 11706636128,
+        "name": "macos-arm64-native-runtime-receipt",
+        "zipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-arm64-native-runtime-receipt.zip"
+      },
+      "binary": {
+        "bytes": 20969810,
+        "goMetadataExit": 0,
+        "goVersion": "go1.26.9",
+        "path": "/dev/shm/rcc-p1-236-current-native-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+        "runtimeGOARCH": "arm64",
+        "runtimeGOOS": "darwin",
+        "sha256": "4e5f0075c72dfa315e2e5ea613fe98f5ec770e655605121b58fc92b9a2f59cc1",
+        "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+        "vcsModified": false,
+        "version": "v18.19.6"
+      },
+      "exactBinaryCLI": {
+        "artifactDigest": "sha256:2066bd328c4d8cdb25f016634978c051ebbb9151ddc8403d75a0fb26b1bbb194",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": 5007,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      },
+      "linuxJAT": false,
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "verified",
+        "executableSymlink": "pass",
+        "machine": "arm64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robot": {
+        "fail": 0,
+        "pass": 1,
+        "robotColdProviderHit": "provider",
+        "robotExactBinaryExecutedHashMatchesReceipt": true,
+        "robotExecuteLeaseReleased": true,
+        "robotWarmProviderDeadReuse": true,
+        "skip": 0,
+        "sqliteImport": "sqlite3"
+      },
+      "sourceAPI": {
+        "artifactDigest": "sha256:2066bd328c4d8cdb25f016634978c051ebbb9151ddc8403d75a0fb26b1bbb194",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": null,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      }
+    },
+    "linux_amd64": {
+      "artifact": {
+        "actualZipSha256": "065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935",
+        "bytes": 13385953,
+        "githubDigest": "sha256:065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935",
+        "id": 11706526381,
+        "name": "linux-amd64-native-runtime-receipt",
+        "zipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-linux-amd64-native-runtime-receipt.zip"
+      },
+      "binary": {
+        "bytes": 22392994,
+        "goMetadataExit": 0,
+        "goVersion": "go1.26.9",
+        "path": "/dev/shm/rcc-p1-236-current-native-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+        "runtimeGOARCH": "amd64",
+        "runtimeGOOS": "linux",
+        "sha256": "b0df6026cd52248edd74e37ce903aa81aa86f7e28df611121bafbf7bd0ed2806",
+        "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+        "vcsModified": false,
+        "version": "v18.19.6"
+      },
+      "exactBinaryCLI": {
+        "artifactDigest": "sha256:c634eb5e577c9b7b376bc67328adc010d87808d179f7f2de9b5fb68116fa8229",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": 5045,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      },
+      "linuxJAT": true,
+      "platformChecks": {
+        "caseCollision": "case-sensitive-filesystem",
+        "executableSymlink": "pass",
+        "filesystemType": "ext2/ext3",
+        "glibcMuslMismatch": "pass",
+        "libc": "glibc",
+        "machine": "x86_64",
+        "runnerOS": "linux"
+      },
+      "robot": {
+        "fail": 0,
+        "pass": 1,
+        "robotColdProviderHit": "provider",
+        "robotExactBinaryExecutedHashMatchesReceipt": true,
+        "robotExecuteLeaseReleased": true,
+        "robotWarmProviderDeadReuse": true,
+        "skip": 0,
+        "sqliteImport": "sqlite3"
+      },
+      "sourceAPI": {
+        "artifactDigest": "sha256:c634eb5e577c9b7b376bc67328adc010d87808d179f7f2de9b5fb68116fa8229",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": null,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      }
+    },
+    "windows_amd64": {
+      "artifact": {
+        "actualZipSha256": "11ed43eabaad48afb7e8e1ab158eb62aa724f61ca4b6a0c16d5a7c74044d5a54",
+        "bytes": 10850290,
+        "githubDigest": "sha256:11ed43eabaad48afb7e8e1ab158eb62aa724f61ca4b6a0c16d5a7c74044d5a54",
+        "id": 11705647535,
+        "name": "windows-amd64-native-runtime-receipt",
+        "zipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-windows-amd64-native-runtime-receipt.zip"
+      },
+      "binary": {
+        "bytes": 20117504,
+        "goMetadataExit": 0,
+        "goVersion": "go1.26.9",
+        "path": "/dev/shm/rcc-p1-236-current-native-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+        "runtimeGOARCH": "amd64",
+        "runtimeGOOS": "windows",
+        "sha256": "3e133dbaf3d2a6948f41580689f0127a2c46a80c14340071eb7eede2c8d8bd28",
+        "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+        "vcsModified": false,
+        "version": "v18.19.6"
+      },
+      "exactBinaryCLI": {
+        "artifactDigest": "sha256:e490a3a6062abdea1edba259bdbfb0cfc5a8b7113dd368601b9d9aa5e35368f5",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": 3808,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      },
+      "linuxJAT": false,
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "executableSymlink": "pass",
+        "fileLock": "pass",
+        "junction": "pass",
+        "longPath": "pass",
+        "machine": "AMD64",
+        "pathNormalization": "pass",
+        "runnerOS": "win32"
+      },
+      "robot": {
+        "fail": 0,
+        "pass": 1,
+        "robotColdProviderHit": "provider",
+        "robotExactBinaryExecutedHashMatchesReceipt": true,
+        "robotExecuteLeaseReleased": true,
+        "robotWarmProviderDeadReuse": true,
+        "skip": 0,
+        "sqliteImport": "sqlite3"
+      },
+      "sourceAPI": {
+        "artifactDigest": "sha256:e490a3a6062abdea1edba259bdbfb0cfc5a8b7113dd368601b9d9aa5e35368f5",
+        "coldExit": 0,
+        "coldHit": "provider",
+        "leaseIdPresent": true,
+        "leaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "objectCount": null,
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization",
+        "warmSameMaterialization": true
+      }
+    }
+  },
+  "runId": 38148406741,
+  "schemaVersion": 1,
+  "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "version": "v18.19.6"
+}

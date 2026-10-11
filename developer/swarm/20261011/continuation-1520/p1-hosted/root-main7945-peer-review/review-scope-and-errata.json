@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-11T15:12:52.716135+00:00",
+  "expectedProofHashes": {
+    "main7945-native-independent-review/report.md": "920af7addce1cc085c9cfeedc12a5fae43a93f5d2589212e476871542748e791",
+    "main7945-native-independent-review/verification.json": "18dc24211936d441b2355deb3d800dabd0371fe4e3cdfd9a878378a7a9da6a06",
+    "main7945-native-independent-review/official9-reader-review.json": "90bef6d96775e07dc96df93b86172f5ea1acad03595b98e8645277ac690a0c31",
+    "main7945-assets-independent-review/verification.json": "8aa2be7dac2f3dfbb09d0a82d3b283c98ac830bc4bcc073d32be98c8099d14b3"
+  },
+  "all9ActualAssetsAnd4NativeBytesIndependentlyReviewed": true,
+  "canonical270MBZipBytesDownloaded": false,
+  "canonicalDigestScope": "GitHub API digest metadata only; full canonical ZIP and raw eleven-gate/N1 receipts still require accepted hosted read-only exporter; peer static report wording about root canonical ZIP verification must not be read as actual270MB byte inspection.",
+  "rootLocalInstallationAttempt": "Preflight failed before any executable copy or CLI command; actual installation not claimed. Govuln tool restored intact; later owner-controlled P1 artifact review may stage it separately."
+}

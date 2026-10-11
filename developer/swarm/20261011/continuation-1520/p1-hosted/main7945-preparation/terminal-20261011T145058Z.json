@@ -1,0 +1,530 @@
+{
+  "snapshot_utc": "2026-10-11T14:50:58Z",
+  "repo": "joshyorko/rcc",
+  "main": {
+    "sha": "7945f956b428359928908a9f42e36417b113dafd",
+    "tree": "49baf943b9d64ef79af56ec8f34eebe0385477b1"
+  },
+  "open_issues": [
+    185,
+    182,
+    181,
+    135,
+    133,
+    132,
+    131,
+    125,
+    118,
+    98
+  ],
+  "open_prs": [
+    {
+      "number": 236,
+      "head_sha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+      "draft": true
+    },
+    {
+      "number": 235,
+      "head_sha": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+      "draft": true
+    },
+    {
+      "number": 225,
+      "head_sha": "b24b29fffab4581456a313a240257d681ad744fd",
+      "draft": true
+    },
+    {
+      "number": 224,
+      "head_sha": "32d51bd00852b003fd0d82050f5fd6d281f362d5",
+      "draft": true
+    }
+  ],
+  "tags": {
+    "count": 33,
+    "latest": "v18.19.5"
+  },
+  "releases": {
+    "count": 27,
+    "latest": "v18.19.5",
+    "latest_published_at": "2026-09-07T19:02:08Z"
+  },
+  "milestones_count": 0,
+  "main_check_runs": [
+    {
+      "name": "Bump version and dispatch release tag",
+      "status": "completed",
+      "conclusion": "skipped",
+      "id": 114497651323
+    },
+    {
+      "name": "Bump version and dispatch release tag",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114497529038
+    },
+    {
+      "name": "Assemble Release Preparation",
+      "status": "completed",
+      "conclusion": "skipped",
+      "id": 114497520680
+    },
+    {
+      "name": "Assemble Release Preparation",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114497349596
+    },
+    {
+      "name": "Native Runtime (linux-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492978768
+    },
+    {
+      "name": "Native Runtime (windows-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492978764
+    },
+    {
+      "name": "Native Runtime (macos-arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492978756
+    },
+    {
+      "name": "Native Runtime (macos-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492978723
+    },
+    {
+      "name": "Native Runtime (macos-arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492923432
+    },
+    {
+      "name": "Native Runtime (macos-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492923390
+    },
+    {
+      "name": "Native Runtime (linux-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492923389
+    },
+    {
+      "name": "Native Runtime (windows-amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492923377
+    },
+    {
+      "name": "Release Candidate Verification",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492769755
+    },
+    {
+      "name": "Build RCC",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492769574
+    },
+    {
+      "name": "Release Candidate Verification",
+      "status": "completed",
+      "conclusion": "skipped",
+      "id": 114492724564
+    },
+    {
+      "name": "golangci-lint",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492723588
+    },
+    {
+      "name": "coverage",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492723579
+    },
+    {
+      "name": "Build RCC",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492723535
+    },
+    {
+      "name": "Analyze (go)",
+      "status": "completed",
+      "conclusion": "success",
+      "id": 114492723317
+    }
+  ],
+  "runs": [
+    {
+      "id": 38147141244,
+      "name": "Rcc",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "head_branch": "main",
+      "run_number": 595,
+      "created_at": "2026-10-11T14:25:49Z",
+      "updated_at": "2026-10-11T14:50:07Z",
+      "jobs": [
+        {
+          "id": 114492769574,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": "2026-10-11T14:26:52Z"
+        },
+        {
+          "id": 114492769755,
+          "name": "Release Candidate Verification",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": "2026-10-11T14:48:39Z"
+        },
+        {
+          "id": 114492978723,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": "2026-10-11T14:45:37Z"
+        },
+        {
+          "id": 114492978756,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:27:04Z",
+          "completed_at": "2026-10-11T14:39:11Z"
+        },
+        {
+          "id": 114492978764,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:54Z",
+          "completed_at": "2026-10-11T14:45:52Z"
+        },
+        {
+          "id": 114492978768,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": "2026-10-11T14:36:38Z"
+        },
+        {
+          "id": 114497349596,
+          "name": "Assemble Release Preparation",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:49:18Z",
+          "completed_at": "2026-10-11T14:50:06Z"
+        }
+      ],
+      "artifacts_metadata": [
+        {
+          "id": 11706495506,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-linux64",
+          "size_bytes": 22398033,
+          "digest": "sha256:f39e6347088725e1f126e344ab8b3c1a849e04ee11aa9e77507b0389aa2f2c9f",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11706480506,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-macosarm64",
+          "size_bytes": 20974858,
+          "digest": "sha256:fee0614f1b74bcf1f0b61a9bd2b0a3931097e41c25ae5d3dffb35d12a0d612bb",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11706315811,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-index.json",
+          "size_bytes": 13981,
+          "digest": "sha256:c28b9758575c3cae1187b1169cf9cf7885e8d92c30463826c3b4c3bce47f5f22",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11706300817,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-macos64",
+          "size_bytes": 9548096,
+          "digest": "sha256:8294f11d36c3c891c4446b40f6d6c6891f3026627ad5671c66e2910d16ed4266",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11706210955,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-macosarm64",
+          "size_bytes": 8891643,
+          "digest": "sha256:957e0736ec65b8e8be6fc3c74d6f1f577ed0bdced69247e57826693e2b9d5973",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11706085986,
+          "name": "release-candidate-evidence",
+          "size_bytes": 156408741,
+          "digest": "sha256:e9920de56b1506b4542b9766c50212c86f1a077fa95d617ce3f9f2190692cdae",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705946259,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-windows64.exe",
+          "size_bytes": 9677266,
+          "digest": "sha256:8578d4ddabae0cc15ee2d826eca03e9f39b64f8cd037e8fdb39ebdc8016b4084",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705946257,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-windows64.exe",
+          "size_bytes": 20122561,
+          "digest": "sha256:21ef08ea1c6ca560dd858c64f0384914866ae5d09d094ccfb3682769da7f7732",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705592029,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-macos64",
+          "size_bytes": 22233967,
+          "digest": "sha256:075280bfba61c89ffed37385bcc11ece3dfa61eecd26ff9170226bd49e73a6a6",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705567118,
+          "name": "rcc-release-preparation",
+          "size_bytes": 270724871,
+          "digest": "sha256:75919093aaeb1a49bfa7898246b4bd8d2e56ea065db837a391fb0ec83d78c7f5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705419997,
+          "name": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-linux64",
+          "size_bytes": 9356386,
+          "digest": "sha256:688debb3d915883c8272f334a4637aaaac1f6ebc895abe5fc8ad87b21d7f2fff",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705267835,
+          "name": "native-runtime-binaries",
+          "size_bytes": 49100735,
+          "digest": "sha256:8db17c7dc838f5f26fb47ebc479b438f370743d919e3605e6a6a17e26d8033d3",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705238385,
+          "name": "macos-amd64-native-runtime-receipt",
+          "size_bytes": 13072836,
+          "digest": "sha256:da0ebc9d866071efbeb203ecea78f665996b415cae2261eefe3319223b200315",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705179118,
+          "name": "linux-amd64-native-runtime-receipt",
+          "size_bytes": 13386023,
+          "digest": "sha256:4c94f47bc09e80eb44b970199aff0142b36834f43d36bc3b760d84ec99ab7f8b",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704699968,
+          "name": "windows-amd64-native-runtime-receipt",
+          "size_bytes": 10850198,
+          "digest": "sha256:1b9b53cc3bcd9ca0df36a3399410f2fc37c9aa64ac294f697bf07578a655cae5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704669558,
+          "name": "macos-arm64-native-runtime-receipt",
+          "size_bytes": 12498015,
+          "digest": "sha256:6b042fd446ead249047c67e16747d4329c340c76ea291b2749dd1e0c6e4f76c5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704448864,
+          "name": "RCC-Binaries",
+          "size_bytes": 64502653,
+          "digest": "sha256:c4d36a414536386867d56f94351387db7fde38695bfd4adf46246cbe33c99443",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        }
+      ]
+    },
+    {
+      "id": 38147126371,
+      "name": "Rcc",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "head_branch": "main",
+      "run_number": 594,
+      "created_at": "2026-10-11T14:25:36Z",
+      "updated_at": "2026-10-11T14:49:31Z",
+      "jobs": [
+        {
+          "id": 114492723535,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:38Z",
+          "completed_at": "2026-10-11T14:26:36Z"
+        },
+        {
+          "id": 114492724564,
+          "name": "Release Candidate Verification",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T14:25:36Z",
+          "completed_at": "2026-10-11T14:25:36Z"
+        },
+        {
+          "id": 114492923377,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": "2026-10-11T14:43:15Z"
+        },
+        {
+          "id": 114492923389,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": "2026-10-11T14:36:33Z"
+        },
+        {
+          "id": 114492923390,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:39Z",
+          "completed_at": "2026-10-11T14:49:30Z"
+        },
+        {
+          "id": 114492923432,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:42Z",
+          "completed_at": "2026-10-11T14:35:53Z"
+        },
+        {
+          "id": 114497520680,
+          "name": "Assemble Release Preparation",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T14:49:30Z",
+          "completed_at": "2026-10-11T14:49:30Z"
+        }
+      ],
+      "artifacts_metadata": [
+        {
+          "id": 11705655878,
+          "name": "macos-amd64-native-runtime-receipt",
+          "size_bytes": 13073111,
+          "digest": "sha256:bd77f391358e53b2d5ffa066aa53183a2fcace2fd143c17da558b5b373d48770",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705505801,
+          "name": "macos-arm64-native-runtime-receipt",
+          "size_bytes": 12498108,
+          "digest": "sha256:9f274a40b23450d9688aae86d2da64d7e7e02d7ef6d1c78a7e829f9bd56b644f",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705403678,
+          "name": "linux-amd64-native-runtime-receipt",
+          "size_bytes": 13386129,
+          "digest": "sha256:bd23cb3f8d07b7cd7a3695126bc974a5d94263d6bb82a7fd3ee6e7f457c0aee0",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705379479,
+          "name": "windows-amd64-native-runtime-receipt",
+          "size_bytes": 10850216,
+          "digest": "sha256:acc9e08f8f194e46fd989e38942cac60f4271c5fe8970231757e7d506a8139d5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705148315,
+          "name": "native-runtime-binaries",
+          "size_bytes": 49100747,
+          "digest": "sha256:b734e0da7f6ea3c8dd4a15da6ce43bbbe53b6f08db7828391405d762b48bd5a9",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704848871,
+          "name": "RCC-Binaries",
+          "size_bytes": 64502671,
+          "digest": "sha256:9deea23d04ef928f596861529350d7efdbbf33571a55657f5da0ce9f60ea39fb",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        }
+      ]
+    }
+  ],
+  "source_workflow_permissions": {
+    "rcc.yaml": {
+      "contents": "read",
+      "triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ]
+    },
+    "publish-release.yml": {
+      "actions": "read",
+      "contents": "write",
+      "trigger": "workflow_dispatch",
+      "job_guard": "main",
+      "environment_gate": true
+    },
+    "create-release-tag.yml": {
+      "contents": "read",
+      "trigger": "workflow_dispatch"
+    }
+  },
+  "issue_actions_133_latest_comment": 6109883396,
+  "issue_actions_133_comment_count": 4,
+  "issue_actions_133_newer_response": false,
+  "artifact_zip_downloads": 0,
+  "numeric_gate_receipt_assertions": 0,
+  "publication_state": "No tag or release created; operator hold remains.",
+  "interpretation": {
+    "dispatch_38147141244": "Build, full Release Candidate Verification, all four native jobs, and Assemble Release Preparation completed success. This is a preparation check only; no publish/tag workflow was run.",
+    "push_38147126371": "Build and all four native jobs completed success; Release Candidate Verification and Assemble Release Preparation are skipped under push-event policy.",
+    "raw_wrapper_receipt": "The full-run job succeeded, but this read-only metadata lane did not download the evidence artifact or inspect gateExitCode/teeExitCode numeric fields or per-gate receipt contents."
+  }
+}

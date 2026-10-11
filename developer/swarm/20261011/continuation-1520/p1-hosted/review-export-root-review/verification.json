@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-11T15:08:25.058329+00:00",
+  "head": "7945f956b428359928908a9f42e36417b113dafd",
+  "fullScriptExitCode": 0,
+  "diffCheckExitCode": 0,
+  "fixtureNeverExecuted": true,
+  "fileHashes": {
+    "docs/release-process.md": "e7e19d32842ef757193877f0ed6eaf52a8ad6f2ba47f53531ad5f8837737178c",
+    "scripts/release_publication.py": "f59ac4cbd20b390234fa3756cb3c73d54c826fdb4eec16146cd00bae9fcac30a",
+    "scripts/test_release_publication.py": "0688f04305c0cc402311a065f5f73cf8e121d321a560f4a7019b576f86ccfd16",
+    ".github/workflows/export-release-evidence.yml": "5313549f3788bc6b1e2f048e9ff35a5f511b6d5dfd64eba3677e7701d5187921"
+  }
+}

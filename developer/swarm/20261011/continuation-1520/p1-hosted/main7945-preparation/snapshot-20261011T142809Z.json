@@ -1,0 +1,839 @@
+{
+  "snapshot_utc": "2026-10-11T14:28:09Z",
+  "repository": "joshyorko/rcc",
+  "main_sha": "7945f956b428359928908a9f42e36417b113dafd",
+  "open_issues": [
+    185,
+    182,
+    181,
+    135,
+    133,
+    132,
+    131,
+    125,
+    118,
+    98
+  ],
+  "open_pull_requests": [
+    {
+      "number": 236,
+      "head_sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+      "draft": true,
+      "state": "open"
+    },
+    {
+      "number": 235,
+      "head_sha": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+      "draft": true,
+      "state": "open"
+    },
+    {
+      "number": 225,
+      "head_sha": "b24b29fffab4581456a313a240257d681ad744fd",
+      "draft": true,
+      "state": "open"
+    },
+    {
+      "number": 224,
+      "head_sha": "32d51bd00852b003fd0d82050f5fd6d281f362d5",
+      "draft": true,
+      "state": "open"
+    }
+  ],
+  "tags": {
+    "count": 33,
+    "latest": "v18.19.5"
+  },
+  "releases": {
+    "count": 27,
+    "latest": "v18.19.5",
+    "latest_published_at": "2026-09-07T19:02:08Z"
+  },
+  "milestones": {
+    "count": 0
+  },
+  "runs": [
+    {
+      "id": 38147141244,
+      "name": "Rcc",
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "head_branch": "main",
+      "run_number": 595,
+      "run_attempt": 1,
+      "created_at": "2026-10-11T14:25:49Z",
+      "updated_at": "2026-10-11T14:27:04Z",
+      "jobs": [
+        {
+          "id": 114492769574,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": "2026-10-11T14:26:52Z",
+          "steps": []
+        },
+        {
+          "id": 114492769755,
+          "name": "Release Candidate Verification",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run contained release candidate gate",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Upload release candidate evidence",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492978723,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492978756,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:27:04Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Setup Robot Environment",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run UV Python prefix symlink containment tests",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Show commit info",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492978764,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:54Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492978768,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        }
+      ],
+      "artifacts_metadata": [
+        {
+          "id": 11705267835,
+          "name": "native-runtime-binaries",
+          "size_bytes": 49100735,
+          "digest": "sha256:8db17c7dc838f5f26fb47ebc479b438f370743d919e3605e6a6a17e26d8033d3",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704448864,
+          "name": "RCC-Binaries",
+          "size_bytes": 64502653,
+          "digest": "sha256:c4d36a414536386867d56f94351387db7fde38695bfd4adf46246cbe33c99443",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        }
+      ]
+    },
+    {
+      "id": 38147126371,
+      "name": "Rcc",
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "head_branch": "main",
+      "run_number": 594,
+      "run_attempt": 1,
+      "created_at": "2026-10-11T14:25:36Z",
+      "updated_at": "2026-10-11T14:26:43Z",
+      "jobs": [
+        {
+          "id": 114492723535,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:38Z",
+          "completed_at": "2026-10-11T14:26:36Z",
+          "steps": []
+        },
+        {
+          "id": 114492724564,
+          "name": "Release Candidate Verification",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T14:25:36Z",
+          "completed_at": "2026-10-11T14:25:36Z",
+          "steps": []
+        },
+        {
+          "id": 114492923377,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492923389,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492923390,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:39Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run UV Python prefix symlink containment tests",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Show commit info",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run macOS system-alias no-follow acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "id": 114492923432,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:26:42Z",
+          "completed_at": null,
+          "steps": [
+            {
+              "name": "Run Windows process supervision and artifact lock acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Robot binary spelling acceptance",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run Windows Environment Artifact Robot acceptance against exact binary",
+              "status": "completed",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run real native A-to-B acceptance",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "name": "Run JAT-class real consumer A-to-B acceptance",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run Environment Artifact Robot acceptance against exact binary",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Bind Robot evidence into native runtime receipt",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Stage exact native binary for review",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Validate native review payload size",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+              "status": "pending",
+              "conclusion": null
+            },
+            {
+              "name": "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd",
+              "status": "pending",
+              "conclusion": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "source_permissions": {
+    "rcc.yaml": {
+      "permissions": {
+        "contents": "read"
+      },
+      "event_triggers": [
+        "push",
+        "pull_request",
+        "workflow_dispatch"
+      ]
+    },
+    "publish-release.yml": {
+      "permissions": {
+        "actions": "read",
+        "contents": "write"
+      },
+      "event": "workflow_dispatch",
+      "job_guard": "refs/heads/main",
+      "environment_gated": true
+    },
+    "create-release-tag.yml": {
+      "permissions": {
+        "contents": "read"
+      },
+      "event": "workflow_dispatch"
+    }
+  },
+  "publication": "No tag/release or publication initiated; operator hold remains.",
+  "actions_issue_133_latest_comment_id": 6109883396,
+  "actions_issue_133_comment_count": 4,
+  "actions_issue_133_latest_comment_is_reply_to_6109883396": false,
+  "note": "No artifacts downloaded. No retries, cancellations, source, branch, PR, issue, label, tag, release, or publication writes."
+}

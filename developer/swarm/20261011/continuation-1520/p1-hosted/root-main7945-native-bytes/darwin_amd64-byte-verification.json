@@ -1,0 +1,63 @@
+{
+  "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "platform": "darwin_amd64",
+  "artifactId": 11705238385,
+  "zipBytes": 13072836,
+  "zipSha256": "da0ebc9d866071efbeb203ecea78f665996b415cae2261eefe3319223b200315",
+  "actualZipPath": "/dev/shm/rcc-main7945-native-review-root/main7945-intel-native.zip",
+  "actualBinaryPath": "/dev/shm/rcc-main7945-native-review-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+  "binaryBytes": 22228928,
+  "binarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+  "metadataExitCode": 0,
+  "robot": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "linuxJatActualReceiptValidated": false,
+  "scope": "Exact shipping-source executed-native binary and receipts; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+  "memberInventory": [
+    {
+      "path": "native-binary-review/assets/rcc-macos64",
+      "bytes": 22228928,
+      "sha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c"
+    },
+    {
+      "path": "log.html",
+      "bytes": 273059,
+      "sha256": "78cfd688e3d39ad1e4b6bbe235c1ea1855d988d207b5675f23b7564bdfb6ac4d"
+    },
+    {
+      "path": "native-binary-review/native-binary-review.json",
+      "bytes": 560,
+      "sha256": "385cf6522760dabfba124ce8776df0852b4589502f9371819dda4728e144aede"
+    },
+    {
+      "path": "native-runtime-receipt.json",
+      "bytes": 15466,
+      "sha256": "768779b9512f0aed02fff9cde1c2f172303fcfa30f9b7d1f96df1c0db4b78fa0"
+    },
+    {
+      "path": "native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "a848e6e8262848a5efa095cba542030f313b8383ff66181431134893d20009e0"
+    },
+    {
+      "path": "native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "report.html",
+      "bytes": 232408,
+      "sha256": "b2283482ef0cc27d25a5899ba8cc541dd5c3671bdecd48830917a5244640ae5c"
+    },
+    {
+      "path": "output.xml",
+      "bytes": 128880,
+      "sha256": "f32372fc9ee0cdb7221a5e0882d6863e6843107446c332138e69312cf460e11c"
+    }
+  ]
+}

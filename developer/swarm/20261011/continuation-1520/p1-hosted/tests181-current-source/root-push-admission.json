@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-11T14:50:23.154124+00:00",
+  "pr": 235,
+  "oldHead": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+  "newHead": "fa464a23ce5bc8c2b903bfc62d53b71205379812",
+  "originalAcceptedTestPatchBytesIdentical": true,
+  "rootSourceReview": "Only original200testlines unchanged; bothancestriespreserved; clean/diffcheck0. Existingworker unnecessarilymade extraLOCALbranch; preserveit,no remote branch/PR proliferation.",
+  "freshAcceptance": "NewheadhostedGo/race/4actualnativebinary acceptance REQUIRED, olde536proofnotrebound",
+  "releaseSourceImmutable": "7945f956b428359928908a9f42e36417b113dafd",
+  "noMainReleaseActionsMutation": true
+}

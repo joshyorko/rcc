@@ -1,0 +1,30 @@
+{
+  "status": "ACTUAL_DISTRIBUTION_ASSET_BYTES_ZIP_SOURCE_METADATA_MANIFEST_VERIFIED",
+  "asset": "rccremote-macosarm64",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "run": 38147141244,
+  "artifactId": 11706210955,
+  "zipBytes": 8891643,
+  "zipSha256": "sha256:957e0736ec65b8e8be6fc3c74d6f1f577ed0bdced69247e57826693e2b9d5973",
+  "binaryBytes": 8886578,
+  "assetSha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+  "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "retainedActualZip": "/dev/shm/rcc-main7945-release-review-root/rccremote-macosarm64.zip",
+  "retainedActualBytes": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-macosarm64/assets/rccremote-macosarm64",
+  "goBuildInfo": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "arm64",
+    "GOOS": "darwin",
+    "GOARM64": "v8.0",
+    "vcs": "git",
+    "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "vcs.time": "2026-10-11T14:25:33Z",
+    "vcs.modified": "false"
+  },
+  "nativeExecutedBinaryMatched": false,
+  "memberCount": 5
+}

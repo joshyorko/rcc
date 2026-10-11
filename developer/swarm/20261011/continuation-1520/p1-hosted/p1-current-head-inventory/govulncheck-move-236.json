@@ -1,0 +1,13 @@
+{
+  "action": "copy-verify-then-unlink-temporary-move",
+  "originalPath": "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+  "ramPath": "/dev/shm/rcc-p1-236-current-native-root/govulncheck-go1.26.9",
+  "sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "size": 10395913,
+  "mode": "0o700",
+  "mtimeNs": 1791665111453359250,
+  "originalMtimeNs": 1791665111453359250,
+  "workspaceFreeBytesAfterMove": 2710843392,
+  "requiredFloorPlusLargestZipBytes": 2701934817,
+  "originalRemovedOnlyAfterCopiedBytesModeMtimeSHAValidated": true
+}

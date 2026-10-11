@@ -1,0 +1,5 @@
+The verified v18.19.6 preparation retains full release-gate and N−1 receipts inside a 270 MB canonical artifact, while the local download resolver admits at most 32 MiB. Add a manual, main-only, read-only exporter that verifies the existing preparation run, exact source ancestry, API ZIP digest and complete bundle, then uploads an explicit receipt allowlist capped at 24 MiB. It does not rebuild, tag or publish, and the publisher still consumes only the original canonical preparation artifact.
+
+Shipping source remains frozen at `7945f956b428359928908a9f42e36417b113dafd`; this engineering correction exports its existing run `38147141244` without changing its nine assets. Publication remains under explicit operator HOLD.
+
+Validation: root full script suite 143/143; independent focused suite 21/21, YAML parsing and diff checks passed. Independent review found no blocking issue. Actual hosted export and payload fit remain unproven until this change is accepted and the read-only workflow runs. Current-head CI/native gates must pass before integration.

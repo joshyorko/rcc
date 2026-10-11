@@ -1,0 +1,30 @@
+{
+  "status": "ACTUAL_DISTRIBUTION_ASSET_BYTES_ZIP_SOURCE_METADATA_MANIFEST_VERIFIED",
+  "asset": "rcc-macos64",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "run": 38147141244,
+  "artifactId": 11705592029,
+  "zipBytes": 22233967,
+  "zipSha256": "sha256:075280bfba61c89ffed37385bcc11ece3dfa61eecd26ff9170226bd49e73a6a6",
+  "binaryBytes": 22228928,
+  "assetSha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+  "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "retainedActualZip": "/dev/shm/rcc-main7945-release-review-root/rcc-macos64.zip",
+  "retainedActualBytes": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-macos64/assets/rcc-macos64",
+  "goBuildInfo": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "darwin",
+    "GOAMD64": "v1",
+    "vcs": "git",
+    "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "vcs.time": "2026-10-11T14:25:33Z",
+    "vcs.modified": "false"
+  },
+  "nativeExecutedBinaryMatched": true,
+  "memberCount": 5
+}

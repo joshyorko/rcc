@@ -1,0 +1,63 @@
+{
+  "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+  "source": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "version": "v18.19.6",
+  "platform": "darwin_arm64",
+  "artifactId": 11706636128,
+  "zipBytes": 12497966,
+  "zipSha256": "0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213",
+  "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-arm64-native-runtime-receipt.zip",
+  "actualBinaryPath": "/dev/shm/rcc-p1-236-native-independent-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+  "binaryBytes": 20969810,
+  "binarySha256": "4e5f0075c72dfa315e2e5ea613fe98f5ec770e655605121b58fc92b9a2f59cc1",
+  "metadataExitCode": 0,
+  "robot": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "linuxJatActualReceiptValidated": false,
+  "scope": "Exact shipping-source executed-native binary and receipts; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+  "memberInventory": [
+    {
+      "path": "log.html",
+      "bytes": 272760,
+      "sha256": "01b56d76a5932788b3b571ba78518ad07a655cd9735ffb4838b2d074c4c216c7"
+    },
+    {
+      "path": "native-binary-review/assets/rcc-macosarm64",
+      "bytes": 20969810,
+      "sha256": "4e5f0075c72dfa315e2e5ea613fe98f5ec770e655605121b58fc92b9a2f59cc1"
+    },
+    {
+      "path": "native-binary-review/native-binary-review.json",
+      "bytes": 563,
+      "sha256": "5c0eecfc3cbe2fbef79b2c5d79a6d8665e446498b59f72d18a9dadd23fae06eb"
+    },
+    {
+      "path": "native-runtime-receipt.json",
+      "bytes": 15451,
+      "sha256": "2e61fc2c114a06d64c92de366a8cc04ece16ab1043712d7a8abab333a41373da"
+    },
+    {
+      "path": "native-runtime-robot-evidence.json",
+      "bytes": 1674,
+      "sha256": "9da41141067f6d1259f206a18620b1a98c0a70ed03b4e374575946ef62ff7f28"
+    },
+    {
+      "path": "native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "output.xml",
+      "bytes": 128974,
+      "sha256": "7d26b526e596212c52518f3029e7a88a9de2d8908c6c59c0dcc937e4cc017342"
+    },
+    {
+      "path": "report.html",
+      "bytes": 232408,
+      "sha256": "6aa4871314869e03a3dfcede9f3e3234ea7c39ca6bf65eeabf9937d01f0499a5"
+    }
+  ]
+}

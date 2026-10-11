@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+    "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/verify_final_236_native.py"
+  ],
+  "exitCode": 0,
+  "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/final-verification.log",
+  "logSha256": "a72a91187d2b437e88052ffbfc9406252203f0770cfd9bb1c07491f164c00411",
+  "scriptSha256": "369360a33d57504800cd7189eaad4970decb5f752c74e1969aab499f36ce2a50"
+}

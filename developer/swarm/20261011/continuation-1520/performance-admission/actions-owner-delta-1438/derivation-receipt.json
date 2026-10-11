@@ -1,0 +1,30 @@
+{
+  "compare_five_files_and_ordered_parents_verified": true,
+  "numeric_derivation_exit_expected": 0,
+  "owner_body_equal": true,
+  "prior_four_receipt_hashes_checked": {
+    "immutable-source-proof.json": {
+      "bytes": 3487,
+      "sha256": "121ef3a5d96c3216afba70ec2c18176733ab0e72abd2ee23a83ed33fa6d510a9"
+    },
+    "owner-evidence-proof.json": {
+      "bytes": 7982,
+      "sha256": "bfda1ce3dabfc7a4870a302dfbe447322b52d18913900b3e742d568953e21645"
+    },
+    "report.md": {
+      "bytes": 12226,
+      "sha256": "b9bf49c496ff9665654e9ee6f8313b2568e012dec96041134893f9453894ebc9"
+    },
+    "source-bound.json": {
+      "bytes": 26147,
+      "sha256": "eca7b275691badd8371a71e7129b03a38fd02d05a88253c8e7d45d235b841ed8"
+    }
+  },
+  "retained_fetch_records_verified": 21,
+  "runtime_experiments": 0,
+  "source_bound": {
+    "bytes": 17766,
+    "sha256": "3d39125d4f998e99268cbad4af55d66a1d9ef032e23a333075ddbf1d7b550901"
+  },
+  "timestamp": "2026-10-11T14:48:40.144873+00:00"
+}

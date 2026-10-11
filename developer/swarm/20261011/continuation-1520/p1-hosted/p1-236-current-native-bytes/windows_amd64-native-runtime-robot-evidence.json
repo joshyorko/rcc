@@ -1,0 +1,34 @@
+{
+  "artifactDigest": "sha256:3671b604317a86808941ecaba7558d3b765723f0c4d262dc48f879eff7695c46",
+  "binary": "D:\\a\\rcc\\rcc\\build\\rcc.exe",
+  "binarySha256": "3e133dbaf3d2a6948f41580689f0127a2c46a80c14340071eb7eede2c8d8bd28",
+  "binaryVersion": "v18.19.6",
+  "cold": {
+    "artifactDigest": "sha256:3671b604317a86808941ecaba7558d3b765723f0c4d262dc48f879eff7695c46",
+    "cacheHit": "provider",
+    "materializationId": "3b120bf_5a1fac3_cc42ec98",
+    "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-d3lrmul4\\home-b\\holotree\\3b120bf_5a1fac3_cc42ec98"
+  },
+  "execute": {
+    "artifactDigest": "sha256:3671b604317a86808941ecaba7558d3b765723f0c4d262dc48f879eff7695c46",
+    "cacheHit": "local-materialization",
+    "exitCode": 0,
+    "leaseId": "a704712ce39b7d9f2dd6097f934962af",
+    "leaseReleased": true,
+    "materializationId": "3b120bf_5a1fac3_cc42ec98",
+    "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-d3lrmul4\\home-b\\holotree\\3b120bf_5a1fac3_cc42ec98"
+  },
+  "native": {
+    "extension": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-d3lrmul4\\home-b\\holotree\\3b120bf_5a1fac3_cc42ec98\\DLLs\\_sqlite3.pyd",
+    "import": "sqlite3",
+    "sqliteVersion": "3.54.0"
+  },
+  "source": "robot_tests/environment_artifacts.robot",
+  "warm": {
+    "artifactDigest": "sha256:3671b604317a86808941ecaba7558d3b765723f0c4d262dc48f879eff7695c46",
+    "cacheHit": "local-materialization",
+    "materializationId": "3b120bf_5a1fac3_cc42ec98",
+    "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-d3lrmul4\\home-b\\holotree\\3b120bf_5a1fac3_cc42ec98",
+    "providerDeadWarmReuse": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "status": "ACTUAL_DISTRIBUTION_ASSET_BYTES_ZIP_SOURCE_METADATA_MANIFEST_VERIFIED",
+  "asset": "rcc-windows64.exe",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "run": 38147141244,
+  "artifactId": 11705946257,
+  "zipBytes": 20122561,
+  "zipSha256": "sha256:21ef08ea1c6ca560dd858c64f0384914866ae5d09d094ccfb3682769da7f7732",
+  "binaryBytes": 20117504,
+  "assetSha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+  "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "retainedActualZip": "/dev/shm/rcc-main7945-release-review-root/rcc-windows64.exe.zip",
+  "retainedActualBytes": "/dev/shm/rcc-main7945-release-review-root/assets-review/rcc-windows64.exe/assets/rcc-windows64.exe",
+  "goBuildInfo": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "windows",
+    "GOAMD64": "v1",
+    "vcs": "git",
+    "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "vcs.time": "2026-10-11T14:25:33Z",
+    "vcs.modified": "false"
+  },
+  "nativeExecutedBinaryMatched": true,
+  "memberCount": 5
+}

@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "commitSha": "7945f956b428359928908a9f42e36417b113dafd",
+  "platform": "windows_amd64",
+  "producerHome": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\002\\producer-home",
+  "consumerHome": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\011\\consumer-home",
+  "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+  "binary": {
+    "path": "D:\\a\\rcc\\rcc\\build\\rcc.exe",
+    "sha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+    "version": "v18.19.6",
+    "runtimeGOOS": "windows",
+    "runtimeGOARCH": "amd64",
+    "expectedGOOS": "windows",
+    "expectedGOARCH": "amd64"
+  },
+  "exactBinaryCLI": {
+    "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+    "objectCount": 3808,
+    "producerHome": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\002\\producer-home",
+    "consumerHome": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\004\\consumer-home",
+    "cold": {
+      "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+      "materializationId": "3b120bf_5a1fac3_672978c1",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\004\\consumer-home\\holotree\\3b120bf_5a1fac3_672978c1",
+      "cacheHit": "provider",
+      "exitCode": 0,
+      "leaseId": "58ad51fbc23d541bb8d2f5dde277cfa2",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": false,
+      "nativeImport": "sqlite3",
+      "nativeExtension": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\004\\consumer-home\\holotree\\3b120bf_5a1fac3_672978c1\\DLLs\\_sqlite3.pyd",
+      "sqliteVersion": "3.54.0",
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311"
+          },
+          "os": {
+            "family": "windows",
+            "minimumVersion": "10.0.26100.33438",
+            "kernelMinimum": "10.0.26100.33438",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "amd64",
+            "translationPolicy": "native-only",
+            "runtime": "win32",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "requiredFeatures": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": false,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 208
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "windows",
+            "version": "10.0.26100.33438",
+            "kernelVersion": "10.0.26100.33438",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "amd64",
+            "translation": "native",
+            "runtime": "win32",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "features": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": true,
+            "longPaths": true,
+            "maxPath": 32767
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "warm": {
+      "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+      "materializationId": "3b120bf_5a1fac3_672978c1",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\004\\consumer-home\\holotree\\3b120bf_5a1fac3_672978c1",
+      "cacheHit": "local-materialization",
+      "exitCode": 0,
+      "leaseId": "88640d6277d24f14ab274a11a6e9a432",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": true,
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311"
+          },
+          "os": {
+            "family": "windows",
+            "minimumVersion": "10.0.26100.33438",
+            "kernelMinimum": "10.0.26100.33438",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "amd64",
+            "translationPolicy": "native-only",
+            "runtime": "win32",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "requiredFeatures": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": false,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 208
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "windows",
+            "version": "10.0.26100.33438",
+            "kernelVersion": "10.0.26100.33438",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "amd64",
+            "translation": "native",
+            "runtime": "win32",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "features": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": true,
+            "longPaths": true,
+            "maxPath": 32767
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "mismatch": {
+      "rejected": true,
+      "artifactDigest": "sha256:80fa25e5aaeeb352f57a8fa52f800a50cc6a22556f37c25f941f5e20cea42098",
+      "providerObjectGets": 0,
+      "error": "Error: reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has sse2\nError: [rcc v18.19.6] reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has sse2\n[rcc] exit status will be: 1!"
+    },
+    "platformChecks": {
+      "caseCollision": "case-insensitive-filesystem",
+      "executableSymlink": "pass",
+      "fileLock": "pass",
+      "junction": "pass",
+      "longPath": "pass",
+      "machine": "AMD64",
+      "pathNormalization": "pass",
+      "runnerOS": "win32"
+    }
+  },
+  "sourceAPI": {
+    "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+    "cold": {
+      "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+      "materializationId": "3b120bf_b35c539_672978c1",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\011\\consumer-home\\holotree\\3b120bf_b35c539_672978c1",
+      "cacheHit": "provider",
+      "exitCode": 0,
+      "leaseId": "c0a928a7bb48ca5b26af03bb132f64d7",
+      "leaseReleased": true,
+      "providerDeadWarmReuse": false,
+      "nativeImport": "sqlite3",
+      "nativeExtension": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\011\\consumer-home\\holotree\\3b120bf_b35c539_672978c1\\DLLs\\_sqlite3.pyd",
+      "sqliteVersion": "3.54.0",
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311"
+          },
+          "os": {
+            "family": "windows",
+            "minimumVersion": "10.0.26100.33438",
+            "kernelMinimum": "10.0.26100.33438",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "amd64",
+            "translationPolicy": "native-only",
+            "runtime": "win32",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "requiredFeatures": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": false,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 208
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "windows",
+            "version": "10.0.26100.33438",
+            "kernelVersion": "10.0.26100.33438",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "amd64",
+            "translation": "native",
+            "runtime": "win32",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "features": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": true,
+            "longPaths": true,
+            "maxPath": 32767
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "warm": {
+      "artifactDigest": "sha256:a37dd883df13346b3f0f560030203ad51da7453c0b9e44f230d142fdfefcb92f",
+      "materializationId": "3b120bf_b35c539_672978c1",
+      "path": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\TestRealCurrentRCCAtoBVertical498321045\\011\\consumer-home\\holotree\\3b120bf_b35c539_672978c1",
+      "cacheHit": "local-materialization",
+      "exitCode": -1,
+      "leaseReleased": false,
+      "providerDeadWarmReuse": true,
+      "compatibility": {
+        "schemaVersion": 1,
+        "status": "compatible",
+        "requirements": {
+          "schemaVersion": 1,
+          "relocationVersion": "holotree-v12-path-rewrite-v1",
+          "python": {
+            "implementation": "cpython",
+            "version": "3.11.17",
+            "abi": "cpython-311"
+          },
+          "os": {
+            "family": "windows",
+            "minimumVersion": "10.0.26100.33438",
+            "kernelMinimum": "10.0.26100.33438",
+            "libc": "",
+            "libcMinimum": "",
+            "nativeArchitecture": "amd64",
+            "translationPolicy": "native-only",
+            "runtime": "win32",
+            "requiredLibraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "requiredFeatures": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": false,
+            "junctions": false,
+            "longPaths": false,
+            "minimumMaxPath": 208
+          },
+          "systemRequirementsOverridden": false
+        },
+        "worker": {
+          "schemaVersion": 1,
+          "relocationVersions": [
+            "holotree-v12-path-rewrite-v1"
+          ],
+          "python": {
+            "implementations": [
+              "cpython"
+            ],
+            "versions": [],
+            "abis": [],
+            "artifactProvided": true
+          },
+          "os": {
+            "family": "windows",
+            "version": "10.0.26100.33438",
+            "kernelVersion": "10.0.26100.33438",
+            "libc": "",
+            "libcVersion": "",
+            "nativeArchitecture": "amd64",
+            "translation": "native",
+            "runtime": "win32",
+            "libraries": []
+          },
+          "cpu": {
+            "architecture": "amd64",
+            "features": [
+              "sse2"
+            ]
+          },
+          "filesystem": {
+            "caseSensitive": false,
+            "symlinks": true,
+            "junctions": true,
+            "longPaths": true,
+            "maxPath": 32767
+          },
+          "allowSystemRequirementsOverride": false
+        }
+      }
+    },
+    "mismatch": {
+      "rejected": true,
+      "artifactDigest": "sha256:80fa25e5aaeeb352f57a8fa52f800a50cc6a22556f37c25f941f5e20cea42098",
+      "providerObjectGets": 0,
+      "error": "reject incompatible environment artifact: incompatible environment artifact [cpu-feature]: cpu.requiredFeatures requires rcc-real-acceptance-impossible-feature, worker has sse2"
+    }
+  },
+  "robotExactBinary": {
+    "artifactDigest": "sha256:b1c0a9d2feda35a4d8892e9be8e8ee63ff125e0eb43ca85d2ce0de7a422df9aa",
+    "binary": "D:\\a\\rcc\\rcc\\build\\rcc.exe",
+    "binarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+    "binaryVersion": "v18.19.6",
+    "cold": {
+      "artifactDigest": "sha256:b1c0a9d2feda35a4d8892e9be8e8ee63ff125e0eb43ca85d2ce0de7a422df9aa",
+      "cacheHit": "provider",
+      "materializationId": "3b120bf_5a1fac3_8961f18d",
+      "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-7o0wr4ej\\home-b\\holotree\\3b120bf_5a1fac3_8961f18d"
+    },
+    "execute": {
+      "artifactDigest": "sha256:b1c0a9d2feda35a4d8892e9be8e8ee63ff125e0eb43ca85d2ce0de7a422df9aa",
+      "cacheHit": "local-materialization",
+      "exitCode": 0,
+      "leaseId": "35e67c56f6152d3991e56815988e679b",
+      "leaseReleased": true,
+      "materializationId": "3b120bf_5a1fac3_8961f18d",
+      "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-7o0wr4ej\\home-b\\holotree\\3b120bf_5a1fac3_8961f18d"
+    },
+    "native": {
+      "extension": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-7o0wr4ej\\home-b\\holotree\\3b120bf_5a1fac3_8961f18d\\DLLs\\_sqlite3.pyd",
+      "import": "sqlite3",
+      "sqliteVersion": "3.54.0"
+    },
+    "source": "robot_tests/environment_artifacts.robot",
+    "warm": {
+      "artifactDigest": "sha256:b1c0a9d2feda35a4d8892e9be8e8ee63ff125e0eb43ca85d2ce0de7a422df9aa",
+      "cacheHit": "local-materialization",
+      "materializationId": "3b120bf_5a1fac3_8961f18d",
+      "path": "D:\\a\\rcc\\rcc\\tmp\\environment-artifacts-7o0wr4ej\\home-b\\holotree\\3b120bf_5a1fac3_8961f18d",
+      "providerDeadWarmReuse": true
+    }
+  }
+}

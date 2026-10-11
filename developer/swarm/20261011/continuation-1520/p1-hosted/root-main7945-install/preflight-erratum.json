@@ -1,0 +1,8 @@
+{
+  "numericOuterExit": 1,
+  "commandsExecuted": 0,
+  "preflightFreeBytes": 2710941696,
+  "requiredGuardPlusBinaryPlus64KiB": 2711007394,
+  "cause": "Insufficient safe workspace headroom before any copy/CLI; original attempt preserved; exact govuln tool restored in finally. No actualinstallation success claimed.",
+  "temporaryRemovedFlagScope": "No temporary executable existed; flag means cleanup branch completed, not execution/preservation of a new executable."
+}

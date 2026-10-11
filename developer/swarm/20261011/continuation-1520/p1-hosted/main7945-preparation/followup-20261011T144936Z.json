@@ -1,0 +1,267 @@
+{
+  "snapshot_utc": "2026-10-11T14:49:36Z",
+  "repo": "joshyorko/rcc",
+  "main_sha": "7945f956b428359928908a9f42e36417b113dafd",
+  "open_issue_numbers": [
+    185,
+    182,
+    181,
+    135,
+    133,
+    132,
+    131,
+    125,
+    118,
+    98
+  ],
+  "open_pr_numbers": [
+    236,
+    235,
+    225,
+    224
+  ],
+  "tags": {
+    "count": 33,
+    "latest": "v18.19.5"
+  },
+  "releases": {
+    "count": 27,
+    "latest": "v18.19.5"
+  },
+  "artifact_zip_downloads": 0,
+  "runs": [
+    {
+      "id": 38147141244,
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "updated_at": "2026-10-11T14:49:18Z",
+      "jobs": [
+        {
+          "id": 114492769574,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": "2026-10-11T14:26:52Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492769755,
+          "name": "Release Candidate Verification",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:52Z",
+          "completed_at": "2026-10-11T14:48:39Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492978723,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": "2026-10-11T14:45:37Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492978756,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:27:04Z",
+          "completed_at": "2026-10-11T14:39:11Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492978764,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:54Z",
+          "completed_at": "2026-10-11T14:45:52Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492978768,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:55Z",
+          "completed_at": "2026-10-11T14:36:38Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114497349596,
+          "name": "Assemble Release Preparation",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-10-11T14:49:18Z",
+          "completed_at": null,
+          "active_step": "Assemble checksummed assets and source-bound evidence",
+          "pending_steps": [
+            "Upload immutable release preparation artifact",
+            "Stage review-only release asset payloads",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Upload review-only release asset",
+            "Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405",
+            "Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c",
+            "Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd"
+          ]
+        }
+      ],
+      "artifacts_metadata": [
+        {
+          "id": 11706085986,
+          "name": "release-candidate-evidence",
+          "size_bytes": 156408741,
+          "digest": "sha256:e9920de56b1506b4542b9766c50212c86f1a077fa95d617ce3f9f2190692cdae",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705267835,
+          "name": "native-runtime-binaries",
+          "size_bytes": 49100735,
+          "digest": "sha256:8db17c7dc838f5f26fb47ebc479b438f370743d919e3605e6a6a17e26d8033d3",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705238385,
+          "name": "macos-amd64-native-runtime-receipt",
+          "size_bytes": 13072836,
+          "digest": "sha256:da0ebc9d866071efbeb203ecea78f665996b415cae2261eefe3319223b200315",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11705179118,
+          "name": "linux-amd64-native-runtime-receipt",
+          "size_bytes": 13386023,
+          "digest": "sha256:4c94f47bc09e80eb44b970199aff0142b36834f43d36bc3b760d84ec99ab7f8b",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704699968,
+          "name": "windows-amd64-native-runtime-receipt",
+          "size_bytes": 10850198,
+          "digest": "sha256:1b9b53cc3bcd9ca0df36a3399410f2fc37c9aa64ac294f697bf07578a655cae5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704669558,
+          "name": "macos-arm64-native-runtime-receipt",
+          "size_bytes": 12498015,
+          "digest": "sha256:6b042fd446ead249047c67e16747d4329c340c76ea291b2749dd1e0c6e4f76c5",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        },
+        {
+          "id": 11704448864,
+          "name": "RCC-Binaries",
+          "size_bytes": 64502653,
+          "digest": "sha256:c4d36a414536386867d56f94351387db7fde38695bfd4adf46246cbe33c99443",
+          "expired": false,
+          "head_sha": "7945f956b428359928908a9f42e36417b113dafd"
+        }
+      ]
+    },
+    {
+      "id": 38147126371,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "updated_at": "2026-10-11T14:49:31Z",
+      "jobs": [
+        {
+          "id": 114492723535,
+          "name": "Build RCC",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:25:38Z",
+          "completed_at": "2026-10-11T14:26:36Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492724564,
+          "name": "Release Candidate Verification",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T14:25:36Z",
+          "completed_at": "2026-10-11T14:25:36Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492923377,
+          "name": "Native Runtime (windows-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": "2026-10-11T14:43:15Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492923389,
+          "name": "Native Runtime (linux-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:38Z",
+          "completed_at": "2026-10-11T14:36:33Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492923390,
+          "name": "Native Runtime (macos-amd64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:39Z",
+          "completed_at": "2026-10-11T14:49:30Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114492923432,
+          "name": "Native Runtime (macos-arm64)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T14:26:42Z",
+          "completed_at": "2026-10-11T14:35:53Z",
+          "active_step": null,
+          "pending_steps": []
+        },
+        {
+          "id": 114497520680,
+          "name": "Assemble Release Preparation",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T14:49:30Z",
+          "completed_at": "2026-10-11T14:49:30Z",
+          "active_step": null,
+          "pending_steps": []
+        }
+      ]
+    }
+  ]
+}

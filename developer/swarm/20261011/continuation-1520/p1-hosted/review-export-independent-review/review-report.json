@@ -1,0 +1,72 @@
+{
+  "at": "2026-10-11T15:05:24.239532+00:00",
+  "reviewScope": {
+    "checkout": "/workspace/work/rcc-swarm/review-export-proposal",
+    "baseHead": "7945f956b428359928908a9f42e36417b113dafd",
+    "baseTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+    "uncommittedFiles": [
+      "docs/release-process.md",
+      "scripts/release_publication.py",
+      "scripts/test_release_publication.py",
+      ".github/workflows/export-release-evidence.yml"
+    ],
+    "sourceOrRemoteMutation": "none"
+  },
+  "fileHashes": {
+    "docs/release-process.md": {
+      "sha256": "e7e19d32842ef757193877f0ed6eaf52a8ad6f2ba47f53531ad5f8837737178c",
+      "bytes": 8428
+    },
+    "scripts/release_publication.py": {
+      "sha256": "f59ac4cbd20b390234fa3756cb3c73d54c826fdb4eec16146cd00bae9fcac30a",
+      "bytes": 90735
+    },
+    "scripts/test_release_publication.py": {
+      "sha256": "0688f04305c0cc402311a065f5f73cf8e121d321a560f4a7019b576f86ccfd16",
+      "bytes": 50575
+    },
+    ".github/workflows/export-release-evidence.yml": {
+      "sha256": "5313549f3788bc6b1e2f048e9ff35a5f511b6d5dfd64eba3677e7701d5187921",
+      "bytes": 3711
+    }
+  },
+  "conclusion": "No confirmed blocking issue in the reviewed source/export authority and boundary checks.",
+  "verified": [
+    "Exporter is an independent workflow_dispatch-only workflow gated to refs/heads/main; workflow and job token permissions are actions:read and contents:read.",
+    "Exporter checkout disables persisted credentials, pins actions by full commit SHA, asserts checkout SHA and preparation-source ancestry, and checks run ID/source SHA/version/manifest hash inputs before artifact use.",
+    "API verifier binds exact manual successful main preparation run, workflow path, required successful jobs, artifact name/ID and GitHub ZIP digest; downloaded bytes are SHA-256 compared to API digest before staging.",
+    "ZIP extraction rejects absolute/traversal/backslash/other-root/duplicate/symlink/nonregular members and bounds compressed and expanded sizes; full bundle validation precedes staging.",
+    "Sidecar uses explicit path allowlist; file and directory sets are exact; raw size including generated identity is capped at 24 MiB; no distribution assets, native executables, N-1 archive bytes, private home directories, keys or token material are staged.",
+    "Existing publisher workflow and release/tag/Homebrew mutation path are unchanged; publisher still reads the canonical rcc-release-preparation artifact, while exporter output is not an accepted publisher input.",
+    "No build, tag, release, dispatch, artifact download or workflow run was performed in this review."
+  ],
+  "verification": {
+    "focusedTestCommand": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10 -m unittest discover -s scripts -p test_release_publication.py -v",
+    "focusedTests": 21,
+    "passed": 21,
+    "failed": 0,
+    "exitCode": 0,
+    "yamlCommand": "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python3.10; import invoke.vendor.yaml; safe_load exporter workflow, preparation workflow, and canonical publisher workflow",
+    "yamlFilesParsed": [
+      ".github/workflows/export-release-evidence.yml",
+      ".github/workflows/rcc.yaml",
+      ".github/workflows/publish-release.yml"
+    ],
+    "yamlParseExitCode": 0,
+    "gitDiffCheckExitCode": 0
+  },
+  "limitsAndNotes": [
+    "The standard top-level `yaml` module was absent from this toolkit Python; its bundled `invoke.vendor.yaml` parser was used successfully.",
+    "No GitHub API call, artifact download, action dispatch, or live sidecar export was performed. The actual canonical ZIP digest was independently verified by root; this review does not claim the live sidecar currently fits the 24 MiB limit or that export has succeeded.",
+    "The explicit allowlist includes receipts whose fields may contain CI absolute paths and materialization IDs. No home/materialization files are copied; if policy intends to hide those path strings too, sanitize them or clarify the documentation.",
+    "Coordination receipt validation checks required scenario keys and a well-formed binary digest but does not constrain each scenario value. The source-bound successful preparation gate separately validates and emits the expected values; this is a non-blocking opportunity for stricter offline receipt validation."
+  ],
+  "noFindingsRequiringSourceChange": true,
+  "documentationReceipt": {
+    "canonicalGuidance": "No change.",
+    "durableLearning": "None from this bounded review.",
+    "evidence": "Patch file hashes, 21 passing focused tests, YAML parse, and static review of workflow/API/extraction/source-binding paths.",
+    "staleGuidanceRemoved": "None.",
+    "remainingUncertainty": "Actual hosted exporter output size and runtime upload not exercised."
+  }
+}

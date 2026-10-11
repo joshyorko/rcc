@@ -1,0 +1,56 @@
+{
+  "allFourPass": true,
+  "expectedToolSha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "platforms": {
+    "darwin_amd64": {
+      "GOARCH": "amd64",
+      "GOOS": "darwin",
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+      "binarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "embeddedCompiler": "go1.26.9",
+      "exitCode": 0,
+      "pass": true,
+      "vcsModified": "false",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd"
+    },
+    "darwin_arm64": {
+      "GOARCH": "arm64",
+      "GOOS": "darwin",
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+      "binarySha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "embeddedCompiler": "go1.26.9",
+      "exitCode": 0,
+      "pass": true,
+      "vcsModified": "false",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd"
+    },
+    "linux_amd64": {
+      "GOARCH": "amd64",
+      "GOOS": "linux",
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+      "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "embeddedCompiler": "go1.26.9",
+      "exitCode": 0,
+      "pass": true,
+      "vcsModified": "false",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd"
+    },
+    "windows_amd64": {
+      "GOARCH": "amd64",
+      "GOOS": "windows",
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+      "binarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "embeddedCompiler": "go1.26.9",
+      "exitCode": 0,
+      "pass": true,
+      "vcsModified": "false",
+      "vcsRevision": "7945f956b428359928908a9f42e36417b113dafd"
+    }
+  },
+  "scope": "additive official Go 1.26.9 `go version -m` reread of existing exact binaries only; no ZIP/test/build/scan reruns",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "toolHashMatchesExpected": true,
+  "toolPath": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+  "toolSha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+  "toolVersion": "go version go1.26.9 linux/amd64"
+}

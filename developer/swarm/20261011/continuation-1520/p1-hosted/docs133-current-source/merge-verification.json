@@ -1,0 +1,46 @@
+{
+  "at": "2026-10-11T14:34:56.270500+00:00",
+  "worktree": "/workspace/work/rcc-swarm/contributor-docs-133-current",
+  "detachedWorktree": true,
+  "worktreeSourceStart": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+  "mergeCommit": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "tree": "24a5db01da087c486da93e9eb8615b9bc2ac0ed8",
+  "parents": [
+    "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "7945f956b428359928908a9f42e36417b113dafd"
+  ],
+  "expectedParentOrder": [
+    "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "7945f956b428359928908a9f42e36417b113dafd"
+  ],
+  "signoff": "Josh Yorko <54248591+joshyorko@users.noreply.github.com>",
+  "treeDiffFromMergedMain": {
+    "base": "7945f956b428359928908a9f42e36417b113dafd",
+    "paths": [
+      "CONTRIBUTING.md"
+    ],
+    "numstat": "4\t0\tCONTRIBUTING.md",
+    "patchFile": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/docs133-current-source/contributing.diff"
+  },
+  "targetDirectoriesPresentAndTracked": [
+    "conda",
+    "htfs",
+    "remotree",
+    "settings"
+  ],
+  "checks": {
+    "mergeConflictFree": true,
+    "gitDiffCheckExit": 0,
+    "worktreeClean": true,
+    "docsOnlyDiffFromMain": true,
+    "allFourContributorTargetsExist": true
+  },
+  "commands": [
+    "git worktree add --detach ... 5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+    "git merge --no-ff --no-commit 7945f956b428359928908a9f42e36417b113dafd",
+    "git commit --signoff -m \"Merge main into contributor map checkpoint\"",
+    "git diff --check 7945f956b428359928908a9f42e36417b113dafd HEAD"
+  ],
+  "push": "not performed",
+  "releaseOrActionsMutation": "none"
+}

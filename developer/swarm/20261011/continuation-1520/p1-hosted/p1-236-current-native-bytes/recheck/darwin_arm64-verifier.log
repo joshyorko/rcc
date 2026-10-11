@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck/verify_native_bundle_236_recheck.py", line 3, in <module>
+    p=argparse.ArgumentParser();p.add_argument('platform');p.add_argument('zip');p.add_argument('artifact_id',type=int);p.add_argument('expected_zip_sha');a=p.parse_args();root=Path(__file__).resolve().parent;source='bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8';version='v18.19.6';target={'linux_amd64':('linux','amd64','rcc-linux64'),'darwin_arm64':('darwin','arm64','rcc-macosarm64'),'darwin_amd64':('darwin','amd64','rcc-macos64'),'windows_amd64':('windows','amd64','rcc-windows64.exe')}[a.platform];zpath=Path(a.zip);sha=lambda b:hashlib.sha256(b).hexdigest();zh=sha(zpath.read_bytes());assert zh==a.expected_zip_sha
+  File "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-darwin-arm64-native-runtime-receipt.zip'

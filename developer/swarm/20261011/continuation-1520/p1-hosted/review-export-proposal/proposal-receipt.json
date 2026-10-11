@@ -1,0 +1,58 @@
+{
+  "changedFiles": [
+    ".github/workflows/export-release-evidence.yml",
+    "docs/release-process.md",
+    "scripts/release_publication.py",
+    "scripts/test_release_publication.py"
+  ],
+  "checks": [
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "-m",
+        "unittest",
+        "scripts.test_release_publication",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/review-export-proposal/focused-release-publication-tests.log",
+      "logSha256": "aecb2f978aff5b61fb890c23a7719f2ca46810660c4d532f191013096f86499c",
+      "name": "focused-release-publication-tests"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/review-export-proposal/git-diff-check.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "name": "git-diff-check"
+    },
+    {
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/review-export-proposal/python-unittest-discovery-final.log",
+      "logSha256": "2339a34d6b94dbe0bfdb30105452fd95ac168bfaa600b3c9c85a3273db7c3b97",
+      "name": "python-unittest-discovery-scripts",
+      "tests": 143
+    }
+  ],
+  "detachedHead": true,
+  "fileSha256": {
+    ".github/workflows/export-release-evidence.yml": "5313549f3788bc6b1e2f048e9ff35a5f511b6d5dfd64eba3677e7701d5187921",
+    "docs/release-process.md": "e7e19d32842ef757193877f0ed6eaf52a8ad6f2ba47f53531ad5f8837737178c",
+    "scripts/release_publication.py": "f59ac4cbd20b390234fa3756cb3c73d54c826fdb4eec16146cd00bae9fcac30a",
+    "scripts/test_release_publication.py": "0688f04305c0cc402311a065f5f73cf8e121d321a560f4a7019b576f86ccfd16"
+  },
+  "limitations": [
+    "No live 156 MiB preparation artifact was downloaded or re-exported; proposal tests use realistic isolated fixtures. Hosted manual exporter requires a separate run for live proof.",
+    "Generic YAML parser is unavailable in the toolkit environment; workflow syntax was inspected and covered by the static contract test."
+  ],
+  "patchBytes": 49668,
+  "patchSha256": "825b36f53d710504cda970d347b71dec665ac0c257fd4604b56816e99ee9afea",
+  "proposalSourceSha": "7945f956b428359928908a9f42e36417b113dafd",
+  "proposalSourceTree": "49baf943b9d64ef79af56ec8f34eebe0385477b1",
+  "schemaVersion": 1,
+  "worktree": "/workspace/work/rcc-swarm/review-export-proposal"
+}

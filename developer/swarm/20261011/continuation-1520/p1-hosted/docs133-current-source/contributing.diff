@@ -1,0 +1,9 @@
+diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md
+index 2da8086..513bc00 100644
+--- a/CONTRIBUTING.md
++++ b/CONTRIBUTING.md
+@@ -124,0 +125,4 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
++| `conda/` | Python environment creation, activation, and package installation |
++| `htfs/` | Holotree filesystem storage and environment materialization |
++| `remotree/` | Remote cache protocol, service, and synchronization |
++| `settings/` | RCC settings, endpoint, and provider-profile configuration |

@@ -1,0 +1,30 @@
+{
+  "status": "ACTUAL_DISTRIBUTION_ASSET_BYTES_ZIP_SOURCE_METADATA_MANIFEST_VERIFIED",
+  "asset": "rccremote-windows64.exe",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "run": 38147141244,
+  "artifactId": 11705946259,
+  "zipBytes": 9677266,
+  "zipSha256": "sha256:8578d4ddabae0cc15ee2d826eca03e9f39b64f8cd037e8fdb39ebdc8016b4084",
+  "binaryBytes": 9672192,
+  "assetSha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+  "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "retainedActualZip": "/dev/shm/rcc-main7945-release-review-root/rccremote-windows64.exe.zip",
+  "retainedActualBytes": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-windows64.exe/assets/rccremote-windows64.exe",
+  "goBuildInfo": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "windows",
+    "GOAMD64": "v1",
+    "vcs": "git",
+    "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "vcs.time": "2026-10-11T14:25:33Z",
+    "vcs.modified": "false"
+  },
+  "nativeExecutedBinaryMatched": false,
+  "memberCount": 5
+}

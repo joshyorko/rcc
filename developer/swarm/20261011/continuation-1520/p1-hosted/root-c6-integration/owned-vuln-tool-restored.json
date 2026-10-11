@@ -1,0 +1,9 @@
+{
+  "restored": "/workspace/work/rcc-swarm/tools/govulncheck-go1.26.9",
+  "sha256": "119a9cb89999d79c6932fe65e52f02b7c53276dd0f511da0085be5773f417fe3",
+  "bytes": 10395913,
+  "mode": 448,
+  "mtime_ns": 1791665111453359250,
+  "freeBytesAfter": 2700537856,
+  "noRamExecution": true
+}

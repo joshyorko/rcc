@@ -1,0 +1,9 @@
+{
+  "sha": "86cabfb8e4fac2e16048571b727bc60f2c800dba",
+  "tree": "cc0f9b4d155ef9d7f79fccb9c1a71d4c83286052",
+  "parent": "7945f956b428359928908a9f42e36417b113dafd",
+  "branch": "codex/rcc-two-phase-release-20261011",
+  "pr": 238,
+  "normalFastForwardPush": true,
+  "frozenShippingSourceUnchanged": true
+}

@@ -1,0 +1,185 @@
+{
+  "frozen_at": "2026-10-11T14:49:32.875686+00:00",
+  "scope": "read-only public owner delta and evidence derivation only",
+  "actual_derivation_command": "python3 work/rcc-swarm/evidence/continuation-20261011/performance-admission/actions-owner-delta-1438/derive_delta.py",
+  "observed_numeric_derivation_exit": 0,
+  "runtime_experiments": 0,
+  "Actions_mutations": 0,
+  "source_bound_independently_inspected_new_compatibility_code": false,
+  "source_gap": "b614 exact publiccommit422/gitcommit404; underlying d14 raw failure review not supplied",
+  "files": [
+    {
+      "path": "compare-a0d-e3c.json",
+      "bytes": 85244,
+      "sha256": "bb6ef337709bfd3515b9c116c227d095fe366f3bf4006df81844a5def7d02e46"
+    },
+    {
+      "path": "compatibility-source-b614-full.json",
+      "bytes": 174,
+      "sha256": "65d25ec43bc1868bb531a45fd312dcb1f78920c641904170ddef7448972ba59a"
+    },
+    {
+      "path": "compatibility-source-b614-git-full.json",
+      "bytes": 121,
+      "sha256": "264a1ecdce738c7d50e554bf0ca918e8c242a7f7f987b9a816485652ec6e0609"
+    },
+    {
+      "path": "compatibility-source-b614.json",
+      "bytes": 142,
+      "sha256": "63ff59afbeec0a3ca8914a55b73058edc3b6646a30b204710a4e7be29c70d42d"
+    },
+    {
+      "path": "coordination-actions133-6109883396.md",
+      "bytes": 2763,
+      "sha256": "0256252166c17a50d94459ae4e0299e3723b94a6a9bf30abd2f61c45304221de"
+    },
+    {
+      "path": "derivation-receipt.json",
+      "bytes": 986,
+      "sha256": "1361659e362d983a6b816f8a775dca70ed316bcfb375ab109b414fd0925b34ce"
+    },
+    {
+      "path": "derive_delta.py",
+      "bytes": 11756,
+      "sha256": "b3b07c749a6b85ab71b4f219730dd4cc6ec7d70906bb84ac535165d1edfecf13"
+    },
+    {
+      "path": "fetch-provenance.json",
+      "bytes": 10331,
+      "sha256": "5e9d23040de99b06bede88d23ba639631f30a13a2f2d27bc494c03cecbb5ceed"
+    },
+    {
+      "path": "initial-delta.json",
+      "bytes": 2699,
+      "sha256": "55aebe12f75e606183825c21d3ed1b725191a6a14ec4cae67f5c7f9d0fb445f5"
+    },
+    {
+      "path": "integration-e3c-git.json",
+      "bytes": 2760,
+      "sha256": "3144c6de8ea2909c17240076a49b025e3b377cedcab8dea083e8258b38242a52"
+    },
+    {
+      "path": "issue-101-body.diff",
+      "bytes": 6189,
+      "sha256": "4e2ccd0e2871479ef2aa48d1c7ed67cca26123df1b1413088dd70392bf6c39f9"
+    },
+    {
+      "path": "issue-101-body.md",
+      "bytes": 35993,
+      "sha256": "28c1ab4e6293e45ce3af6ed2f738424bd7689bfcfc3f52aa91eff74562d85a89"
+    },
+    {
+      "path": "issue-101.json",
+      "bytes": 40322,
+      "sha256": "a07f32b659903f0a1f6ad932f27cbc838ff90f7425fa0657374eb2cbd6e684b7"
+    },
+    {
+      "path": "issue-133.json",
+      "bytes": 18321,
+      "sha256": "8e4186a5cf85e9e381a3ec1fc4e66e8383673e9d66753cf3a7dcc90ae5729052"
+    },
+    {
+      "path": "issue-134.json",
+      "bytes": 17421,
+      "sha256": "fa73a328464bff20937bab1e68350d0a8de2e4a742bd6089a455fb7618084398"
+    },
+    {
+      "path": "issue-139.json",
+      "bytes": 21147,
+      "sha256": "25b65fa9331b08fe0bcd45ab8df32f906f10de7bd994c177b91bb8e075aa6b5c"
+    },
+    {
+      "path": "issue-143.json",
+      "bytes": 22229,
+      "sha256": "69235d19119946d84186f0e6d2815a2a533b71cf4bf5a2a5e323cbb319050ec8"
+    },
+    {
+      "path": "issue-221-body.diff",
+      "bytes": 3509,
+      "sha256": "7856bc175dff7e280b8e2147f0dc26b83f9825dda2f366aae19e2f902f9270c5"
+    },
+    {
+      "path": "issue-221-body.md",
+      "bytes": 20305,
+      "sha256": "73543167daa75d217d7374666425814e443e30d58781b8b5f70340dcb15bf3c0"
+    },
+    {
+      "path": "issue-221.json",
+      "bytes": 24557,
+      "sha256": "e9e6abecd6122ddb50cce9514c7330ddde56003f8fb5de69febcda26d776b640"
+    },
+    {
+      "path": "new-comments-101-page-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "new-comments-133-page-1.json",
+      "bytes": 6107,
+      "sha256": "cd4a2bbbee7c152042641d5c8c2282cc5a6aa733b72eb5f2bcf660b5a0266b62"
+    },
+    {
+      "path": "new-comments-134-page-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "new-comments-139-page-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "new-comments-143-page-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "new-comments-221-page-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "open-pulls-page-1.json",
+      "bytes": 202573,
+      "sha256": "998140992e783936bac53d1fa6b5aa6d44e00986f884743756e77fd2024aee8f"
+    },
+    {
+      "path": "owner-rcc118-6109416839.md",
+      "bytes": 5027,
+      "sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae"
+    },
+    {
+      "path": "owner-rcc125-6109416621.md",
+      "bytes": 5027,
+      "sha256": "d82e4cebb631789c2fbe02972c81dc9d79437efd9577ad7cf7bba990885314ae"
+    },
+    {
+      "path": "pull-221.json",
+      "bytes": 36172,
+      "sha256": "3e2d4b715e40cf4ab6986f1a8a6a8471d2f599812a56546c3f4d3671b587d980"
+    },
+    {
+      "path": "rcc-new-comments-118-page-1.json",
+      "bytes": 8372,
+      "sha256": "61f1987e192c9342da5cde646a3375fe6698aa0d2db407b5fa047ef9b02018eb"
+    },
+    {
+      "path": "rcc-new-comments-125-page-1.json",
+      "bytes": 21336,
+      "sha256": "da261d1dbb14d1fe51d7384d2d08b809824537a87456b1fc192ead16c15c2f7e"
+    },
+    {
+      "path": "report.md",
+      "bytes": 10877,
+      "sha256": "b22b7a8a22ca8649c33c8697c1132a132c86ccd77bdd6bc619882065acb33941"
+    },
+    {
+      "path": "source-bound.json",
+      "bytes": 17766,
+      "sha256": "3d39125d4f998e99268cbad4af55d66a1d9ef032e23a333075ddbf1d7b550901"
+    }
+  ],
+  "prior_namespace_untouched_receipt": "derivation-receipt.json",
+  "global_free_bytes": 2701713408,
+  "allocated_bytes_before_completion": 720896
+}

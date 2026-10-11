@@ -1,0 +1,636 @@
+{
+  "allPass": true,
+  "artifactInventory": {
+    "exactArtifactNames": true,
+    "expectedCount": 9,
+    "matchingCount": 9,
+    "sameRunAndHead": true
+  },
+  "assets": {
+    "index.json": {
+      "artifactId": 11706315811,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-index.json",
+      "assetBytes": 8949,
+      "assetSha256": "0bfdecc19330f76cab7a75800b6d7c882767679d6629ece6dc254e0798d1336c",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": null,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": null,
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/index.json",
+          "sha256": "0bfdecc19330f76cab7a75800b6d7c882767679d6629ece6dc254e0798d1336c",
+          "size": 8949
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "c4e652e7fb7e0519ab8881cfb7c0a9eab29f4c33e1894aa0786f9b6dc834c013",
+          "size": 339
+        }
+      ],
+      "nativeExecutedBinaryMatch": null,
+      "pass": true,
+      "zipBytes": 13981,
+      "zipSha256": "sha256:c28b9758575c3cae1187b1169cf9cf7885e8d92c30463826c3b4c3bce47f5f22"
+    },
+    "rcc-linux64": {
+      "artifactId": 11706495506,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-linux64",
+      "assetBytes": 22392994,
+      "assetSha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": true,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "linux",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rcc-linux64",
+          "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+          "size": 22392994
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "bac7a615a26dfcb0c6d7555b52eff8c3ebb33d0ccd3728f68037d7b14d21acf5",
+          "size": 344
+        }
+      ],
+      "nativeExecutedBinaryMatch": true,
+      "pass": true,
+      "zipBytes": 22398033,
+      "zipSha256": "sha256:f39e6347088725e1f126e344ab8b3c1a849e04ee11aa9e77507b0389aa2f2c9f"
+    },
+    "rcc-macos64": {
+      "artifactId": 11705592029,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-macos64",
+      "assetBytes": 22228928,
+      "assetSha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": true,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rcc-macos64",
+          "sha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+          "size": 22228928
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "574a76c038a6e3f88f99224c4025638ae9e7377ce898040747cfbf4a80b2b0a0",
+          "size": 344
+        }
+      ],
+      "nativeExecutedBinaryMatch": true,
+      "pass": true,
+      "zipBytes": 22233967,
+      "zipSha256": "sha256:075280bfba61c89ffed37385bcc11ece3dfa61eecd26ff9170226bd49e73a6a6"
+    },
+    "rcc-macosarm64": {
+      "artifactId": 11706480506,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-macosarm64",
+      "assetBytes": 20969810,
+      "assetSha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": true,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "arm64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rcc-macosarm64",
+          "sha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+          "size": 20969810
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "d24c7d6176bf7574dd5781200093746b9a821c0d0ea5738d540c7663609a02b5",
+          "size": 347
+        }
+      ],
+      "nativeExecutedBinaryMatch": true,
+      "pass": true,
+      "zipBytes": 20974858,
+      "zipSha256": "sha256:fee0614f1b74bcf1f0b61a9bd2b0a3931097e41c25ae5d3dffb35d12a0d612bb"
+    },
+    "rcc-windows64.exe": {
+      "artifactId": 11705946257,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rcc-windows64.exe",
+      "assetBytes": 20117504,
+      "assetSha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": true,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rcc-windows64.exe",
+          "sha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+          "size": 20117504
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "86799c7b936fc7e0b0cb85369a67bdf1e1c3167328fb69811a251d3d384ec542",
+          "size": 350
+        }
+      ],
+      "nativeExecutedBinaryMatch": true,
+      "pass": true,
+      "zipBytes": 20122561,
+      "zipSha256": "sha256:21ef08ea1c6ca560dd858c64f0384914866ae5d09d094ccfb3682769da7f7732"
+    },
+    "rccremote-linux64": {
+      "artifactId": 11705419997,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-linux64",
+      "assetBytes": 9351330,
+      "assetSha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": null,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "linux",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rccremote-linux64",
+          "sha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+          "size": 9351330
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "837e42a95bb661d936348d2b9ed7afcd9b5c3093d12eb20f6da5674b910cc561",
+          "size": 349
+        }
+      ],
+      "nativeExecutedBinaryMatch": null,
+      "pass": true,
+      "zipBytes": 9356386,
+      "zipSha256": "sha256:688debb3d915883c8272f334a4637aaaac1f6ebc895abe5fc8ad87b21d7f2fff"
+    },
+    "rccremote-macos64": {
+      "artifactId": 11706300817,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-macos64",
+      "assetBytes": 9543040,
+      "assetSha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": null,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rccremote-macos64",
+          "sha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+          "size": 9543040
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "81c2be1bfaa4353a9b246ac2f08cf0b38d39ce9c632230db874106d624f9ded8",
+          "size": 349
+        }
+      ],
+      "nativeExecutedBinaryMatch": null,
+      "pass": true,
+      "zipBytes": 9548096,
+      "zipSha256": "sha256:8294f11d36c3c891c4446b40f6d6c6891f3026627ad5671c66e2910d16ed4266"
+    },
+    "rccremote-macosarm64": {
+      "artifactId": 11706210955,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-macosarm64",
+      "assetBytes": 8886578,
+      "assetSha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": null,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "arm64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rccremote-macosarm64",
+          "sha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+          "size": 8886578
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "d7e95a2fd08ea8c6933f4fcd4bebc676c45ffc95c604da50cf5223ddc6e0bb7a",
+          "size": 352
+        }
+      ],
+      "nativeExecutedBinaryMatch": null,
+      "pass": true,
+      "zipBytes": 8891643,
+      "zipSha256": "sha256:957e0736ec65b8e8be6fc3c74d6f1f577ed0bdced69247e57826693e2b9d5973"
+    },
+    "rccremote-windows64.exe": {
+      "artifactId": 11705946259,
+      "artifactName": "v18.19.6-7945f956b428359928908a9f42e36417b113dafd-review-rccremote-windows64.exe",
+      "assetBytes": 9672192,
+      "assetSha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+      "checks": {
+        "allExtractedMemberBytesMatch": true,
+        "apiArtifactIdentityAndZipDigest": true,
+        "checksumSetAndBytes": true,
+        "manifestIdentityAndAssetBytes": true,
+        "matchesNativeExecutedBinary": null,
+        "officialGo1269Metadata": true,
+        "provenanceBinding": true,
+        "provenanceBuildInfoForAsset": true,
+        "reviewIdentityBinding": true,
+        "safeRegularMembers": true,
+        "sameCanonicalManifestAcrossAllNine": true,
+        "zipFiveExactMembers": true
+      },
+      "goMetadata": {
+        "CGO_ENABLED": "0",
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "embeddedCompiler": "go1.26.9",
+        "exitCode": 0,
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "manifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "memberCount": 5,
+      "members": [
+        {
+          "extractedBytesMatch": true,
+          "path": "assets/rccremote-windows64.exe",
+          "sha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+          "size": 9672192
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/SHA256SUMS",
+          "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+          "size": 806
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/asset-manifest.json",
+          "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+          "size": 1143
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "evidence/provenance.json",
+          "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+          "size": 2046
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "review-identity.json",
+          "sha256": "c5ec15d058205fb9109b63905a3084cab8a2ea4322a8c54b1bc2a6269a9c47ae",
+          "size": 355
+        }
+      ],
+      "nativeExecutedBinaryMatch": null,
+      "pass": true,
+      "zipBytes": 9677266,
+      "zipSha256": "sha256:8578d4ddabae0cc15ee2d826eca03e9f39b64f8cd037e8fdb39ebdc8016b4084"
+    }
+  },
+  "index": {
+    "mappingsPass": true,
+    "matchingVersionEntryCount": 1,
+    "requiredMappings": {
+      "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v18196",
+      "linux": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-linux64",
+      "macos": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macos64",
+      "macosarm64": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macosarm64",
+      "windows": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-windows64.exe"
+    },
+    "testedEntry": {
+      "changelog": "https://github.com/joshyorko/rcc/blob/main/docs/changelog.md#v18196",
+      "linux": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-linux64",
+      "macos": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macos64",
+      "macosarm64": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macosarm64",
+      "version": "v18.19.6",
+      "when": "11.10.2026",
+      "windows": "https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-windows64.exe"
+    }
+  },
+  "manifestSha256Expected": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "officialGoTool": {
+    "expectedSha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+    "path": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+    "sha256": "e90c4e12df236ea0c2e7536fd68da8a47fc0b585c19588bf6c1a70cfc296a0f9",
+    "version": "go version go1.26.9 linux/amd64"
+  },
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "workflowRunId": 38147141244
+}

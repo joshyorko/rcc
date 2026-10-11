@@ -1,0 +1,154 @@
+{
+  "snapshot_utc": "2026-10-11T14:36:34Z",
+  "repo": "joshyorko/rcc",
+  "main_sha": "7945f956b428359928908a9f42e36417b113dafd",
+  "open_issues": [
+    185,
+    182,
+    181,
+    135,
+    133,
+    132,
+    131,
+    125,
+    118,
+    98
+  ],
+  "open_prs": [
+    {
+      "number": 236,
+      "head_sha": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+      "draft": true
+    },
+    {
+      "number": 235,
+      "head_sha": "e53624a359c1e73a6ef01e5daf7c2138b693d3a3",
+      "draft": true
+    },
+    {
+      "number": 225,
+      "head_sha": "b24b29fffab4581456a313a240257d681ad744fd",
+      "draft": true
+    },
+    {
+      "number": 224,
+      "head_sha": "32d51bd00852b003fd0d82050f5fd6d281f362d5",
+      "draft": true
+    }
+  ],
+  "tags": {
+    "count": 33,
+    "latest": "v18.19.5"
+  },
+  "releases": {
+    "count": 27,
+    "latest": "v18.19.5"
+  },
+  "runs": [
+    {
+      "id": 38147141244,
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "updated_at": "2026-10-11T14:27:04Z",
+      "jobs": [
+        {
+          "name": "Build RCC",
+          "id": 114492769574,
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null
+        },
+        {
+          "name": "Release Candidate Verification",
+          "id": 114492769755,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run contained release candidate gate"
+        },
+        {
+          "name": "Native Runtime (macos-amd64)",
+          "id": 114492978723,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run real native A-to-B acceptance"
+        },
+        {
+          "name": "Native Runtime (macos-arm64)",
+          "id": 114492978756,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run Environment Artifact Robot acceptance against exact binary"
+        },
+        {
+          "name": "Native Runtime (windows-amd64)",
+          "id": 114492978764,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run real native A-to-B acceptance"
+        },
+        {
+          "name": "Native Runtime (linux-amd64)",
+          "id": 114492978768,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": null
+        }
+      ]
+    },
+    {
+      "id": 38147126371,
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "7945f956b428359928908a9f42e36417b113dafd",
+      "updated_at": "2026-10-11T14:26:43Z",
+      "jobs": [
+        {
+          "name": "Build RCC",
+          "id": 114492723535,
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null
+        },
+        {
+          "name": "Release Candidate Verification",
+          "id": 114492724564,
+          "status": "completed",
+          "conclusion": "skipped",
+          "current_step": null
+        },
+        {
+          "name": "Native Runtime (windows-amd64)",
+          "id": 114492923377,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run real native A-to-B acceptance"
+        },
+        {
+          "name": "Native Runtime (linux-amd64)",
+          "id": 114492923389,
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null
+        },
+        {
+          "name": "Native Runtime (macos-amd64)",
+          "id": 114492923390,
+          "status": "in_progress",
+          "conclusion": null,
+          "current_step": "Run real native A-to-B acceptance"
+        },
+        {
+          "name": "Native Runtime (macos-arm64)",
+          "id": 114492923432,
+          "status": "completed",
+          "conclusion": "success",
+          "current_step": null
+        }
+      ]
+    }
+  ],
+  "artifact_downloaded": false
+}

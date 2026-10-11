@@ -1,0 +1,26 @@
+test_accepts_complete_bundle_and_exact_prep_run (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_artifact_redirect_drops_bearer_on_cross_origin_and_requires_https (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_bundle_validation_independently_rejects_wrong_index_version_and_release_path (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_checks_compiler_revision_and_target_for_all_eight_binaries (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_download_checks_github_zip_digest_and_rejects_unsafe_members (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_evidence_export_checks_ancestor_and_full_artifact_digest (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_homebrew_lookup_uses_owner_of_current_repository (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_native_binary_review_payload_binds_executed_binary_and_rejects_tampering (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_native_review_reports_each_go_metadata_mismatch (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_prepared_bundle_checks_actual_go_metadata_against_provenance (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_boolean_or_float_zero_exit_receipts (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_failed_preparation_or_missing_native_job (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_legacy_auto_tag_workflow_and_accepts_corrected_source (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_missing_or_unprotected_environment (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_source_or_version_mismatch (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_rejects_tampered_or_missing_asset (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_review_asset_staging_binds_nine_small_exact_payloads (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_review_assets_reject_mismatched_identity_extra_layout_and_oversize (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_review_evidence_export_contains_only_bound_small_receipts (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_review_evidence_export_rejects_missing_symlinked_and_oversize_inputs (scripts.test_release_publication.ReleasePublicationTests) ... ok
+test_review_export_workflow_is_manual_read_only_and_source_bound (scripts.test_release_publication.ReleasePublicationTests) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.554s
+
+OK

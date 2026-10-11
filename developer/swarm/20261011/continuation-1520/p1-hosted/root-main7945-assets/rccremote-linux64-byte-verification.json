@@ -1,0 +1,30 @@
+{
+  "status": "ACTUAL_DISTRIBUTION_ASSET_BYTES_ZIP_SOURCE_METADATA_MANIFEST_VERIFIED",
+  "asset": "rccremote-linux64",
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6",
+  "run": 38147141244,
+  "artifactId": 11705419997,
+  "zipBytes": 9356386,
+  "zipSha256": "sha256:688debb3d915883c8272f334a4637aaaac1f6ebc895abe5fc8ad87b21d7f2fff",
+  "binaryBytes": 9351330,
+  "assetSha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+  "assetManifestSha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+  "retainedActualZip": "/dev/shm/rcc-main7945-release-review-root/rccremote-linux64.zip",
+  "retainedActualBytes": "/dev/shm/rcc-main7945-release-review-root/assets-review/rccremote-linux64/assets/rccremote-linux64",
+  "goBuildInfo": {
+    "-buildmode": "exe",
+    "-compiler": "gc",
+    "-ldflags": "-s",
+    "CGO_ENABLED": "0",
+    "GOARCH": "amd64",
+    "GOOS": "linux",
+    "GOAMD64": "v1",
+    "vcs": "git",
+    "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd",
+    "vcs.time": "2026-10-11T14:25:33Z",
+    "vcs.modified": "false"
+  },
+  "nativeExecutedBinaryMatched": false,
+  "memberCount": 5
+}

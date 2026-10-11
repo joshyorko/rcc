@@ -1,0 +1,23 @@
+--- issue221-1350
++++ issue221-1438
+@@ -1,3 +1,14 @@
++Actual integration is `e3c29cde8878307912e55ed09b6436c0f91d06d5`, tree `2238ed312babba9fd5ad89a3a1cc581ca6ad2dcf`, after normal #300 merge with ordered `a0d258a1` / `74beef4d` parents. Independent actual receipt SHA256 `51e944e9dc6117e924b2ee8f6c448b6ab93dea318d7efe28611a535eabc7d40b` verifies all1,423 typed source entries and normal GitHub policy admission. The #299→#300 stack is integrated; premerge6workflows/19jobs succeeded. Linux1325passed/13skipped; original Windows1166passed/172skipped and integration131passed/19skipped. All30new transport cases were explicitly skipped on Windows. Earlier failures and accepted scopes remain retained.
++
++Engineering continues on existing branches: #312 refreshed to `ec70a292`/`47a1e4fc` (source LIGHT independently accepted; current full preexecution successor under review), #313 to `12dd3ec5`/`d3428cf6` (source LIGHT passed; old Windows job114480645718 failed and its cause remains unknown). Neither refresh grants fresh hosted qualification.
++
++RCC compatibility SOURCE `b614864b`/`6fa4f5c1` has independent current full1363passes/13skips and explicit hash/source/feature-bound test admission for acquired RCC18.19.5 and source727c1ff8/18.19.6. The first isolated RCC3 control's publication/details case passed, but its staged case stopped at the2.35GiB operational capacity threshold and strict captured cleanup failed. Independent original failure review `d14c888b…` stops newer versions: both remain NOT_RUN/unqualified. Two duplicated package caches are being addressed through an isolated fixture change; failure-path metadata retention is also being improved. Production download/build/default pins remain18.19.3. Persistent reuse, reload/drain, provider recovery, private fixture, whole issue and release gates remain open. RCC #125/#118 have the tested admission contract and this failure on their existing coordination comments.
++
++PR #221 remains draft against community/a709. Fresh current-e3c community CI has started; prior-head CI and distributions retain their original scopes. Current artifact/installed-consumer/platform proof, approved source/content authority, OAuth strings, native/private acceptance and release publication gates remain required. No release merge, tag, publication or whole-issue closure is admitted.
++
++<details>
++<summary>Previous engineering and release state retained verbatim</summary>
++
+ Actual integration is `a0d258a16095b95b1bf9000cb1201cddfaff4779`, tree `1181b35b11e4904405ca1a9a3a398e6c1c3abfd0`, after normal #309 admission. Independent final8d834b13 and actual787ed17e verify complete19-job CI, original Windows131passes/19skips and all1,421 typed entries. Previous6181 source/CI/artifacts retain their scopes; tree or payload equality does not grant whole-release admission.
+ 
+ This PR remains draft against communitya709. Current metadata at11:54:48UTC records34 check contexts:32SUCCESS, one running and one expected Work Items tag-publisher skip; complete authenticated closures/reviews/threads are zero. Complete current declared-flow/job reconciliation and final release acceptance remain separate. Necessary checkout-byte correction PR312 has reviewed original92e source/full gates and current770/a0d LIGHTefda1d98; exactly one two-worker bounded full run is authorized. Fresh source final review, normal push, hosted Windows/platform byte proof and all other release gates remain required.
+@@ -74,3 +85,5 @@
+ 
+ 
+ </details>
++
++</details>

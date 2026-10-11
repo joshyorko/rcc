@@ -1,0 +1,420 @@
+{
+  "inspectionTool": "go version go1.26.5 linux/amd64",
+  "pass": true,
+  "platforms": {
+    "darwin_amd64": {
+      "artifactId": 11705238385,
+      "assetCount": 8,
+      "binaryBytes": 22228928,
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+      "binarySha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "checks": {
+        "GoBuildMetadataMatchesSourceTargetAndGo1269": true,
+        "allExtractedMemberBytesMatch": true,
+        "binaryReceiptMetadataMatch": true,
+        "exactMemberSet": true,
+        "linuxJATBoundToSourceAndBinary": null,
+        "officialGo1269MetadataReceiptMatches": true,
+        "robotXMLPass1Fail0Skip0AndBinaryBound": true,
+        "safeZipMembers": true,
+        "zipAndArtifactMetadataMatch": true
+      },
+      "goBuildInfo": {
+        "GOARCH": "amd64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "goTool": "go version go1.26.5 linux/amd64",
+      "memberSet": [
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/assets/rcc-macos64",
+          "sha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+          "size": 22228928
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "log.html",
+          "sha256": "78cfd688e3d39ad1e4b6bbe235c1ea1855d988d207b5675f23b7564bdfb6ac4d",
+          "size": 273059
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/native-binary-review.json",
+          "sha256": "385cf6522760dabfba124ce8776df0852b4589502f9371819dda4728e144aede",
+          "size": 560
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-receipt.json",
+          "sha256": "768779b9512f0aed02fff9cde1c2f172303fcfa30f9b7d1f96df1c0db4b78fa0",
+          "size": 15466
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-evidence.json",
+          "sha256": "a848e6e8262848a5efa095cba542030f313b8383ff66181431134893d20009e0",
+          "size": 1674
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-phases.log",
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7",
+          "size": 1556
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "report.html",
+          "sha256": "b2283482ef0cc27d25a5899ba8cc541dd5c3671bdecd48830917a5244640ae5c",
+          "size": 232408
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "output.xml",
+          "sha256": "f32372fc9ee0cdb7221a5e0882d6863e6843107446c332138e69312cf460e11c",
+          "size": 128880
+        }
+      ],
+      "nativeReceiptSha256": "768779b9512f0aed02fff9cde1c2f172303fcfa30f9b7d1f96df1c0db4b78fa0",
+      "officialGo1269MetadataLogMatches": true,
+      "officialGo1269MetadataLogSha256": "d42c418ce10efc667952b43dd0ec452b0a11a71fb4526d9ec1ec4564557d70e5",
+      "pass": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "robotXmlSha256": "f32372fc9ee0cdb7221a5e0882d6863e6843107446c332138e69312cf460e11c",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "target": {
+        "goarch": "amd64",
+        "goos": "darwin"
+      },
+      "version": "v18.19.6",
+      "zipBytes": 13072836,
+      "zipPath": "/dev/shm/rcc-main7945-native-review-root/main7945-intel-native.zip",
+      "zipSha256": "da0ebc9d866071efbeb203ecea78f665996b415cae2261eefe3319223b200315"
+    },
+    "darwin_arm64": {
+      "artifactId": 11704669558,
+      "assetCount": 8,
+      "binaryBytes": 20969810,
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+      "binarySha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "checks": {
+        "GoBuildMetadataMatchesSourceTargetAndGo1269": true,
+        "allExtractedMemberBytesMatch": true,
+        "binaryReceiptMetadataMatch": true,
+        "exactMemberSet": true,
+        "linuxJATBoundToSourceAndBinary": null,
+        "officialGo1269MetadataReceiptMatches": true,
+        "robotXMLPass1Fail0Skip0AndBinaryBound": true,
+        "safeZipMembers": true,
+        "zipAndArtifactMetadataMatch": true
+      },
+      "goBuildInfo": {
+        "GOARCH": "arm64",
+        "GOOS": "darwin",
+        "embeddedCompiler": "go1.26.9",
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "goTool": "go version go1.26.5 linux/amd64",
+      "memberSet": [
+        {
+          "extractedBytesMatch": true,
+          "path": "log.html",
+          "sha256": "bdbe47a3e9c7796ca383eb885795fedd8a7424ea425418a87a3b904be9f1c2da",
+          "size": 272953
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/assets/rcc-macosarm64",
+          "sha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+          "size": 20969810
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/native-binary-review.json",
+          "sha256": "d374c4d5c90d7a78037f6fb42cf32872c0df108783688d4b4a5306b8d681950a",
+          "size": 563
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-receipt.json",
+          "sha256": "0934245be8fa18c4c51351dd870dbe9210cb60e2c05f74cd8fd3cef1e39e96f6",
+          "size": 15441
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-evidence.json",
+          "sha256": "5ba27ac5e74fc828b2dc3b21eaaca25ac99fe1cb89906db9bc04fb7b5a7cf6d8",
+          "size": 1674
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-phases.log",
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7",
+          "size": 1556
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "output.xml",
+          "sha256": "b32217e8100f180752a945126fba796f108e8ad546a445e15e318117060c439d",
+          "size": 128975
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "report.html",
+          "sha256": "4211141501f5251d5cb57f3f66d0b0ca92e24a4e8f0c706cf7c00363b08a2417",
+          "size": 232408
+        }
+      ],
+      "nativeReceiptSha256": "0934245be8fa18c4c51351dd870dbe9210cb60e2c05f74cd8fd3cef1e39e96f6",
+      "officialGo1269MetadataLogMatches": true,
+      "officialGo1269MetadataLogSha256": "609744e17beb32538d2c4acdc2743cac18a9ab2e8f04a2c6e17623b0cfccb29e",
+      "pass": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "robotXmlSha256": "b32217e8100f180752a945126fba796f108e8ad546a445e15e318117060c439d",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "target": {
+        "goarch": "arm64",
+        "goos": "darwin"
+      },
+      "version": "v18.19.6",
+      "zipBytes": 12498015,
+      "zipPath": "/dev/shm/rcc-main7945-native-review-root/main7945-arm-native.zip",
+      "zipSha256": "6b042fd446ead249047c67e16747d4329c340c76ea291b2749dd1e0c6e4f76c5"
+    },
+    "linux_amd64": {
+      "artifactId": 11705179118,
+      "assetCount": 9,
+      "binaryBytes": 22392994,
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+      "binarySha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "checks": {
+        "GoBuildMetadataMatchesSourceTargetAndGo1269": true,
+        "allExtractedMemberBytesMatch": true,
+        "binaryReceiptMetadataMatch": true,
+        "exactMemberSet": true,
+        "linuxJATBoundToSourceAndBinary": true,
+        "officialGo1269MetadataReceiptMatches": true,
+        "robotXMLPass1Fail0Skip0AndBinaryBound": true,
+        "safeZipMembers": true,
+        "zipAndArtifactMetadataMatch": true
+      },
+      "goBuildInfo": {
+        "GOARCH": "amd64",
+        "GOOS": "linux",
+        "embeddedCompiler": "go1.26.9",
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "goTool": "go version go1.26.5 linux/amd64",
+      "memberSet": [
+        {
+          "extractedBytesMatch": true,
+          "path": "jat-class-consumer-receipt.json",
+          "sha256": "3b4625199382a0d1aa18b703f53e8ef457220368eafe220984bc7009ee31d36f",
+          "size": 106541
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "log.html",
+          "sha256": "ea2dbaf95454af1595d347abd717f7283b1a1015d61ee20e524120b1e484ef10",
+          "size": 272256
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/assets/rcc-linux64",
+          "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+          "size": 22392994
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/native-binary-review.json",
+          "sha256": "74d8d027f30716ee1f43b53eaa7a66a954f75d12b9b7942fc7d485720ac7db44",
+          "size": 558
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-receipt.json",
+          "sha256": "52a3dacb2b685bad418d228ffe2b6c778c979e4c5a3d465d05dc37217dc59583",
+          "size": 108160
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-evidence.json",
+          "sha256": "e9667e1936d1eba34a6e3e5a98a9e019921e2c5227066dda1f5339e019f88144",
+          "size": 1679
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-phases.log",
+          "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7",
+          "size": 1556
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "output.xml",
+          "sha256": "927d6fa3da01f98587b1d1c0e72295c86322e168a8461f39856437bac96b8f64",
+          "size": 128497
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "report.html",
+          "sha256": "6cb588513d0a4d36d635f0719648c2dfe4641f739b4b52d779c1734f02ab10d0",
+          "size": 232406
+        }
+      ],
+      "nativeReceiptSha256": "52a3dacb2b685bad418d228ffe2b6c778c979e4c5a3d465d05dc37217dc59583",
+      "officialGo1269MetadataLogMatches": true,
+      "officialGo1269MetadataLogSha256": "9eb96777aa64a8cce7b8b33928cdfd67a6aff9f349b017f23375881e7222db3d",
+      "pass": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "robotXmlSha256": "927d6fa3da01f98587b1d1c0e72295c86322e168a8461f39856437bac96b8f64",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "target": {
+        "goarch": "amd64",
+        "goos": "linux"
+      },
+      "version": "v18.19.6",
+      "zipBytes": 13386023,
+      "zipPath": "/dev/shm/rcc-main7945-native-review-root/main7945-linux-native.zip",
+      "zipSha256": "4c94f47bc09e80eb44b970199aff0142b36834f43d36bc3b760d84ec99ab7f8b"
+    },
+    "windows_amd64": {
+      "artifactId": 11704699968,
+      "assetCount": 8,
+      "binaryBytes": 20117504,
+      "binaryPath": "/dev/shm/rcc-main7945-native-review-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+      "binarySha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "checks": {
+        "GoBuildMetadataMatchesSourceTargetAndGo1269": true,
+        "allExtractedMemberBytesMatch": true,
+        "binaryReceiptMetadataMatch": true,
+        "exactMemberSet": true,
+        "linuxJATBoundToSourceAndBinary": null,
+        "officialGo1269MetadataReceiptMatches": true,
+        "robotXMLPass1Fail0Skip0AndBinaryBound": true,
+        "safeZipMembers": true,
+        "zipAndArtifactMetadataMatch": true
+      },
+      "goBuildInfo": {
+        "GOARCH": "amd64",
+        "GOOS": "windows",
+        "embeddedCompiler": "go1.26.9",
+        "vcs.modified": "false",
+        "vcs.revision": "7945f956b428359928908a9f42e36417b113dafd"
+      },
+      "goTool": "go version go1.26.5 linux/amd64",
+      "memberSet": [
+        {
+          "extractedBytesMatch": true,
+          "path": "log.html",
+          "sha256": "aed3a1a9c749294f718482db6579b8d858390a738cb0b1d078508173b7e371ff",
+          "size": 277311
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/assets/rcc-windows64.exe",
+          "sha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+          "size": 20117504
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-binary-review/native-binary-review.json",
+          "sha256": "d334ff604db147af523bb4980814801d202f2e9186582c2a520367c1c87f1693",
+          "size": 585
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-receipt.json",
+          "sha256": "3d2184ead868f12a223db7a86bba689a8707cd92be7fe4c7edf8ced9383855ed",
+          "size": 15987
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-evidence.json",
+          "sha256": "bd773a7eac410737da8ed53835fa67251422e7e8965c15d66112f4caeee92b80",
+          "size": 1641
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "native-runtime-robot-phases.log",
+          "sha256": "51860f80e4f0c63e9bfdf37cf5ed1153c62a7a95db8caf40a28e7ecde0ac16a4",
+          "size": 1606
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "output.xml",
+          "sha256": "9256d57a44b98da1759a29d6962163864f154eee27b76c1350a0eb6c945c5d6d",
+          "size": 135832
+        },
+        {
+          "extractedBytesMatch": true,
+          "path": "report.html",
+          "sha256": "afcb433f0c87699ee178a52404fc92e8115d50cc4cdf00aeaff102f807887595",
+          "size": 234860
+        }
+      ],
+      "nativeReceiptSha256": "3d2184ead868f12a223db7a86bba689a8707cd92be7fe4c7edf8ced9383855ed",
+      "officialGo1269MetadataLogMatches": true,
+      "officialGo1269MetadataLogSha256": "cd9897316c7bbb77d59712f41c53bac8c896609c54ce61a4cc9db93aaa40f4a0",
+      "pass": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "robotXmlSha256": "9256d57a44b98da1759a29d6962163864f154eee27b76c1350a0eb6c945c5d6d",
+      "source": "7945f956b428359928908a9f42e36417b113dafd",
+      "target": {
+        "goarch": "amd64",
+        "goos": "windows"
+      },
+      "version": "v18.19.6",
+      "zipBytes": 10850198,
+      "zipPath": "/dev/shm/rcc-main7945-native-review-root/main7945-windows-native.zip",
+      "zipSha256": "1b9b53cc3bcd9ca0df36a3399410f2fc37c9aa64ac294f697bf07578a655cae5"
+    }
+  },
+  "shippingInputComparison727vs7945": {
+    "embeddedBlobInputs": {
+      "baseCount": 3,
+      "baseManifestSha256": "ae4b59c1d694fa2451853846bbe443bc9535cb95a71d0d7a183b926e65f830ad",
+      "changedPaths": [],
+      "equal": true,
+      "headCount": 3,
+      "headManifestSha256": "ae4b59c1d694fa2451853846bbe443bc9535cb95a71d0d7a183b926e65f830ad"
+    },
+    "goModuleManifests": {
+      "baseCount": 4,
+      "baseManifestSha256": "de31468c47cef10971335b68769bae3ebc32ed95054ff83b4c9c033f2cb1434e",
+      "changedPaths": [],
+      "equal": true,
+      "headCount": 4,
+      "headManifestSha256": "de31468c47cef10971335b68769bae3ebc32ed95054ff83b4c9c033f2cb1434e"
+    },
+    "goSources": {
+      "baseCount": 429,
+      "baseManifestSha256": "468fd4e039623cbb06652e9784f4f2156ae15730cd8fad1ebe890f65e701a476",
+      "changedPaths": [],
+      "equal": true,
+      "headCount": 429,
+      "headManifestSha256": "468fd4e039623cbb06652e9784f4f2156ae15730cd8fad1ebe890f65e701a476"
+    }
+  },
+  "source": "7945f956b428359928908a9f42e36417b113dafd",
+  "version": "v18.19.6"
+}

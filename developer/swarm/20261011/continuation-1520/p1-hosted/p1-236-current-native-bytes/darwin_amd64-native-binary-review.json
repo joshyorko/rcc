@@ -1,0 +1,17 @@
+{
+  "assetName": "rcc-macos64",
+  "binarySha256": "a5530cdfc64df97438dfa292562424ab58157ba8671a8db013397e14bacde4e6",
+  "binarySize": 22228928,
+  "goBuildInfo": {
+    "goVersion": "go1.26.9",
+    "goarch": "amd64",
+    "goos": "darwin",
+    "vcsModified": false,
+    "vcsRevision": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8"
+  },
+  "nativeReceiptSha256": "4525848ff10d089b4df683b869adf77fae9405969a8bc9a58916bda6e5439fac",
+  "platform": "darwin_amd64",
+  "schemaVersion": 1,
+  "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "version": "v18.19.6"
+}

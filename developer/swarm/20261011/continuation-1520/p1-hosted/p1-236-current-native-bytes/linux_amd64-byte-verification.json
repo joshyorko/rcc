@@ -1,0 +1,68 @@
+{
+  "status": "ROOT_ACTUAL_NATIVE_ZIP_BINARY_METADATA_RECEIPT_ROBOT_VERIFIED",
+  "source": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "version": "v18.19.6",
+  "platform": "linux_amd64",
+  "artifactId": 11706526381,
+  "zipBytes": 13385953,
+  "zipSha256": "065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935",
+  "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-linux-amd64-native-runtime-receipt.zip",
+  "actualBinaryPath": "/dev/shm/rcc-p1-236-current-native-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+  "binaryBytes": 22392994,
+  "binarySha256": "b0df6026cd52248edd74e37ce903aa81aa86f7e28df611121bafbf7bd0ed2806",
+  "metadataExitCode": 0,
+  "robot": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "linuxJatActualReceiptValidated": true,
+  "scope": "Exact shipping-source executed-native binary and receipts; foreign binaries not executed here; no signing or Rosetta claim beyond actualreceipt",
+  "memberInventory": [
+    {
+      "path": "jat-class-consumer-receipt.json",
+      "bytes": 106541,
+      "sha256": "653a54dc7a3cba50fcbf703e81cc980df3d76133dcfef3e02012ca6e091a5bb3"
+    },
+    {
+      "path": "native-binary-review/assets/rcc-linux64",
+      "bytes": 22392994,
+      "sha256": "b0df6026cd52248edd74e37ce903aa81aa86f7e28df611121bafbf7bd0ed2806"
+    },
+    {
+      "path": "log.html",
+      "bytes": 272230,
+      "sha256": "9472d6cfe7bf7e534edeafeb19144ada8ab8fc35d878f0b1c0e47f8dd2061712"
+    },
+    {
+      "path": "native-binary-review/native-binary-review.json",
+      "bytes": 558,
+      "sha256": "c9d2950ca0caa8d08587186c7878791332819d73d87e93b689afbd84fad8c871"
+    },
+    {
+      "path": "native-runtime-receipt.json",
+      "bytes": 108170,
+      "sha256": "383723e4d55f8f3f455192e65a6eff920f4218440d062c38e70ac136a533dea1"
+    },
+    {
+      "path": "native-runtime-robot-evidence.json",
+      "bytes": 1679,
+      "sha256": "f869eb292dbf16d56487d116450dabc6312eb3007cedfb31b1a6433bc7f79e93"
+    },
+    {
+      "path": "native-runtime-robot-phases.log",
+      "bytes": 1556,
+      "sha256": "a2d6723666de968d2510976c37fd8a9129fc5e691b8e908ab4f464c0dadb29c7"
+    },
+    {
+      "path": "output.xml",
+      "bytes": 128497,
+      "sha256": "92a71fd72640dbaa4c5c5669624a8bc4bfa36ed73b9324e13912be67b751425d"
+    },
+    {
+      "path": "report.html",
+      "bytes": 232406,
+      "sha256": "bd6fdc348088259d6ee38f2fd1857b1ee18c5e2f806412d7fab07ddb33242f2f"
+    }
+  ]
+}

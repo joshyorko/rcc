@@ -1,0 +1,67 @@
+{
+  "foreignPlatformsExecutedLocally": false,
+  "goBinary": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+  "goVersion": "go version go1.26.9 linux/amd64",
+  "originalZipAndExtractPathsPreserved": true,
+  "runId": 38148406741,
+  "runs": [
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/verify_native_bundle_236_numeric.py",
+        "linux_amd64",
+        "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-linux-amd64-native-runtime-receipt.zip",
+        "11706526381",
+        "065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/linux_amd64-verifier.log",
+      "logSha256": "091eb8d43ddf4541f79e4666886e3b20b49d4dc20f4e35a3381a061d9bf93393",
+      "platform": "linux_amd64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/verify_native_bundle_236_numeric.py",
+        "darwin_arm64",
+        "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-arm64-native-runtime-receipt.zip",
+        "11706636128",
+        "0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/darwin_arm64-verifier.log",
+      "logSha256": "58973a76cdb8cf169644d16b2a60ea96e7e410fa6a52bdd2a678662766e56179",
+      "platform": "darwin_arm64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/verify_native_bundle_236_numeric.py",
+        "darwin_amd64",
+        "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-amd64-native-runtime-receipt.zip",
+        "11706013157",
+        "3ebb38d6d5888d332919bb325de2c545cd73d25aed79ebf136a8593057261533"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/darwin_amd64-verifier.log",
+      "logSha256": "814ac2b326b9a46db97ffea24b2a1be614d47932375cdbdfda0d90e879a1ea21",
+      "platform": "darwin_amd64"
+    },
+    {
+      "command": [
+        "/home/agent/.robocorp/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/python",
+        "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/verify_native_bundle_236_numeric.py",
+        "windows_amd64",
+        "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-windows-amd64-native-runtime-receipt.zip",
+        "11705647535",
+        "11ed43eabaad48afb7e8e1ab158eb62aa724f61ca4b6a0c16d5a7c74044d5a54"
+      ],
+      "exitCode": 0,
+      "log": "/workspace/work/rcc-swarm/evidence/continuation-20261011/p1-hosted/p1-236-current-native-bytes/recheck-final/windows_amd64-verifier.log",
+      "logSha256": "a0408d9d098dd44a8966434cec7f97c552876e111e85fb175f6754f7c5ae9e22",
+      "platform": "windows_amd64"
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8"
+}

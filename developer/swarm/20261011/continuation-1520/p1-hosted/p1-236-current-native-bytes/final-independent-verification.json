@@ -1,0 +1,227 @@
+{
+  "foreignBinariesExecutedLocally": false,
+  "goBinary": "/workspace/work/rcc-swarm/tools/go1.26.9/bin/go",
+  "goVersion": "go version go1.26.9 linux/amd64",
+  "nativeJobConclusions": {
+    "Native Runtime (linux-amd64)": "success",
+    "Native Runtime (macos-amd64)": "success",
+    "Native Runtime (macos-arm64)": "success",
+    "Native Runtime (windows-amd64)": "success"
+  },
+  "platforms": {
+    "darwin_amd64": {
+      "actualBinaryPath": "/dev/shm/rcc-p1-236-current-native-root/darwin_amd64/native-binary-review/assets/rcc-macos64",
+      "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-amd64-native-runtime-receipt.zip",
+      "artifactId": 11706013157,
+      "artifactName": "macos-amd64-native-runtime-receipt",
+      "binaryBytes": 22228928,
+      "binarySha256": "a5530cdfc64df97438dfa292562424ab58157ba8671a8db013397e14bacde4e6",
+      "embeddedGoMetadataExitCode": 0,
+      "exactBinaryCLI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization"
+      },
+      "githubZipDigest": "sha256:3ebb38d6d5888d332919bb325de2c545cd73d25aed79ebf136a8593057261533",
+      "goarch": "amd64",
+      "goos": "darwin",
+      "linuxJATReceiptPresent": false,
+      "nativeRuntimeReceiptSha256": "4525848ff10d089b4df683b869adf77fae9405969a8bc9a58916bda6e5439fac",
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "unsigned-or-unverified",
+        "executableSymlink": "pass",
+        "machine": "x86_64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robotBinaryMatchesReceipt": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceAPI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "providerDeadWarmReuse": true,
+        "warmHit": "local-materialization"
+      },
+      "zipBytes": 13072743
+    },
+    "darwin_arm64": {
+      "actualBinaryPath": "/dev/shm/rcc-p1-236-current-native-root/darwin_arm64/native-binary-review/assets/rcc-macosarm64",
+      "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-macos-arm64-native-runtime-receipt.zip",
+      "artifactId": 11706636128,
+      "artifactName": "macos-arm64-native-runtime-receipt",
+      "binaryBytes": 20969810,
+      "binarySha256": "4e5f0075c72dfa315e2e5ea613fe98f5ec770e655605121b58fc92b9a2f59cc1",
+      "embeddedGoMetadataExitCode": 0,
+      "exactBinaryCLI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization"
+      },
+      "githubZipDigest": "sha256:0bd7ae2f49bc99823c996fc7c90a2b92a6f4d47c35bef9867b7bb257ad95c213",
+      "goarch": "arm64",
+      "goos": "darwin",
+      "linuxJATReceiptPresent": false,
+      "nativeRuntimeReceiptSha256": "2e61fc2c114a06d64c92de366a8cc04ece16ab1043712d7a8abab333a41373da",
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "codeSigning": "verified",
+        "executableSymlink": "pass",
+        "machine": "arm64",
+        "machoDependencies": "pass",
+        "machoRPath": "pass",
+        "nativeOnlyOnRosetta": "skipped:native-runner",
+        "quarantineXattr": "absent",
+        "rosetta": "native",
+        "runnerOS": "darwin",
+        "translationAllowed": "pass"
+      },
+      "robotBinaryMatchesReceipt": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceAPI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "providerDeadWarmReuse": true,
+        "warmHit": "local-materialization"
+      },
+      "zipBytes": 12497966
+    },
+    "linux_amd64": {
+      "actualBinaryPath": "/dev/shm/rcc-p1-236-current-native-root/linux_amd64/native-binary-review/assets/rcc-linux64",
+      "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-linux-amd64-native-runtime-receipt.zip",
+      "artifactId": 11706526381,
+      "artifactName": "linux-amd64-native-runtime-receipt",
+      "binaryBytes": 22392994,
+      "binarySha256": "b0df6026cd52248edd74e37ce903aa81aa86f7e28df611121bafbf7bd0ed2806",
+      "embeddedGoMetadataExitCode": 0,
+      "exactBinaryCLI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization"
+      },
+      "githubZipDigest": "sha256:065bd53924727776f01f6a5b0d72fd3f6615adb51763801572f287e22274f935",
+      "goarch": "amd64",
+      "goos": "linux",
+      "linuxJAT": {
+        "artifactDigest": "sha256:4b0ccf7683e32cf2cb9c6b6c511ead10f6e24907be4e6e57f4cd9df8ad2e80ce",
+        "coldLeaseReleased": true,
+        "mismatchProviderObjectGets": 0,
+        "nativeImport": "sqlite3",
+        "objectCount": 10121,
+        "receiptSha256": "653a54dc7a3cba50fcbf703e81cc980df3d76133dcfef3e02012ca6e091a5bb3",
+        "warmProviderDeadReuse": true
+      },
+      "linuxJATReceiptPresent": true,
+      "nativeRuntimeReceiptSha256": "383723e4d55f8f3f455192e65a6eff920f4218440d062c38e70ac136a533dea1",
+      "platformChecks": {
+        "caseCollision": "case-sensitive-filesystem",
+        "executableSymlink": "pass",
+        "filesystemType": "ext2/ext3",
+        "glibcMuslMismatch": "pass",
+        "libc": "glibc",
+        "machine": "x86_64",
+        "runnerOS": "linux"
+      },
+      "robotBinaryMatchesReceipt": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceAPI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "providerDeadWarmReuse": true,
+        "warmHit": "local-materialization"
+      },
+      "zipBytes": 13385953
+    },
+    "windows_amd64": {
+      "actualBinaryPath": "/dev/shm/rcc-p1-236-current-native-root/windows_amd64/native-binary-review/assets/rcc-windows64.exe",
+      "actualZipPath": "/dev/shm/rcc-p1-236-current-native-root/pr236-38148406741-windows-amd64-native-runtime-receipt.zip",
+      "artifactId": 11705647535,
+      "artifactName": "windows-amd64-native-runtime-receipt",
+      "binaryBytes": 20117504,
+      "binarySha256": "3e133dbaf3d2a6948f41580689f0127a2c46a80c14340071eb7eede2c8d8bd28",
+      "embeddedGoMetadataExitCode": 0,
+      "exactBinaryCLI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "nativeImport": "sqlite3",
+        "providerDeadWarmReuse": true,
+        "sqliteVersion": "3.54.0",
+        "warmHit": "local-materialization"
+      },
+      "githubZipDigest": "sha256:11ed43eabaad48afb7e8e1ab158eb62aa724f61ca4b6a0c16d5a7c74044d5a54",
+      "goarch": "amd64",
+      "goos": "windows",
+      "linuxJATReceiptPresent": false,
+      "nativeRuntimeReceiptSha256": "1da9d72f3d1c381f250ae3ebfd52bd637b4a65af46b91819e0330ba009648c03",
+      "platformChecks": {
+        "caseCollision": "case-insensitive-filesystem",
+        "executableSymlink": "pass",
+        "fileLock": "pass",
+        "junction": "pass",
+        "longPath": "pass",
+        "machine": "AMD64",
+        "pathNormalization": "pass",
+        "runnerOS": "win32"
+      },
+      "robotBinaryMatchesReceipt": true,
+      "robotCounts": {
+        "fail": 0,
+        "pass": 1,
+        "skip": 0
+      },
+      "sourceAPI": {
+        "coldLeaseReleased": true,
+        "coldProviderHit": "provider",
+        "mismatchProviderObjectGets": 0,
+        "mismatchRejected": true,
+        "providerDeadWarmReuse": true,
+        "warmHit": "local-materialization"
+      },
+      "zipBytes": 10850290
+    }
+  },
+  "runId": 38148406741,
+  "schemaVersion": 1,
+  "sourceSha": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "version": "v18.19.6"
+}

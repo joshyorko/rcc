@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-11T14:44:25.532554+00:00",
+  "pr": 236,
+  "oldHead": "5c2e8e95b0ecdaa62faf08b7e514c42b523593a3",
+  "newHead": "bdeff0bc40a15b93e3df3ee430ee4a021d0d70f8",
+  "exactDiffFromMain": "diff --git a/CONTRIBUTING.md b/CONTRIBUTING.md\nindex 2da8086..513bc00 100644\n--- a/CONTRIBUTING.md\n+++ b/CONTRIBUTING.md\n@@ -122,6 +122,10 @@ Your robot, however, lacks both vision and the ability to think. It needs precis\n |-----------|---------|\n | `cmd/` | CLI commands (Cobra entrypoints & implementations) |\n | `operations/` | Higher-level behaviors (auth, bundles, diagnostics, etc.) |\n+| `conda/` | Python environment creation, activation, and package installation |\n+| `htfs/` | Holotree filesystem storage and environment materialization |\n+| `remotree/` | Remote cache protocol, service, and synchronization |\n+| `settings/` | RCC settings, endpoint, and provider-profile configuration |\n | `common/`, `pathlib/`, `shell/` | Shared libraries/utilities |\n | `assets/` | *Source* assets that get embedded into the binary |\n | `blobs/` | Generated/embedded assets (**do not edit by hand**\u2014the build will overwrite your tears) |\n",
+  "rootReview": "ACCEPT_EXACT_FOUR_EXISTING_DOC_ROWS_AND_APPEND_ANCESTRY",
+  "freshNativeBinaryGate": "REQUIRED_ON_NEWHEAD_NO_OLDRECEIPT_REBIND",
+  "disposition": "ADMIT_FF_PUSH_EXISTING_BRANCH_ONLY; do not merge until currentheadCI/native accepted",
+  "releaseSourceFrozen": "7945f956b428359928908a9f42e36417b113dafd",
+  "noReleaseCandidateMainMutation": true
+}
