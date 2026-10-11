@@ -1,3 +1,15 @@
+## Current execution — 2026-10-11 02:48 UTC
+
+Main is `727c1ff8b679cdbbe12836e53c87734a1edb0071`, tree `cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152`, exactly the accepted candidate324 tree. PRs229–232,234,233 are merged; candidate324 full11/numeric0 and all4native receipts passed independent root verification. Main local fullCGO Go tests and116script checks pass. All four required final-main push workflows are green. Root independently verified all four native actual ZIP/source/binary/Robot receipts, Linux JAT, and28 top-level plus16 nested UV-prefix cases across four raw logs. Main full11 is correctly skipped on non-tag push; candidate324 full11 stays source324. The extra PatchRaptor workflow_run succeeded with version-bump/release-dispatch steps skipped. No tag/release was published; stable remains v18.19.5.
+
+The user's in-place performance steer is admitted into existing #125, not a new campaign or release dependency. SolExtraHigh `consumer_contract_125` owns complete six-direction research and Actions owner/contract reconciliation; LunaHigh `pr_readiness` owns bounded isolated real Actions control/prerequisites (initial500MiB newdisk), while LunaHigh `native_acceptance` retains release-critical final-main gates. LunaHigh `graph_inventory` owns the execution ledger. Root retains engineering decisions/integration; five active agents out of seven slots at admission. No production format/default change, six implementation fanout, Actions branch/pin mutation, or optimization selection.
+
+Live Actions PR221 now points to `ba85aac7324ea4463bfba8c5f8586e27706dc2fe`, distinct from earlier community `a70993f`; both inspected adapters require exact RCCv18.19.3. Actual221 fixture uses actions-core1.0.2, while community fixture uses1.0.0. Existing owner Runtime holds must be honored; source-only controls and contract checks are not real Action invocation or performance acceptance. The full six-scenario runtime matrix waits for its owner-controlled prerequisites. An unchanged-version real runtime control is admitted only if bounded dependencies/resources permit. Performance is not a v18.19.6 publication prerequisite.
+
+See updated [inventory](inventory.md), [restart prompt](restart-prompt.md), and the prepared [publication handoff](evidence/final-main-727/release-publication-handoff.md). The following timeline preserves earlier source-bound checkpoints; dated pending states below are historical.
+
+---
+
 # RCC acceptance checkpoint
 
 Snapshot: **2026-10-11 01:58:27 UTC** (read-only public GitHub refresh; root receipts through 01:57 UTC). This is a durable evidence handoff, not release approval.

@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-11T02:47:54.816211+00:00",
+  "rccMain": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "issue": 125,
+  "releasePrerequisite": false,
+  "newIssues": 0,
+  "newInfrastructure": false,
+  "workers": {
+    "native_acceptance": "Luna High final-main release unchanged",
+    "consumer_contract_125": "Sol Extra High existing research lane",
+    "pr_readiness": "Luna High isolated runtime prerequisites/control <=500MiB initialdisk",
+    "graph_inventory": "Luna High ledger",
+    "root": "Sol High orchestration"
+  },
+  "actionsWrites": false,
+  "defaultChanges": false,
+  "optimizationSelected": false
+}

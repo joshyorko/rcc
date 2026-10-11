@@ -1,0 +1,70 @@
+{
+  "at": "2026-10-11T02:51:18.577264+00:00",
+  "main": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "tree": "cfae5c5ee9df0e5031e8e9ae37040b5c98ac6152",
+  "mainRequiredPushWorkflowsAllSuccess": true,
+  "mainNativeActualZipAndBinaryFourVerified": true,
+  "uvTopLevelPasses": 28,
+  "uvNestedPasses": 16,
+  "mainFull11Job": "skipped on main non-tag push by policy; candidate324 same tree eleven-gate numeric0 receipt remains source324",
+  "releaseJob": "skipped",
+  "v18_19_6TagOrReleasePublished": false,
+  "latestStable": "v18.19.5",
+  "additionalWorkflowRun": {
+    "id": 38106400198,
+    "event": "workflow_run",
+    "name": "PatchRaptor RCC Release",
+    "conclusion": "success",
+    "meaning": "conditional release-bump and dispatch steps skipped; not tag/release acceptance"
+  },
+  "reports": [
+    {
+      "path": "final-main-727/hosted-runs.json",
+      "sha256": "bde1461bce4177be074928477ebb28b660687d5dd3c50e07bf174b71792b9371"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-live-jobs.json",
+      "sha256": "08f713a45ae8a728f2509671bdac7bad60540e9f25c94fe0a392ca8adc0e1e05"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-live-artifacts.json",
+      "sha256": "d7a814d8dc4d78015785ac4650a313f8539bea71c72c3e98f3b939d3aacb1f66"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-native-progress-verification.json",
+      "sha256": "88a0de8f2b9e9c723ac0a2296cc246531736a32eac9884b5e85a20a9e01c1386"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-native-uv-log-verification.json",
+      "sha256": "db9be4b50dd2333db9dc521fad2a43ab64fa9929ff451c2672f038457360227f"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-all-eight-and-native-bundle-verification.json",
+      "sha256": "7ec5fe7362239cb1e462c024d06dcbf1256e54cc21c273b72f6458bf8ba1c00c"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-distribution-consumer-verification.json",
+      "sha256": "f6a0bc7bd3a21e72e665ea2f5eeb9d017a99bab7e2ee454df4bc31df73e84fd3"
+    },
+    {
+      "path": "hosted-native/final-main-727/root-real-stable-index-retention-verification.json",
+      "sha256": "36ec754d07ee5d1bb77b86ae771eaa892f283bdcd63855a6ab143f545509927f"
+    },
+    {
+      "path": "final-main-727/root-independent-verification.json",
+      "sha256": "4542f65aaaf011c6757d0ff28b7bcb0efbe5f149d3a9cef20de9578554be9f80"
+    },
+    {
+      "path": "final-main-727/current-main.json",
+      "sha256": "42336d54f62a0a90f89eb256c0c23e9c648507fbf7a5289f9f31f2736a92fd99"
+    },
+    {
+      "path": "final-main-727/current-tags.json",
+      "sha256": "6225b7b99f221209d531bd6a69ee7eab022b3a2ae7a94f669c03b6091e96db46"
+    },
+    {
+      "path": "final-main-727/current-releases.json",
+      "sha256": "d2f3394f3b306139fdb1f9b940b2fad2e6a84050f75ed903d714d97c8c352ab6"
+    }
+  ]
+}

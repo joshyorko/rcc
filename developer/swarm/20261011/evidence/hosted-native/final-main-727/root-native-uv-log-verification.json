@@ -1,0 +1,39 @@
+{
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "at": "2026-10-11T02:50:26.731706+00:00",
+  "logs": [
+    {
+      "platform": "linux-amd64",
+      "log": "linux-amd64-native-job.log",
+      "sha256": "595327034520be98b10b3949ce07c2e35d9ab56dd12d5bcc87bb1b7ac6659b14",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4,
+      "nativeVerticalPassed": true
+    },
+    {
+      "platform": "macos-amd64",
+      "log": "macos-amd64-native-job.log",
+      "sha256": "2bce9fbf029fdca2b41b0508221b409cb16d730062c049d5dce1c54420db3a62",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4,
+      "nativeVerticalPassed": true
+    },
+    {
+      "platform": "macos-arm64",
+      "log": "macos-arm64-native-job.log",
+      "sha256": "87c0d60be08f86fdc7e6fa8df0c6d80839b1ece80febd0de390dc24eadff249c",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4,
+      "nativeVerticalPassed": true
+    },
+    {
+      "platform": "windows-amd64",
+      "log": "windows-amd64-native-job.log",
+      "sha256": "b5bbc60f2d6c81f08e6dd2a34d7ee523322086b74e6022af33bde7dba53f0b35",
+      "uvTopLevelPassed": 7,
+      "uvSubcasesPassed": 4,
+      "nativeVerticalPassed": true
+    }
+  ],
+  "allFourLogsVerified": true
+}

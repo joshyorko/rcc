@@ -1,0 +1,49 @@
+{
+  "context": "final-main",
+  "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071",
+  "at": "2026-10-11T02:50:26.316079+00:00",
+  "platforms": [
+    {
+      "platform": "linux_amd64",
+      "actualBinarySha256": "be55dadc391ae4ac7dd38356755a1698c595fdf41bd4a0141f8df7cc9d29f00e",
+      "artifact": 11689851536,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "not-attested",
+      "jatPass": true
+    },
+    {
+      "platform": "windows_amd64",
+      "actualBinarySha256": "ade9c2cb34379b8a279056d093f02e110fc311e7f4f9e33cf3565bc8c7b66c39",
+      "artifact": 11689687809,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "not-attested"
+    },
+    {
+      "platform": "darwin_amd64",
+      "actualBinarySha256": "866527e2c4f21771d57b4707a1b3c2ad19bb0e7254e2f0ac27feb0c5c7530a5a",
+      "artifact": 11689987200,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "unsigned-or-unverified"
+    },
+    {
+      "platform": "darwin_arm64",
+      "actualBinarySha256": "b216a96f99bb302ca370c08290ce61480b96af005867a925448182deeeef038b",
+      "artifact": 11689732116,
+      "zipDigestVerified": true,
+      "nativeColdWarmLeasesSQLite": true,
+      "cpuMismatchZeroGets": true,
+      "robotExactBinaryPass": 1,
+      "signing": "verified"
+    }
+  ],
+  "allFourPlatformsVerified": true
+}

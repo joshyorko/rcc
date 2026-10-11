@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-11T02:52:52.976577+00:00",
+  "actualZipAgainstGitHubDigest": [
+    {
+      "name": "RCC-Binaries",
+      "id": 11690060283,
+      "bytes": 64478883,
+      "sha256": "0233fd07e55753a7c1cf3fa0214f15f28c9c63c32413b172c206824d9c4338ce",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "macos-amd64-native-runtime-receipt",
+      "id": 11689987200,
+      "bytes": 172527,
+      "sha256": "577c6a6a5f05251654f0c4ee6029a3a08407001ba19fd8e4f2659c1091922eb9",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "linux-amd64-native-runtime-receipt",
+      "id": 11689851536,
+      "bytes": 185396,
+      "sha256": "ec8d7cc46646fcfca7a228392e1bc2cb53341d838563802abd7d306c1f07eaba",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "native-runtime-binaries",
+      "id": 11689755940,
+      "bytes": 49089276,
+      "sha256": "88f406c654de1155e717ded1534fa058ca1c5375007109f2a06364d3a5036ac2",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "macos-arm64-native-runtime-receipt",
+      "id": 11689732116,
+      "bytes": 172216,
+      "sha256": "0336c09e5c16717eb0536f5e532b027aa99f115348a7403bec633738f92f7384",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    },
+    {
+      "name": "windows-amd64-native-runtime-receipt",
+      "id": 11689687809,
+      "bytes": 174186,
+      "sha256": "45282dbe3c2e6f374757b785e6223e9a4511cd0545f7a88e5bcbe884510ab246",
+      "source": "727c1ff8b679cdbbe12836e53c87734a1edb0071"
+    }
+  ],
+  "count": 6
+}
