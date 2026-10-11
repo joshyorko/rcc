@@ -94,7 +94,7 @@ def process():
             flatnames.remove(flatname)
         for filename, level, title in headings(filename):
             toc.add(filename, level, title)
-    for flatname in flatnames:
+    for flatname in sorted(flatnames):
         if flatname in IGNORE_LIST:
             continue
         for filename, level, title in headings(f"docs/{flatname}"):

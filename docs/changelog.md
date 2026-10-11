@@ -6,6 +6,10 @@
 
 ### Fixes
 
+- preserve internal relative Python links when UV's cache parent is symlinked
+  by comparing physical prefix paths; continue rejecting absolute links and
+  links that escape the selected prefix
+
 - accept padded and unpadded standard Base64 trust-root public keys in offline
   `env trust verify`, matching runtime acquisition and execution while retaining
   exact Ed25519 key sizes and strict signature verification

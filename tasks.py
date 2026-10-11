@@ -1494,6 +1494,11 @@ def local(c, do_test=True):
 def robot(c):
     """Run robot tests on local application"""
     print("Running robot tests...")
+    executable = Path("build") / ("rcc.exe" if os.name == "nt" else "rcc")
+    c.run(
+        f"{PYTHON} -m unittest robot_tests.development_process_acceptance -v",
+        env={"RCC_ACCEPTANCE_BINARY": str(executable.resolve())},
+    )
     c.run(f"{PYTHON} -m robot -L DEBUG -d tmp/output robot_tests")
 
 
