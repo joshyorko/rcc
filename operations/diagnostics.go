@@ -2,6 +2,7 @@ package operations
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -19,7 +20,6 @@ import (
 	"github.com/joshyorko/rcc/htfs"
 	"github.com/joshyorko/rcc/journal"
 	"github.com/joshyorko/rcc/pathlib"
-	"github.com/joshyorko/rcc/pretty"
 	"github.com/joshyorko/rcc/robot"
 	"github.com/joshyorko/rcc/settings"
 	"github.com/joshyorko/rcc/xviper"
@@ -554,16 +554,19 @@ func canaryDownloadCheck() *common.DiagnosticCheck {
 	}
 }
 
-func jsonDiagnostics(sink io.Writer, details *common.DiagnosticStatus) {
+func jsonDiagnostics(sink io.Writer, details *common.DiagnosticStatus) error {
 	form, err := details.AsJson()
 	if err != nil {
-		pretty.Exit(1, "Error: %s", err)
+		return err
 	}
-	fmt.Fprintln(sink, form)
+	_, err = fmt.Fprintln(sink, form)
+	return err
 }
 
-func humaneDiagnostics(sink io.Writer, details *common.DiagnosticStatus, showStatistics bool) {
-	fmt.Fprintln(sink, "Diagnostics:")
+func humaneDiagnostics(sink io.Writer, details *common.DiagnosticStatus, showStatistics bool) error {
+	if _, err := fmt.Fprintln(sink, "Diagnostics:"); err != nil {
+		return err
+	}
 	keys := make([]string, 0, len(details.Details))
 	for key := range details.Details {
 		keys = append(keys, key)
@@ -571,23 +574,53 @@ func humaneDiagnostics(sink io.Writer, details *common.DiagnosticStatus, showSta
 	sort.Strings(keys)
 	for _, key := range keys {
 		value := details.Details[key]
-		fmt.Fprintf(sink, " - %-38s...  %q\n", key, value)
+		if _, err := fmt.Fprintf(sink, " - %-38s...  %q\n", key, value); err != nil {
+			return err
+		}
 	}
-	fmt.Fprintln(sink, "")
-	fmt.Fprintln(sink, "Checks:")
+	if _, err := fmt.Fprintln(sink, ""); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprintln(sink, "Checks:"); err != nil {
+		return err
+	}
 	for _, check := range details.Checks {
-		fmt.Fprintf(sink, " - %-8s %-8s %s\n", check.Type, check.Status, check.Message)
+		if _, err := fmt.Fprintf(sink, " - %-8s %-8s %s\n", check.Type, check.Status, check.Message); err != nil {
+			return err
+		}
 	}
 	if !showStatistics {
-		return
+		return nil
 	}
 	count, body := journal.MakeStatistics(12, false, false, false, false)
 	if count > 4 {
-		fmt.Fprintln(sink, "")
-		fmt.Fprintln(sink, "Statistics:")
-		fmt.Fprintln(sink, "")
-		fmt.Fprintln(sink, string(body))
+		if _, err := fmt.Fprintln(sink, ""); err != nil {
+			return err
+		}
+		if _, err := fmt.Fprintln(sink, "Statistics:"); err != nil {
+			return err
+		}
+		if _, err := fmt.Fprintln(sink, ""); err != nil {
+			return err
+		}
+		if _, err := fmt.Fprintln(sink, string(body)); err != nil {
+			return err
+		}
 	}
+	return nil
+}
+
+func writeDiagnostics(sink io.WriteCloser, closeSink bool, details *common.DiagnosticStatus, jsonOutput, showStatistics bool) error {
+	var err error
+	if jsonOutput {
+		err = jsonDiagnostics(sink, details)
+	} else {
+		err = humaneDiagnostics(sink, details, showStatistics)
+	}
+	if closeSink {
+		return errors.Join(err, sink.Close())
+	}
+	return err
 }
 
 func fileIt(filename string) (io.WriteCloser, error) {
@@ -612,11 +645,10 @@ func ProduceNetDiagnostics(body []byte, json bool) (*common.DiagnosticStatus, er
 	}
 	networkDiagnostics(config, result)
 	if json {
-		jsonDiagnostics(os.Stdout, result)
+		return nil, jsonDiagnostics(os.Stdout, result)
 	} else {
-		humaneDiagnostics(os.Stdout, result, false)
+		return nil, humaneDiagnostics(os.Stdout, result, false)
 	}
-	return nil, nil
 }
 
 func ProduceDiagnostics(filename, robotfile string, json, production, quick bool) (*common.DiagnosticStatus, error) {
@@ -624,18 +656,12 @@ func ProduceDiagnostics(filename, robotfile string, json, production, quick bool
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 	result := runDiagnostics(quick)
 	if len(robotfile) > 0 {
 		addRobotDiagnostics(robotfile, result, production)
 	}
 	settings.Global.Diagnostics(result)
-	if json {
-		jsonDiagnostics(file, result)
-	} else {
-		humaneDiagnostics(file, result, true)
-	}
-	return result, nil
+	return result, writeDiagnostics(file, len(filename) > 0, result, json, true)
 }
 
 type Unmarshaler func([]byte, interface{}) error
@@ -702,9 +728,7 @@ func RunRobotDiagnostics(robotfile string, production bool) *common.DiagnosticSt
 func PrintRobotDiagnostics(robotfile string, json, production bool) error {
 	result := RunRobotDiagnostics(robotfile, production)
 	if json {
-		jsonDiagnostics(os.Stdout, result)
-	} else {
-		humaneDiagnostics(os.Stderr, result, true)
+		return jsonDiagnostics(os.Stdout, result)
 	}
-	return nil
+	return humaneDiagnostics(os.Stderr, result, true)
 }

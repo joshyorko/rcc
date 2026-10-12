@@ -75,9 +75,13 @@ func Scale() uint64 {
 }
 
 func AutoScale() {
-	limit := uint64(runtime.NumCPU() - 1)
-	if WorkerCount > 1 {
-		limit = uint64(WorkerCount)
+	startWorkers(workerLimit(runtime.NumCPU(), WorkerCount))
+}
+
+func workerLimit(cpuCount, configuredWorkers int) uint64 {
+	limit := uint64(cpuCount - 1)
+	if configuredWorkers > 1 {
+		limit = uint64(configuredWorkers)
 	}
 	if limit > 96 {
 		limit = 96
@@ -85,7 +89,7 @@ func AutoScale() {
 	if limit < 2 {
 		limit = 2
 	}
-	startWorkers(limit)
+	return limit
 }
 
 func startWorkers(limit uint64) {

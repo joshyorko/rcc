@@ -1,7 +1,9 @@
 package operations
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,16 +82,30 @@ func SummonCache() (*Cache, error) {
 	cacheFile := cacheLocation()
 	source, err := os.Open(cacheFile)
 	if err != nil {
-		return result.Ready(), nil
+		if os.IsNotExist(err) {
+			return result.Ready(), nil
+		}
+		return nil, fmt.Errorf("failed to open cache %q: %w", cacheFile, err)
 	}
-	defer source.Close()
-	defer pathlib.RestrictOwnerOnly(cacheFile)
 	decoder := yaml.NewDecoder(source)
 	err = decoder.Decode(&result)
+	closeErr := source.Close()
+	restrictErr := pathlib.RestrictOwnerOnly(cacheFile)
 	if err != nil {
+		return nil, errors.Join(err, closeErr, restrictErr)
+	}
+	if err := errors.Join(closeErr, restrictErr); err != nil {
 		return nil, err
 	}
 	return result.Ready(), nil
+}
+
+func encodeCache(sink io.WriteCloser, value *Cache) error {
+	encoder := yaml.NewEncoder(sink)
+	encodeErr := encoder.Encode(value)
+	encoderCloseErr := encoder.Close()
+	sinkCloseErr := sink.Close()
+	return errors.Join(encodeErr, encoderCloseErr, sinkCloseErr)
 }
 
 func (it *Cache) Save() error {
@@ -110,12 +126,7 @@ func (it *Cache) Save() error {
 	if err != nil {
 		return err
 	}
-	defer sink.Close()
-	defer pathlib.RestrictOwnerOnly(cacheFile)
-	encoder := yaml.NewEncoder(sink)
-	err = encoder.Encode(it)
-	if err != nil {
-		return err
-	}
-	return nil
+	writeErr := encodeCache(sink, it)
+	permissionErr := pathlib.RestrictOwnerOnly(cacheFile)
+	return errors.Join(writeErr, permissionErr)
 }
