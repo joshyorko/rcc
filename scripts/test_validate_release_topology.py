@@ -1,12 +1,17 @@
 import json
+import argparse
 import os
 import re
+import runpy
+import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
 import textwrap
 import unittest
+from string import Template
+from unittest.mock import patch
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -25,6 +30,61 @@ RELEASE_BASE = f"https://github.com/joshyorko/rcc/releases/download/{VERSION}"
 
 
 class ReleaseTopologyTests(unittest.TestCase):
+    def publisher_python_commands(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        values = {
+            "RCC_PREPARATION_RUN_ID": "123",
+            "RCC_SOURCE_SHA": "a" * 40,
+            "RCC_RELEASE_VERSION": VERSION,
+            "RCC_ASSET_MANIFEST_SHA256": "b" * 64,
+        }
+        return [
+            [Template(part).substitute(values) for part in shlex.split(line.strip())]
+            for line in workflow.replace("\\\n", " ").splitlines()
+            if line.strip().startswith("python3 scripts/")
+        ]
+
+    def test_publisher_python_invocations_match_actual_cli_parsers(self):
+        class ParsedCommand(Exception):
+            pass
+
+        parse_args = argparse.ArgumentParser.parse_args
+
+        def validate_and_stop(parser, args=None, namespace=None):
+            parse_args(parser, args, namespace)
+            raise ParsedCommand
+
+        # Stop immediately after real parsing, before any network or publication work.
+        for command in self.publisher_python_commands():
+            with self.subTest(command=command):
+                script = REPOSITORY_ROOT / command[1]
+                with patch.object(sys, "argv", [str(script), *command[2:]]), \
+                        patch.object(argparse.ArgumentParser, "parse_args", validate_and_stop), \
+                        self.assertRaises(ParsedCommand):
+                    runpy.run_path(str(script), run_name="__main__")
+
+    def test_publisher_topology_invocation_validates_all_workflows(self):
+        root, _, index = self.fixture()
+        self.addCleanup(shutil.rmtree, root)
+        assets = root / "rcc-release-preparation" / "assets"
+        assets.mkdir(parents=True)
+        for name in ASSETS:
+            (assets / name).write_bytes(b"release asset fixture")
+        shutil.copyfile(index, assets / "index.json")
+        workflows = root / "release-source" / ".github" / "workflows"
+        workflows.mkdir(parents=True)
+        for name in ("rcc.yaml", "create-release-tag.yml", "publish-release.yml", "recover-rcc-185.yml"):
+            shutil.copyfile(REPOSITORY_ROOT / ".github" / "workflows" / name, workflows / name)
+        command, = [c for c in self.publisher_python_commands() if c[1] == "scripts/validate_release_topology.py"]
+        invocation = [sys.executable, str(REPOSITORY_ROOT / command[1]), *command[2:]]
+        result = subprocess.run(invocation, cwd=root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        recovery = workflows / "recover-rcc-185.yml"
+        recovery.write_text(recovery.read_text().replace("contents: read", "contents: write"))
+        result = subprocess.run(invocation, cwd=root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("historical recovery workflow", result.stdout)
+
     def fixture(self):
         root = Path(tempfile.mkdtemp())
         for directory in ("linux64", "windows64", "macos64", "macosarm64"):
