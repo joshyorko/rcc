@@ -765,6 +765,65 @@ print("\\tbuild\\tvcs.modified=false")
         with self.assertRaisesRegex(ReleaseGateError, "native job or preparation job"):
             validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
 
+    def sole_maintainer_environment(self):
+        return {
+            "name": "rcc-production",
+            "can_admins_bypass": False,
+            "protection_rules": [{
+                "type": "required_reviewers",
+                "prevent_self_review": False,
+                "reviewers": [{"type": "User", "reviewer": {
+                    "login": "joshyorko", "id": 54248591,
+                }}],
+            }],
+        }
+
+    def test_accepts_only_scoped_sole_maintainer_self_review(self):
+        environment = self.sole_maintainer_environment()
+        self.assertTrue(validate_environment_protection(environment, repository="joshyorko/rcc"))
+        with self.assertRaisesRegex(ReleaseGateError, "self-review"):
+            validate_environment_protection(environment)
+        with self.assertRaisesRegex(ReleaseGateError, "self-review"):
+            validate_environment_protection(environment, repository="another/rcc")
+        environment["protection_rules"][0]["prevent_self_review"] = True
+        self.assertTrue(validate_environment_protection(environment, repository="another/rcc"))
+
+    def test_rejects_mismatched_or_incomplete_sole_maintainer_policy(self):
+        cases = [
+            ("environment", lambda e: e.update(name="other")),
+            ("login", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(login="other")),
+            ("id", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(id=1)),
+            ("id type", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(id="54248591")),
+            ("team", lambda e: e["protection_rules"][0]["reviewers"][0].update(type="Team")),
+            ("bypass", lambda e: e.update(can_admins_bypass=True)),
+            ("unreadable bypass", lambda e: e.pop("can_admins_bypass")),
+            ("extra reviewer", lambda e: e["protection_rules"][0]["reviewers"].append({"type": "User"})),
+            ("empty reviewer", lambda e: e["protection_rules"][0].update(reviewers=[])),
+            ("malformed reviewer", lambda e: e["protection_rules"][0].update(reviewers=[None])),
+            ("malformed identity", lambda e: e["protection_rules"][0]["reviewers"][0].update(reviewer=None)),
+            ("missing self-review", lambda e: e["protection_rules"][0].pop("prevent_self_review")),
+            ("unreadable self-review", lambda e: e["protection_rules"][0].update(prevent_self_review=None)),
+            ("extra review rule", lambda e: e["protection_rules"].append(e["protection_rules"][0])),
+        ]
+        for name, change in cases:
+            with self.subTest(name=name):
+                environment = self.sole_maintainer_environment()
+                change(environment)
+                with self.assertRaises(ReleaseGateError):
+                    validate_environment_protection(environment, repository="joshyorko/rcc")
+
+    def test_environment_api_supplies_repository_scope(self):
+        environment = self.sole_maintainer_environment()
+        with patch("release_publication._api_get", return_value=environment) as get:
+            self.assertTrue(publication.verify_environment_api(
+                "https://api.github.test", "audit-token-fixture", "joshyorko/rcc", "rcc-production"))
+        self.assertEqual(get.call_args.args, (
+            "https://api.github.test/repos/joshyorko/rcc/environments/rcc-production", "audit-token-fixture"))
+        with patch("release_publication._api_get", return_value=environment):
+            with self.assertRaisesRegex(ReleaseGateError, "self-review"):
+                publication.verify_environment_api(
+                    "https://api.github.test", "audit-token-fixture", "another/rcc", "rcc-production")
+
     def test_rejects_missing_or_unprotected_environment(self):
         with self.assertRaisesRegex(ReleaseGateError, "unreadable"):
             validate_environment_protection(None)
