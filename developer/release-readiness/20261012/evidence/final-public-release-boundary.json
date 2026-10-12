@@ -1,0 +1,32 @@
+[
+  {
+    "check": "final-public-environment-read",
+    "httpStatus": 200,
+    "visibleEnvironmentNames": [
+      "copilot"
+    ],
+    "tagName": null,
+    "message": null
+  },
+  {
+    "check": "final-public-release-recheck",
+    "httpStatus": 200,
+    "visibleEnvironmentNames": [],
+    "tagName": "v18.19.5",
+    "message": null
+  },
+  {
+    "check": "final-public-tag-recheck",
+    "httpStatus": 404,
+    "visibleEnvironmentNames": [],
+    "tagName": null,
+    "message": "Not Found"
+  },
+  {
+    "check": "final-public-version-recheck",
+    "httpStatus": 404,
+    "visibleEnvironmentNames": [],
+    "tagName": null,
+    "message": "Not Found"
+  }
+]

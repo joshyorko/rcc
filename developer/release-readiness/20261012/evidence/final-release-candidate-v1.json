@@ -1,0 +1,36 @@
+{
+  "commands": [
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke assets",
+    "go build -ldflags -s -o build/ ./cmd/...",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke artifactFocused",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke artifactRace",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke artifactVertical",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke artifactConsumerVertical",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke artifactRobot",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke binaryInventory",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke largeStream",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke robot",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke selfHost",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke goVet",
+    "/home/runner/work/rcc/rcc-release-candidate-home/holotree/62fb83f_5a1fac3_9fcd2534/bin/python3.10 -m invoke coordinationAcceptance"
+  ],
+  "commitSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "gates": {
+    "artifactConsumerVertical": "passed",
+    "artifactFocused": "passed",
+    "artifactRace": "passed",
+    "artifactRobot": "passed",
+    "artifactVertical": "passed",
+    "binaryInventory": "passed",
+    "coordinationAcceptance": "passed",
+    "goVet": "passed",
+    "largeStream": "passed",
+    "robot": "passed",
+    "selfHost": "passed"
+  },
+  "schemaVersion": 1,
+  "source": {
+    "path": "/home/runner/work/rcc/rcc/build/rcc",
+    "sha256": "3f0dfbc8ac83ac4d694d7c37ada3ff8fb37334a80c93e8c17f70d1a02c8f056d"
+  }
+}

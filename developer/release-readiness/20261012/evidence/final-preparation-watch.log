@@ -1,0 +1,1453 @@
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 14 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+* Native Runtime (windows-amd64) (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 15 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+* Native Runtime (windows-amd64) (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 16 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+* Native Runtime (windows-amd64) (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 16 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+* Native Runtime (windows-amd64) (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 17 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Native Runtime (windows-amd64) in 15m35s (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  - Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (windows-amd64): .github#2
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 17 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  * Run real native A-to-B acceptance
+  * Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Native Runtime (windows-amd64) in 15m35s (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  - Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (windows-amd64): .github#2
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 18 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Native Runtime (windows-amd64) in 15m35s (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  - Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (windows-amd64): .github#2
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 18 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Native Runtime (windows-amd64) in 15m35s (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  - Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (windows-amd64): .github#2
+
+Refreshing run status every 30 seconds. Press Ctrl+C to quit.
+
+* main Rcc · 38245229838
+Triggered via workflow_dispatch about 19 minutes ago
+
+JOBS
+* Release Candidate Verification (ID 114797325398)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Install pinned released RCC
+  ✓ Install Linux sandbox dependency
+  * Run contained release candidate gate
+  * Upload release candidate evidence
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Build RCC in 1m5s (ID 114797325676)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Set up Python 3.10
+  ✓ Install invoke
+  ✓ Show commit info
+  ✓ Debug Build Job
+  ✓ Build RCC
+  ✓ Prepare Artifacts
+  ✓ Upload RCC Binaries
+  ✓ Prepare native runtime binaries
+  ✓ Upload native runtime binaries
+  ✓ Post Set up Python 3.10
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (linux-amd64) in 9m28s (ID 114797717709)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  ✓ Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+✓ Native Runtime (macos-arm64) in 11m26s (ID 114797717743)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  ✓ Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+* Native Runtime (macos-amd64) (ID 114797717792)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  - Run Windows process supervision and artifact lock acceptance
+  - Run Windows Robot binary spelling acceptance
+  ✓ Run macOS system-alias no-follow acceptance
+  - Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  * Run Environment Artifact Robot acceptance against exact binary
+  * Bind Robot evidence into native runtime receipt
+  * Stage exact native binary for review
+  * Validate native review payload size
+  * Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  * Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  * Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  * Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+✓ Native Runtime (windows-amd64) in 15m35s (ID 114797717900)
+  ✓ Set up job
+  ✓ Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Assert exact candidate checkout
+  ✓ Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Download exact release-built RCC binary
+  ✓ Stage and assert native RCC binary
+  ✓ Install invoke
+  ✓ Setup Robot Environment
+  ✓ Run UV Python prefix symlink containment tests
+  ✓ Show commit info
+  ✓ Run Windows process supervision and artifact lock acceptance
+  ✓ Run Windows Robot binary spelling acceptance
+  - Run macOS system-alias no-follow acceptance
+  ✓ Run Windows Environment Artifact Robot acceptance against exact binary
+  ✓ Run real native A-to-B acceptance
+  - Run JAT-class real consumer A-to-B acceptance
+  - Run Environment Artifact Robot acceptance against exact binary
+  ✓ Bind Robot evidence into native runtime receipt
+  ✓ Stage exact native binary for review
+  ✓ Validate native review payload size
+  ✓ Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+  ✓ Post Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+  ✓ Post Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+  ✓ Post Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+  ✓ Complete job
+
+ANNOTATIONS
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Build RCC: .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Build RCC: .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (linux-amd64): .github#2
+
+- "The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748"
+Native Runtime (linux-amd64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (macos-arm64): .github#2
+
+- Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times.
+Native Runtime (macos-arm64): .github#1
+
+! Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+Native Runtime (windows-amd64): .github#2
+
+failed to get run: HTTP 401: Bad credentials (https://api.github.com/repos/joshyorko/rcc/actions/runs/38245229838?exclude_pull_requests=true)
+Try authenticating with:  gh auth login

@@ -1,0 +1,145 @@
+{
+  "total_count": 7,
+  "artifacts": [
+    {
+      "id": 11746351168,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NjM1MTE2OA==",
+      "name": "linux-amd64-native-runtime-receipt",
+      "size_in_bytes": 13390231,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746351168",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746351168/zip",
+      "expired": false,
+      "digest": "sha256:5adc88a47f2c6d1c9284ffd933fa09912b505347bda45d018eb26a59cade776a",
+      "created_at": "2026-10-12T12:00:54Z",
+      "updated_at": "2026-10-12T12:00:54Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11746264314,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NjI2NDMxNA==",
+      "name": "release-candidate-evidence",
+      "size_in_bytes": 156451104,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746264314",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746264314/zip",
+      "expired": false,
+      "digest": "sha256:f978ef3685a99ed2565b3682e273b641cd5156b3c3b082b98ac3db8a0933c574",
+      "created_at": "2026-10-12T12:16:43Z",
+      "updated_at": "2026-10-12T12:16:43Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11746257363,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NjI1NzM2Mw==",
+      "name": "windows-amd64-native-runtime-receipt",
+      "size_in_bytes": 10854368,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746257363",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746257363/zip",
+      "expired": false,
+      "digest": "sha256:6b70d454b23a4936803a9f3061738253fdae6a499de678cf64e87673066123bb",
+      "created_at": "2026-10-12T12:07:00Z",
+      "updated_at": "2026-10-12T12:07:00Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11745827600,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NTgyNzYwMA==",
+      "name": "macos-arm64-native-runtime-receipt",
+      "size_in_bytes": 12500965,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745827600",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745827600/zip",
+      "expired": false,
+      "digest": "sha256:590494a402576b59cfff23086f7736c15d57c11562d9eb7fae6bd7de74bd1b11",
+      "created_at": "2026-10-12T12:03:49Z",
+      "updated_at": "2026-10-12T12:03:49Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11745499753,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NTQ5OTc1Mw==",
+      "name": "macos-amd64-native-runtime-receipt",
+      "size_in_bytes": 13076516,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745499753",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745499753/zip",
+      "expired": false,
+      "digest": "sha256:77e3227746aa075731583bee21380bcd86928e5a3183d64b5bec529ff2eceea8",
+      "created_at": "2026-10-12T12:16:49Z",
+      "updated_at": "2026-10-12T12:16:49Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11745250370,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NTI1MDM3MA==",
+      "name": "native-runtime-binaries",
+      "size_in_bytes": 49116065,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745250370",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745250370/zip",
+      "expired": false,
+      "digest": "sha256:c761431f5981b2344f4e9307a729cca9701e8c2005d1c1932958d1c2582c4807",
+      "created_at": "2026-10-12T11:51:23Z",
+      "updated_at": "2026-10-12T11:51:23Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    },
+    {
+      "id": 11744726345,
+      "node_id": "MDg6QXJ0aWZhY3QxMTc0NDcyNjM0NQ==",
+      "name": "RCC-Binaries",
+      "size_in_bytes": 64521924,
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11744726345",
+      "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11744726345/zip",
+      "expired": false,
+      "digest": "sha256:4ea8067cb86cba642bb45aa75c314d9e07e283635549de1f3a72bda44d495321",
+      "created_at": "2026-10-12T11:51:19Z",
+      "updated_at": "2026-10-12T11:51:19Z",
+      "expires_at": "2027-01-10T11:50:20Z",
+      "workflow_run": {
+        "id": 38245229838,
+        "repository_id": 1051101627,
+        "head_repository_id": 1051101627,
+        "head_branch": "main",
+        "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+      }
+    }
+  ]
+}

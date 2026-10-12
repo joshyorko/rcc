@@ -1,0 +1,194 @@
+{
+  "allNineAssetBytesEqualCanonical": true,
+  "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+  "canonicalArtifactId": 11746509342,
+  "canonicalValidation": "passed",
+  "canonicalZipSha256": "c94d11e0e3f51c3ed6acbd0b0d8b75376cb3b436763626109b81271264eeb31e",
+  "preparationRunId": 38245229838,
+  "sidecarCount": 9,
+  "sidecarValidation": "passed",
+  "sidecars": [
+    {
+      "artifactId": 11746629184,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-index.json",
+      "assetSha256": "f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77",
+      "assetSize": 8949,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "index.json",
+        "assetSha256": "f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77",
+        "assetSize": 8949,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "ffbe2fcfb39914a6df9984af0a53a369a0998f52c4f3bbd55c4e044eef2e3eb5",
+      "zipSize": 13981
+    },
+    {
+      "artifactId": 11746234425,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rcc-linux64",
+      "assetSha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+      "assetSize": 22401186,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rcc-linux64",
+        "assetSha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+        "assetSize": 22401186,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "b8d83356c3fdda6960ba6e1e6a892bda5091d2781bf087a514fdd915643388f2",
+      "zipSize": 22406225
+    },
+    {
+      "artifactId": 11746654199,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rcc-macos64",
+      "assetSha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+      "assetSize": 22241232,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rcc-macos64",
+        "assetSha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+        "assetSize": 22241232,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "d007cdfc7301ce39190dca1170a65109c294ba8e10682440c2648b9bf2e33903",
+      "zipSize": 22246271
+    },
+    {
+      "artifactId": 11746259528,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rcc-macosarm64",
+      "assetSha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+      "assetSize": 20986322,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rcc-macosarm64",
+        "assetSha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+        "assetSize": 20986322,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "ff8faa846f653ebbb70bef1fe8c0f8db0f37d92eb6e6ccb007fd040198ce67d7",
+      "zipSize": 20991370
+    },
+    {
+      "artifactId": 11746514359,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rcc-windows64.exe",
+      "assetSha256": "7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238",
+      "assetSize": 20127232,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rcc-windows64.exe",
+        "assetSha256": "7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238",
+        "assetSize": 20127232,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "2843315ffbef6190286c023fda4e17ee5770d2bf07317ad1661fc5abce137184",
+      "zipSize": 20132289
+    },
+    {
+      "artifactId": 11746464347,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rccremote-linux64",
+      "assetSha256": "14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26",
+      "assetSize": 9351330,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rccremote-linux64",
+        "assetSha256": "14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26",
+        "assetSize": 9351330,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "641a02c7e69f5a954af319cb727af2c23dc0145ac64d2f05475b4a82440ae7c9",
+      "zipSize": 9356386
+    },
+    {
+      "artifactId": 11746629169,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rccremote-macos64",
+      "assetSha256": "597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab",
+      "assetSize": 9547136,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rccremote-macos64",
+        "assetSha256": "597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab",
+        "assetSize": 9547136,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "f252c0eb36adfd8aae3e95bef54e36b00a1fa8d731ee77245c3224f46647febf",
+      "zipSize": 9552192
+    },
+    {
+      "artifactId": 11746404419,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rccremote-macosarm64",
+      "assetSha256": "ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d",
+      "assetSize": 8886578,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rccremote-macosarm64",
+        "assetSha256": "ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d",
+        "assetSize": 8886578,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "20d0dfae9661249ba430b3b869621a9e80e395283aa7639b9a96655a22578500",
+      "zipSize": 8891643
+    },
+    {
+      "artifactId": 11745964467,
+      "artifactName": "v18.19.6-f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0-review-rccremote-windows64.exe",
+      "assetSha256": "5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197",
+      "assetSize": 9675264,
+      "identity": {
+        "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+        "assetName": "rccremote-windows64.exe",
+        "assetSha256": "5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197",
+        "assetSize": 9675264,
+        "preparationRunId": 38245229838,
+        "schemaVersion": 1,
+        "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+        "version": "v18.19.6"
+      },
+      "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "workflowRunId": 38245229838,
+      "zipSha256": "cc08614c1b0a01e93071aba8716b62a7afa74b23ee6998f9906577f0e8f70997",
+      "zipSize": 9680338
+    }
+  ],
+  "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "version": "v18.19.6"
+}

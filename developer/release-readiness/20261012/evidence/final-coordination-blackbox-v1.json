@@ -1,0 +1,13 @@
+{
+  "binarySha256": "3f0dfbc8ac83ac4d694d7c37ada3ff8fb37334a80c93e8c17f70d1a02c8f056d",
+  "commitSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "scenarios": {
+    "cli-claim": "published",
+    "cli-heartbeat": "renewed",
+    "cli-loopback-rejection": "rejected",
+    "cli-prewarm": "ready-and-capacity-limited",
+    "cli-release": "released",
+    "cli-wait": "artifact-backed"
+  },
+  "schemaVersion": 1
+}

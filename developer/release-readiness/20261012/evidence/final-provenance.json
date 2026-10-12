@@ -1,0 +1,72 @@
+{
+  "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+  "binaryBuildInfo": {
+    "rcc-linux64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "linux",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-macos64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goarch": "arm64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "windows",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-linux64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "linux",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-macos64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goarch": "arm64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "windows",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    }
+  },
+  "nativePlatforms": [
+    "darwin_amd64",
+    "darwin_arm64",
+    "linux_amd64",
+    "windows_amd64"
+  ],
+  "preparationRunId": 38245229838,
+  "releaseCandidateExitCode": 0,
+  "schemaVersion": 1,
+  "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "version": "v18.19.6"
+}

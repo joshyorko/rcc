@@ -1,0 +1,87 @@
+{
+  "createdUtc": "2026-10-12T12:25:01.218350+00:00",
+  "sourceEngineering": "GO",
+  "preparationAndArtifactReview": "GO",
+  "publication": "HOLD",
+  "remoteMain": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "merges": [
+    {
+      "pr": 243,
+      "head": "56cab486cd70865c9ca73bc66da9d756086e12c4",
+      "merge": "3aa418395b60165613af98688580b627fb843623"
+    },
+    {
+      "pr": 242,
+      "head": "3132e089f575260fb8104e365cdd37f3a5d6a799",
+      "merge": "f965f12acf19f333dca82a9a5dd6887e45c43a61"
+    },
+    {
+      "pr": 241,
+      "head": "5776739f151cb04282c333c5ba6ac29f54d805ef",
+      "merge": "9312f283068c0c5c259370b1bc8bd9065970225b"
+    },
+    {
+      "pr": 244,
+      "head": "03eed7451c475c644d15ea49a781f1635f3db9d8",
+      "merge": "66c44c0ce2a765989a1fdfcc6e3ed5716921d703"
+    },
+    {
+      "pr": 245,
+      "head": "df022c1eb8cd5106fe9d12ca3ddacc67343cf411",
+      "merge": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    }
+  ],
+  "publicationInputs": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "canonicalArtifactId": 11746509342,
+  "canonicalZipSha256": "c94d11e0e3f51c3ed6acbd0b0d8b75376cb3b436763626109b81271264eeb31e",
+  "manifestHashDerivedFromActualArtifactBytes": true,
+  "frozenComparison": "all nine asset hashes changed; original frozen bundle and exporter sidecar preserved; no old evidence rebound to corrected source",
+  "requiredRemainingGates": [
+    {
+      "gate": "Administrator release preflight",
+      "requirements": [
+        "Create and protect rcc-production under explicit administrator authorization; verify exactly one required-reviewers rule, at least one authorized different human reviewer, prevent_self_review=true and can_admins_bypass=false, and Administration:read release audit access.",
+        "Verify RCC_RELEASE_POLICY_AUDIT_TOKEN repository secret and its Administration:read permission. Do not create or expand credentials without operator authorization.",
+        "Verify publication GITHUB_TOKEN can create the new tag and release, and the separately configured HOMEBREW_TOOLS_PAT can dispatch the active homebrew-tools tap-auto-update.yml workflow. Readability alone is insufficient.",
+        "Obtain and disposition the actual current security dashboard alerts with authorized security read access, and explicitly decide whether the verified unsigned/ad hoc signing scope meets publication requirements."
+      ]
+    },
+    {
+      "gate": "Exact-candidate publication approval",
+      "requirements": [
+        "Josh explicitly approves the verified final source/run/version/manifest tuple and publication action. Conditional continuation approval is retained; the new exact tuple has not been approved."
+      ]
+    },
+    {
+      "gate": "Independent protected-job approval",
+      "requirements": [
+        "After an authorized publisher dispatch, a different authorized human approves the protected rcc-production job. The dispatcher cannot self-approve; admin bypass must be disabled."
+      ]
+    }
+  ],
+  "singleNextOperatorStep": "Administrator release preflight under explicit security/settings authorization, before requesting Josh final exact-tuple publication approval.",
+  "publicationActionsTaken": {
+    "tag": false,
+    "release": false,
+    "publisherDispatch": false,
+    "homebrewUpdate": false,
+    "credentialsOrSecuritySettingsChanged": false
+  },
+  "evidenceSha256": {
+    "final-candidate-verification.json": "e0bb12e6988add82f16d0e492acc5c7138a44bfc1f5d3566a40eb853bd8d9227",
+    "final-independent-artifact-review.json": "761b12fae9db890e2573f7feb27f4a42f23c7ff7d1f8902e1fef43d29147c411",
+    "final-review-sidecar-verification.json": "45ab0bc48d579ba3af6334766f4f398710f13e48dbc386ff59e8be43bf159377",
+    "final-signing.json": "bc27fc78f8ede3536453ec918d51e3be65f87fe052055cfaf3410e2fd4f05b70",
+    "final-source-verification.json": "d0cd4e54306ac27edf54d7d10bc6a5f7014c63e184f1473a93670a877274e577",
+    "final-security-summary.json": "2ef66b280dbeadfd1b045856ed109c3468d9cd2c76accfb95005decedbb90649",
+    "final-preparation-run.json": "b30463275cc778d8dd65d182a759517c09a1ce8f8c7baa71c6c8fdb1f5513398",
+    "final-preparation-jobs.json": "33d444db1e295c9489b545c173575e46cb320392cca22a5aef9d33d5ac7415aa",
+    "final-preparation-artifacts.json": "3d6aefdb463c91e26e72b26cf5ae2d7e2804cc2d7b29abd5178ef8f6921da101",
+    "final-public-release-boundary.json": "f807010e23f4af9f84781bd725141b09aed0f2dfdfb6b584531d8a4206086285"
+  }
+}

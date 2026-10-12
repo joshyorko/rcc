@@ -1,0 +1,13 @@
+{
+  "bufferBytes": 65536,
+  "bytes": 2147483648,
+  "commitSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "interruptionAcceptance": "TestHTTPInterruptedDownloadFailsVerificationThenFullRestartSucceeds",
+  "memoryBytes": 2764528,
+  "memoryDeltaBytes": 117552,
+  "platform": "linux/amd64",
+  "requests": 1,
+  "restartPolicy": "full-restart",
+  "schemaVersion": 1,
+  "sha256": "47194c6cbe6e6ebc28e1241b6739f03624563d1953fa876349f94c89f5d930f3"
+}

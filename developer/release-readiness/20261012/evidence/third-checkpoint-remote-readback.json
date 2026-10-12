@@ -1,0 +1,67 @@
+{
+  "commit": "e110b316fa6fcc3e5466a96b525c476f1cbc781e",
+  "verifiedChangedFiles": 12,
+  "mismatches": [],
+  "files": [
+    {
+      "path": "developer/release-readiness/20261012/README.md",
+      "sha256": "874537628af0e692f845bb946c860418b4ab42f1cee876b0653eca712c1cbc3e",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745827600-metadata.json",
+      "sha256": "2687061b468d96e11c1d7034f0bf36705298fe3294a9dc5d610cbc115567fa71",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745827600-verification.json",
+      "sha256": "27df9cad784d14a1d4ab5400881e85819b33130683bf8b6e01c9154aff9c9400",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746257363-metadata.json",
+      "sha256": "ba02dc6b7af4673712fd58a961a7d233266aee1c79ee9d6f0062a826caae2c95",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746257363-verification.json",
+      "sha256": "4257ff3578c87bb5db7f4c8463af133384a14ee1c4089d7a1795cbb020adc33c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746351168-metadata.json",
+      "sha256": "f1a90abd3590c57b69e553ccaf971cb83fa8f807e0cade1d4a6a9250bc46107c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746351168-verification.json",
+      "sha256": "01a92edcf8d91049780ce0bc9ce188bf25aabaa58ae68fa753bfc8861afeea50",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-verifier-proof.json",
+      "sha256": "96a3173de38f973c3f90dad3f9c9b47b9fc70939cd9b4ba0a864a151628a5c83",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/second-checkpoint-remote-readback.json",
+      "sha256": "41b7365417a3c0d367213e53c19150eddf22939fae312f4bb713a76198331484",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/verification-limitations.json",
+      "sha256": "86b9d8199d5e46526c7f55cf90ce2de2c73caf99f41db83344cf71f995b5b787",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/verifier-optimized-python-rejected.log",
+      "sha256": "cba3052a19dbc2576925dce85a1d9eac1528a8990a0633a394aaefae2b015242",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/verify_final_candidate.py",
+      "sha256": "bb63d1cf8efb56f81d54a7ab790e7a6cadd5489842401abba3b96104645020e7",
+      "matches": true
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "actualBinaryBuildInfo": {
+    "rcc-linux64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "linux",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-macos64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goarch": "arm64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rcc-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "windows",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-linux64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "linux",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-macos64": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goarch": "arm64",
+      "goos": "darwin",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    "rccremote-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goarch": "amd64",
+      "goos": "windows",
+      "vcsModified": false,
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    }
+  },
+  "apiRequiredJobs": "all seven success",
+  "artifactId": 11746509342,
+  "artifactZipSha256": "c94d11e0e3f51c3ed6acbd0b0d8b75376cb3b436763626109b81271264eeb31e",
+  "assetManifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+  "assets": {
+    "index.json": {
+      "sha256": "f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77",
+      "size": 8949
+    },
+    "rcc-linux64": {
+      "sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+      "size": 22401186
+    },
+    "rcc-macos64": {
+      "sha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+      "size": 22241232
+    },
+    "rcc-macosarm64": {
+      "sha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+      "size": 20986322
+    },
+    "rcc-windows64.exe": {
+      "sha256": "7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238",
+      "size": 20127232
+    },
+    "rccremote-linux64": {
+      "sha256": "14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26",
+      "size": 9351330
+    },
+    "rccremote-macos64": {
+      "sha256": "597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab",
+      "size": 9547136
+    },
+    "rccremote-macosarm64": {
+      "sha256": "ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d",
+      "size": 8886578
+    },
+    "rccremote-windows64.exe": {
+      "sha256": "5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197",
+      "size": 9675264
+    }
+  },
+  "comparisonWithFrozen7945": {
+    "index.json": {
+      "changed": true,
+      "newSha256": "f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77",
+      "newSize": 8949,
+      "oldSha256": "0bfdecc19330f76cab7a75800b6d7c882767679d6629ece6dc254e0798d1336c",
+      "oldSize": 8949
+    },
+    "rcc-linux64": {
+      "changed": true,
+      "newSha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+      "newSize": 22401186,
+      "oldSha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+      "oldSize": 22392994
+    },
+    "rcc-macos64": {
+      "changed": true,
+      "newSha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+      "newSize": 22241232,
+      "oldSha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+      "oldSize": 22228928
+    },
+    "rcc-macosarm64": {
+      "changed": true,
+      "newSha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+      "newSize": 20986322,
+      "oldSha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+      "oldSize": 20969810
+    },
+    "rcc-windows64.exe": {
+      "changed": true,
+      "newSha256": "7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238",
+      "newSize": 20127232,
+      "oldSha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+      "oldSize": 20117504
+    },
+    "rccremote-linux64": {
+      "changed": true,
+      "newSha256": "14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26",
+      "newSize": 9351330,
+      "oldSha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+      "oldSize": 9351330
+    },
+    "rccremote-macos64": {
+      "changed": true,
+      "newSha256": "597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab",
+      "newSize": 9547136,
+      "oldSha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+      "oldSize": 9543040
+    },
+    "rccremote-macosarm64": {
+      "changed": true,
+      "newSha256": "ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d",
+      "newSize": 8886578,
+      "oldSha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+      "oldSize": 8886578
+    },
+    "rccremote-windows64.exe": {
+      "changed": true,
+      "newSha256": "5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197",
+      "newSize": 9675264,
+      "oldSha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+      "oldSize": 9672192
+    }
+  },
+  "linuxJat": "validated by canonical bundle validator",
+  "n1ArchiveRollback": "imported",
+  "n1ArchiveSha256": "43d84bdc23778528eae8f542ac664ab9837b70ba4026b6f35edd0dfc4a6954ca",
+  "n1ArtifactIdentity": {
+    "artifactDigest": "sha256:210093636fe0779a9012ac50183774b42d5b07b9f636c06ab1c457d66ad6fd68",
+    "materializationId": "62fb83f_5a1fac3_0ca1aa6e"
+  },
+  "n1LegacyConsumption": "zero exit, old task marker and exact legacy closure validated",
+  "n1RollbackStateSha256": "5dd811f0bf30b0d00f28ef82a79a324206b81889c9469a640391f591aebe2dda",
+  "nativeRobot": {
+    "darwin_amd64": {
+      "fail": 0,
+      "pass": 1,
+      "skip": 0
+    },
+    "darwin_arm64": {
+      "fail": 0,
+      "pass": 1,
+      "skip": 0
+    },
+    "linux_amd64": {
+      "fail": 0,
+      "pass": 1,
+      "skip": 0
+    },
+    "windows_amd64": {
+      "fail": 0,
+      "pass": 1,
+      "skip": 0
+    }
+  },
+  "preparationRunId": 38245229838,
+  "publication": "HOLD",
+  "releaseCandidateGates": {
+    "artifactConsumerVertical": "passed",
+    "artifactFocused": "passed",
+    "artifactRace": "passed",
+    "artifactRobot": "passed",
+    "artifactVertical": "passed",
+    "binaryInventory": "passed",
+    "coordinationAcceptance": "passed",
+    "goVet": "passed",
+    "largeStream": "passed",
+    "robot": "passed",
+    "selfHost": "passed"
+  },
+  "releaseRobot": {
+    "fail": 0,
+    "pass": 171,
+    "skip": 1
+  },
+  "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "version": "v18.19.6"
+}
