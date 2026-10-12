@@ -1,0 +1,38 @@
+{
+  "recordedUtc": "2026-10-12T15:52:56.930426+00:00",
+  "attempt2": {
+    "run": 38270780149,
+    "job": 114888451777,
+    "head": "2092fcf0e4d6bd9cb87868580da87133f66bffd8",
+    "result": "failure",
+    "passed": [
+      "manualapproval",
+      "full job-tokenpolicy audit",
+      "HomebrewcredentialGET preflight",
+      "exact preparationmetadata/source ancestry/version",
+      "version absent",
+      "actualZIPdigest/fetch",
+      "validate-bundle"
+    ],
+    "failure": "actual topology CLI rejects unsupported --publisher-workflow; supported option --publication-workflow; exit2",
+    "failureUtc": "2026-10-12T15:45:12Z",
+    "laterWrites": "tag/release/Homebrew dispatch skipped"
+  },
+  "authorizedCorrection": {
+    "pr": 248,
+    "acceptedHead": "f3200dc852a480a3a3ff26db066a7b9e4ca689cb",
+    "files": [
+      ".github/workflows/publish-release.yml",
+      "scripts/test_validate_release_topology.py"
+    ],
+    "behavior": "one corrected workflow flag; no parser/securitypolicy/credentials/runtime changes",
+    "regressionRED": "actual argparseexit2 inboth newtests beforefix",
+    "focusedTests": 53,
+    "fullToolingTests": 151,
+    "independentReview": "bootstrap ACCEPT exacthead;53tests pass",
+    "actualCanonicalCheck": "corrected actualtopologyinvocation passes against retainedcanonicalassets andexactf35workflowbytes",
+    "audit": "every publisher Pythoninvocation checkedagainstactualCLIparser beforework; gh/GitHubAPIcommands subject toindependentread-onlyreview",
+    "status": "draftPR248 pendingexact-headhostedCI; no merge/newpublicationattempt yet",
+    "candidateUnchanged": "f35/38245229838/v18.19.6/a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  }
+}

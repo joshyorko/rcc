@@ -1,0 +1,679 @@
+﻿2026-10-12T15:44:24.8916649Z Current runner version: '2.337.0'
+2026-10-12T15:44:24.8942841Z ##[group]Runner Image Provisioner
+2026-10-12T15:44:24.8943890Z Hosted Compute Agent
+2026-10-12T15:44:24.8944525Z Version: 20261002.596
+2026-10-12T15:44:24.8945521Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-12T15:44:24.8946328Z Build Date: 2026-10-02T22:28:27Z
+2026-10-12T15:44:24.8947081Z Worker ID: {5504047c-b9eb-4e92-aac9-41e955a6924e}
+2026-10-12T15:44:24.8947929Z Region: westus2
+2026-10-12T15:44:24.8948724Z Cloud: Azure
+2026-10-12T15:44:24.8949330Z ##[endgroup]
+2026-10-12T15:44:24.8951012Z ##[group]Operating System
+2026-10-12T15:44:24.8951695Z Ubuntu
+2026-10-12T15:44:24.8952348Z 24.04.5
+2026-10-12T15:44:24.8952948Z LTS
+2026-10-12T15:44:24.8953531Z ##[endgroup]
+2026-10-12T15:44:24.8954124Z ##[group]Runner Image
+2026-10-12T15:44:24.8954774Z Image: ubuntu-24.04
+2026-10-12T15:44:24.8955451Z Version: 20261004.327.1
+2026-10-12T15:44:24.8956747Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-12T15:44:24.8958610Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-12T15:44:24.8959628Z ##[endgroup]
+2026-10-12T15:44:24.8960951Z ##[group]GITHUB_TOKEN Permissions
+2026-10-12T15:44:24.8963091Z Actions: read
+2026-10-12T15:44:24.8963843Z Contents: write
+2026-10-12T15:44:24.8964460Z Metadata: read
+2026-10-12T15:44:24.8965143Z ##[endgroup]
+2026-10-12T15:44:24.8967220Z Secret source: Actions
+2026-10-12T15:44:24.8968893Z Cache mode: write
+2026-10-12T15:44:24.8969913Z Prepare workflow directory
+2026-10-12T15:44:24.9502129Z Prepare all required actions
+2026-10-12T15:44:24.9549861Z Getting action download info
+2026-10-12T15:44:25.2910986Z Download action repository 'actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd' (SHA:93cb6efe18208431cddfb8368fd83d5badbf9bfd)
+2026-10-12T15:44:25.4115668Z Download action repository 'actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405' (SHA:a309ff8b426b58ec0e2a45f0f869d46889d02405)
+2026-10-12T15:44:25.5185498Z Download action repository 'actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c' (SHA:4a3601121dd01d1626a1e23e37211e3254c1c06c)
+2026-10-12T15:44:25.8307238Z Download action repository 'actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd' (SHA:ed597411d8f924073f98dfc5c65a23a2325f34cd)
+2026-10-12T15:44:26.1422350Z Complete job name: Publish Reviewed RCC Preparation
+2026-10-12T15:44:26.2170577Z ##[group]Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+2026-10-12T15:44:26.2171641Z with:
+2026-10-12T15:44:26.2172155Z   ref: 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:44:26.2172768Z   fetch-depth: 0
+2026-10-12T15:44:26.2173242Z   repository: joshyorko/rcc
+2026-10-12T15:44:26.2177244Z   token: ***
+2026-10-12T15:44:26.2177701Z   ssh-strict: true
+2026-10-12T15:44:26.2178385Z   ssh-user: git
+2026-10-12T15:44:26.2178880Z   persist-credentials: true
+2026-10-12T15:44:26.2179391Z   clean: true
+2026-10-12T15:44:26.2179857Z   sparse-checkout-cone-mode: true
+2026-10-12T15:44:26.2180425Z   fetch-tags: false
+2026-10-12T15:44:26.2180887Z   show-progress: true
+2026-10-12T15:44:26.2181358Z   lfs: false
+2026-10-12T15:44:26.2181797Z   submodules: false
+2026-10-12T15:44:26.2182280Z   set-safe-directory: true
+2026-10-12T15:44:26.2183022Z env:
+2026-10-12T15:44:26.2183518Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:26.2184304Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:26.2184969Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:26.2185818Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:26.2186692Z ##[endgroup]
+2026-10-12T15:44:26.3150391Z Syncing repository: joshyorko/rcc
+2026-10-12T15:44:26.3152199Z ##[group]Getting Git version info
+2026-10-12T15:44:26.3152916Z Working directory is '/home/runner/work/rcc/rcc'
+2026-10-12T15:44:26.3153898Z [command]/usr/bin/git version
+2026-10-12T15:44:26.3247148Z git version 2.55.0
+2026-10-12T15:44:26.3268864Z ##[endgroup]
+2026-10-12T15:44:26.3282897Z Temporarily overriding HOME='/home/runner/work/_temp/84f59892-7278-417a-b14d-98c58963137a' before making global git config changes
+2026-10-12T15:44:26.3287585Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:44:26.3289429Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-12T15:44:26.3336130Z Deleting the contents of '/home/runner/work/rcc/rcc'
+2026-10-12T15:44:26.3408672Z ##[group]Initializing the repository
+2026-10-12T15:44:26.3409606Z [command]/usr/bin/git init /home/runner/work/rcc/rcc
+2026-10-12T15:44:26.3468742Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T15:44:26.3469896Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T15:44:26.3470856Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T15:44:26.3471851Z hint: call:
+2026-10-12T15:44:26.3472546Z hint:
+2026-10-12T15:44:26.3473246Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T15:44:26.3473915Z hint:
+2026-10-12T15:44:26.3474516Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T15:44:26.3475468Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T15:44:26.3476234Z hint:
+2026-10-12T15:44:26.3476958Z hint: 	git branch -m <name>
+2026-10-12T15:44:26.3477903Z hint:
+2026-10-12T15:44:26.3479061Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T15:44:26.3480088Z Initialized empty Git repository in /home/runner/work/rcc/rcc/.git/
+2026-10-12T15:44:26.3483052Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-10-12T15:44:26.3530944Z ##[endgroup]
+2026-10-12T15:44:26.3531754Z ##[group]Disabling automatic garbage collection
+2026-10-12T15:44:26.3534861Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T15:44:26.3563665Z ##[endgroup]
+2026-10-12T15:44:26.3564427Z ##[group]Setting up auth
+2026-10-12T15:44:26.3570507Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:44:26.3601982Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:44:26.3971294Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:44:26.4001435Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:44:26.4214955Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:44:26.4244135Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:44:26.4461141Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T15:44:26.4496992Z ##[endgroup]
+2026-10-12T15:44:26.4497960Z ##[group]Fetching the repository
+2026-10-12T15:44:26.4506414Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-12T15:44:28.4219908Z From https://github.com/joshyorko/rcc
+2026-10-12T15:44:28.4221467Z  * [new branch]      001-oci-image-build  -> origin/001-oci-image-build
+2026-10-12T15:44:28.4222845Z  * [new branch]      002-ui-wizard-enhancements -> origin/002-ui-wizard-enhancements
+2026-10-12T15:44:28.4223937Z  * [new branch]      acmm/rcc-hygiene     -> origin/acmm/rcc-hygiene
+2026-10-12T15:44:28.4225101Z  * [new branch]      acmm/rcc-quality-observability -> origin/acmm/rcc-quality-observability
+2026-10-12T15:44:28.4226205Z  * [new branch]      acmm/rcc-review-governance -> origin/acmm/rcc-review-governance
+2026-10-12T15:44:28.4228288Z  * [new branch]      add-workflow-workflows-daily-repo-status.md-7272 -> origin/add-workflow-workflows-daily-repo-status.md-7272
+2026-10-12T15:44:28.4229406Z  * [new branch]      bugs/clawpatch-fixes -> origin/bugs/clawpatch-fixes
+2026-10-12T15:44:28.4230398Z  * [new branch]      codex/119-lease-gc   -> origin/codex/119-lease-gc
+2026-10-12T15:44:28.4231665Z  * [new branch]      codex/rcc-118-uv-prefix-alias-20261011 -> origin/codex/rcc-118-uv-prefix-alias-20261011
+2026-10-12T15:44:28.4232999Z  * [new branch]      codex/rcc-124-compatibility-20261010 -> origin/codex/rcc-124-compatibility-20261010
+2026-10-12T15:44:28.4234139Z  * [new branch]      codex/rcc-125-benchmark-20261010 -> origin/codex/rcc-125-benchmark-20261010
+2026-10-12T15:44:28.4235561Z  * [new branch]      codex/rcc-125-profile-evidence-20261010 -> origin/codex/rcc-125-profile-evidence-20261010
+2026-10-12T15:44:28.4236747Z  * [new branch]      codex/rcc-133-contributor-map-20261011 -> origin/codex/rcc-133-contributor-map-20261011
+2026-10-12T15:44:28.4238404Z  * [new branch]      codex/rcc-181-scale-acceptance-20261011 -> origin/codex/rcc-181-scale-acceptance-20261011
+2026-10-12T15:44:28.4239798Z  * [new branch]      codex/rcc-182-journal-tests-20261011 -> origin/codex/rcc-182-journal-tests-20261011
+2026-10-12T15:44:28.4241344Z  * [new branch]      codex/rcc-208-serving-docs-20261010 -> origin/codex/rcc-208-serving-docs-20261010
+2026-10-12T15:44:28.4242475Z  * [new branch]      codex/rcc-226-worker-limit-20261010 -> origin/codex/rcc-226-worker-limit-20261010
+2026-10-12T15:44:28.4243865Z  * [new branch]      codex/rcc-automatic-policy-audit-20261012 -> origin/codex/rcc-automatic-policy-audit-20261012
+2026-10-12T15:44:28.4245064Z  * [new branch]      codex/rcc-bootstrap-correctness-20261012 -> origin/codex/rcc-bootstrap-correctness-20261012
+2026-10-12T15:44:28.4246475Z  * [new branch]      codex/rcc-go-security-patch-20261010 -> origin/codex/rcc-go-security-patch-20261010
+2026-10-12T15:44:28.4247632Z  * [new branch]      codex/rcc-integrated-candidate-20261010 -> origin/codex/rcc-integrated-candidate-20261010
+2026-10-12T15:44:28.4249423Z  * [new branch]      codex/rcc-integrated-candidate-20261011 -> origin/codex/rcc-integrated-candidate-20261011
+2026-10-12T15:44:28.4251222Z  * [new branch]      codex/rcc-integrated-candidate-20261011-acceptance -> origin/codex/rcc-integrated-candidate-20261011-acceptance
+2026-10-12T15:44:28.4253317Z  * [new branch]      codex/rcc-integrated-candidate-20261011-contract-docs -> origin/codex/rcc-integrated-candidate-20261011-contract-docs
+2026-10-12T15:44:28.4254431Z  * [new branch]      codex/rcc-integrated-candidate-20261011-hosted-gate -> origin/codex/rcc-integrated-candidate-20261011-hosted-gate
+2026-10-12T15:44:28.4255322Z  * [new branch]      codex/rcc-jat-fixture-pin-20261010 -> origin/codex/rcc-jat-fixture-pin-20261010
+2026-10-12T15:44:28.4256044Z  * [new branch]      codex/rcc-network-cleanup-20261012 -> origin/codex/rcc-network-cleanup-20261012
+2026-10-12T15:44:28.4256807Z  * [new branch]      codex/rcc-non-holotree-handoff-20261012 -> origin/codex/rcc-non-holotree-handoff-20261012
+2026-10-12T15:44:28.4257716Z  * [new branch]      codex/rcc-quality-residuals-20261012 -> origin/codex/rcc-quality-residuals-20261012
+2026-10-12T15:44:28.4259229Z  * [new branch]      codex/rcc-release-notes-20261012 -> origin/codex/rcc-release-notes-20261012
+2026-10-12T15:44:28.4260376Z  * [new branch]      codex/rcc-release-v18.19.6-20261010 -> origin/codex/rcc-release-v18.19.6-20261010
+2026-10-12T15:44:28.4261603Z  * [new branch]      codex/rcc-robot-proxy-20261010 -> origin/codex/rcc-robot-proxy-20261010
+2026-10-12T15:44:28.4262855Z  * [new branch]      codex/rcc-runtime-correctness-20261012 -> origin/codex/rcc-runtime-correctness-20261012
+2026-10-12T15:44:28.4263880Z  * [new branch]      codex/rcc-sole-maintainer-release-20261012 -> origin/codex/rcc-sole-maintainer-release-20261012
+2026-10-12T15:44:28.4265056Z  * [new branch]      codex/rcc-swarm-acceptance-evidence-20261011 -> origin/codex/rcc-swarm-acceptance-evidence-20261011
+2026-10-12T15:44:28.4266367Z  * [new branch]      codex/rcc-trust-key-compat-20261010 -> origin/codex/rcc-trust-key-compat-20261010
+2026-10-12T15:44:28.4267125Z  * [new branch]      codex/rcc-two-phase-release-20261011 -> origin/codex/rcc-two-phase-release-20261011
+2026-10-12T15:44:28.4267806Z  * [new branch]      experiment/room-artifact-v2 -> origin/experiment/room-artifact-v2
+2026-10-12T15:44:28.4268669Z  * [new branch]      feat/rcc-object-storage-cas -> origin/feat/rcc-object-storage-cas
+2026-10-12T15:44:28.4269527Z  * [new branch]      feature/63-holotree-zstd-compression -> origin/feature/63-holotree-zstd-compression
+2026-10-12T15:44:28.4270442Z  * [new branch]      feature/environment-artifacts-v1 -> origin/feature/environment-artifacts-v1
+2026-10-12T15:44:28.4271577Z  * [new branch]      feature/fuse-virtual-holotree -> origin/feature/fuse-virtual-holotree
+2026-10-12T15:44:28.4272685Z  * [new branch]      feature/uv-native-fast-path -> origin/feature/uv-native-fast-path
+2026-10-12T15:44:28.4273705Z  * [new branch]      fix/issue-121-archive-compat-preflight -> origin/fix/issue-121-archive-compat-preflight
+2026-10-12T15:44:28.4274561Z  * [new branch]      fix/portable-linux-artifact-kernel-floor -> origin/fix/portable-linux-artifact-kernel-floor
+2026-10-12T15:44:28.4275305Z  * [new branch]      guide/docs-update-stale-docs -> origin/guide/docs-update-stale-docs
+2026-10-12T15:44:28.4275935Z  * [new branch]      hive/issue-120-v18-19-release -> origin/hive/issue-120-v18-19-release
+2026-10-12T15:44:28.4276563Z  * [new branch]      hive/issue-121-portability -> origin/hive/issue-121-portability
+2026-10-12T15:44:28.4277267Z  * [new branch]      hive/issue-125-holotree-benchmarks -> origin/hive/issue-125-holotree-benchmarks
+2026-10-12T15:44:28.4278184Z  * [new branch]      hive/issue-126-trust -> origin/hive/issue-126-trust
+2026-10-12T15:44:28.4278836Z  * [new branch]      hive/issue-127-build-coordination -> origin/hive/issue-127-build-coordination
+2026-10-12T15:44:28.4279518Z  * [new branch]      issue-123-streaming-provider -> origin/issue-123-streaming-provider
+2026-10-12T15:44:28.4280187Z  * [new branch]      issue-124-manifest-archive -> origin/issue-124-manifest-archive
+2026-10-12T15:44:28.4281041Z  * [new branch]      jyorko-agent/fix-hololib-import-zip-slip-vulnerability -> origin/jyorko-agent/fix-hololib-import-zip-slip-vulnerability
+2026-10-12T15:44:28.4282360Z  * [new branch]      jyorko-agent/fix-javascript-injection-in-release-workflow -> origin/jyorko-agent/fix-javascript-injection-in-release-workflow
+2026-10-12T15:44:28.4283445Z  * [new branch]      jyorko-agent/fix-unsafe-micromamba-tar-extraction -> origin/jyorko-agent/fix-unsafe-micromamba-tar-extraction
+2026-10-12T15:44:28.4284406Z  * [new branch]      jyorko-agent/fix-zip-extraction-vulnerability -> origin/jyorko-agent/fix-zip-extraction-vulnerability
+2026-10-12T15:44:28.4285367Z  * [new branch]      jyorko-agent/propose-fix-for-ci-command-injection -> origin/jyorko-agent/propose-fix-for-ci-command-injection
+2026-10-12T15:44:28.4286388Z  * [new branch]      jyorko-agent/propose-fix-for-mutable-ci-dependencies -> origin/jyorko-agent/propose-fix-for-mutable-ci-dependencies
+2026-10-12T15:44:28.4287527Z  * [new branch]      jyorko-agent/propose-fix-for-release-permission-vulnerability -> origin/jyorko-agent/propose-fix-for-release-permission-vulnerability
+2026-10-12T15:44:28.4288814Z  * [new branch]      jyorko-agent/propose-fix-for-template-vulnerability -> origin/jyorko-agent/propose-fix-for-template-vulnerability
+2026-10-12T15:44:28.4289553Z  * [new branch]      main                 -> origin/main
+2026-10-12T15:44:28.4290102Z  * [new branch]      patchraptor/buildcoord-backoff -> origin/patchraptor/buildcoord-backoff
+2026-10-12T15:44:28.4290830Z  * [new branch]      patchraptor/buildcoord-backoff-only -> origin/patchraptor/buildcoord-backoff-only
+2026-10-12T15:44:28.4291583Z  * [new branch]      patchraptor/buildcoord-contract -> origin/patchraptor/buildcoord-contract
+2026-10-12T15:44:28.4292380Z  * [new branch]      patchraptor/buildcoord-runtime-prerequisite -> origin/patchraptor/buildcoord-runtime-prerequisite
+2026-10-12T15:44:28.4293310Z  * [new branch]      patchraptor/coverage-131-181-182 -> origin/patchraptor/coverage-131-181-182
+2026-10-12T15:44:28.4294109Z  * [new branch]      patchraptor/coverage-131-181-182-deterministic -> origin/patchraptor/coverage-131-181-182-deterministic
+2026-10-12T15:44:28.4294998Z  * [new branch]      patchraptor/issue-121-jat-materialization -> origin/patchraptor/issue-121-jat-materialization
+2026-10-12T15:44:28.4295870Z  * [new branch]      patchraptor/issue-121-platform-compatibility -> origin/patchraptor/issue-121-platform-compatibility
+2026-10-12T15:44:28.4296770Z  * [new branch]      patchraptor/issue-122-crash-boundary-main19ca -> origin/patchraptor/issue-122-crash-boundary-main19ca
+2026-10-12T15:44:28.4297557Z  * [new branch]      patchraptor/issue-122-gc-policy -> origin/patchraptor/issue-122-gc-policy
+2026-10-12T15:44:28.4298438Z  * [new branch]      patchraptor/issue-122-stale-lease -> origin/patchraptor/issue-122-stale-lease
+2026-10-12T15:44:28.4299297Z  * [new branch]      patchraptor/issue-123-http-health-transitions -> origin/patchraptor/issue-123-http-health-transitions
+2026-10-12T15:44:28.4300139Z  * [new branch]      patchraptor/issue-130-journal-state -> origin/patchraptor/issue-130-journal-state
+2026-10-12T15:44:28.4300869Z  * [new branch]      patchraptor/journal-home-cleanup -> origin/patchraptor/journal-home-cleanup
+2026-10-12T15:44:28.4301637Z  * [new branch]      patchraptor/rcc-122-closure-verification -> origin/patchraptor/rcc-122-closure-verification
+2026-10-12T15:44:28.4302301Z  * [new branch]      recovery/v18.19.5    -> origin/recovery/v18.19.5
+2026-10-12T15:44:28.4302849Z  * [new branch]      release/v18.19.3-portability -> origin/release/v18.19.3-portability
+2026-10-12T15:44:28.4303406Z  * [new branch]      release/v18.19.5     -> origin/release/v18.19.5
+2026-10-12T15:44:28.4303836Z  * [new tag]         v18.10.0             -> v18.10.0
+2026-10-12T15:44:28.4304207Z  * [new tag]         v18.11.0             -> v18.11.0
+2026-10-12T15:44:28.4304577Z  * [new tag]         v18.12.0             -> v18.12.0
+2026-10-12T15:44:28.4304938Z  * [new tag]         v18.12.1             -> v18.12.1
+2026-10-12T15:44:28.4305301Z  * [new tag]         v18.13.0             -> v18.13.0
+2026-10-12T15:44:28.4305660Z  * [new tag]         v18.13.1             -> v18.13.1
+2026-10-12T15:44:28.4306141Z  * [new tag]         v18.16.0             -> v18.16.0
+2026-10-12T15:44:28.4306626Z  * [new tag]         v18.17.0             -> v18.17.0
+2026-10-12T15:44:28.4307162Z  * [new tag]         v18.17.1             -> v18.17.1
+2026-10-12T15:44:28.4307526Z  * [new tag]         v18.17.2             -> v18.17.2
+2026-10-12T15:44:28.4307893Z  * [new tag]         v18.17.3             -> v18.17.3
+2026-10-12T15:44:28.4308423Z  * [new tag]         v18.17.4             -> v18.17.4
+2026-10-12T15:44:28.4308779Z  * [new tag]         v18.17.5             -> v18.17.5
+2026-10-12T15:44:28.4309139Z  * [new tag]         v18.17.6             -> v18.17.6
+2026-10-12T15:44:28.4309522Z  * [new tag]         v18.17.7             -> v18.17.7
+2026-10-12T15:44:28.4309885Z  * [new tag]         v18.18.0             -> v18.18.0
+2026-10-12T15:44:28.4310249Z  * [new tag]         v18.18.1             -> v18.18.1
+2026-10-12T15:44:28.4310814Z  * [new tag]         v18.19.0             -> v18.19.0
+2026-10-12T15:44:28.4311223Z  * [new tag]         v18.19.0-rc.1        -> v18.19.0-rc.1
+2026-10-12T15:44:28.4311628Z  * [new tag]         v18.19.0-rc.2        -> v18.19.0-rc.2
+2026-10-12T15:44:28.4312014Z  * [new tag]         v18.19.0-rc.3        -> v18.19.0-rc.3
+2026-10-12T15:44:28.4312605Z  * [new tag]         v18.19.0-rc.4        -> v18.19.0-rc.4
+2026-10-12T15:44:28.4313004Z  * [new tag]         v18.19.1             -> v18.19.1
+2026-10-12T15:44:28.4313367Z  * [new tag]         v18.19.2             -> v18.19.2
+2026-10-12T15:44:28.4313726Z  * [new tag]         v18.19.3             -> v18.19.3
+2026-10-12T15:44:28.4314086Z  * [new tag]         v18.19.4             -> v18.19.4
+2026-10-12T15:44:28.4314610Z  * [new tag]         v18.19.5             -> v18.19.5
+2026-10-12T15:44:28.4314990Z  * [new tag]         v18.5.0              -> v18.5.0
+2026-10-12T15:44:28.4315354Z  * [new tag]         v18.6.0              -> v18.6.0
+2026-10-12T15:44:28.4315710Z  * [new tag]         v18.7.0              -> v18.7.0
+2026-10-12T15:44:28.4316062Z  * [new tag]         v18.8.0              -> v18.8.0
+2026-10-12T15:44:28.4316429Z  * [new tag]         v18.9.0              -> v18.9.0
+2026-10-12T15:44:28.4317071Z  * [new tag]         v18.9.1              -> v18.9.1
+2026-10-12T15:44:28.4318976Z [command]/usr/bin/git rev-parse --verify --quiet 2092fcf0e4d6bd9cb87868580da87133f66bffd8^{object}
+2026-10-12T15:44:28.4319615Z 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:44:28.4320537Z ##[endgroup]
+2026-10-12T15:44:28.4320995Z ##[group]Determining the checkout info
+2026-10-12T15:44:28.4321480Z ##[endgroup]
+2026-10-12T15:44:28.4321883Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T15:44:28.4323483Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T15:44:28.4358485Z ##[group]Checking out the ref
+2026-10-12T15:44:28.4362278Z [command]/usr/bin/git checkout --progress --force 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:44:28.4880240Z Note: switching to '2092fcf0e4d6bd9cb87868580da87133f66bffd8'.
+2026-10-12T15:44:28.4880807Z 
+2026-10-12T15:44:28.4881119Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T15:44:28.4881711Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T15:44:28.4882259Z state without impacting any branches by switching back to a branch.
+2026-10-12T15:44:28.4882609Z 
+2026-10-12T15:44:28.4882845Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T15:44:28.4883385Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T15:44:28.4883694Z 
+2026-10-12T15:44:28.4883834Z   git switch -c <new-branch-name>
+2026-10-12T15:44:28.4884042Z 
+2026-10-12T15:44:28.4884187Z Or undo this operation with:
+2026-10-12T15:44:28.4884378Z 
+2026-10-12T15:44:28.4884491Z   git switch -
+2026-10-12T15:44:28.4884646Z 
+2026-10-12T15:44:28.4884894Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T15:44:28.4885246Z 
+2026-10-12T15:44:28.4885778Z HEAD is now at 2092fcf Merge pull request #247 from joshyorko/codex/rcc-automatic-policy-audit-20261012
+2026-10-12T15:44:28.4893197Z ##[endgroup]
+2026-10-12T15:44:28.4932321Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T15:44:28.4956285Z 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:44:28.5221686Z ##[group]Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+2026-10-12T15:44:28.5222192Z with:
+2026-10-12T15:44:28.5222456Z   python-version: 3.10
+2026-10-12T15:44:28.5222739Z   check-latest: false
+2026-10-12T15:44:28.5225755Z   token: ***
+2026-10-12T15:44:28.5226026Z   update-environment: true
+2026-10-12T15:44:28.5226338Z   allow-prereleases: false
+2026-10-12T15:44:28.5226644Z   freethreaded: false
+2026-10-12T15:44:28.5226905Z env:
+2026-10-12T15:44:28.5227156Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:28.5227536Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:28.5227913Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:28.5228690Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:28.5229201Z ##[endgroup]
+2026-10-12T15:44:28.6546370Z ##[group]Installed versions
+2026-10-12T15:44:28.6643287Z Successfully set up CPython (3.10.22)
+2026-10-12T15:44:28.6644508Z ##[endgroup]
+2026-10-12T15:44:28.6797891Z ##[group]Run actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+2026-10-12T15:44:28.6798690Z with:
+2026-10-12T15:44:28.6798952Z   go-version: 1.26.9
+2026-10-12T15:44:28.6799229Z   check-latest: false
+2026-10-12T15:44:28.6802246Z   token: ***
+2026-10-12T15:44:28.6802501Z   cache: true
+2026-10-12T15:44:28.6802744Z env:
+2026-10-12T15:44:28.6803003Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:28.6803591Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:28.6803982Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:28.6804476Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:28.6805062Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:28.6805580Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:28.6806083Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:28.6806567Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:28.6807014Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:28.6807466Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:28.6807847Z ##[endgroup]
+2026-10-12T15:44:28.8299724Z Setup go version spec 1.26.9
+2026-10-12T15:44:28.8313624Z Attempting to download 1.26.9...
+2026-10-12T15:44:29.3602994Z matching 1.26.9...
+2026-10-12T15:44:29.3640853Z Acquiring 1.26.9 from https://github.com/actions/go-versions/releases/download/1.26.9-37875104533/go-1.26.9-linux-x64.tar.gz
+2026-10-12T15:44:29.8500864Z Extracting Go...
+2026-10-12T15:44:29.8660746Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/1096127b-5a78-4ce3-aaa7-40ec1432bd0e -f /home/runner/work/_temp/b40d0dcd-329a-46d8-b6f7-c59ae4da8a4e
+2026-10-12T15:44:31.4943172Z Successfully extracted go to /home/runner/work/_temp/1096127b-5a78-4ce3-aaa7-40ec1432bd0e
+2026-10-12T15:44:31.4943849Z Adding to the cache ...
+2026-10-12T15:44:37.3805219Z Successfully cached go to /opt/hostedtoolcache/go/1.26.9/x64
+2026-10-12T15:44:37.3806852Z Added go to the path
+2026-10-12T15:44:37.3809492Z Successfully set up Go version 1.26.9
+2026-10-12T15:44:37.4005344Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOMODCACHE
+2026-10-12T15:44:37.4036937Z [command]/opt/hostedtoolcache/go/1.26.9/x64/bin/go env GOCACHE
+2026-10-12T15:44:37.4071106Z /home/runner/go/pkg/mod
+2026-10-12T15:44:37.4094733Z /home/runner/.cache/go-build
+2026-10-12T15:44:37.6609788Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.26.9-14b47f31eec5c1b878ad4184139696410b24861d8f0018bbfa6c1e6c74bfc953
+2026-10-12T15:44:38.9829545Z Received 0 of 196189775 (0.0%), 0.0 MBs/sec
+2026-10-12T15:44:39.9832478Z Received 109051904 of 196189775 (55.6%), 52.0 MBs/sec
+2026-10-12T15:44:40.8545697Z Received 196189775 of 196189775 (100.0%), 65.1 MBs/sec
+2026-10-12T15:44:40.8546774Z Cache Size: ~187 MB (196189775 B)
+2026-10-12T15:44:40.8699059Z [command]/usr/bin/tar -xf /home/runner/work/_temp/a8a83894-7869-4032-ae95-88f524381343/cache.tzst -P -C /home/runner/work/rcc/rcc --use-compress-program unzstd
+2026-10-12T15:44:42.3487884Z Cache restored successfully
+2026-10-12T15:44:42.3610531Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.26.9-14b47f31eec5c1b878ad4184139696410b24861d8f0018bbfa6c1e6c74bfc953
+2026-10-12T15:44:42.3629535Z go version go1.26.9 linux/amd64
+2026-10-12T15:44:42.3630192Z 
+2026-10-12T15:44:42.3630868Z ##[group]go env
+2026-10-12T15:44:42.4628693Z AR='ar'
+2026-10-12T15:44:42.4629335Z CC='gcc'
+2026-10-12T15:44:42.4630225Z CGO_CFLAGS='-O2 -g'
+2026-10-12T15:44:42.4630919Z CGO_CPPFLAGS=''
+2026-10-12T15:44:42.4631563Z CGO_CXXFLAGS='-O2 -g'
+2026-10-12T15:44:42.4632138Z CGO_ENABLED='1'
+2026-10-12T15:44:42.4632688Z CGO_FFLAGS='-O2 -g'
+2026-10-12T15:44:42.4633280Z CGO_LDFLAGS='-O2 -g'
+2026-10-12T15:44:42.4633806Z CXX='g++'
+2026-10-12T15:44:42.4634307Z GCCGO='gccgo'
+2026-10-12T15:44:42.4634812Z GO111MODULE=''
+2026-10-12T15:44:42.4635317Z GOAMD64='v1'
+2026-10-12T15:44:42.4636345Z GOARCH='amd64'
+2026-10-12T15:44:42.4636904Z GOAUTH='netrc'
+2026-10-12T15:44:42.4637410Z GOBIN=''
+2026-10-12T15:44:42.4637969Z GOCACHE='/home/runner/.cache/go-build'
+2026-10-12T15:44:42.4638851Z GOCACHEPROG=''
+2026-10-12T15:44:42.4639370Z GODEBUG=''
+2026-10-12T15:44:42.4639912Z GOENV='/home/runner/.config/go/env'
+2026-10-12T15:44:42.4640526Z GOEXE=''
+2026-10-12T15:44:42.4641016Z GOEXPERIMENT=''
+2026-10-12T15:44:42.4642394Z GOFIPS140='off'
+2026-10-12T15:44:42.4643032Z GOFLAGS=''
+2026-10-12T15:44:42.4644508Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build1021229820=/tmp/go-build -gno-record-gcc-switches'
+2026-10-12T15:44:42.4645954Z GOHOSTARCH='amd64'
+2026-10-12T15:44:42.4646494Z GOHOSTOS='linux'
+2026-10-12T15:44:42.4647116Z GOINSECURE=''
+2026-10-12T15:44:42.4647703Z GOMOD='/home/runner/work/rcc/rcc/go.mod'
+2026-10-12T15:44:42.4648586Z GOMODCACHE='/home/runner/go/pkg/mod'
+2026-10-12T15:44:42.4649249Z GONOPROXY=''
+2026-10-12T15:44:42.4649798Z GONOSUMDB=''
+2026-10-12T15:44:42.4650297Z GOOS='linux'
+2026-10-12T15:44:42.4650845Z GOPATH='/home/runner/go'
+2026-10-12T15:44:42.4651490Z GOPRIVATE=''
+2026-10-12T15:44:42.4652117Z GOPROXY='https://proxy.golang.org,direct'
+2026-10-12T15:44:42.4652870Z GOROOT='/opt/hostedtoolcache/go/1.26.9/x64'
+2026-10-12T15:44:42.4653562Z GOSUMDB='sum.golang.org'
+2026-10-12T15:44:42.4654190Z GOTELEMETRY='local'
+2026-10-12T15:44:42.4654908Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+2026-10-12T15:44:42.4655870Z GOTMPDIR=''
+2026-10-12T15:44:42.4656424Z GOTOOLCHAIN='local'
+2026-10-12T15:44:42.4657259Z GOTOOLDIR='/opt/hostedtoolcache/go/1.26.9/x64/pkg/tool/linux_amd64'
+2026-10-12T15:44:42.4658488Z GOVCS=''
+2026-10-12T15:44:42.4715853Z GOVERSION='go1.26.9'
+2026-10-12T15:44:42.4716633Z GOWORK=''
+2026-10-12T15:44:42.4717254Z PKG_CONFIG='pkg-config'
+2026-10-12T15:44:42.4717727Z 
+2026-10-12T15:44:42.4718715Z ##[endgroup]
+2026-10-12T15:44:42.6530603Z ##[group]Run python3 scripts/release_publication.py verify-environment --name rcc-production
+2026-10-12T15:44:42.6531878Z [36;1mpython3 scripts/release_publication.py verify-environment --name rcc-production[0m
+2026-10-12T15:44:42.7259415Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:42.7259874Z env:
+2026-10-12T15:44:42.7260221Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:42.7260797Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:42.7261379Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:42.7262156Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:42.7263082Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:42.7263824Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:42.7264579Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:42.7265378Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:42.7266063Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:42.7266739Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:42.7267327Z   GOTOOLCHAIN: local
+2026-10-12T15:44:42.7273930Z   RCC_RELEASE_POLICY_AUDIT_TOKEN: ***
+2026-10-12T15:44:42.7274406Z ##[endgroup]
+2026-10-12T15:44:44.1095986Z environment protection validated: rcc-production
+2026-10-12T15:44:44.1236849Z ##[group]Run python3 scripts/release_publication.py verify-run \
+2026-10-12T15:44:44.1237389Z [36;1mpython3 scripts/release_publication.py verify-run \[0m
+2026-10-12T15:44:44.1237786Z [36;1m  --run-id "$RCC_PREPARATION_RUN_ID" \[0m
+2026-10-12T15:44:44.1238488Z [36;1m  --source-sha "$RCC_SOURCE_SHA" \[0m
+2026-10-12T15:44:44.1238863Z [36;1m  --workflow-path .github/workflows/rcc.yaml[0m
+2026-10-12T15:44:44.1301615Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:44.1301885Z env:
+2026-10-12T15:44:44.1302101Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:44.1302444Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:44.1302788Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:44.1303232Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:44.1303769Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:44.1304290Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:44.1304741Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:44.1305311Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:44.1305709Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:44.1306103Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:44.1306431Z   GOTOOLCHAIN: local
+2026-10-12T15:44:44.1309558Z   GH_TOKEN: ***
+2026-10-12T15:44:44.1309784Z ##[endgroup]
+2026-10-12T15:44:45.4249667Z preparation run and artifact validated: id=11746509342
+2026-10-12T15:44:45.4388333Z ##[group]Run set -euo pipefail
+2026-10-12T15:44:45.4388680Z [36;1mset -euo pipefail[0m
+2026-10-12T15:44:45.4389026Z [36;1mif [[ ! "$RCC_PREPARATION_RUN_ID" =~ ^[0-9]+$ ]]; then[0m
+2026-10-12T15:44:45.4389403Z [36;1m  echo "Preparation run ID must be numeric."[0m
+2026-10-12T15:44:45.4389713Z [36;1m  exit 1[0m
+2026-10-12T15:44:45.4389909Z [36;1mfi[0m
+2026-10-12T15:44:45.4390156Z [36;1mif [[ ! "$RCC_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then[0m
+2026-10-12T15:44:45.4390520Z [36;1m  echo "Source SHA must be a full commit SHA."[0m
+2026-10-12T15:44:45.4390837Z [36;1m  exit 1[0m
+2026-10-12T15:44:45.4391030Z [36;1mfi[0m
+2026-10-12T15:44:45.4391274Z [36;1mgit fetch --no-tags origin "$RCC_SOURCE_SHA"[0m
+2026-10-12T15:44:45.4391612Z [36;1mgit cat-file -e "${RCC_SOURCE_SHA}^{commit}"[0m
+2026-10-12T15:44:45.4392005Z [36;1mgit merge-base --is-ancestor "$RCC_SOURCE_SHA" "$GITHUB_SHA"[0m
+2026-10-12T15:44:45.4455386Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T15:44:45.4455775Z env:
+2026-10-12T15:44:45.4455984Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:45.4456314Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:45.4456647Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:45.4457071Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:45.4457599Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4458301Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:45.4458738Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4459124Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4459510Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4459891Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:45.4460212Z   GOTOOLCHAIN: local
+2026-10-12T15:44:45.4460428Z ##[endgroup]
+2026-10-12T15:44:45.4608817Z From https://github.com/joshyorko/rcc
+2026-10-12T15:44:45.4609611Z  * branch            f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0 -> FETCH_HEAD
+2026-10-12T15:44:45.4739493Z ##[group]Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+2026-10-12T15:44:45.4739887Z with:
+2026-10-12T15:44:45.4740122Z   ref: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:45.4740432Z   path: release-source
+2026-10-12T15:44:45.4740674Z   persist-credentials: false
+2026-10-12T15:44:45.4740930Z   repository: joshyorko/rcc
+2026-10-12T15:44:45.4743914Z   token: ***
+2026-10-12T15:44:45.4744118Z   ssh-strict: true
+2026-10-12T15:44:45.4744320Z   ssh-user: git
+2026-10-12T15:44:45.4744515Z   clean: true
+2026-10-12T15:44:45.4744728Z   sparse-checkout-cone-mode: true
+2026-10-12T15:44:45.4744987Z   fetch-depth: 1
+2026-10-12T15:44:45.4745190Z   fetch-tags: false
+2026-10-12T15:44:45.4745397Z   show-progress: true
+2026-10-12T15:44:45.4745605Z   lfs: false
+2026-10-12T15:44:45.4745794Z   submodules: false
+2026-10-12T15:44:45.4746009Z   set-safe-directory: true
+2026-10-12T15:44:45.4746235Z env:
+2026-10-12T15:44:45.4746434Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:45.4746785Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:45.4747120Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:45.4747544Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:45.4748346Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4749006Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:45.4749440Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4749829Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4750226Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:45.4750614Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:45.4750943Z   GOTOOLCHAIN: local
+2026-10-12T15:44:45.4751160Z ##[endgroup]
+2026-10-12T15:44:45.5555263Z Syncing repository: joshyorko/rcc
+2026-10-12T15:44:45.5561785Z ##[group]Getting Git version info
+2026-10-12T15:44:45.5562537Z Working directory is '/home/runner/work/rcc/rcc/release-source'
+2026-10-12T15:44:45.5601741Z [command]/usr/bin/git version
+2026-10-12T15:44:45.5636384Z git version 2.55.0
+2026-10-12T15:44:45.5657013Z ##[endgroup]
+2026-10-12T15:44:45.5671890Z Temporarily overriding HOME='/home/runner/work/_temp/182c1d48-60cf-4def-b11c-599585a7dccf' before making global git config changes
+2026-10-12T15:44:45.5673361Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:44:45.5678098Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc/release-source
+2026-10-12T15:44:45.5709960Z ##[group]Initializing the repository
+2026-10-12T15:44:45.5714582Z [command]/usr/bin/git init /home/runner/work/rcc/rcc/release-source
+2026-10-12T15:44:45.5753856Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T15:44:45.5754861Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T15:44:45.5755589Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T15:44:45.5756005Z hint: call:
+2026-10-12T15:44:45.5756196Z hint:
+2026-10-12T15:44:45.5756459Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T15:44:45.5756779Z hint:
+2026-10-12T15:44:45.5757168Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T15:44:45.5758309Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T15:44:45.5758781Z hint:
+2026-10-12T15:44:45.5758988Z hint: 	git branch -m <name>
+2026-10-12T15:44:45.5759223Z hint:
+2026-10-12T15:44:45.5759564Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T15:44:45.5760410Z Initialized empty Git repository in /home/runner/work/rcc/rcc/release-source/.git/
+2026-10-12T15:44:45.5766684Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-10-12T15:44:45.5802289Z ##[endgroup]
+2026-10-12T15:44:45.5802990Z ##[group]Disabling automatic garbage collection
+2026-10-12T15:44:45.5806166Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T15:44:45.5834563Z ##[endgroup]
+2026-10-12T15:44:45.5835007Z ##[group]Setting up auth
+2026-10-12T15:44:45.5841266Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:44:45.5872404Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:44:45.6095453Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:44:45.6125639Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:44:45.6345356Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:44:45.6376103Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:44:45.6621598Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T15:44:45.6660201Z ##[endgroup]
+2026-10-12T15:44:45.6661255Z ##[group]Fetching the repository
+2026-10-12T15:44:45.6672841Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.1009098Z From https://github.com/joshyorko/rcc
+2026-10-12T15:44:46.1009685Z  * branch            f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0 -> FETCH_HEAD
+2026-10-12T15:44:46.1019916Z ##[endgroup]
+2026-10-12T15:44:46.1020543Z ##[group]Determining the checkout info
+2026-10-12T15:44:46.1021338Z ##[endgroup]
+2026-10-12T15:44:46.1022051Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T15:44:46.1062548Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T15:44:46.1093123Z ##[group]Checking out the ref
+2026-10-12T15:44:46.1097182Z [command]/usr/bin/git checkout --progress --force f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.1566069Z Note: switching to 'f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0'.
+2026-10-12T15:44:46.1566772Z 
+2026-10-12T15:44:46.1567199Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T15:44:46.1568205Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T15:44:46.1568850Z state without impacting any branches by switching back to a branch.
+2026-10-12T15:44:46.1569213Z 
+2026-10-12T15:44:46.1569468Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T15:44:46.1578429Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T15:44:46.1578952Z 
+2026-10-12T15:44:46.1579192Z   git switch -c <new-branch-name>
+2026-10-12T15:44:46.1579442Z 
+2026-10-12T15:44:46.1579568Z Or undo this operation with:
+2026-10-12T15:44:46.1579746Z 
+2026-10-12T15:44:46.1579852Z   git switch -
+2026-10-12T15:44:46.1579984Z 
+2026-10-12T15:44:46.1580235Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T15:44:46.1580580Z 
+2026-10-12T15:44:46.1580892Z HEAD is now at f35d6d5 Merge pull request #245 from joshyorko/codex/rcc-release-notes-20261012
+2026-10-12T15:44:46.1581847Z ##[endgroup]
+2026-10-12T15:44:46.1610782Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T15:44:46.1633902Z f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.1643159Z ##[group]Removing auth
+2026-10-12T15:44:46.1646947Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:44:46.1675380Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:44:46.1895252Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:44:46.1916329Z http.https://github.com/.extraheader
+2026-10-12T15:44:46.1926109Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-12T15:44:46.1956245Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:44:46.2177227Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:44:46.2205544Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:44:46.2418488Z ##[endgroup]
+2026-10-12T15:44:46.2590293Z ##[group]Run python3 scripts/release_publication.py validate-source \
+2026-10-12T15:44:46.2590829Z [36;1mpython3 scripts/release_publication.py validate-source \[0m
+2026-10-12T15:44:46.2591206Z [36;1m  --root release-source \[0m
+2026-10-12T15:44:46.2591498Z [36;1m  --source-sha "$RCC_SOURCE_SHA" \[0m
+2026-10-12T15:44:46.2591810Z [36;1m  --version "$RCC_RELEASE_VERSION"[0m
+2026-10-12T15:44:46.2653808Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:46.2654061Z env:
+2026-10-12T15:44:46.2654267Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:46.2654768Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.2655102Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:46.2655528Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:46.2656067Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.2656558Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:46.2657003Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.2657387Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.2657775Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.2658469Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:46.2658845Z   GOTOOLCHAIN: local
+2026-10-12T15:44:46.2659066Z ##[endgroup]
+2026-10-12T15:44:46.3525968Z exact release source and no-auto-publish workflow validated
+2026-10-12T15:44:46.3635623Z ##[group]Run python3 scripts/release_publication.py verify-downstream
+2026-10-12T15:44:46.3636156Z [36;1mpython3 scripts/release_publication.py verify-downstream[0m
+2026-10-12T15:44:46.3698788Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:46.3699112Z env:
+2026-10-12T15:44:46.3699328Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:46.3699663Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.3700000Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:46.3700437Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:46.3700977Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.3701419Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:46.3701848Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.3702227Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.3702673Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.3703082Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:46.3703411Z   GOTOOLCHAIN: local
+2026-10-12T15:44:46.3704091Z   HOMEBREW_TOOLS_PAT: ***
+2026-10-12T15:44:46.3704341Z ##[endgroup]
+2026-10-12T15:44:46.6607283Z Homebrew update workflow is readable and active
+2026-10-12T15:44:46.6745178Z ##[group]Run python3 scripts/release_publication.py verify-release-absent --version "$RCC_RELEASE_VERSION"
+2026-10-12T15:44:46.6745993Z [36;1mpython3 scripts/release_publication.py verify-release-absent --version "$RCC_RELEASE_VERSION"[0m
+2026-10-12T15:44:46.6807317Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:46.6807593Z env:
+2026-10-12T15:44:46.6807813Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:46.6808386Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:46.6808727Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:46.6809166Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:46.6809707Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.6810153Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:46.6810601Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.6811021Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.6811421Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:46.6811817Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:46.6812160Z   GOTOOLCHAIN: local
+2026-10-12T15:44:46.6815297Z   GH_TOKEN: ***
+2026-10-12T15:44:46.6815523Z ##[endgroup]
+2026-10-12T15:44:47.1944773Z tag and release are absent
+2026-10-12T15:44:47.2071117Z ##[group]Run python3 scripts/release_publication.py fetch-artifact \
+2026-10-12T15:44:47.2071638Z [36;1mpython3 scripts/release_publication.py fetch-artifact \[0m
+2026-10-12T15:44:47.2072028Z [36;1m  --run-id "$RCC_PREPARATION_RUN_ID" \[0m
+2026-10-12T15:44:47.2072521Z [36;1m  --source-sha "$RCC_SOURCE_SHA" \[0m
+2026-10-12T15:44:47.2072867Z [36;1m  --workflow-path .github/workflows/rcc.yaml \[0m
+2026-10-12T15:44:47.2073253Z [36;1m  --zip-path rcc-release-preparation.zip \[0m
+2026-10-12T15:44:47.2073590Z [36;1m  --output rcc-release-preparation[0m
+2026-10-12T15:44:47.2134575Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:44:47.2134831Z env:
+2026-10-12T15:44:47.2135034Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:44:47.2135376Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:44:47.2135720Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:44:47.2136161Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:44:47.2136723Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:47.2137166Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:44:47.2137604Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:47.2138229Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:47.2138634Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:44:47.2139047Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:44:47.2139380Z   GOTOOLCHAIN: local
+2026-10-12T15:44:47.2142473Z   GH_TOKEN: ***
+2026-10-12T15:44:47.2142690Z ##[endgroup]
+2026-10-12T15:45:11.7449712Z preparation artifact ZIP verified and extracted: id=11746509342 digest=sha256:c94d11e0e3f51c3ed6acbd0b0d8b75376cb3b436763626109b81271264eeb31e
+2026-10-12T15:45:11.7576866Z ##[group]Run python3 scripts/release_publication.py validate-bundle \
+2026-10-12T15:45:11.7577408Z [36;1mpython3 scripts/release_publication.py validate-bundle \[0m
+2026-10-12T15:45:11.7577803Z [36;1m  --root rcc-release-preparation \[0m
+2026-10-12T15:45:11.7578502Z [36;1m  --source-sha "$RCC_SOURCE_SHA" \[0m
+2026-10-12T15:45:11.7578843Z [36;1m  --version "$RCC_RELEASE_VERSION" \[0m
+2026-10-12T15:45:11.7579230Z [36;1m  --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \[0m
+2026-10-12T15:45:11.7579571Z [36;1m  --run-id "$RCC_PREPARATION_RUN_ID"[0m
+2026-10-12T15:45:11.7579921Z [36;1mpython3 scripts/validate_release_topology.py \[0m
+2026-10-12T15:45:11.7580297Z [36;1m  --asset-root rcc-release-preparation/assets \[0m
+2026-10-12T15:45:11.7580695Z [36;1m  --workflow release-source/.github/workflows/rcc.yaml \[0m
+2026-10-12T15:45:11.7581119Z [36;1m  --index rcc-release-preparation/assets/index.json \[0m
+2026-10-12T15:45:11.7581628Z [36;1m  --tag-workflow release-source/.github/workflows/create-release-tag.yml \[0m
+2026-10-12T15:45:11.7582214Z [36;1m  --publisher-workflow release-source/.github/workflows/publish-release.yml \[0m
+2026-10-12T15:45:11.7582791Z [36;1m  --recovery-workflow release-source/.github/workflows/recover-rcc-185.yml \[0m
+2026-10-12T15:45:11.7583233Z [36;1m  --version "$RCC_RELEASE_VERSION"[0m
+2026-10-12T15:45:11.7643483Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:45:11.7643747Z env:
+2026-10-12T15:45:11.7643955Z   RCC_PREPARATION_RUN_ID: 38245229838
+2026-10-12T15:45:11.7644288Z   RCC_SOURCE_SHA: f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+2026-10-12T15:45:11.7644623Z   RCC_RELEASE_VERSION: v18.19.6
+2026-10-12T15:45:11.7645059Z   RCC_ASSET_MANIFEST_SHA256: a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+2026-10-12T15:45:11.7645583Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:45:11.7646013Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:45:11.7646441Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:45:11.7646817Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:45:11.7647200Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:45:11.7647595Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:45:11.7647920Z   GOTOOLCHAIN: local
+2026-10-12T15:45:11.7648310Z ##[endgroup]
+2026-10-12T15:45:11.9780022Z prepared release artifact validated
+2026-10-12T15:45:12.0201117Z usage: validate_release_topology.py [-h] [--build-root BUILD_ROOT]
+2026-10-12T15:45:12.0202537Z                                     [--asset-root ASSET_ROOT]
+2026-10-12T15:45:12.0203721Z                                     [--workflow WORKFLOW]
+2026-10-12T15:45:12.0204891Z                                     [--tag-workflow TAG_WORKFLOW]
+2026-10-12T15:45:12.0205815Z                                     [--publication-workflow PUBLICATION_WORKFLOW]
+2026-10-12T15:45:12.0206708Z                                     [--recovery-workflow RECOVERY_WORKFLOW]
+2026-10-12T15:45:12.0207494Z                                     [--index INDEX] [--version VERSION]
+2026-10-12T15:45:12.0208157Z                                     [root]
+2026-10-12T15:45:12.0208621Z validate_release_topology.py: error: unrecognized arguments: --publisher-workflow
+2026-10-12T15:45:12.0265909Z ##[error]Process completed with exit code 2.
+2026-10-12T15:45:12.0411515Z Post job cleanup.
+2026-10-12T15:45:12.1298523Z [command]/usr/bin/git version
+2026-10-12T15:45:12.1334736Z git version 2.55.0
+2026-10-12T15:45:12.1373324Z Temporarily overriding HOME='/home/runner/work/_temp/7c0b0cdf-c86c-42c6-a435-a0614378d475' before making global git config changes
+2026-10-12T15:45:12.1374811Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:45:12.1379833Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc/release-source
+2026-10-12T15:45:12.1414721Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:45:12.1447310Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:45:12.1673935Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:45:12.1706242Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:45:12.1926005Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:45:12.1956212Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:45:12.2367791Z Post job cleanup.
+2026-10-12T15:45:12.3265300Z [command]/usr/bin/git version
+2026-10-12T15:45:12.3305708Z git version 2.55.0
+2026-10-12T15:45:12.3346435Z Temporarily overriding HOME='/home/runner/work/_temp/3ba14f8a-6937-4910-9a9f-c9d8bec12266' before making global git config changes
+2026-10-12T15:45:12.3348378Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:45:12.3354061Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-12T15:45:12.3393572Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:45:12.3430505Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:45:12.3682063Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:45:12.3705650Z http.https://github.com/.extraheader
+2026-10-12T15:45:12.3718603Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-12T15:45:12.3755063Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:45:12.3996878Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:45:12.4028617Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:45:12.4384649Z Cleaning up orphan processes
+
