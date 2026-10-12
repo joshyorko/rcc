@@ -225,6 +225,7 @@ def validate_environment_protection(environment, repository=None):
         and reviewer.get("type") == "User"
         and isinstance(identity, dict)
         and identity.get("login") == "joshyorko"
+        and type(identity.get("id")) is int
         and identity.get("id") == 54248591
         and rule.get("prevent_self_review") is False
     )

@@ -794,6 +794,7 @@ print("\\tbuild\\tvcs.modified=false")
             ("login", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(login="other")),
             ("id", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(id=1)),
             ("id type", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(id="54248591")),
+            ("float id", lambda e: e["protection_rules"][0]["reviewers"][0]["reviewer"].update(id=54248591.0)),
             ("team", lambda e: e["protection_rules"][0]["reviewers"][0].update(type="Team")),
             ("bypass", lambda e: e.update(can_admins_bypass=True)),
             ("unreadable bypass", lambda e: e.pop("can_admins_bypass")),
