@@ -1,0 +1,14 @@
+{
+  "dispatchRequestedUtc": "2026-10-12T14:34:24.959927+00:00",
+  "workflow": "publish-release.yml",
+  "ref": "main",
+  "publisherSource": "8198e7f6170032b3720278669410ce6d4ddb4e63",
+  "inputs": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "protectedManualApprovalNotBypassed": true,
+  "credentialsChanged": false
+}

@@ -1,0 +1,11 @@
+--- a/.github/workflows/publish-release.yml
++++ b/.github/workflows/publish-release.yml
+@@ -49,7 +49,7 @@
+           go-version: "1.26.9"
+       - name: Require configured release approval protection
+         env:
+-          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ secrets.RCC_RELEASE_POLICY_AUDIT_TOKEN }}
++          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ github.token }}
+         run: python3 scripts/release_publication.py verify-environment --name rcc-production
+       - name: Verify exact successful preparation run and artifact
+         env:

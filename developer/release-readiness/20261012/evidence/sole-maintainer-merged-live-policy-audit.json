@@ -1,0 +1,8 @@
+{
+  "publisherSource": "8198e7f6170032b3720278669410ce6d4ddb4e63",
+  "authenticatedActualPolicyAudit": "passed with existing session credential",
+  "workflowSecretAuditPermission": "not inferred from session credential",
+  "environmentId": 24084206266,
+  "reviewerId": 54248591,
+  "newCredentialsCreated": false
+}
