@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-10-12T00:03:40.522574+00:00",
+  "initial_selected_gate": "Two overlapping ExecuteWithStreams calls: cancelA withoutreapingB orreleasingBlease",
+  "dependency_refinement": "Independent source review found prerequisite closeErr suppression andunconditionalleaseRelease oncontextCanceled; no overlapexecution untilfailclosedfailurebarrier is qualified",
+  "selected_control": "Injectexplicitclosefailure ONLYafteractualgroupcensus empty; compare frozenexecute failurehandling againstprivateerrors.Join+releaseguard overlay",
+  "negative_expected": "ContextCanceled alone; leasegone; statusUNSAFE_BASELINE_OBSERVED even thoughharness observation succeeds",
+  "fixed_expected": "Joinedcancel+cleanup error, owncanonicalleaseheld, durablebarrierreceipt, bothPID/startidentitiesabsentINCLUDINGzombies; onlythen normalRCCRelease exactsnapshot ownedrecovery; finalzero leases",
+  "bounds": "ExactlytwoNEWuntimedcontrols, builds60s/native25s/outer30s sampledresourceceilings; stopfirstunexpectedfailure; noautomatic retries",
+  "prohibited": [
+    "acceptedtimedwave replay",
+    "productionpromotion/default/format/sourcechange",
+    "overlap/concurrency qualification fromthesefaultcontrols",
+    "hostile/longlived/nonLinux qualification",
+    "Actions source/pin/controller/worktree/home mutation",
+    "tag/release/publisherdispatch/infrastructure/credentialbypass"
+  ],
+  "base_source": "7945f956b428359928908a9f42e36417b113dafd",
+  "shipping_binary_sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+  "routing": "Reuse twoexisting configuredLunaHighworkers; coordinatorrequestedGPT6.1SolHigh ownsdiagnosis/nativeexecution; actualprovidertelemetryunavailable"
+}

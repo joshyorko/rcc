@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-12T00:04:37.428545+00:00",
+  "phase": "build-negative",
+  "controller_exit": 1,
+  "failure": "KeyError: source_binding_sha256",
+  "stage": "Admission field lookup before any subprocess/build/root creation",
+  "native_build_started": false,
+  "native_control_started": false,
+  "source_binding_unchanged": true,
+  "repair": "Add expectedroot hashfield to independentlyissuedadmission; preserveoriginalreceipt; no sourcecode/hashchange"
+}

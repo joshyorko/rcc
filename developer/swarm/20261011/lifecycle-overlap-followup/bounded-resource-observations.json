@@ -1,0 +1,37 @@
+{
+  "scope": "Fromexistingbuild/untimedcontrolreceipts only; no performance claim/no replay; samplednotabsolutepeak",
+  "phases": [
+    {
+      "phase": "build-negative",
+      "seconds": 6.986908590000894,
+      "sampled_tree_rss_max": 232132608,
+      "returncode": 0,
+      "stop": null,
+      "final_live_identities": []
+    },
+    {
+      "phase": "results-negative",
+      "seconds": 2.3127517470002203,
+      "sampled_tree_rss_max": 38162432,
+      "returncode": 0,
+      "stop": null,
+      "final_live_identities": []
+    },
+    {
+      "phase": "build-fixed",
+      "seconds": 1.1259926460006682,
+      "sampled_tree_rss_max": 241614848,
+      "returncode": 0,
+      "stop": null,
+      "final_live_identities": []
+    },
+    {
+      "phase": "results-fixed",
+      "seconds": 2.4640744349999295,
+      "sampled_tree_rss_max": 32055296,
+      "returncode": 0,
+      "stop": null,
+      "final_live_identities": []
+    }
+  ]
+}

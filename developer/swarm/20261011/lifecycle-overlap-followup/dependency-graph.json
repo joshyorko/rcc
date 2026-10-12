@@ -1,0 +1,212 @@
+{
+  "timestamp": "2026-10-12T00:07:51.495336+00:00",
+  "parent_checkpoint": "5fb5c8595fad597a036dcc908745c2c9d5fc91bd",
+  "historical_graph": "developer/swarm/20261011/representative-coordination/dependency-graph.json",
+  "ownership_preserved": true,
+  "nodes": [
+    {
+      "id": "private-home-lifecycle",
+      "status": "frozen actual import baseline FAILED1 retained; narrowLinuxoverlay12controlsPASS",
+      "issue": 132,
+      "owner": "coordinator"
+    },
+    {
+      "id": "small-object-pack-pipeline",
+      "status": "6PASS / 12controlsPASS; no measured gain",
+      "issue": 125,
+      "owner": "coordinator / bounded Luna implementation + independent review"
+    },
+    {
+      "id": "gzip-pipeline",
+      "status": "6PASS; gzip6 stored16pctsmaller; mixedlatency/no winner",
+      "issue": 125,
+      "owner": "coordinator"
+    },
+    {
+      "id": "prewarm-local-materialization",
+      "status": "6 realwarmAcquire+ExecutePASS / sameoutputs / zeroprovidercalls / cleanleases / strict700",
+      "issue": 125,
+      "owner": "coordinator"
+    },
+    {
+      "id": "reflink-clonefile",
+      "status": "ownedworkspaceoverlay + tmpfstwo64KiBFICLONEENOTSUP95; verifiedcopyfallbackintegrity",
+      "issue": 125,
+      "owner": "coordinator"
+    },
+    {
+      "id": "lazy-fuse",
+      "status": "kernelregistered /dev/fuseabsent",
+      "issue": 125,
+      "owner": "coordinator"
+    },
+    {
+      "id": "compressed-image-cow",
+      "status": "bwrap namespace UID-map read-only failure1; mounted route unavailable on inspected host, not universal no-go",
+      "issue": 125,
+      "owner": "coordinator"
+    },
+    {
+      "id": "actions-consumer-admission",
+      "status": "PUBLIC396925/current308source inspected; freshcurrent3\u2192released5\u2192candidate727 qualificationunavailable",
+      "issue": null,
+      "owner": "existing external root01a128d1-75e2-71fe-9528-54b0163600dc"
+    },
+    {
+      "id": "finite-persistent-child",
+      "issue": 125,
+      "owner": "coordinator",
+      "status": "source/build/control admitted; six arms PASS only scoped finitebatch, no Actions/release acceptance"
+    },
+    {
+      "id": "cas-FD-session-hypothesis",
+      "issue": 125,
+      "owner": "coordinator",
+      "status": "source diagnosis only; precommit identity/replacement/cleanup controls required before implementation admission"
+    },
+    {
+      "id": "real-repository-finite-worker",
+      "issue": 125,
+      "owner": "coordinator",
+      "status": "540maintainedtests accepted privatefiniteLinux; correctedv4cohort2pairs20.07pctfullcontrollerbenefit; noActions/prodacceptance"
+    },
+    {
+      "id": "linux-group-supervisor-prototype",
+      "issue": 132,
+      "owner": "coordinator",
+      "status": "Actualdirectchildsupervisorcounterexample retained; privateSetpgid/subreaper+pidfdreap2controlsPASS; no shippingchange"
+    },
+    {
+      "id": "bounded-sampler-v4",
+      "owner": "coordinator plus independentLuna review",
+      "status": "ENOENTrace controlPASS/nonENOENTfailsclosed; four remainingarms resumed only"
+    },
+    {
+      "id": "close-error-lease-retention-gate",
+      "issue": 132,
+      "owner": "coordinator",
+      "status": "Privateinjectedcleanup-errorpolicy PASS; frozenExecuteunsafecontrolpreserved; no overlapqualification"
+    }
+  ],
+  "edges": [
+    {
+      "from": "private-home-lifecycle",
+      "to": "small-object-pack-pipeline",
+      "state": "narrow ownedLinuxonlyadmitted; baselinefailurepreserved"
+    },
+    {
+      "from": "private-home-lifecycle",
+      "to": "gzip-pipeline",
+      "state": "same guardedprivateoverlayadmitted"
+    },
+    {
+      "from": "gzip-pipeline",
+      "to": "prewarm-local-materialization",
+      "state": "actualsameworkerwarmAcquire+freshPythonExecute accepted onlyfixture"
+    },
+    {
+      "from": "actions-consumer-admission",
+      "to": "current3-runtime",
+      "state": "pendingactualowner admission"
+    },
+    {
+      "from": "current3-runtime",
+      "to": "released5-runtime",
+      "state": "blockeduntilfirstpasses; STOPfirstfailure"
+    },
+    {
+      "from": "released5-runtime",
+      "to": "exact727-runtime",
+      "state": "blockeduntilreleased5passes; STOPfirstfailure"
+    },
+    {
+      "from": "small-object-pack-pipeline",
+      "to": "actual-workload-optimization",
+      "state": "no winner; inspect retainedprofile localCAS/materialization cost first"
+    },
+    {
+      "from": "prewarm-local-materialization",
+      "to": "persistent-worker-prototype",
+      "state": "distinctfuturelifecycle/cleanup admissionrequired"
+    },
+    {
+      "from": "compressed-image-cow",
+      "to": "userspace-image-prototype",
+      "state": "independentfeasible research with integrityrelocationlease controls; no infra"
+    },
+    {
+      "from": "approval-policy/signing/security-disposition",
+      "to": "release-publication",
+      "state": "HOLD; absent required environment,403 andGO5970/6629 unresolved"
+    },
+    {
+      "from": "explicit-operator-approval",
+      "to": "release-publication",
+      "state": "absent; no tag/release/dispatch"
+    },
+    {
+      "from": "private-home-lifecycle",
+      "to": "finite-persistent-child",
+      "state": "narrow guarded Linux overlays only, strict700 required"
+    },
+    {
+      "from": "gzip-pipeline",
+      "to": "finite-persistent-child",
+      "state": "reuse accepted gzip1fixture/producer unchanged; new finite work, no timed wave replay"
+    },
+    {
+      "from": "finite-persistent-child",
+      "to": "actions-consumer-admission",
+      "state": "scoped RCC evidence only; consumer chain remains existing-owner blocked"
+    },
+    {
+      "from": "cas-FD-session-hypothesis",
+      "to": "small-object-pack-pipeline",
+      "state": "not admitted; actual precommit identity/rename/symlink tests required; no shortcut implemented"
+    },
+    {
+      "from": "linux-group-supervisor-prototype",
+      "to": "real-repository-finite-worker",
+      "state": "actualPID/startready cancellation + zeroPIDs/leases beforetiming PASS"
+    },
+    {
+      "from": "bounded-sampler-v4",
+      "to": "real-repository-finite-worker",
+      "state": "source/hash-bound controls+exactresumeadmission; pair1preserved, failedoldpair2excluded"
+    },
+    {
+      "from": "real-repository-finite-worker",
+      "to": "actions-consumer-admission",
+      "state": "evidence ready only; consumer runtime baseline3 remains externalownerdependency"
+    },
+    {
+      "from": "linux-group-supervisor-prototype",
+      "to": "close-error-lease-retention-gate",
+      "state": "NewsourcefindingcancellationmaskedcloseErr andunconditionalRelease; injectionafteractualdrainconfirmed"
+    },
+    {
+      "from": "close-error-lease-retention-gate",
+      "to": "same-process-overlap-control",
+      "state": "Prerequisiteprivateerrorpropagation/leaseholdpassed onlyforcedempty-groupfailure; nextcontrolNOTRUN/separateadmissionneeded"
+    },
+    {
+      "from": "same-process-overlap-control",
+      "to": "finite-resident-worker-qualification",
+      "state": "Unproven; security/longlived/nonLinuxremainoutsideboundedturn"
+    }
+  ],
+  "non_edges": [
+    "research is not a release gate",
+    "component timings do not qualify Actions or close125",
+    "shipping7945/5a6a is not Actions727/be55",
+    "two ENOTSUP paths do not block all independentresearch"
+  ],
+  "next": [
+    "IndependentboundedA-cancel/B-alive distinctgroups/leasescontrol, withbeforeReleaseproof; NOTRUNthisturn",
+    "ExistingActionsowner actualcurrent18.19.3baselineadmission before5/exact727, STOPfirstfailure",
+    "Preserveallpriorwaves/sixdirections; zstd/mixed-sizeGoexperimentrequiresfutureadmission, noadoptedcodec",
+    "Noautomaticadditionalturns/fanout/infra/productionpromotion"
+  ],
+  "coordination": "Three authorized existingrepository comments verified POST+GET; no actualowner runtimeadmission or directdelivery inferred",
+  "windows_diagnosis": "Currentheadjobunit/typecheckfailuremetadata; rawlogsForbidden; publicannotationsgeneric; actualcauseunknown"
+}

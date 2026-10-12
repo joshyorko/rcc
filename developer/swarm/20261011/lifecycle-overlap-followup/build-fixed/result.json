@@ -1,0 +1,297 @@
+{
+  "final_output_bytes": 0,
+  "final_scratch_logical_bytes": null,
+  "final_scratch_vanished_entries": 0,
+  "command": [
+    "/workspace/rcc-successor-tools/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64/bin/go",
+    "build",
+    "-p",
+    "2",
+    "-mod=readonly",
+    "-overlay=/workspace/rcc-continuation/developer/swarm/20261011/lifecycle-overlap-followup/overlay-fail-closed.json",
+    "-o",
+    "/workspace/rcc-successor-tools/close-barrier-fixed",
+    "/workspace/rcc-continuation/developer/swarm/20261011/lifecycle-overlap-followup/source/main.go"
+  ],
+  "returncode": 0,
+  "stop": null,
+  "seconds": 1.1259926460006682,
+  "sampled_tree_rss_max": 241614848,
+  "known_identities": {
+    "20051": "1540517",
+    "20065": "1540527",
+    "20069": "1540578",
+    "20077": "1540587"
+  },
+  "final_observed_live_identities": [],
+  "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait.",
+  "launcher_sha256": "3c953181a2ac08d0bd15d24d4504d87ce1954ea86136c39131e100eddee9194a",
+  "samples": [
+    {
+      "elapsed": 0.00268055200103845,
+      "rss": 11051008,
+      "free": 30407692288,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 11051008,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.10558359100105008,
+      "rss": 48807936,
+      "free": 30407684096,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33271808,
+          "state": "S"
+        },
+        {
+          "pid": 20065,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540527",
+          "rss": 15536128,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.2073772640014795,
+      "rss": 84860928,
+      "free": 30407684096,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33271808,
+          "state": "S"
+        },
+        {
+          "pid": 20065,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540527",
+          "rss": 51589120,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.311718232000203,
+      "rss": 95076352,
+      "free": 30407684096,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33271808,
+          "state": "S"
+        },
+        {
+          "pid": 20065,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540527",
+          "rss": 61804544,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.4134850960017502,
+      "rss": 107720704,
+      "free": 30407684096,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33271808,
+          "state": "S"
+        },
+        {
+          "pid": 20065,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540527",
+          "rss": 74448896,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.5151361590014858,
+      "rss": 121876480,
+      "free": 30407684096,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33271808,
+          "state": "S"
+        },
+        {
+          "pid": 20065,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540527",
+          "rss": 88604672,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.6173058760014101,
+      "rss": 47980544,
+      "free": 30405079040,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33402880,
+          "state": "S"
+        },
+        {
+          "pid": 20069,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540578",
+          "rss": 14577664,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.7190755740011809,
+      "rss": 74227712,
+      "free": 30404792320,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33402880,
+          "state": "S"
+        },
+        {
+          "pid": 20077,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540587",
+          "rss": 40824832,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.8207228310002392,
+      "rss": 179380224,
+      "free": 30404792320,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33402880,
+          "state": "S"
+        },
+        {
+          "pid": 20077,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540587",
+          "rss": 145977344,
+          "state": "S"
+        }
+      ]
+    },
+    {
+      "elapsed": 0.92256123000152,
+      "rss": 219582464,
+      "free": 30404792320,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33402880,
+          "state": "S"
+        },
+        {
+          "pid": 20077,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540587",
+          "rss": 186179584,
+          "state": "R"
+        }
+      ]
+    },
+    {
+      "elapsed": 1.0242443200004345,
+      "rss": 241614848,
+      "free": 30404792320,
+      "identities": [
+        {
+          "pid": 20051,
+          "ppid": 20050,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540517",
+          "rss": 33402880,
+          "state": "S"
+        },
+        {
+          "pid": 20077,
+          "ppid": 20051,
+          "pgid": 20051,
+          "sid": 20051,
+          "start": "1540587",
+          "rss": 208211968,
+          "state": "R"
+        }
+      ]
+    }
+  ]
+}

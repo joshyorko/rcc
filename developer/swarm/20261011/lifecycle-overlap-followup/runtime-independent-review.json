@@ -1,0 +1,323 @@
+{
+  "reviewed_at_utc": "2026-10-12T00:09:48+00:00",
+  "verdict": "GO for the two untimed private close-error/lease-policy controls only; no overlap or qualification admission",
+  "scope": "Read-only raw review after the authorized run. No build, execution, Actions mutation, source change, or benchmark replay by reviewer.",
+  "source_binding": {
+    "sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+    "entries": 542,
+    "unique_entries": 542,
+    "bytes_rehashed": 62153850,
+    "mismatches": [],
+    "native_admission_sha256": "321edb68a931ef2421ada09ecab06e729d9b8bec71b00ea6995c7b4fc14a5027",
+    "native_admission_status": "GO",
+    "native_admission_allowed_phases": [
+      "build-negative",
+      "run-negative",
+      "build-fixed",
+      "run-fixed"
+    ]
+  },
+  "source_sha256": {
+    "main.go": "50e3b1ca47cd53e1add883b669d7c9f5a74e76663d4db3e49a9106c0c1aaa0a7",
+    "controller.py": "69d07fa1a70ae74d7db155d34d53dba1a271fcc1df5eca38fb461075d845ca6e",
+    "fixed_execute_overlay": "888345d4b949634cfbea4229b132474aea7ed570516db06cea23fb9444d18f49",
+    "injected_group_close_overlay": "c2e9fc52c9016b86f4f06a18e077471d01ddb225c6cc2cf292b8266069331f7a",
+    "negative_overlay_json": "033a4c8a58bde0e146d73ca78e7cd00be5b1c03f6f06a7d1552f9171b2c8ca5a",
+    "fixed_overlay_json": "0c328d9fc58840b4ab4671fd13893d8878ff94274abf6bb5bc04f1e30dfbf234"
+  },
+  "fixture": {
+    "path": "/workspace/rcc-successor-compression-2018/gzip-1/fixture.json",
+    "sha256": "cd43bfd93be0863808cffa7aa76d64367239af1d866ded8218a2fe1dc5d62183",
+    "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "file_count": 513
+  },
+  "arms": {
+    "negative": {
+      "status": "UNSAFE_BASELINE_OBSERVED",
+      "worker_final_status": "UNSAFE_BASELINE_OBSERVED",
+      "worker_row_count": 2,
+      "execute_calls": 1,
+      "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+      "materialization_id": "c2fd1aa_b35c539_3f05801f",
+      "home_path": "/workspace/rcc-close-barrier-followup/negative/home",
+      "source_closure_sha256": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56",
+      "cancel_observed": true,
+      "close_failure_propagated": false,
+      "lease_retained_before_recovery": false,
+      "recovery_released": false,
+      "lease_released_at_end": true,
+      "lease_ids": [
+        "b5b724a8b7aa70c641fedbf40121197b"
+      ],
+      "recovery_barrier_rows": [],
+      "worker_identity_rows": [
+        {
+          "childPid": 20029,
+          "childStart": "1539485",
+          "control": "cancel-ready",
+          "leaseId": "b5b724a8b7aa70c641fedbf40121197b",
+          "pid": 20028,
+          "processGroup": 20028,
+          "sequence": 1,
+          "start": "1539462"
+        }
+      ],
+      "responses_exactly_match_worker_identity_row": true,
+      "binary_sha256": "178ff4098a6f5914ac087617673674782390d914900ab7529892d32f35b5e234",
+      "binary_binding": {
+        "source_binding_sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+        "binary_sha256": "178ff4098a6f5914ac087617673674782390d914900ab7529892d32f35b5e234",
+        "binary_bytes": 12725779,
+        "build_result_sha256": "a89864f478d7c1900a2df80a13ecb2707dd2b46f2d2e1f2ddd19e177a7c92d92"
+      },
+      "binary_binding_matches_source": true,
+      "binary_binding_matches_binary": true,
+      "build_outer": {
+        "returncode": 0,
+        "stop": null,
+        "final_observed_live_identities": [],
+        "result_sha256": "a89864f478d7c1900a2df80a13ecb2707dd2b46f2d2e1f2ddd19e177a7c92d92"
+      },
+      "outer_result": {
+        "returncode": 0,
+        "stop": null,
+        "final_observed_live_identities": [],
+        "final_scratch_vanished_entries": 0,
+        "result_sha256": "2a5e8cf03f19513196c94e456f70d00d324c2168b36d11d5d6c3e5e1dfdc3d1c",
+        "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait."
+      },
+      "readback_sha256": "c568477299ad452440eaea1dbc22d18b1dd512ce26ee8489c788fccf602f88ad",
+      "worker_sha256": "dc58bb03b9458a88eb4438b8a26ef24e4b0f5057d174536617b3e172fded32ce",
+      "responses_sha256": "42426b5dce0ba399a029e3bd0eb2ba292acdc1fdcdd8b3be9f7b1aec784c1006",
+      "readback_pre_equals_post": true,
+      "guards": [
+        {
+          "path": "/workspace/rcc-close-barrier-followup",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/negative",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/negative/home",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/negative/tasks",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1/producer-home",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-representative-2110/inputs",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        }
+      ],
+      "materialized_files_expected": 513,
+      "materialized_files_independently_hashchecked": 513,
+      "materialization_errors": [],
+      "remaining_lease_files": 0,
+      "task_files": [],
+      "recorded_pid_identity_checks": [
+        {
+          "pid": 20028,
+          "start": "1539462",
+          "current": "absent",
+          "absent": true
+        },
+        {
+          "pid": 20029,
+          "start": "1539485",
+          "current": "absent",
+          "absent": true
+        }
+      ]
+    },
+    "fixed": {
+      "status": "PASS_PRIVATE_FAIL_CLOSED",
+      "worker_final_status": "PASS_PRIVATE_FAIL_CLOSED",
+      "worker_row_count": 3,
+      "execute_calls": 1,
+      "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+      "materialization_id": "c2fd1aa_b35c539_3f05801f",
+      "home_path": "/workspace/rcc-close-barrier-followup/fixed/home",
+      "source_closure_sha256": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56",
+      "cancel_observed": true,
+      "close_failure_propagated": true,
+      "lease_retained_before_recovery": true,
+      "recovery_released": true,
+      "lease_released_at_end": true,
+      "lease_ids": [
+        "72c09c550f01fdea26ce869da05c68f7"
+      ],
+      "recovery_barrier_rows": [
+        {
+          "status": "RETAINED_LEASE_BEFORE_RECOVERY",
+          "leasesReleased": false,
+          "closeFailurePropagated": true,
+          "leaseRetainedBeforeRecovery": true,
+          "recoveryReleased": false
+        }
+      ],
+      "worker_identity_rows": [
+        {
+          "childPid": 20140,
+          "childStart": "1543373",
+          "control": "cancel-ready",
+          "leaseId": "72c09c550f01fdea26ce869da05c68f7",
+          "pid": 20139,
+          "processGroup": 20139,
+          "sequence": 1,
+          "start": "1543349"
+        }
+      ],
+      "responses_exactly_match_worker_identity_row": true,
+      "binary_sha256": "f479d38a4c7e3f8fb671d81b1bcb8b424d7a21ce69dd566df361b5fe4a54614d",
+      "binary_binding": {
+        "source_binding_sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+        "binary_sha256": "f479d38a4c7e3f8fb671d81b1bcb8b424d7a21ce69dd566df361b5fe4a54614d",
+        "binary_bytes": 12726171,
+        "build_result_sha256": "390f11110b45e10d90d9508483f6a562f6c0be9038d40aabb194a5436753405c"
+      },
+      "binary_binding_matches_source": true,
+      "binary_binding_matches_binary": true,
+      "build_outer": {
+        "returncode": 0,
+        "stop": null,
+        "final_observed_live_identities": [],
+        "result_sha256": "390f11110b45e10d90d9508483f6a562f6c0be9038d40aabb194a5436753405c"
+      },
+      "outer_result": {
+        "returncode": 0,
+        "stop": null,
+        "final_observed_live_identities": [],
+        "final_scratch_vanished_entries": 0,
+        "result_sha256": "a90d05a157852977724063d187a5ce3ff8a427bfd44b8280609a23b3b0cfa0e8",
+        "scope": "Sampled descendant/process identity monitoring across process groups plus final private-session census; misses unobserved descendants that create another session; no hard memory quota or absolute peak claim. Output and optional owned scratch limits are sampled; no absolute disk quota. Stops at 8MiB output / 128MiB scratch logical bytes / 2GiB observed RSS / 2.5GiB free floor. Output closed after wait."
+      },
+      "readback_sha256": "920b5346bc7e8a656a0456d7f135ab1dd33520333b0fa6f0552dcd2fa71b1572",
+      "worker_sha256": "e50d8a56cbecf2973c03824bb9bf372a0fcc803660ca094482e948cac0d0d19c",
+      "responses_sha256": "cd1ea04e3a367964463518f5a20a4afce0f4d4add07b9dbeab68ec636ed91612",
+      "readback_pre_equals_post": true,
+      "guards": [
+        {
+          "path": "/workspace/rcc-close-barrier-followup",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/fixed",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/fixed/home",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-close-barrier-followup/fixed/tasks",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1/producer-home",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        },
+        {
+          "path": "/workspace/rcc-representative-2110/inputs",
+          "mode": "0o700",
+          "uid": 1000,
+          "gid": 1000,
+          "ok": true
+        }
+      ],
+      "materialized_files_expected": 513,
+      "materialized_files_independently_hashchecked": 513,
+      "materialization_errors": [],
+      "remaining_lease_files": 0,
+      "task_files": [],
+      "recorded_pid_identity_checks": [
+        {
+          "pid": 20139,
+          "start": "1543349",
+          "current": "absent",
+          "absent": true
+        },
+        {
+          "pid": 20140,
+          "start": "1543373",
+          "current": "absent",
+          "absent": true
+        }
+      ]
+    }
+  },
+  "limits": [
+    "This only demonstrates cancellation-time supervisor-close-error policy after an empty-group census, under these exact Linux overlays and artifact fixture.",
+    "No same-process A/B overlap, simultaneous execution, persistent worker, pool, hostile-task isolation, escaped-session, macOS/Windows, production, RCC release, Actions, or publication claim.",
+    "The retained lease body bytes/hash are not included in worker JSONL. The bound source reads and decodes one leaseBody, validates exact IDs/artifact/materialization/owner PID, emits the pre-recovery row after both PID/start identities are gone, and passes that same decoded snapshot to normal RCC Release. This behavior is source-bound but the transient lease bytes are not independently rehashed from retained raw output.",
+    "The negative worker does not serialize the suppressed injected error text; the fixed arm does serialize/verify the exact marker under the same source binding and shared group-close overlay, confirming the injected close path on the fixed comparison.",
+    "No performance inference from providerSetupNs/acquireNs/batchNs values in control receipts. Prior strict-home-mode failure remains untouched."
+  ]
+}

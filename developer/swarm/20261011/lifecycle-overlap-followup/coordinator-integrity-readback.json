@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-10-12T00:06:29.750958+00:00",
+  "scope": "Read-only postcontrol actualidentities/bytes/guards, no replay",
+  "source_binding_files": 542,
+  "source_binding_mismatches": 0,
+  "input_files_unchanged": 681,
+  "materialized_file_checks": 1026,
+  "materialized_mismatches": 0,
+  "controls": [
+    {
+      "variant": "negative",
+      "status": "UNSAFE_BASELINE_OBSERVED",
+      "identities": [
+        {
+          "pid": 20028,
+          "start": "1539462",
+          "stat_absent": true
+        },
+        {
+          "pid": 20029,
+          "start": "1539485",
+          "stat_absent": true
+        }
+      ],
+      "materialized_files": 513,
+      "mismatches": 0,
+      "remaining_leases": 0,
+      "close_failure_propagated": false,
+      "retained_before_recovery": false,
+      "recovery_released": false
+    },
+    {
+      "variant": "fixed",
+      "status": "PASS_PRIVATE_FAIL_CLOSED",
+      "identities": [
+        {
+          "pid": 20139,
+          "start": "1543349",
+          "stat_absent": true
+        },
+        {
+          "pid": 20140,
+          "start": "1543373",
+          "stat_absent": true
+        }
+      ],
+      "materialized_files": 513,
+      "mismatches": 0,
+      "remaining_leases": 0,
+      "close_failure_propagated": true,
+      "retained_before_recovery": true,
+      "recovery_released": true
+    }
+  ],
+  "historical_failed_private_home": "0750 preserved unrepaired",
+  "overlap_control": "NOTRUN, independent admission stillneeded",
+  "performance_samples": "NONE; prioracceptedmedians retained"
+}

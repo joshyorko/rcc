@@ -1,0 +1,248 @@
+{
+  "refreshed_at_utc": "2026-10-11T23:59:32Z",
+  "repository": "joshyorko/actions",
+  "issues": {
+    "101": {
+      "title": "Run the Actions Runtime product, runtime-adapter, and control-room factory",
+      "state": "open",
+      "updated_at": "2026-10-11T23:34:41Z",
+      "url": "https://github.com/joshyorko/actions/issues/101",
+      "body_sha256": "7c9c31ef1c41a2ad0e38a15223908bbeb981a8d6711da5cf569949e248d29565",
+      "comment_count": 174,
+      "latest_comments": [
+        {
+          "id": 6104775747,
+          "created_at": "2026-10-11T02:51:56Z",
+          "updated_at": "2026-10-11T02:51:56Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6104775747",
+          "body_sha256": "63b565048249aa4312d35dd0428be84f02aa7b1fb60ec480ff49a29ecf079d98"
+        },
+        {
+          "id": 6105114291,
+          "created_at": "2026-10-11T03:41:45Z",
+          "updated_at": "2026-10-11T03:41:45Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105114291",
+          "body_sha256": "3661d0880e85f6142e4b1936c1950c01d4fa13e845a87e05ae02260a7a30a955"
+        },
+        {
+          "id": 6105231845,
+          "created_at": "2026-10-11T03:59:13Z",
+          "updated_at": "2026-10-11T03:59:13Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105231845",
+          "body_sha256": "88c77f89188aa37abe519927a3eb004d6db92a5cee6d7bfdf8656b9fa0cc59d2"
+        },
+        {
+          "id": 6105422819,
+          "created_at": "2026-10-11T04:26:50Z",
+          "updated_at": "2026-10-11T04:26:50Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105422819",
+          "body_sha256": "114933fb2b42b74dd8375539527be6e82fdf1b36be55dd8735aadf1301c7fec2"
+        },
+        {
+          "id": 6105710480,
+          "created_at": "2026-10-11T05:09:50Z",
+          "updated_at": "2026-10-11T05:09:50Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/101#issuecomment-6105710480",
+          "body_sha256": "19c1a769235909152c9d38fd5351716f1e9bcd12d3a91ea52286648da7efbf90"
+        }
+      ]
+    },
+    "133": {
+      "title": "Use RCC/Holotree as the first full environment and execution adapter for Actions workers",
+      "state": "open",
+      "updated_at": "2026-10-11T21:59:27Z",
+      "url": "https://github.com/joshyorko/actions/issues/133",
+      "body_sha256": "7cfcdb618fc35203a0cacf64e37fc2696ad003f133c4391abbf3ec8b034d4c4c",
+      "comment_count": 9,
+      "latest_comments": [
+        {
+          "id": 6110447631,
+          "created_at": "2026-10-11T15:12:07Z",
+          "updated_at": "2026-10-11T15:12:07Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6110447631",
+          "body_sha256": "b40b051d68758f4b43ec7b9b58f226eccb162fbb55e62f1c8d3fa7a0f826f41b"
+        },
+        {
+          "id": 6111162766,
+          "created_at": "2026-10-11T16:29:22Z",
+          "updated_at": "2026-10-11T16:29:22Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6111162766",
+          "body_sha256": "02edd5f70e41e757f760ba01ac63ce7ac45082565ecb4002b8f212536e2c6d7f"
+        },
+        {
+          "id": 6111606204,
+          "created_at": "2026-10-11T17:17:15Z",
+          "updated_at": "2026-10-11T17:46:58Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6111606204",
+          "body_sha256": "9c1441459bcd57b6bcd6de98b2ebb142041cadf4f80a988fa96c31ccb3aca7a2"
+        },
+        {
+          "id": 6113444599,
+          "created_at": "2026-10-11T20:32:56Z",
+          "updated_at": "2026-10-11T20:32:56Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6113444599",
+          "body_sha256": "693b4c615d89a627626698632478db823c4bfbf3e24ba4664bcace11b12f185a"
+        },
+        {
+          "id": 6114273250,
+          "created_at": "2026-10-11T21:59:27Z",
+          "updated_at": "2026-10-11T21:59:27Z",
+          "html_url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6114273250",
+          "body_sha256": "48feacaa1038179e4c7df8edf56140e15fd7223330681e34d8d0806e10ca7da8"
+        }
+      ]
+    }
+  },
+  "pulls": {
+    "221": {
+      "title": "Integrate Actions Runtime 1.0.3 security, execution, and native acceptance work",
+      "state": "open",
+      "draft": true,
+      "updated_at": "2026-10-11T23:34:47Z",
+      "url": "https://github.com/joshyorko/actions/pull/221",
+      "head_ref": "integration/community-release-20261008",
+      "head_sha": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+      "base_ref": "community",
+      "base_sha": "a70993fafc99a9f94041485542d5a720797ca394",
+      "mergeable": true,
+      "check_run_total": 35,
+      "check_conclusions": {
+        "skipped": 1,
+        "success": 34
+      },
+      "failed_checks": [],
+      "legacy_combined_status": "pending",
+      "legacy_status_contexts": 0,
+      "review_records": 0
+    },
+    "308": {
+      "title": "fix(runtime): admit approved RCC test binaries by exact compatibility identity",
+      "state": "open",
+      "draft": true,
+      "updated_at": "2026-10-11T23:34:45Z",
+      "url": "https://github.com/joshyorko/actions/pull/308",
+      "head_ref": "fix/rcc-candidate-wheel-identities-20261010",
+      "head_sha": "8d49d0865ad5ad27b2d4e325ec135212080625e8",
+      "base_ref": "integration/community-release-20261008",
+      "base_sha": "e2c81adce7858d5a952991ba9a8b7f72e902038a",
+      "mergeable": true,
+      "check_run_total": 26,
+      "check_conclusions": {
+        "failure": 1,
+        "success": 25
+      },
+      "failed_checks": [
+        {
+          "name": "build (windows-py3.12-devmode)",
+          "conclusion": "failure",
+          "url": "https://github.com/joshyorko/actions/actions/runs/38164596550/job/114544417671"
+        }
+      ],
+      "legacy_combined_status": "pending",
+      "legacy_status_contexts": 0,
+      "review_records": 0
+    },
+    "305": {
+      "title": "Keep Canvas acceptance build caches outside synchronized package source",
+      "state": "open",
+      "draft": true,
+      "updated_at": "2026-10-11T09:47:14Z",
+      "url": "https://github.com/joshyorko/actions/pull/305",
+      "head_ref": "test/canvas-runtime-cache-isolation-20261010",
+      "head_sha": "519a0beb7451cb6e4410f0bee18c826fc493086e",
+      "base_ref": "integration/community-release-20261008",
+      "base_sha": "6181b044c75de35386f1ae30e71725398b6a7feb",
+      "mergeable": false,
+      "check_run_total": 19,
+      "check_conclusions": {
+        "success": 19
+      },
+      "failed_checks": [],
+      "legacy_combined_status": "pending",
+      "legacy_status_contexts": 0,
+      "review_records": 0
+    },
+    "313": {
+      "title": "Wait for captured descendants within the shared cleanup deadline",
+      "state": "open",
+      "draft": true,
+      "updated_at": "2026-10-11T13:24:28Z",
+      "url": "https://github.com/joshyorko/actions/pull/313",
+      "head_ref": "fix/captured-child-cleanup-deadline-20261011",
+      "head_sha": "499a83d802ca9a0e2ebe3d77071af10625879297",
+      "base_ref": "integration/community-release-20261008",
+      "base_sha": "a0d258a16095b95b1bf9000cb1201cddfaff4779",
+      "mergeable": true,
+      "check_run_total": 19,
+      "check_conclusions": {
+        "failure": 1,
+        "success": 18
+      },
+      "failed_checks": [
+        {
+          "name": "build (windows-py3.12-devmode)",
+          "conclusion": "failure",
+          "url": "https://github.com/joshyorko/actions/actions/runs/38143045413/job/114480645718"
+        }
+      ],
+      "legacy_combined_status": "pending",
+      "legacy_status_contexts": 0,
+      "review_records": 0
+    }
+  },
+  "stable3_actual_warm_action_control": {
+    "receipt_path": "/workspace/rcc-continuation/developer/swarm/20261011/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/root-independent-warm-reuse-verification.json",
+    "receipt_sha256": "4ece3c653a0f436acc3e927058ecec3c824cf836eb616a815113e6aa52196173",
+    "report_path": "/workspace/rcc-continuation/developer/swarm/20261011/evidence/performance-steer-20261011/runtime-prerequisites/warm-reuse-attempt-13-retry-01/attempt13-report.md",
+    "report_sha256": "48b5f5f121eb59158439295b98a3c3fa84b1c981de95f87b820851ca1dc53575",
+    "result": "verified_stable3_warm_reuse_single_control",
+    "qualification": "warm-only supported external community control, not current221 controller or candidate6 acceptance; no controlled optimization comparison",
+    "source": {
+      "actions_commit": "a70993fafc99a9f94041485542d5a720797ca394",
+      "actions_tree": "562b49fc03bc4a16ef8a0b7b6f50b9bec88de959",
+      "adapter_sha256": "8f7642f4b1ee8ff658dbf2414ec34ca28747054833f73f4996fb4210d9e5dde5",
+      "artifact_digest": "sha256:ec3795182e7261439a8b9a9a9b7bd0834b7a7d65202067b17e5589e06f41b83e",
+      "fixture_inventory_sha256": "c9cfe7c5226005eef2fa83d7ecbe0f55920c72af24487fce624a7a61ae5e3ca5",
+      "poetry_lock_sha256": "1ae599eac4d1ba2a3e1c99de8bb14d113fea7e9da190558f6b724179a2823023",
+      "rcc_path": "/workspace/work/rcc-swarm/ownedtools/rcc-v18.19.3",
+      "rcc_sha256": "7e588c01751ca2ae15ba13ef67f2f4b7567697a5a8389737059a73936f509428"
+    },
+    "actual_results": [
+      {
+        "call": 1,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      },
+      {
+        "call": 2,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      },
+      {
+        "call": 3,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      },
+      {
+        "call": 4,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      },
+      {
+        "call": 5,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      },
+      {
+        "call": 6,
+        "bytes": 59,
+        "sha256": "cd7197165a98c6b966540ad70718157dc1b9cab51513338a0f88746c71af6873"
+      }
+    ],
+    "numeric_worker_supervisor_exit": 0,
+    "receipt_status": "failed",
+    "receipt_exit_code": -1,
+    "lease_disposal_scope": "intentional dispose after six successful calls; wrapper return 0, lease gone, every sampled identity gone"
+  },
+  "current_owner_admission_status": "Current issue 101 explicitly reports actual native current control3/released5/exact7276 qualification NOT RUN or unqualified; production remains v18.19.3. The historical warm-use control is not that current matrix."
+}

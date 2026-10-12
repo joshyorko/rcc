@@ -1,0 +1,101 @@
+{
+  "kind": "private-close-error-lease-retention-admission",
+  "status": "GO",
+  "scope": "four bounded Linux build/control phases for injected supervisor-close-error propagation and lease retention/recovery only; no workload timing or same-process A/B overlap claim",
+  "allowed_phases": [
+    "build-negative",
+    "run-negative",
+    "build-fixed",
+    "run-fixed"
+  ],
+  "prohibited_phases": [
+    "timed workload",
+    "same-process overlap measurement",
+    "production source/build/format/default change",
+    "Actions or release qualification",
+    "hostile or long-lived worker claims",
+    "non-Linux qualification"
+  ],
+  "phase_order": [
+    {
+      "phase": "build-negative",
+      "gate": "Build only the immutable negative overlay/binary into its absent exact output path; require bounded launcher success and source-binding match."
+    },
+    {
+      "phase": "run-negative",
+      "gate": "Requires the exact negative binary binding; expect UNSAFE_BASELINE_OBSERVED only as the deliberate close-error-suppression policy control. Preserve its receipt as failure evidence, not as a safe PASS."
+    },
+    {
+      "phase": "build-fixed",
+      "gate": "Requires results-negative/readback.json to prove status UNSAFE_BASELINE_OBSERVED, closeFailurePropagated=false, and leasesReleased=true; build only the fail-closed overlay into its absent exact output path."
+    },
+    {
+      "phase": "run-fixed",
+      "gate": "Requires the exact fixed binary binding; require joined cancellation/close error, lease retained in canonical exact-handle state, PID/start identities gone, durable RETAINED_LEASE_BEFORE_RECOVERY receipt, ordinary RCC Release of that exact snapshot, then zero leases."
+    }
+  ],
+  "source_binding": {
+    "path": "source-binding.json",
+    "sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+    "files": 542,
+    "verified_bytes": 62153850,
+    "mismatches": 0,
+    "includes": [
+      "all 535 previously bound runtime/build files unchanged",
+      "7 new source, overlay, controller and binding files",
+      "exact worker binary and selected Go toolchain"
+    ]
+  },
+  "review": {
+    "decision": "GO for exact four phases only, conditional on the gates above",
+    "review_path": "source-independent-review.md",
+    "review_sha256": "d4e87280dd2ae3e5954aab1a7851fc22a1e3ff915202565a9fa14c668a5bf169",
+    "reviewed_harness_sha256": "50e3b1ca47cd53e1add883b669d7c9f5a74e76663d4db3e49a9106c0c1aaa0a7",
+    "reviewed_controller_sha256": "69d07fa1a70ae74d7db155d34d53dba1a271fcc1df5eca38fb461075d845ca6e",
+    "negative_execute_source": "frozen Execute implementation; negative supervisor injects its error only after an empty process-group census",
+    "fixed_execute_overlay_sha256": "888345d4b949634cfbea4229b132474aea7ed570516db06cea23fb9444d18f49",
+    "injected_group_close_overlay_sha256": "c2e9fc52c9016b86f4f06a18e077471d01ddb225c6cc2cf292b8266069331f7a",
+    "source_review_execution": "No build or native execution was performed by the reviewer."
+  },
+  "expected_negative_control": {
+    "exit_status": 0,
+    "receipt_status": "UNSAFE_BASELINE_OBSERVED",
+    "close_failure_propagated": false,
+    "lease_released": true,
+    "cancelled_parent_and_child_identity_absent": true,
+    "interpretation": "Expected policy-regression evidence: frozen Execute suppresses the injected close error and releases the lease after a verified empty-group census. It does not claim a live descendant remained during release."
+  },
+  "expected_fixed_control": {
+    "exit_status": 0,
+    "receipt_status": "PASS_PRIVATE_FAIL_CLOSED",
+    "close_failure_propagated_with_cancellation": true,
+    "automatic_lease_release_suppressed": true,
+    "canonical_exact_handle_lease_retained": true,
+    "cancelled_parent_and_child_identity_absent_including_zombies": true,
+    "durable_receipt_before_recovery": "RETAINED_LEASE_BEFORE_RECOVERY",
+    "recovery": "Call normal RCC Release with the exact decoded lease snapshot only after both recorded identities are absent; require lease-path and directory absence afterward.",
+    "remaining_leases": 0
+  },
+  "bounded_environment": {
+    "native_context_seconds": 25,
+    "outer_seconds": 30,
+    "build_seconds": 60,
+    "gomaxprocs": 2,
+    "gomemlimit": "256MiB",
+    "sampled_tree_rss": "2GiB; not a hard quota",
+    "sampled_scratch_logical": "128MiB; not a disk quota",
+    "sampled_output": "8MiB",
+    "free_space_floor": "2.5GiB",
+    "retry_policy": "No automatic retry; preserve every first failure."
+  },
+  "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+  "base_source": "7945f956b428359928908a9f42e36417b113dafd",
+  "production_changes": false,
+  "remaining_limits": [
+    "This prerequisite does not exercise overlapping A/B Execute calls.",
+    "Injected failure occurs after group-empty census; it tests close-error propagation/lease policy, not a live-descendant timeout.",
+    "Only cooperative Linux process-group lifecycle is in scope; escaped sessions, hostile tasks, long-lived workers, and macOS/Windows remain unqualified.",
+    "No performance result, production approval, Actions qualification, or release qualification is granted."
+  ],
+  "source_binding_sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c"
+}

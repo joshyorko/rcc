@@ -1,0 +1,14 @@
+{
+  "kind": "pre-build-admission-schema-repair",
+  "status": "PASS",
+  "original_path": "native-admission.schema-mismatch.json",
+  "original_sha256": "0b5fbffbe2089ea3c410be7251500768a5a86fc16ba10b3ee6d1e34c371f0831",
+  "repaired_path": "native-admission.json",
+  "repaired_sha256": "321edb68a931ef2421ada09ecab06e729d9b8bec71b00ea6995c7b4fc14a5027",
+  "source_binding_sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+  "change": "Added the controller-required top-level source_binding_sha256 matching the already-reviewed nested binding; no other fields or source/controller hashes intentionally changed.",
+  "stage": "controller schema validation failed before build command started",
+  "native_execution": "NO_NATIVE_EXECUTION",
+  "build_started": false,
+  "accepted_control_replay": false
+}

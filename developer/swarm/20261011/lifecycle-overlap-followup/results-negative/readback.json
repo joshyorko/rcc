@@ -1,0 +1,141 @@
+{
+  "status": "UNSAFE_BASELINE_OBSERVED",
+  "scope": "Untimed close-failure barrier only; no performance sample",
+  "worker": {
+    "type": "close-failure-barrier-control",
+    "mode": "cancel-control",
+    "arm": "",
+    "status": "UNSAFE_BASELINE_OBSERVED",
+    "artifact": "sha256:0d77a90cd569b46d4e70ac8423584e802c5eb0141ef5a7ebceb23f67fc1c728d",
+    "materialization": "c2fd1aa_b35c539_3f05801f",
+    "sourceClosureSha256": "ce5985dbf0edc46a7a120ad1b9fb09df9277060ef57b28cb137717b22f66be56",
+    "providerSetupNs": 1549074,
+    "acquireNs": 1838047771,
+    "batchNs": 252878392,
+    "executeCalls": 1,
+    "rows": [
+      {
+        "childPid": 20029,
+        "childStart": "1539485",
+        "control": "cancel-ready",
+        "leaseId": "b5b724a8b7aa70c641fedbf40121197b",
+        "pid": 20028,
+        "processGroup": 20028,
+        "sequence": 1,
+        "start": "1539462"
+      }
+    ],
+    "leasesReleased": true,
+    "childCpuUserNs": 214262000,
+    "childCpuSystemNs": 20700000,
+    "cancelObserved": true,
+    "closeFailurePropagated": false,
+    "leaseRetainedBeforeRecovery": false,
+    "recoveryReleased": false
+  },
+  "pre": [
+    {
+      "path": "/workspace/rcc-close-barrier-followup",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative/home",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative/tasks",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1/producer-home",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/inputs",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    }
+  ],
+  "post": [
+    {
+      "path": "/workspace/rcc-close-barrier-followup",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative/home",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-close-barrier-followup/negative/tasks",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1/producer-home",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-successor-compression-2018/gzip-1/filesystem-provider",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    },
+    {
+      "path": "/workspace/rcc-representative-2110/inputs",
+      "mode": "0o700",
+      "uid": 1000,
+      "gid": 1000
+    }
+  ],
+  "materialized_files": 513,
+  "mismatches": 0,
+  "remaining_leases": 0,
+  "binary_sha256": "178ff4098a6f5914ac087617673674782390d914900ab7529892d32f35b5e234",
+  "source_binding_sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c"
+}

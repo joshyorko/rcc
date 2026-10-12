@@ -1,0 +1,7 @@
+{
+  "Replace": {
+    "/workspace/rcc-frozen/common/platform_linux.go": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/platform_linux_isolated.go.txt",
+    "/workspace/rcc-frozen/pathlib/functions.go": "/workspace/rcc-continuation/developer/swarm/20261011/successor-1955/functions_private_linux.go.txt",
+    "/workspace/rcc-frozen/environmentlifecycle/execution_supervisor_linux.go": "/workspace/rcc-continuation/developer/swarm/20261011/lifecycle-overlap-followup/source/group-close-fault.go.txt"
+  }
+}
