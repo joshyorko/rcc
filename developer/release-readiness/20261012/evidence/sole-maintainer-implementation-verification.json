@@ -1,0 +1,30 @@
+{
+  "head": "505360b7a7c559ee7cedbf5eb7c2e48315beef32",
+  "fullToolingTests": 148,
+  "fixture": "preserved f35 candidateLinux bytes used only to satisfy existing mocked gate-sequence hash fixture; not executed; no rebuild; fixture removed",
+  "sourceSpecificRedBeforeGreen": [
+    "sole-maintainer-red.log",
+    "sole-maintainer-float-id-red.log"
+  ],
+  "retainedVerificationLimitations": [
+    "sole-maintainer-host-python-attempt.log",
+    "sole-maintainer-missing-unit-fixture-attempt.log"
+  ],
+  "supersededOwnRunCancelled": {
+    "run": 38257912668,
+    "source": "9ec1e655e3894ecd23c251e505af625b6de7fb86",
+    "reason": "float-ID fix supersedes head; receipts retained"
+  },
+  "pushFailure": {
+    "message": "self-signed certificate in certificate chain after sourcing contained toolkit environment",
+    "fix": "fresh standard selected-environment Git invocation with ordinary TLS verification; no security settings changed"
+  },
+  "testLogSha256": "724e7ce9a1dc00b2a4bdef9d0339530e891cb145582bfb39d5a3939c38bed5e9",
+  "approvedEnvironmentId": 24084206266,
+  "approvedReviewerId": 54248591,
+  "candidatePreserved": {
+    "source": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "run": 38245229838,
+    "manifest": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  }
+}

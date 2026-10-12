@@ -1,0 +1,21 @@
+E
+======================================================================
+ERROR: test_environment_api_supplies_repository_scope (scripts.test_release_publication.ReleasePublicationTests.test_environment_api_supplies_repository_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/rcc-release-notes/scripts/test_release_publication.py", line 818, in test_environment_api_supplies_repository_scope
+    self.assertTrue(publication.verify_environment_api(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc-release-notes/scripts/release_publication.py", line 1419, in verify_environment_api
+    return validate_environment_protection(environment)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc-release-notes/scripts/release_publication.py", line 219, in validate_environment_protection
+    _require(rule.get("prevent_self_review") is True, "release environment does not prevent self-review")
+  File "/workspace/rcc-release-notes/scripts/release_publication.py", line 147, in _require
+    raise ReleaseGateError(message)
+release_publication.ReleaseGateError: release environment does not prevent self-review
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)

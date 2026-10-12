@@ -1,0 +1,38 @@
+..........EE........................................................
+======================================================================
+ERROR: test_environment_artifact_tasks (unittest.loader._FailedTest.test_environment_artifact_tasks)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_environment_artifact_tasks
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/rcc-release-notes/scripts/test_environment_artifact_tasks.py", line 16, in <module>
+    from invoke import Collection
+ModuleNotFoundError: No module named 'invoke'
+
+
+======================================================================
+ERROR: test_micromamba_tasks (unittest.loader._FailedTest.test_micromamba_tasks)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_micromamba_tasks
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/rcc-release-notes/scripts/test_micromamba_tasks.py", line 14, in <module>
+    import tasks  # noqa: E402
+    ^^^^^^^^^^^^
+  File "/workspace/rcc-release-notes/tasks.py", line 18, in <module>
+    from invoke import task
+ModuleNotFoundError: No module named 'invoke'
+
+
+----------------------------------------------------------------------
+Ran 68 tests in 0.990s
+
+FAILED (errors=2)

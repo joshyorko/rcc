@@ -1,0 +1,34 @@
+{
+  "recordedUtc": "2026-10-12T14:24:13.496912+00:00",
+  "pr": 246,
+  "policyHead": "505360b7a7c559ee7cedbf5eb7c2e48315beef32",
+  "approvedChange": {
+    "approvalTime": "2026-10-12T13:35:01Z",
+    "approvalMessage": "Sentinel_db1c2825b1b081919680ea3be92f9537",
+    "reviewer": "joshyorko",
+    "reviewerId": 54248591,
+    "context": "Only scoped sole-maintainer exception and matching environment settings; no credentials or broader access changes"
+  },
+  "environment": {
+    "id": 24084206266,
+    "restUserIdVerified": true,
+    "selfReviewPrevention": false,
+    "adminBypass": false,
+    "changedBy": "Jarvis browser; root read-only verification"
+  },
+  "independentExactHeadReview": {
+    "reviewer": "existing bootstrap agent",
+    "accepted": true,
+    "focusedTestsPassed": 50,
+    "floatIdReviewFindingFixed": true
+  },
+  "fullToolingTestsPassed": 148,
+  "exactHeadRccRun": 38258413463,
+  "status": "CI native jobs pending; no merge, release dispatch or publication yet",
+  "secretsMetadataQuestion": "Awaiting read-only browser confirmation of existing names only; no values requested",
+  "candidateUnchanged": {
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "preparation_run_id": 38245229838,
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  }
+}

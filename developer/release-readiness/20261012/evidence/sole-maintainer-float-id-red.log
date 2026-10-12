@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_rejects_mismatched_or_incomplete_sole_maintainer_policy (scripts.test_release_publication.ReleasePublicationTests.test_rejects_mismatched_or_incomplete_sole_maintainer_policy) (name='float id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/rcc-release-notes/scripts/test_release_publication.py", line 813, in test_rejects_mismatched_or_incomplete_sole_maintainer_policy
+    with self.assertRaises(ReleaseGateError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ReleaseGateError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
