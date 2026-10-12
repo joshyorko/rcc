@@ -85,10 +85,9 @@ func ReportIssue(email, robotFile, reportFile string, attachmentsFiles []string,
 	diagnostics, data, err := createDiagnosticsReport(robotFile)
 	if err == nil {
 		attachmentsFiles = append(attachmentsFiles, diagnostics)
-	}
-	plan, ok := data.Details["robot-conda-plan"]
-	if ok {
-		attachmentsFiles = append(attachmentsFiles, plan)
+		if plan, ok := data.Details["robot-conda-plan"]; ok {
+			attachmentsFiles = append(attachmentsFiles, plan)
+		}
 	}
 	attachmentsFiles = append(attachmentsFiles, reportFile)
 	filename, err := createIssueZip(attachmentsFiles)
@@ -104,7 +103,7 @@ func ReportIssue(email, robotFile, reportFile string, attachmentsFiles []string,
 	token["account-email"] = email
 	token["fileName"] = shortname
 	token["controller"] = common.ControllerIdentity()
-	_, ok = token["platform"]
+	_, ok := token["platform"]
 	if !ok {
 		token["platform"] = common.Platform()
 	}

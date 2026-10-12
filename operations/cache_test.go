@@ -3,8 +3,12 @@ package operations
 import (
 	"bytes"
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/joshyorko/rcc/xviper"
 )
 
 type cacheTestWriter struct {
@@ -54,4 +58,92 @@ func TestEncodeCacheReturnsWriteAndCloseErrors(t *testing.T) {
 	if !writer.closed {
 		t.Fatal("encodeCache did not close output after a write failure")
 	}
+}
+
+func TestSummonCacheTreatsOnlyMissingFilesAsEmpty(t *testing.T) {
+	t.Run("missing cache", func(t *testing.T) {
+		cacheFile := configureCacheTestLocation(t)
+
+		cache, err := SummonCache()
+		if err != nil {
+			t.Fatalf("SummonCache returned error for a missing cache: %v", err)
+		}
+		if cache == nil || len(cache.Credentials) != 0 || len(cache.Stamps) != 0 {
+			t.Fatalf("SummonCache returned unexpected empty cache: %#v", cache)
+		}
+		if _, err := os.Stat(cacheFile); !os.IsNotExist(err) {
+			t.Fatalf("SummonCache created cache file on read: %v", err)
+		}
+	})
+
+	t.Run("readable cache", func(t *testing.T) {
+		cacheFile := configureCacheTestLocation(t)
+		content := []byte("credentials:\n  retained:\n    account: robot\n    token: secret\n")
+		if err := os.WriteFile(cacheFile, content, 0o600); err != nil {
+			t.Fatal(err)
+		}
+
+		cache, err := SummonCache()
+		if err != nil {
+			t.Fatalf("SummonCache returned error for a readable cache: %v", err)
+		}
+		if credential := cache.Credentials["retained"]; credential == nil || credential.Token != "secret" {
+			t.Fatalf("SummonCache did not retain the credential: %#v", cache.Credentials)
+		}
+	})
+}
+
+func TestSummonCachePreservesUnreadableWritableFile(t *testing.T) {
+	cacheFile := configureCacheTestLocation(t)
+	content := []byte("credentials:\n  retained:\n    account: robot\n    token: secret\n")
+	if err := os.WriteFile(cacheFile, content, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(cacheFile, 0o200); err != nil {
+		t.Skipf("cannot set unreadable cache mode: %v", err)
+	}
+	probe, err := os.Open(cacheFile)
+	if err == nil {
+		_ = probe.Close()
+		t.Skip("test process can read a mode-0200 cache")
+	}
+
+	cache, err := SummonCache()
+	if err == nil || cache != nil {
+		t.Fatalf("SummonCache returned cache %#v, error %v for an unreadable file", cache, err)
+	}
+
+	if err := os.Chmod(cacheFile, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	persisted, err := os.ReadFile(cacheFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(persisted, content) {
+		t.Fatalf("unreadable cache changed after SummonCache: got %q, want %q", persisted, content)
+	}
+}
+
+func configureCacheTestLocation(t *testing.T) string {
+	t.Helper()
+	previous := xviper.ConfigFileUsed()
+	_, lockFileExists := os.Stat(".lck")
+	root := t.TempDir()
+	configFile := filepath.Join(root, "rcc.yaml")
+	if err := os.WriteFile(configFile, []byte("{}\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	xviper.SetConfigFile(configFile)
+	t.Cleanup(func() {
+		xviper.SetConfigFile(previous)
+		_ = xviper.ConfigFileUsed()
+		if previous == "" && os.IsNotExist(lockFileExists) {
+			_ = os.Remove(".lck")
+		}
+	})
+	if got := xviper.ConfigFileUsed(); got != configFile {
+		t.Fatalf("configuration file = %q, want %q", got, configFile)
+	}
+	return filepath.Join(root, "rcccache.yaml")
 }

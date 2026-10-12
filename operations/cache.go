@@ -82,7 +82,10 @@ func SummonCache() (*Cache, error) {
 	cacheFile := cacheLocation()
 	source, err := os.Open(cacheFile)
 	if err != nil {
-		return result.Ready(), nil
+		if os.IsNotExist(err) {
+			return result.Ready(), nil
+		}
+		return nil, fmt.Errorf("failed to open cache %q: %w", cacheFile, err)
 	}
 	decoder := yaml.NewDecoder(source)
 	err = decoder.Decode(&result)
