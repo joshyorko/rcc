@@ -206,7 +206,7 @@ def validate_inputs(source_sha, version):
     _require(isinstance(version, str) and VERSION_RE.fullmatch(version) is not None, "invalid release version")
 
 
-def validate_environment_protection(environment):
+def validate_environment_protection(environment, repository=None):
     _require(isinstance(environment, dict), "release environment configuration is unreadable")
     _require(environment.get("can_admins_bypass") is False, "release environment permits admin bypass or bypass policy is unreadable")
     rules = environment.get("protection_rules")
@@ -216,7 +216,21 @@ def validate_environment_protection(environment):
     rule = reviewer_rules[0]
     reviewers = rule.get("reviewers")
     _require(isinstance(reviewers, list) and bool(reviewers), "release environment has no required reviewers")
-    _require(rule.get("prevent_self_review") is True, "release environment does not prevent self-review")
+    reviewer = reviewers[0] if len(reviewers) == 1 and isinstance(reviewers[0], dict) else {}
+    identity = reviewer.get("reviewer", {})
+    sole_maintainer = (
+        repository == "joshyorko/rcc"
+        and environment.get("name") == "rcc-production"
+        and len(reviewers) == 1
+        and reviewer.get("type") == "User"
+        and isinstance(identity, dict)
+        and identity.get("login") == "joshyorko"
+        and type(identity.get("id")) is int
+        and identity.get("id") == 54248591
+        and rule.get("prevent_self_review") is False
+    )
+    _require(rule.get("prevent_self_review") is True or sole_maintainer,
+             "release environment does not prevent self-review or match the approved sole-maintainer policy")
     return True
 
 
@@ -1416,7 +1430,7 @@ def verify_environment_api(api_url, token, repository, environment_name):
     _require(bool(token), "release policy audit token is unavailable")
     encoded = urllib.parse.quote(environment_name, safe="")
     environment = _api_get(f"{api_url.rstrip('/')}/repos/{repository}/environments/{encoded}", token)
-    return validate_environment_protection(environment)
+    return validate_environment_protection(environment, repository=repository)
 
 
 def main():
