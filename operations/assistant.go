@@ -160,7 +160,7 @@ func MultipartUpload(url string, fields map[string]string, basename, fullpath st
 	return multipartUpload(client, url, fields, basename, fullpath)
 }
 
-func multipartUpload(client *http.Client, url string, fields map[string]string, basename, fullpath string) error {
+func multipartUpload(client *http.Client, url string, fields map[string]string, basename, fullpath string) (result error) {
 	buffer := new(bytes.Buffer)
 	many := multipart.NewWriter(buffer)
 
@@ -198,10 +198,6 @@ func multipartUpload(client *http.Client, url string, fields map[string]string, 
 	if err != nil {
 		return err
 	}
-	return finishMultipartUpload(response)
-}
-
-func finishMultipartUpload(response *http.Response) (result error) {
 	defer func() {
 		result = errors.Join(result, response.Body.Close())
 	}()
