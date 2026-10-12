@@ -244,7 +244,8 @@ func probeVersion(serverport string, config *tls.Config, seen map[string]int) {
 	dialer := &tls.Dialer{
 		Config: config,
 	}
-	timeout, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	timeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	intermediate, err := dialer.DialContext(timeout, "tcp", serverport)
 	if err != nil {
 		common.Log("  %s%s failed, reason: %v%s", pretty.Yellow, tlsVersions[config.MinVersion], err, pretty.Reset)

@@ -954,6 +954,26 @@ class ArtifactTaskTests(unittest.TestCase):
     with self.assertRaisesRegex(RuntimeError, "unexpected go vet findings"):
       tasks._validate_go_vet_result(1, baseline + "new/file.go:1:1: new finding\n")
 
+  def test_go_vet_rejects_resolved_tls_cancel_baseline_finding(self):
+    current_findings = [
+        "htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)",
+        "htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used",
+        "operations/pull.go:67:2: unreachable code",
+    ]
+    resolved_tls_finding = (
+        "operations/tlscheck.go:247:11: the cancel function returned by "
+        "context.WithTimeout should be called, not discarded, to avoid a context leak"
+    )
+
+    self.assertEqual(tasks._known_go_vet_findings(), current_findings)
+    tasks._validate_go_vet_result(1, "\n".join(current_findings) + "\n")
+    with self.assertRaisesRegex(RuntimeError, "unexpected go vet findings"):
+      tasks._validate_go_vet_result(
+          1, "\n".join(current_findings + [resolved_tls_finding]) + "\n")
+
   def test_artifact_race_scope_is_pinned_to_non_legacy_subpackages(self):
     self.assertEqual(tasks._artifact_race_packages(), [
         "./common",

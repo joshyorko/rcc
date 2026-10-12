@@ -471,7 +471,6 @@ def _known_go_vet_findings():
         "htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used",
         "htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used",
         "htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used",
-        "operations/tlscheck.go:247:11: the cancel function returned by context.WithTimeout should be called, not discarded, to avoid a context leak",
         "operations/pull.go:67:2: unreachable code",
     ]
 
