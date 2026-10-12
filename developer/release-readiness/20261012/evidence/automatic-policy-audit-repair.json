@@ -1,0 +1,20 @@
+{
+  "failedPublisher": 38263901267,
+  "failure": "step5 received empty audit variable and rejected before any environment API call; remaining publication steps skipped",
+  "freshTagAndReleaseReads": "both404 on2026-10-12 after failed run",
+  "repairPR": 247,
+  "acceptedHead": "6db6a3449357e8e9fe0a06715da1d0f2dc9cc96a",
+  "independentReview": "bootstrap ACCEPT,51focused tests",
+  "fullToolingTests": 149,
+  "permissions": "newpreflight actionsread/contentsread; existingpublication actionsread/contentswrite unchanged",
+  "audit": "unchanged authenticated fullpolicy guard repeated before andafter protectedmanualapproval",
+  "credentials": "automaticperjob token; no storedcredentials copied/created/reused; no settings change",
+  "hostedCI": 38267225983,
+  "status": "pendingCI; no merge or actualjobtokenproof yet",
+  "candidatePreserved": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  }
+}
