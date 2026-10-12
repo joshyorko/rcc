@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -75,6 +76,88 @@ func TestAutoScaleGrowsToConfiguredWorkerCount(t *testing.T) {
 	anywork.WorkerCount = previous
 	if got := anywork.Scale(); got != 3 {
 		t.Fatalf("Scale() after AutoScale with WorkerCount=3 = %d, want 3", got)
+	}
+}
+
+func TestAutoScaleBoundsWorkerCountAndMatchesConcurrentCapacity(t *testing.T) {
+	const subprocessCase = "RCC_ANYWORK_AUTOSCALE_BOUNDARY_CASE"
+	caseName := os.Getenv(subprocessCase)
+	if caseName == "" {
+		for _, testCase := range []string{"default", "cap"} {
+			t.Run(testCase, func(t *testing.T) {
+				ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+				defer cancel()
+				cmd := exec.CommandContext(ctx, os.Args[0], "-test.v", "-test.run=^TestAutoScaleBoundsWorkerCountAndMatchesConcurrentCapacity$")
+				cmd.Env = append(os.Environ(), subprocessCase+"="+testCase)
+				output, err := cmd.CombinedOutput()
+				if ctx.Err() != nil {
+					t.Fatalf("AutoScale %s subprocess exceeded its deadline: %v\n%s", testCase, ctx.Err(), output)
+				}
+				if err != nil {
+					t.Fatalf("AutoScale %s subprocess failed: %v\n%s", testCase, err, output)
+				}
+			})
+		}
+		return
+	}
+
+	var want uint64
+	switch caseName {
+	case "default":
+		want = uint64(runtime.NumCPU() - 1)
+	case "cap":
+		anywork.WorkerCount = 97
+		want = 96
+	default:
+		t.Fatalf("unexpected AutoScale subprocess case %q", caseName)
+	}
+	if want > 96 {
+		want = 96
+	}
+	if want < 2 {
+		want = 2
+	}
+	if caseName == "default" {
+		anywork.WorkerCount = 0
+	}
+	anywork.AutoScale()
+	workers := anywork.Scale()
+	if workers != want {
+		t.Fatalf("Scale() for %s AutoScale case = %d, want %d", caseName, workers, want)
+	}
+
+	started := make(chan struct{}, workers)
+	release := make(chan struct{})
+	released := false
+	defer func() {
+		if !released {
+			close(release)
+		}
+	}()
+	var active, maximum atomic.Int32
+	for range workers {
+		anywork.Backlog(func() {
+			current := active.Add(1)
+			for observed := maximum.Load(); current > observed; observed = maximum.Load() {
+				if maximum.CompareAndSwap(observed, current) {
+					break
+				}
+			}
+			started <- struct{}{}
+			<-release
+			active.Add(-1)
+		})
+	}
+	for range workers {
+		waitForWorkerSignal(t, started, "all AutoScale workers to start one held task")
+	}
+	if got := maximum.Load(); got != int32(workers) {
+		t.Fatalf("maximum simultaneous workers = %d, Scale() reports %d in %s case", got, workers, caseName)
+	}
+	close(release)
+	released = true
+	if err := anywork.Sync(); err != nil {
+		t.Fatalf("Sync returned error after releasing %s workers: %v", caseName, err)
 	}
 }
 
