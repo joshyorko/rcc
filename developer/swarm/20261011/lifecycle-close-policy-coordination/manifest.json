@@ -1,0 +1,162 @@
+{
+  "parent": "a020e3300207e627aa9b61ab61573358f13397ec",
+  "timestamp": "2026-10-12T00:15:38.084775+00:00",
+  "all_parent_entries_preserved": 3867,
+  "scope": "Append-onlyremoteverification, authorizedexistingissuePOST+GET receipts and actualread-onlyexistingenvironmentavailability result; no newnativeexperiment/workload/task/environment/turn. Manifestexcludedfromselfhash.",
+  "entries": [
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/actions133-get.json",
+      "bytes": 7531,
+      "sha256": "fba631ab42a031e0b69da6813a5092ea0687f2f34ce3a500090ff228f30f522d",
+      "git_mode": "100644",
+      "git_blob": "ffd69671c994e857664019a98516e1cc4af1779d"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/actions133-get.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/actions133-post.json",
+      "bytes": 7531,
+      "sha256": "fba631ab42a031e0b69da6813a5092ea0687f2f34ce3a500090ff228f30f522d",
+      "git_mode": "100644",
+      "git_blob": "ffd69671c994e857664019a98516e1cc4af1779d"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/actions133-post.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/actions133-request.json",
+      "bytes": 4206,
+      "sha256": "d59c6647622c1e5096cbf79e1157797a578ccc22b4819648dff5edbd77aa19ea",
+      "git_mode": "100644",
+      "git_blob": "f415747cd130e978727068bb2d6292dfa5db4232"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/availability-check.json",
+      "bytes": 479,
+      "sha256": "b1d7003fdc51d8a2bf5c151273c454013d4a9fd21346b4b01594d7f2cf074e8d",
+      "git_mode": "100644",
+      "git_blob": "883e2b7bf52bcdbda9c0c81609ebe3c6ef29a356"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/coordination-receipts.json",
+      "bytes": 1513,
+      "sha256": "623f2dde038b6b7fd82cde616846a7414c4464659ca635cdf2e0222a1feb7017",
+      "git_mode": "100644",
+      "git_blob": "1cc4e4d34a50f873e0fc45c2708839920c7623a5"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/dependency-graph.json",
+      "bytes": 1059,
+      "sha256": "4d82b142943a1ddb87b6a14e2a92dc1d606c5f47e887f2a0afb8484a722fb75e",
+      "git_mode": "100644",
+      "git_blob": "bf16f41f83ff7e37cfeaba7e5c5937f136ce203d"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/execution-ledger.json",
+      "bytes": 1605,
+      "sha256": "c67c2d31f43fe3a9c7bed5297a20308c91e19271f04810528f16f612f6223893",
+      "git_mode": "100644",
+      "git_blob": "5eab64d24ad1f98f502a153f29bc74a3cb0d7889"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/parent-remote-verification.json",
+      "bytes": 26172,
+      "sha256": "73f2ae27aef6c55948c7d119def51417344117dd2c3dfa405901a95e9e0fa222",
+      "git_mode": "100644",
+      "git_blob": "b84bdeede4d906d4829a490b58dfc5ec520c5602"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc125-get.json",
+      "bytes": 6399,
+      "sha256": "059b0d9b6e278af6c0737b926e1bde4a59f3e857fc7beb600e09c4d38588f31a",
+      "git_mode": "100644",
+      "git_blob": "2ff5b96a9b848bb14ceae1bc1e155ecb891295cf"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc125-get.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc125-post.json",
+      "bytes": 6399,
+      "sha256": "059b0d9b6e278af6c0737b926e1bde4a59f3e857fc7beb600e09c4d38588f31a",
+      "git_mode": "100644",
+      "git_blob": "2ff5b96a9b848bb14ceae1bc1e155ecb891295cf"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc125-post.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc125-request.json",
+      "bytes": 3090,
+      "sha256": "2cce789bcd2ed62eca3947be3319720983ea61d6c45e2833be9a225861cd0b30",
+      "git_mode": "100644",
+      "git_blob": "d7ce0fb90ece450b600fee19b77e61cf7a879383"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc132-get.json",
+      "bytes": 6855,
+      "sha256": "789c0ec34d18e8a50cef8f5645b4ab1258fb3b5141b4789cfd15e2e270a9bce0",
+      "git_mode": "100644",
+      "git_blob": "3c2844be48fa0d046149abb7f8013969d1f0cd82"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc132-get.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc132-post.json",
+      "bytes": 6855,
+      "sha256": "789c0ec34d18e8a50cef8f5645b4ab1258fb3b5141b4789cfd15e2e270a9bce0",
+      "git_mode": "100644",
+      "git_blob": "3c2844be48fa0d046149abb7f8013969d1f0cd82"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc132-post.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/rcc132-request.json",
+      "bytes": 3546,
+      "sha256": "20b7373449ef02c7c10f5312720cc0422beff7d7e4f2369a76a599b0fdb39509",
+      "git_mode": "100644",
+      "git_blob": "4555d16d9a71b1d2acc06dc78b00796860403873"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/report.md",
+      "bytes": 3650,
+      "sha256": "54c8f8a8b732a3b5fed4d50bed62a939526a8da2bac5a003efca3f9780e6b123",
+      "git_mode": "100644",
+      "git_blob": "f2e5e52dcafea93c6590eaf8218abef12ba9155b"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-close-policy-coordination/restart.md",
+      "bytes": 2142,
+      "sha256": "d32a70a88c99f723dbfde8900c79967f1f7efdcb15163e83d12064e8c99c6caa",
+      "git_mode": "100644",
+      "git_blob": "5a6f259aca69a3a72f100bc26c8f3b886b480369"
+    }
+  ]
+}

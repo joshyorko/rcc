@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-10-12T00:13:44.843260+00:00",
+  "checkpoint": "a020e3300207e627aa9b61ab61573358f13397ec",
+  "receipts": [
+    {
+      "repository": "joshyorko/rcc",
+      "issue": 132,
+      "id": 6115474781,
+      "url": "https://github.com/joshyorko/rcc/issues/132#issuecomment-6115474781",
+      "post_exit": 0,
+      "independent_get_exit": 0,
+      "body_exact": true,
+      "body_sha256": "14bcc52fffbb923ed0d3bd373d4dbef36e8723ccc022bc4a8a002d194826fd09",
+      "scope": "Existingauthorizedrepositorychannel only; notdirectexternalrootdelivery/owneracknowledgment"
+    },
+    {
+      "repository": "joshyorko/rcc",
+      "issue": 125,
+      "id": 6115475039,
+      "url": "https://github.com/joshyorko/rcc/issues/125#issuecomment-6115475039",
+      "post_exit": 0,
+      "independent_get_exit": 0,
+      "body_exact": true,
+      "body_sha256": "435c839a7df03fda3d8f821b89d4714adafc1d1bac2b0d9564e70e75d7dc0143",
+      "scope": "Existingauthorizedrepositorychannel only; notdirectexternalrootdelivery/owneracknowledgment"
+    },
+    {
+      "repository": "joshyorko/actions",
+      "issue": 133,
+      "id": 6115475353,
+      "url": "https://github.com/joshyorko/actions/issues/133#issuecomment-6115475353",
+      "post_exit": 0,
+      "independent_get_exit": 0,
+      "body_exact": true,
+      "body_sha256": "2a31934560918291bb5e1e69c60874965d48b7bbbf16587c326bd6581a7a2a8f",
+      "scope": "Existingauthorizedrepositorychannel only; notdirectexternalrootdelivery/owneracknowledgment"
+    }
+  ]
+}

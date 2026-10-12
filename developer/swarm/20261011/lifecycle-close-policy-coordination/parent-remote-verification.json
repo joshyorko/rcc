@@ -1,0 +1,605 @@
+{
+  "sha": "a020e3300207e627aa9b61ab61573358f13397ec",
+  "parent": "5fb5c8595fad597a036dcc908745c2c9d5fc91bd",
+  "exit": 0,
+  "all_parent_entries_preserved": 3782,
+  "remote_raw_files": 85,
+  "remote_raw_bytes": 2126659,
+  "seconds": 4.785328725998625,
+  "files": [
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/current-refresh-summary.json",
+      "bytes": 10668,
+      "sha256": "0d63f5e64d4ced706c4ee8895cd25590262c8ed546423263501aea6886289bc1",
+      "git_mode": "100644",
+      "git_blob": "e65c5db9e15b07cd16dbdb32f79a4cb5a793dee7"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-101-comments-index.json",
+      "bytes": 13629,
+      "sha256": "1892fcbede7041371606b0c71195138cb783f88784ad1953b0c3cca7b4b93ab7",
+      "git_mode": "100644",
+      "git_blob": "c7144048586d6473d5982b76a3f5da1d461f2214"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-101-comments-page-1.json",
+      "bytes": 321857,
+      "sha256": "85748e63ca085ef3948c25a4f1734a2f6582fd731fe63024a949b7eef1184f92",
+      "git_mode": "100644",
+      "git_blob": "17c8e7741091cb1b7bcfd55a03b5791582bb2d09"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-101-comments-page-2.json",
+      "bytes": 372572,
+      "sha256": "33d898af4b6d96fcc3b3ca9b9209bcd6b726c609f11258558af75208234faff1",
+      "git_mode": "100644",
+      "git_blob": "e05b536f6ab5d866b93ce82295249260526c35ae"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-101.json",
+      "bytes": 48619,
+      "sha256": "1aabde096cc03201e253b8e3e6f2f24205cea633605e416058c2212157f95899",
+      "git_mode": "100644",
+      "git_blob": "66d0632e737796150eb474c7c6bcb09d5e0d555c"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-133-comments-index.json",
+      "bytes": 16335,
+      "sha256": "019ae0c6257fdc450b51d488d064f70f2f0c44d1f4a20830027f3556509b139e",
+      "git_mode": "100644",
+      "git_blob": "95f9ae20ab2d900be8ae3087d135f853d97cddc5"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-133-comments-page-1.json",
+      "bytes": 51006,
+      "sha256": "204a91b3285c101247b46995a665591e216fae0d28448fba7459709efdc68a21",
+      "git_mode": "100644",
+      "git_blob": "1b3195c26f75d183c9a70f95debcf30ed68d1df8"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/issue-133.json",
+      "bytes": 18321,
+      "sha256": "3d21fbee278247ca6448dbf4476114dc6a37838ae93d10b631268f06c0074ba4",
+      "git_mode": "100644",
+      "git_blob": "25d12ed62dc975a186fb000bd44fa6a120d05d50"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-221-check-runs.json",
+      "bytes": 124583,
+      "sha256": "c41edbeb98af53ff936892d425140008a4144d6738cf6b628c65c9bddb6a5f13",
+      "git_mode": "100644",
+      "git_blob": "a05a6025029984db26ecd87bff98a000b05c833f"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-221-combined-status.json",
+      "bytes": 4492,
+      "sha256": "0f4893ed5264270285900048eb16c6a37157d1f1a0d73e7917192dab97b02873",
+      "git_mode": "100644",
+      "git_blob": "7ad4c7738f69ecbdb1d121119dfcd30db5e010f4"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-221-reviews.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "git_mode": "100644",
+      "git_blob": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-221.json",
+      "bytes": 42153,
+      "sha256": "4370a8b6b9e023043d822bf5eab5fc7558fb978531ed4650f2ff3d20b4200eda",
+      "git_mode": "100644",
+      "git_blob": "158b724eba272540691df1125a775a38aaa38388"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-305-check-runs.json",
+      "bytes": 68795,
+      "sha256": "d41c4a3ee213381c8c14a0da3a5a16fb04d83b4872873227ea5f1d55eb79e4c3",
+      "git_mode": "100644",
+      "git_blob": "dadd913a97fbae1e946e6834f8d96d21437e1c62"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-305-combined-status.json",
+      "bytes": 4492,
+      "sha256": "8aa6da0b907bd75cf155e8929d553bbafe45a8a809bd1047d80394df1fe8a937",
+      "git_mode": "100644",
+      "git_blob": "c4d3470cd2f0f9dddc1c7e7058b99a925e871a79"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-305-reviews.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "git_mode": "100644",
+      "git_blob": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-305.json",
+      "bytes": 32689,
+      "sha256": "6569cc8d2a0eda5a7a9d5377cbb0666d82597a920b9aa3ef06b4b516d3e6b77a",
+      "git_mode": "100644",
+      "git_blob": "4ca87ffe8b72b93004b6dc6fb2b7cfb49ef62a2d"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-308-check-runs.json",
+      "bytes": 93708,
+      "sha256": "919466791319aaaffd62550550f580934f5d9867fd1eb1842c9e2faf062d897a",
+      "git_mode": "100644",
+      "git_blob": "7b64b6e8e918688c99ba3b446d96153190673068"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-308-combined-status.json",
+      "bytes": 4492,
+      "sha256": "dc113725e3c1483bc53cd8f5a1bb85b3b96e05dc03795886a0d49fa66a894265",
+      "git_mode": "100644",
+      "git_blob": "6eb6e1c87a9c7cccde0a0ac759e1bf8af8f6a2c5"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-308-reviews.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "git_mode": "100644",
+      "git_blob": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-308.json",
+      "bytes": 31627,
+      "sha256": "0d59859fbab970fd055d7c12b6b969b2d9fd533c062d53a849de4e8943aa07ee",
+      "git_mode": "100644",
+      "git_blob": "606c9a999b7cfbe925e338174fc15d13d948087b"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-313-check-runs.json",
+      "bytes": 68795,
+      "sha256": "beb0decc57b85bf0a0bb615a3fab77670c2ba078f3107039eb605ab9d7a7f0d6",
+      "git_mode": "100644",
+      "git_blob": "d3ae7872569a30bf2b4d62cd0e463f6595d73fc5"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-313-combined-status.json",
+      "bytes": 4492,
+      "sha256": "61ddcde44f4416e52a5d21686fef44a260ba8a9633546ae57e6cb83107bb3596",
+      "git_mode": "100644",
+      "git_blob": "997aab06007d819253074da563450b1206d64e35"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-313-reviews.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "git_mode": "100644",
+      "git_blob": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/pr-313.json",
+      "bytes": 19806,
+      "sha256": "23ad9463f216518f1d802e90586ad7bbcacee034fb913f009998c0debdfbfc48",
+      "git_mode": "100644",
+      "git_blob": "3f787ebdaa2a967a1b569341f0cbc3342bd950bb"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/report.md",
+      "bytes": 7235,
+      "sha256": "dc2218c6871c72318414ef36e45fc841df6abb47fdf29e48a08be1c172e22e31",
+      "git_mode": "100644",
+      "git_blob": "5259df3844ae8d675c85ce9ba565227f49b5e956"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/actions-refresh/sha256.txt",
+      "bytes": 2204,
+      "sha256": "3c923dd84d4d6b1b924ef7475cc2e08d63fe54babd09594ca88c5e9b4b449fa0",
+      "git_mode": "100644",
+      "git_blob": "646e3a39f08725d0675a8638b13f1ef6c90dda1e"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/binary-binding-fixed.json",
+      "bytes": 306,
+      "sha256": "f32c64d89aa7de104a11a606ed4725cbb76fd2c30ef5440e0a34265078dfa8b9",
+      "git_mode": "100644",
+      "git_blob": "23facff9d7d69ea327aa6a07a9c15ead9e7b0aff"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/binary-binding-negative.json",
+      "bytes": 306,
+      "sha256": "56326d18a5ca523cd3d5e6b97907149bea4c20ec93af31b54ea5f30deffbb698",
+      "git_mode": "100644",
+      "git_blob": "16ae70b09474be62a534dbc81655d4325a1f3e32"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/bounded-resource-observations.json",
+      "bytes": 936,
+      "sha256": "8e2048d6c4e997dbcdce7783a29b7876da671924def07c109fb82b675effb0be",
+      "git_mode": "100644",
+      "git_blob": "c9ad0022810d62db5e28948e84675942da749b12"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-fixed/result.json",
+      "bytes": 6970,
+      "sha256": "390f11110b45e10d90d9508483f6a562f6c0be9038d40aabb194a5436753405c",
+      "git_mode": "100644",
+      "git_blob": "c77d9955d72f4bc32178cb5ae60384c76834ff43"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-fixed/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-fixed/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-negative/result.json",
+      "bytes": 42573,
+      "sha256": "a89864f478d7c1900a2df80a13ecb2707dd2b46f2d2e1f2ddd19e177a7c92d92",
+      "git_mode": "100644",
+      "git_blob": "1af703e0ad0d57ccd92f1f79bbb1fae95a967dd6"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-negative/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/build-negative/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/controller.py",
+      "bytes": 6972,
+      "sha256": "69d07fa1a70ae74d7db155d34d53dba1a271fcc1df5eca38fb461075d845ca6e",
+      "git_mode": "100644",
+      "git_blob": "d1204e007f4a67700606492d1d9b48ef0560f0b4"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/coordinator-integrity-readback.json",
+      "bytes": 1557,
+      "sha256": "3a7632accd08c1851568793ccc97aa72929c44fd628f90a45054d181051eb156",
+      "git_mode": "100644",
+      "git_blob": "6d6b491e92ff3c233306157dbe8a5d9886436063"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/dependency-graph.json",
+      "bytes": 8008,
+      "sha256": "1df196d7acd2143503d98d5c57f3e286e984f35bd6b37b8220d9056aa2d4101c",
+      "git_mode": "100644",
+      "git_blob": "069a2663dd30dd92bbbd704fc95b79cdb2d20431"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/design-independent-review.md",
+      "bytes": 5263,
+      "sha256": "15475f56f9e264469fbf36e2a2c697196cec00f49883af2976851f567464ce8a",
+      "git_mode": "100644",
+      "git_blob": "dd9936f53e36342979f5aeb8e6937545c306d5fa"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/execution-ledger.json",
+      "bytes": 23570,
+      "sha256": "0cfb5bf332d6ec909aff80eb240768a5cb73663ac4a4e6fae1f0e5d8cd329146",
+      "git_mode": "100644",
+      "git_blob": "d46eab5b9860d7530a16a161792b3aceaf12a5af"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/experiment-scope.json",
+      "bytes": 1708,
+      "sha256": "f23cfa63f61e2b96ba3c9bbd8a527b40420776eeeae06ba5cada8104f0d6eecb",
+      "git_mode": "100644",
+      "git_blob": "605d09ebcd5602e00f38d091d30494753dfb85a0"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/host-context.json",
+      "bytes": 460,
+      "sha256": "8b3c775f2ed7f606b7085922a9b6011a2cca63560d7f7ed1dbb385cb3bf989f7",
+      "git_mode": "100644",
+      "git_blob": "37ef457e41214376ff3b2ab6a079b3f07500eef7"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/issue-125.json",
+      "bytes": 51096,
+      "sha256": "85f2cfc3b58138e51c010d823e8867a7eec9dfe88c61850199bf020a3a3926aa",
+      "git_mode": "100644",
+      "git_blob": "10dae9641a87dcd9d8bee8429c68692257b9702e"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/issue-132.json",
+      "bytes": 6257,
+      "sha256": "0fc6cd9a6f62a35dc17d1f50f0a5ffae90f71400edfadcfd150f1de18a3432c4",
+      "git_mode": "100644",
+      "git_blob": "d3d13aa6b331af097ceb68015518f5be99874f00"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/issue-185.json",
+      "bytes": 28592,
+      "sha256": "978f7cf759c57d9c89fae213ce69d0a12aec81bcd4e23d639ae658758c427e1d",
+      "git_mode": "100644",
+      "git_blob": "7508e6813bdcdc1398035d4554efb494b7386f92"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/main-ref.json",
+      "bytes": 324,
+      "sha256": "7b3f0596c16c8dfbcd8957df590d1ece09734bc9136c2b2eee32bde570e067d2",
+      "git_mode": "100644",
+      "git_blob": "12826cc048e9b66fa294eb901177a840e2d6d86b"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/native-admission.json",
+      "bytes": 5297,
+      "sha256": "321edb68a931ef2421ada09ecab06e729d9b8bec71b00ea6995c7b4fc14a5027",
+      "git_mode": "100644",
+      "git_blob": "17744872effe5bc1266ca4abcce1e3373a56a7ff"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/native-admission.schema-mismatch.json",
+      "bytes": 5202,
+      "sha256": "0b5fbffbe2089ea3c410be7251500768a5a86fc16ba10b3ee6d1e34c371f0831",
+      "git_mode": "100644",
+      "git_blob": "568f8245d5501c7ed5b81d72c61cc9361f6dcc6c"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/overlay-fail-closed.json",
+      "bytes": 703,
+      "sha256": "0c328d9fc58840b4ab4671fd13893d8878ff94274abf6bb5bc04f1e30dfbf234",
+      "git_mode": "100644",
+      "git_blob": "06cd5169029cf154ed00499cce5d9762bb0cc37a"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/overlay-negative.json",
+      "bytes": 525,
+      "sha256": "033a4c8a58bde0e146d73ca78e7cd00be5b1c03f6f06a7d1552f9171b2c8ca5a",
+      "git_mode": "100644",
+      "git_blob": "a9ede81fa1c2bf5e468c5c2999d61c743b67fe98"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/owner-final-refresh/issue-101.json",
+      "bytes": 48619,
+      "sha256": "1aabde096cc03201e253b8e3e6f2f24205cea633605e416058c2212157f95899",
+      "git_mode": "100644",
+      "git_blob": "66d0632e737796150eb474c7c6bcb09d5e0d555c"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/owner-final-refresh/issue-133-comments.json",
+      "bytes": 51006,
+      "sha256": "204a91b3285c101247b46995a665591e216fae0d28448fba7459709efdc68a21",
+      "git_mode": "100644",
+      "git_blob": "1b3195c26f75d183c9a70f95debcf30ed68d1df8"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/owner-final-refresh/pr-221.json",
+      "bytes": 42153,
+      "sha256": "4370a8b6b9e023043d822bf5eab5fc7558fb978531ed4650f2ff3d20b4200eda",
+      "git_mode": "100644",
+      "git_blob": "158b724eba272540691df1125a775a38aaa38388"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/owner-final-refresh/pr-308.json",
+      "bytes": 31627,
+      "sha256": "0d59859fbab970fd055d7c12b6b969b2d9fd533c062d53a849de4e8943aa07ee",
+      "git_mode": "100644",
+      "git_blob": "606c9a999b7cfbe925e338174fc15d13d948087b"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/owner-final-refresh/timestamp.txt",
+      "bytes": 33,
+      "sha256": "e9cf730dd1d907f0e02deace2e579e4f20b6a3afc2f5ee530bf0d1268146a61f",
+      "git_mode": "100644",
+      "git_blob": "a977e7aec48d79b60bcd9755ab95189e7d200630"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/packet-independent-review.md",
+      "bytes": 2975,
+      "sha256": "3bf060132642d0141b048286a3c8593492302b68e023097ffffdd88efc4f173d",
+      "git_mode": "100644",
+      "git_blob": "5cb1d52b0faba44dc73f763d5010c88e66182182"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/parent-remote-verification.json",
+      "bytes": 9204,
+      "sha256": "23954001376f8705a30b98ba8aecbe291a61ff70c9deaf643c66ed7934b072f0",
+      "git_mode": "100644",
+      "git_blob": "1ba9cdb0db930959d0d0f61574ccb05bcb96a6e6"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/pr-224.json",
+      "bytes": 19065,
+      "sha256": "4b0e5c4703d6efe9c13b5bb3fe645adaa9fd7ac3a7bbeaeb9d366612a69eb125",
+      "git_mode": "100644",
+      "git_blob": "ec5243604564720e3e51ddb497814166ffca80ec"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/pr-225.json",
+      "bytes": 17317,
+      "sha256": "90ae35c7d06c38cc4edc007de2e89904af44f89ac075cc20d9bb4b401e56726d",
+      "git_mode": "100644",
+      "git_blob": "865ef6819694891a0d348d457df2fd010e9e2081"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/prebuild-admission-schema-failure.json",
+      "bytes": 463,
+      "sha256": "80fc647d713edca11726fcfc0d21f272b3352ff2d418ea24ef4bbcfd0c9ddd26",
+      "git_mode": "100644",
+      "git_blob": "c99a01ae10316ba35e5adcace29417e4ee6dc010"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/report.md",
+      "bytes": 11485,
+      "sha256": "230ea677ac6527b9012db2f4fcbfef57414271f3b556dcc3cc7308a8923c7633",
+      "git_mode": "100644",
+      "git_blob": "70050a28dafb54ce331ae86f80cf6bb03b632598"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/repository.json",
+      "bytes": 5384,
+      "sha256": "4eaf30ee241aeff78fa67d45d6fe9cd2222a6b97c9599c244eac172092112df7",
+      "git_mode": "100644",
+      "git_blob": "2b17c0f795f1529ed449477f62c07c4e1402ebd1"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/restart.md",
+      "bytes": 3086,
+      "sha256": "361f8ea96ae6b48486c7dc1f16ebc355fad9e4519164cb9f0fe0ddea80f85bae",
+      "git_mode": "100644",
+      "git_blob": "fa901d664c04a83b427ff5a191c4bf6606b36351"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/readback.json",
+      "bytes": 3666,
+      "sha256": "920b5346bc7e8a656a0456d7f135ab1dd33520333b0fa6f0552dcd2fa71b1572",
+      "git_mode": "100644",
+      "git_blob": "880d687178486ca25198af3b1d9c0e2cca6ba645"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/responses.jsonl",
+      "bytes": 176,
+      "sha256": "cd1ea04e3a367964463518f5a20a4afce0f4d4add07b9dbeab68ec636ed91612",
+      "git_mode": "100644",
+      "git_blob": "e87198bcddfa8873e3be1139014efcde8f4d7e62"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/result.json",
+      "bytes": 7060,
+      "sha256": "a90d05a157852977724063d187a5ce3ff8a427bfd44b8280609a23b3b0cfa0e8",
+      "git_mode": "100644",
+      "git_blob": "04c3f62ce197a436da70d2720f5d6fefa7c24a2b"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-fixed/worker.jsonl",
+      "bytes": 1928,
+      "sha256": "e50d8a56cbecf2973c03824bb9bf372a0fcc803660ca094482e948cac0d0d19c",
+      "git_mode": "100644",
+      "git_blob": "dab0b98a378da8231b053e8499aaf32cdb3b6418"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/readback.json",
+      "bytes": 3687,
+      "sha256": "c568477299ad452440eaea1dbc22d18b1dd512ce26ee8489c788fccf602f88ad",
+      "git_mode": "100644",
+      "git_blob": "0b2354811ecd71f9db68ed8b0b292627917c2972"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/responses.jsonl",
+      "bytes": 176,
+      "sha256": "42426b5dce0ba399a029e3bd0eb2ba292acdc1fdcdd8b3be9f7b1aec784c1006",
+      "git_mode": "100644",
+      "git_blob": "9f49555f6dff327a2ce8618360f56785ff7851b2"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/result.json",
+      "bytes": 9252,
+      "sha256": "2a5e8cf03f19513196c94e456f70d00d324c2168b36d11d5d6c3e5e1dfdc3d1c",
+      "git_mode": "100644",
+      "git_blob": "139095057ea5c5ffb961749d9e707d83d2cff1fe"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/results-negative/worker.jsonl",
+      "bytes": 1190,
+      "sha256": "dc58bb03b9458a88eb4438b8a26ef24e4b0f5057d174536617b3e172fded32ce",
+      "git_mode": "100644",
+      "git_blob": "c76e4ca11a532a68afb4e9196c595d9f453aa4ab"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/runtime-independent-review.json",
+      "bytes": 13108,
+      "sha256": "6a6225d1b99179c11d6530c41b0026e506a6ffdd5119846719c4dc8421b3ef3b",
+      "git_mode": "100644",
+      "git_blob": "062be05e2d3360624643d0d27d063f54762da7c7"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/runtime-independent-review.md",
+      "bytes": 5067,
+      "sha256": "05e00b62bbd3088979f3af29166a65799b23e2fa73380f70f9a768dd7e3f8380",
+      "git_mode": "100644",
+      "git_blob": "5c7ef71d76d0ada6ad4bdc7b8fce526e72984b03"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/schema-repair-receipt.json",
+      "bytes": 823,
+      "sha256": "9a790b3589fe1ce822813dc18726fb499f7b53a7c51fd5a80d235f217a732665",
+      "git_mode": "100644",
+      "git_blob": "8d1b78611e2d4384f6cf8e7cfac1734795dc6442"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source-binding.json",
+      "bytes": 220272,
+      "sha256": "2a9bcafbd9e1e664aded2e461e4801808551d1f6a2d117be71d4012255b9068c",
+      "git_mode": "100644",
+      "git_blob": "ea9adeece0c787fd425988e4e0fb565cb3d41581"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source-independent-review.md",
+      "bytes": 3603,
+      "sha256": "d4e87280dd2ae3e5954aab1a7851fc22a1e3ff915202565a9fa14c668a5bf169",
+      "git_mode": "100644",
+      "git_blob": "654055693bd76fb2d097e584c216610210f2ce8d"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source/execute-fail-closed.go.txt",
+      "bytes": 7682,
+      "sha256": "888345d4b949634cfbea4229b132474aea7ed570516db06cea23fb9444d18f49",
+      "git_mode": "100644",
+      "git_blob": "7079c44b0f2f96f232b077019de22747b7a33116"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source/go.mod",
+      "bytes": 52,
+      "sha256": "679d3186aa3400a422e917eea772db636ba90f5d8d35038ef82573ce28363569",
+      "git_mode": "100644",
+      "git_blob": "3f138e39860cf5411a7037f61d974e4a4cf2ef99"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source/group-close-fault.go.txt",
+      "bytes": 5423,
+      "sha256": "c2e9fc52c9016b86f4f06a18e077471d01ddb225c6cc2cf292b8266069331f7a",
+      "git_mode": "100644",
+      "git_blob": "6f9d2d1d9357145f7eabaa345bc6066ef3ea7cff"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/source/main.go",
+      "bytes": 15812,
+      "sha256": "50e3b1ca47cd53e1add883b669d7c9f5a74e76663d4db3e49a9106c0c1aaa0a7",
+      "git_mode": "100644",
+      "git_blob": "305c834bf80c20629ae001f5e8151ce4bd8394d1"
+    },
+    {
+      "path": "developer/swarm/20261011/lifecycle-overlap-followup/manifest.json",
+      "bytes": 26062,
+      "sha256": "859a138f2b7b92250e0c1227c937c4fb853ace21c588ea90640ce85d31acf063"
+    }
+  ],
+  "scope": "Read-only exact remote/local Git bytes including symlink Git payloads; no workload replay."
+}

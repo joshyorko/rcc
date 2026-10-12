@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-10-12T00:15:05.928918+00:00",
+  "parent_checkpoint": "a020e3300207e627aa9b61ab61573358f13397ec",
+  "authoritative_graph": "developer/swarm/20261011/lifecycle-overlap-followup/dependency-graph.json",
+  "ownership_preserved": true,
+  "new_execution": false,
+  "nodes": [
+    {
+      "id": "lifecycle-close-policy",
+      "state": "PrivateinjectedfailureprerequisitePASS only"
+    },
+    {
+      "id": "same-process-overlap",
+      "state": "NOTRUN/separatefutureadmission"
+    },
+    {
+      "id": "actions-current3-native",
+      "state": "Existingownerblockedprerequisite"
+    },
+    {
+      "id": "publication",
+      "state": "HOLD185"
+    }
+  ],
+  "edges": [
+    {
+      "from": "lifecycle-close-policy",
+      "to": "same-process-overlap",
+      "state": "Nextgateunqualified; noautomaticturn"
+    },
+    {
+      "from": "actions-current3-native",
+      "to": "released5/exact727",
+      "state": "STOPuntilcurrent3PASS"
+    },
+    {
+      "from": "research",
+      "to": "publication",
+      "state": "Notareleasegate"
+    }
+  ]
+}

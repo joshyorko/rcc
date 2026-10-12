@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-10-12T00:15:05.928918+00:00",
+  "repository": "joshyorko/rcc",
+  "repository_id": 1051101627,
+  "parent_checkpoint": "a020e3300207e627aa9b61ab61573358f13397ec",
+  "authoritative_lifecycle_ledger": "developer/swarm/20261011/lifecycle-overlap-followup/execution-ledger.json",
+  "authoritative_lifecycle_graph": "developer/swarm/20261011/lifecycle-overlap-followup/dependency-graph.json",
+  "authority": "ONEboundedfollowupsameexisting successor, completed; no automaticadditionalturns",
+  "new_native_or_performance_execution": false,
+  "parent_remote_verification": "parent-remote-verification.json",
+  "availability": "availability-check.json",
+  "coordination": "coordination-receipts.json",
+  "external_root_delivery": "Notclaimed; historicalNOT_FOUND remains; existingrepositoryPOST+GET only",
+  "retained_status": {
+    "private_injected_close_error_lease_policy": "ScopedPASS only; unsafebaselinepreserved",
+    "overlap": "NOTRUN",
+    "currentActionsnative3": "NOTRUN/unqualified; historicala709warm-only3PASS retained separately withfailed/-1teardown",
+    "version_order": "18.19.3\u2192released18.19.5\u2192exact727;STOPfirstfailure",
+    "publication": "v18.19.6 PUBLICATION HOLD185",
+    "draft224225": "NO-GO"
+  },
+  "frozen_source": "7945f956b428359928908a9f42e36417b113dafd",
+  "frozen_linux_binary_sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+  "all_parent_entries_to_preserve": 3867,
+  "documentation_receipt": "report.md last paragraph",
+  "checkpoint_policy": "Normalexistingbranchappendonly, verifyeveryremote rawbyte; noforce"
+}
