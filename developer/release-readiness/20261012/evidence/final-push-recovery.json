@@ -1,0 +1,22 @@
+{
+  "firstPush": {
+    "localCommit": "72eb32c411d6e91116c9e8c3a9dfbe8db50382d8",
+    "exitCode": 1,
+    "remoteMessage": "fatal error in commit_refs; failure"
+  },
+  "remoteReadBeforeRetry": {
+    "handoffHead": "b976a06884640f7e802767da57bfd0f8055ca63f",
+    "main": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+  },
+  "retry": {
+    "ordinaryFastForward": true,
+    "force": false,
+    "exitCode": 0,
+    "remoteReadBack": "72eb32c411d6e91116c9e8c3a9dfbe8db50382d8"
+  },
+  "prematureRawRead": {
+    "httpStatus": 404,
+    "disposition": "first push failed; no candidate or evidence acceptance inferred"
+  },
+  "noReceiptsErased": true
+}

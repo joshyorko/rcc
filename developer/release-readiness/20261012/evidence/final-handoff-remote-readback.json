@@ -1,0 +1,902 @@
+{
+  "commit": "72eb32c411d6e91116c9e8c3a9dfbe8db50382d8",
+  "verifiedFiles": 179,
+  "mismatches": [],
+  "files": [
+    {
+      "path": "developer/release-readiness/20261012/.gitattributes",
+      "sha256": "380041cbd785c37a8afef69af552f8504e36436e9b8b9e3129726f7ff99a0882",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/README.md",
+      "sha256": "e3a15ca030f17cd9d5676d880f980da5be11a37eff8ee8f94fd0c93ba3d518b0",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/GO-2026-5970.json",
+      "sha256": "67ada3c81c785215b93c9ea718755b8204b322f95f45f4a4594e2f8b52c7aead",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/GO-2026-6629.json",
+      "sha256": "b68c3868c023ae6d358294a1af09758ce97aed426a8a65e2c755ca524ba509b6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/export-artifacts.json",
+      "sha256": "d9734d1a4c55346f4eac274789f912a006ec06fea4deec06242eea3f8a2a08d3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/export-run.json",
+      "sha256": "279fef35939fbe9b554d087c7e2f35695f4f5e8921bd3aa98586718bf9e20389",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-SHA256SUMS",
+      "sha256": "70c35fe80c1f4f47892d9367465bedb9e19225678ff7bc70ad6ae5b63789073e",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-advisory-GO-2026-5970.json",
+      "sha256": "67ada3c81c785215b93c9ea718755b8204b322f95f45f4a4594e2f8b52c7aead",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-advisory-GO-2026-6629.json",
+      "sha256": "b68c3868c023ae6d358294a1af09758ce97aed426a8a65e2c755ca524ba509b6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-asset-manifest.json",
+      "sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-assets.log",
+      "sha256": "e86fb5e917863589d64268281cf9d3b9c5d172c9f4f64c616d35e75c928f373d",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-candidate-archive-upgrade.json",
+      "sha256": "15d2b609fa5015d41649a1c1613d0add279823ea5c1ce50672fb24b2c13059d6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-candidate-verification.json",
+      "sha256": "e0bb12e6988add82f16d0e492acc5c7138a44bfc1f5d3566a40eb853bd8d9227",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-coordination-blackbox-v1.json",
+      "sha256": "2e6c6acb4e601eba470033461a77c5a12f5eab9c1a3e358a42d627e9ecda366d",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_amd64-native-runtime-receipt.json",
+      "sha256": "6acf64ca64e549ffff802b56c94e28c4f5035d9008010f6d14966d88da605c59",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_amd64-native-runtime-robot-evidence.json",
+      "sha256": "027d1831eca071958ca1662f4f3d43ece20e519e2f7f93e66f666886cf9f5226",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_amd64-output.xml",
+      "sha256": "aee3b14bfc7474f024741a3608086bdedd0d2290cefd5f13e71fa717234d1913",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_arm64-native-runtime-receipt.json",
+      "sha256": "ea68edae470e3a12cbd44a8d3c8b6c8c0b9e75cf6132514321e6f663d72af2cb",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_arm64-native-runtime-robot-evidence.json",
+      "sha256": "8481b6293b16c22159736cf9dd1f1484f7e595b187f102ee031732b2984ea135",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-darwin_arm64-output.xml",
+      "sha256": "30175f98d50b0f24105ceeb503e3be069da3096c8916e31318bbe15c3aa4b3ef",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-dependabot-alerts.json",
+      "sha256": "415d9114c0abefafeb44a592c04b93c752798f1ad31a712873f7d5cac9eb5a6c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-dependabot-alerts.stderr.log",
+      "sha256": "67522825656fb8092ae4db6a436b2aad857054a3f7b587f46c1725d77df82871",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-evidence-normalization-receipt.json",
+      "sha256": "055b8ca1da553f15e66f3e88133841f6be62feb1ce522331ce309833ab3e5371",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-independent-artifact-review.json",
+      "sha256": "761b12fae9db890e2573f7feb27f4a42f23c7ff7d1f8902e1fef43d29147c411",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-large-stream-receipt.json",
+      "sha256": "e5b7c25365bb995f04f213bbb0b036f3ab4f01cf6c66e5f9e34c47acbfbbdecd",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-latest-release.json",
+      "sha256": "3ce0a3a99d9c890c31b28cf535094335a7842be87a1afb485bcad44c19aa2567",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-latest-release.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-linux-jat-class-consumer-receipt.json",
+      "sha256": "98d0389d805f2bdd571437c93180c42fdb5aea03df86aeca621a4b68eb9778b6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-linux_amd64-native-runtime-receipt.json",
+      "sha256": "f69b0cd304a1bb0d8c41198a9d1718a052a8f615a84c25beb71b9b50fe50ca48",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-linux_amd64-native-runtime-robot-evidence.json",
+      "sha256": "f0f0843e76c23476ba7085bac6056229aec881d02b868e8b45d51ad88cfe7d3b",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-linux_amd64-output.xml",
+      "sha256": "cdb336f9fdbb363d3bbdd39580bc825754e86d4de27a7b3757659401bcabd7a1",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-local-binary-go-metadata.txt",
+      "sha256": "ff9b1b29809e51b41d50dc4a2a41e3d062eee78699217ef66eb81f6ef7e806f1",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-main-protection.json",
+      "sha256": "e2373c984773dfee141aed6665a6497c3d7ae4022e643d1c860ab01b710aa23a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-main-protection.stderr.log",
+      "sha256": "67522825656fb8092ae4db6a436b2aad857054a3f7b587f46c1725d77df82871",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-n1-archive-sha256.txt",
+      "sha256": "c12f1a5e8fd7e974002ec771f24ec54f2709ac03b9b38baf233be82bdf201987",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745499753-metadata.json",
+      "sha256": "8e5155e16d1f53794d088f627b9e32bf7849870a5b8ec6e9ba2d952025e49802",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745499753-verification.json",
+      "sha256": "1ed3b352e6d23041d13e7ab0fea0e64f08880ce0fe591e7a1fd1af6284ecb5b9",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745827600-metadata.json",
+      "sha256": "2687061b468d96e11c1d7034f0bf36705298fe3294a9dc5d610cbc115567fa71",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11745827600-verification.json",
+      "sha256": "27df9cad784d14a1d4ab5400881e85819b33130683bf8b6e01c9154aff9c9400",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746257363-metadata.json",
+      "sha256": "ba02dc6b7af4673712fd58a961a7d233266aee1c79ee9d6f0062a826caae2c95",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746257363-verification.json",
+      "sha256": "4257ff3578c87bb5db7f4c8463af133384a14ee1c4089d7a1795cbb020adc33c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746351168-metadata.json",
+      "sha256": "f1a90abd3590c57b69e553ccaf971cb83fa8f807e0cade1d4a6a9250bc46107c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-native-11746351168-verification.json",
+      "sha256": "01a92edcf8d91049780ce0bc9ce188bf25aabaa58ae68fa753bfc8861afeea50",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-artifacts-interim.json",
+      "sha256": "ef710ba7aacfdbcf690e2bdeab0beea1ce3e5ca906b455ae8675727c7727632f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-artifacts.json",
+      "sha256": "3d6aefdb463c91e26e72b26cf5ae2d7e2804cc2d7b29abd5178ef8f6921da101",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-jobs-interim.json",
+      "sha256": "81e09b37a9923ad7481c0af156e49a7b084a8b1201f7c13380345e5b898e3b2f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-jobs.json",
+      "sha256": "33d444db1e295c9489b545c173575e46cb320392cca22a5aef9d33d5ac7415aa",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-run-start.json",
+      "sha256": "edbd4f33cb7ddd21182ec237591a507277fdaeecae674574637cd80af0cde748",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-run.json",
+      "sha256": "b30463275cc778d8dd65d182a759517c09a1ce8f8c7baa71c6c8fdb1f5513398",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-preparation-watch.log",
+      "sha256": "1ded3a1572ef043b7aa76eda27a7303f30bcbf1714cbb4c38b983e0155d46d3f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-provenance.json",
+      "sha256": "d4c73212ab2e204e74714fe40c9ac6e9cfa3752664f45941cbb7333099a9dbd0",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-public-environment-read.json",
+      "sha256": "f53eddc8c324ef7958bbce8980fae1a7b6d392c7096bfe4f9a4b07d57f5f2055",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-public-release-boundary.json",
+      "sha256": "f807010e23f4af9f84781bd725141b09aed0f2dfdfb6b584531d8a4206086285",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-public-release-recheck.json",
+      "sha256": "883d7ecdf3cb46a9e96d01fb47a1860fe8c72298b389eb90dc2b17deb6bf95a9",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-public-tag-recheck.json",
+      "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-public-version-recheck.json",
+      "sha256": "010563d2cfb8f1e87f700936ce59ee3a33364da46e3db41b0049227918ece74d",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-read-only-preflight-results.json",
+      "sha256": "fc1562a7b81614751df1de05e084310970d39f463b0770bc468d6022c002e9c3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-candidate-exit.json",
+      "sha256": "0bbb723e56722c0eb79d8c5329f73fee9d06d0bd6b576c69da066d1c35038ffa",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-candidate-v1.json",
+      "sha256": "6bd0b3dfa421c07f3f8c23e0d188cbb80712609e48ef2aeee96e3fe22530e747",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-decision.json",
+      "sha256": "c6b8755054236e69d3a492b74d1bb31a90b0037bb422569d8623220eda1082fa",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-robot-output.xml",
+      "sha256": "55eb86698b1e4b95200c24358051c28d2de9e3647b8430748444d6fed780bfb1",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-tag.json",
+      "sha256": "e2e3c64edab172132f77ce89a0e8c190db1cd30936a096344f45893bd5b75f8a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-tag.stderr.log",
+      "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-version.json",
+      "sha256": "010563d2cfb8f1e87f700936ce59ee3a33364da46e3db41b0049227918ece74d",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-release-version.stderr.log",
+      "sha256": "d2c8985c89b29a842ac4946d13bdbc297709f44f20bb968faf9682664b211db6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-released-archive-rollback-attempt.json",
+      "sha256": "be93486aff9e624718154fa758ff3cf6c6728fce8796d338a837df7cdd3a9fda",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-released-v12-rollback-consumption.json",
+      "sha256": "5932163a9cd9a7fd521f15c840fc17cc41ff53ad62f2e2c4272995128e7ae9d4",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-repository-environments.json",
+      "sha256": "f53eddc8c324ef7958bbce8980fae1a7b6d392c7096bfe4f9a4b07d57f5f2055",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-repository-environments.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-required-secret-metadata.json",
+      "sha256": "3d3f30783f5cd971132ffc8f343e1e43c9afdedd50012054595e6d47ff903b6e",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-required-secret-metadata.stderr.log",
+      "sha256": "67522825656fb8092ae4db6a436b2aad857054a3f7b587f46c1725d77df82871",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-review-sidecar-verification.json",
+      "sha256": "45ab0bc48d579ba3af6334766f4f398710f13e48dbc386ff59e8be43bf159377",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-run-anonymous-response.json",
+      "sha256": "b7e593a24829ea5da24a7a4576b6938ea086a2e7211b73c6d79ab0a0b43c6b8b",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-script-tests-wrong-path-attempt.log",
+      "sha256": "928c95d7695953aa78cfc275266dc5c74d0a01da868e0b93eafd0ce49f8424c2",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-script-tests.log",
+      "sha256": "589b7cc3c3bbcd21c53466146cd41f73b6a23a5010653b2680211330461f88ca",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-amd64-json-show-attempt.stderr.log",
+      "sha256": "ff26c3bb8d3b750bd4bd11ab2f1972a559010d877a34a176a4318144f5cb7e41",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-amd64.json",
+      "sha256": "c4d009ccbc6adcbcb242f18a72caf4822db8af720d6b0da466130487b87daa15",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-amd64.json.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-amd64.traces.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-amd64.traces.txt",
+      "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-arm64-json-show-attempt.stderr.log",
+      "sha256": "ff26c3bb8d3b750bd4bd11ab2f1972a559010d877a34a176a4318144f5cb7e41",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-arm64.json",
+      "sha256": "a180b2f5b40d97fa7f3da0b17350c27f9b1a85f1d46f4cf91205b2022c0dbd93",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-arm64.json.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-arm64.traces.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-darwin-arm64.traces.txt",
+      "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-linux-amd64-json-show-attempt.stderr.log",
+      "sha256": "ff26c3bb8d3b750bd4bd11ab2f1972a559010d877a34a176a4318144f5cb7e41",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-linux-amd64.json",
+      "sha256": "4319fe845cdfe334ee404b25675820691f598823a2798dc39c34ddabcd2b37e8",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-linux-amd64.json.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-linux-amd64.traces.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-linux-amd64.traces.txt",
+      "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-summary.json",
+      "sha256": "2ef66b280dbeadfd1b045856ed109c3468d9cd2c76accfb95005decedbb90649",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-windows-amd64-json-show-attempt.stderr.log",
+      "sha256": "ff26c3bb8d3b750bd4bd11ab2f1972a559010d877a34a176a4318144f5cb7e41",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-windows-amd64.json",
+      "sha256": "60730616265b2f68b992ed2da24d6ddab61fa193185668a89eff9b1003c716e4",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-windows-amd64.json.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-windows-amd64.traces.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-security-windows-amd64.traces.txt",
+      "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-self-host-metadata-v1.json",
+      "sha256": "80f3d90666804a9335821cdb40782458835ffedaef33088bd1dc5eb3ef85ce61",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-self-host-v1.json",
+      "sha256": "baeb1c4a062a58e7961ffc71744bb217a00efb93cd1e2b9ee95a5aa420cc9e2c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-signing.json",
+      "sha256": "bc27fc78f8ede3536453ec918d51e3be65f87fe052055cfaf3410e2fd4f05b70",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-source-verification.json",
+      "sha256": "d0cd4e54306ac27edf54d7d10bc6a5f7014c63e184f1473a93670a877274e577",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-unit-tests.log",
+      "sha256": "29729127061dcb73481e0375bb91dad3b18145f9e59af5a8a17055cd12c920cd",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-vet-wrong-task-attempt.log",
+      "sha256": "7b92fb32e9d4a71ce1898aca69c207ca9bbbb0dc5f4f7347718a394028fddc4f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-vet.log",
+      "sha256": "31cb361badc5b7841fdb87beb198a4e2d8f9946798648fe4bba23305b079ae9e",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-vs-frozen-diff-stat.txt",
+      "sha256": "fe08105c5f83d1f8fc845b6b3ea7b8397dd736e5bef5ee083ab3d2a46d5e4f24",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-native-runtime-receipt.json",
+      "sha256": "a17aff0ba60be00787eb6a95d54d6331dfb48d8fc374697b7f697ea7841cdfd7",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-native-runtime-robot-evidence.json",
+      "sha256": "94cd8ded86d56758307c0474f95fea77182707c966a23b3703c26644781f5180",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-output.xml",
+      "sha256": "d41def5577f538c7e08cb8ad2682375fd37ae0e3d0f72825fabbd81e11691939",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-workflow-permissions.json",
+      "sha256": "cea2b4f3d37040cc51d5fd15f65383101ab3cf373d28db729e71f56acb2caa0f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-workflow-permissions.stderr.log",
+      "sha256": "67522825656fb8092ae4db6a436b2aad857054a3f7b587f46c1725d77df82871",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-SHA256SUMS",
+      "sha256": "07f0076b4672eb9e76913c496dbfde52148ae8bc0e79489d1fb8a74b57ee2a20",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-asset-manifest.json",
+      "sha256": "26a47203ec1375e2c60d362c5aa55ba0aa65e334c1b24bc07b16f973a585f62c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-provenance.json",
+      "sha256": "086d1c37b957c256ff3ae03eae92f888f380efd8bf3d760dd75e0ea74dd83238",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-signing.json",
+      "sha256": "703e907d62a38f0330bbcb9c40f6ec2a128f218ba1f82c83200aaef998889bd4",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/frozen-verifier-proof.json",
+      "sha256": "96a3173de38f973c3f90dad3f9c9b47b9fc70939cd9b4ba0a864a151628a5c83",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/go-vet-pr244-stale-baseline.log",
+      "sha256": "9c948e51dc0bab5ef410f5c3681d3a0ee12175efc42b50da0409fb3543ba2a9b",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/govulncheck-baseline.json",
+      "sha256": "7a19c577d652eb18d9e366aea1c02663b26ba5c4c26ab16734b47b393e2f0427",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/govulncheck-darwin-amd64.json",
+      "sha256": "29bd8be27c625b5bdf83ede77fbee912e18dac087f3083b515c39668c1f9f04a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/govulncheck-darwin-arm64.json",
+      "sha256": "f10118cf6e6e7559a5b6a760c8f047ba38886d7fa959cf451f226db575f7a5fd",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/govulncheck-linux-amd64.json",
+      "sha256": "44c8e1d08e4b40391f5460f5abbf12b4bf854a7d1489a2676177b9a8c2e69bd9",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/govulncheck-windows-amd64.json",
+      "sha256": "b97c93a2d3eb0e689a04ca29e161443c17e16849bacfa9550e73401431eb33b3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/historical-lint.log",
+      "sha256": "e6045f326d39ad60a0e59e4037284f784009ef53fdd4109c703ee8d69e4d23e8",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/integrated-unit-tests-before-network.log",
+      "sha256": "86477f57fc1b7d7289a1af3cb9a1aaf75741c9327a8e716fa07bada5b48750e4",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/listing-full-tests.log",
+      "sha256": "b28892f49b5b3852bf6e42ff1d4d2c206b8cfdd9e09e01fde6e4ee381df398b3",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/listing-green.log",
+      "sha256": "9ea42ccc7470b8e3d0d8d419fe602eb2573000b530e24c905be2b4643e6236d9",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/listing-red.log",
+      "sha256": "f92ef733b2e41264c3e6dcd0bd5575676b0d9fa845470b7ac199b477b6d77d8b",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/network-baseline-red.log",
+      "sha256": "cf2110c32049860a2686b23831fb782102f4608836b45294b13f8b3e8670d683",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/network-root-verification.log",
+      "sha256": "28c166e801fb462ea3a25a560843e47543231b93ffbdf1a2d585ef9790e5ae45",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/network-vet-six-findings.log",
+      "sha256": "fdf178bed9633b24f6e85bead9c81415ae333da9bbe5b1494e8a6ad414a85cb6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-linux-amd64-metadata.json",
+      "sha256": "186a042287fc79821a197f11d073b8fc26c5169b63c1e6b6a55a6d33f7756bb6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-linux-amd64-verification.json",
+      "sha256": "4b38644c26f2be9a7dd7b2c4df361bec4c144db00dda2b41212307b003ff666f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-macos-amd64-metadata.json",
+      "sha256": "cfd49de3eebf64b2de210f454031bae02a7ed0c471e8e2b8bb1ea7ad907cc332",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-macos-amd64-verification.json",
+      "sha256": "57035e0cb927480e5672b25419ffb1789a62b3449bd8403a3dc3c12acf6702f0",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-macos-arm64-metadata.json",
+      "sha256": "fd0a74623dcf4d69b4499c5bf85cf16a70491f286a32c3ed27ebe9aaccbd4394",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-macos-arm64-verification.json",
+      "sha256": "7d2af80afed87277e8b4c94dab75b2a7477fc59c48c9bf121402ba1b7675f3bf",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-windows-amd64-metadata.json",
+      "sha256": "47a7167ed46f00c29f1a35e03b7d047d04b2b9156076351956cca5a0f3adb183",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr241-windows-amd64-verification.json",
+      "sha256": "2cfe7ebf24e98653881d01118e10e4aee35a29ea2e43cc26e5b10895770e6c41",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-linux-amd64-metadata.json",
+      "sha256": "6db357c1b4e71d95bb206465aa5969bddc33b68e5098acee02dd561d6cf9e061",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-linux-amd64-verification.json",
+      "sha256": "3fd9c1f1eb40d1182e4ac0bddf5e2502a12c599d9c1b0fffb17ec9fd110e3869",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-macos-amd64-metadata.json",
+      "sha256": "62ad1547eb9e78d37b3ab70ab0e7668ec23466072340c0cd4695bb60de9a9017",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-macos-amd64-verification.json",
+      "sha256": "167c7512dfab2c75c811ac5787624cb8578fa04ee1dfa0460abdc27c927847c8",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-macos-arm64-metadata.json",
+      "sha256": "f9535e0a3a55dd5876acb9e947ccaa7f16cb2b0cb77bf6d0efa43889724b9011",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-macos-arm64-verification.json",
+      "sha256": "90ac775afd538fa36c66c9b2d958ddce0393db1bb1d9538c9e77a21675a19f4a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-windows-amd64-metadata.json",
+      "sha256": "1faa0f8ba5dc00145bd75f442cee3cd8fdcaf526a748b7a36d62c250f2111971",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr242-windows-amd64-verification.json",
+      "sha256": "f5dbab5b5d029a197d3d34849ae11c4f9cd2456da37f50639722e850e94789a7",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-linux-metadata.json",
+      "sha256": "ccbf7bfe1a830a6714311519dbc5ce22570a302d5d613b7e0750c15f8d2ab45c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-linux-verification.json",
+      "sha256": "80186f9510343e76310dbcb6724f903606486c2632a3bc842a037b430bbfb17f",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-macos-amd64-metadata.json",
+      "sha256": "de10fa8559ef8bcd61704fb7c2d0865326c8d79c4623852d095da53f23f2bd53",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-macos-amd64-verification.json",
+      "sha256": "5b6e36b8e12fee76185430343ce490d0e9f4a0b40aee9a9e1dc95add2cb77fc6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-macos-arm64-metadata.json",
+      "sha256": "bbb4271dbe272f1e281dd8ad7475d77bb468202ed880f4f2d230d2c955e62754",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-macos-arm64-verification.json",
+      "sha256": "09519dcc3c997d05e94f1d3041e152678d162d27285a1dfe5a6bb4c45d1931bc",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-windows-amd64-metadata.json",
+      "sha256": "e411c526cfcf4e67ba572bc220703461040924ec19cfcb584e935acadc763c04",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr243-windows-amd64-verification.json",
+      "sha256": "0ffc1b1af170c6813aace84ec8cc6a568ba3f34b9913cc514dff8a58e132c8b9",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-linux-amd64-metadata.json",
+      "sha256": "14cec2dbf8d70aea45978f1df239462810eeea86f249dad0f7a063fe4d5d8788",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-linux-amd64-verification.json",
+      "sha256": "8dcdc75d420bf0c61495086e99dee3492ae7a64b1cd767468cb052a6f9bc3ee8",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-macos-arm64-metadata.json",
+      "sha256": "895e0e2e32279ec44101c9e064501c9d61f8a1c122801f90c9d1b51f62b28b43",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-macos-arm64-verification.json",
+      "sha256": "bee856e0f99836353f7f80fb0009c1eb88516b828c0f5abd435d0ad1bf9761f5",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-windows-amd64-metadata.json",
+      "sha256": "d67b5918b82cb1291e2b1ca99b68b6f12781fd5e30a11f109c58f79e9c76a558",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr244-windows-amd64-verification.json",
+      "sha256": "d84275e7727fdc87d4133eec270c4d913830eb609bdc11f904f5d22c6292e452",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-linux-amd64-metadata.json",
+      "sha256": "ae6a4b91f9c75db07f29298e6688113ace6298cb3bbec342c138ae699c703167",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-linux-amd64-verification.json",
+      "sha256": "495536f87d06584c28834141b1dc837d03dad1b658c349b4fb20c14bf8c1d882",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-macos-arm64-metadata.json",
+      "sha256": "33cab31c0c763f7e126318a80c7f4e0e7a6906a81dfe9a18c76b76910ab6c4c8",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-macos-arm64-verification.json",
+      "sha256": "49bab4fda69ab3a1a20a6544ca63d87159a7632fb01b19e564096e58eb179fa1",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-windows-amd64-metadata.json",
+      "sha256": "8169b05a531f9f04fec867898a635cc8e58c0ef08085f03abaaf441d4458ad3a",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/pr245-windows-amd64-verification.json",
+      "sha256": "4cf22a7f3d59f1d8c680db715d6d924a8d1ca2ca0e98227c61386a9e90f422df",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/preparation-artifacts.json",
+      "sha256": "7b6f70855fa0f3a8d5ef69dc297dd31f504f72f257625a29746bba2ac6f11636",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/preparation-jobs.json",
+      "sha256": "f8224a53500e2af0192d0b0a28ecd5e8eb45a71f7a831a606711785f44685c89",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/preparation-run.json",
+      "sha256": "a7b824d5d27bf0186a877f7a47bb6282bbaa90e632c73d276e8fe84326c0a41c",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/prerequisites.json",
+      "sha256": "85238fb5757310facce953a462b4a87a2754334769257ce081c82f9e9efee172",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/quality-root-verification.log",
+      "sha256": "38188c1ae375dc809a8e50edb1862268f96065e33a2165a880dc735b6f8fc0b6",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/release-notes-tests.log",
+      "sha256": "52fdafd7619a301c38dfabe66b1b1d32bc96cf6f19b52863eef83739b3239858",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/residual-dispositions.json",
+      "sha256": "3e57b0b693cdd13898bbc22fabb6b50aa9f7c132ca3d52f9abc438f1a4cae301",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/second-checkpoint-remote-readback.json",
+      "sha256": "41b7365417a3c0d367213e53c19150eddf22939fae312f4bb713a76198331484",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/source-security-summary.json",
+      "sha256": "a5e52996f69da0757562ce484043dbdeb822cafbc6adb5186c442e34db48c4df",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/third-checkpoint-remote-readback.json",
+      "sha256": "e98a16280cd78a1588a2fdf8e7831cffdc23dd0b173e7a26dc3094afc41e01c0",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/verification-limitations.json",
+      "sha256": "28e5d85b72680663b070c4f51bfa7954896fa60c542374bd4ef7592e4498d694",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/verifier-optimized-python-rejected.log",
+      "sha256": "cba3052a19dbc2576925dce85a1d9eac1528a8990a0633a394aaefae2b015242",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/inspect_signing.py",
+      "sha256": "fa180bdc44c4efa373f3d29085521721c519262d2ec275f00ca72a2d65332778",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/verify_final_candidate.py",
+      "sha256": "bb63d1cf8efb56f81d54a7ab790e7a6cadd5489842401abba3b96104645020e7",
+      "matches": true
+    },
+    {
+      "path": "developer/release-readiness/20261012/verify_native_artifact.py",
+      "sha256": "d4f87b341583d0359b2cab61bccd825e9f6ccd25069f2d962665c6f65844bbc5",
+      "matches": true
+    }
+  ]
+}
