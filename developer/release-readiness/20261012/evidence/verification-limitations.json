@@ -51,6 +51,10 @@
     {
       "check": "final local Go build target",
       "result": "repository root contains no Go files; corrected target ./cmd/rcc built with Go1.26.9 exact final source SHA and clean VCS metadata"
+    },
+    {
+      "check": "command-line GitHub authentication during final preparation",
+      "result": "gh API began returning401 at12:10UTC; connected GitHub app remains authenticated as joshyorko and supplies read-only jobs/artifact downloads; public API remains accessible; no credentials created or broadened; original run not redispatched"
     }
   ],
   "supersededOwnRccRunsCancelledWithoutDeletingReceipts": [

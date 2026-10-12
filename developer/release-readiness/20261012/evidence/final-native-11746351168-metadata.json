@@ -1,0 +1,20 @@
+{
+  "id": 11746351168,
+  "node_id": "MDg6QXJ0aWZhY3QxMTc0NjM1MTE2OA==",
+  "name": "linux-amd64-native-runtime-receipt",
+  "size_in_bytes": 13390231,
+  "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746351168",
+  "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746351168/zip",
+  "expired": false,
+  "digest": "sha256:5adc88a47f2c6d1c9284ffd933fa09912b505347bda45d018eb26a59cade776a",
+  "created_at": "2026-10-12T12:00:54Z",
+  "updated_at": "2026-10-12T12:00:54Z",
+  "expires_at": "2027-01-10T11:50:20Z",
+  "workflow_run": {
+    "id": 38245229838,
+    "repository_id": 1051101627,
+    "head_repository_id": 1051101627,
+    "head_branch": "main",
+    "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+  }
+}

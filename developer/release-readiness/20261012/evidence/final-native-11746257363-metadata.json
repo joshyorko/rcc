@@ -1,0 +1,20 @@
+{
+  "id": 11746257363,
+  "node_id": "MDg6QXJ0aWZhY3QxMTc0NjI1NzM2Mw==",
+  "name": "windows-amd64-native-runtime-receipt",
+  "size_in_bytes": 10854368,
+  "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746257363",
+  "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11746257363/zip",
+  "expired": false,
+  "digest": "sha256:6b70d454b23a4936803a9f3061738253fdae6a499de678cf64e87673066123bb",
+  "created_at": "2026-10-12T12:07:00Z",
+  "updated_at": "2026-10-12T12:07:00Z",
+  "expires_at": "2027-01-10T11:50:20Z",
+  "workflow_run": {
+    "id": 38245229838,
+    "repository_id": 1051101627,
+    "head_repository_id": 1051101627,
+    "head_branch": "main",
+    "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+  }
+}

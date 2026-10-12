@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/rcc-mission/verify_final_candidate.py", line 11, in <module>
+    raise RuntimeError("Verification requires Python assertions; run without -O or -OO")
+RuntimeError: Verification requires Python assertions; run without -O or -OO

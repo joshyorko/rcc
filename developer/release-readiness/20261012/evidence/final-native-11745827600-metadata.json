@@ -1,0 +1,20 @@
+{
+  "id": 11745827600,
+  "node_id": "MDg6QXJ0aWZhY3QxMTc0NTgyNzYwMA==",
+  "name": "macos-arm64-native-runtime-receipt",
+  "size_in_bytes": 12500965,
+  "url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745827600",
+  "archive_download_url": "https://api.github.com/repos/joshyorko/rcc/actions/artifacts/11745827600/zip",
+  "expired": false,
+  "digest": "sha256:590494a402576b59cfff23086f7736c15d57c11562d9eb7fae6bd7de74bd1b11",
+  "created_at": "2026-10-12T12:03:49Z",
+  "updated_at": "2026-10-12T12:03:49Z",
+  "expires_at": "2027-01-10T11:50:20Z",
+  "workflow_run": {
+    "id": 38245229838,
+    "repository_id": 1051101627,
+    "head_repository_id": 1051101627,
+    "head_branch": "main",
+    "head_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+  }
+}
