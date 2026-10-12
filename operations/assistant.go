@@ -156,6 +156,11 @@ func (it *ArtifactPublisher) Publish(fullpath, relativepath string, details os.F
 }
 
 func MultipartUpload(url string, fields map[string]string, basename, fullpath string) error {
+	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport()}
+	return multipartUpload(client, url, fields, basename, fullpath)
+}
+
+func multipartUpload(client *http.Client, url string, fields map[string]string, basename, fullpath string) error {
 	buffer := new(bytes.Buffer)
 	many := multipart.NewWriter(buffer)
 
@@ -189,11 +194,17 @@ func MultipartUpload(url string, fields map[string]string, basename, fullpath st
 	}
 	request.Header.Add("Content-Type", many.FormDataContentType())
 	request.Header.Add("User-Agent", common.UserAgent())
-	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport()}
 	response, err := client.Do(request)
 	if err != nil {
 		return err
 	}
+	return finishMultipartUpload(response)
+}
+
+func finishMultipartUpload(response *http.Response) (result error) {
+	defer func() {
+		result = errors.Join(result, response.Body.Close())
+	}()
 	if response.StatusCode < 200 || response.StatusCode > 299 {
 		return fmt.Errorf("Warning: status: %d reason: %s", response.StatusCode, IoAsString(response.Body))
 	}
