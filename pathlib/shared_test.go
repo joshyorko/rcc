@@ -46,6 +46,41 @@ func TestMakeSharedDirPreservesExistingParentMode(t *testing.T) {
 	})
 }
 
+func TestMakeSharedDirEnforcesModeOnExistingTarget(t *testing.T) {
+	for _, test := range []struct {
+		name  string
+		setup Shared
+		mode  os.FileMode
+	}{
+		{name: "private", setup: privateSetup(1), mode: 0o750},
+		{name: "shared", setup: sharedSetup(9), mode: 0o777},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			target := filepath.Join(t.TempDir(), "existing")
+			if err := os.Mkdir(target, 0o700); err != nil {
+				t.Fatal(err)
+			}
+
+			if _, err := test.setup.MakeSharedDir(target); err != nil {
+				t.Fatal(err)
+			}
+			assertDirectoryMode(t, target, test.mode)
+		})
+	}
+}
+
+func TestMakeSharedDirRejectsNonDirectoryParent(t *testing.T) {
+	root := t.TempDir()
+	parent := filepath.Join(root, "file")
+	if err := os.WriteFile(parent, []byte("not a directory"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := (privateSetup(1)).MakeSharedDir(filepath.Join(parent, "child")); err == nil {
+		t.Fatal("MakeSharedDir succeeded with a regular file as parent")
+	}
+}
+
 func assertDirectoryMode(t *testing.T, directory string, expected os.FileMode) {
 	t.Helper()
 	info, err := os.Stat(directory)
