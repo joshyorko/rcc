@@ -1,0 +1,11 @@
+{
+  "head": "f3200dc852a480a3a3ff26db066a7b9e4ca689cb",
+  "reviewer": "existing quality helper",
+  "result": "No additional publisher command/parser/API schema mismatch found after the publication-workflow flag correction",
+  "actualChecks": ["28 topology tests pass", "corrected topology invocation exits0 on actual canonical assets and exactf35 workflow files", "validate-bundle accepts exact38245229838/f35/a267 tuple"],
+  "schemaChecks": ["all release_publication.py command flags/types match actual argparse", "Git ref creation fully-qualified ref and sha fields match API", "gh release create verify-tag/generate-notes/title flags supported", "Homebrew active workflow_dispatch accepts main/rcc-daily", "2022-11-28 API version remains supported through2028-03-10"],
+  "sources": ["https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event", "https://docs.github.com/en/rest/git/refs#create-a-reference", "https://docs.github.com/en/rest/about-the-rest-api/api-versions", "https://github.com/joshyorko/homebrew-tools/blob/main/.github/workflows/tap-auto-update.yml", "https://cli.github.com/manual/gh_release_create"],
+  "credentialConditionForOperator": "Confirm updated HOMEBREW_TOOLS_PAT selects joshyorko/homebrew-tools and Actions:write before next protected approval. GET only proves readable/active, not dispatch write access; no secret value requested or read.",
+  "limits": ["No write endpoint was exercised", "A downstream dispatch could fail after upstream tag/release if configured token lacks scope", "Publisher refuses rerun after partial publication; diagnose and recover rather than overwrite"],
+  "writesPerformedByReviewer": false
+}
