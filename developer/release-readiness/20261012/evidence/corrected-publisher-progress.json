@@ -1,0 +1,32 @@
+{
+  "recordedUtc": "2026-10-12T16:17:26.010428+00:00",
+  "pr": 248,
+  "acceptedHead": "f3200dc852a480a3a3ff26db066a7b9e4ca689cb",
+  "merge": "7ec87fb3feccad243dad81deb0c0f2cb4f5f0493",
+  "independentReview": "bootstrap ACCEPT53focusedtests; qualitynoadditionalcommand/API mismatch andactualcanonicalbundle/topologypass",
+  "fullToolingTests": 151,
+  "hostedCI": 38273298179,
+  "allCurrentChecksAndFourNative": "pass; actualsource-boundnative logs retained",
+  "sourceMain": "clean localmainmatches remote7ec; f35ancestor; publisher/tests-only correction",
+  "oneCorrectedAttempt": {
+    "run": 38276098534,
+    "workflowHead": "7ec87fb3feccad243dad81deb0c0f2cb4f5f0493",
+    "auditJob": 114901833327,
+    "auditResult": "success",
+    "publisherJob": 114901882343,
+    "status": "waiting protectedmanualapproval",
+    "environment": "rcc-production",
+    "environmentId": 24084206266,
+    "requiredReviewer": "joshyorko54248591",
+    "oldAttemptsNotReplayed": true
+  },
+  "candidateTuple": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "credentialAccessByAgent": "no values read/changed/copied; Joshupdated designatedHomebrewsecret; GETpassed priorattempt",
+  "operatorGate": "approve rcc-production forrun38276098534, ensuringupdatedtoken hasHomebrewActionswrite; parentcoordinates",
+  "postPublicationVerification": "read-only scriptprepared todownload/hashall9publicassets andvalidate8Gobinaries +exacttag source +Linuxruntime; actualtapversion/3mirrorhashes tobechecked afterexistingdispatch"
+}
