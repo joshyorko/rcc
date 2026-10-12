@@ -1,0 +1,51 @@
+[
+  {
+    "check": "final-repository-environments",
+    "exitCode": 0,
+    "names": [
+      "copilot"
+    ]
+  },
+  {
+    "check": "final-main-protection",
+    "exitCode": 1,
+    "message": "Resource not accessible by integration",
+    "status": "403"
+  },
+  {
+    "check": "final-workflow-permissions",
+    "exitCode": 1,
+    "message": "Resource not accessible by integration",
+    "status": "403"
+  },
+  {
+    "check": "final-required-secret-metadata",
+    "exitCode": 1,
+    "message": "Resource not accessible by integration",
+    "status": "403"
+  },
+  {
+    "check": "final-dependabot-alerts",
+    "exitCode": 1,
+    "message": "Resource not accessible by integration",
+    "status": "403"
+  },
+  {
+    "check": "final-latest-release",
+    "exitCode": 0,
+    "tag": "v18.19.5",
+    "publishedAt": "2026-09-07T19:02:08Z"
+  },
+  {
+    "check": "final-release-tag",
+    "exitCode": 1,
+    "message": "Not Found",
+    "status": "404"
+  },
+  {
+    "check": "final-release-version",
+    "exitCode": 1,
+    "message": "Not Found",
+    "status": "404"
+  }
+]

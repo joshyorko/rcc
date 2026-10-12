@@ -1,22 +1,100 @@
 {
   "retainedFailedChecks": [
-    {"check": "initial workspace git inspection", "result": "not a git repository at /workspace; actual clean checkout found at /workspace/rcc"},
-    {"check": "host go version", "result": "/usr/bin/go is GNU Go; selected actual contained Go and verified automatic Go 1.26.9 selection"},
-    {"check": "raw gh artifact/log download", "result": "GitHub storage redirect returned Forbidden; connected artifact/log tool fetched the actual bytes, later rehashed against GitHub metadata"},
-    {"check": "first cross-target go run scanner invocation", "result": "foreign tool executable returned exec format errors for non-Linux targets; replaced with a native govulncheck binary executing source analysis under target GOOS/GOARCH"},
-    {"check": "first native receipt helper execution", "result": "Python 3.10 lacks hashlib.file_digest; verifier changed to streamed SHA-256"},
-    {"check": "first PR243 ARM ZIP verification", "result": "digest assertion ran while the download session was in flight; after awaiting successful download completion, unchanged verifier passed on final actual ZIP bytes"},
-    {"check": "local worktree VCS-stamped Go build", "result": "Go probes /workspace git status because of workspace VCS boundaries; ordinary main checkout build verified clean exact VCS metadata, and hosted native receipts independently verify worktree PR source metadata"},
-    {"check": "nested sandbox full unit suite", "result": "bwrap uid-map tests require user namespaces outside nested command sandbox; approved execution in the same selected environment passed unchanged required tests"},
-    {"check": "PR242 initial delta lint", "result": "new uppercase error strings failed ST1005; follow-up lowercased those strings, exact-head delta lint passed; old failed run retained"},
-    {"check": "PR244 fixed TLS source against old vet baseline", "result": "exact seven-warning baseline rejected actual six after leak was fixed; baseline narrowed by removing only resolved entry, with regression rejecting its reintroduction"}
+    {
+      "check": "initial workspace git inspection",
+      "result": "not a git repository at /workspace; actual clean checkout found at /workspace/rcc"
+    },
+    {
+      "check": "host go version",
+      "result": "/usr/bin/go is GNU Go; selected actual contained Go and verified automatic Go 1.26.9 selection"
+    },
+    {
+      "check": "raw gh artifact/log download",
+      "result": "GitHub storage redirect returned Forbidden; connected artifact/log tool fetched the actual bytes, later rehashed against GitHub metadata"
+    },
+    {
+      "check": "first cross-target go run scanner invocation",
+      "result": "foreign tool executable returned exec format errors for non-Linux targets; replaced with a native govulncheck binary executing source analysis under target GOOS/GOARCH"
+    },
+    {
+      "check": "first native receipt helper execution",
+      "result": "Python 3.10 lacks hashlib.file_digest; verifier changed to streamed SHA-256"
+    },
+    {
+      "check": "first PR243 ARM ZIP verification",
+      "result": "digest assertion ran while the download session was in flight; after awaiting successful download completion, unchanged verifier passed on final actual ZIP bytes"
+    },
+    {
+      "check": "local worktree VCS-stamped Go build",
+      "result": "Go probes /workspace git status because of workspace VCS boundaries; ordinary main checkout build verified clean exact VCS metadata, and hosted native receipts independently verify worktree PR source metadata"
+    },
+    {
+      "check": "nested sandbox full unit suite",
+      "result": "bwrap uid-map tests require user namespaces outside nested command sandbox; approved execution in the same selected environment passed unchanged required tests"
+    },
+    {
+      "check": "PR242 initial delta lint",
+      "result": "new uppercase error strings failed ST1005; follow-up lowercased those strings, exact-head delta lint passed; old failed run retained"
+    },
+    {
+      "check": "PR244 fixed TLS source against old vet baseline",
+      "result": "exact seven-warning baseline rejected actual six after leak was fixed; baseline narrowed by removing only resolved entry, with regression rejecting its reintroduction"
+    },
+    {
+      "check": "final Python discovery with wrong tests path",
+      "result": "tests directory does not exist; retained wrong-path log; corrected scripts discovery ran all 145 tests successfully"
+    },
+    {
+      "check": "final vet task spelling",
+      "result": "Invoke rejected go-vet; retained wrong-task log; actual goVet task passed strict six-warning baseline"
+    },
+    {
+      "check": "final local Go build target",
+      "result": "repository root contains no Go files; corrected target ./cmd/rcc built with Go1.26.9 exact final source SHA and clean VCS metadata"
+    }
   ],
   "supersededOwnRccRunsCancelledWithoutDeletingReceipts": [
-    {"run": 38239039223, "source": "ec2934ea50dff51295a0628cdcd0803a2dd6ed98", "reason": "superseded quality head"},
-    {"run": 38239245147, "source": "f62e18fca56fec8bdfc82083d8d646389232a21f", "reason": "superseded bootstrap head; earlier lint failure retained"},
-    {"run": 38239687447, "source": "69b76cb0a689ad491f54db852fc774c5922fe5a5", "reason": "superseded network head"},
-    {"run": 38239911302, "source": "e8ee6af3589d3997110bb720f528953bbb290801", "reason": "superseded network vet-baseline correction"}
+    {
+      "run": 38239039223,
+      "source": "ec2934ea50dff51295a0628cdcd0803a2dd6ed98",
+      "reason": "superseded quality head"
+    },
+    {
+      "run": 38239245147,
+      "source": "f62e18fca56fec8bdfc82083d8d646389232a21f",
+      "reason": "superseded bootstrap head; earlier lint failure retained"
+    },
+    {
+      "run": 38239687447,
+      "source": "69b76cb0a689ad491f54db852fc774c5922fe5a5",
+      "reason": "superseded network head"
+    },
+    {
+      "run": 38239911302,
+      "source": "e8ee6af3589d3997110bb720f528953bbb290801",
+      "reason": "superseded network vet-baseline correction"
+    },
+    {
+      "run": 38242402201,
+      "source": "3aa418395b60165613af98688580b627fb843623",
+      "reason": "obsolete intermediate main; final exact main preparation retained"
+    },
+    {
+      "run": 38242989242,
+      "source": "9312f283068c0c5c259370b1bc8bd9065970225b",
+      "reason": "obsolete intermediate main; final exact main preparation retained"
+    },
+    {
+      "run": 38244794652,
+      "source": "66c44c0ce2a765989a1fdfcc6e3ed5716921d703",
+      "reason": "obsolete intermediate main; final exact main preparation retained"
+    }
   ],
   "sourceAndRuntimeEvidenceAreDistinct": true,
-  "noPublicationAuthorizationInferred": true
+  "noPublicationAuthorizationInferred": true,
+  "alreadyCompletedOwnRunCancellationRequest": {
+    "run": 38242979247,
+    "httpStatus": 409,
+    "disposition": "run had completed; not cancelled or erased"
+  }
 }

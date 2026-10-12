@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/__main__.py", line 18, in <module>
+    main(module=None)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/main.py", line 100, in __init__
+    self.parseArgs(argv)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/main.py", line 124, in parseArgs
+    self._do_discovery(argv[2:])
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/main.py", line 244, in _do_discovery
+    self.createTests(from_discovery=True, Loader=Loader)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/main.py", line 154, in createTests
+    self.test = loader.discover(self.start, self.pattern, self.top)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/unittest/loader.py", line 346, in discover
+    raise ImportError('Start directory is not importable: %r' % start_dir)
+ImportError: Start directory is not importable: 'tests'

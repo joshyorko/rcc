@@ -1,0 +1,383 @@
+{
+  "created_utc": "2026-10-12T11:54:57.319215+00:00",
+  "execution_window_utc": "Output artifacts were written 2026-10-12T11:53:19Z through 2026-10-12T11:53:43Z; final source/clean check at 2026-10-12T11:54:38Z.",
+  "failed_attempt_preserved": "An initial -format=json -show=traces combination was rejected by govulncheck because -show is unsupported with JSON. The four stderr files final-security-*-json-show-attempt.stderr.log preserve the diagnostic. Corrected separate JSON and trace invocations both exited 0 for every target.",
+  "limits": [
+    "Source scan only; this is not a scan of built executables or a proof that all vulnerable dependency APIs are unreachable.",
+    "Current advisory records can change after this scan and the vulnerability database was last modified 2026-10-08T22:31:09Z.",
+    "The x/text module is in use at v0.28.0; affected norm package is imported transitively, while source search found no RCC call to Afero NeuterAccents or the vulnerable norm APIs. No dependency upgrade was made without a called path."
+  ],
+  "official_advisories": {
+    "GO-2026-5970": {
+      "bytes": 1269,
+      "path": "/workspace/rcc-mission/evidence/final-advisory-GO-2026-5970.json",
+      "sha256": "67ada3c81c785215b93c9ea718755b8204b322f95f45f4a4594e2f8b52c7aead"
+    },
+    "GO-2026-6629": {
+      "bytes": 1119,
+      "path": "/workspace/rcc-mission/evidence/final-advisory-GO-2026-6629.json",
+      "sha256": "b68c3868c023ae6d358294a1af09758ce97aed426a8a65e2c755ca524ba509b6"
+    },
+    "record_recheck": "Official vuln.go.dev JSON returned today; modified dates agree with scan records: 2026-08-10T22:42:36Z and 2026-10-07T14:09:43Z."
+  },
+  "scope": "READONLY source vulnerability verification",
+  "source": {
+    "end_commit": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "end_worktree_clean": true,
+    "start_clean": true,
+    "start_commit": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "worktree": "/workspace/rcc"
+  },
+  "source_trace_facts": {
+    "go_list_deps": [
+      "golang.org/x/text/transform",
+      "golang.org/x/text/runes",
+      "golang.org/x/text/unicode/norm",
+      "golang.org/x/text/encoding/internal/identifier",
+      "golang.org/x/text/encoding",
+      "golang.org/x/text/encoding/internal",
+      "golang.org/x/text/encoding/unicode"
+    ],
+    "go_mod_why_module": [
+      "github.com/joshyorko/rcc/xviper",
+      "github.com/spf13/viper",
+      "github.com/spf13/afero",
+      "golang.org/x/text/runes"
+    ],
+    "go_mod_why_norm_package": [
+      "github.com/joshyorko/rcc/xviper",
+      "github.com/spf13/viper",
+      "github.com/spf13/afero",
+      "golang.org/x/text/unicode/norm"
+    ],
+    "go_mod_why_precis": "(main module does not need package golang.org/x/text/secure/precis)",
+    "source_rg": "No RCC Go source references to NeuterAccents, golang.org/x/text/unicode/norm, or golang.org/x/text/secure/precis were found. Afero v1.15.0 declares NeuterAccents in util.go and imports norm; no RCC callsite was found. The affected norm package is in the dependency graph, but govulncheck reports no affected-symbol call trace. precis is absent from resolved dependencies."
+  },
+  "summary_findings": {
+    "inventory_note": "191 unique OSV records were emitted as inventory. These are not all reachable symbol findings; JSON emits the three listed finding events.",
+    "structured_findings": [
+      {
+        "module": "golang.org/x/text",
+        "osv": "GO-2026-5970",
+        "type": "module",
+        "version": "v0.28.0"
+      },
+      {
+        "module": "golang.org/x/text",
+        "osv": "GO-2026-6629",
+        "type": "module",
+        "version": "v0.28.0"
+      },
+      {
+        "module": "golang.org/x/text",
+        "osv": "GO-2026-5970",
+        "package": "golang.org/x/text/unicode/norm",
+        "type": "imported-package",
+        "version": "v0.28.0"
+      }
+    ],
+    "symbol_level": "0 symbol findings in all four target text outputs"
+  },
+  "tool": {
+    "binary": "/workspace/rcc-mission/bin/govulncheck",
+    "commands": [
+      "GOOS=<target> GOARCH=<target> /workspace/rcc-mission/bin/govulncheck -format=json ./...",
+      "GOOS=<target> GOARCH=<target> /workspace/rcc-mission/bin/govulncheck -show=traces ./..."
+    ],
+    "database": "https://vuln.go.dev",
+    "database_last_modified": "2026-10-08T22:31:09Z",
+    "environment": {
+      "CGO_ENABLED": "1",
+      "GOARCH_native": "amd64",
+      "GOFLAGS": "-mod=readonly",
+      "GOOS_native": "linux",
+      "GOPATH": "/workspace/.rcc-onboarding/cache/go",
+      "GOPROXY": "https://proxy.golang.org,direct",
+      "GOROOT": "/workspace/.rcc-onboarding/cache/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.9.linux-amd64",
+      "GOSUMDB": "sum.golang.org",
+      "GOTOOLCHAIN": "auto",
+      "GOVERSION": "go1.26.9",
+      "PATH_prefix": "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/bin"
+    },
+    "go_version": "go1.26.9",
+    "per_target_results": [
+      {
+        "config": {
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.26.9",
+          "protocol_version": "v1.0.0",
+          "scan_level": "symbol",
+          "scan_mode": "source",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0"
+        },
+        "findings": [
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.41.0",
+            "osv": "GO-2026-6629",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "package": "golang.org/x/text/unicode/norm",
+                "version": "v0.28.0"
+              }
+            ]
+          }
+        ],
+        "json": {
+          "bytes": 600624,
+          "path": "/workspace/rcc-mission/evidence/final-security-linux-amd64.json",
+          "sha256": "4319fe845cdfe334ee404b25675820691f598823a2798dc39c34ddabcd2b37e8"
+        },
+        "json_exit": 0,
+        "json_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-linux-amd64.json.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "target": "linux-amd64",
+        "text_traces": {
+          "bytes": 297,
+          "path": "/workspace/rcc-mission/evidence/final-security-linux-amd64.traces.txt",
+          "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3"
+        },
+        "trace_exit": 0,
+        "trace_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-linux-amd64.traces.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unique_osv_inventory_records": 191
+      },
+      {
+        "config": {
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.26.9",
+          "protocol_version": "v1.0.0",
+          "scan_level": "symbol",
+          "scan_mode": "source",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0"
+        },
+        "findings": [
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.41.0",
+            "osv": "GO-2026-6629",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "package": "golang.org/x/text/unicode/norm",
+                "version": "v0.28.0"
+              }
+            ]
+          }
+        ],
+        "json": {
+          "bytes": 600624,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-amd64.json",
+          "sha256": "c4d009ccbc6adcbcb242f18a72caf4822db8af720d6b0da466130487b87daa15"
+        },
+        "json_exit": 0,
+        "json_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-amd64.json.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "target": "darwin-amd64",
+        "text_traces": {
+          "bytes": 297,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-amd64.traces.txt",
+          "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3"
+        },
+        "trace_exit": 0,
+        "trace_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-amd64.traces.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unique_osv_inventory_records": 191
+      },
+      {
+        "config": {
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.26.9",
+          "protocol_version": "v1.0.0",
+          "scan_level": "symbol",
+          "scan_mode": "source",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0"
+        },
+        "findings": [
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.41.0",
+            "osv": "GO-2026-6629",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "package": "golang.org/x/text/unicode/norm",
+                "version": "v0.28.0"
+              }
+            ]
+          }
+        ],
+        "json": {
+          "bytes": 600624,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-arm64.json",
+          "sha256": "a180b2f5b40d97fa7f3da0b17350c27f9b1a85f1d46f4cf91205b2022c0dbd93"
+        },
+        "json_exit": 0,
+        "json_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-arm64.json.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "target": "darwin-arm64",
+        "text_traces": {
+          "bytes": 297,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-arm64.traces.txt",
+          "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3"
+        },
+        "trace_exit": 0,
+        "trace_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-darwin-arm64.traces.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unique_osv_inventory_records": 191
+      },
+      {
+        "config": {
+          "db": "https://vuln.go.dev",
+          "db_last_modified": "2026-10-08T22:31:09Z",
+          "go_version": "go1.26.9",
+          "protocol_version": "v1.0.0",
+          "scan_level": "symbol",
+          "scan_mode": "source",
+          "scanner_name": "govulncheck",
+          "scanner_version": "v1.9.0"
+        },
+        "findings": [
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.41.0",
+            "osv": "GO-2026-6629",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "version": "v0.28.0"
+              }
+            ]
+          },
+          {
+            "fixed_version": "v0.39.0",
+            "osv": "GO-2026-5970",
+            "trace": [
+              {
+                "module": "golang.org/x/text",
+                "package": "golang.org/x/text/unicode/norm",
+                "version": "v0.28.0"
+              }
+            ]
+          }
+        ],
+        "json": {
+          "bytes": 600725,
+          "path": "/workspace/rcc-mission/evidence/final-security-windows-amd64.json",
+          "sha256": "60730616265b2f68b992ed2da24d6ddab61fa193185668a89eff9b1003c716e4"
+        },
+        "json_exit": 0,
+        "json_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-windows-amd64.json.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "target": "windows-amd64",
+        "text_traces": {
+          "bytes": 297,
+          "path": "/workspace/rcc-mission/evidence/final-security-windows-amd64.traces.txt",
+          "sha256": "3ec96e53373d0ec36171fd50800a5ad85a44c607437f8f900371203b70f314d3"
+        },
+        "trace_exit": 0,
+        "trace_stderr": {
+          "bytes": 0,
+          "path": "/workspace/rcc-mission/evidence/final-security-windows-amd64.traces.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "unique_osv_inventory_records": 191
+      }
+    ],
+    "version": "govulncheck@v1.9.0"
+  }
+}

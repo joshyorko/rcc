@@ -4,7 +4,7 @@
   "latestPublicRelease": "v18.19.5",
   "v18.19.6TagAndReleaseAbsent": true,
   "readOnlyChecks": {
-    "rccProductionEnvironment": {"httpStatus": 404, "disposition": "unreadable or absent; protection and reviewer identity not established"},
+    "rccProductionEnvironment": {"httpStatus": 404, "listReadSucceeded": true, "visibleEnvironmentNames": ["copilot"], "disposition": "rcc-production is absent from the successful repository environment-list read; protection and different-human reviewer are not configured or verified"},
     "mainBranchProtection": {"httpStatus": 403, "disposition": "resource not accessible by current integration"},
     "workflowPermissions": {"httpStatus": 403, "disposition": "GITHUB_TOKEN contents-write settings not established"},
     "requiredSecretNames": {"httpStatus": 403, "disposition": "RCC_RELEASE_POLICY_AUDIT_TOKEN and HOMEBREW_TOOLS_PAT configuration not established"},
@@ -13,7 +13,7 @@
     "repositoryUserPermissions": {"admin": true, "maintain": true, "push": true, "pull": true, "disposition": "account permissions do not establish current integration/token administration permissions"}
   },
   "administratorPrerequisites": [
-    "Make rcc-production readable through Administration:read release audit credentials; verify exactly one required-reviewers rule, at least one authorized different human reviewer, prevent_self_review=true and can_admins_bypass=false.",
+    "Create and protect rcc-production under explicit administrator authorization; verify exactly one required-reviewers rule, at least one authorized different human reviewer, prevent_self_review=true and can_admins_bypass=false, and Administration:read release audit access.",
     "Verify RCC_RELEASE_POLICY_AUDIT_TOKEN repository secret and its Administration:read permission. Do not create or expand credentials without operator authorization.",
     "Verify publication GITHUB_TOKEN can create the new tag and release, and the separately configured HOMEBREW_TOOLS_PAT can dispatch the active homebrew-tools tap-auto-update.yml workflow. Readability alone is insufficient.",
     "Obtain and disposition the actual current security dashboard alerts with authorized security read access, and explicitly decide whether the verified unsigned/ad hoc signing scope meets publication requirements."

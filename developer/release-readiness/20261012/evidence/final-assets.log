@@ -1,0 +1,43 @@
+Using micromamba version v2.5.0
+Asset blobs/assets/micromamba.linux_amd64.gz already exists, skipping
+Asset blobs/assets/micromamba.darwin_amd64.gz already exists, skipping
+Asset blobs/assets/micromamba.darwin_arm64.gz already exists, skipping
+Asset blobs/assets/micromamba.windows_amd64.gz already exists, skipping
+Asset /workspace/rcc/blobs/assets/extended.zip already exists, skipping
+Asset /workspace/rcc/blobs/assets/python.zip already exists, skipping
+Asset /workspace/rcc/blobs/assets/standard.zip already exists, skipping
+Copying assets/externally_managed.txt to blobs/assets/
+Copying assets/micromamba_version.txt to blobs/assets/
+Copying assets/netdiag.yaml to blobs/assets/
+Copying assets/robocorp_settings.yaml to blobs/assets/
+Copying assets/speedtest.yaml to blobs/assets/
+Copying assets/templates.yaml to blobs/assets/
+Copying assets/depxtraction.py to blobs/assets/
+Copying assets/man/LICENSE.txt to blobs/assets/man/
+Copying assets/man/tutorial.txt to blobs/assets/man/
+Copying docs/BUILD.md to blobs/docs/
+Copying docs/README.md to blobs/docs/
+Copying docs/agent-boundaries.md to blobs/docs/
+Copying docs/ai-ops-runbook.md to blobs/docs/
+Copying docs/change-classification.md to blobs/docs/
+Copying docs/changelog.md to blobs/docs/
+Copying docs/cloud-commands.md to blobs/docs/
+Copying docs/environment-artifact-compatibility.md to blobs/docs/
+Copying docs/environment-artifact-trust.md to blobs/docs/
+Copying docs/environment-build-coordination.md to blobs/docs/
+Copying docs/environment-caching.md to blobs/docs/
+Copying docs/features.md to blobs/docs/
+Copying docs/history.md to blobs/docs/
+Copying docs/holotree.md to blobs/docs/
+Copying docs/maintenance.md to blobs/docs/
+Copying docs/metrics.md to blobs/docs/
+Copying docs/profile_configuration.md to blobs/docs/
+Copying docs/recipes.md to blobs/docs/
+Copying docs/release-process.md to blobs/docs/
+Copying docs/review-rubric.md to blobs/docs/
+Copying docs/roadmap.md to blobs/docs/
+Copying docs/troubleshooting.md to blobs/docs/
+Copying docs/usecases.md to blobs/docs/
+Copying docs/v18-compatibility.md to blobs/docs/
+Copying docs/venv.md to blobs/docs/
+Copying docs/vocabulary.md to blobs/docs/

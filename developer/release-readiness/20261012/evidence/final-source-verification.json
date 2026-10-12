@@ -1,0 +1,33 @@
+{
+  "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "remoteMain": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "worktreeClean": true,
+  "goTest": {
+    "command": "GOARCH=amd64 CGO_ENABLED=0 go test ./... -count=1",
+    "exitCode": 0,
+    "unchangedConfinementTests": "executed with approved same-environment execution outside nested command sandbox"
+  },
+  "pythonTests": {
+    "command": "python -m unittest discover -s scripts -p 'test_*.py'",
+    "tests": 145,
+    "exitCode": 0
+  },
+  "vet": {
+    "command": "python -m invoke goVet",
+    "exitCode": 0,
+    "strictBaselineWarnings": 6
+  },
+  "localBuild": {
+    "command": "CGO_ENABLED=0 GOARCH=amd64 go build -trimpath -o /workspace/rcc-mission/final-main-rcc ./cmd/rcc",
+    "goVersion": "go1.26.9",
+    "cleanExactVcs": true,
+    "binarySha256": "85abeddd3bdbaf9a5749424746b741375674c572bded4f1747483c3f3e4474ef",
+    "isPublicationArtifact": false
+  },
+  "evidenceSha256": {
+    "final-unit-tests.log": "29729127061dcb73481e0375bb91dad3b18145f9e59af5a8a17055cd12c920cd",
+    "final-script-tests.log": "589b7cc3c3bbcd21c53466146cd41f73b6a23a5010653b2680211330461f88ca",
+    "final-vet.log": "31cb361badc5b7841fdb87beb198a4e2d8f9946798648fe4bba23305b079ae9e",
+    "final-local-binary-go-metadata.txt": "ff9b1b29809e51b41d50dc4a2a41e3d062eee78699217ef66eb81f6ef7e806f1"
+  }
+}
