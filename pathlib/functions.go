@@ -260,7 +260,7 @@ func makeParentDirectories(directory string, correct fs.FileMode) error {
 	stat, err := os.Stat(directory)
 	if err == nil {
 		if !stat.IsDir() {
-			return fmt.Errorf("Path %q exists, but is not a directory", directory)
+			return fmt.Errorf("path %q exists, but is not a directory", directory)
 		}
 		return nil
 	}
@@ -283,7 +283,7 @@ func makeParentDirectories(directory string, correct fs.FileMode) error {
 			return statErr
 		}
 		if !stat.IsDir() {
-			return fmt.Errorf("Path %q exists, but is not a directory", directory)
+			return fmt.Errorf("path %q exists, but is not a directory", directory)
 		}
 		return nil
 	}
