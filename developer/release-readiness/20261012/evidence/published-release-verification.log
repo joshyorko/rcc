@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/workspace/rcc/scripts/release_publication.py", line 161, in read_go_build_info
+    output = subprocess.check_output([go_binary, "version", "-m", str(path)], text=True, stderr=subprocess.STDOUT)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/go', 'version', '-m', '/workspace/rcc-mission/published-v18.19.6-verification/assets/rcc-linux64']' returned non-zero exit status 1.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/rcc-handoff/developer/release-readiness/20261012/verify_published_release.py", line 78, in <module>
+    main()
+  File "/workspace/rcc-handoff/developer/release-readiness/20261012/verify_published_release.py", line 63, in main
+    metadata = validate_actual_binary_metadata(args.output, source, args.go)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc/scripts/release_publication.py", line 1178, in validate_actual_binary_metadata
+    actual = validate_asset_build_info(root / "assets", source_sha, go_binary)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc/scripts/release_publication.py", line 190, in validate_asset_build_info
+    info = read_go_build_info(path, go_binary)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc/scripts/release_publication.py", line 163, in read_go_build_info
+    raise ReleaseGateError(f"cannot inspect Go build metadata for {path}: {error}") from error
+release_publication.ReleaseGateError: cannot inspect Go build metadata for /workspace/rcc-mission/published-v18.19.6-verification/assets/rcc-linux64: Command '['/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/bin/go', 'version', '-m', '/workspace/rcc-mission/published-v18.19.6-verification/assets/rcc-linux64']' returned non-zero exit status 1.

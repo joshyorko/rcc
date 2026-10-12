@@ -1,5 +1,6 @@
 """Read back the approved RCC publication and hash every downloaded asset."""
 import argparse
+from contextlib import nullcontext
 import hashlib
 import json
 import os
@@ -20,6 +21,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--repository-root", type=Path, required=True)
     parser.add_argument("--go", required=True)
+    parser.add_argument("--resume", action="store_true", help="Rehash retained public downloads without downloading again")
     args = parser.parse_args()
     if sys.flags.optimize:
         raise RuntimeError("Run without Python optimization so checks remain active")
@@ -36,11 +38,11 @@ def main():
     assets = {asset["name"]: asset for asset in release["assets"]}
     assert len(assets) == len(release["assets"]) == 9
     assert set(assets) == set(manifest["assets"])
-    args.output.mkdir(parents=True, exist_ok=False)
+    args.output.mkdir(parents=True, exist_ok=args.resume)
     (args.output / "release-api.json").write_text(json.dumps(release, indent=2) + "\n")
     actual = {}
     asset_root = args.output / "assets"
-    asset_root.mkdir()
+    asset_root.mkdir(exist_ok=args.resume)
     for name, expected in manifest["assets"].items():
         asset = assets[name]
         assert asset["state"] == "uploaded" and asset["size"] == expected["size"]
@@ -50,17 +52,20 @@ def main():
         assert asset["browser_download_url"] == url
         digest, size = hashlib.sha256(), 0
         # Public download; do not send an API credential to redirected storage.
-        with urllib.request.urlopen(url, timeout=60) as stream, (asset_root / name).open("wb") as target:
+        incoming = (asset_root / name).open("rb") if args.resume else urllib.request.urlopen(url, timeout=60)
+        outgoing = nullcontext(None) if args.resume else (asset_root / name).open("wb")
+        with incoming as stream, outgoing as target:
             while block := stream.read(1024 * 1024):
                 size += len(block)
                 assert size <= expected["size"]
                 digest.update(block)
-                target.write(block)
+                if target is not None:
+                    target.write(block)
         actual[name] = {"sha256": digest.hexdigest(), "size": size}
         assert actual[name] == expected, name
     sys.path.insert(0, str(args.repository_root / "scripts"))
-    from release_publication import validate_actual_binary_metadata
-    metadata = validate_actual_binary_metadata(args.output, source, args.go)
+    from release_publication import validate_asset_build_info
+    metadata = validate_asset_build_info(asset_root, source, args.go)
     linux = asset_root / "rcc-linux64"
     linux.chmod(0o700)
     environment = {**os.environ, "ROBOCORP_HOME": str(args.output / "runtime-home")}

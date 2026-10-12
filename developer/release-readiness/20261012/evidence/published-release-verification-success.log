@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/workspace/rcc/scripts/release_publication.py", line 137, in _read_json
+    value = json.loads(path.read_text(encoding="utf-8"))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/rcc-mission/published-v18.19.6-verification/evidence/provenance.json'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/rcc-handoff/developer/release-readiness/20261012/verify_published_release.py", line 83, in <module>
+    main()
+  File "/workspace/rcc-handoff/developer/release-readiness/20261012/verify_published_release.py", line 68, in main
+    metadata = validate_actual_binary_metadata(args.output, source, args.go)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc/scripts/release_publication.py", line 1179, in validate_actual_binary_metadata
+    provenance = _read_json(root / "evidence" / "provenance.json")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/rcc/scripts/release_publication.py", line 139, in _read_json
+    raise ReleaseGateError(f"cannot read JSON evidence {path}: {error}") from error
+release_publication.ReleaseGateError: cannot read JSON evidence /workspace/rcc-mission/published-v18.19.6-verification/evidence/provenance.json: [Errno 2] No such file or directory: '/workspace/rcc-mission/published-v18.19.6-verification/evidence/provenance.json'

@@ -1,0 +1,24 @@
+{
+  "verifiedUtc": "2026-10-12T16:25:35.371427+00:00",
+  "runId": 38276397789,
+  "conclusion": "success",
+  "caskCommit": "d6a2fbc1a39de21fe8888a828010a3a27827a9f8",
+  "caskBlob": "6a0f4d9ea2b353153227cacf2c2d4cf357ee3c86",
+  "caskVersion": "18.19.6",
+  "mirrorReleaseId": 410800696,
+  "actualMirrorDownloads": {
+    "rcc-linux64": {
+      "sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+      "size": 22401186
+    },
+    "rcc-macos64": {
+      "sha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+      "size": 22241232
+    },
+    "rcc-macosarm64": {
+      "sha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+      "size": 20986322
+    }
+  },
+  "installSmoke": "actual build-job log proves brew install --cask test/tap/rcc succeeded and rcc --version v18.19.6"
+}

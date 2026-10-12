@@ -1,0 +1,1169 @@
+﻿2026-10-12T16:18:58.0253970Z Current runner version: '2.337.0'
+2026-10-12T16:18:58.0275125Z ##[group]Runner Image Provisioner
+2026-10-12T16:18:58.0275860Z Hosted Compute Agent
+2026-10-12T16:18:58.0276336Z Version: 20261002.596
+2026-10-12T16:18:58.0276922Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-12T16:18:58.0277704Z Build Date: 2026-10-02T22:28:27Z
+2026-10-12T16:18:58.0278298Z Worker ID: {cf59b05e-93da-475c-8439-e79fba2f8e52}
+2026-10-12T16:18:58.0278882Z Region: eastus
+2026-10-12T16:18:58.0279335Z Cloud: Azure
+2026-10-12T16:18:58.0279841Z ##[endgroup]
+2026-10-12T16:18:58.0281054Z ##[group]Operating System
+2026-10-12T16:18:58.0281652Z Ubuntu
+2026-10-12T16:18:58.0282093Z 24.04.5
+2026-10-12T16:18:58.0282512Z LTS
+2026-10-12T16:18:58.0283029Z ##[endgroup]
+2026-10-12T16:18:58.0283518Z ##[group]Runner Image
+2026-10-12T16:18:58.0284036Z Image: ubuntu-24.04
+2026-10-12T16:18:58.0284570Z Version: 20261004.327.1
+2026-10-12T16:18:58.0285648Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-12T16:18:58.0286883Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-12T16:18:58.0287884Z ##[endgroup]
+2026-10-12T16:18:58.0288771Z ##[group]GITHUB_TOKEN Permissions
+2026-10-12T16:18:58.0290885Z Contents: write
+2026-10-12T16:18:58.0291396Z Metadata: read
+2026-10-12T16:18:58.0291849Z ##[endgroup]
+2026-10-12T16:18:58.0293565Z Secret source: Actions
+2026-10-12T16:18:58.0294342Z Cache mode: write
+2026-10-12T16:18:58.0295098Z Prepare workflow directory
+2026-10-12T16:18:58.0842971Z Prepare all required actions
+2026-10-12T16:18:58.0898291Z Getting action download info
+2026-10-12T16:18:58.2807982Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-12T16:18:58.4051615Z Download action repository 'dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77' (SHA:27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77)
+2026-10-12T16:18:58.5072956Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-12T16:18:59.0256332Z Complete job name: Build rcc Bundle
+2026-10-12T16:18:59.0816262Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-10-12T16:18:59.0817313Z with:
+2026-10-12T16:18:59.0818014Z   repository: joshyorko/homebrew-tools
+2026-10-12T16:18:59.0821189Z   token: ***
+2026-10-12T16:18:59.0821577Z   ssh-strict: true
+2026-10-12T16:18:59.0821964Z   ssh-user: git
+2026-10-12T16:18:59.0822348Z   persist-credentials: true
+2026-10-12T16:18:59.0822771Z   clean: true
+2026-10-12T16:18:59.0823153Z   sparse-checkout-cone-mode: true
+2026-10-12T16:18:59.0823605Z   fetch-depth: 1
+2026-10-12T16:18:59.0823984Z   fetch-tags: false
+2026-10-12T16:18:59.0824398Z   show-progress: true
+2026-10-12T16:18:59.0824790Z   lfs: false
+2026-10-12T16:18:59.0825154Z   submodules: false
+2026-10-12T16:18:59.0825554Z   set-safe-directory: true
+2026-10-12T16:18:59.0826012Z   allow-unsafe-pr-checkout: false
+2026-10-12T16:18:59.0826711Z env:
+2026-10-12T16:18:59.0827080Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:18:59.0830470Z   GH_TOKEN: ***
+2026-10-12T16:18:59.0831154Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:18:59.0831802Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:18:59.0832254Z ##[endgroup]
+2026-10-12T16:18:59.1690583Z Syncing repository: joshyorko/homebrew-tools
+2026-10-12T16:18:59.1692403Z ##[group]Getting Git version info
+2026-10-12T16:18:59.1693118Z Working directory is '/home/runner/work/homebrew-tools/homebrew-tools'
+2026-10-12T16:18:59.1694152Z [command]/usr/bin/git version
+2026-10-12T16:18:59.1732869Z git version 2.55.0
+2026-10-12T16:18:59.1749409Z ##[endgroup]
+2026-10-12T16:18:59.1758900Z Temporarily overriding HOME='/home/runner/work/_temp/600f641a-2a3f-4c46-b482-9e3f1a8bd220' before making global git config changes
+2026-10-12T16:18:59.1760194Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T16:18:59.1763732Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/homebrew-tools/homebrew-tools
+2026-10-12T16:18:59.1803205Z Deleting the contents of '/home/runner/work/homebrew-tools/homebrew-tools'
+2026-10-12T16:18:59.1805999Z ##[group]Determining repository object format
+2026-10-12T16:18:59.1807098Z ##[endgroup]
+2026-10-12T16:18:59.1808023Z ##[group]Initializing the repository
+2026-10-12T16:18:59.1810947Z [command]/usr/bin/git init /home/runner/work/homebrew-tools/homebrew-tools
+2026-10-12T16:18:59.1888953Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T16:18:59.1890618Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T16:18:59.1892400Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T16:18:59.1893798Z hint: call:
+2026-10-12T16:18:59.1894628Z hint:
+2026-10-12T16:18:59.1895621Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T16:18:59.1896674Z hint:
+2026-10-12T16:18:59.1897890Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T16:18:59.1899557Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T16:18:59.1900991Z hint:
+2026-10-12T16:18:59.1901846Z hint: 	git branch -m <name>
+2026-10-12T16:18:59.1902746Z hint:
+2026-10-12T16:18:59.1903801Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T16:18:59.1905655Z Initialized empty Git repository in /home/runner/work/homebrew-tools/homebrew-tools/.git/
+2026-10-12T16:18:59.1909085Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/homebrew-tools
+2026-10-12T16:18:59.1971767Z ##[endgroup]
+2026-10-12T16:18:59.1972453Z ##[group]Disabling automatic garbage collection
+2026-10-12T16:18:59.1974674Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T16:18:59.2001883Z ##[endgroup]
+2026-10-12T16:18:59.2002630Z ##[group]Setting up auth
+2026-10-12T16:18:59.2003115Z Removing SSH command configuration
+2026-10-12T16:18:59.2006452Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T16:18:59.2033272Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T16:18:59.2876447Z Removing HTTP extra header
+2026-10-12T16:18:59.2881507Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T16:18:59.2907769Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T16:18:59.3080037Z Removing includeIf entries pointing to credentials config files
+2026-10-12T16:18:59.3083932Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T16:18:59.3115051Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T16:18:59.3299331Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T16:18:59.3326831Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git.path /home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:18:59.3351452Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:18:59.3379299Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:18:59.3405127Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:18:59.3427319Z ##[endgroup]
+2026-10-12T16:18:59.3428237Z ##[group]Fetching the repository
+2026-10-12T16:18:59.3433920Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +068d8fd5d04014cbd6c2c8a913cc84b1d327a956:refs/remotes/origin/main
+2026-10-12T16:18:59.7790486Z From https://github.com/joshyorko/homebrew-tools
+2026-10-12T16:18:59.7791590Z  * [new ref]         068d8fd5d04014cbd6c2c8a913cc84b1d327a956 -> origin/main
+2026-10-12T16:18:59.7798752Z [command]/usr/bin/git branch --list --remote origin/main
+2026-10-12T16:18:59.7820221Z   origin/main
+2026-10-12T16:18:59.7827697Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-10-12T16:18:59.7846553Z 068d8fd5d04014cbd6c2c8a913cc84b1d327a956
+2026-10-12T16:18:59.7850920Z ##[endgroup]
+2026-10-12T16:18:59.7852393Z ##[group]Determining the checkout info
+2026-10-12T16:18:59.7854167Z ##[endgroup]
+2026-10-12T16:18:59.7855154Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T16:18:59.7892672Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T16:18:59.7953711Z ##[group]Checking out the ref
+2026-10-12T16:18:59.7954937Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-12T16:18:59.8268378Z Switched to a new branch 'main'
+2026-10-12T16:18:59.8271840Z branch 'main' set up to track 'origin/main'.
+2026-10-12T16:18:59.8283737Z ##[endgroup]
+2026-10-12T16:18:59.8320960Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T16:18:59.8341239Z 068d8fd5d04014cbd6c2c8a913cc84b1d327a956
+2026-10-12T16:18:59.8874820Z ##[group]Run dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77
+2026-10-12T16:18:59.8876131Z with:
+2026-10-12T16:18:59.8876804Z   version: 0.21.10
+2026-10-12T16:18:59.8877684Z   module: ./dagger/tap-pipeline
+2026-10-12T16:18:59.8879080Z   cloud-token: ***
+2026-10-12T16:18:59.8879894Z   enable-github-summary: true
+2026-10-12T16:18:59.8882127Z   call: -o "$RUNNER_TEMP/bundle" release-bundle --package-id="rcc" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit="patchraptor-main" --codex-desktop-package-source="pinned"
+2026-10-12T16:18:59.8884467Z   dagger-flags: --progress plain
+2026-10-12T16:18:59.8885301Z   verb: call
+2026-10-12T16:18:59.8885984Z   workdir: .
+2026-10-12T16:18:59.8886675Z env:
+2026-10-12T16:18:59.8887342Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:18:59.8893974Z   GH_TOKEN: ***
+2026-10-12T16:18:59.8894754Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:18:59.8895720Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:18:59.8896617Z ##[endgroup]
+2026-10-12T16:18:59.8958144Z ##[start-action display=Run set -o pipefail;id=__dagger_dagger-for-github.__run]
+2026-10-12T16:18:59.9158423Z ##[group]Run set -o pipefail
+2026-10-12T16:18:59.9159432Z [36;1mset -o pipefail[0m
+2026-10-12T16:18:59.9160439Z [36;1m# Fallback to /usr/local for backwards compatability[0m
+2026-10-12T16:18:59.9161655Z [36;1mprefix_dir="${RUNNER_TEMP:-/usr/local}"[0m
+2026-10-12T16:18:59.9162875Z [36;1m# Ensure the dir is writable otherwise fallback to tmpdir[0m
+2026-10-12T16:18:59.9164206Z [36;1mif [[ ! -d "$prefix_dir" ]] || [[ ! -w "$prefix_dir" ]]; then[0m
+2026-10-12T16:18:59.9165411Z [36;1m    prefix_dir="$(mktemp -d)"[0m
+2026-10-12T16:18:59.9166404Z [36;1mfi[0m
+2026-10-12T16:18:59.9167222Z [36;1mprintf '%s/bin' "$prefix_dir" >> $GITHUB_PATH[0m
+2026-10-12T16:18:59.9168502Z [36;1m[0m
+2026-10-12T16:18:59.9169518Z [36;1m# If the dagger version is 'latest', set the version back to an empty[0m
+2026-10-12T16:18:59.9171099Z [36;1m# string. This allows the install script to detect and install the latest[0m
+2026-10-12T16:18:59.9172398Z [36;1m# version itself[0m
+2026-10-12T16:18:59.9173221Z [36;1mVERSION=0.21.10[0m
+2026-10-12T16:18:59.9174082Z [36;1mif [[ "$VERSION" == "latest" ]]; then[0m
+2026-10-12T16:18:59.9175038Z [36;1m  VERSION=[0m
+2026-10-12T16:18:59.9176103Z [36;1melif [[ -n "$VERSION" && "$VERSION" != v* ]]; then[0m
+2026-10-12T16:18:59.9177433Z [36;1m  # Add 'v' prefix if version doesn't start with 'v' and is not empty[0m
+2026-10-12T16:18:59.9178762Z [36;1m  VERSION="v$VERSION"[0m
+2026-10-12T16:18:59.9179588Z [36;1mfi[0m
+2026-10-12T16:18:59.9180265Z [36;1m[0m
+2026-10-12T16:18:59.9180935Z [36;1mCOMMIT=[0m
+2026-10-12T16:18:59.9181642Z [36;1m[0m
+2026-10-12T16:18:59.9182404Z [36;1mif [[ -x "$(command -v dagger)" ]]; then[0m
+2026-10-12T16:18:59.9183441Z [36;1m  echo "::group::Checking dagger"[0m
+2026-10-12T16:18:59.9184695Z [36;1m  version="$(dagger --silent version | cut --fields 2 --delimiter ' ')"[0m
+2026-10-12T16:18:59.9186057Z [36;1m  echo "Found existing dagger version: $version"[0m
+2026-10-12T16:18:59.9187120Z [36;1m  if [[ -z "$VERSION" ]]; then[0m
+2026-10-12T16:18:59.9188362Z [36;1m    latest=$(curl -s https://dl.dagger.io/dagger/versions/latest)[0m
+2026-10-12T16:18:59.9189572Z [36;1m  fi[0m
+2026-10-12T16:18:59.9190435Z [36;1m  if [[ "$version" == "$VERSION" ]] || \[0m
+2026-10-12T16:18:59.9191544Z [36;1m     [[ -z "$VERSION" && "$version" == "$latest" ]]; then[0m
+2026-10-12T16:18:59.9192909Z [36;1m    echo "dagger ${version} is already installed, skipping installation"[0m
+2026-10-12T16:18:59.9194135Z [36;1m    exit 0[0m
+2026-10-12T16:18:59.9194860Z [36;1m  fi[0m
+2026-10-12T16:18:59.9195573Z [36;1m  echo "::endgroup::"[0m
+2026-10-12T16:18:59.9196392Z [36;1mfi[0m
+2026-10-12T16:18:59.9197063Z [36;1m[0m
+2026-10-12T16:18:59.9197869Z [36;1mecho "::group::Installing dagger"[0m
+2026-10-12T16:18:59.9199021Z [36;1mcurl -fsSL https://dl.dagger.io/dagger/install.sh | \[0m
+2026-10-12T16:18:59.9200686Z [36;1mBIN_DIR=${prefix_dir}/bin DAGGER_VERSION="$VERSION" DAGGER_COMMIT="$COMMIT" sh[0m
+2026-10-12T16:18:59.9202020Z [36;1mecho "::endgroup::"[0m
+2026-10-12T16:19:00.0634563Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T16:19:00.0635671Z env:
+2026-10-12T16:19:00.0636586Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:19:00.0644957Z   GH_TOKEN: ***
+2026-10-12T16:19:00.0645772Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:19:00.0646738Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:19:00.0648042Z ##[endgroup]
+2026-10-12T16:19:00.0901789Z ##[group]Installing dagger
+2026-10-12T16:19:00.4083180Z sh debug downloading files into /tmp/tmp.aocgS17XPc
+2026-10-12T16:19:00.4085712Z sh debug http_download https://dl.dagger.io/dagger/releases/0.21.10/dagger_v0.21.10_linux_amd64.tar.gz
+2026-10-12T16:19:00.5260985Z sh debug http_download https://dl.dagger.io/dagger/releases/0.21.10/checksums.txt
+2026-10-12T16:19:01.0101502Z sh debug display shell completion instructions
+2026-10-12T16:19:01.0106326Z sh info installed /home/runner/work/_temp/bin/dagger
+2026-10-12T16:19:01.0227805Z ##[endgroup]
+2026-10-12T16:19:01.0243813Z ##[end-action id=__dagger_dagger-for-github.__run;outcome=success;conclusion=success;duration_ms=1128]
+2026-10-12T16:19:01.0251298Z ##[start-action display=Run # Determine if the user wants to execute a dagger command or just install;id=__dagger_dagger-for-github.should-exec]
+2026-10-12T16:19:01.0349938Z ##[group]Run # Determine if the user wants to execute a dagger command or just install
+2026-10-12T16:19:01.0350474Z [36;1m# Determine if the user wants to execute a dagger command or just install[0m
+2026-10-12T16:19:01.0350847Z [36;1mif [[ -n "$INPUT_CALL" ]] || \[0m
+2026-10-12T16:19:01.0351126Z [36;1m   [[ -n "$INPUT_SHELL" ]] || \[0m
+2026-10-12T16:19:01.0351378Z [36;1m   [[ -n "$INPUT_ARGS" ]] || \[0m
+2026-10-12T16:19:01.0351627Z [36;1m   [[ -n "$INPUT_CHECK" ]] || \[0m
+2026-10-12T16:19:01.0351889Z [36;1m   [[ "$INPUT_VERB" != "call" ]]; then[0m
+2026-10-12T16:19:01.0352183Z [36;1m  echo "result=true" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0352447Z [36;1mfi[0m
+2026-10-12T16:19:01.0411390Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T16:19:01.0411745Z env:
+2026-10-12T16:19:01.0411954Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:19:01.0414343Z   GH_TOKEN: ***
+2026-10-12T16:19:01.0414585Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:19:01.0414861Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:19:01.0415539Z   INPUT_CALL: -o "$RUNNER_TEMP/bundle" release-bundle --package-id="rcc" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit="patchraptor-main" --codex-desktop-package-source="pinned"
+2026-10-12T16:19:01.0416182Z   INPUT_SHELL: 
+2026-10-12T16:19:01.0416385Z   INPUT_ARGS: 
+2026-10-12T16:19:01.0416583Z   INPUT_CHECK: 
+2026-10-12T16:19:01.0416784Z   INPUT_VERB: call
+2026-10-12T16:19:01.0416987Z ##[endgroup]
+2026-10-12T16:19:01.0649318Z ##[end-action id=__dagger_dagger-for-github.should-exec;outcome=success;conclusion=success;duration_ms=39]
+2026-10-12T16:19:01.0666191Z ##[start-action display=Run verb=call;id=__dagger_dagger-for-github.assemble]
+2026-10-12T16:19:01.0853679Z ##[group]Run verb=call
+2026-10-12T16:19:01.0853989Z [36;1mverb=call[0m
+2026-10-12T16:19:01.0854288Z [36;1mshell=$(echo '""' | jq -rj .)[0m
+2026-10-12T16:19:01.0854700Z [36;1m# Collapse backslash-continuations and newlines into spaces for CLI args[0m
+2026-10-12T16:19:01.0855224Z [36;1mdagger_flags=$(echo '"--progress plain"' | jq -rj . | sed -z 's/\\\n/ /g; s/\n/ /g')[0m
+2026-10-12T16:19:01.0855675Z [36;1margs=$(echo '""' | jq -rj . | sed -z 's/\\\n/ /g; s/\n/ /g')[0m
+2026-10-12T16:19:01.0856574Z [36;1mcall=$(echo '"-o \"$RUNNER_TEMP/bundle\" release-bundle --package-id=\"rcc\" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit=\"patchraptor-main\" --codex-desktop-package-source=\"pinned\""' | jq -rj . | sed -z 's/\\\n/ /g; s/\n/ /g')[0m
+2026-10-12T16:19:01.0857451Z [36;1mcheck=$(echo '""' | jq -rj . | sed -z 's/\\\n/ /g; s/\n/ /g')[0m
+2026-10-12T16:19:01.0858615Z [36;1mif [[ -n "-o "$RUNNER_TEMP/bundle" release-bundle --package-id="rcc" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit="patchraptor-main" --codex-desktop-package-source="pinned"" ]]; then[0m
+2026-10-12T16:19:01.0859299Z [36;1m  verb="call"[0m
+2026-10-12T16:19:01.0859554Z [36;1melif [[ -n "$check" ]]; then[0m
+2026-10-12T16:19:01.0859811Z [36;1m  verb="check"[0m
+2026-10-12T16:19:01.0860138Z [36;1m  # check input is used as a trigger; don't pass glob patterns as args[0m
+2026-10-12T16:19:01.0860492Z [36;1m  check=""[0m
+2026-10-12T16:19:01.0860724Z [36;1melif [[ "$shell" != "" ]]; then[0m
+2026-10-12T16:19:01.0860977Z [36;1m  verb=""[0m
+2026-10-12T16:19:01.0861205Z [36;1m  script=$(mktemp)[0m
+2026-10-12T16:19:01.0861454Z [36;1m  printf '%s' "$shell" > $script[0m
+2026-10-12T16:19:01.0861707Z [36;1mfi[0m
+2026-10-12T16:19:01.0861940Z [36;1mecho "script=$script" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0862252Z [36;1mecho "verb=$verb" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0862683Z [36;1mecho "dagger-flags=$dagger_flags" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0863030Z [36;1mecho "args=$args" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0863314Z [36;1mecho "call=$call" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0863601Z [36;1mecho "check=$check" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.0917574Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T16:19:01.0917904Z env:
+2026-10-12T16:19:01.0918113Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:19:01.0920141Z   GH_TOKEN: ***
+2026-10-12T16:19:01.0920391Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:19:01.0920680Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:19:01.0920959Z   INPUT_MODULE: ./dagger/tap-pipeline
+2026-10-12T16:19:01.0921216Z ##[endgroup]
+2026-10-12T16:19:01.1129789Z ##[end-action id=__dagger_dagger-for-github.assemble;outcome=success;conclusion=success;duration_ms=46]
+2026-10-12T16:19:01.1136975Z ##[start-action display=Run tmpout=$(mktemp);id=__dagger_dagger-for-github.exec]
+2026-10-12T16:19:01.1362175Z ##[group]Run tmpout=$(mktemp)
+2026-10-12T16:19:01.1362517Z [36;1mtmpout=$(mktemp)[0m
+2026-10-12T16:19:01.1362759Z [36;1mtmperr=$(mktemp)[0m
+2026-10-12T16:19:01.1362990Z [36;1mcd . && { \[0m
+2026-10-12T16:19:01.1363474Z [36;1mDAGGER_CLOUD_TOKEN=*** \[0m
+2026-10-12T16:19:01.1363857Z [36;1mdagger \[0m
+2026-10-12T16:19:01.1364096Z [36;1m--progress plain \[0m
+2026-10-12T16:19:01.1364335Z [36;1m${VERB} \[0m
+2026-10-12T16:19:01.1364578Z [36;1m${INPUT_MODULE:+-m $INPUT_MODULE} \[0m
+2026-10-12T16:19:01.1365430Z [36;1m-o "$RUNNER_TEMP/bundle" release-bundle --package-id="rcc" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit="patchraptor-main" --codex-desktop-package-source="pinned"; } 1> >(tee "${tmpout}") 2> >(tee "${tmperr}" >&2)[0m
+2026-10-12T16:19:01.1366236Z [36;1m[0m
+2026-10-12T16:19:01.1366438Z [36;1m{[0m
+2026-10-12T16:19:01.1366735Z [36;1m  # we need a delim that doesn't appear in the output - a hash of the[0m
+2026-10-12T16:19:01.1367175Z [36;1m  # file itself *probably* won't (if it does, we have larger[0m
+2026-10-12T16:19:01.1367758Z [36;1m  # cryptographic problems)[0m
+2026-10-12T16:19:01.1368068Z [36;1m  delim="$(sha256sum $tmpout | cut -d " " -f1)"[0m
+2026-10-12T16:19:01.1368378Z [36;1m  echo "stdout<<${delim}"[0m
+2026-10-12T16:19:01.1368651Z [36;1m  cat "${tmpout}"[0m
+2026-10-12T16:19:01.1368888Z [36;1m  echo[0m
+2026-10-12T16:19:01.1369099Z [36;1m  echo "${delim}"[0m
+2026-10-12T16:19:01.1369342Z [36;1m} >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.1369575Z [36;1m[0m
+2026-10-12T16:19:01.1369847Z [36;1m# Extract trace URL from stderr and set as traceURL output[0m
+2026-10-12T16:19:01.1370389Z [36;1mtrace_url=$((grep -Eo 'https://dagger.cloud(/[^ ]+/traces/[a-zA-Z0-9]+|/traces/setup)' "${tmperr}" || true) | head -n1)[0m
+2026-10-12T16:19:01.1370857Z [36;1mif [[ -n "$trace_url" ]]; then[0m
+2026-10-12T16:19:01.1371166Z [36;1m  echo "traceURL=$trace_url" >> "$GITHUB_OUTPUT"[0m
+2026-10-12T16:19:01.1371586Z [36;1mfi[0m
+2026-10-12T16:19:01.1371785Z [36;1m[0m
+2026-10-12T16:19:01.1372001Z [36;1m# Generate job summary content[0m
+2026-10-12T16:19:01.1372267Z [36;1msummary_content(){[0m
+2026-10-12T16:19:01.1372514Z [36;1m  echo -e "## Command\n"[0m
+2026-10-12T16:19:01.1372762Z [36;1m  echo '```bash'[0m
+2026-10-12T16:19:01.1373477Z [36;1m  cmd="dagger $VERB -o "$RUNNER_TEMP/bundle" release-bundle --package-id="rcc" --github-token=env://GH_TOKEN --codex-desktop-conversion-commit="patchraptor-main" --codex-desktop-package-source="pinned""[0m
+2026-10-12T16:19:01.1374193Z [36;1m  if [[ -n "$INPUT_MODULE" ]]; then[0m
+2026-10-12T16:19:01.1374511Z [36;1m    echo -e -E "DAGGER_MODULE=\"$INPUT_MODULE\" $cmd"[0m
+2026-10-12T16:19:01.1374805Z [36;1m  else[0m
+2026-10-12T16:19:01.1375021Z [36;1m    echo -e -E "$cmd"[0m
+2026-10-12T16:19:01.1375262Z [36;1m  fi[0m
+2026-10-12T16:19:01.1375470Z [36;1m  echo '```'[0m
+2026-10-12T16:19:01.1375704Z [36;1m  if [[ -n "$SCRIPT" ]]; then[0m
+2026-10-12T16:19:01.1375972Z [36;1m    echo -e "### Script\n"[0m
+2026-10-12T16:19:01.1376223Z [36;1m    echo '```bash'[0m
+2026-10-12T16:19:01.1376458Z [36;1m    cat "$SCRIPT"[0m
+2026-10-12T16:19:01.1376698Z [36;1m    echo -e "\n"[0m
+2026-10-12T16:19:01.1376929Z [36;1m    echo '```'[0m
+2026-10-12T16:19:01.1377152Z [36;1m  fi[0m
+2026-10-12T16:19:01.1377351Z [36;1m[0m
+2026-10-12T16:19:01.1377705Z [36;1m  echo -e "## Dagger trace\n"[0m
+2026-10-12T16:19:01.1377971Z [36;1m  if [[ -n "$trace_url" ]]; then[0m
+2026-10-12T16:19:01.1378259Z [36;1m    echo "[$trace_url]($trace_url)"[0m
+2026-10-12T16:19:01.1378519Z [36;1m  else[0m
+2026-10-12T16:19:01.1378927Z [36;1m    echo "No trace available. To setup: [https://dagger.cloud/traces/setup](https://dagger.cloud/traces/setup)"[0m
+2026-10-12T16:19:01.1379373Z [36;1m  fi[0m
+2026-10-12T16:19:01.1379569Z [36;1m[0m
+2026-10-12T16:19:01.1379782Z [36;1m  echo -e "## Dagger version\n"[0m
+2026-10-12T16:19:01.1380050Z [36;1m  echo '```bash'[0m
+2026-10-12T16:19:01.1380290Z [36;1m  dagger version || true[0m
+2026-10-12T16:19:01.1380543Z [36;1m  echo '```'[0m
+2026-10-12T16:19:01.1380753Z [36;1m[0m
+2026-10-12T16:19:01.1380952Z [36;1m  echo -e "---\n"[0m
+2026-10-12T16:19:01.1381179Z [36;1m}[0m
+2026-10-12T16:19:01.1381380Z [36;1m[0m
+2026-10-12T16:19:01.1381725Z [36;1m# Write to custom summary path if specified[0m
+2026-10-12T16:19:01.1382009Z [36;1mif [[ -n "" ]]; then[0m
+2026-10-12T16:19:01.1401721Z [36;1m  summary_content > ""[0m
+2026-10-12T16:19:01.1402034Z [36;1mfi[0m
+2026-10-12T16:19:01.1402277Z [36;1m[0m
+2026-10-12T16:19:01.1402644Z [36;1m# Write to GitHub step summary if enabled (default: true)[0m
+2026-10-12T16:19:01.1402989Z [36;1mif [[ "true" == "true" ]]; then[0m
+2026-10-12T16:19:01.1403292Z [36;1m  summary_content > "${GITHUB_STEP_SUMMARY}"[0m
+2026-10-12T16:19:01.1403574Z [36;1mfi[0m
+2026-10-12T16:19:01.1459941Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-12T16:19:01.1460285Z env:
+2026-10-12T16:19:01.1460517Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:19:01.1462544Z   GH_TOKEN: ***
+2026-10-12T16:19:01.1462797Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:19:01.1463090Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:19:01.1463369Z   INPUT_MODULE: ./dagger/tap-pipeline
+2026-10-12T16:19:01.1463633Z   VERB: call
+2026-10-12T16:19:01.1463847Z   SCRIPT: 
+2026-10-12T16:19:01.1464064Z ##[endgroup]
+2026-10-12T16:19:01.3271365Z [95m1   : [0m[90;2m[0mconnect
+2026-10-12T16:19:01.3272602Z [95m1   : [0m[90;2m[0m[90m[0.1s] [0m[90m|[0m cloud [2murl=[0mhttps://dagger.cloud/joshyorko/traces/1eb47905853ba514e12625a88f2c9b07
+2026-10-12T16:19:01.4269304Z [95m2   : [0m[90;2m┆ [0mstarting engine
+2026-10-12T16:19:01.4269940Z [95m3   : [0m[90;2m┆ ┆ [0mcreate container
+2026-10-12T16:19:01.4270573Z [95m4   : [0m[90;2m┆ ┆ ┆ [0mexec docker ps -a --format {{.Names}}
+2026-10-12T16:19:01.4271382Z [95m4   : [0m[90;2m┆ ┆ ┆ [0mexec docker ps -a --format {{.Names}}[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:01.4272244Z [95m5   : [0m[90;2m┆ ┆ ┆ [0mexec docker pull registry.dagger.io/engine:v0.21.10
+2026-10-12T16:19:02.4591453Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.0s] [0m[90m|[0m v0.21.10: Pulling from engine
+2026-10-12T16:19:03.0273374Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f30736dc2e12: Pulling fs layer
+2026-10-12T16:19:03.0274189Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9072f02b91b9: Pulling fs layer
+2026-10-12T16:19:03.0274827Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 31a4be2e3dab: Pulling fs layer
+2026-10-12T16:19:03.0275480Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ec7bfc05a18b: Pulling fs layer
+2026-10-12T16:19:03.0276100Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 536a30a5a605: Pulling fs layer
+2026-10-12T16:19:03.0276728Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0b8b7c7cd7bc: Pulling fs layer
+2026-10-12T16:19:03.0283722Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0b07dbcf9faf: Pulling fs layer
+2026-10-12T16:19:03.0285256Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 68fc2dff657d: Pulling fs layer
+2026-10-12T16:19:03.0286020Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f735bc71da0a: Pulling fs layer
+2026-10-12T16:19:03.0286559Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b1664c47d125: Pulling fs layer
+2026-10-12T16:19:03.0287243Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4eca0264defb: Pulling fs layer
+2026-10-12T16:19:03.0288163Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4931e67f891d: Pulling fs layer
+2026-10-12T16:19:03.0288879Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b8e2ca334e10: Pulling fs layer
+2026-10-12T16:19:03.0289662Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 45105157e2d9: Pulling fs layer
+2026-10-12T16:19:03.0296267Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9b72e11b3913: Pulling fs layer
+2026-10-12T16:19:03.0297103Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fe12085f0aac: Pulling fs layer
+2026-10-12T16:19:03.0297898Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c82aea02de10: Pulling fs layer
+2026-10-12T16:19:03.0298503Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5d8002b0c9f4: Pulling fs layer
+2026-10-12T16:19:03.0299182Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0e06514acdc4: Pulling fs layer
+2026-10-12T16:19:03.0299576Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d80e699ee3f4: Pulling fs layer
+2026-10-12T16:19:03.0299945Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9bd6add9325c: Pulling fs layer
+2026-10-12T16:19:03.0300320Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 125852072ac3: Pulling fs layer
+2026-10-12T16:19:03.0300706Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 04dac680043f: Pulling fs layer
+2026-10-12T16:19:03.0301082Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 519388fd44f9: Pulling fs layer
+2026-10-12T16:19:03.0301466Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m cc334516ebff: Pulling fs layer
+2026-10-12T16:19:03.0301850Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 10c68547f011: Pulling fs layer
+2026-10-12T16:19:03.0302223Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0319f1b4ed31: Pulling fs layer
+2026-10-12T16:19:03.0302936Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 859e21e3e337: Pulling fs layer
+2026-10-12T16:19:03.0303317Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 58a5e62226bb: Pulling fs layer
+2026-10-12T16:19:03.0303687Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6ce9d0ec3e11: Pulling fs layer
+2026-10-12T16:19:03.0304349Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 71697fe62d1c: Pulling fs layer
+2026-10-12T16:19:03.0304725Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6a50abdf1735: Pulling fs layer
+2026-10-12T16:19:03.0305303Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m bc763964929f: Pulling fs layer
+2026-10-12T16:19:03.0305694Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b8165b6d23e0: Pulling fs layer
+2026-10-12T16:19:03.0306068Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6a68713fb1cc: Pulling fs layer
+2026-10-12T16:19:03.0306445Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f09750bff7fb: Pulling fs layer
+2026-10-12T16:19:03.0306820Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5b0e356a0ccf: Pulling fs layer
+2026-10-12T16:19:03.0309226Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6e203f273e69: Pulling fs layer
+2026-10-12T16:19:03.0310011Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6d8240c2f33e: Pulling fs layer
+2026-10-12T16:19:03.0310846Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m a233597a7ca6: Pulling fs layer
+2026-10-12T16:19:03.0311487Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4e710d79112d: Pulling fs layer
+2026-10-12T16:19:03.0312128Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d72d4b8376aa: Pulling fs layer
+2026-10-12T16:19:03.0312763Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 381e846e324a: Pulling fs layer
+2026-10-12T16:19:03.0313274Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 7788e844287c: Pulling fs layer
+2026-10-12T16:19:03.0313670Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 8cb02660e806: Pulling fs layer
+2026-10-12T16:19:03.0314054Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m dbc81087ec4f: Pulling fs layer
+2026-10-12T16:19:03.0314427Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b00992d75f2f: Pulling fs layer
+2026-10-12T16:19:03.0315064Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1de75f04c5e5: Pulling fs layer
+2026-10-12T16:19:03.0315622Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5fe32bf4caa7: Pulling fs layer
+2026-10-12T16:19:03.0316177Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1cce20d6fe0b: Pulling fs layer
+2026-10-12T16:19:03.0317040Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 317789eb6182: Pulling fs layer
+2026-10-12T16:19:03.0318367Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 459560ffce72: Pulling fs layer
+2026-10-12T16:19:03.0319931Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ec7bfc05a18b: Waiting
+2026-10-12T16:19:03.0320636Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m aa8140292f0f: Pulling fs layer
+2026-10-12T16:19:03.0321640Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 536a30a5a605: Waiting
+2026-10-12T16:19:03.0322250Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d2080ff342a5: Pulling fs layer
+2026-10-12T16:19:03.0322647Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m eb8ba02debc5: Pulling fs layer
+2026-10-12T16:19:03.0323186Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0b8b7c7cd7bc: Waiting
+2026-10-12T16:19:03.0324779Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e4ea43d40060: Pulling fs layer
+2026-10-12T16:19:03.0325988Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0b07dbcf9faf: Waiting
+2026-10-12T16:19:03.0326669Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 50bb467984d0: Pulling fs layer
+2026-10-12T16:19:03.0328419Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 970c54821cb3: Pulling fs layer
+2026-10-12T16:19:03.0329399Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 68fc2dff657d: Waiting
+2026-10-12T16:19:03.0333520Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 16d191797970: Pulling fs layer
+2026-10-12T16:19:03.0334716Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f1839c1c048b: Pulling fs layer
+2026-10-12T16:19:03.0335574Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f735bc71da0a: Waiting
+2026-10-12T16:19:03.0336576Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 571f90e1eefd: Pulling fs layer
+2026-10-12T16:19:03.0423648Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b1664c47d125: Waiting
+2026-10-12T16:19:03.0424464Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ed84881650c3: Pulling fs layer
+2026-10-12T16:19:03.0425124Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9230e4898522: Pulling fs layer
+2026-10-12T16:19:03.0425758Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4eca0264defb: Waiting
+2026-10-12T16:19:03.0426373Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4a0236322319: Pulling fs layer
+2026-10-12T16:19:03.0427015Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 27d5999d2ccb: Pulling fs layer
+2026-10-12T16:19:03.0428965Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m a3fa856ae694: Pulling fs layer
+2026-10-12T16:19:03.0429686Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4931e67f891d: Waiting
+2026-10-12T16:19:03.0430216Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d917099c426f: Pulling fs layer
+2026-10-12T16:19:03.0430834Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m aa9704af11f7: Pulling fs layer
+2026-10-12T16:19:03.0431425Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b8e2ca334e10: Waiting
+2026-10-12T16:19:03.0432767Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f870a2d8b7d9: Pulling fs layer
+2026-10-12T16:19:03.0433424Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 45105157e2d9: Waiting
+2026-10-12T16:19:03.0433816Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 84a06230fbc8: Pulling fs layer
+2026-10-12T16:19:03.0434213Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d353f8966ed0: Pulling fs layer
+2026-10-12T16:19:03.0434590Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9b72e11b3913: Waiting
+2026-10-12T16:19:03.0434953Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fe12085f0aac: Waiting
+2026-10-12T16:19:03.0435300Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c82aea02de10: Waiting
+2026-10-12T16:19:03.0435824Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e6e0358fe381: Pulling fs layer
+2026-10-12T16:19:03.0436461Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5f4e57657eba: Pulling fs layer
+2026-10-12T16:19:03.0437068Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5d8002b0c9f4: Waiting
+2026-10-12T16:19:03.0437805Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m db3530f810d0: Pulling fs layer
+2026-10-12T16:19:03.0438239Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fab8d7ffdf80: Pulling fs layer
+2026-10-12T16:19:03.0438621Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0e06514acdc4: Waiting
+2026-10-12T16:19:03.0439017Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m dab938d80ff6: Pulling fs layer
+2026-10-12T16:19:03.0439761Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 3385ffb0324c: Pulling fs layer
+2026-10-12T16:19:03.0440336Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d80e699ee3f4: Waiting
+2026-10-12T16:19:03.0440938Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5c500d7ec37f: Pulling fs layer
+2026-10-12T16:19:03.0441565Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c835ed9135ee: Pulling fs layer
+2026-10-12T16:19:03.0442122Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9bd6add9325c: Waiting
+2026-10-12T16:19:03.0442677Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4f4fb700ef54: Pulling fs layer
+2026-10-12T16:19:03.0443274Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c31489308c83: Pulling fs layer
+2026-10-12T16:19:03.0443656Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 125852072ac3: Waiting
+2026-10-12T16:19:03.0444021Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2d1aec7e5139: Pulling fs layer
+2026-10-12T16:19:03.0444395Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e93550d6c7d2: Pulling fs layer
+2026-10-12T16:19:03.0444749Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 04dac680043f: Waiting
+2026-10-12T16:19:03.0445240Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 632bb61aaec8: Pulling fs layer
+2026-10-12T16:19:03.0445634Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4b6298563c2a: Pulling fs layer
+2026-10-12T16:19:03.0445990Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 519388fd44f9: Waiting
+2026-10-12T16:19:03.0446357Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9c4bae1d7b92: Pulling fs layer
+2026-10-12T16:19:03.0446731Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 548cb2349029: Pulling fs layer
+2026-10-12T16:19:03.0447091Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m cc334516ebff: Waiting
+2026-10-12T16:19:03.0447450Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 33acec480013: Pulling fs layer
+2026-10-12T16:19:03.0448028Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 77bc63fe39b8: Pulling fs layer
+2026-10-12T16:19:03.0448415Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m acb9a785b4bc: Pulling fs layer
+2026-10-12T16:19:03.0448790Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 10502c7d42d1: Pulling fs layer
+2026-10-12T16:19:03.0449274Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 10c68547f011: Waiting
+2026-10-12T16:19:03.0449841Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6c1ab25062d6: Pulling fs layer
+2026-10-12T16:19:03.0450247Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ee417c672c17: Pulling fs layer
+2026-10-12T16:19:03.0450775Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 353dabb02cd2: Pulling fs layer
+2026-10-12T16:19:03.0451412Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2d40d296b262: Pulling fs layer
+2026-10-12T16:19:03.0452066Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 7f966c9e4d7d: Pulling fs layer
+2026-10-12T16:19:03.0452697Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 216437d85a6a: Pulling fs layer
+2026-10-12T16:19:03.0453357Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 270c9ec96ae5: Pulling fs layer
+2026-10-12T16:19:03.0453990Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2e9d8cb6dae0: Pulling fs layer
+2026-10-12T16:19:03.0454657Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fb5703e58764: Pulling fs layer
+2026-10-12T16:19:03.0455539Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 17b0e5b6c47b: Pulling fs layer
+2026-10-12T16:19:03.0456156Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 0319f1b4ed31: Waiting
+2026-10-12T16:19:03.0456810Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 47c263013985: Pulling fs layer
+2026-10-12T16:19:03.0457583Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 13e1f9edcef6: Pulling fs layer
+2026-10-12T16:19:03.0458227Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 859e21e3e337: Waiting
+2026-10-12T16:19:03.0458808Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1f4b6dd42026: Pulling fs layer
+2026-10-12T16:19:03.0459371Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2166847d94a4: Pulling fs layer
+2026-10-12T16:19:03.0459800Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 58a5e62226bb: Waiting
+2026-10-12T16:19:03.0460303Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6ce9d0ec3e11: Waiting
+2026-10-12T16:19:03.0460882Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 71697fe62d1c: Waiting
+2026-10-12T16:19:03.0461457Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6a50abdf1735: Waiting
+2026-10-12T16:19:03.0462088Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 8cbc2e7a4074: Pulling fs layer
+2026-10-12T16:19:03.0462720Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m bc763964929f: Waiting
+2026-10-12T16:19:03.0463364Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 301dbe6aaf97: Pulling fs layer
+2026-10-12T16:19:03.0464007Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2f84cd7f9dde: Pulling fs layer
+2026-10-12T16:19:03.0464808Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b8165b6d23e0: Waiting
+2026-10-12T16:19:03.0465506Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c067d66e6181: Pulling fs layer
+2026-10-12T16:19:03.0466094Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6a68713fb1cc: Waiting
+2026-10-12T16:19:03.0466473Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f09750bff7fb: Waiting
+2026-10-12T16:19:03.0466969Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 970c54821cb3: Waiting
+2026-10-12T16:19:03.0467354Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5b0e356a0ccf: Waiting
+2026-10-12T16:19:03.0468181Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6e203f273e69: Waiting
+2026-10-12T16:19:03.0468684Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6d8240c2f33e: Waiting
+2026-10-12T16:19:03.0469220Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 16d191797970: Waiting
+2026-10-12T16:19:03.0469783Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m a233597a7ca6: Waiting
+2026-10-12T16:19:03.0470362Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f1839c1c048b: Waiting
+2026-10-12T16:19:03.0470947Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4e710d79112d: Waiting
+2026-10-12T16:19:03.0471591Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 571f90e1eefd: Waiting
+2026-10-12T16:19:03.0472208Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d72d4b8376aa: Waiting
+2026-10-12T16:19:03.0472795Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ed84881650c3: Waiting
+2026-10-12T16:19:03.0473380Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 381e846e324a: Waiting
+2026-10-12T16:19:03.0473938Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9230e4898522: Waiting
+2026-10-12T16:19:03.0474342Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 7788e844287c: Waiting
+2026-10-12T16:19:03.0474936Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4a0236322319: Waiting
+2026-10-12T16:19:03.0475442Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 8cb02660e806: Waiting
+2026-10-12T16:19:03.0475860Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m dbc81087ec4f: Waiting
+2026-10-12T16:19:03.0476420Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m b00992d75f2f: Waiting
+2026-10-12T16:19:03.0477227Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 27d5999d2ccb: Waiting
+2026-10-12T16:19:03.0477966Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1de75f04c5e5: Waiting
+2026-10-12T16:19:03.0478568Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m a3fa856ae694: Waiting
+2026-10-12T16:19:03.0479166Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5fe32bf4caa7: Waiting
+2026-10-12T16:19:03.0479774Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d917099c426f: Waiting
+2026-10-12T16:19:03.0480358Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1cce20d6fe0b: Waiting
+2026-10-12T16:19:03.0481091Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m aa9704af11f7: Waiting
+2026-10-12T16:19:03.0481609Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 317789eb6182: Waiting
+2026-10-12T16:19:03.0482119Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m f870a2d8b7d9: Waiting
+2026-10-12T16:19:03.0482719Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 84a06230fbc8: Waiting
+2026-10-12T16:19:03.0483308Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d353f8966ed0: Waiting
+2026-10-12T16:19:03.0483906Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e6e0358fe381: Waiting
+2026-10-12T16:19:03.0484485Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5f4e57657eba: Waiting
+2026-10-12T16:19:03.0485067Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m db3530f810d0: Waiting
+2026-10-12T16:19:03.0485660Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fab8d7ffdf80: Waiting
+2026-10-12T16:19:03.0486296Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m dab938d80ff6: Waiting
+2026-10-12T16:19:03.0486897Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 459560ffce72: Waiting
+2026-10-12T16:19:03.0487700Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 3385ffb0324c: Waiting
+2026-10-12T16:19:03.0488346Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m aa8140292f0f: Waiting
+2026-10-12T16:19:03.0488947Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 5c500d7ec37f: Waiting
+2026-10-12T16:19:03.0489560Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m d2080ff342a5: Waiting
+2026-10-12T16:19:03.0489975Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c835ed9135ee: Waiting
+2026-10-12T16:19:03.0490494Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4f4fb700ef54: Waiting
+2026-10-12T16:19:03.0490923Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c31489308c83: Waiting
+2026-10-12T16:19:03.0491406Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2d1aec7e5139: Waiting
+2026-10-12T16:19:03.0491899Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e93550d6c7d2: Waiting
+2026-10-12T16:19:03.0492348Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 632bb61aaec8: Waiting
+2026-10-12T16:19:03.0492818Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 4b6298563c2a: Waiting
+2026-10-12T16:19:03.0493389Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m eb8ba02debc5: Waiting
+2026-10-12T16:19:03.0493896Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 9c4bae1d7b92: Waiting
+2026-10-12T16:19:03.0494329Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 548cb2349029: Waiting
+2026-10-12T16:19:03.0494819Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 33acec480013: Waiting
+2026-10-12T16:19:03.0495332Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 13e1f9edcef6: Waiting
+2026-10-12T16:19:03.0495829Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 77bc63fe39b8: Waiting
+2026-10-12T16:19:03.0496296Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 1f4b6dd42026: Waiting
+2026-10-12T16:19:03.0496896Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m acb9a785b4bc: Waiting
+2026-10-12T16:19:03.0497645Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 10502c7d42d1: Waiting
+2026-10-12T16:19:03.0498264Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m e4ea43d40060: Waiting
+2026-10-12T16:19:03.0498892Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 6c1ab25062d6: Waiting
+2026-10-12T16:19:03.0499492Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2166847d94a4: Waiting
+2026-10-12T16:19:03.0500087Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m ee417c672c17: Waiting
+2026-10-12T16:19:03.0500708Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 8cbc2e7a4074: Waiting
+2026-10-12T16:19:03.0501309Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 353dabb02cd2: Waiting
+2026-10-12T16:19:03.0502128Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 301dbe6aaf97: Waiting
+2026-10-12T16:19:03.0502755Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2f84cd7f9dde: Waiting
+2026-10-12T16:19:03.0503364Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2d40d296b262: Waiting
+2026-10-12T16:19:03.0503968Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 50bb467984d0: Waiting
+2026-10-12T16:19:03.0504558Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m c067d66e6181: Waiting
+2026-10-12T16:19:03.0505156Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 7f966c9e4d7d: Waiting
+2026-10-12T16:19:03.0505748Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 216437d85a6a: Waiting
+2026-10-12T16:19:03.0506348Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 270c9ec96ae5: Waiting
+2026-10-12T16:19:03.0506932Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 47c263013985: Waiting
+2026-10-12T16:19:03.0507652Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 2e9d8cb6dae0: Waiting
+2026-10-12T16:19:03.0508274Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m fb5703e58764: Waiting
+2026-10-12T16:19:03.0508908Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.6s] [0m[90m|[0m 17b0e5b6c47b: Waiting
+2026-10-12T16:19:03.0509560Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m f30736dc2e12: Verifying Checksum
+2026-10-12T16:19:03.0510254Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m f30736dc2e12: Download complete
+2026-10-12T16:19:03.1570397Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 31a4be2e3dab: Download complete
+2026-10-12T16:19:03.1571400Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m ec7bfc05a18b: Verifying Checksum
+2026-10-12T16:19:03.1572693Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m ec7bfc05a18b: Download complete
+2026-10-12T16:19:03.1573683Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 9072f02b91b9: Verifying Checksum
+2026-10-12T16:19:03.1574215Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 9072f02b91b9: Download complete
+2026-10-12T16:19:03.1574762Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 0b07dbcf9faf: Verifying Checksum
+2026-10-12T16:19:03.1575234Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 536a30a5a605: Verifying Checksum
+2026-10-12T16:19:03.1684666Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 536a30a5a605: Download complete
+2026-10-12T16:19:03.1685317Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 0b07dbcf9faf: Download complete
+2026-10-12T16:19:03.1685978Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 0b8b7c7cd7bc: Verifying Checksum
+2026-10-12T16:19:03.1686610Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.7s] [0m[90m|[0m 0b8b7c7cd7bc: Download complete
+2026-10-12T16:19:03.1687248Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.8s] [0m[90m|[0m 68fc2dff657d: Verifying Checksum
+2026-10-12T16:19:03.1688099Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.8s] [0m[90m|[0m 68fc2dff657d: Download complete
+2026-10-12T16:19:03.2312239Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.8s] [0m[90m|[0m b1664c47d125: Verifying Checksum
+2026-10-12T16:19:03.2312920Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.8s] [0m[90m|[0m b1664c47d125: Download complete
+2026-10-12T16:19:03.2313599Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.8s] [0m[90m|[0m 4eca0264defb: Download complete
+2026-10-12T16:19:03.2314318Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.9s] [0m[90m|[0m f735bc71da0a: Verifying Checksum
+2026-10-12T16:19:03.2314983Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.9s] [0m[90m|[0m f735bc71da0a: Download complete
+2026-10-12T16:19:03.2315642Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.9s] [0m[90m|[0m 4931e67f891d: Verifying Checksum
+2026-10-12T16:19:03.2316308Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[1.9s] [0m[90m|[0m 4931e67f891d: Download complete
+2026-10-12T16:19:03.3269247Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.0s] [0m[90m|[0m 45105157e2d9: Verifying Checksum
+2026-10-12T16:19:03.3504411Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.0s] [0m[90m|[0m 45105157e2d9: Download complete
+2026-10-12T16:19:03.4267173Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.0s] [0m[90m|[0m b8e2ca334e10: Verifying Checksum
+2026-10-12T16:19:03.4267810Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.0s] [0m[90m|[0m b8e2ca334e10: Download complete
+2026-10-12T16:19:03.5265784Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m f30736dc2e12: Pull complete
+2026-10-12T16:19:03.5266573Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m c82aea02de10: Verifying Checksum
+2026-10-12T16:19:03.5267689Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m c82aea02de10: Download complete
+2026-10-12T16:19:03.5268447Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m 9b72e11b3913: Verifying Checksum
+2026-10-12T16:19:03.5269137Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m 9b72e11b3913: Download complete
+2026-10-12T16:19:03.5269667Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m fe12085f0aac: Verifying Checksum
+2026-10-12T16:19:03.5270099Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.1s] [0m[90m|[0m fe12085f0aac: Download complete
+2026-10-12T16:19:03.5270511Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m d80e699ee3f4: Download complete
+2026-10-12T16:19:03.6263134Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 5d8002b0c9f4: Download complete
+2026-10-12T16:19:03.6264370Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 0e06514acdc4: Verifying Checksum
+2026-10-12T16:19:03.6265382Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 0e06514acdc4: Download complete
+2026-10-12T16:19:03.6266415Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 9bd6add9325c: Download complete
+2026-10-12T16:19:03.6267378Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 125852072ac3: Verifying Checksum
+2026-10-12T16:19:03.6268462Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 125852072ac3: Download complete
+2026-10-12T16:19:03.6269569Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 519388fd44f9: Verifying Checksum
+2026-10-12T16:19:03.6270292Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.2s] [0m[90m|[0m 519388fd44f9: Download complete
+2026-10-12T16:19:03.6270984Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 04dac680043f: Verifying Checksum
+2026-10-12T16:19:03.6272106Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 04dac680043f: Download complete
+2026-10-12T16:19:03.7267802Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 10c68547f011: Verifying Checksum
+2026-10-12T16:19:03.7268541Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 10c68547f011: Download complete
+2026-10-12T16:19:03.7269132Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m cc334516ebff: Download complete
+2026-10-12T16:19:03.7269714Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 0319f1b4ed31: Verifying Checksum
+2026-10-12T16:19:03.7270407Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 0319f1b4ed31: Download complete
+2026-10-12T16:19:03.7271056Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 859e21e3e337: Verifying Checksum
+2026-10-12T16:19:03.7271709Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.3s] [0m[90m|[0m 859e21e3e337: Download complete
+2026-10-12T16:19:03.7272391Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 71697fe62d1c: Verifying Checksum
+2026-10-12T16:19:03.7273060Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 71697fe62d1c: Download complete
+2026-10-12T16:19:03.8261987Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 58a5e62226bb: Verifying Checksum
+2026-10-12T16:19:03.8262629Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 58a5e62226bb: Download complete
+2026-10-12T16:19:03.8263226Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m bc763964929f: Verifying Checksum
+2026-10-12T16:19:03.8263831Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m bc763964929f: Download complete
+2026-10-12T16:19:03.8264751Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 6ce9d0ec3e11: Verifying Checksum
+2026-10-12T16:19:03.8265392Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 6ce9d0ec3e11: Download complete
+2026-10-12T16:19:03.8265996Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 6a50abdf1735: Verifying Checksum
+2026-10-12T16:19:03.8266629Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.4s] [0m[90m|[0m 6a50abdf1735: Download complete
+2026-10-12T16:19:03.8267241Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 6a68713fb1cc: Verifying Checksum
+2026-10-12T16:19:03.8268057Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 6a68713fb1cc: Download complete
+2026-10-12T16:19:03.8268677Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m b8165b6d23e0: Download complete
+2026-10-12T16:19:03.9272319Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 6e203f273e69: Verifying Checksum
+2026-10-12T16:19:03.9273150Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 6e203f273e69: Download complete
+2026-10-12T16:19:03.9273847Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 6d8240c2f33e: Download complete
+2026-10-12T16:19:03.9274538Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 5b0e356a0ccf: Verifying Checksum
+2026-10-12T16:19:03.9275207Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m 5b0e356a0ccf: Download complete
+2026-10-12T16:19:03.9275894Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m f09750bff7fb: Verifying Checksum
+2026-10-12T16:19:03.9276552Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m f09750bff7fb: Download complete
+2026-10-12T16:19:03.9277215Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m a233597a7ca6: Verifying Checksum
+2026-10-12T16:19:03.9278034Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.5s] [0m[90m|[0m a233597a7ca6: Download complete
+2026-10-12T16:19:03.9278699Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 4e710d79112d: Verifying Checksum
+2026-10-12T16:19:03.9279363Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 4e710d79112d: Download complete
+2026-10-12T16:19:04.0272342Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 381e846e324a: Download complete
+2026-10-12T16:19:04.0276653Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 7788e844287c: Verifying Checksum
+2026-10-12T16:19:04.0277780Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 7788e844287c: Download complete
+2026-10-12T16:19:04.0289199Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 8cb02660e806: Verifying Checksum
+2026-10-12T16:19:04.0290556Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m 8cb02660e806: Download complete
+2026-10-12T16:19:04.0291984Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m dbc81087ec4f: Verifying Checksum
+2026-10-12T16:19:04.0292701Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m dbc81087ec4f: Download complete
+2026-10-12T16:19:04.0293398Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m d72d4b8376aa: Verifying Checksum
+2026-10-12T16:19:04.0294060Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m d72d4b8376aa: Download complete
+2026-10-12T16:19:04.0294748Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m b00992d75f2f: Verifying Checksum
+2026-10-12T16:19:04.0295753Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.6s] [0m[90m|[0m b00992d75f2f: Download complete
+2026-10-12T16:19:04.1263431Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 1de75f04c5e5: Verifying Checksum
+2026-10-12T16:19:04.1264226Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 1de75f04c5e5: Download complete
+2026-10-12T16:19:04.1264917Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 1cce20d6fe0b: Verifying Checksum
+2026-10-12T16:19:04.1265548Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 1cce20d6fe0b: Download complete
+2026-10-12T16:19:04.1266097Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 5fe32bf4caa7: Verifying Checksum
+2026-10-12T16:19:04.1266854Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 5fe32bf4caa7: Download complete
+2026-10-12T16:19:04.1267258Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m aa8140292f0f: Verifying Checksum
+2026-10-12T16:19:04.1267840Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m aa8140292f0f: Download complete
+2026-10-12T16:19:04.1268279Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 459560ffce72: Verifying Checksum
+2026-10-12T16:19:04.1268689Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 459560ffce72: Download complete
+2026-10-12T16:19:04.1269076Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.7s] [0m[90m|[0m 317789eb6182: Download complete
+2026-10-12T16:19:04.2264603Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m d2080ff342a5: Verifying Checksum
+2026-10-12T16:19:04.2265250Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m d2080ff342a5: Download complete
+2026-10-12T16:19:04.2265724Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m e4ea43d40060: Verifying Checksum
+2026-10-12T16:19:04.2266127Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m e4ea43d40060: Download complete
+2026-10-12T16:19:04.2266518Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m eb8ba02debc5: Verifying Checksum
+2026-10-12T16:19:04.2266909Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m eb8ba02debc5: Download complete
+2026-10-12T16:19:04.2267310Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 50bb467984d0: Verifying Checksum
+2026-10-12T16:19:04.2267880Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 50bb467984d0: Download complete
+2026-10-12T16:19:04.2268260Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 16d191797970: Verifying Checksum
+2026-10-12T16:19:04.2268634Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 16d191797970: Download complete
+2026-10-12T16:19:04.2269017Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 970c54821cb3: Verifying Checksum
+2026-10-12T16:19:04.2269429Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m 970c54821cb3: Download complete
+2026-10-12T16:19:04.2269825Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m f1839c1c048b: Verifying Checksum
+2026-10-12T16:19:04.2270210Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.8s] [0m[90m|[0m f1839c1c048b: Download complete
+2026-10-12T16:19:04.2270833Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.9s] [0m[90m|[0m ed84881650c3: Verifying Checksum
+2026-10-12T16:19:04.2271214Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.9s] [0m[90m|[0m ed84881650c3: Download complete
+2026-10-12T16:19:04.3266808Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.9s] [0m[90m|[0m 9230e4898522: Download complete
+2026-10-12T16:19:04.3267432Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[2.9s] [0m[90m|[0m 4a0236322319: Download complete
+2026-10-12T16:19:04.3268153Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m 27d5999d2ccb: Verifying Checksum
+2026-10-12T16:19:04.3268744Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m 27d5999d2ccb: Download complete
+2026-10-12T16:19:04.3269317Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m 571f90e1eefd: Verifying Checksum
+2026-10-12T16:19:04.3269905Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m 571f90e1eefd: Download complete
+2026-10-12T16:19:04.3270501Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m a3fa856ae694: Verifying Checksum
+2026-10-12T16:19:04.3271111Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m a3fa856ae694: Download complete
+2026-10-12T16:19:04.4265430Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m f870a2d8b7d9: Verifying Checksum
+2026-10-12T16:19:04.4265952Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m f870a2d8b7d9: Download complete
+2026-10-12T16:19:04.4266373Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m d917099c426f: Download complete
+2026-10-12T16:19:04.4266771Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m aa9704af11f7: Verifying Checksum
+2026-10-12T16:19:04.4267424Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m aa9704af11f7: Download complete
+2026-10-12T16:19:04.4268019Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m e6e0358fe381: Verifying Checksum
+2026-10-12T16:19:04.4268406Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.0s] [0m[90m|[0m e6e0358fe381: Download complete
+2026-10-12T16:19:04.4268823Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m d353f8966ed0: Verifying Checksum
+2026-10-12T16:19:04.4269215Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m d353f8966ed0: Download complete
+2026-10-12T16:19:04.4269598Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m 84a06230fbc8: Verifying Checksum
+2026-10-12T16:19:04.4269988Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m 84a06230fbc8: Download complete
+2026-10-12T16:19:04.5266290Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m 5f4e57657eba: Verifying Checksum
+2026-10-12T16:19:04.5266913Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m 5f4e57657eba: Download complete
+2026-10-12T16:19:04.5267347Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m db3530f810d0: Verifying Checksum
+2026-10-12T16:19:04.5267969Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m db3530f810d0: Download complete
+2026-10-12T16:19:04.5268494Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m dab938d80ff6: Verifying Checksum
+2026-10-12T16:19:04.5269213Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m dab938d80ff6: Download complete
+2026-10-12T16:19:04.5269668Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m fab8d7ffdf80: Verifying Checksum
+2026-10-12T16:19:04.5270177Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.1s] [0m[90m|[0m fab8d7ffdf80: Download complete
+2026-10-12T16:19:04.5270580Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m 3385ffb0324c: Download complete
+2026-10-12T16:19:04.6269593Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m 4f4fb700ef54: Verifying Checksum
+2026-10-12T16:19:04.6270260Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m 4f4fb700ef54: Download complete
+2026-10-12T16:19:04.6270829Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m 5c500d7ec37f: Verifying Checksum
+2026-10-12T16:19:04.6271305Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m 5c500d7ec37f: Download complete
+2026-10-12T16:19:04.6272014Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m c31489308c83: Verifying Checksum
+2026-10-12T16:19:04.6272656Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m c31489308c83: Download complete
+2026-10-12T16:19:04.6273303Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m c835ed9135ee: Verifying Checksum
+2026-10-12T16:19:04.6273697Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.2s] [0m[90m|[0m c835ed9135ee: Download complete
+2026-10-12T16:19:04.6274082Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m 632bb61aaec8: Verifying Checksum
+2026-10-12T16:19:04.6274707Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m 632bb61aaec8: Download complete
+2026-10-12T16:19:04.6275110Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m e93550d6c7d2: Verifying Checksum
+2026-10-12T16:19:04.6275490Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m e93550d6c7d2: Download complete
+2026-10-12T16:19:04.7264558Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m 4b6298563c2a: Verifying Checksum
+2026-10-12T16:19:04.7265120Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.3s] [0m[90m|[0m 4b6298563c2a: Download complete
+2026-10-12T16:19:04.8267452Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 548cb2349029: Verifying Checksum
+2026-10-12T16:19:04.8268093Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 548cb2349029: Download complete
+2026-10-12T16:19:04.8268523Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 2d1aec7e5139: Verifying Checksum
+2026-10-12T16:19:04.8268942Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 2d1aec7e5139: Download complete
+2026-10-12T16:19:04.8269390Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 9c4bae1d7b92: Verifying Checksum
+2026-10-12T16:19:04.8269781Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 9c4bae1d7b92: Download complete
+2026-10-12T16:19:04.8270160Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.4s] [0m[90m|[0m 33acec480013: Download complete
+2026-10-12T16:19:04.8270560Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m acb9a785b4bc: Verifying Checksum
+2026-10-12T16:19:04.8270940Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m acb9a785b4bc: Download complete
+2026-10-12T16:19:04.8271335Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 77bc63fe39b8: Verifying Checksum
+2026-10-12T16:19:04.8271718Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 77bc63fe39b8: Download complete
+2026-10-12T16:19:04.9267095Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 10502c7d42d1: Verifying Checksum
+2026-10-12T16:19:04.9269138Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 10502c7d42d1: Download complete
+2026-10-12T16:19:04.9272252Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 6c1ab25062d6: Download complete
+2026-10-12T16:19:04.9273403Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m ee417c672c17: Verifying Checksum
+2026-10-12T16:19:04.9274167Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m ee417c672c17: Download complete
+2026-10-12T16:19:04.9275244Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 7f966c9e4d7d: Verifying Checksum
+2026-10-12T16:19:04.9275900Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.5s] [0m[90m|[0m 7f966c9e4d7d: Download complete
+2026-10-12T16:19:04.9276574Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 2d40d296b262: Verifying Checksum
+2026-10-12T16:19:04.9277171Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 2d40d296b262: Download complete
+2026-10-12T16:19:05.0267242Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 353dabb02cd2: Verifying Checksum
+2026-10-12T16:19:05.0268217Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 353dabb02cd2: Download complete
+2026-10-12T16:19:05.0268903Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 270c9ec96ae5: Verifying Checksum
+2026-10-12T16:19:05.0269603Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 270c9ec96ae5: Download complete
+2026-10-12T16:19:05.0270750Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 2e9d8cb6dae0: Verifying Checksum
+2026-10-12T16:19:05.0271426Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 2e9d8cb6dae0: Download complete
+2026-10-12T16:19:05.0272566Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 216437d85a6a: Verifying Checksum
+2026-10-12T16:19:05.0273282Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 216437d85a6a: Download complete
+2026-10-12T16:19:05.0274477Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m fb5703e58764: Verifying Checksum
+2026-10-12T16:19:05.0276110Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m fb5703e58764: Download complete
+2026-10-12T16:19:05.0276903Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 17b0e5b6c47b: Verifying Checksum
+2026-10-12T16:19:05.0277860Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.6s] [0m[90m|[0m 17b0e5b6c47b: Download complete
+2026-10-12T16:19:05.0278517Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.7s] [0m[90m|[0m 47c263013985: Verifying Checksum
+2026-10-12T16:19:05.0279668Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.7s] [0m[90m|[0m 47c263013985: Download complete
+2026-10-12T16:19:05.1343760Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.7s] [0m[90m|[0m 1f4b6dd42026: Verifying Checksum
+2026-10-12T16:19:05.1344254Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.8s] [0m[90m|[0m 8cbc2e7a4074: Verifying Checksum
+2026-10-12T16:19:05.1344668Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.8s] [0m[90m|[0m 8cbc2e7a4074: Download complete
+2026-10-12T16:19:05.2270007Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.8s] [0m[90m|[0m 301dbe6aaf97: Verifying Checksum
+2026-10-12T16:19:05.2270919Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.8s] [0m[90m|[0m 301dbe6aaf97: Download complete
+2026-10-12T16:19:05.3266613Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.9s] [0m[90m|[0m 2f84cd7f9dde: Verifying Checksum
+2026-10-12T16:19:05.3267190Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.9s] [0m[90m|[0m 2f84cd7f9dde: Download complete
+2026-10-12T16:19:05.3268640Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.9s] [0m[90m|[0m 2166847d94a4: Verifying Checksum
+2026-10-12T16:19:05.3269088Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[3.9s] [0m[90m|[0m 2166847d94a4: Download complete
+2026-10-12T16:19:05.4271483Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[4.0s] [0m[90m|[0m c067d66e6181: Verifying Checksum
+2026-10-12T16:19:05.4272090Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[4.0s] [0m[90m|[0m c067d66e6181: Download complete
+2026-10-12T16:19:05.6270056Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[4.3s] [0m[90m|[0m 13e1f9edcef6: Verifying Checksum
+2026-10-12T16:19:05.6270572Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[4.3s] [0m[90m|[0m 13e1f9edcef6: Download complete
+2026-10-12T16:19:09.1270767Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.7s] [0m[90m|[0m 9072f02b91b9: Pull complete
+2026-10-12T16:19:09.2269691Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.8s] [0m[90m|[0m 31a4be2e3dab: Pull complete
+2026-10-12T16:19:09.2270249Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.8s] [0m[90m|[0m ec7bfc05a18b: Pull complete
+2026-10-12T16:19:09.3268086Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.9s] [0m[90m|[0m 536a30a5a605: Pull complete
+2026-10-12T16:19:09.3268888Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.9s] [0m[90m|[0m 0b8b7c7cd7bc: Pull complete
+2026-10-12T16:19:09.3269535Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.9s] [0m[90m|[0m 0b07dbcf9faf: Pull complete
+2026-10-12T16:19:09.3270146Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[7.9s] [0m[90m|[0m 68fc2dff657d: Pull complete
+2026-10-12T16:19:09.3270519Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m f735bc71da0a: Pull complete
+2026-10-12T16:19:09.4265672Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m b1664c47d125: Pull complete
+2026-10-12T16:19:09.4266166Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m 4eca0264defb: Pull complete
+2026-10-12T16:19:09.4266577Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m 4931e67f891d: Pull complete
+2026-10-12T16:19:09.4266986Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m b8e2ca334e10: Pull complete
+2026-10-12T16:19:09.4267401Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.0s] [0m[90m|[0m 45105157e2d9: Pull complete
+2026-10-12T16:19:09.5264233Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.1s] [0m[90m|[0m 9b72e11b3913: Pull complete
+2026-10-12T16:19:09.5264793Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.2s] [0m[90m|[0m fe12085f0aac: Pull complete
+2026-10-12T16:19:09.6324636Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.2s] [0m[90m|[0m c82aea02de10: Pull complete
+2026-10-12T16:19:09.6325403Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.2s] [0m[90m|[0m 5d8002b0c9f4: Pull complete
+2026-10-12T16:19:09.6326292Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m 0e06514acdc4: Pull complete
+2026-10-12T16:19:09.7270926Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m d80e699ee3f4: Pull complete
+2026-10-12T16:19:09.7271641Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m 9bd6add9325c: Pull complete
+2026-10-12T16:19:09.7272300Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m 125852072ac3: Pull complete
+2026-10-12T16:19:09.7272931Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m 04dac680043f: Pull complete
+2026-10-12T16:19:09.7273409Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.3s] [0m[90m|[0m 519388fd44f9: Pull complete
+2026-10-12T16:19:09.7273901Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.4s] [0m[90m|[0m cc334516ebff: Pull complete
+2026-10-12T16:19:09.8407818Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.4s] [0m[90m|[0m 10c68547f011: Pull complete
+2026-10-12T16:19:09.8408407Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.5s] [0m[90m|[0m 0319f1b4ed31: Pull complete
+2026-10-12T16:19:09.9268207Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.5s] [0m[90m|[0m 859e21e3e337: Pull complete
+2026-10-12T16:19:09.9268698Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.5s] [0m[90m|[0m 58a5e62226bb: Pull complete
+2026-10-12T16:19:09.9269104Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.5s] [0m[90m|[0m 6ce9d0ec3e11: Pull complete
+2026-10-12T16:19:09.9269495Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.6s] [0m[90m|[0m 71697fe62d1c: Pull complete
+2026-10-12T16:19:10.0272479Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.6s] [0m[90m|[0m 6a50abdf1735: Pull complete
+2026-10-12T16:19:10.2263848Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.8s] [0m[90m|[0m bc763964929f: Pull complete
+2026-10-12T16:19:10.2264641Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.8s] [0m[90m|[0m b8165b6d23e0: Pull complete
+2026-10-12T16:19:10.2265392Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.8s] [0m[90m|[0m 6a68713fb1cc: Pull complete
+2026-10-12T16:19:10.2266054Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.8s] [0m[90m|[0m f09750bff7fb: Pull complete
+2026-10-12T16:19:10.2266708Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m 5b0e356a0ccf: Pull complete
+2026-10-12T16:19:10.2267301Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m 6e203f273e69: Pull complete
+2026-10-12T16:19:10.3271745Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m 6d8240c2f33e: Pull complete
+2026-10-12T16:19:10.3272647Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m a233597a7ca6: Pull complete
+2026-10-12T16:19:10.3273151Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m 4e710d79112d: Pull complete
+2026-10-12T16:19:10.3273589Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m d72d4b8376aa: Pull complete
+2026-10-12T16:19:10.3274136Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[8.9s] [0m[90m|[0m 381e846e324a: Pull complete
+2026-10-12T16:19:10.4268349Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.0s] [0m[90m|[0m 7788e844287c: Pull complete
+2026-10-12T16:19:10.4269113Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.0s] [0m[90m|[0m 8cb02660e806: Pull complete
+2026-10-12T16:19:10.4269940Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.0s] [0m[90m|[0m dbc81087ec4f: Pull complete
+2026-10-12T16:19:10.4271334Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.0s] [0m[90m|[0m b00992d75f2f: Pull complete
+2026-10-12T16:19:10.4271974Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.1s] [0m[90m|[0m 1de75f04c5e5: Pull complete
+2026-10-12T16:19:10.5265053Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.1s] [0m[90m|[0m 5fe32bf4caa7: Pull complete
+2026-10-12T16:19:10.5265863Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.1s] [0m[90m|[0m 1cce20d6fe0b: Pull complete
+2026-10-12T16:19:10.5266563Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.1s] [0m[90m|[0m 317789eb6182: Pull complete
+2026-10-12T16:19:10.6264236Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.2s] [0m[90m|[0m 459560ffce72: Pull complete
+2026-10-12T16:19:10.6264986Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.2s] [0m[90m|[0m aa8140292f0f: Pull complete
+2026-10-12T16:19:10.6265864Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.2s] [0m[90m|[0m d2080ff342a5: Pull complete
+2026-10-12T16:19:10.9270089Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.5s] [0m[90m|[0m eb8ba02debc5: Pull complete
+2026-10-12T16:19:10.9270581Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.5s] [0m[90m|[0m e4ea43d40060: Pull complete
+2026-10-12T16:19:11.1272158Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.7s] [0m[90m|[0m 50bb467984d0: Pull complete
+2026-10-12T16:19:11.1272695Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.7s] [0m[90m|[0m 970c54821cb3: Pull complete
+2026-10-12T16:19:11.1273100Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.7s] [0m[90m|[0m 16d191797970: Pull complete
+2026-10-12T16:19:11.1273486Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[9.8s] [0m[90m|[0m f1839c1c048b: Pull complete
+2026-10-12T16:19:11.3271670Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.0s] [0m[90m|[0m 571f90e1eefd: Pull complete
+2026-10-12T16:19:11.4268019Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.0s] [0m[90m|[0m ed84881650c3: Pull complete
+2026-10-12T16:19:11.4268569Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.0s] [0m[90m|[0m 9230e4898522: Pull complete
+2026-10-12T16:19:11.4268978Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.0s] [0m[90m|[0m 4a0236322319: Pull complete
+2026-10-12T16:19:11.6263747Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.2s] [0m[90m|[0m 27d5999d2ccb: Pull complete
+2026-10-12T16:19:11.6264336Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.2s] [0m[90m|[0m a3fa856ae694: Pull complete
+2026-10-12T16:19:11.8266836Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.4s] [0m[90m|[0m d917099c426f: Pull complete
+2026-10-12T16:19:11.8267331Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.5s] [0m[90m|[0m aa9704af11f7: Pull complete
+2026-10-12T16:19:11.8267890Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.5s] [0m[90m|[0m f870a2d8b7d9: Pull complete
+2026-10-12T16:19:11.9286383Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.5s] [0m[90m|[0m 84a06230fbc8: Pull complete
+2026-10-12T16:19:12.0325452Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.6s] [0m[90m|[0m d353f8966ed0: Pull complete
+2026-10-12T16:19:12.1269693Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.7s] [0m[90m|[0m e6e0358fe381: Pull complete
+2026-10-12T16:19:12.1270425Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.7s] [0m[90m|[0m 5f4e57657eba: Pull complete
+2026-10-12T16:19:12.1271219Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.8s] [0m[90m|[0m db3530f810d0: Pull complete
+2026-10-12T16:19:12.1272224Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.8s] [0m[90m|[0m fab8d7ffdf80: Pull complete
+2026-10-12T16:19:12.2268249Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.8s] [0m[90m|[0m dab938d80ff6: Pull complete
+2026-10-12T16:19:12.2268757Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.8s] [0m[90m|[0m 3385ffb0324c: Pull complete
+2026-10-12T16:19:12.3271980Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.9s] [0m[90m|[0m 5c500d7ec37f: Pull complete
+2026-10-12T16:19:12.3272931Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.9s] [0m[90m|[0m c835ed9135ee: Pull complete
+2026-10-12T16:19:12.3273549Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.9s] [0m[90m|[0m 4f4fb700ef54: Pull complete
+2026-10-12T16:19:12.3274270Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[10.9s] [0m[90m|[0m c31489308c83: Pull complete
+2026-10-12T16:19:13.3268499Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.0s] [0m[90m|[0m 2d1aec7e5139: Pull complete
+2026-10-12T16:19:13.3269191Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.0s] [0m[90m|[0m e93550d6c7d2: Pull complete
+2026-10-12T16:19:13.5272137Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.1s] [0m[90m|[0m 632bb61aaec8: Pull complete
+2026-10-12T16:19:13.5272775Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.2s] [0m[90m|[0m 4b6298563c2a: Pull complete
+2026-10-12T16:19:13.7266150Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.3s] [0m[90m|[0m 9c4bae1d7b92: Pull complete
+2026-10-12T16:19:14.1264385Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.7s] [0m[90m|[0m 548cb2349029: Pull complete
+2026-10-12T16:19:14.1265023Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.7s] [0m[90m|[0m 33acec480013: Pull complete
+2026-10-12T16:19:14.2270463Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.8s] [0m[90m|[0m 77bc63fe39b8: Pull complete
+2026-10-12T16:19:14.3266791Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[12.9s] [0m[90m|[0m acb9a785b4bc: Pull complete
+2026-10-12T16:19:14.3267291Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.0s] [0m[90m|[0m 10502c7d42d1: Pull complete
+2026-10-12T16:19:14.4265427Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.0s] [0m[90m|[0m 6c1ab25062d6: Pull complete
+2026-10-12T16:19:14.5262255Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.1s] [0m[90m|[0m ee417c672c17: Pull complete
+2026-10-12T16:19:14.5262801Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.2s] [0m[90m|[0m 353dabb02cd2: Pull complete
+2026-10-12T16:19:14.6269964Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.2s] [0m[90m|[0m 2d40d296b262: Pull complete
+2026-10-12T16:19:14.7267931Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.4s] [0m[90m|[0m 7f966c9e4d7d: Pull complete
+2026-10-12T16:19:14.8267048Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.4s] [0m[90m|[0m 216437d85a6a: Pull complete
+2026-10-12T16:19:14.8267746Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.4s] [0m[90m|[0m 270c9ec96ae5: Pull complete
+2026-10-12T16:19:14.9271924Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.5s] [0m[90m|[0m 2e9d8cb6dae0: Pull complete
+2026-10-12T16:19:14.9272431Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.5s] [0m[90m|[0m fb5703e58764: Pull complete
+2026-10-12T16:19:14.9273099Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.5s] [0m[90m|[0m 17b0e5b6c47b: Pull complete
+2026-10-12T16:19:14.9273498Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[13.5s] [0m[90m|[0m 47c263013985: Pull complete
+2026-10-12T16:19:16.1271188Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[14.7s] [0m[90m|[0m 13e1f9edcef6: Pull complete
+2026-10-12T16:19:16.3271813Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[14.9s] [0m[90m|[0m 1f4b6dd42026: Pull complete
+2026-10-12T16:19:16.7267918Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[15.3s] [0m[90m|[0m 2166847d94a4: Pull complete
+2026-10-12T16:19:16.7268883Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[15.4s] [0m[90m|[0m 8cbc2e7a4074: Pull complete
+2026-10-12T16:19:16.8264490Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[15.4s] [0m[90m|[0m 301dbe6aaf97: Pull complete
+2026-10-12T16:19:16.8265098Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[15.4s] [0m[90m|[0m 2f84cd7f9dde: Pull complete
+2026-10-12T16:19:17.3266785Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[15.9s] [0m[90m|[0m c067d66e6181: Pull complete
+2026-10-12T16:19:17.3267788Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[16.0s] [0m[90m|[0m Digest: sha256:2a7c054e0864e297671c24a0726ebf1c9747d70291b8843b1726daaff200a334
+2026-10-12T16:19:17.3268788Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[16.0s] [0m[90m|[0m Status: Downloaded newer image for registry.dagger.io/engine:v0.21.10
+2026-10-12T16:19:17.3269508Z [95m5   : [0m[90;2m┆ ┆ ┆ [0m[90m[16.0s] [0m[90m|[0m registry.dagger.io/engine:v0.21.10
+2026-10-12T16:19:17.3270346Z [95m5   : [0m[90;2m┆ ┆ ┆ [0mexec docker pull registry.dagger.io/engine:v0.21.10[32m DONE[0m[90m [16.0s][0m
+2026-10-12T16:19:17.3271793Z [95m6   : [0m[90;2m┆ ┆ ┆ [0mexec docker run --name dagger-engine-v0.21.10 -d --restart always -v /var/lib/dagger -e DAGGER_CLOUD_TOKEN --privileged registry.dagger.io/engine:v0.21.10 --debug --debugaddr 127.0.0.1:6060
+2026-10-12T16:19:17.4266773Z [95m6   : [0m[90;2m┆ ┆ ┆ [0m[90m[0.0s] [0m[90m|[0m 05e9b8f364b40150d09fbf904d29eeb439c8d7e6b34543fec1273a3ca64d3b1f
+2026-10-12T16:19:17.5274384Z [95m6   : [0m[90;2m┆ ┆ ┆ [0mexec docker run --name dagger-engine-v0.21.10 -d --restart always -v /var/lib/dagger -e DAGGER_CLOUD_TOKEN --privileged registry.dagger.io/engine:v0.21.10 --debug --debugaddr 127.0.0.1:6060[32m DONE[0m[90m [0.2s][0m
+2026-10-12T16:19:17.5277005Z [95m3   : [0m[90;2m┆ ┆ [0mcreate container[32m DONE[0m[90m [16.2s][0m
+2026-10-12T16:19:17.5278589Z [95m2   : [0m[90;2m┆ [0mstarting engine[32m DONE[0m[90m [16.2s][0m
+2026-10-12T16:19:17.5279553Z [95m7   : [0m[90;2m┆ [0mconnecting to engine
+2026-10-12T16:19:19.6273601Z [95m7   : [0m[90;2m┆ [0m[90m[2.0s] [0m[90m|[0m [2m16:19:19[0m [92mINF[0m connected [2mname=[0m05e9b8f364b4 [2mclient-version=[0mv0.21.10 [2mserver-version=[0mv0.21.10
+2026-10-12T16:19:19.6274753Z [95m7   : [0m[90;2m┆ [0mconnecting to engine[32m DONE[0m[90m [2.0s][0m
+2026-10-12T16:19:19.6275325Z [95m8   : [0m[90;2m┆ [0mstarting session
+2026-10-12T16:19:20.0271848Z [95m8   : [0m[90;2m┆ [0mstarting session[32m DONE[0m[90m [0.5s][0m
+2026-10-12T16:19:20.0272615Z [95m1   : [0m[90;2m[0mconnect[32m DONE[0m[90m [18.8s][0m
+2026-10-12T16:19:20.0272955Z 
+2026-10-12T16:19:20.0273222Z [95m9   : [0m[90;2m[0mload workspace: .
+2026-10-12T16:19:20.0273672Z [95m10  : [0m[90;2m┆ [0mloading type definitions
+2026-10-12T16:19:43.9763968Z [95m10  : [0m[90;2m┆ [0mloading type definitions[32m DONE[0m[90m [23.9s][0m
+2026-10-12T16:19:43.9764970Z [95m9   : [0m[90;2m[0mload workspace: .[32m DONE[0m[90m [23.9s][0m
+2026-10-12T16:19:43.9765379Z 
+2026-10-12T16:19:43.9765640Z [95m11  : [0m[90;2m[0mparsing command line arguments
+2026-10-12T16:19:43.9766567Z [95m11  : [0m[90;2m[0mparsing command line arguments[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:44.1768729Z 
+2026-10-12T16:19:44.1770044Z [95m12  : [0m[90;2m[0m[1maddress[0m([36mvalue: [0m[33m"env://GH_TOKEN"[0m)[2m: Address![0m
+2026-10-12T16:19:44.1770812Z [95m12  : [0m[90;2m[0m[1maddress[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:44.1771478Z 
+2026-10-12T16:19:44.1771667Z [95m13  : [0m[90;2m[0mAddress.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:19:44.1772175Z [95m13  : [0m[90;2m[0mAddress.[1msecret[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:44.3768731Z 
+2026-10-12T16:19:44.3769686Z [95m14  : [0m[90;2m[0m[1mtapPipeline[0m(
+2026-10-12T16:19:44.3770610Z [95m14  : [0m[90;2m┆ [0m[36msource:[0m Host.[1mdirectory[0m([36mpath: [0m[33m"/home/runner/work/homebrew-tools/homebrew-tools"[0m, [36mnoCache: [0m[31mtrue[0m)[2m: Directory![0m
+2026-10-12T16:19:44.3772060Z [95m14  : [0m[90;2m┆ [0m[36mgitDir:[0m Host.[1mdirectory[0m([36mpath: [0m[33m"/home/runner/work/homebrew-tools/homebrew-tools/.git"[0m, [36mnoCache: [0m[31mtrue[0m)[2m: Directory![0m
+2026-10-12T16:19:44.3772673Z [95m14  : [0m[90;2m[0m)[2m: TapPipeline![0m
+2026-10-12T16:19:49.6272284Z [95m14  : [0m[90;2m[0m[1mtapPipeline[0m[32m DONE[0m[90m [5.4s][0m
+2026-10-12T16:19:49.6272817Z 
+2026-10-12T16:19:49.6273238Z [95m15  : [0m[90;2m[0m[35mTapPipeline[0m.[1mreleaseBundle[0m(
+2026-10-12T16:19:49.6273659Z [95m15  : [0m[90;2m┆ [0m[36mpackageId:[0m [33m"rcc"[0m
+2026-10-12T16:19:49.6274080Z [95m15  : [0m[90;2m┆ [0m[36mgithubToken:[0m Address.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:19:49.6274627Z [95m15  : [0m[90;2m┆ [0m[36mcodexDesktopConversionCommit:[0m [33m"patchraptor-main"[0m
+2026-10-12T16:19:49.6275101Z [95m15  : [0m[90;2m┆ [0m[36mcodexDesktopPackageSource:[0m [33m"pinned"[0m
+2026-10-12T16:19:49.6275440Z [95m15  : [0m[90;2m[0m)[2m: Directory![0m
+2026-10-12T16:19:52.4763484Z [95m16  : [0m[90;2m┆ [0mContainer.[1mfrom[0m([36maddress: [0m[33m"node:24-bookworm"[0m)[2m: Container![0m
+2026-10-12T16:19:52.7768088Z [95m17  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m(
+2026-10-12T16:19:52.7769677Z [95m17  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"GH_TOKEN"[0m
+2026-10-12T16:19:52.7770974Z [95m17  : [0m[90;2m┆ ┆ [0m[36msecret:[0m Address.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:19:52.7771607Z [95m17  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:19:52.7772382Z [95m17  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:52.7798153Z [95m18  : [0m[90;2m┆ [0m[34mwithExec[0m node --input-type=module -e 'const url = process.argv[1]\nconst maxAttempts = 3\nconst baseDelayMs = 1000\nconst maxDelayMs = 15000\nconst retryableStatuses = new Set([403,429,500,502,503,504])\nconst headers = { Accept: "application/vnd.github+json", "User-Agent": "tap-pipeline" }\nif (process.env.GH_TOKEN) {\n  headers.Authorization = `*** sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))\nconst writeStdout = (value) => new Promise((resolve, reject) => {\n  process.stdout.write(value, (error) => {\n    if (error) {\n      reject(error)\n      return\n    }\n    resolve(undefined)\n  })\n})\nconst header = (response, name) => response.headers.get(name) ?? "n/a"\nconst summarizeFailure = async (response) => {\n  const body = (await response.text()).replace(/\s+/g, " ").trim()\n  const bodySummary = body.length > 0 ? `, body=${body.slice(0, 200)}` : ""\n  return [\n    `status=${response.status}`,\n    `request_id=${header(response, "x-github-request-id")}`,\n    `retry_after=${header(response, "retry-after")}`,\n    `ratelimit_limit=${header(response, "x-ratelimit-limit")}`,\n    `ratelimit_remaining=${header(response, "x-ratelimit-remaining")}`,\n    `ratelimit_reset=${header(response, "x-ratelimit-reset")}`,\n  ].join(", ") + bodySummary\n}\nlet completed = false\nfor (let attempt = 1; attempt <= maxAttempts; attempt += 1) {\n  const response = await fetch(url, { headers })\n  if (response.ok) {\n    await writeStdout(await response.text())\n    completed = true\n    break\n  }\n  const failure = await summarizeFailure(response)\n  if (retryableStatuses.has(response.status) && attempt < maxAttempts) {\n    const retryAfterSeconds = Number(response.headers.get("retry-after") ?? "")\n    const retryAfterMs = Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1_000 : 0\n    const delayMs = Math.min(maxDelayMs, Math.max(baseDelayMs * (2 ** (attempt - 1)), retryAfterMs))\n    console.error(`GitHub API request failed for ${url} on attempt ${attempt}/${maxAttempts}: ${failure}. Retrying in ${delayMs}ms.`)\n    await sleep(delayMs)\n    continue\n  }\n  throw new Error(`Failed to fetch ${url}: ${failure}`)\n}\nif (!completed) {\n  throw new Error(`Failed to fetch ${url}: exhausted retries without a response`)\n}' https://api.github.com/repos/joshyorko/rcc/releases/latest
+2026-10-12T16:19:52.7816119Z [95m18  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:19:52.7816791Z [95m19  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[2m: String![0m
+2026-10-12T16:20:02.2269426Z [95m16  : [0m[90;2m┆ [0mContainer.[1mfrom[0m[32m DONE[0m[90m [9.7s][0m
+2026-10-12T16:20:02.5265979Z [95m18  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.5s][0m
+2026-10-12T16:20:02.6336921Z [95m18  : [0m[90;2m┆ [0m[90m[9.8s] [0m[90m|[0m {"url":"https://api.github.com/repos/joshyorko/rcc/releases/410798228","assets_url":"https://api.github.com/repos/joshyorko/rcc/releases/410798228/assets","upload_url":"https://uploads.github.com/repos/joshyorko/rcc/releases/410798228/assets{?name,label}","html_url":"https://github.com/joshyorko/rcc/releases/tag/v18.19.6","id":410798228,"author":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"node_id":"RE_kwDOPqaJu84YfEiU","tag_name":"v18.19.6","target_commitish":"main","name":"v18.19.6","draft":false,"immutable":false,"prerelease":false,"created_at":"2026-10-12T11:50:02Z","updated_at":"2026-10-12T16:17:45Z","published_at":"2026-10-12T16:17:45Z","assets":[{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299351","id":634299351,"node_id":"RA_kwDOPqaJu84lzqPX","name":"index.json","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/json","state":"uploaded","size":8949,"digest":"sha256:f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77","download_count":0,"created_at":"2026-10-12T16:17:41Z","updated_at":"2026-10-12T16:17:41Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/index.json"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299347","id":634299347,"node_id":"RA_kwDOPqaJu84lzqPT","name":"rcc-linux64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":22401186,"digest":"sha256:2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e","download_count":0,"created_at":"2026-10-12T16:17:41Z","updated_at":"2026-10-12T16:17:42Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-linux64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299352","id":634299352,"node_id":"RA_kwDOPqaJu84lzqPY","name":"rcc-macos64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":22241232,"digest":"sha256:22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce","download_count":0,"created_at":"2026-10-12T16:17:41Z","updated_at":"2026-10-12T16:17:42Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macos64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299344","id":634299344,"node_id":"RA_kwDOPqaJu84lzqPQ","name":"rcc-macosarm64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":20986322,"digest":"sha256:18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f","download_count":0,"created_at":"2026-10-12T16:17:41Z","updated_at":"2026-10-12T16:17:43Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macosarm64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299349","id":634299349,"node_id":"RA_kwDOPqaJu84lzqPV","name":"rcc-windows64.exe","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":20127232,"digest":"sha256:7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238","download_count":0,"created_at":"2026-10-12T16:17:41Z","updated_at":"2026-10-12T16:17:42Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-windows64.exe"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299374","id":634299374,"node_id":"RA_kwDOPqaJu84lzqPu","name":"rccremote-linux64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":9351330,"digest":"sha256:14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26","download_count":0,"created_at":"2026-10-12T16:17:42Z","updated_at":"2026-10-12T16:17:43Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rccremote-linux64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299391","id":634299391,"node_id":"RA_kwDOPqaJu84lzqP_","name":"rccremote-macos64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":9547136,"digest":"sha256:597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab","download_count":0,"created_at":"2026-10-12T16:17:43Z","updated_at":"2026-10-12T16:17:44Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rccremote-macos64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299392","id":634299392,"node_id":"RA_kwDOPqaJu84lzqQA","name":"rccremote-macosarm64","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":8886578,"digest":"sha256:ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d","download_count":0,"created_at":"2026-10-12T16:17:43Z","updated_at":"2026-10-12T16:17:44Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rccremote-macosarm64"},{"url":"https://api.github.com/repos/joshyorko/rcc/releases/assets/634299402","id":634299402,"node_id":"RA_kwDOPqaJu84lzqQK","name":"rccremote-windows64.exe","label":"","uploader":{"login":"github-actions[bot]","id":41898282,"node_id":"MDM6Qm90NDE4OTgyODI=","avatar_url":"https://avatars.githubusercontent.com/in/15368?v=4","gravatar_id":"","url":"https://api.github.com/users/github-actions%5Bbot%5D","html_url":"https://github.com/apps/github-actions","followers_url":"https://api.github.com/users/github-actions%5Bbot%5D/followers","following_url":"https://api.github.com/users/github-actions%5Bbot%5D/following{/other_user}","gists_url":"https://api.github.com/users/github-actions%5Bbot%5D/gists{/gist_id}","starred_url":"https://api.github.com/users/github-actions%5Bbot%5D/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/github-actions%5Bbot%5D/subscriptions","organizations_url":"https://api.github.com/users/github-actions%5Bbot%5D/orgs","repos_url":"https://api.github.com/users/github-actions%5Bbot%5D/repos","events_url":"https://api.github.com/users/github-actions%5Bbot%5D/events{/privacy}","received_events_url":"https://api.github.com/users/github-actions%5Bbot%5D/received_events","type":"Bot","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":9675264,"digest":"sha256:5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197","download_count":0,"created_at":"2026-10-12T16:17:43Z","updated_at":"2026-10-12T16:17:44Z","browser_download_url":"https://github.com/joshyorko/rcc/releases/download/v18.19.6/rccremote-windows64.exe"}],"tarball_url":"https://api.github.com/repos/joshyorko/rcc/tarball/v18.19.6","zipball_url":"https://api.github.com/repos/joshyorko/rcc/zipball/v18.19.6","body":"## What's Changed\n* fix(release): validate supported N-1 archive rollback by @joshyorko in https://github.com/joshyorko/rcc/pull/222\n* fix(release): recover v18.19.5 from original verified artifacts by @joshyorko in https://github.com/joshyorko/rcc/pull/223\n* fix(anywork): honor parsed worker limit by @joshyorko in https://github.com/joshyorko/rcc/pull/227\n* test: preserve proxy routing for online artifact acceptance by @joshyorko in https://github.com/joshyorko/rcc/pull/228\n* test(benchmarks): measure isolated lifecycle consumers with exact receipts by @joshyorko in https://github.com/joshyorko/rcc/pull/229\n* docs: make provider hosting examples honor artifact trust policy by @joshyorko in https://github.com/joshyorko/rcc/pull/231\n* fix: accept padded trust root keys in offline verification by @joshyorko in https://github.com/joshyorko/rcc/pull/232\n* chore(security): build RCC with Go 1.26.9 security fixes by @joshyorko in https://github.com/joshyorko/rcc/pull/230\n* fix(uv): preserve internal links through aliased cache parents by @joshyorko in https://github.com/joshyorko/rcc/pull/234\n* chore(release): prepare RCC v18.19.6 by @joshyorko in https://github.com/joshyorko/rcc/pull/233\n* fix(release): separate verified preparation from approved publication by @joshyorko in https://github.com/joshyorko/rcc/pull/237\n* docs: complete contributor repository map by @joshyorko in https://github.com/joshyorko/rcc/pull/236\n* Export bounded source-bound release preparation receipts by @joshyorko in https://github.com/joshyorko/rcc/pull/238\n* test(anywork): cover scale capacity, queued work and worker panics by @joshyorko in https://github.com/joshyorko/rcc/pull/235\n* fix(release): verify expected N-1 catalog rebase by @joshyorko in https://github.com/joshyorko/rcc/pull/239\n* test(journal): cover persistence and lifecycle by @joshyorko in https://github.com/joshyorko/rcc/pull/240\n* Fix successful pip dependency listing fallback by @joshyorko in https://github.com/joshyorko/rcc/pull/243\n* fix(pathlib): preserve existing ancestor permissions by @joshyorko in https://github.com/joshyorko/rcc/pull/242\n* Handle diagnostic output and cache read failures by @joshyorko in https://github.com/joshyorko/rcc/pull/241\n* fix(operations): close network probe responses by @joshyorko in https://github.com/joshyorko/rcc/pull/244\n* Document v18.19.6 fixes and signing scope by @joshyorko in https://github.com/joshyorko/rcc/pull/245\n\n\n**Full Changelog**: https://github.com/joshyorko/rcc/compare/v18.19.5...v18.19.6","mentions_count":1}
+2026-10-12T16:20:02.6767438Z [95m19  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[32m DONE[0m[90m [9.8s][0m
+2026-10-12T16:20:02.6768374Z [95m20  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m(
+2026-10-12T16:20:02.6768958Z [95m20  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"GH_TOKEN"[0m
+2026-10-12T16:20:02.6769917Z [95m20  : [0m[90;2m┆ ┆ [0m[36msecret:[0m Address.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:20:02.6770495Z [95m20  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:02.6770929Z [95m20  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.6776265Z [95m21  : [0m[90;2m┆ [0m[34mwithExec[0m node --input-type=module -e 'import { writeFile } from '\''node:fs/promises'\''\nconst [url, path] = process.argv.slice(1)\nconst headers = { Accept: '\''application/vnd.github+json'\'', '\''User-Agent'\'': '\''tap-pipeline'\'' }\nif (process.env.GH_TOKEN) {\n  headers.Authorization = `*** retryDelaysMs = [1000,3000,7000]\nconst retryableStatuses = new Set([403, 429, 500, 502, 503, 504])\nconst wait = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs))\nconst totalAttempts = retryDelaysMs.length + 1\nfor (let attempt = 1; attempt <= totalAttempts; attempt += 1) {\n  try {\n    const response = await fetch(url, { headers })\n    if (response.ok) {\n      await writeFile(path, Buffer.from(await response.arrayBuffer()))\n      break\n    }\n    if (!retryableStatuses.has(response.status) || attempt === totalAttempts) {\n      throw new Error(`Failed to download ${url}: ${response.status} after ${attempt} attempt${attempt === 1 ? '"''"' : '\''s'\''}`)\n    }\n  } catch (error) {\n    if (error.message.startsWith('\''Failed to download'\'') || attempt === totalAttempts) {\n      if (error.message.startsWith('\''Failed to download'\'')) throw error\n      throw new Error(`Failed to download ${url}: ${error.message} after ${attempt} attempts`, { cause: error })\n    }\n  }\n  await wait(retryDelaysMs[attempt - 1])\n}' https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-linux64 /tmp/rcc-linux64
+2026-10-12T16:20:02.7272621Z [95m22  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m(
+2026-10-12T16:20:02.7273448Z [95m22  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"GH_TOKEN"[0m
+2026-10-12T16:20:02.7274223Z [95m22  : [0m[90;2m┆ ┆ [0m[36msecret:[0m Address.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:20:02.7274908Z [95m22  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:02.7275695Z [95m22  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.7282549Z [95m23  : [0m[90;2m┆ [0m[34mwithExec[0m node --input-type=module -e 'import { writeFile } from '\''node:fs/promises'\''\nconst [url, path] = process.argv.slice(1)\nconst headers = { Accept: '\''application/vnd.github+json'\'', '\''User-Agent'\'': '\''tap-pipeline'\'' }\nif (process.env.GH_TOKEN) {\n  headers.Authorization = `*** retryDelaysMs = [1000,3000,7000]\nconst retryableStatuses = new Set([403, 429, 500, 502, 503, 504])\nconst wait = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs))\nconst totalAttempts = retryDelaysMs.length + 1\nfor (let attempt = 1; attempt <= totalAttempts; attempt += 1) {\n  try {\n    const response = await fetch(url, { headers })\n    if (response.ok) {\n      await writeFile(path, Buffer.from(await response.arrayBuffer()))\n      break\n    }\n    if (!retryableStatuses.has(response.status) || attempt === totalAttempts) {\n      throw new Error(`Failed to download ${url}: ${response.status} after ${attempt} attempt${attempt === 1 ? '"''"' : '\''s'\''}`)\n    }\n  } catch (error) {\n    if (error.message.startsWith('\''Failed to download'\'') || attempt === totalAttempts) {\n      if (error.message.startsWith('\''Failed to download'\'')) throw error\n      throw new Error(`Failed to download ${url}: ${error.message} after ${attempt} attempts`, { cause: error })\n    }\n  }\n  await wait(retryDelaysMs[attempt - 1])\n}' https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macosarm64 /tmp/rcc-macosarm64
+2026-10-12T16:20:02.7287000Z [95m23  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.7287450Z [95m24  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m(
+2026-10-12T16:20:02.7288354Z [95m24  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"GH_TOKEN"[0m
+2026-10-12T16:20:02.7288790Z [95m24  : [0m[90;2m┆ ┆ [0m[36msecret:[0m Address.[1msecret[0m[2m: Secret![0m
+2026-10-12T16:20:02.7289179Z [95m24  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:02.7289642Z [95m24  : [0m[90;2m┆ [0mContainer.[1mwithSecretVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.7294983Z [95m25  : [0m[90;2m┆ [0m[34mwithExec[0m node --input-type=module -e 'import { writeFile } from '\''node:fs/promises'\''\nconst [url, path] = process.argv.slice(1)\nconst headers = { Accept: '\''application/vnd.github+json'\'', '\''User-Agent'\'': '\''tap-pipeline'\'' }\nif (process.env.GH_TOKEN) {\n  headers.Authorization = `*** retryDelaysMs = [1000,3000,7000]\nconst retryableStatuses = new Set([403, 429, 500, 502, 503, 504])\nconst wait = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs))\nconst totalAttempts = retryDelaysMs.length + 1\nfor (let attempt = 1; attempt <= totalAttempts; attempt += 1) {\n  try {\n    const response = await fetch(url, { headers })\n    if (response.ok) {\n      await writeFile(path, Buffer.from(await response.arrayBuffer()))\n      break\n    }\n    if (!retryableStatuses.has(response.status) || attempt === totalAttempts) {\n      throw new Error(`Failed to download ${url}: ${response.status} after ${attempt} attempt${attempt === 1 ? '"''"' : '\''s'\''}`)\n    }\n  } catch (error) {\n    if (error.message.startsWith('\''Failed to download'\'') || attempt === totalAttempts) {\n      if (error.message.startsWith('\''Failed to download'\'')) throw error\n      throw new Error(`Failed to download ${url}: ${error.message} after ${attempt} attempts`, { cause: error })\n    }\n  }\n  await wait(retryDelaysMs[attempt - 1])\n}' https://github.com/joshyorko/rcc/releases/download/v18.19.6/rcc-macos64 /tmp/rcc-macos64
+2026-10-12T16:20:02.7299602Z [95m25  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.7300332Z [95m26  : [0m[90;2m┆ [0m[34mwithExec[0m sha256sum /tmp/rcc-linux64
+2026-10-12T16:20:02.7301069Z [95m26  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:02.7301777Z [95m27  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[2m: String![0m
+2026-10-12T16:20:03.0264828Z [95m21  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.4s][0m
+2026-10-12T16:20:03.9264423Z [95m26  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.1s][0m
+2026-10-12T16:20:03.9265687Z [95m26  : [0m[90;2m┆ [0m[90m[1.3s] [0m[90m|[0m 2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e  /tmp/rcc-linux64
+2026-10-12T16:20:03.9766535Z [95m27  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[32m DONE[0m[90m [1.3s][0m
+2026-10-12T16:20:03.9767731Z [95m28  : [0m[90;2m┆ [0m[34mwithExec[0m sha256sum /tmp/rcc-macosarm64
+2026-10-12T16:20:04.0272502Z [95m28  : [0m[90;2m┆ [0m[90m[0.1s] [0m[90m|[0m 18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f  /tmp/rcc-macosarm64
+2026-10-12T16:20:04.0273216Z [95m28  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.1s][0m
+2026-10-12T16:20:04.0273624Z [95m29  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[2m: String![0m
+2026-10-12T16:20:04.0274011Z [95m29  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[32m DONE[0m[90m [0.1s][0m
+2026-10-12T16:20:04.0274395Z [95m30  : [0m[90;2m┆ [0m[34mwithExec[0m sha256sum /tmp/rcc-macos64
+2026-10-12T16:20:04.0770962Z [95m31  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[2m: String![0m
+2026-10-12T16:20:04.1278698Z [95m30  : [0m[90;2m┆ [0m[34mwithExec[0m sha256sum /tmp/rcc-macos64
+2026-10-12T16:20:04.1279748Z [95m30  : [0m[90;2m┆ [0m[90m[0.1s] [0m[90m|[0m 22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce  /tmp/rcc-macos64
+2026-10-12T16:20:04.2273974Z [95m30  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.1s][0m
+2026-10-12T16:20:04.2274879Z [95m31  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[32m DONE[0m[90m [0.1s][0m
+2026-10-12T16:20:04.2275686Z [95m32  : [0m[90;2m┆ [0m[1mfile[0m(
+2026-10-12T16:20:04.2276265Z [95m32  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"rcc.rb"[0m
+2026-10-12T16:20:04.2279917Z [95m32  : [0m[90;2m┆ ┆ [0m[36mcontents:[0m [33m"cask \"rcc\" do\n  version \"18.19.6\"\n\n  livecheck do\n    skip \"Updated by the tap's GitHub Actions workflow.\"\n  end\n\n  on_macos do\n    on_arm do\n      sha256 \"18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f\"\n      url \"file:///artifacts/rcc-macosarm64\"\n      binary \"rcc-macosarm64\", target: \"rcc\"\n    end\n\n    on_intel do\n      sha256 \"22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce\"\n      url \"file:///artifacts/rcc-macos64\"\n      binary \"rcc-macos64\", target: \"rcc\"\n    end\n  end\n\n  on_linux do\n    sha256 \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\"\n    url \"file:///artifacts/rcc-linux64\"\n    binary \"rcc-linux64\", target: \"rcc\"\n  end\n\n  name \"RCC\"\n  desc \"RCC - Repeatable Contained Code automation runtime\"\n  homepage \"https://github.com/joshyorko/rcc\"\n\n  caveats <<~EOS\n    If 'rcc' is not found after installation, refresh your shell's cache:\n      hash -r\n\n    Or start a new terminal session.\n  EOS\nend\n"[0m
+2026-10-12T16:20:04.2282772Z [95m32  : [0m[90;2m┆ [0m)[2m: File![0m
+2026-10-12T16:20:04.2283096Z [95m32  : [0m[90;2m┆ [0m[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.2283422Z [95m33  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:04.2283747Z [95m33  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"Casks/rcc.rb"[0m
+2026-10-12T16:20:04.2284265Z [95m33  : [0m[90;2m┆ ┆ [0m[36msource:[0m [1mfile[0m(
+2026-10-12T16:20:04.2284591Z [95m33  : [0m[90;2m┆ ┆ ┆ [0m[36mname:[0m [33m"rcc.rb"[0m
+2026-10-12T16:20:04.2287852Z [95m33  : [0m[90;2m┆ ┆ ┆ [0m[36mcontents:[0m [33m"cask \"rcc\" do\n  version \"18.19.6\"\n\n  livecheck do\n    skip \"Updated by the tap's GitHub Actions workflow.\"\n  end\n\n  on_macos do\n    on_arm do\n      sha256 \"18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f\"\n      url \"file:///artifacts/rcc-macosarm64\"\n      binary \"rcc-macosarm64\", target: \"rcc\"\n    end\n\n    on_intel do\n      sha256 \"22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce\"\n      url \"file:///artifacts/rcc-macos64\"\n      binary \"rcc-macos64\", target: \"rcc\"\n    end\n  end\n\n  on_linux do\n    sha256 \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\"\n    url \"file:///artifacts/rcc-linux64\"\n    binary \"rcc-linux64\", target: \"rcc\"\n  end\n\n  name \"RCC\"\n  desc \"RCC - Repeatable Contained Code automation runtime\"\n  homepage \"https://github.com/joshyorko/rcc\"\n\n  caveats <<~EOS\n    If 'rcc' is not found after installation, refresh your shell's cache:\n      hash -r\n\n    Or start a new terminal session.\n  EOS\nend\n"[0m
+2026-10-12T16:20:04.2290513Z [95m33  : [0m[90;2m┆ ┆ [0m)[2m: File![0m
+2026-10-12T16:20:04.2290796Z [95m33  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:04.2291148Z [95m33  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.2291625Z [95m34  : [0m[90;2m┆ [0mContainer.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-linux64"[0m)[2m: File![0m
+2026-10-12T16:20:04.2292074Z [95m34  : [0m[90;2m┆ [0mContainer.[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.2292535Z [95m35  : [0m[90;2m┆ [0mContainer.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macosarm64"[0m)[2m: File![0m
+2026-10-12T16:20:04.2292990Z [95m35  : [0m[90;2m┆ [0mContainer.[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.2293425Z [95m36  : [0m[90;2m┆ [0mContainer.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macos64"[0m)[2m: File![0m
+2026-10-12T16:20:04.2293860Z [95m36  : [0m[90;2m┆ [0mContainer.[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.2294369Z [95m37  : [0m[90;2m┆ [0mContainer.[1mfrom[0m([36maddress: [0m[33m"ghcr.io/homebrew/brew:main"[0m)[2m: Container![0m
+2026-10-12T16:20:04.5267189Z [95m38  : [0m[90;2m┆ [0m[34mwithEnvVariable[0m HOMEBREW_NO_AUTO_UPDATE=1
+2026-10-12T16:20:04.5268179Z [95m38  : [0m[90;2m┆ [0mContainer.[1mwithEnvVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5268916Z [95m39  : [0m[90;2m┆ [0m[34mwithEnvVariable[0m HOMEBREW_NO_ENV_HINTS=1
+2026-10-12T16:20:04.5269599Z [95m39  : [0m[90;2m┆ [0mContainer.[1mwithEnvVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5270309Z [95m40  : [0m[90;2m┆ [0m[34mwithEnvVariable[0m HOMEBREW_NO_INSTALL_FROM_API=1
+2026-10-12T16:20:04.5271058Z [95m40  : [0m[90;2m┆ [0mContainer.[1mwithEnvVariable[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5271710Z [95m41  : [0m[90;2m┆ [0mContainer.[1mwithDirectory[0m(
+2026-10-12T16:20:04.5272238Z [95m41  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"/tap"[0m
+2026-10-12T16:20:04.5272767Z [95m41  : [0m[90;2m┆ ┆ [0m[36msource:[0m Directory.[1mwithFile[0m(
+2026-10-12T16:20:04.5273395Z [95m41  : [0m[90;2m┆ ┆ ┆ [0m[36mpath:[0m [33m"Casks/rcc.rb"[0m
+2026-10-12T16:20:04.5273908Z [95m41  : [0m[90;2m┆ ┆ ┆ [0m[36msource:[0m [1mfile[0m(
+2026-10-12T16:20:04.5274441Z [95m41  : [0m[90;2m┆ ┆ ┆ ┆ [0m[36mname:[0m [33m"rcc.rb"[0m
+2026-10-12T16:20:04.5281957Z [95m41  : [0m[90;2m┆ ┆ ┆ ┆ [0m[36mcontents:[0m [33m"cask \"rcc\" do\n  version \"18.19.6\"\n\n  livecheck do\n    skip \"Updated by the tap's GitHub Actions workflow.\"\n  end\n\n  on_macos do\n    on_arm do\n      sha256 \"18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f\"\n      url \"file:///artifacts/rcc-macosarm64\"\n      binary \"rcc-macosarm64\", target: \"rcc\"\n    end\n\n    on_intel do\n      sha256 \"22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce\"\n      url \"file:///artifacts/rcc-macos64\"\n      binary \"rcc-macos64\", target: \"rcc\"\n    end\n  end\n\n  on_linux do\n    sha256 \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\"\n    url \"file:///artifacts/rcc-linux64\"\n    binary \"rcc-linux64\", target: \"rcc\"\n  end\n\n  name \"RCC\"\n  desc \"RCC - Repeatable Contained Code automation runtime\"\n  homepage \"https://github.com/joshyorko/rcc\"\n\n  caveats <<~EOS\n    If 'rcc' is not found after installation, refresh your shell's cache:\n      hash -r\n\n    Or start a new terminal session.\n  EOS\nend\n"[0m
+2026-10-12T16:20:04.5285320Z [95m41  : [0m[90;2m┆ ┆ ┆ [0m)[2m: File![0m
+2026-10-12T16:20:04.5285633Z [95m41  : [0m[90;2m┆ ┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:04.5285930Z [95m41  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:04.5286342Z [95m41  : [0m[90;2m┆ [0mContainer.[1mwithDirectory[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5286746Z [95m42  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m(
+2026-10-12T16:20:04.5287117Z [95m42  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"/artifacts/rcc-linux64"[0m
+2026-10-12T16:20:04.5287909Z [95m42  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-linux64"[0m)[2m: File![0m
+2026-10-12T16:20:04.5288376Z [95m42  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:04.5288757Z [95m42  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5289135Z [95m43  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m(
+2026-10-12T16:20:04.5289498Z [95m43  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"/artifacts/rcc-macosarm64"[0m
+2026-10-12T16:20:04.5290165Z [95m43  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macosarm64"[0m)[2m: File![0m
+2026-10-12T16:20:04.5290720Z [95m43  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:04.5291086Z [95m43  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5291447Z [95m44  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m(
+2026-10-12T16:20:04.5291796Z [95m44  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"/artifacts/rcc-macos64"[0m
+2026-10-12T16:20:04.5292497Z [95m44  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macos64"[0m)[2m: File![0m
+2026-10-12T16:20:04.5292937Z [95m44  : [0m[90;2m┆ [0m)[2m: Container![0m
+2026-10-12T16:20:04.5293300Z [95m44  : [0m[90;2m┆ [0mContainer.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5294443Z [95m45  : [0m[90;2m┆ [0m[34mwithExec[0m bash -lc 'set -euo pipefail\nrepo=$(brew --repository)\ntap_dir="$repo/Library/Taps/test/homebrew-tap"\nmkdir -p "$tap_dir/Casks"\ncp /tap/Casks/rcc.rb "$tap_dir/Casks/"\nbrew install --cask test/tap/rcc\ntest -x "$(brew --prefix)/bin/rcc"\nrcc --version'
+2026-10-12T16:20:04.5295444Z [95m45  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:04.5295854Z [95m46  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[2m: String![0m
+2026-10-12T16:20:41.8769387Z [95m37  : [0m[90;2m┆ [0mContainer.[1mfrom[0m[32m DONE[0m[90m [37.7s][0m
+2026-10-12T16:20:42.7269585Z [95m45  : [0m[90;2m┆ [0mContainer.[1mwithExec[0m[32m DONE[0m[90m [0.9s][0m
+2026-10-12T16:20:42.7270771Z [95m45  : [0m[90;2m┆ [0m[90m[38.3s] [0m[90m|[0m ==> Trusted cask test/tap/rcc
+2026-10-12T16:20:43.0268343Z [95m45  : [0m[90;2m┆ [0m[90m[38.6s] [0m[90m|[0m ==> Fetching downloads for: test/tap/rcc
+2026-10-12T16:20:43.2272615Z [95m45  : [0m[90;2m┆ [0m[90m[38.8s] [0m[90m|[0m Warning: Landlock ABI 10 or later is required to deny all network access; found ABI 7. Applying the network restrictions supported by this kernel.
+2026-10-12T16:20:43.8274250Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m ✔︎ Cask rcc (18.19.6)
+2026-10-12T16:20:43.8274847Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m ==> Installing Cask rcc
+2026-10-12T16:20:43.8275592Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m ==> Linking Binary 'rcc-linux64' to '/home/linuxbrew/.linuxbrew/bin/rcc'
+2026-10-12T16:20:43.9264435Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m 🍺  rcc was successfully installed!
+2026-10-12T16:20:43.9264921Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m ==> Caveats
+2026-10-12T16:20:43.9265276Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m ==> rcc
+2026-10-12T16:20:43.9265784Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m If 'rcc' is not found after installation, refresh your shell's cache:
+2026-10-12T16:20:43.9266260Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m   hash -r
+2026-10-12T16:20:43.9266595Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m 
+2026-10-12T16:20:43.9267007Z [95m45  : [0m[90;2m┆ [0m[90m[39.4s] [0m[90m|[0m Or start a new terminal session.
+2026-10-12T16:20:43.9267414Z [95m45  : [0m[90;2m┆ [0m[90m[39.5s] [0m[90m|[0m v18.19.6
+2026-10-12T16:20:45.0274253Z [95m46  : [0m[90;2m┆ [0mContainer.[1mstdout[0m[32m DONE[0m[90m [40.5s][0m
+2026-10-12T16:20:45.1287250Z [95m47  : [0m[90;2m┆ [0m[1mfile[0m(
+2026-10-12T16:20:45.1288915Z [95m47  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"rcc.rb"[0m
+2026-10-12T16:20:45.1308664Z [95m47  : [0m[90;2m┆ ┆ [0m[36mcontents:[0m [33m"cask \"rcc\" do\n  version \"18.19.6\"\n\n  livecheck do\n    skip \"Updated by the tap's GitHub Actions workflow.\"\n  end\n\n  on_macos do\n    on_arm do\n      sha256 \"18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f\"\n      url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-macosarm64\"\n      binary \"rcc-macosarm64\", target: \"rcc\"\n    end\n\n    on_intel do\n      sha256 \"22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce\"\n      url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-macos64\"\n      binary \"rcc-macos64\", target: \"rcc\"\n    end\n  end\n\n  on_linux do\n    sha256 \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\"\n    url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-linux64\"\n    binary \"rcc-linux64\", target: \"rcc\"\n  end\n\n  name \"RCC\"\n  desc \"RCC - Repeatable Contained Code automation runtime\"\n  homepage \"https://github.com/joshyorko/rcc\"\n\n  caveats <<~EOS\n    If 'rcc' is not found after installation, refresh your shell's cache:\n      hash -r\n\n    Or start a new terminal session.\n  EOS\nend\n"[0m
+2026-10-12T16:20:45.1315640Z [95m47  : [0m[90;2m┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1316229Z [95m47  : [0m[90;2m┆ [0m[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1316823Z [95m48  : [0m[90;2m┆ [0m[1mfile[0m(
+2026-10-12T16:20:45.1317398Z [95m48  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"release.json"[0m
+2026-10-12T16:20:45.1322212Z [95m48  : [0m[90;2m┆ ┆ [0m[36mcontents:[0m [33m"{\n  \"package\": \"rcc\",\n  \"kind\": \"github_release_binary_cask\",\n  \"homebrew_path\": \"Casks/rcc.rb\",\n  \"version\": \"18.19.6\",\n  \"release_tag\": \"rcc-18.19.6\",\n  \"asset_name\": \"rcc-linux64\",\n  \"artifact_sha256\": \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\",\n  \"download_url\": \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-linux64\",\n  \"release_title\": \"RCC 18.19.6\",\n  \"release_notes\": \"Release bundle mirrored from joshyorko/rcc v18.19.6\",\n  \"commit_message\": \"Update rcc cask to v18.19.6\",\n  \"upstream\": {\n    \"kind\": \"github_release\",\n    \"repo\": \"https://github.com/joshyorko/rcc\",\n    \"assetPrefix\": \"rcc-\",\n    \"version\": \"18.19.6\",\n    \"commit\": \"v18.19.6\"\n  }\n}\n"[0m
+2026-10-12T16:20:45.1326246Z [95m48  : [0m[90;2m┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1327015Z [95m48  : [0m[90;2m┆ [0m[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1329159Z [95m49  : [0m[90;2m┆ [0m[1mfile[0m(
+2026-10-12T16:20:45.1330074Z [95m49  : [0m[90;2m┆ ┆ [0m[36mname:[0m [33m"ci.log"[0m
+2026-10-12T16:20:45.1335988Z [95m49  : [0m[90;2m┆ ┆ [0m[36mcontents:[0m [33m"==> Installing Cask rcc\n==> Linking Binary 'rcc-linux64' to '/home/linuxbrew/.linuxbrew/bin/rcc'\n🍺  rcc was successfully installed!\n==> Caveats\n==> rcc\nIf 'rcc' is not found after installation, refresh your shell's cache:\n  hash -r\n\nOr start a new terminal session.\nv18.19.6\n"[0m
+2026-10-12T16:20:45.1337964Z [95m49  : [0m[90;2m┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1338527Z [95m49  : [0m[90;2m┆ [0m[1mfile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1339116Z [95m50  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1358457Z [95m50  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"artifacts/rcc-linux64"[0m
+2026-10-12T16:20:45.1359296Z [95m50  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-linux64"[0m)[2m: File![0m
+2026-10-12T16:20:45.1360286Z [95m50  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1361124Z [95m50  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1362013Z [95m51  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1362724Z [95m51  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"artifacts/rcc-macosarm64"[0m
+2026-10-12T16:20:45.1363757Z [95m51  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macosarm64"[0m)[2m: File![0m
+2026-10-12T16:20:45.1364528Z [95m51  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1365094Z [95m51  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1365747Z [95m52  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1366381Z [95m52  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"artifacts/rcc-macos64"[0m
+2026-10-12T16:20:45.1367366Z [95m52  : [0m[90;2m┆ ┆ [0m[36msource:[0m Container.[1mfile[0m([36mpath: [0m[33m"/tmp/rcc-macos64"[0m)[2m: File![0m
+2026-10-12T16:20:45.1368126Z [95m52  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1368771Z [95m52  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1369891Z [95m53  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1370491Z [95m53  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"homebrew/rcc.rb"[0m
+2026-10-12T16:20:45.1371017Z [95m53  : [0m[90;2m┆ ┆ [0m[36msource:[0m [1mfile[0m(
+2026-10-12T16:20:45.1371485Z [95m53  : [0m[90;2m┆ ┆ ┆ [0m[36mname:[0m [33m"rcc.rb"[0m
+2026-10-12T16:20:45.1379998Z [95m53  : [0m[90;2m┆ ┆ ┆ [0m[36mcontents:[0m [33m"cask \"rcc\" do\n  version \"18.19.6\"\n\n  livecheck do\n    skip \"Updated by the tap's GitHub Actions workflow.\"\n  end\n\n  on_macos do\n    on_arm do\n      sha256 \"18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f\"\n      url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-macosarm64\"\n      binary \"rcc-macosarm64\", target: \"rcc\"\n    end\n\n    on_intel do\n      sha256 \"22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce\"\n      url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-macos64\"\n      binary \"rcc-macos64\", target: \"rcc\"\n    end\n  end\n\n  on_linux do\n    sha256 \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\"\n    url \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-linux64\"\n    binary \"rcc-linux64\", target: \"rcc\"\n  end\n\n  name \"RCC\"\n  desc \"RCC - Repeatable Contained Code automation runtime\"\n  homepage \"https://github.com/joshyorko/rcc\"\n\n  caveats <<~EOS\n    If 'rcc' is not found after installation, refresh your shell's cache:\n      hash -r\n\n    Or start a new terminal session.\n  EOS\nend\n"[0m
+2026-10-12T16:20:45.1386041Z [95m53  : [0m[90;2m┆ ┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1386472Z [95m53  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1386921Z [95m53  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1387648Z [95m54  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1388230Z [95m54  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"release.json"[0m
+2026-10-12T16:20:45.1388827Z [95m54  : [0m[90;2m┆ ┆ [0m[36msource:[0m [1mfile[0m(
+2026-10-12T16:20:45.1389263Z [95m54  : [0m[90;2m┆ ┆ ┆ [0m[36mname:[0m [33m"release.json"[0m
+2026-10-12T16:20:45.1393256Z [95m54  : [0m[90;2m┆ ┆ ┆ [0m[36mcontents:[0m [33m"{\n  \"package\": \"rcc\",\n  \"kind\": \"github_release_binary_cask\",\n  \"homebrew_path\": \"Casks/rcc.rb\",\n  \"version\": \"18.19.6\",\n  \"release_tag\": \"rcc-18.19.6\",\n  \"asset_name\": \"rcc-linux64\",\n  \"artifact_sha256\": \"2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e\",\n  \"download_url\": \"https://github.com/joshyorko/homebrew-tools/releases/download/rcc-18.19.6/rcc-linux64\",\n  \"release_title\": \"RCC 18.19.6\",\n  \"release_notes\": \"Release bundle mirrored from joshyorko/rcc v18.19.6\",\n  \"commit_message\": \"Update rcc cask to v18.19.6\",\n  \"upstream\": {\n    \"kind\": \"github_release\",\n    \"repo\": \"https://github.com/joshyorko/rcc\",\n    \"assetPrefix\": \"rcc-\",\n    \"version\": \"18.19.6\",\n    \"commit\": \"v18.19.6\"\n  }\n}\n"[0m
+2026-10-12T16:20:45.1397107Z [95m54  : [0m[90;2m┆ ┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1397733Z [95m54  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1398372Z [95m54  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.1399064Z [95m55  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m(
+2026-10-12T16:20:45.1399577Z [95m55  : [0m[90;2m┆ ┆ [0m[36mpath:[0m [33m"ci.log"[0m
+2026-10-12T16:20:45.1400161Z [95m55  : [0m[90;2m┆ ┆ [0m[36msource:[0m [1mfile[0m(
+2026-10-12T16:20:45.1400750Z [95m55  : [0m[90;2m┆ ┆ ┆ [0m[36mname:[0m [33m"ci.log"[0m
+2026-10-12T16:20:45.1404454Z [95m55  : [0m[90;2m┆ ┆ ┆ [0m[36mcontents:[0m [33m"==> Installing Cask rcc\n==> Linking Binary 'rcc-linux64' to '/home/linuxbrew/.linuxbrew/bin/rcc'\n🍺  rcc was successfully installed!\n==> Caveats\n==> rcc\nIf 'rcc' is not found after installation, refresh your shell's cache:\n  hash -r\n\nOr start a new terminal session.\nv18.19.6\n"[0m
+2026-10-12T16:20:45.1406651Z [95m55  : [0m[90;2m┆ ┆ [0m)[2m: File![0m
+2026-10-12T16:20:45.1407202Z [95m55  : [0m[90;2m┆ [0m)[2m: Directory![0m
+2026-10-12T16:20:45.1407994Z [95m55  : [0m[90;2m┆ [0mDirectory.[1mwithFile[0m[32m DONE[0m[90m [0.0s][0m
+2026-10-12T16:20:45.3273510Z [95m15  : [0m[90;2m[0m[35mTapPipeline[0m.[1mreleaseBundle[0m[32m DONE[0m[90m [55.6s][0m[31m (3.07% dropped)[0m
+2026-10-12T16:20:45.3286323Z 
+2026-10-12T16:20:45.3301973Z [95m56  : [0m[90;2m[0mDirectory.[1mexport[0m([36mpath: [0m[33m"/home/runner/work/_temp/bundle"[0m)[2m: String![0m
+2026-10-12T16:20:45.3320457Z [95m57  : [0m[90;2m┆ [0mexport directory / to host /home/runner/work/_temp/bundle
+2026-10-12T16:20:45.4665162Z [95m57  : [0m[90;2m┆ [0mexport directory / to host /home/runner/work/_temp/bundle[32m DONE[0m[90m [0.3s][0m
+2026-10-12T16:20:45.4665867Z [95m56  : [0m[90;2m[0mDirectory.[1mexport[0m[32m DONE[0m[90m [0.3s][0m
+2026-10-12T16:20:45.5013383Z 
+2026-10-12T16:20:45.5013399Z 
+2026-10-12T16:20:45.5014479Z [1mFull trace at [0mhttps://dagger.cloud/joshyorko/traces/1eb47905853ba514e12625a88f2c9b07
+2026-10-12T16:20:45.5014835Z 
+2026-10-12T16:20:45.5014838Z 
+2026-10-12T16:20:45.5014955Z Saved to "/home/runner/work/_temp/bundle".
+2026-10-12T16:20:45.5342037Z ##[end-action id=__dagger_dagger-for-github.exec;outcome=success;conclusion=success;duration_ms=104420]
+2026-10-12T16:20:45.5431935Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-10-12T16:20:45.5432292Z with:
+2026-10-12T16:20:45.5432479Z   name: release-bundle-rcc
+2026-10-12T16:20:45.5432707Z   path: /home/runner/work/_temp/bundle
+2026-10-12T16:20:45.5432955Z   if-no-files-found: warn
+2026-10-12T16:20:45.5433171Z   compression-level: 6
+2026-10-12T16:20:45.5433367Z   overwrite: false
+2026-10-12T16:20:45.5433562Z   include-hidden-files: false
+2026-10-12T16:20:45.5433792Z   archive: true
+2026-10-12T16:20:45.5433965Z env:
+2026-10-12T16:20:45.5434137Z   DAGGER_VERSION: 0.21.10
+2026-10-12T16:20:45.5436231Z   GH_TOKEN: ***
+2026-10-12T16:20:45.5436460Z   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+2026-10-12T16:20:45.5436723Z   RELEASE_RETENTION_PER_PACKAGE: 1
+2026-10-12T16:20:45.5436959Z ##[endgroup]
+2026-10-12T16:20:45.6648445Z With the provided path, there will be 6 files uploaded
+2026-10-12T16:20:45.6651956Z Artifact name is valid!
+2026-10-12T16:20:45.6652544Z Root directory input is valid!
+2026-10-12T16:20:45.8628747Z Uploading artifact: release-bundle-rcc.zip
+2026-10-12T16:20:45.8662271Z Beginning upload of artifact content to blob storage
+2026-10-12T16:20:46.4858787Z Uploaded bytes 8388608
+2026-10-12T16:20:47.0340611Z Uploaded bytes 16777216
+2026-10-12T16:20:47.5167249Z Uploaded bytes 25165824
+2026-10-12T16:20:47.8720000Z Uploaded bytes 33554432
+2026-10-12T16:20:48.0623988Z Uploaded bytes 38437341
+2026-10-12T16:20:48.0754671Z Finished uploading artifact content to blob storage!
+2026-10-12T16:20:48.0757849Z SHA256 digest of uploaded artifact is 5cf92ae42759b7aec4b4ca5cdb361d70601d4cca3bd2b205812008b6b2aa4d4f
+2026-10-12T16:20:48.0759803Z Finalizing artifact upload
+2026-10-12T16:20:48.3423240Z Artifact release-bundle-rcc successfully finalized. Artifact ID 11759945085
+2026-10-12T16:20:48.3424215Z Artifact release-bundle-rcc has been successfully uploaded! Final size is 38437341 bytes. Artifact ID is 11759945085
+2026-10-12T16:20:48.3429493Z Artifact download URL: https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/artifacts/11759945085
+2026-10-12T16:20:48.3615172Z Post job cleanup.
+2026-10-12T16:20:48.4360989Z [command]/usr/bin/git version
+2026-10-12T16:20:48.4394961Z git version 2.55.0
+2026-10-12T16:20:48.4429632Z Temporarily overriding HOME='/home/runner/work/_temp/34da2e27-b7a6-4c8d-98a2-8141f20ac26b' before making global git config changes
+2026-10-12T16:20:48.4430760Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T16:20:48.4434637Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/homebrew-tools/homebrew-tools
+2026-10-12T16:20:48.4461535Z Removing SSH command configuration
+2026-10-12T16:20:48.4466446Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T16:20:48.4495052Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T16:20:48.4700199Z Removing HTTP extra header
+2026-10-12T16:20:48.4704642Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T16:20:48.4734952Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T16:20:48.4943918Z Removing includeIf entries pointing to credentials config files
+2026-10-12T16:20:48.4949419Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T16:20:48.4971227Z includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git.path
+2026-10-12T16:20:48.4971909Z includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git/worktrees/*.path
+2026-10-12T16:20:48.4972355Z includeif.gitdir:/github/workspace/.git.path
+2026-10-12T16:20:48.4972681Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T16:20:48.4978523Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git.path
+2026-10-12T16:20:48.4999394Z /home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:20:48.5007055Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-8bcd0e3d\-e5bd\-483d\-ae25\-d62a35bedafa\.config
+2026-10-12T16:20:48.5039155Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git/worktrees/*.path
+2026-10-12T16:20:48.5058548Z /home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:20:48.5072754Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/homebrew-tools/homebrew-tools/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-8bcd0e3d\-e5bd\-483d\-ae25\-d62a35bedafa\.config
+2026-10-12T16:20:48.5101566Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-12T16:20:48.5122258Z /github/runner_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:20:48.5129216Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-8bcd0e3d\-e5bd\-483d\-ae25\-d62a35bedafa\.config
+2026-10-12T16:20:48.5157663Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-12T16:20:48.5176088Z /github/runner_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config
+2026-10-12T16:20:48.5183308Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-8bcd0e3d\-e5bd\-483d\-ae25\-d62a35bedafa\.config
+2026-10-12T16:20:48.5213098Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T16:20:48.5408467Z Removing credentials config '/home/runner/work/_temp/git-credentials-8bcd0e3d-e5bd-483d-ae25-d62a35bedafa.config'
+2026-10-12T16:20:48.5539574Z Cleaning up orphan processes
+

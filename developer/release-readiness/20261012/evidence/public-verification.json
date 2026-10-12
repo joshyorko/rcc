@@ -1,0 +1,104 @@
+{
+  "version": "v18.19.6",
+  "sourceSha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+  "releaseId": 410798228,
+  "publishedAt": "2026-10-12T16:17:45Z",
+  "manifestSha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f",
+  "downloadedAssets": {
+    "index.json": {
+      "sha256": "f48dbe7941386b5adeb85cba077fd7a70c5e969ff729e3ebb08c4a14d2f0ca77",
+      "size": 8949
+    },
+    "rcc-linux64": {
+      "sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+      "size": 22401186
+    },
+    "rcc-macos64": {
+      "sha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+      "size": 22241232
+    },
+    "rcc-macosarm64": {
+      "sha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+      "size": 20986322
+    },
+    "rcc-windows64.exe": {
+      "sha256": "7fc250c378bcc853286998a69d6335e0a9e29b11a0ec653cad6e62f4644dc238",
+      "size": 20127232
+    },
+    "rccremote-linux64": {
+      "sha256": "14bfd76b608d3984635505a90be495c5503b27aa487e474fec96b162b58dfe26",
+      "size": 9351330
+    },
+    "rccremote-macos64": {
+      "sha256": "597bf719fb46254268af90057cf2f7a3695a07948a514e3052bd9a4446bec6ab",
+      "size": 9547136
+    },
+    "rccremote-macosarm64": {
+      "sha256": "ffaa506a890af2486d40be51fbb96ba33077288872fb3ce329fdb3b163ff092d",
+      "size": 8886578
+    },
+    "rccremote-windows64.exe": {
+      "sha256": "5687238576fef087b876e521572989838b2605a444fbac7f561719cde5bee197",
+      "size": 9675264
+    }
+  },
+  "actualBinaryMetadata": {
+    "rcc-linux64": {
+      "goVersion": "go1.26.9",
+      "goos": "linux",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rccremote-linux64": {
+      "goVersion": "go1.26.9",
+      "goos": "linux",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rcc-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goos": "windows",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rccremote-windows64.exe": {
+      "goVersion": "go1.26.9",
+      "goos": "windows",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rcc-macos64": {
+      "goVersion": "go1.26.9",
+      "goos": "darwin",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rccremote-macos64": {
+      "goVersion": "go1.26.9",
+      "goos": "darwin",
+      "goarch": "amd64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rcc-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goos": "darwin",
+      "goarch": "arm64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    },
+    "rccremote-macosarm64": {
+      "goVersion": "go1.26.9",
+      "goos": "darwin",
+      "goarch": "arm64",
+      "vcsRevision": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+      "vcsModified": false
+    }
+  },
+  "linuxRuntimeVersion": "v18.19.6"
+}

@@ -1,0 +1,87 @@
+{
+  "recordedUtc": "2026-10-12T16:28:40.681682+00:00",
+  "decision": "GO: publication and actual Homebrew update completed and verified",
+  "remainingReleaseGates": [],
+  "nextOperatorAction": "none",
+  "administratorCredentialPrerequisite": "none",
+  "publication": {
+    "run": 38276098534,
+    "workflowHead": "7ec87fb3feccad243dad81deb0c0f2cb4f5f0493",
+    "conclusion": "success",
+    "releaseId": 410798228,
+    "publishedAt": "2026-10-12T16:17:45Z",
+    "tag": "v18.19.6",
+    "tagTarget": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "actualPublicAssetDownloads": 9,
+    "allSizesHashesMatchApprovedManifest": true,
+    "actualGo1_26_9SourcePlatformCleanMetadata": 8,
+    "linuxRuntimeVersion": "v18.19.6"
+  },
+  "candidateTuple": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "homebrew": {
+    "verifiedUtc": "2026-10-12T16:25:35.371427+00:00",
+    "runId": 38276397789,
+    "conclusion": "success",
+    "caskCommit": "d6a2fbc1a39de21fe8888a828010a3a27827a9f8",
+    "caskBlob": "6a0f4d9ea2b353153227cacf2c2d4cf357ee3c86",
+    "caskVersion": "18.19.6",
+    "mirrorReleaseId": 410800696,
+    "actualMirrorDownloads": {
+      "rcc-linux64": {
+        "sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+        "size": 22401186
+      },
+      "rcc-macos64": {
+        "sha256": "22832fc7c8511f7827ea83cf19fcccb6265b57db986fccb07bf801a52c6078ce",
+        "size": 22241232
+      },
+      "rcc-macosarm64": {
+        "sha256": "18bfdd6c85abf5f26170a8e933c97799c884a067877943e65c74d4eadeb1e08f",
+        "size": 20986322
+      }
+    },
+    "installSmoke": "actual build-job log proves brew install --cask test/tap/rcc succeeded and rcc --version v18.19.6"
+  },
+  "verificationLocalCorrections": "initial verifier used default readonly Go module cache; selected existing contained Go1.26.9 cache. Public assets omit canonical provenance sidecar, so public validator correctly uses actual asset build-info function; all bytes rehashed, all failures retained; no release mutation/retry or binary rebuild for these read-only checks",
+  "acceptedSourcePRs": [
+    {
+      "pr": 243,
+      "merge": "3aa418395b60165613af98688580b627fb843623"
+    },
+    {
+      "pr": 242,
+      "merge": "f965f12acf19f333dca82a9a5dd6887e45c43a61"
+    },
+    {
+      "pr": 241,
+      "merge": "9312f283068c0c5c259370b1bc8bd9065970225b"
+    },
+    {
+      "pr": 244,
+      "merge": "66c44c0ce2a765989a1fdfcc6e3ed5716921d703"
+    },
+    {
+      "pr": 245,
+      "merge": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0"
+    },
+    {
+      "pr": 246,
+      "merge": "8198e7f6170032b3720278669410ce6d4ddb4e63"
+    },
+    {
+      "pr": 247,
+      "merge": "2092fcf0e4d6bd9cb87868580da87133f66bffd8"
+    },
+    {
+      "pr": 248,
+      "merge": "7ec87fb3feccad243dad81deb0c0f2cb4f5f0493"
+    }
+  ],
+  "tests": "fullshippingGo suite; final151Python tooling; current53focused; exact-headfour-platformnative checks; preparation171Robotpasses/full11/N1rollback; actualHomebrewinstall andversion smoke",
+  "scope": "Holotree optimization/research and optional architecture remain outside this completed non-Holotree release mission; signing/advisory dispositions and all prior failures retained; no new task/workspace/worker/credential or weakened policy"
+}

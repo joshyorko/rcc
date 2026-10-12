@@ -1,0 +1,336 @@
+{
+  "total_count": 6,
+  "jobs": [
+    {
+      "id": 114902818549,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawL3e9Q",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114902818549",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114902818549",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T16:17:51Z",
+      "started_at": "2026-10-12T16:17:53Z",
+      "completed_at": "2026-10-12T16:18:55Z",
+      "name": "Resolve Auto Update Slot",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T16:17:54Z",
+          "completed_at": "2026-10-12T16:17:55Z"
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T16:17:55Z",
+          "completed_at": "2026-10-12T16:17:56Z"
+        },
+        {
+          "name": "Resolve auto-update slot",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-12T16:17:56Z",
+          "completed_at": "2026-10-12T16:17:56Z"
+        },
+        {
+          "name": "Resolve packages needing update",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-12T16:17:56Z",
+          "completed_at": "2026-10-12T16:18:52Z"
+        },
+        {
+          "name": "Build matrix from slot output",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-12T16:18:52Z",
+          "completed_at": "2026-10-12T16:18:52Z"
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-12T16:18:52Z",
+          "completed_at": "2026-10-12T16:18:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-12T16:18:53Z",
+          "completed_at": "2026-10-12T16:18:53Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114902818549",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000141998,
+      "runner_name": "GitHub Actions 1000141998",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114902820431,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawL3mTw",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114902820431",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114902820431",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-12T16:17:52Z",
+      "started_at": "2026-10-12T16:17:52Z",
+      "completed_at": "2026-10-12T16:17:51Z",
+      "name": "Refresh Codex MemoryD from master",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114902820431",
+      "labels": [],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 114902820690,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawL3nUg",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114902820690",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114902820690",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-12T16:17:52Z",
+      "started_at": "2026-10-12T16:17:52Z",
+      "completed_at": "2026-10-12T16:17:51Z",
+      "name": "Sync Camp Formula",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114902820690",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 114903233033,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawMQyCQ",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114903233033",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114903233033",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T16:18:56Z",
+      "started_at": "2026-10-12T16:18:57Z",
+      "completed_at": "2026-10-12T16:20:49Z",
+      "name": "Build rcc Bundle",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T16:18:58Z",
+          "completed_at": "2026-10-12T16:18:59Z"
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T16:18:59Z",
+          "completed_at": "2026-10-12T16:18:59Z"
+        },
+        {
+          "name": "Resolve immutable Buzz Linux source",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-10-12T16:18:59Z",
+          "completed_at": "2026-10-12T16:18:59Z"
+        },
+        {
+          "name": "Export release bundle",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-12T16:18:59Z",
+          "completed_at": "2026-10-12T16:20:45Z"
+        },
+        {
+          "name": "Export Buzz Linux release bundle",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-12T16:20:45Z",
+          "completed_at": "2026-10-12T16:20:45Z"
+        },
+        {
+          "name": "Upload release bundle artifact",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-12T16:20:45Z",
+          "completed_at": "2026-10-12T16:20:48Z"
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-12T16:20:48Z",
+          "completed_at": "2026-10-12T16:20:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-12T16:20:48Z",
+          "completed_at": "2026-10-12T16:20:48Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114903233033",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000141999,
+      "runner_name": "GitHub Actions 1000141999",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 114903236030,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawMQ9vg",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114903236030",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114903236030",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-10-12T16:18:56Z",
+      "started_at": "2026-10-12T16:18:56Z",
+      "completed_at": "2026-10-12T16:18:55Z",
+      "name": "No Auto Updates Required",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114903236030",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 114903969708,
+      "run_id": 38276397789,
+      "workflow_name": "Tap Auto Update",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/runs/38276397789",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOQyqAJ88AAAAawM9vrA",
+      "head_sha": "068d8fd5d04014cbd6c2c8a913cc84b1d327a956",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/jobs/114903969708",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789/job/114903969708",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-12T16:20:50Z",
+      "started_at": "2026-10-12T16:20:52Z",
+      "completed_at": "2026-10-12T16:21:11Z",
+      "name": "Publish Auto Update Slot",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-12T16:20:52Z",
+          "completed_at": "2026-10-12T16:20:53Z"
+        },
+        {
+          "name": "Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-12T16:20:53Z",
+          "completed_at": "2026-10-12T16:20:55Z"
+        },
+        {
+          "name": "Download release bundles",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-12T16:20:55Z",
+          "completed_at": "2026-10-12T16:20:58Z"
+        },
+        {
+          "name": "Publish release assets and update tap files",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-12T16:20:58Z",
+          "completed_at": "2026-10-12T16:21:09Z"
+        },
+        {
+          "name": "Post Checkout repository",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-12T16:21:09Z",
+          "completed_at": "2026-10-12T16:21:09Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-12T16:21:09Z",
+          "completed_at": "2026-10-12T16:21:09Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/joshyorko/homebrew-tools/check-runs/114903969708",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000142000,
+      "runner_name": "GitHub Actions 1000142000",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

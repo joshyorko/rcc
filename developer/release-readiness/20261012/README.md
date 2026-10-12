@@ -1,3 +1,25 @@
+# RCC v18.19.6 published and independently verified
+
+Publication and the actual Homebrew update completed successfully. No release execution gate or operator approval remains.
+
+- RCC [v18.19.6](https://github.com/joshyorko/rcc/releases/tag/v18.19.6) published at 2026-10-12 16:17:45 UTC by [publisher 38276098534](https://github.com/joshyorko/rcc/actions/runs/38276098534), running corrected main `7ec87fb3feccad243dad81deb0c0f2cb4f5f0493`.
+- The public Git tag points exactly to approved shipping source `f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0`. All nine public assets were downloaded and their actual bytes, sizes and SHA-256 values match the approved canonical manifest. All eight binaries' actual Go 1.26.9/source/platform/clean metadata passed; the downloaded Linux executable returned `v18.19.6`.
+- [Homebrew run 38276397789](https://github.com/joshyorko/homebrew-tools/actions/runs/38276397789) completed its real install/smoke check and update. Its log records `brew install --cask test/tap/rcc` successfully installing RCC and `rcc --version` returning `v18.19.6`. Commit `d6a2fbc1a39de21fe8888a828010a3a27827a9f8` updated `Casks/rcc.rb`. All three mirrored Linux/macOS files were independently downloaded and hashed against the same canonical manifest; the cask's version, URLs and hashes match.
+- Accepted PRs 241–248 are integrated. The shipping candidate was preserved through publisher-only fixes; no new preparation or unchanged-binary rebuild was introduced. Josh controlled the Homebrew credential correction and each protected approval. The agent neither read nor changed credential values, bypassed approval, weakened guards, erased failure receipts, or started another task/workspace/worker.
+
+The immutable publication inputs were:
+
+```text
+preparation_run_id=38245229838
+source_sha=f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0
+expected_version=v18.19.6
+asset_manifest_sha256=a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f
+```
+
+Final evidence: [publication handoff](evidence/final-published-release-handoff.json), [actual public-byte verification](evidence/public-verification.json), [publisher job](evidence/corrected-publisher-success-job.log), [actual Homebrew verification](evidence/homebrew-final-verification.json), [install/smoke job](evidence/homebrew-final-build-job.log), and [tap publish job](evidence/homebrew-final-publish-job.log). Source-specific tests, exact-head reviews, all11/Robot/native/N-1 receipts and earlier failed attempts remain below and in the evidence directory. The retained signing and source-level advisory dispositions are not blanket security clearance. Holotree optimization/research and optional architecture remain outside this completed non-Holotree campaign.
+
+## Retained checkpoints and failure history
+
 # RCC v18.19.6 release readiness
 
 Source engineering and exact-main preparation: GO. Publication: HOLD. No tag, public release, publisher dispatch, Homebrew update, new credential or security setting change occurred. Josh’s conditional release approval authorizes continued preparation; the new exact tuple and remaining operator/security gates have not been approved.
