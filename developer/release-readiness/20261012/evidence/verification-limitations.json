@@ -55,6 +55,10 @@
     {
       "check": "command-line GitHub authentication during final preparation",
       "result": "gh API began returning401 at12:10UTC; connected GitHub app remains authenticated as joshyorko and supplies read-only jobs/artifact downloads; public API remains accessible; no credentials created or broadened; original run not redispatched"
+    },
+    {
+      "check": "raw exported Robot XML whitespace and Windows receipt normalization",
+      "result": "git diff --check reports trailing whitespace in unmodified exported raw XML; preserve actual artifact bytes. Root text=auto normalized three Windows raw receipts toLF at first handoffcommit; scoped handoff evidence/** -text and re-add restore originalCRLF. Authored guidance diffcheckpasses; final remote all-byte readback required."
     }
   ],
   "supersededOwnRccRunsCancelledWithoutDeletingReceipts": [

@@ -1,0 +1,2 @@
+# Keep downloaded receipts and logs byte-exact, including Windows CRLF.
+evidence/** -text

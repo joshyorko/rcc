@@ -1,0 +1,24 @@
+{
+  "correctiveScope": "handoff evidence only, no shipping source or policy change",
+  "originalByteMismatches": [
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-native-runtime-receipt.json",
+      "workingArtifactSha256": "a17aff0ba60be00787eb6a95d54d6331dfb48d8fc374697b7f697ea7841cdfd7",
+      "priorNormalizedCommitBlobSha256": "69b04525162ed23389a70d1d11d352332334d89e72c73bc736abb995d119775d",
+      "priorBytesIdentical": false
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-native-runtime-robot-evidence.json",
+      "workingArtifactSha256": "94cd8ded86d56758307c0474f95fea77182707c966a23b3703c26644781f5180",
+      "priorNormalizedCommitBlobSha256": "eb3a7c5a68fd5af056065909968f638d08c7c3133aeaf0f836331e1bc0f837fa",
+      "priorBytesIdentical": false
+    },
+    {
+      "path": "developer/release-readiness/20261012/evidence/final-windows_amd64-output.xml",
+      "workingArtifactSha256": "d41def5577f538c7e08cb8ad2682375fd37ae0e3d0f72825fabbd81e11691939",
+      "priorNormalizedCommitBlobSha256": "2b9e0c8f2c33eab51c1f2b37f7fe6bc78bb23518d0978edb51dd65d4617a5e0b",
+      "priorBytesIdentical": false
+    }
+  ],
+  "fix": "scoped evidence/** -text attribute; re-add raw Windows artifacts unchanged"
+}
