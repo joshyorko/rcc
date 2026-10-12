@@ -245,8 +245,8 @@ func makeModedDir(fullpath string, correct fs.FileMode) (path string, err error)
 		return ensureCorrectMode(fullpath, stat, correct)
 	}
 	fail.On(err == nil, "Path %q exists, but is not a directory!", fullpath)
-	_, err = shared.MakeSharedDir(filepath.Dir(fullpath))
-	fail.On(err != nil, "%v", err)
+	err = makeParentDirectories(filepath.Dir(fullpath), correct)
+	fail.On(err != nil, "Failed to create parent directories for %q, reason: %v", fullpath, err)
 	err = os.Mkdir(fullpath, correct)
 	fail.On(err != nil, "Failed to create directory %q, reason: %v", fullpath, err)
 	stat, err = os.Stat(fullpath)
@@ -254,6 +254,45 @@ func makeModedDir(fullpath string, correct fs.FileMode) (path string, err error)
 	_, err = ensureCorrectMode(fullpath, stat, correct)
 	fail.On(err != nil, "Failed to make created directory shared %q, reason: %v", fullpath, err)
 	return fullpath, nil
+}
+
+func makeParentDirectories(directory string, correct fs.FileMode) error {
+	stat, err := os.Stat(directory)
+	if err == nil {
+		if !stat.IsDir() {
+			return fmt.Errorf("path %q exists, but is not a directory", directory)
+		}
+		return nil
+	}
+	if !os.IsNotExist(err) {
+		return err
+	}
+
+	parent := filepath.Dir(directory)
+	if parent != directory {
+		if err := makeParentDirectories(parent, correct); err != nil {
+			return err
+		}
+	}
+	if err := os.Mkdir(directory, correct); err != nil {
+		if !os.IsExist(err) {
+			return err
+		}
+		stat, statErr := os.Stat(directory)
+		if statErr != nil {
+			return statErr
+		}
+		if !stat.IsDir() {
+			return fmt.Errorf("path %q exists, but is not a directory", directory)
+		}
+		return nil
+	}
+	stat, err = os.Stat(directory)
+	if err != nil {
+		return err
+	}
+	_, err = ensureCorrectMode(directory, stat, correct)
+	return err
 }
 
 func MakeSharedFile(fullpath string) (string, error) {
