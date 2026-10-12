@@ -1,0 +1,12 @@
+=== RUN   TestMultipartUploadClosesResponseBody
+=== RUN   TestMultipartUploadClosesResponseBody/success
+=== RUN   TestMultipartUploadClosesResponseBody/error_status
+=== RUN   TestMultipartUploadClosesResponseBody/body_close_error
+=== RUN   TestMultipartUploadClosesResponseBody/status_and_body_close_errors
+--- PASS: TestMultipartUploadClosesResponseBody (0.00s)
+    --- PASS: TestMultipartUploadClosesResponseBody/success (0.00s)
+    --- PASS: TestMultipartUploadClosesResponseBody/error_status (0.00s)
+    --- PASS: TestMultipartUploadClosesResponseBody/body_close_error (0.00s)
+    --- PASS: TestMultipartUploadClosesResponseBody/status_and_body_close_errors (0.00s)
+PASS
+ok  	github.com/joshyorko/rcc/operations	0.026s

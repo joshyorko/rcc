@@ -1,0 +1,26 @@
+htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)
+htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used
+htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used
+htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used
+htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used
+operations/pull.go:67:2: unreachable code
+Traceback (most recent call last):
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/site-packages/invoke/__main__.py", line 3, in <module>
+    program.run()
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/site-packages/invoke/program.py", line 398, in run
+    self.execute()
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/site-packages/invoke/program.py", line 583, in execute
+    executor.execute(*self.tasks)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/site-packages/invoke/executor.py", line 140, in execute
+    result = call.task(*args, **call.kwargs)
+  File "/workspace/.rcc-onboarding/home/holotree/c2fd1aa_5a1fac3_9fcd2534/lib/python3.10/site-packages/invoke/tasks.py", line 138, in __call__
+    result = self.body(*args, **kwargs)
+  File "/workspace/rcc-bootstrap/tasks.py", line 904, in goVet
+    _validate_go_vet_result(result.returncode, output)
+  File "/workspace/rcc-bootstrap/tasks.py", line 484, in _validate_go_vet_result
+    raise RuntimeError(f"unexpected go vet findings: {findings}")
+RuntimeError: unexpected go vet findings: ['htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)', 'htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used', 'operations/pull.go:67:2: unreachable code']

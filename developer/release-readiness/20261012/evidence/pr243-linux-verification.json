@@ -1,0 +1,17 @@
+{
+  "artifactId": 11742577797,
+  "workflowRunId": 38239425668,
+  "sourceSha": "56cab486cd70865c9ca73bc66da9d756086e12c4",
+  "platform": "linux_amd64",
+  "zipSha256": "73de37428df44c657e829de3332d8ac8d67af2a79a6242a3dffcd0f996a66899",
+  "binarySha256": "2deb0aeafb0b08b0ba1c962f48726d4118245be1d9163d77c1e5ce38b9eb9da0",
+  "binarySize": 22392994,
+  "goVersion": "go1.26.9",
+  "nativeLifecycle": "validated",
+  "robot": {
+    "pass": 1,
+    "fail": 0,
+    "skip": 0
+  },
+  "jat": "validated"
+}

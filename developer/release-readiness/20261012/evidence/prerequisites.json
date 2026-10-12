@@ -1,0 +1,22 @@
+{
+  "observedDate": "2026-10-12",
+  "publication": "HOLD",
+  "latestPublicRelease": "v18.19.5",
+  "v18.19.6TagAndReleaseAbsent": true,
+  "readOnlyChecks": {
+    "rccProductionEnvironment": {"httpStatus": 404, "disposition": "unreadable or absent; protection and reviewer identity not established"},
+    "mainBranchProtection": {"httpStatus": 403, "disposition": "resource not accessible by current integration"},
+    "workflowPermissions": {"httpStatus": 403, "disposition": "GITHUB_TOKEN contents-write settings not established"},
+    "requiredSecretNames": {"httpStatus": 403, "disposition": "RCC_RELEASE_POLICY_AUDIT_TOKEN and HOMEBREW_TOOLS_PAT configuration not established"},
+    "securityDashboard": {"httpStatus": 403, "disposition": "individual alert details unavailable; git push still reports 15 alerts, 1 critical, 6 high, 4 moderate, 4 low"},
+    "homebrewWorkflow": {"id": 255480164, "path": ".github/workflows/tap-auto-update.yml", "state": "active", "disposition": "workflow readability only, not dispatch permission using publication secret"},
+    "repositoryUserPermissions": {"admin": true, "maintain": true, "push": true, "pull": true, "disposition": "account permissions do not establish current integration/token administration permissions"}
+  },
+  "administratorPrerequisites": [
+    "Make rcc-production readable through Administration:read release audit credentials; verify exactly one required-reviewers rule, at least one authorized different human reviewer, prevent_self_review=true and can_admins_bypass=false.",
+    "Verify RCC_RELEASE_POLICY_AUDIT_TOKEN repository secret and its Administration:read permission. Do not create or expand credentials without operator authorization.",
+    "Verify publication GITHUB_TOKEN can create the new tag and release, and the separately configured HOMEBREW_TOOLS_PAT can dispatch the active homebrew-tools tap-auto-update.yml workflow. Readability alone is insufficient.",
+    "Obtain and disposition the actual current security dashboard alerts with authorized security read access, and explicitly decide whether the verified unsigned/ad hoc signing scope meets publication requirements."
+  ],
+  "nextOperatorApprovalAfterPrerequisites": "Josh must explicitly approve the final exact verified candidate and publication tuple. A different authorized human must then approve the protected pending publish job; Josh cannot dispatch and self-approve. No publisher dispatch is authorized yet."
+}

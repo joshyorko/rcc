@@ -1,0 +1,29 @@
+ok  	github.com/joshyorko/rcc/anywork	0.045s
+?   	github.com/joshyorko/rcc/artifactpolicy	[no test files]
+ok  	github.com/joshyorko/rcc/artifactprovider	1.055s
+ok  	github.com/joshyorko/rcc/artifacttrust	0.013s
+ok  	github.com/joshyorko/rcc/blobs	0.926s
+ok  	github.com/joshyorko/rcc/buildcoord	1.574s
+ok  	github.com/joshyorko/rcc/cloud	0.027s
+ok  	github.com/joshyorko/rcc/cmd	0.246s
+ok  	github.com/joshyorko/rcc/cmd/rcc	0.056s
+ok  	github.com/joshyorko/rcc/cmd/rccremote	0.017s
+ok  	github.com/joshyorko/rcc/common	0.002s
+ok  	github.com/joshyorko/rcc/conda	0.489s
+ok  	github.com/joshyorko/rcc/environmentartifact	0.570s
+ok  	github.com/joshyorko/rcc/environmentlifecycle	11.012s
+ok  	github.com/joshyorko/rcc/fail	0.003s [no tests to run]
+ok  	github.com/joshyorko/rcc/hamlet	0.002s
+ok  	github.com/joshyorko/rcc/htfs	0.058s
+ok  	github.com/joshyorko/rcc/journal	0.004s
+ok  	github.com/joshyorko/rcc/mocks	0.017s
+ok  	github.com/joshyorko/rcc/operations	0.152s
+ok  	github.com/joshyorko/rcc/pathlib	0.012s
+ok  	github.com/joshyorko/rcc/pretty	0.002s [no tests to run]
+ok  	github.com/joshyorko/rcc/remotree	0.033s
+ok  	github.com/joshyorko/rcc/robot	0.018s
+ok  	github.com/joshyorko/rcc/set	0.002s
+ok  	github.com/joshyorko/rcc/settings	0.034s
+ok  	github.com/joshyorko/rcc/shell	0.024s
+ok  	github.com/joshyorko/rcc/wizard	0.018s [no tests to run]
+ok  	github.com/joshyorko/rcc/xviper	0.002s

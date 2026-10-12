@@ -1,0 +1,373 @@
+﻿2026-08-18T22:15:55.9569201Z Current runner version: '2.336.0'
+2026-08-18T22:15:55.9590423Z ##[group]Runner Image Provisioner
+2026-08-18T22:15:55.9591227Z Hosted Compute Agent
+2026-08-18T22:15:55.9591664Z Version: 20260729.566
+2026-08-18T22:15:55.9592253Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+2026-08-18T22:15:55.9592857Z Build Date: 2026-07-29T19:17:02Z
+2026-08-18T22:15:55.9593395Z Worker ID: {de410190-c803-479f-ae1b-24b1350c4bf2}
+2026-08-18T22:15:55.9594287Z Azure Region: westus
+2026-08-18T22:15:55.9594774Z ##[endgroup]
+2026-08-18T22:15:55.9595920Z ##[group]Operating System
+2026-08-18T22:15:55.9596496Z Ubuntu
+2026-08-18T22:15:55.9596918Z 24.04.4
+2026-08-18T22:15:55.9597357Z LTS
+2026-08-18T22:15:55.9597791Z ##[endgroup]
+2026-08-18T22:15:55.9598266Z ##[group]Runner Image
+2026-08-18T22:15:55.9598775Z Image: ubuntu-24.04
+2026-08-18T22:15:55.9599227Z Version: 20260810.271.1
+2026-08-18T22:15:55.9600223Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260810.271/images/ubuntu/Ubuntu2404-Readme.md
+2026-08-18T22:15:55.9601506Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260810.271
+2026-08-18T22:15:55.9602260Z ##[endgroup]
+2026-08-18T22:15:55.9603185Z ##[group]GITHUB_TOKEN Permissions
+2026-08-18T22:15:55.9605118Z Contents: read
+2026-08-18T22:15:55.9605655Z Metadata: read
+2026-08-18T22:15:55.9606105Z ##[endgroup]
+2026-08-18T22:15:55.9607797Z Secret source: Actions
+2026-08-18T22:15:55.9608839Z Prepare workflow directory
+2026-08-18T22:15:56.0257245Z Prepare all required actions
+2026-08-18T22:15:56.0294922Z Getting action download info
+2026-08-18T22:15:56.3520007Z Download action repository 'actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd' (SHA:93cb6efe18208431cddfb8368fd83d5badbf9bfd)
+2026-08-18T22:15:56.8991588Z Download action repository 'actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405' (SHA:a309ff8b426b58ec0e2a45f0f869d46889d02405)
+2026-08-18T22:15:57.6039364Z Download action repository 'golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a' (SHA:ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a)
+2026-08-18T22:15:58.3649240Z Complete job name: golangci-lint
+2026-08-18T22:15:58.4390041Z ##[group]Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+2026-08-18T22:15:58.4391404Z with:
+2026-08-18T22:15:58.4392037Z   fetch-depth: 0
+2026-08-18T22:15:58.4392731Z   repository: joshyorko/rcc
+2026-08-18T22:15:58.4399676Z   token: ***
+2026-08-18T22:15:58.4400348Z   ssh-strict: true
+2026-08-18T22:15:58.4401023Z   ssh-user: git
+2026-08-18T22:15:58.4401719Z   persist-credentials: true
+2026-08-18T22:15:58.4402471Z   clean: true
+2026-08-18T22:15:58.4403168Z   sparse-checkout-cone-mode: true
+2026-08-18T22:15:58.4404198Z   fetch-tags: false
+2026-08-18T22:15:58.4404888Z   show-progress: true
+2026-08-18T22:15:58.4405594Z   lfs: false
+2026-08-18T22:15:58.4406328Z   submodules: false
+2026-08-18T22:15:58.4407287Z   set-safe-directory: true
+2026-08-18T22:15:58.4408454Z ##[endgroup]
+2026-08-18T22:15:58.6263378Z Syncing repository: joshyorko/rcc
+2026-08-18T22:15:58.6265625Z ##[group]Getting Git version info
+2026-08-18T22:15:58.6266724Z Working directory is '/home/runner/work/rcc/rcc'
+2026-08-18T22:15:58.6268322Z [command]/usr/bin/git version
+2026-08-18T22:15:58.6758727Z git version 2.54.0
+2026-08-18T22:15:58.6805915Z ##[endgroup]
+2026-08-18T22:15:58.6817429Z Temporarily overriding HOME='/home/runner/work/_temp/e569ea27-4273-425c-83cd-a0ec4cfdb2c6' before making global git config changes
+2026-08-18T22:15:58.6820363Z Adding repository directory to the temporary git global config as a safe directory
+2026-08-18T22:15:58.6822850Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-08-18T22:15:58.7189413Z Deleting the contents of '/home/runner/work/rcc/rcc'
+2026-08-18T22:15:58.7192447Z ##[group]Initializing the repository
+2026-08-18T22:15:58.7196145Z [command]/usr/bin/git init /home/runner/work/rcc/rcc
+2026-08-18T22:15:58.7901838Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-08-18T22:15:58.7904454Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-08-18T22:15:58.7906029Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-08-18T22:15:58.7907364Z hint: call:
+2026-08-18T22:15:58.7908173Z hint:
+2026-08-18T22:15:58.7909341Z hint: 	git config --global init.defaultBranch <name>
+2026-08-18T22:15:58.7910555Z hint:
+2026-08-18T22:15:58.7911938Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-08-18T22:15:58.7914292Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-08-18T22:15:58.7916046Z hint:
+2026-08-18T22:15:58.7917156Z hint: 	git branch -m <name>
+2026-08-18T22:15:58.7918244Z hint:
+2026-08-18T22:15:58.7919293Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-08-18T22:15:58.7920847Z Initialized empty Git repository in /home/runner/work/rcc/rcc/.git/
+2026-08-18T22:15:58.7923993Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-08-18T22:15:58.7940474Z ##[endgroup]
+2026-08-18T22:15:58.7942219Z ##[group]Disabling automatic garbage collection
+2026-08-18T22:15:58.7943659Z [command]/usr/bin/git config --local gc.auto 0
+2026-08-18T22:15:58.7969756Z ##[endgroup]
+2026-08-18T22:15:58.7971321Z ##[group]Setting up auth
+2026-08-18T22:15:58.7976055Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-08-18T22:15:58.8001538Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-08-18T22:15:58.8367601Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-08-18T22:15:58.8394011Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-08-18T22:15:58.8571382Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-08-18T22:15:58.8598252Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-08-18T22:15:58.8776775Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-08-18T22:15:58.8804435Z ##[endgroup]
+2026-08-18T22:15:58.8805946Z ##[group]Fetching the repository
+2026-08-18T22:15:58.8812494Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +b5bda85d21d5fdedb466d990a48606ce78674320:refs/remotes/pull/119/merge
+2026-08-18T22:16:00.1556877Z From https://github.com/joshyorko/rcc
+2026-08-18T22:16:00.1558380Z  * [new branch]      001-oci-image-build                      -> origin/001-oci-image-build
+2026-08-18T22:16:00.1559465Z  * [new branch]      002-ui-wizard-enhancements               -> origin/002-ui-wizard-enhancements
+2026-08-18T22:16:00.1560659Z  * [new branch]      add-workflow-workflows-daily-repo-status.md-7272 -> origin/add-workflow-workflows-daily-repo-status.md-7272
+2026-08-18T22:16:00.1561676Z  * [new branch]      bugs/clawpatch-fixes                     -> origin/bugs/clawpatch-fixes
+2026-08-18T22:16:00.1562524Z  * [new branch]      feature/63-holotree-zstd-compression     -> origin/feature/63-holotree-zstd-compression
+2026-08-18T22:16:00.1563639Z  * [new branch]      feature/environment-artifacts-v1         -> origin/feature/environment-artifacts-v1
+2026-08-18T22:16:00.1564541Z  * [new branch]      feature/fuse-virtual-holotree            -> origin/feature/fuse-virtual-holotree
+2026-08-18T22:16:00.1565377Z  * [new branch]      feature/uv-native-fast-path              -> origin/feature/uv-native-fast-path
+2026-08-18T22:16:00.1566458Z  * [new branch]      jyorko-agent/fix-hololib-import-zip-slip-vulnerability -> origin/jyorko-agent/fix-hololib-import-zip-slip-vulnerability
+2026-08-18T22:16:00.1568175Z  * [new branch]      jyorko-agent/fix-javascript-injection-in-release-workflow -> origin/jyorko-agent/fix-javascript-injection-in-release-workflow
+2026-08-18T22:16:00.1569479Z  * [new branch]      jyorko-agent/fix-unsafe-micromamba-tar-extraction -> origin/jyorko-agent/fix-unsafe-micromamba-tar-extraction
+2026-08-18T22:16:00.1570614Z  * [new branch]      jyorko-agent/fix-zip-extraction-vulnerability -> origin/jyorko-agent/fix-zip-extraction-vulnerability
+2026-08-18T22:16:00.1571776Z  * [new branch]      jyorko-agent/propose-fix-for-ci-command-injection -> origin/jyorko-agent/propose-fix-for-ci-command-injection
+2026-08-18T22:16:00.1572601Z  * [new branch]      jyorko-agent/propose-fix-for-mutable-ci-dependencies -> origin/jyorko-agent/propose-fix-for-mutable-ci-dependencies
+2026-08-18T22:16:00.1573696Z  * [new branch]      jyorko-agent/propose-fix-for-release-permission-vulnerability -> origin/jyorko-agent/propose-fix-for-release-permission-vulnerability
+2026-08-18T22:16:00.1574719Z  * [new branch]      jyorko-agent/propose-fix-for-template-vulnerability -> origin/jyorko-agent/propose-fix-for-template-vulnerability
+2026-08-18T22:16:00.1575315Z  * [new branch]      main                                     -> origin/main
+2026-08-18T22:16:00.1575682Z  * [new tag]         v18.10.0                                 -> v18.10.0
+2026-08-18T22:16:00.1576023Z  * [new tag]         v18.11.0                                 -> v18.11.0
+2026-08-18T22:16:00.1576352Z  * [new tag]         v18.12.0                                 -> v18.12.0
+2026-08-18T22:16:00.1576671Z  * [new tag]         v18.12.1                                 -> v18.12.1
+2026-08-18T22:16:00.1576990Z  * [new tag]         v18.13.0                                 -> v18.13.0
+2026-08-18T22:16:00.1577305Z  * [new tag]         v18.13.1                                 -> v18.13.1
+2026-08-18T22:16:00.1577622Z  * [new tag]         v18.16.0                                 -> v18.16.0
+2026-08-18T22:16:00.1577939Z  * [new tag]         v18.17.0                                 -> v18.17.0
+2026-08-18T22:16:00.1578422Z  * [new tag]         v18.17.1                                 -> v18.17.1
+2026-08-18T22:16:00.1578872Z  * [new tag]         v18.17.2                                 -> v18.17.2
+2026-08-18T22:16:00.1579194Z  * [new tag]         v18.17.3                                 -> v18.17.3
+2026-08-18T22:16:00.1579630Z  * [new tag]         v18.17.4                                 -> v18.17.4
+2026-08-18T22:16:00.1580100Z  * [new tag]         v18.17.5                                 -> v18.17.5
+2026-08-18T22:16:00.1580423Z  * [new tag]         v18.17.6                                 -> v18.17.6
+2026-08-18T22:16:00.1580740Z  * [new tag]         v18.17.7                                 -> v18.17.7
+2026-08-18T22:16:00.1581183Z  * [new tag]         v18.18.0                                 -> v18.18.0
+2026-08-18T22:16:00.1581557Z  * [new tag]         v18.18.1                                 -> v18.18.1
+2026-08-18T22:16:00.1581881Z  * [new tag]         v18.5.0                                  -> v18.5.0
+2026-08-18T22:16:00.1582230Z  * [new tag]         v18.6.0                                  -> v18.6.0
+2026-08-18T22:16:00.1582547Z  * [new tag]         v18.7.0                                  -> v18.7.0
+2026-08-18T22:16:00.1582860Z  * [new tag]         v18.8.0                                  -> v18.8.0
+2026-08-18T22:16:00.1583169Z  * [new tag]         v18.9.0                                  -> v18.9.0
+2026-08-18T22:16:00.1583659Z  * [new tag]         v18.9.1                                  -> v18.9.1
+2026-08-18T22:16:00.1584055Z  * [new ref]         b5bda85d21d5fdedb466d990a48606ce78674320 -> pull/119/merge
+2026-08-18T22:16:00.1626264Z ##[endgroup]
+2026-08-18T22:16:00.1626836Z ##[group]Determining the checkout info
+2026-08-18T22:16:00.1627528Z ##[endgroup]
+2026-08-18T22:16:00.1633200Z [command]/usr/bin/git sparse-checkout disable
+2026-08-18T22:16:00.1665800Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-08-18T22:16:00.1688733Z ##[group]Checking out the ref
+2026-08-18T22:16:00.1697090Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/119/merge
+2026-08-18T22:16:00.1988452Z Note: switching to 'refs/remotes/pull/119/merge'.
+2026-08-18T22:16:00.1988805Z 
+2026-08-18T22:16:00.1989081Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-08-18T22:16:00.1989533Z changes and commit them, and you can discard any commits you make in this
+2026-08-18T22:16:00.1989965Z state without impacting any branches by switching back to a branch.
+2026-08-18T22:16:00.1990205Z 
+2026-08-18T22:16:00.1990396Z If you want to create a new branch to retain commits you create, you may
+2026-08-18T22:16:00.1990802Z do so (now or later) by using -c with the switch command. Example:
+2026-08-18T22:16:00.1991021Z 
+2026-08-18T22:16:00.1991137Z   git switch -c <new-branch-name>
+2026-08-18T22:16:00.1991300Z 
+2026-08-18T22:16:00.1991414Z Or undo this operation with:
+2026-08-18T22:16:00.1991569Z 
+2026-08-18T22:16:00.1991699Z   git switch -
+2026-08-18T22:16:00.1991830Z 
+2026-08-18T22:16:00.1992051Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-08-18T22:16:00.1992317Z 
+2026-08-18T22:16:00.1992673Z HEAD is now at b5bda85 Merge b1af6aab4be2a2fd4aa9c5329cddcc2739cfa0d8 into 0e3a5e4d97291b880ad97d235a2f730ae8a4e251
+2026-08-18T22:16:00.1996615Z ##[endgroup]
+2026-08-18T22:16:00.2028570Z [command]/usr/bin/git log -1 --format=%H
+2026-08-18T22:16:00.2049012Z b5bda85d21d5fdedb466d990a48606ce78674320
+2026-08-18T22:16:00.2264839Z ##[group]Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+2026-08-18T22:16:00.2265204Z with:
+2026-08-18T22:16:00.2265417Z   python-version: 3.10
+2026-08-18T22:16:00.2265650Z   check-latest: false
+2026-08-18T22:16:00.2267561Z   token: ***
+2026-08-18T22:16:00.2267781Z   update-environment: true
+2026-08-18T22:16:00.2268022Z   allow-prereleases: false
+2026-08-18T22:16:00.2268253Z   freethreaded: false
+2026-08-18T22:16:00.2268466Z ##[endgroup]
+2026-08-18T22:16:00.3308269Z ##[group]Installed versions
+2026-08-18T22:16:00.4321906Z Successfully set up CPython (3.10.20)
+2026-08-18T22:16:00.4322624Z ##[endgroup]
+2026-08-18T22:16:00.4432950Z ##[group]Run python -m pip install invoke==2.2.0
+2026-08-18T22:16:00.4433391Z [36;1mpython -m pip install invoke==2.2.0[0m
+2026-08-18T22:16:00.4433976Z [36;1minv assets[0m
+2026-08-18T22:16:00.4476914Z shell: /usr/bin/bash -e {0}
+2026-08-18T22:16:00.4477189Z env:
+2026-08-18T22:16:00.4477453Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:00.4477854Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.20/x64/lib/pkgconfig
+2026-08-18T22:16:00.4478238Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:00.4478578Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:00.4478913Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:00.4479249Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.20/x64/lib
+2026-08-18T22:16:00.4479535Z ##[endgroup]
+2026-08-18T22:16:01.6577966Z Collecting invoke==2.2.0
+2026-08-18T22:16:01.6987048Z   Downloading invoke-2.2.0-py3-none-any.whl.metadata (3.3 kB)
+2026-08-18T22:16:01.7041737Z Downloading invoke-2.2.0-py3-none-any.whl (160 kB)
+2026-08-18T22:16:01.7589661Z Installing collected packages: invoke
+2026-08-18T22:16:01.8271881Z Successfully installed invoke-2.2.0
+2026-08-18T22:16:20.4097474Z Using micromamba version v2.5.0
+2026-08-18T22:16:20.4098100Z Downloading from official source: https://micro.mamba.pm/api/micromamba/linux-64/2.5.0
+2026-08-18T22:16:20.4098596Z Compressing blobs/assets/micromamba.linux_amd64
+2026-08-18T22:16:20.4099067Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-64/2.5.0
+2026-08-18T22:16:20.4099559Z Compressing blobs/assets/micromamba.darwin_amd64
+2026-08-18T22:16:20.4100072Z Downloading from official source: https://micro.mamba.pm/api/micromamba/osx-arm64/2.5.0
+2026-08-18T22:16:20.4100639Z Compressing blobs/assets/micromamba.darwin_arm64
+2026-08-18T22:16:20.4101185Z Downloading from official source: https://micro.mamba.pm/api/micromamba/win-64/2.5.0
+2026-08-18T22:16:20.4102094Z Compressing blobs/assets/micromamba.windows_amd64
+2026-08-18T22:16:20.4102574Z Directory templates/python/ => /home/runner/work/rcc/rcc/blobs/assets/python.zip
+2026-08-18T22:16:20.4103208Z Directory templates/extended/ => /home/runner/work/rcc/rcc/blobs/assets/extended.zip
+2026-08-18T22:16:20.4104076Z Directory templates/standard/ => /home/runner/work/rcc/rcc/blobs/assets/standard.zip
+2026-08-18T22:16:20.4104620Z Copying assets/micromamba_version.txt to blobs/assets/
+2026-08-18T22:16:20.4105046Z Copying assets/externally_managed.txt to blobs/assets/
+2026-08-18T22:16:20.4105450Z Copying assets/robocorp_settings.yaml to blobs/assets/
+2026-08-18T22:16:20.4105823Z Copying assets/speedtest.yaml to blobs/assets/
+2026-08-18T22:16:20.4106209Z Copying assets/templates.yaml to blobs/assets/
+2026-08-18T22:16:20.4106545Z Copying assets/netdiag.yaml to blobs/assets/
+2026-08-18T22:16:20.4106884Z Copying assets/depxtraction.py to blobs/assets/
+2026-08-18T22:16:20.4107269Z Copying assets/man/LICENSE.txt to blobs/assets/man/
+2026-08-18T22:16:20.4107703Z Copying assets/man/tutorial.txt to blobs/assets/man/
+2026-08-18T22:16:20.4108139Z Copying docs/environment-caching.md to blobs/docs/
+2026-08-18T22:16:20.4108564Z Copying docs/agent-boundaries.md to blobs/docs/
+2026-08-18T22:16:20.4108989Z Copying docs/troubleshooting.md to blobs/docs/
+2026-08-18T22:16:20.4109440Z Copying docs/recipes.md to blobs/docs/
+2026-08-18T22:16:20.4109798Z Copying docs/features.md to blobs/docs/
+2026-08-18T22:16:20.4110141Z Copying docs/usecases.md to blobs/docs/
+2026-08-18T22:16:20.4110502Z Copying docs/cloud-commands.md to blobs/docs/
+2026-08-18T22:16:20.4110882Z Copying docs/roadmap.md to blobs/docs/
+2026-08-18T22:16:20.4111233Z Copying docs/changelog.md to blobs/docs/
+2026-08-18T22:16:20.4111579Z Copying docs/README.md to blobs/docs/
+2026-08-18T22:16:20.4111936Z Copying docs/holotree.md to blobs/docs/
+2026-08-18T22:16:20.4112290Z Copying docs/BUILD.md to blobs/docs/
+2026-08-18T22:16:20.4112692Z Copying docs/profile_configuration.md to blobs/docs/
+2026-08-18T22:16:20.4113390Z Copying docs/maintenance.md to blobs/docs/
+2026-08-18T22:16:20.4113960Z Copying docs/vocabulary.md to blobs/docs/
+2026-08-18T22:16:20.4114324Z Copying docs/history.md to blobs/docs/
+2026-08-18T22:16:20.4114672Z Copying docs/venv.md to blobs/docs/
+2026-08-18T22:16:20.4317241Z ##[group]Run golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+2026-08-18T22:16:20.4317577Z with:
+2026-08-18T22:16:20.4317737Z   version: v2.12.2
+2026-08-18T22:16:20.4317979Z   args: --new-from-rev=0e3a5e4d97291b880ad97d235a2f730ae8a4e251
+2026-08-18T22:16:20.4318242Z   install-mode: binary
+2026-08-18T22:16:20.4318437Z   install-only: false
+2026-08-18T22:16:20.4320257Z   github-token: ***
+2026-08-18T22:16:20.4320427Z   verify: true
+2026-08-18T22:16:20.4320595Z   only-new-issues: false
+2026-08-18T22:16:20.4320781Z   skip-cache: false
+2026-08-18T22:16:20.4320947Z   skip-save-cache: false
+2026-08-18T22:16:20.4321148Z   cache-invalidation-interval: 7
+2026-08-18T22:16:20.4321350Z   problem-matchers: false
+2026-08-18T22:16:20.4321530Z env:
+2026-08-18T22:16:20.4321730Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:20.4322059Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.20/x64/lib/pkgconfig
+2026-08-18T22:16:20.4322419Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:20.4322720Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:20.4323003Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.20/x64
+2026-08-18T22:16:20.4323288Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.20/x64/lib
+2026-08-18T22:16:20.4323654Z ##[endgroup]
+2026-08-18T22:16:20.5399003Z ##[group]Restore cache
+2026-08-18T22:16:20.5401332Z Checking for go.mod: go.mod
+2026-08-18T22:16:20.7867716Z Cache hit for: golangci-lint.cache-Linux-2954-c7a32c96c6da728a081a505fd724ddd7ba717719
+2026-08-18T22:16:21.6638031Z Received 354341 of 354341 (100.0%), 0.6 MBs/sec
+2026-08-18T22:16:21.6638761Z Cache Size: ~0 MB (354341 B)
+2026-08-18T22:16:21.6663933Z [command]/usr/bin/tar -xf /home/runner/work/_temp/32302c2e-f523-4d6f-9e72-0281d35cbaf1/cache.tzst -P -C /home/runner/work/rcc/rcc --use-compress-program unzstd
+2026-08-18T22:16:21.7326692Z Cache restored successfully
+2026-08-18T22:16:21.7330815Z Restored cache for golangci-lint from key 'golangci-lint.cache-Linux-2954-c7a32c96c6da728a081a505fd724ddd7ba717719' in 1193ms
+2026-08-18T22:16:21.7331925Z ##[endgroup]
+2026-08-18T22:16:21.7332351Z ##[group]Install
+2026-08-18T22:16:21.7333035Z Finding needed golangci-lint version...
+2026-08-18T22:16:21.7336157Z Installation mode: binary
+2026-08-18T22:16:21.7337102Z Installing golangci-lint binary v2.12.2...
+2026-08-18T22:16:21.7338156Z Downloading binary https://github.com/golangci/golangci-lint/releases/download/v2.12.2/golangci-lint-2.12.2-linux-amd64.tar.gz ...
+2026-08-18T22:16:21.9697395Z [command]/usr/bin/tar xz --overwrite --warning=no-unknown-keyword --overwrite -C /home/runner -f /home/runner/work/_temp/a8ca01e3-fcc2-4811-a053-4e72add30977
+2026-08-18T22:16:22.1986239Z Installed golangci-lint into /home/runner/golangci-lint-2.12.2-linux-amd64/golangci-lint in 465ms
+2026-08-18T22:16:22.1990387Z ##[endgroup]
+2026-08-18T22:16:22.1993187Z ##[group]run golangci-lint
+2026-08-18T22:16:22.1998849Z Running [/home/runner/golangci-lint-2.12.2-linux-amd64/golangci-lint config path] in [/home/runner/work/rcc/rcc] ...
+2026-08-18T22:16:26.1532152Z Running [/home/runner/golangci-lint-2.12.2-linux-amd64/golangci-lint config verify] in [/home/runner/work/rcc/rcc] ...
+2026-08-18T22:16:26.2242955Z Running [/home/runner/golangci-lint-2.12.2-linux-amd64/golangci-lint run  --new-from-rev=0e3a5e4d97291b880ad97d235a2f730ae8a4e251] in [/home/runner/work/rcc/rcc] ...
+2026-08-18T22:16:43.2039601Z artifactprovider/filesystem_unix.go:359:18: Error return value of `file.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2040214Z 	defer file.Close()
+2026-08-18T22:16:43.2040449Z 	                ^
+2026-08-18T22:16:43.2041018Z artifactprovider/filesystem_unix.go:386:18: Error return value of `file.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2041562Z 	defer file.Close()
+2026-08-18T22:16:43.2041784Z 	                ^
+2026-08-18T22:16:43.2042234Z artifactprovider/http.go:377:27: Error return value of `response.Body.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2043124Z 	defer response.Body.Close()
+2026-08-18T22:16:43.2043419Z 	                         ^
+2026-08-18T22:16:43.2044084Z artifactprovider/http.go:418:27: Error return value of `response.Body.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2044636Z 	defer response.Body.Close()
+2026-08-18T22:16:43.2044903Z 	                         ^
+2026-08-18T22:16:43.2045362Z artifactprovider/http.go:456:27: Error return value of `response.Body.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2045918Z 	defer response.Body.Close()
+2026-08-18T22:16:43.2046177Z 	                         ^
+2026-08-18T22:16:43.2046690Z artifactprovider/http_policy_test.go:108:13: Error return value of `os.Unsetenv` is not checked (errcheck)
+2026-08-18T22:16:43.2047253Z 	os.Unsetenv(env)
+2026-08-18T22:16:43.2047473Z 	           ^
+2026-08-18T22:16:43.2047853Z cmd/cacheServe.go:69:22: Error return value of `listener.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2048336Z 	defer listener.Close()
+2026-08-18T22:16:43.2048621Z 	                    ^
+2026-08-18T22:16:43.2049038Z cmd/providerAdd.go:32:14: Error return value of `fmt.Fprintf` is not checked (errcheck)
+2026-08-18T22:16:43.2049636Z 		fmt.Fprintf(c.OutOrStdout(), "Provider %s added.\n", args[0])
+2026-08-18T22:16:43.2050062Z 		           ^
+2026-08-18T22:16:43.2050491Z cmd/providerInspect.go:77:14: Error return value of `fmt.Fprintf` is not checked (errcheck)
+2026-08-18T22:16:43.2051042Z 		fmt.Fprintf(c.OutOrStdout(), "%s %s\n", r.Reference, r.Source)
+2026-08-18T22:16:43.2051404Z 		           ^
+2026-08-18T22:16:43.2051790Z cmd/providerList.go:37:16: Error return value of `fmt.Fprintln` is not checked (errcheck)
+2026-08-18T22:16:43.2052576Z 			fmt.Fprintln(c.OutOrStdout(), p.Name)
+2026-08-18T22:16:43.2052897Z 			            ^
+2026-08-18T22:16:43.2053339Z cmd/providerRemove.go:27:14: Error return value of `fmt.Fprintf` is not checked (errcheck)
+2026-08-18T22:16:43.2054140Z 		fmt.Fprintf(c.OutOrStdout(), "Provider %s removed.\n", a[0])
+2026-08-18T22:16:43.2054540Z 		           ^
+2026-08-18T22:16:43.2055024Z cmd/providerTest.go:34:15: Error return value of `fmt.Fprintln` is not checked (errcheck)
+2026-08-18T22:16:43.2055577Z 		fmt.Fprintln(c.OutOrStdout(), "compatible")
+2026-08-18T22:16:43.2055949Z 		            ^
+2026-08-18T22:16:43.2056485Z environmentartifact/inventory.go:120:20: Error return value of `source.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2057081Z 	defer source.Close()
+2026-08-18T22:16:43.2057335Z 	                  ^
+2026-08-18T22:16:43.2057847Z environmentartifact/inventory.go:125:20: Error return value of `reader.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2058449Z 	defer reader.Close()
+2026-08-18T22:16:43.2058732Z 	                  ^
+2026-08-18T22:16:43.2059273Z environmentartifact/inventory.go:149:20: Error return value of `source.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2059829Z 	defer source.Close()
+2026-08-18T22:16:43.2060051Z 	                  ^
+2026-08-18T22:16:43.2060503Z environmentlifecycle/acquire.go:185:20: Error return value of `os.RemoveAll` is not checked (errcheck)
+2026-08-18T22:16:43.2061141Z 	defer os.RemoveAll(directory)
+2026-08-18T22:16:43.2061436Z 	                  ^
+2026-08-18T22:16:43.2062020Z environmentlifecycle/materialize_test.go:155:16: Error return value of `os.Unsetenv` is not checked (errcheck)
+2026-08-18T22:16:43.2062748Z 				os.Unsetenv(env)
+2026-08-18T22:16:43.2063066Z 				           ^
+2026-08-18T22:16:43.2063895Z environmentlifecycle/materialize_test.go:293:28: Error return value of `materializer.Release` is not checked (errcheck)
+2026-08-18T22:16:43.2064723Z 	defer materializer.Release(context.Background(), lease)
+2026-08-18T22:16:43.2090759Z 	                          ^
+2026-08-18T22:16:43.2091302Z settings/provider_store.go:72:22: Error return value of `locker.Release` is not checked (errcheck)
+2026-08-18T22:16:43.2091679Z 	defer locker.Release()
+2026-08-18T22:16:43.2091864Z 	                    ^
+2026-08-18T22:16:43.2092371Z settings/provider_store_unix.go:33:18: Error return value of `unix.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2092780Z 	defer unix.Close(parent)
+2026-08-18T22:16:43.2092971Z 	                ^
+2026-08-18T22:16:43.2093273Z settings/provider_store_unix.go:62:18: Error return value of `unix.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2093881Z 	defer unix.Close(parent)
+2026-08-18T22:16:43.2094124Z 	                ^
+2026-08-18T22:16:43.2094572Z settings/provider_store_unix.go:71:18: Error return value of `file.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2095083Z 	defer file.Close()
+2026-08-18T22:16:43.2095386Z 	                ^
+2026-08-18T22:16:43.2095843Z settings/provider_store_unix.go:91:18: Error return value of `unix.Close` is not checked (errcheck)
+2026-08-18T22:16:43.2096409Z 	defer unix.Close(parent)
+2026-08-18T22:16:43.2096683Z 	                ^
+2026-08-18T22:16:43.2097192Z environmentlifecycle/content_linux.go:387:14: ST1005: error strings should not be capitalized (staticcheck)
+2026-08-18T22:16:43.2097924Z 		return "", fmt.Errorf("Python executable is not an executable regular file")
+2026-08-18T22:16:43.2098406Z 		           ^
+2026-08-18T22:16:43.2098798Z environmentlifecycle/publish.go:184:6: func supports is unused (unused)
+2026-08-18T22:16:43.2099356Z func supports[T comparable](values []T, wanted T) bool {
+2026-08-18T22:16:43.2099745Z      ^
+2026-08-18T22:16:43.2100147Z remotree/server_handlers_test.go:38:6: func queryFixture is unused (unused)
+2026-08-18T22:16:43.2100681Z func queryFixture() (Partqueries, chan string) {
+2026-08-18T22:16:43.2101045Z      ^
+2026-08-18T22:16:43.2101267Z 26 issues:
+2026-08-18T22:16:43.2101492Z * errcheck: 23
+2026-08-18T22:16:43.2101737Z * staticcheck: 1
+2026-08-18T22:16:43.2102168Z * unused: 2
+2026-08-18T22:16:43.2102312Z 
+2026-08-18T22:16:43.2117433Z ##[error]issues found
+2026-08-18T22:16:43.2122833Z Ran golangci-lint in 16979ms
+2026-08-18T22:16:43.2123251Z ##[endgroup]
+2026-08-18T22:16:43.2226987Z Post job cleanup.
+2026-08-18T22:16:43.3383339Z Cache hit occurred on the primary key golangci-lint.cache-Linux-2954-c7a32c96c6da728a081a505fd724ddd7ba717719, not saving cache.
+2026-08-18T22:16:43.3501565Z Post job cleanup.
+2026-08-18T22:16:43.4157378Z [command]/usr/bin/git version
+2026-08-18T22:16:43.4220388Z git version 2.54.0
+2026-08-18T22:16:43.4250030Z Temporarily overriding HOME='/home/runner/work/_temp/8afd3ee0-e732-492f-a959-9e45c1deadd0' before making global git config changes
+2026-08-18T22:16:43.4251045Z Adding repository directory to the temporary git global config as a safe directory
+2026-08-18T22:16:43.4255043Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-08-18T22:16:43.4286620Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-08-18T22:16:43.4318685Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-08-18T22:16:43.4515893Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-08-18T22:16:43.4534267Z http.https://github.com/.extraheader
+2026-08-18T22:16:43.4543670Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-08-18T22:16:43.4572080Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-08-18T22:16:43.4767987Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-08-18T22:16:43.4794457Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-08-18T22:16:43.5127624Z Cleaning up orphan processes
+

@@ -1,0 +1,54 @@
+[
+  {
+    "asset": "rcc-linux64",
+    "sha256": "5a6ae55f33e041e376ca4538c592e7c214b9da30cc6c1cf32cd62a0f65077e21",
+    "signature": "ELF; no detached vendor signature in preparation asset set"
+  },
+  {
+    "asset": "rcc-macos64",
+    "sha256": "771b06ca9352b84df08507bccb759a115e354a898a78c678127dbdb2d2a1e60c",
+    "signature": "no Mach-O LC_CODE_SIGNATURE"
+  },
+  {
+    "asset": "rcc-macosarm64",
+    "sha256": "4a953e052041082345af2ea120b60dac2f38b2018b6da54c3b23ccd09a5f6001",
+    "signature": "Mach-O embedded CodeDirectory",
+    "adHoc": true,
+    "flags": 131074,
+    "codePagesVerified": 5080,
+    "cmsSignatureSlot": false
+  },
+  {
+    "asset": "rcc-windows64.exe",
+    "sha256": "cef95bf88055c4a587b06c38fcef5a7edb48cad63202f7bb3238ad7fe03cb895",
+    "signature": "PE Authenticode directory",
+    "certificateOffset": 0,
+    "certificateSize": 0
+  },
+  {
+    "asset": "rccremote-linux64",
+    "sha256": "4e3522c042e34d1702604c40ecf506a228f91116ae12c26290424fef2aff62af",
+    "signature": "ELF; no detached vendor signature in preparation asset set"
+  },
+  {
+    "asset": "rccremote-macos64",
+    "sha256": "ca43a5ae6d4313803299864bdda995c99704ec0d44a497fa2e0bcc82546d50f0",
+    "signature": "no Mach-O LC_CODE_SIGNATURE"
+  },
+  {
+    "asset": "rccremote-macosarm64",
+    "sha256": "9916ffbb8a2e071ce5a25bcf3877c90c0e1696ae43e12042989575122583c1e5",
+    "signature": "Mach-O embedded CodeDirectory",
+    "adHoc": true,
+    "flags": 131074,
+    "codePagesVerified": 2153,
+    "cmsSignatureSlot": false
+  },
+  {
+    "asset": "rccremote-windows64.exe",
+    "sha256": "13b72d0e322fce53a4d7f50703c3006c3600e9bdfd4ab35d82240b0142b49602",
+    "signature": "PE Authenticode directory",
+    "certificateOffset": 0,
+    "certificateSize": 0
+  }
+]

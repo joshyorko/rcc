@@ -1,0 +1,14 @@
+{
+  "analyzedSource": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "mode": "govulncheck v1.9.0 source symbol analysis, Go 1.26.9",
+  "targets": ["linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64"],
+  "moduleVersion": "golang.org/x/text v0.28.0",
+  "dispositions": [
+    {"id": "GO-2026-5970", "source": "https://vuln.go.dev/ID/GO-2026-5970.json", "fixedVersion": "v0.39.0", "trigger": "norm.Iter infinite loop with invalid UTF-8", "actualFindings": ["affected module", "unicode/norm package"], "affectedSymbolCallsFound": false, "trace": "RCC xviper -> Viper -> Afero -> unicode/norm. Afero.NeuterAccents uses norm transforms, but RCC and the inspected production dependency callers do not call this helper.", "outcome": "no reachable affected symbol identified; retain module/package finding and require source-bound disposition, not stripped-binary clearance"},
+    {"id": "GO-2026-6629", "source": "https://vuln.go.dev/ID/GO-2026-6629.json", "fixedVersion": "v0.41.0", "trigger": "precis Nickname transform panic with a short destination buffer", "actualFindings": ["affected module"], "affectedSymbolCallsFound": false, "trace": "secure/precis is absent from RCC production dependency graphs across all four targets.", "outcome": "no reachable affected package/symbol identified; retain affected-module inventory finding"}
+  ],
+  "independentReview": "Root source trace plus both bounded Luna source/scan reviews agree on the observed reachability limits.",
+  "noModuleCleanlinessClaim": true,
+  "dashboard": "Current integration cannot read the individual 15 GitHub alerts; security disposition for publication remains blocked on authorized access.",
+  "finalCandidateSourceScan": "must be refreshed and bound to the final exact-main source after all accepted merges"
+}

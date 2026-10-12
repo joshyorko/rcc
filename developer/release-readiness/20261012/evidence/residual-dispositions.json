@@ -1,0 +1,27 @@
+{
+  "startingSource": "7d17122436584dcbfe9b8afddeb56d7c81a10af7",
+  "trackedIssuesRemainClosed": true,
+  "requiredShippingWork": [
+    {"finding": "#132 configured home permissions", "disposition": "reproduced; MakeSharedDir changed an existing 0700 parent to 0750; fixed in PR242 with parent, requested-target, import-process and built-CLI checks"},
+    {"finding": "#181 worker Scale/Sync/cleanup", "disposition": "historical zero coverage is stale; existing deterministic capacity/queue/panic/cleanup tests retained; PR241 adds explicit default/floor/cap resolution and subprocess capacity at the default and 96-worker cap"},
+    {"finding": "#131 operations and command coverage", "disposition": "embedded inputs and published coverage workflow already restored; PR241/243/244 add concrete success/failure output, cache, command JSON, process fallback and multipart compatibility/error cases"},
+    {"finding": "#135 original 26 lint findings", "disposition": "all 26 individually traced from recovered historical job 95887771959 and are stale on current main; checked provider writes, obsolete helpers, explicit verified-read cleanup and current delta lint; no lint suppression added"},
+    {"finding": "new diagnostics/cache output-integrity defects", "disposition": "PR241 propagates rendering, writing, encoder flush, close and permission errors; protects unreadable existing cache and optional ReportIssue diagnostics failure path"},
+    {"finding": "new pip fallback shadowed error", "disposition": "PR243 corrects false failure on successful fallback, with real direct/captured subprocess success and failure controls"},
+    {"finding": "new HTTP/TLS resource cleanup", "disposition": "PR244 closes multipart response bodies and cancels TLS probe contexts; exact vet allowance narrows from seven to six after the timer leak is fixed"}
+  ],
+  "optionalOrUnsupportedScopes": [
+    "The larger explicit-bootstrap/dependency-injection redesign remains optional architecture work. Current CLI import effects remain documented as observed; no claim of side-effect-free reusable libraries.",
+    "Closing anywork's private pipeline and concurrently mutating process-global WorkerCount are outside its current supported CLI initialization contract. No public close operation or concurrent reconfiguration support was introduced.",
+    "The current broad lint baseline also includes style, dead-code, intentional API naming and explicit best-effort logging/read-cleanup findings; historical 26-finding closure is not a full-lint-clean claim.",
+    "Private resident-worker, fallible-supervisor and descendant/overlap experiments were not promoted. Production ExecuteWithStreams documents a direct-child lifetime/reaping contract on Linux; detached-descendant isolation is not established by this campaign.",
+    "Actions-owner qualification and the six Holotree optimization/research directions are not independent publication gates in the checked release contract. Drafts224/225, formats, FUSE, packs, zstd and default materializers remain untouched."
+  ],
+  "ledgerShippingItems": {
+    "journal182": "already integrated in starting main; deterministic tests preserved",
+    "contributor133": "already integrated; no new required source change",
+    "releaseExporterAndN1Correction": "already integrated; canonical frozen bundle and bounded sidecar actually downloaded, rehashed and independently validated",
+    "shippingStrictConsumer": "original frozen evidence retained; new shipping-source preparation must requalify full11/native/N-1 before final tuple",
+    "security": "source analysis across four targets shows no called affected x/text symbols; module/package findings are retained rather than asserted clean; dashboard/signing/administration dispositions remain external publication gates"
+  }
+}

@@ -1,0 +1,22 @@
+Installed pip packages:
+fixture-package==1.0
+--
+Installed pip packages:
+fixture-package==1.0
+Process 27184: exit status 42, command: /tmp/TestExecutionEnvironmentListingPipFallbackfaileddirect1810396127/001/pip [freeze --all] [v18.19.6/27176]
+--
+Installed pip packages:
+fixture-package==1.0
+--
+Installed pip packages:
+fixture-package==1.0
+Process 27186: exit status 42, command: /tmp/TestExecutionEnvironmentListingPipFallbackfailedcaptured4089233968/001/pip [freeze --all] [v18.19.6/27176]
+--
+--- FAIL: TestExecutionEnvironmentListingPipFallback (0.00s)
+    --- FAIL: TestExecutionEnvironmentListingPipFallback/successful/direct (0.00s)
+        running_listing_test.go:32: pip fallback result = false, want true
+    --- FAIL: TestExecutionEnvironmentListingPipFallback/successful/captured (0.00s)
+        running_listing_test.go:32: pip fallback result = false, want true
+FAIL
+FAIL	github.com/joshyorko/rcc/operations	0.017s
+FAIL

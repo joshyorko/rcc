@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/workspace/rcc-mission/evidence/network-pre-baseline-tasks.py", line 484, in _validate_go_vet_result
+    raise RuntimeError(f"unexpected go vet findings: {findings}")
+RuntimeError: unexpected go vet findings: ['htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)', 'htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used', 'htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used', 'operations/pull.go:67:2: unreachable code']

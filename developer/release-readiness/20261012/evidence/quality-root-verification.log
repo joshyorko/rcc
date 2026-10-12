@@ -1,0 +1,5 @@
+ok  	github.com/joshyorko/rcc/anywork	0.028s
+ok  	github.com/joshyorko/rcc/operations	0.118s
+ok  	github.com/joshyorko/rcc/cmd	0.188s
+ok  	github.com/joshyorko/rcc/cmd/rcc	0.045s
+ok  	github.com/joshyorko/rcc/cmd/rccremote	0.023s
