@@ -14,7 +14,7 @@ The publisher also requires a separate `HOMEBREW_TOOLS_PAT` secret that can disp
 
 Before dispatching preparation, confirm that the selected `main` commit has the intended `common/version.go` value and a matching `docs/changelog.md` heading. Start `Rcc` with `workflow_dispatch`, selecting the exact current `main` SHA and version. Review the preparation job's full receipts, native receipt ZIPs, `assets/index.json`, `evidence/asset-manifest.json`, `evidence/SHA256SUMS`, `evidence/provenance.json`, and the GitHub artifact's published digest. After independent review, configure the protected environment and required secrets, then dispatch `Publish RCC Release` from `main` with the same run ID, source SHA, version, and manifest SHA. Review the artifact identity in the workflow summary before approving the environment. The workflow's tag creation and release publication occur only after that approval and all preflight checks.
 
-The legacy `Create Release Tag` entry is intentionally disabled and exits with a migration message. The new publisher is a proposal in this change and must be reviewed and merged before it can be used; do not use a release tag as a test trigger. This change has not created a tag, release, or Homebrew dispatch.
+The legacy `Create Release Tag` entry is intentionally disabled and exits with a migration message. Use the protected publisher only after independent artifact review and explicit publication approval. Do not use a release tag as a test trigger.
 
 The historical `recover-rcc-185.yml` workflow is also retired: manual dispatch
 only reaches a read-only hold that exits nonzero, with no tag, release, or
@@ -28,7 +28,7 @@ automation only, not as release authorization.
 
 ## Signing limits
 
-This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified signature. Existing platform signing behavior remains whatever the platform build currently produces; in particular, the current evidence has ARM signing but does not establish universal signing coverage. Review signing requirements and platform-specific signature evidence separately before publication.
+This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified publisher signature. Go's Darwin ARM64 linker produces ad hoc code-integrity signatures; those signatures do not establish publisher identity. The build has no vendor-signing step for Darwin AMD64, Windows, or Linux binaries. Review signing requirements and platform-specific signature evidence separately before publication.
 
 ## Documentation receipt
 

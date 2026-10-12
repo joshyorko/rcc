@@ -6,6 +6,20 @@
 
 ### Fixes
 
+- preserve existing ancestor directory permissions when provisioning shared
+  descendants, including a configured RCC home with mode 0700; continue
+  enforcing the requested mode on the target directory
+
+- return diagnostic output and cache persistence errors, preserve an
+  unreadable existing cache, and keep issue reporting from panicking when
+  its optional diagnostics cannot be written
+
+- report successful `pip freeze` fallback listings correctly in both direct
+  and captured output modes
+
+- close multipart upload response bodies and cancel TLS probe timeout contexts
+  on all completion paths
+
 - preserve internal relative Python links when UV's cache parent is symlinked
   by comparing physical prefix paths; continue rejecting absolute links and
   links that escape the selected prefix
