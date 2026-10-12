@@ -1,0 +1,70 @@
+{
+  "environment": {
+    "exitCode": 1,
+    "body": {
+      "message": "Not Found",
+      "documentation_url": "https://docs.github.com/rest/deployments/environments#get-an-environment",
+      "status": "404"
+    },
+    "stderr": "gh: Not Found (HTTP 404)"
+  },
+  "workflowPermissions": {
+    "exitCode": 1,
+    "body": {
+      "message": "Resource not accessible by integration",
+      "documentation_url": "https://docs.github.com/rest/actions/permissions#get-default-workflow-permissions-for-a-repository",
+      "status": "403"
+    },
+    "stderr": "gh: Resource not accessible by integration (HTTP 403)"
+  },
+  "secretNames": {
+    "exitCode": 1,
+    "body": {
+      "message": "Resource not accessible by integration",
+      "documentation_url": "https://docs.github.com/rest/actions/secrets#list-repository-secrets",
+      "status": "403"
+    },
+    "stderr": "gh: Resource not accessible by integration (HTTP 403)"
+  },
+  "securityAlerts": {
+    "exitCode": 1,
+    "body": {
+      "message": "Resource not accessible by integration",
+      "documentation_url": "https://docs.github.com/rest/dependabot/alerts#list-dependabot-alerts-for-a-repository",
+      "status": "403"
+    },
+    "stderr": "gh: Resource not accessible by integration (HTTP 403)"
+  },
+  "publisher": {
+    "exitCode": 0,
+    "body": {
+      "id": 381320739,
+      "node_id": "W_kwDOPqaJu84Wun4j",
+      "name": "Publish RCC Release",
+      "path": ".github/workflows/publish-release.yml",
+      "state": "active",
+      "created_at": "2026-10-11T14:25:35.000Z",
+      "updated_at": "2026-10-11T14:25:35.000Z",
+      "url": "https://api.github.com/repos/joshyorko/rcc/actions/workflows/381320739",
+      "html_url": "https://github.com/joshyorko/rcc/blob/main/.github/workflows/publish-release.yml",
+      "badge_url": "https://github.com/joshyorko/rcc/workflows/Publish%20RCC%20Release/badge.svg"
+    },
+    "stderr": ""
+  },
+  "homebrew": {
+    "exitCode": 0,
+    "body": {
+      "id": 255480164,
+      "node_id": "W_kwDOQyqAJ84POlFk",
+      "name": "Tap Auto Update",
+      "path": ".github/workflows/tap-auto-update.yml",
+      "state": "active",
+      "created_at": "2026-04-02T17:48:52.000Z",
+      "updated_at": "2026-09-28T10:52:23.000Z",
+      "url": "https://api.github.com/repos/joshyorko/homebrew-tools/actions/workflows/255480164",
+      "html_url": "https://github.com/joshyorko/homebrew-tools/blob/main/.github/workflows/tap-auto-update.yml",
+      "badge_url": "https://github.com/joshyorko/homebrew-tools/workflows/Tap%20Auto%20Update/badge.svg"
+    },
+    "stderr": ""
+  }
+}

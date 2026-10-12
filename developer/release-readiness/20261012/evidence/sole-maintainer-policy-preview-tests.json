@@ -1,0 +1,77 @@
+{
+  "proposalOnly": true,
+  "liveRepositoryPolicyChanged": false,
+  "cases": [
+    {
+      "case": "exact sole-maintainer configuration",
+      "expected": "accept",
+      "passed": true
+    },
+    {
+      "case": "default strict policy unchanged",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "other repository",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "wrong environment",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "wrong login",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "wrong user ID",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "team reviewer",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "admin bypass",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "extra reviewer",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "missing reviewer",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "unknown self-review state",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "duplicate required rule",
+      "expected": "reject",
+      "passed": true
+    },
+    {
+      "case": "original different-human policy retained",
+      "expected": "accept",
+      "passed": true
+    },
+    {
+      "case": "API validator passes authenticated repository scope",
+      "expected": "accept",
+      "passed": true
+    }
+  ],
+  "passingCases": 14
+}

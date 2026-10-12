@@ -1,0 +1,41 @@
+{
+  "status": "AWAITING_EXPLICIT_ACTION_TIME_APPROVAL",
+  "origin": {
+    "commit": "de40558f994cfbacfad0a1aa5745551a84a5115f",
+    "pr": 237,
+    "source": "scripts/release_publication.py:219 and docs/release-process.md",
+    "isGithubUniversalRequirement": false,
+    "actualEnvironmentAbsent": true
+  },
+  "proposedPolicy": "Only joshyorko/rcc + rcc-production + exactly one User reviewer joshyorko ID54248591 may use prevent_self_review=false. Existing strict policy otherwise remains; admin bypass remains disabled.",
+  "environmentSettings": {
+    "name": "rcc-production",
+    "reviewers": [
+      {
+        "type": "User",
+        "id": 54248591
+      }
+    ],
+    "prevent_self_review": false,
+    "can_admins_bypass": false
+  },
+  "risk": "One account can dispatch and approve; independent second-human review is removed only for the named sole-maintainer configuration. Manual environment approval and every source/content/runtime gate remain.",
+  "candidateUnchanged": {
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "preparation_run_id": "38245229838",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "patchSha256": "1288acbca248551bb8e2f92c68af00704f21b383c15251d29ad8a86e647a8d94",
+  "previewCasesPassed": 14,
+  "executionPlan": [
+    "After explicit policy/settings approval, apply the reviewed publisher-only patch with regression tests and merge normally.",
+    "Create rcc-production with the exact reviewer/self-review/bypass settings through the already-authenticated admin browser.",
+    "Read-check existing audit/Homebrew secret names, permissions and security dashboard via browser. Missing or insufficient credentials require a separate explicit approval; no credentials created or expanded in this proposal.",
+    "After explicit signing/dependency disposition, dispatch the existing checked publisher from current main using the unchanged tuple; Josh approves his own protected deployment.",
+    "Verify exact nine published asset hashes and downstream Homebrew workflow execution."
+  ],
+  "signingAndDependencyDisposition": "Neither vendor-signing nor govulncheck/Dependabot clearance is an enforced technical publisher check. They are documented/operator release decisions; no risk acceptance inferred.",
+  "noLoginNeeded": "Jarvis browser already authenticated as joshyorko with Settings/New environment controls visible; evidence supplied by parent",
+  "liveChangesExecuted": false
+}
