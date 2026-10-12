@@ -79,6 +79,27 @@ class ReleaseTopologyTests(unittest.TestCase):
         self.assertNotIn("  release:\n", workflow)
         self.assertNotIn("gh release create", workflow)
 
+    def test_publisher_audits_with_automatic_tokens_before_and_after_manual_approval(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        jobs = workflow.split("\njobs:\n", 1)[1]
+        self.assertIn("\n  audit_policy:\n", "\n" + jobs)
+        audit, publish = jobs.split("\n  publish:\n", 1)
+        self.assertIn("    needs: audit_policy\n", publish)
+        self.assertIn("    environment:\n      name: rcc-production\n", publish)
+        for job in (audit, publish):
+            self.assertIn("if: github.ref == 'refs/heads/main'", job)
+            self.assertIn("RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ github.token }}", job)
+            self.assertIn("python3 scripts/release_publication.py verify-environment --name rcc-production", job)
+        self.assertIn("    permissions:\n      actions: read\n      contents: read\n", audit)
+        self.assertIn("persist-credentials: false", audit)
+        for forbidden in ("secrets.", "environment:", "write", "gh api", "gh release"):
+            self.assertNotIn(forbidden, audit)
+        self.assertNotIn("secrets.RCC_RELEASE_POLICY_AUDIT_TOKEN", workflow)
+        self.assertEqual(workflow.split("\njobs:\n", 1)[0].split("\npermissions:\n", 1)[1],
+                         "  actions: read\n  contents: write\n")
+        self.assertNotIn("pull_request:", workflow)
+        self.assertNotIn("\n  push:", workflow)
+
     def test_candidate_identity_resolves_pr_main_push_and_manual_dispatch_but_rejects_tags(self):
         resolver = getattr(topology, "resolve_candidate_sha", None)
         self.assertIsNotNone(resolver, "release candidate SHA resolver is missing")

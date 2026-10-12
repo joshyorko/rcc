@@ -25,8 +25,28 @@ permissions:
   contents: write
 
 jobs:
+  audit_policy:
+    name: Audit Release Approval Policy
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+      - name: Verify configured release approval protection with job token
+        env:
+          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ github.token }}
+        run: python3 scripts/release_publication.py verify-environment --name rcc-production
   publish:
     name: Publish Reviewed RCC Preparation
+    needs: audit_policy
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
@@ -49,7 +69,7 @@ jobs:
           go-version: "1.26.9"
       - name: Require configured release approval protection
         env:
-          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ secrets.RCC_RELEASE_POLICY_AUDIT_TOKEN }}
+          RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ github.token }}
         run: python3 scripts/release_publication.py verify-environment --name rcc-production
       - name: Verify exact successful preparation run and artifact
         env:
