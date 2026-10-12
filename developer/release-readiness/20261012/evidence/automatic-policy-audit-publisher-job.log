@@ -1,0 +1,173 @@
+﻿2026-10-12T15:30:51.5332847Z Current runner version: '2.337.0'
+2026-10-12T15:30:51.5354035Z ##[group]Runner Image Provisioner
+2026-10-12T15:30:51.5354721Z Hosted Compute Agent
+2026-10-12T15:30:51.5355192Z Version: 20261002.596
+2026-10-12T15:30:51.5355773Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-12T15:30:51.5356358Z Build Date: 2026-10-02T22:28:27Z
+2026-10-12T15:30:51.5356947Z Worker ID: {37343192-4d61-430f-aeb1-1e3a91fbcf29}
+2026-10-12T15:30:51.5357533Z Region: mexicocentral
+2026-10-12T15:30:51.5358004Z Cloud: Azure
+2026-10-12T15:30:51.5358742Z ##[endgroup]
+2026-10-12T15:30:51.5360005Z ##[group]Operating System
+2026-10-12T15:30:51.5360621Z Ubuntu
+2026-10-12T15:30:51.5361060Z 24.04.5
+2026-10-12T15:30:51.5361492Z LTS
+2026-10-12T15:30:51.5361956Z ##[endgroup]
+2026-10-12T15:30:51.5362420Z ##[group]Runner Image
+2026-10-12T15:30:51.5362917Z Image: ubuntu-24.04
+2026-10-12T15:30:51.5363438Z Version: 20261004.327.1
+2026-10-12T15:30:51.5364442Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-12T15:30:51.5365710Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-12T15:30:51.5366505Z ##[endgroup]
+2026-10-12T15:30:51.5367566Z ##[group]GITHUB_TOKEN Permissions
+2026-10-12T15:30:51.5369439Z Actions: read
+2026-10-12T15:30:51.5370034Z Contents: read
+2026-10-12T15:30:51.5370542Z Metadata: read
+2026-10-12T15:30:51.5371330Z ##[endgroup]
+2026-10-12T15:30:51.5373002Z Secret source: Actions
+2026-10-12T15:30:51.5373787Z Cache mode: write
+2026-10-12T15:30:51.5374388Z Prepare workflow directory
+2026-10-12T15:30:51.5638984Z Prepare all required actions
+2026-10-12T15:30:51.5694051Z Getting action download info
+2026-10-12T15:30:51.8669743Z Download action repository 'actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd' (SHA:93cb6efe18208431cddfb8368fd83d5badbf9bfd)
+2026-10-12T15:30:51.9785504Z Download action repository 'actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405' (SHA:a309ff8b426b58ec0e2a45f0f869d46889d02405)
+2026-10-12T15:30:52.1580985Z Complete job name: Audit Release Approval Policy
+2026-10-12T15:30:52.2179608Z ##[group]Run actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+2026-10-12T15:30:52.2180469Z with:
+2026-10-12T15:30:52.2180859Z   ref: 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:30:52.2181354Z   persist-credentials: false
+2026-10-12T15:30:52.2181762Z   repository: joshyorko/rcc
+2026-10-12T15:30:52.2185046Z   token: ***
+2026-10-12T15:30:52.2185394Z   ssh-strict: true
+2026-10-12T15:30:52.2185743Z   ssh-user: git
+2026-10-12T15:30:52.2186083Z   clean: true
+2026-10-12T15:30:52.2186457Z   sparse-checkout-cone-mode: true
+2026-10-12T15:30:52.2186870Z   fetch-depth: 1
+2026-10-12T15:30:52.2187206Z   fetch-tags: false
+2026-10-12T15:30:52.2187557Z   show-progress: true
+2026-10-12T15:30:52.2187912Z   lfs: false
+2026-10-12T15:30:52.2188434Z   submodules: false
+2026-10-12T15:30:52.2188811Z   set-safe-directory: true
+2026-10-12T15:30:52.2189383Z ##[endgroup]
+2026-10-12T15:30:52.2998027Z Syncing repository: joshyorko/rcc
+2026-10-12T15:30:52.2999845Z ##[group]Getting Git version info
+2026-10-12T15:30:52.3000368Z Working directory is '/home/runner/work/rcc/rcc'
+2026-10-12T15:30:52.3001169Z [command]/usr/bin/git version
+2026-10-12T15:30:52.3050416Z git version 2.55.0
+2026-10-12T15:30:52.3065762Z ##[endgroup]
+2026-10-12T15:30:52.3078586Z Temporarily overriding HOME='/home/runner/work/_temp/42048088-1b9a-4a87-9c78-2edfae50ef21' before making global git config changes
+2026-10-12T15:30:52.3080335Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:30:52.3083390Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-12T15:30:52.3125180Z Deleting the contents of '/home/runner/work/rcc/rcc'
+2026-10-12T15:30:52.3128714Z ##[group]Initializing the repository
+2026-10-12T15:30:52.3131978Z [command]/usr/bin/git init /home/runner/work/rcc/rcc
+2026-10-12T15:30:52.3240942Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-12T15:30:52.3242473Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-12T15:30:52.3243603Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-12T15:30:52.3244487Z hint: call:
+2026-10-12T15:30:52.3244814Z hint:
+2026-10-12T15:30:52.3245250Z hint: 	git config --global init.defaultBranch <name>
+2026-10-12T15:30:52.3245870Z hint:
+2026-10-12T15:30:52.3246623Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-12T15:30:52.3247437Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-12T15:30:52.3248004Z hint:
+2026-10-12T15:30:52.3248511Z hint: 	git branch -m <name>
+2026-10-12T15:30:52.3248893Z hint:
+2026-10-12T15:30:52.3249386Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-12T15:30:52.3250165Z Initialized empty Git repository in /home/runner/work/rcc/rcc/.git/
+2026-10-12T15:30:52.3252000Z [command]/usr/bin/git remote add origin https://github.com/joshyorko/rcc
+2026-10-12T15:30:52.3294947Z ##[endgroup]
+2026-10-12T15:30:52.3295582Z ##[group]Disabling automatic garbage collection
+2026-10-12T15:30:52.3297986Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-12T15:30:52.3322973Z ##[endgroup]
+2026-10-12T15:30:52.3328525Z ##[group]Setting up auth
+2026-10-12T15:30:52.3329452Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:30:52.3353100Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:30:52.3649572Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:30:52.3674819Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:30:52.3856883Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:30:52.3883704Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:30:52.4065873Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-12T15:30:52.4096517Z ##[endgroup]
+2026-10-12T15:30:52.4097213Z ##[group]Fetching the repository
+2026-10-12T15:30:52.4103477Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:30:53.6843136Z From https://github.com/joshyorko/rcc
+2026-10-12T15:30:53.6844731Z  * branch            2092fcf0e4d6bd9cb87868580da87133f66bffd8 -> FETCH_HEAD
+2026-10-12T15:30:53.6848904Z ##[endgroup]
+2026-10-12T15:30:53.6850433Z ##[group]Determining the checkout info
+2026-10-12T15:30:53.6852217Z ##[endgroup]
+2026-10-12T15:30:53.6853471Z [command]/usr/bin/git sparse-checkout disable
+2026-10-12T15:30:53.6896419Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-12T15:30:53.6919230Z ##[group]Checking out the ref
+2026-10-12T15:30:53.6923156Z [command]/usr/bin/git checkout --progress --force 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:30:53.7303768Z Note: switching to '2092fcf0e4d6bd9cb87868580da87133f66bffd8'.
+2026-10-12T15:30:53.7304631Z 
+2026-10-12T15:30:53.7305195Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-12T15:30:53.7306559Z changes and commit them, and you can discard any commits you make in this
+2026-10-12T15:30:53.7307911Z state without impacting any branches by switching back to a branch.
+2026-10-12T15:30:53.7308916Z 
+2026-10-12T15:30:53.7309464Z If you want to create a new branch to retain commits you create, you may
+2026-10-12T15:30:53.7310676Z do so (now or later) by using -c with the switch command. Example:
+2026-10-12T15:30:53.7311648Z 
+2026-10-12T15:30:53.7311967Z   git switch -c <new-branch-name>
+2026-10-12T15:30:53.7312484Z 
+2026-10-12T15:30:53.7312851Z Or undo this operation with:
+2026-10-12T15:30:53.7313436Z 
+2026-10-12T15:30:53.7313828Z   git switch -
+2026-10-12T15:30:53.7314395Z 
+2026-10-12T15:30:53.7315124Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-12T15:30:53.7316152Z 
+2026-10-12T15:30:53.7317144Z HEAD is now at 2092fcf Merge pull request #247 from joshyorko/codex/rcc-automatic-policy-audit-20261012
+2026-10-12T15:30:53.7329234Z ##[endgroup]
+2026-10-12T15:30:53.7365803Z [command]/usr/bin/git log -1 --format=%H
+2026-10-12T15:30:53.7386077Z 2092fcf0e4d6bd9cb87868580da87133f66bffd8
+2026-10-12T15:30:53.7394496Z ##[group]Removing auth
+2026-10-12T15:30:53.7397285Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:30:53.7421480Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:30:53.7608008Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:30:53.7628743Z http.https://github.com/.extraheader
+2026-10-12T15:30:53.7635060Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-12T15:30:53.7661795Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:30:53.7839728Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:30:53.7863363Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:30:53.8044293Z ##[endgroup]
+2026-10-12T15:30:53.8349979Z ##[group]Run actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+2026-10-12T15:30:53.8351325Z with:
+2026-10-12T15:30:53.8352018Z   python-version: 3.10
+2026-10-12T15:30:53.8352795Z   check-latest: false
+2026-10-12T15:30:53.8361349Z   token: ***
+2026-10-12T15:30:53.8362114Z   update-environment: true
+2026-10-12T15:30:53.8363187Z   allow-prereleases: false
+2026-10-12T15:30:53.8364011Z   freethreaded: false
+2026-10-12T15:30:53.8364794Z ##[endgroup]
+2026-10-12T15:30:53.9428420Z ##[group]Installed versions
+2026-10-12T15:30:54.0248331Z Successfully set up CPython (3.10.22)
+2026-10-12T15:30:54.0249121Z ##[endgroup]
+2026-10-12T15:30:54.0493750Z ##[group]Run python3 scripts/release_publication.py verify-environment --name rcc-production
+2026-10-12T15:30:54.0494439Z [36;1mpython3 scripts/release_publication.py verify-environment --name rcc-production[0m
+2026-10-12T15:30:54.0917695Z shell: /usr/bin/bash -e {0}
+2026-10-12T15:30:54.0918001Z env:
+2026-10-12T15:30:54.0918477Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:30:54.0918944Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-10-12T15:30:54.0919325Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:30:54.0919666Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:30:54.0976969Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-10-12T15:30:54.0977413Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-10-12T15:30:54.0981162Z   RCC_RELEASE_POLICY_AUDIT_TOKEN: ***
+2026-10-12T15:30:54.0981598Z ##[endgroup]
+2026-10-12T15:30:54.8790608Z environment protection validated: rcc-production
+2026-10-12T15:30:54.9003984Z Post job cleanup.
+2026-10-12T15:30:55.0101096Z Post job cleanup.
+2026-10-12T15:30:55.0815772Z [command]/usr/bin/git version
+2026-10-12T15:30:55.0845516Z git version 2.55.0
+2026-10-12T15:30:55.0872212Z Temporarily overriding HOME='/home/runner/work/_temp/6b587dd9-c514-44c0-83ed-ed32fafa9e5e' before making global git config changes
+2026-10-12T15:30:55.0873289Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-12T15:30:55.0876181Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/rcc/rcc
+2026-10-12T15:30:55.1919149Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-12T15:30:55.1944969Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-12T15:30:55.2154110Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-12T15:30:55.2183648Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-12T15:30:55.2391399Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-12T15:30:55.2419532Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-12T15:30:55.2726530Z Cleaning up orphan processes
+

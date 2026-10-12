@@ -1,0 +1,42 @@
+{
+  "failedPublisher": 38263901267,
+  "failure": "step5 received empty audit variable and rejected before any environment API call; remaining publication steps skipped",
+  "freshTagAndReleaseReads": "both404 on2026-10-12 after failed run",
+  "repairPR": 247,
+  "acceptedHead": "6db6a3449357e8e9fe0a06715da1d0f2dc9cc96a",
+  "independentReview": "bootstrap ACCEPT,51focused tests",
+  "fullToolingTests": 149,
+  "permissions": "newpreflight actionsread/contentsread; existingpublication actionsread/contentswrite unchanged",
+  "audit": "unchanged authenticated fullpolicy guard repeated before andafter protectedmanualapproval",
+  "credentials": "automaticperjob token; no storedcredentials copied/created/reused; no settings change",
+  "hostedCI": 38267225983,
+  "status": "HOLD at actual protected manual approval; automatic job-token audit succeeded",
+  "candidatePreserved": {
+    "preparation_run_id": "38245229838",
+    "source_sha": "f35d6d52242b09cdf37a9f6fe9f0aaa0d85764e0",
+    "expected_version": "v18.19.6",
+    "asset_manifest_sha256": "a2672d97a03c7d9e5acf01834918fbfabab6a43d89afd21d99d74c8876c1ee3f"
+  },
+  "recordedUtc": "2026-10-12T15:32:20.835776+00:00",
+  "merge": "2092fcf0e4d6bd9cb87868580da87133f66bffd8",
+  "CI": "all current exact-head checks and four native runtime jobs PASS; preparation jobs intentionally skipped for PR",
+  "actualPublisher": {
+    "id": 38270780149,
+    "workflowHead": "2092fcf0e4d6bd9cb87868580da87133f66bffd8",
+    "auditJob": 114884213243,
+    "auditConclusion": "success",
+    "publishJob": 114884271739,
+    "publishStatus": "waiting",
+    "pendingEnvironmentId": 24084206266,
+    "pendingReviewerLogin": "joshyorko",
+    "pendingReviewerId": 54248591,
+    "manualApprovalNotBypassed": true
+  },
+  "operatorStep": "Josh approve rcc-production for run38270780149; after approval publisher repeats audit and exact source/asset checks before tag/release/Homebrew dispatch",
+  "administratorCredentialPrerequisite": "none for policy audit; existing per-job token proved actual full audit with Actions:read/Contents:read; no stored credential created/copied/repurposed",
+  "remainingExecutionGates": [
+    "protected manual approval",
+    "publisher full preflight/tag/release/Homebrew dispatch succeeds",
+    "verify public tag/assets and actual downstream update after execution"
+  ]
+}
