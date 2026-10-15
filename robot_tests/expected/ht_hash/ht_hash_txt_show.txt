@@ -1,4 +1,4 @@
-Blueprint hash for [robot_tests/bare_action/package.yaml] is 00db64afd9c178e7.
+Blueprint hash for [robot_tests/bare_action/package.yaml] is 2644cabd10119cfc.
 Blueprint:
 channels:
 - conda-forge
@@ -8,3 +8,5 @@ dependencies:
 - pip:
   - robocorp==1.6.2
   - robocorp-actions==0.0.7
+
+# RCC legacy uv target-python cache epoch: 1

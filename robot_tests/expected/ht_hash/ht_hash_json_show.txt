@@ -1,4 +1,4 @@
 {
-  "blueprint": "channels:\n- conda-forge\ndependencies:\n- python=3.10.12\n- uv=0.9.22\n- pip:\n  - robocorp==1.6.2\n  - robocorp-actions==0.0.7",
-  "hash": "00db64afd9c178e7"
+  "blueprint": "channels:\n- conda-forge\ndependencies:\n- python=3.10.12\n- uv=0.9.22\n- pip:\n  - robocorp==1.6.2\n  - robocorp-actions==0.0.7\n\n# RCC legacy uv target-python cache epoch: 1",
+  "hash": "2644cabd10119cfc"
 }
