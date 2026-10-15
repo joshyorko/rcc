@@ -100,6 +100,13 @@ func LiveExecution(sink io.Writer, liveFolder string, command ...string) (int, e
 	return task.Tracked(sink, false)
 }
 
+func liveExecutionWithEnvironment(sink io.Writer, liveFolder string, environment []string, command ...string) (int, error) {
+	if _, err := fmt.Fprintf(sink, "Command %q at %q:\n", command, liveFolder); err != nil {
+		return 0, err
+	}
+	return shell.New(environment, ".", command...).Tracked(sink, false)
+}
+
 type InstallObserver map[string]bool
 
 func (it InstallObserver) Write(content []byte) (int, error) {
@@ -339,7 +346,13 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 	}
 	python, pyok := FindPython(targetFolder)
 	if !pyok {
-		fmt.Fprintf(planWriter, "Note: no python in target folder: %s\n", targetFolder)
+		fmt.Fprintf(planWriter, "Error: no python in target folder: %s\n", targetFolder)
+		return false, false, pipUsed, ""
+	}
+	python, err := filepath.Abs(python)
+	if err != nil {
+		fmt.Fprintf(planWriter, "Error: cannot resolve target python in %s: %v\n", targetFolder, err)
+		return false, false, pipUsed, ""
 	}
 	uvCache, wheelCache := common.UvCache(), common.WheelCache()
 	size, ok := pathlib.Size(requirementsText)
@@ -348,13 +361,17 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 	} else {
 		pretty.Progress(8, "Running uv install phase. (uv v%s) [layer: %s]", UvVersion(uv), fingerprint)
 		common.Debug("Updating new environment at %v with uv requirements from %v (size: %v)", targetFolder, requirementsText, size)
-		uvCommand := common.NewCommander(uv, "pip", "install", "--system", "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirementsText)
+		uvCommand := common.NewCommander(legacyUvInstallCommand(uv, python, uvCache, wheelCache, requirementsText)...)
 		uvCommand.Option("--index-url", settings.Global.PypiURL())
 		// no "--trusted-host" on uv pip install
 		// uvCommand.Option("--trusted-host", settings.Global.PypiTrustedHost())
 		uvCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
 		common.Debug("===  uv install phase ===")
-		code, err := LiveExecution(planWriter, targetFolder, uvCommand.CLI()...)
+		// uv honors UV_PYTHON even when invoked with --system. Bind the staged
+		// interpreter explicitly and remove that inherited selector; the base
+		// Conda environment already supplies the staged PATH and target prefix.
+		uvEnvironment := legacyUvExecutionEnvironment(CondaExecutionEnvironment(targetFolder, nil, true))
+		code, err := liveExecutionWithEnvironment(planWriter, targetFolder, uvEnvironment, uvCommand.CLI()...)
 		if err != nil || code != 0 {
 			cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.fatal.uv", fmt.Sprintf("%d_%x", code, code))
 			common.Timeline("uv fail.")
@@ -367,6 +384,14 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 		pipUsed = true
 	}
 	return true, false, pipUsed, python
+}
+
+func legacyUvInstallCommand(uv, python, uvCache, wheelCache, requirements string) []string {
+	return []string{uv, "pip", "install", "--system", "--python", python, "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirements}
+}
+
+func legacyUvExecutionEnvironment(environment []string) []string {
+	return removeIncompatibleEnvironmentVariables(environment, "UV_PYTHON")
 }
 
 func pipLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer) (bool, bool, bool, string) {
