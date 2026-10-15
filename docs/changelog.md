@@ -1,6 +1,16 @@
 # rcc change log
 ## Unreleased
 
+<a name="v18197"></a>
+## v18.19.7 (date: 15.10.2026)
+
+### Fixes
+
+- bind legacy Conda and micromamba `uv pip install` to the Python interpreter
+  staged in the target prefix, preventing successful installs into a different
+  Python environment (GH#249, PR#250)
+
+
 <a name="v18196"></a>
 ## v18.19.6 (date: 10.10.2026)
 
