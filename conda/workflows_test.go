@@ -1,15 +1,15 @@
 package conda
 
 import (
-	"io"
+	"bytes"
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/common"
-	"github.com/joshyorko/rcc/shell"
 )
 
 func TestLegacyUvInstallCommandBindsStagedPythonAndPreservesCondaCompatibility(t *testing.T) {
@@ -62,6 +62,9 @@ func TestLegacyUvExecutionEnvironmentRejectsInheritedPythonSelector(t *testing.T
 }
 
 func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("uses a POSIX executable recorder")
+	}
 	home := t.TempDir()
 	previousHome := common.Product.Home()
 	common.Product.ForceHome(home)
@@ -77,7 +80,7 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 	}
 	uv := filepath.Join(bin, "uv")
 	uvRecord := filepath.Join(home, "uv-record")
-	uvScript := "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"$UV_RECORD\"\nprintf 'UV_PYTHON=%s\\nVIRTUAL_ENV=%s\\nCONDA_PREFIX=%s\\nPATH_PYTHON=%s\\n' \"$UV_PYTHON\" \"$VIRTUAL_ENV\" \"$CONDA_PREFIX\" \"$(command -v python)\" >> \"$UV_RECORD\"\n"
+	uvScript := "#!/bin/sh\nif [ \"$1\" = --version ]; then echo 'uv 0.9.22'; exit 0; fi\nprintf '%s\\n' \"$@\" > \"$UV_RECORD\"\nprintf 'UV_PYTHON=%s\\nVIRTUAL_ENV=%s\\nCONDA_PREFIX=%s\\nPATH_PYTHON=%s\\n' \"$UV_PYTHON\" \"$VIRTUAL_ENV\" \"$CONDA_PREFIX\" \"$(command -v python)\" >> \"$UV_RECORD\"\n"
 	if err := os.WriteFile(uv, []byte(uvScript), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -87,14 +90,14 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 	t.Setenv("PATH", "/decoy/bin")
 	t.Setenv("UV_RECORD", uvRecord)
 
-	python, err := stagedTargetPython(prefix)
-	if err != nil {
+	requirements := filepath.Join(home, "requirements.txt")
+	if err := os.WriteFile(requirements, []byte("example-package==1.0\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	command := legacyUvInstallCommand(uv, python, "/uv-cache", "/wheel-cache", "/requirements.txt")
-	environment := legacyUvExecutionEnvironment(CondaExecutionEnvironment(prefix, nil, true))
-	if code, err := shell.New(environment, ".", command...).Tracked(io.Discard, false); err != nil || code != 0 {
-		t.Fatalf("uv recorder returned code %d, error %v", code, err)
+	var plan bytes.Buffer
+	success, fatal, pipUsed, selectedPython := uvLayer("test", requirements, prefix, nil, &plan)
+	if !success || fatal || !pipUsed {
+		t.Fatalf("uvLayer returned success=%v fatal=%v pipUsed=%v; plan: %s", success, fatal, pipUsed, plan.String())
 	}
 	recorded, err := os.ReadFile(uvRecord)
 	if err != nil {
@@ -102,7 +105,7 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 	}
 	text := string(recorded)
 	for _, want := range []string{
-		"--system\n--python\n" + python + "\n",
+		"--system\n--python\n" + selectedPython + "\n",
 		"UV_PYTHON=\n",
 		"VIRTUAL_ENV=\n",
 		"CONDA_PREFIX=" + prefix + "\n",
@@ -117,5 +120,33 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 func TestStagedTargetPythonFailsWhenMissing(t *testing.T) {
 	if _, err := stagedTargetPython(filepath.Join(t.TempDir(), "empty-prefix")); err == nil {
 		t.Fatal("expected missing staged Python to fail")
+	}
+}
+
+func TestLegacyUvLayerFailsWhenTargetPythonIsMissing(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("uses a POSIX executable recorder")
+	}
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	target := filepath.Join(home, "holotree", "h456t")
+	bin := filepath.Join(target, "bin")
+	if err := os.MkdirAll(bin, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	uv := filepath.Join(bin, "uv")
+	if err := os.WriteFile(uv, []byte("#!/bin/sh\nexit 99\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	requirements := filepath.Join(home, "requirements.txt")
+	if err := os.WriteFile(requirements, []byte("example-package==1.0\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var plan bytes.Buffer
+	success, fatal, pipUsed, _ := uvLayer("test", requirements, target, nil, &plan)
+	if success || fatal || pipUsed || !strings.Contains(plan.String(), "no python in target folder") {
+		t.Fatalf("uvLayer did not fail closed for missing Python: success=%v fatal=%v pipUsed=%v plan=%s", success, fatal, pipUsed, plan.String())
 	}
 }
