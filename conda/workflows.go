@@ -344,14 +344,9 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 		fmt.Fprintf(planWriter, "Note: no uv in target folder: %s\n", targetFolder)
 		return false, false, pipUsed, ""
 	}
-	python, pyok := FindPython(targetFolder)
-	if !pyok {
-		fmt.Fprintf(planWriter, "Error: no python in target folder: %s\n", targetFolder)
-		return false, false, pipUsed, ""
-	}
-	python, err := filepath.Abs(python)
+	python, err := stagedTargetPython(targetFolder)
 	if err != nil {
-		fmt.Fprintf(planWriter, "Error: cannot resolve target python in %s: %v\n", targetFolder, err)
+		fmt.Fprintf(planWriter, "Error: no python in target folder: %s\n", targetFolder)
 		return false, false, pipUsed, ""
 	}
 	uvCache, wheelCache := common.UvCache(), common.WheelCache()
@@ -388,6 +383,14 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 
 func legacyUvInstallCommand(uv, python, uvCache, wheelCache, requirements string) []string {
 	return []string{uv, "pip", "install", "--system", "--python", python, "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirements}
+}
+
+func stagedTargetPython(targetFolder string) (string, error) {
+	python, ok := FindPython(targetFolder)
+	if !ok {
+		return "", fmt.Errorf("no python in target folder: %s", targetFolder)
+	}
+	return filepath.Abs(python)
 }
 
 func legacyUvExecutionEnvironment(environment []string) []string {
