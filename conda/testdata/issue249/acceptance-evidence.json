@@ -290,12 +290,27 @@
     ],
     "wheel": "local rcc_prefix_probe==1.0"
   },
+  "failure_retry": {
+    "binary_revision": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f",
+    "binary_sha256": "d8879c878fc6e934643d55679ae7dcc072a3e6c54ff3beeabf550d9ba1d28347",
+    "exit": 6,
+    "external_pypi_used": false,
+    "failed_uv_attempts": 2,
+    "final_stage_directories": [
+      "hc2fd1aa_493f813dad24d3t"
+    ],
+    "outcome": "expected failed environment creation after a synthetic unreachable PyPI index",
+    "registered_final_environment_metadata": [],
+    "retry_message_count": 1,
+    "stage_cleanup_before_retry_count": 1,
+    "test_index": "http://127.0.0.1:9/simple/ (closed local port)",
+    "uv_install_error_count": 2
+  },
   "go_test": "go test ./conda ./htfs -count=1 (Go 1.26.9, GOARCH=amd64, CGO_ENABLED=0)",
   "issue": 249,
   "limitations": [
-    "Runtime matrix exercised on Linux only.",
-    "Synthetic micromamba corruption retry cleanup was not exercised; uv install failures are fatal and do not enter the generic retry branch.",
-    "Native platform CI receipts are linked from PR #250."
+    "Runtime matrix exercised on Linux only; native CI provides platform coverage.",
+    "Closed local PyPI failure injection caused the expected first uv failure, one generic retry, and successful cleanup of the first stage before retry. The forced retry failed too; no registered final-environment metadata remained, though the last hidden stage directory remained. Cleanup after the final failed attempt was not verified."
   ],
   "purpose": "Acceptance evidence for legacy Conda/micromamba uv target-Python binding and poisoned-cache invalidation.",
   "rcc_baseline_cold": {
@@ -450,5 +465,5 @@
     "robot_tests/blueprint.robot"
   ],
   "runtime_host": "Linux x86_64; isolated non-venv CPython 3.12 prefixes; local rcc_prefix_probe==1.0 wheel.",
-  "runtime_setup": "The target and decoy prefixes share CPython stdlib and have separate site-packages trees. Hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH select the decoy. Baseline RCC v18.19.6 is run cold and warm, then PR-head RCC is run cold and warm against that same ROBOCORP_HOME to verify cache invalidation."
+  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages. Full RCC A/B: target is a real micromamba-built Conda Python 3.12.15 environment; decoy is a separate synthetic prefix. Both scenarios set hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors. Baseline RCC v18.19.6 runs cold/warm; candidate runs cold/warm against the same ROBOCORP_HOME to verify poisoned-cache invalidation."
 }
