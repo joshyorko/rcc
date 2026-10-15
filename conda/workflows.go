@@ -346,7 +346,7 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 	}
 	python, err := stagedTargetPython(targetFolder)
 	if err != nil {
-		fmt.Fprintf(planWriter, "Error: no python in target folder: %s\n", targetFolder)
+		_, _ = fmt.Fprintf(planWriter, "Error: no python in target folder: %s\n", targetFolder)
 		return false, false, pipUsed, ""
 	}
 	uvCache, wheelCache := common.UvCache(), common.WheelCache()
