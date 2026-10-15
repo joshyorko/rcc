@@ -458,11 +458,12 @@
       "CONDA_PREFIX",
       "PATH all point to decoy"
     ],
-    "index": "closed localhost port; successful install must use local wheel",
+    "index": "Default PyPI endpoint configuration; no network isolation was enforced. The local wheel was supplied in ROBOCORP_HOME/wheels.",
     "issue": 249,
+    "network_isolation": "Not enforced for the full RCC real-Conda matrix; only the separate failure/retry probe used a closed localhost endpoint.",
     "prefix_type": "real micromamba Conda non-venv prefixes",
     "rcc_version_requested": "python=3.12 and exact uv pin from each row",
-    "requirements": "local offline wheel rcc-prefix-probe==1.0",
+    "requirements": "local wheel rcc_prefix_probe==1.0 supplied in each ROBOCORP_HOME/wheels directory",
     "versions": [
       {
         "decoy_hashes_after": {
@@ -585,5 +586,5 @@
     "robot_tests/blueprint.robot"
   ],
   "runtime_host": "Linux x86_64; isolated non-venv CPython 3.12 prefixes; local rcc_prefix_probe==1.0 wheel.",
-  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages. Full RCC A/B: candidate cold/warm builds use real micromamba Conda prefixes pinned to uv 0.8.17, 0.9.18 and 0.9.22; the separate shipped v18.19.6 baseline cold/warm uses real Conda uv 0.9.22. The decoy is a separate synthetic prefix. Hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors are set in each scenario."
+  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages; the local wheel is supplied in a wheelhouse. Full RCC matrix: candidate cold/warm builds use real micromamba Conda prefixes pinned to uv 0.8.17, 0.9.18 and 0.9.22; the shipped v18.19.6 baseline cold/warm uses real Conda uv 0.9.22. The decoy is a separate synthetic prefix. Both scenarios set hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors. The full RCC matrix provides the local wheelhouse but does not enforce network isolation."
 }
