@@ -309,7 +309,7 @@
   "go_test": "go test ./conda ./htfs -count=1 (Go 1.26.9, GOARCH=amd64, CGO_ENABLED=0)",
   "issue": 249,
   "limitations": [
-    "Runtime matrix exercised on Linux only; native CI provides platform coverage.",
+    "Runtime matrix exercised on Linux only; native CI supplies Windows and macOS platform checks.",
     "Closed local PyPI failure injection caused the expected first uv failure, one generic retry, and successful cleanup of the first stage before retry. The forced retry failed too; no registered final-environment metadata remained, though the last hidden stage directory remained. Cleanup after the final failed attempt was not verified."
   ],
   "purpose": "Acceptance evidence for legacy Conda/micromamba uv target-Python binding and poisoned-cache invalidation.",
@@ -448,6 +448,126 @@
     "target_import_output": "installed-in-target",
     "target_prefix": "staged Conda target prefix"
   },
+  "real_conda_uv_matrix": {
+    "candidate_revision": "df0f5e8e6d7ff1fe5e807318837a4219daa8df1f",
+    "candidate_sha256": "8c6e0af6b5126070516cf6c295401101061b554bd61cd23c2603380690104722",
+    "host": "Linux x86_64",
+    "hostile_inherited_selectors": [
+      "UV_PYTHON",
+      "VIRTUAL_ENV",
+      "CONDA_PREFIX",
+      "PATH all point to decoy"
+    ],
+    "index": "closed localhost port; successful install must use local wheel",
+    "issue": 249,
+    "prefix_type": "real micromamba Conda non-venv prefixes",
+    "rcc_version_requested": "python=3.12 and exact uv pin from each row",
+    "requirements": "local offline wheel rcc-prefix-probe==1.0",
+    "versions": [
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "273b31cb120bdeb9",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.8.17-h2f8d451_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "273b31cb120bdeb9",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.8.17-h2f8d451_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.8.17"
+      },
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "54ef0fa1e4324a5c",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.18-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "54ef0fa1e4324a5c",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.18-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.9.18"
+      },
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "fd946220d058d711",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.22-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "fd946220d058d711",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.22-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.9.22"
+      }
+    ]
+  },
   "review": {
     "model": "GPT-6.1 Sol",
     "reasoning": "high",
@@ -465,5 +585,5 @@
     "robot_tests/blueprint.robot"
   ],
   "runtime_host": "Linux x86_64; isolated non-venv CPython 3.12 prefixes; local rcc_prefix_probe==1.0 wheel.",
-  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages. Full RCC A/B: target is a real micromamba-built Conda Python 3.12.15 environment; decoy is a separate synthetic prefix. Both scenarios set hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors. Baseline RCC v18.19.6 runs cold/warm; candidate runs cold/warm against the same ROBOCORP_HOME to verify poisoned-cache invalidation."
+  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages. Full RCC A/B: candidate cold/warm builds use real micromamba Conda prefixes pinned to uv 0.8.17, 0.9.18 and 0.9.22; the separate shipped v18.19.6 baseline cold/warm uses real Conda uv 0.9.22. The decoy is a separate synthetic prefix. Hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors are set in each scenario."
 }
