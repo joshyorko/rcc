@@ -100,6 +100,18 @@ func (it *Filesystem) Cleanup(ctx context.Context) (int, error) {
 }
 
 func NewFilesystem(root string) (*Filesystem, error) {
+	return newFilesystem(root, true)
+}
+
+// NewObjectFilesystem opens the verified immutable object primitives without
+// replaying provider administrative audit history. Use a dedicated namespace
+// for generic graphs that Environment Artifact v1 GC cannot trace. Existing
+// NewFilesystem administrative/manifest behavior is unchanged.
+func NewObjectFilesystem(root string) (*Filesystem, error) {
+	return newFilesystem(root, false)
+}
+
+func newFilesystem(root string, loadAudit bool) (*Filesystem, error) {
 	absolute, err := filepath.Abs(root)
 	if err != nil {
 		return nil, fmt.Errorf("resolve provider root: %w", err)
@@ -114,8 +126,10 @@ func NewFilesystem(root string) (*Filesystem, error) {
 	if err := provider.recoverRestore(); err != nil {
 		return nil, err
 	}
-	if records, err := provider.Audit(context.Background()); err == nil {
-		provider.requests.Store(int64(len(records)))
+	if loadAudit {
+		if records, err := provider.Audit(context.Background()); err == nil {
+			provider.requests.Store(int64(len(records)))
+		}
 	}
 	return provider, nil
 }
