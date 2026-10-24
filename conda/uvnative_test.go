@@ -218,3 +218,199 @@ func TestCopyPythonPrefixRejectsEscapingSymlink(t *testing.T) {
 		t.Fatalf("expected escaping symlink error, got: %v", err)
 	}
 }
+
+func TestCopyPythonPrefixAllowsInternalRelativeLinkThroughAliasedParent(t *testing.T) {
+	parent, err := os.MkdirTemp(".", "copy-python-prefix-alias-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if err := os.RemoveAll(parent); err != nil {
+			t.Errorf("removing temporary prefix tree: %v", err)
+		}
+	})
+	cacheRoot, err := filepath.Abs(filepath.Join(parent, "external-cache"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(cacheRoot, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	cacheAlias := filepath.Join(parent, "cache-alias")
+	if err := os.Symlink(cacheRoot, cacheAlias); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+
+	prefix := filepath.Join(cacheAlias, "cpython-3.12.8-linux-x86_64-gnu")
+	binDir := filepath.Join(prefix, "bin")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(binDir, "2to3-3.12"), []byte("script contents"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink("2to3-3.12", filepath.Join(binDir, "2to3")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+
+	target := t.TempDir()
+	if err := copyPythonPrefix(cacheAlias, "3.12.8", target, io.Discard); err != nil {
+		t.Fatalf("copying prefix through a parent alias should succeed: %v", err)
+	}
+
+	copied := filepath.Join(target, "bin", "2to3")
+	info, err := os.Lstat(copied)
+	if err != nil {
+		t.Fatalf("copied relative symlink target is missing: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		t.Fatalf("copied relative symlink remained a symlink: mode %v", info.Mode())
+	}
+	got, err := os.ReadFile(copied)
+	if err != nil {
+		t.Fatalf("copied relative symlink target is missing: %v", err)
+	}
+	if string(got) != "script contents" {
+		t.Fatalf("copied relative symlink contents = %q, want %q", got, "script contents")
+	}
+}
+
+func TestCopyPythonPrefixRejectsAbsoluteLinksEvenWhenInternal(t *testing.T) {
+	for _, test := range []struct {
+		name       string
+		linkTarget func(prefix, cache string) string
+	}{
+		{
+			name: "absolute internal target",
+			linkTarget: func(prefix, _ string) string {
+				return filepath.Join(prefix, "bin", "target")
+			},
+		},
+		{
+			name: "absolute outside target",
+			linkTarget: func(_, cache string) string {
+				return filepath.Join(cache, "outside")
+			},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			cache := t.TempDir()
+			prefix := filepath.Join(cache, "cpython-3.12.8-linux-x86_64-gnu")
+			binDir := filepath.Join(prefix, "bin")
+			if err := os.MkdirAll(binDir, 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(binDir, "target"), []byte("internal"), 0o755); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(cache, "outside"), []byte("outside"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Symlink(test.linkTarget(prefix, cache), filepath.Join(binDir, "script")); err != nil {
+				t.Skipf("symlink unavailable: %v", err)
+			}
+
+			err := copyPythonPrefix(cache, "3.12.8", t.TempDir(), io.Discard)
+			if err == nil || !strings.Contains(err.Error(), "outside Python prefix") {
+				t.Fatalf("expected absolute symlink rejection, got: %v", err)
+			}
+		})
+	}
+}
+
+func TestCopyPythonPrefixRejectsEscapingSymlinkChain(t *testing.T) {
+	for _, aliased := range []bool{false, true} {
+		name := "physical cache"
+		if aliased {
+			name = "aliased cache parent"
+		}
+		t.Run(name, func(t *testing.T) {
+			cacheRoot := t.TempDir()
+			cache := cacheRoot
+			if aliased {
+				aliasParent := t.TempDir()
+				cache = filepath.Join(aliasParent, "cache-alias")
+				if err := os.Symlink(cacheRoot, cache); err != nil {
+					t.Skipf("symlink unavailable: %v", err)
+				}
+			}
+			prefix := filepath.Join(cache, "cpython-3.12.8-linux-x86_64-gnu")
+			binDir := filepath.Join(prefix, "bin")
+			linksDir := filepath.Join(prefix, "links")
+			outsideDir := filepath.Join(cacheRoot, "outside")
+			for _, dir := range []string{binDir, linksDir, outsideDir} {
+				if err := os.MkdirAll(dir, 0o755); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if err := os.WriteFile(filepath.Join(outsideDir, "target"), []byte("outside"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Symlink(filepath.Join("..", "links", "first"), filepath.Join(binDir, "script")); err != nil {
+				t.Skipf("symlink unavailable: %v", err)
+			}
+			if err := os.Symlink(filepath.Join("..", "..", "outside", "target"), filepath.Join(linksDir, "first")); err != nil {
+				t.Skipf("symlink unavailable: %v", err)
+			}
+
+			err := copyPythonPrefix(cache, "3.12.8", t.TempDir(), io.Discard)
+			if err == nil || !strings.Contains(err.Error(), "outside Python prefix") {
+				t.Fatalf("expected chained relative escape rejection, got: %v", err)
+			}
+		})
+	}
+}
+
+func TestCopyPythonPrefixRejectsSymlinkCycle(t *testing.T) {
+	cache := t.TempDir()
+	prefix := filepath.Join(cache, "cpython-3.12.8-linux-x86_64-gnu")
+	binDir := filepath.Join(prefix, "bin")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for _, link := range []struct{ name, target string }{{"first", "second"}, {"second", "first"}} {
+		if err := os.Symlink(link.target, filepath.Join(binDir, link.name)); err != nil {
+			t.Skipf("symlink unavailable: %v", err)
+		}
+	}
+
+	err := copyPythonPrefix(cache, "3.12.8", t.TempDir(), io.Discard)
+	if err == nil || !strings.Contains(err.Error(), "failed to resolve symlink") {
+		t.Fatalf("expected symlink cycle rejection, got: %v", err)
+	}
+}
+
+func TestCopyPythonPrefixCopiesUnaliasedRelativeLinkAsFile(t *testing.T) {
+	cache := t.TempDir()
+	prefix := filepath.Join(cache, "cpython-3.12.8-linux-x86_64-gnu")
+	binDir := filepath.Join(prefix, "bin")
+	if err := os.MkdirAll(binDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(binDir, "python3.12"), []byte("python contents"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink("python3.12", filepath.Join(binDir, "python")); err != nil {
+		t.Skipf("symlink unavailable: %v", err)
+	}
+
+	target := t.TempDir()
+	if err := copyPythonPrefix(cache, "3.12.8", target, io.Discard); err != nil {
+		t.Fatalf("copying unaliased prefix failed: %v", err)
+	}
+	copied := filepath.Join(target, "bin", "python")
+	info, err := os.Lstat(copied)
+	if err != nil {
+		t.Fatalf("copied link is missing: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		t.Fatalf("copied link remained a symlink: mode %v", info.Mode())
+	}
+	got, err := os.ReadFile(copied)
+	if err != nil {
+		t.Fatalf("reading copied link target failed: %v", err)
+	}
+	if string(got) != "python contents" {
+		t.Fatalf("copied link contents = %q, want %q", got, "python contents")
+	}
+}

@@ -107,6 +107,14 @@ def environment_artifact_process_environment(home, offline=False):
         "COMSPEC",
         "SSL_CERT_FILE",
         "SSL_CERT_DIR",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
     )
     environment = {key: os.environ[key] for key in allowed if key in os.environ}
     environment["ROBOCORP_HOME"] = str(Path(home).resolve())
@@ -125,6 +133,9 @@ def environment_artifact_process_environment(home, offline=False):
                 "HTTP_PROXY": "http://127.0.0.1:1",
                 "HTTPS_PROXY": "http://127.0.0.1:1",
                 "ALL_PROXY": "http://127.0.0.1:1",
+                "http_proxy": "http://127.0.0.1:1",
+                "https_proxy": "http://127.0.0.1:1",
+                "all_proxy": "http://127.0.0.1:1",
                 "NO_PROXY": "127.0.0.1,localhost",
                 "no_proxy": "127.0.0.1,localhost",
                 "RCC_NO_BUILD": "1",

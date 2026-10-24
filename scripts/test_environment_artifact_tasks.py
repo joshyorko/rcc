@@ -1,7 +1,9 @@
 import json
 import gzip
 import hashlib
+import inspect
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -21,6 +23,62 @@ from robot_tests.environment_artifacts import library as artifact_robot_library 
 
 
 class ArtifactTaskTests(unittest.TestCase):
+  def test_build_source_guard_rejects_tracked_edits_and_precedes_compilation(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tasks._assert_clean_tracked_workspace(root)
+      (root / "untracked-generated-file.txt").write_text("generated\n")
+      tasks._assert_clean_tracked_workspace(root)
+      tracked.write_text("modified\n")
+      with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+        tasks._assert_clean_tracked_workspace(root)
+
+    build_source = inspect.getsource(tasks.build.body)
+    self.assertLess(build_source.index("_assert_clean_source_if_required"), build_source.index('c.run(f"go build'))
+
+  def test_build_source_guard_is_release_ci_opt_in(self):
+    with tempfile.TemporaryDirectory() as directory:
+      root = Path(directory)
+      subprocess.run(["git", "init", "-q", str(root)], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.name", "RCC test"], check=True)
+      subprocess.run(["git", "-C", str(root), "config", "user.email", "rcc-test@example.invalid"], check=True)
+      tracked = root / "tracked.txt"
+      tracked.write_text("clean\n")
+      subprocess.run(["git", "-C", str(root), "add", "tracked.txt"], check=True)
+      subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+      tracked.write_text("developer edit\n")
+
+      calls = []
+
+      class Context:
+        def run(self, command):
+          calls.append(command)
+          output = root / "build" / "linux64" / "rcc"
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_bytes(b"test executable placeholder")
+
+      old_cwd = Path.cwd()
+      try:
+        os.chdir(root)
+        with mock.patch.dict(os.environ, {}, clear=True):
+          tasks.build.body(Context(), platform="linux")
+        self.assertEqual(len(calls), 1, "ordinary developer build should allow tracked edits")
+
+        calls.clear()
+        with mock.patch.dict(os.environ, {"RCC_REQUIRE_CLEAN_SOURCE": "1"}, clear=True):
+          with self.assertRaisesRegex(RuntimeError, "tracked source tree is not clean"):
+            tasks.build.body(Context(), platform="linux")
+        self.assertEqual(calls, [], "release CI guard must fail before compilation")
+      finally:
+        os.chdir(old_cwd)
+
   def test_self_host_uses_the_archive_legacy_blueprint(self):
     with tempfile.TemporaryDirectory() as directory:
       archive = Path(directory) / "fixture.rcca"
@@ -112,6 +170,153 @@ class ArtifactTaskTests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
           tasks._validate_archive_rollback(result, receipt)
 
+  def _archive_rollback_fixture(self, root):
+    artifact_digest = "sha256:" + "a" * 64
+    materialization_id = "consumer-space"
+    materialization_path = str(root.parent / "holotree" / materialization_id)
+    digest_dir = root / "materializations" / artifact_digest.removeprefix("sha256:")
+    digest_dir.mkdir(parents=True)
+    identity = {
+        "artifactDigest": artifact_digest,
+        "legacyBlueprintKey": "blueprint-key",
+        "materializationId": materialization_id,
+        "path": materialization_path,
+    }
+    ready = dict(identity, state="ready", createdAt="2026-10-10T00:00:00Z", verifiedAt="2026-10-10T00:00:01Z")
+    (digest_dir / "ready.json").write_text(json.dumps(ready, separators=(",", ":")))
+    (digest_dir / "references.json").write_text(json.dumps({"manifest": artifact_digest, "protected": []}))
+    provisional_paths = []
+    for state in ("verified-content", "materializing"):
+      path = digest_dir / f"{state}.json"
+      record = dict(identity, state=state, createdAt=ready["createdAt"], verifiedAt=ready["verifiedAt"])
+      path.write_text(json.dumps(record, separators=(",", ":")))
+      provisional_paths.append(path)
+    content = root / "content" / "objects" / "content-object"
+    content.parent.mkdir(parents=True)
+    content.write_bytes(b"immutable artifact bytes")
+    trust = root / "trust" / "policy.json"
+    trust.parent.mkdir(parents=True)
+    trust.write_bytes(b"immutable trust policy")
+    receipt = {
+        "artifactDigest": artifact_digest,
+        "materializationId": materialization_id,
+        "path": materialization_path,
+    }
+    return receipt, digest_dir, provisional_paths, content, trust
+
+  def test_archive_rollback_allows_only_candidate_provisional_record_removal(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      for path in provisional_paths:
+        path.unlink()
+      after = tasks._state_digests(artifact_root)
+      tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_unrelated_state_changes(self):
+    mutations = ("content", "trust", "ready", "references", "unrelated-removal", "unknown-state")
+    for mutation in mutations:
+      with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, content, trust = self._archive_rollback_fixture(artifact_root)
+        before = tasks._state_digests(artifact_root)
+        provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+        for path in provisional_paths:
+          path.unlink()
+        if mutation == "content":
+          content.write_bytes(b"changed artifact bytes")
+        elif mutation == "trust":
+          trust.write_bytes(b"changed trust policy")
+        elif mutation == "ready":
+          ready = digest_dir / "ready.json"
+          ready.write_text(ready.read_text().replace("consumer-space", "other-space"))
+        elif mutation == "references":
+          references = digest_dir / "references.json"
+          payload = json.loads(references.read_text())
+          payload["protected"].append("sha256:other")
+          references.write_text(json.dumps(payload))
+        elif mutation == "unrelated-removal":
+          (artifact_root / "content" / "objects" / "content-object").unlink()
+        elif mutation == "unknown-state":
+          (digest_dir / "unknown-state.json").write_text("{}")
+        after = tasks._state_digests(artifact_root)
+        with self.assertRaises(RuntimeError):
+          tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_provisional_mutation_addition_and_symlink_replacement(self):
+    for mutation in ("changed-bytes", "added-record", "unknown-identity", "symlink-replacement"):
+      with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+        record_path = provisional_paths[0]
+        original_record = record_path.read_bytes()
+        if mutation == "unknown-identity":
+          payload = json.loads(original_record)
+          payload["materializationId"] = "other-space"
+          record_path.write_text(json.dumps(payload, separators=(",", ":")))
+          with self.assertRaises(RuntimeError):
+            tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+          continue
+        if mutation == "added-record":
+          record_path.unlink()
+        before = tasks._state_digests(artifact_root)
+        provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+        if mutation == "changed-bytes":
+          record_path.write_text(record_path.read_text().replace("consumer-space", "other-space"))
+        elif mutation == "added-record":
+          record_path.write_bytes(original_record)
+        elif mutation == "symlink-replacement":
+          record_path.unlink()
+          record_path.symlink_to(digest_dir / "ready.json")
+        after = tasks._state_digests(artifact_root)
+        with self.assertRaises(RuntimeError):
+          tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
+  def test_archive_rollback_rejects_preexisting_nonregular_provisional_records(self):
+    for replacement in ("symlink", "directory"):
+      with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as directory:
+        artifact_root = Path(directory) / "artifacts" / "v1"
+        artifact_root.mkdir(parents=True)
+        receipt, digest_dir, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+        provisional_paths[0].unlink()
+        if replacement == "symlink":
+          provisional_paths[0].symlink_to(digest_dir / "ready.json")
+        else:
+          provisional_paths[0].mkdir()
+        with self.assertRaisesRegex(RuntimeError, "not a regular file"):
+          tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+
+  def test_archive_rollback_only_allows_provisional_cleanup_after_supported_import(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      for path in provisional_paths:
+        path.unlink()
+      after = tasks._state_digests(artifact_root)
+      with self.assertRaisesRegex(RuntimeError, "unsupported N-1 attempt removed"):
+        tasks._validate_archive_rollback_state(before, after, artifact_root, "unsupported", provisional)
+
+  def test_archive_rollback_does_not_allow_new_provisional_records(self):
+    with tempfile.TemporaryDirectory() as directory:
+      artifact_root = Path(directory) / "artifacts" / "v1"
+      artifact_root.mkdir(parents=True)
+      receipt, _, provisional_paths, _, _ = self._archive_rollback_fixture(artifact_root)
+      provisional_paths[1].unlink()
+      before = tasks._state_digests(artifact_root)
+      provisional = tasks._capture_archive_rollback_provisional_records(artifact_root, receipt)
+      provisional_paths[1].write_text("{}")
+      after = tasks._state_digests(artifact_root)
+      with self.assertRaises(RuntimeError):
+        tasks._validate_archive_rollback_state(before, after, artifact_root, "imported", provisional)
+
   def test_self_host_legacy_fixture_declares_artifacts_directory(self):
     source = (ROOT / "tasks.py").read_text()
     self.assertIn('condaConfigFile: conda.yaml\\nartifactsDir: output\\n', source)
@@ -168,13 +373,15 @@ class ArtifactTaskTests(unittest.TestCase):
 
   def test_native_matrix_uses_exact_binary_and_test_produced_receipt(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
-    native_job = workflow.split("\n  robot:\n", 1)[1].split("\n  release:\n", 1)[0]
+    match = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(match, "native robot job is missing")
+    native_job = match.group(1)
     self.assertIn("needs: build", native_job)
     self.assertIn("actions/download-artifact", native_job)
     self.assertIn("RCC_REAL_BINARY", native_job)
     self.assertIn("RCC_REAL_BINARY_SHA256", native_job)
     self.assertIn("RCC_REAL_RECEIPT_FILE", native_job)
-    self.assertIn("RCC_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}", native_job)
+    self.assertIn("RCC_SOURCE_SHA: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}", native_job)
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("TestRealJATClassRCCAtoBVertical", native_job)
     self.assertIn("RCC_REAL_JAT_CLASS_TEST=1", native_job)
@@ -228,6 +435,49 @@ class ArtifactTaskTests(unittest.TestCase):
     with mock.patch.dict("os.environ", windows, clear=True):
       environment = artifact_robot_library.environment_artifact_process_environment("C:\\rcc-home")
     for name, value in windows.items():
+      self.assertEqual(environment[name], value)
+
+  def test_online_environment_artifact_environment_preserves_proxy_configuration(self):
+    proxy_names = (
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
+    )
+    configured = {name: f"http://{name.lower()}.example:8080" for name in proxy_names}
+    with mock.patch.dict(os.environ, configured, clear=True):
+      environment = artifact_robot_library.environment_artifact_process_environment("/tmp/online-home")
+    for name, value in configured.items():
+      self.assertEqual(environment[name], value)
+
+  def test_offline_environment_artifact_environment_overrides_all_proxy_casing(self):
+    proxy_names = (
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+    )
+    configured = {name: f"http://{name.lower()}.example:8080" for name in proxy_names}
+    configured.update({"NO_PROXY": "remote.example", "no_proxy": "remote.example"})
+    with mock.patch.dict(os.environ, configured, clear=True):
+      environment = artifact_robot_library.environment_artifact_process_environment("/tmp/offline-home", offline=True)
+    for name in proxy_names:
+      self.assertEqual(environment[name], "http://127.0.0.1:1")
+    self.assertEqual(environment["NO_PROXY"], "127.0.0.1,localhost")
+    self.assertEqual(environment["no_proxy"], "127.0.0.1,localhost")
+    for name, value in {
+        "CONDA_OFFLINE": "true",
+        "MAMBA_OFFLINE": "true",
+        "PIP_NO_INDEX": "1",
+        "UV_NO_INDEX": "1",
+        "RCC_NO_BUILD": "1",
+    }.items():
       self.assertEqual(environment[name], value)
 
   def test_multi_platform_index_includes_the_native_runner_platform(self):
@@ -493,6 +743,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("  release-candidate:", workflow)
     self.assertIn("rcc run -r developer/toolkit.yaml --dev -t releaseCandidate", workflow)
     self.assertIn("      - release-candidate", workflow)
+    build_job = workflow.split("  build:\n", 1)[1].split("\n  release-candidate:", 1)[0]
+    self.assertIn('RCC_REQUIRE_CLEAN_SOURCE: "1"', build_job)
 
   def test_release_candidate_provisions_linux_sandbox_before_contained_gate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
@@ -561,11 +813,52 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("HOMEBREW_TOOLS_PAT", guide)
 
   def test_release_validates_homebrew_handoff_before_publication(self):
-    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    workflow = (ROOT / ".github" / "workflows" / "publish-release.yml").read_text()
     self.assertLess(
-        workflow.index("- name: Validate Homebrew Update Token"),
-        workflow.index("- name: Publish Release"),
+        workflow.index("- name: Validate separately configured Homebrew dispatcher access"),
+        workflow.index("- name: Create the new version tag without replacement"),
     )
+    self.assertLess(
+        workflow.index("- name: Create the new version tag without replacement"),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
+    )
+    self.assertLess(
+        workflow.index('gh release create "$RCC_RELEASE_VERSION"'),
+        workflow.index("- name: Dispatch Homebrew update after release publication"),
+    )
+
+  def test_manual_preparation_uploads_nine_review_only_asset_artifacts(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    self.assertIn("stage-review-assets", workflow)
+    self.assertEqual(workflow.count("name: Upload review-only release asset"), 9)
+    self.assertIn("rcc-release-preparation", workflow)
+    self.assertIn("check-review-payload", workflow)
+    self.assertNotIn("needs: assemble-release-preparation", workflow)
+    self.assertLess(workflow.index("name: Upload immutable release preparation artifact"),
+                    workflow.index("name: Upload review-only release asset"))
+    for asset in (
+      "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
+      "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64", "index.json",
+    ):
+      with self.subTest(asset=asset):
+        self.assertIn(f"rcc-release-review-assets/{asset}/", workflow)
+
+  def test_native_receipt_artifact_includes_guarded_exact_executable(self):
+    workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
+    job = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
+    self.assertIsNotNone(job)
+    native_job = job.group(1)
+    self.assertIn("stage-native-review-binary", native_job)
+    self.assertIn("check-review-payload", native_job)
+    stage = native_job.index("stage-native-review-binary")
+    guard = native_job.index("check-review-payload")
+    upload = native_job.index("name: ${{ matrix.platform }}-native-runtime-receipt")
+    self.assertLess(stage, guard)
+    self.assertLess(guard, upload)
+    self.assertIn("--receipt \"$RCC_REAL_RECEIPT_FILE\"", native_job)
+    self.assertIn("--source-sha \"$RCC_CANDIDATE_SHA\"", native_job)
+    self.assertIn('--platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}"', native_job)
+    self.assertIn("path: ./tmp/output/", native_job)
 
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):
     commands = []
@@ -660,6 +953,26 @@ class ArtifactTaskTests(unittest.TestCase):
     tasks._validate_go_vet_result(0, "")
     with self.assertRaisesRegex(RuntimeError, "unexpected go vet findings"):
       tasks._validate_go_vet_result(1, baseline + "new/file.go:1:1: new finding\n")
+
+  def test_go_vet_rejects_resolved_tls_cancel_baseline_finding(self):
+    current_findings = [
+        "htfs/directory.go:335:17: method ReadFrom(source io.Reader) error should have signature ReadFrom(io.Reader) (int64, error)",
+        "htfs/relocator_test.go:18:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:21:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:24:3: result of fmt.Sprintf call not used",
+        "htfs/relocator_test.go:27:3: result of fmt.Sprintf call not used",
+        "operations/pull.go:67:2: unreachable code",
+    ]
+    resolved_tls_finding = (
+        "operations/tlscheck.go:247:11: the cancel function returned by "
+        "context.WithTimeout should be called, not discarded, to avoid a context leak"
+    )
+
+    self.assertEqual(tasks._known_go_vet_findings(), current_findings)
+    tasks._validate_go_vet_result(1, "\n".join(current_findings) + "\n")
+    with self.assertRaisesRegex(RuntimeError, "unexpected go vet findings"):
+      tasks._validate_go_vet_result(
+          1, "\n".join(current_findings + [resolved_tls_finding]) + "\n")
 
   def test_artifact_race_scope_is_pinned_to_non_legacy_subpackages(self):
     self.assertEqual(tasks._artifact_race_packages(), [

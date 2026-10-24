@@ -1,10 +1,19 @@
 import json
+import argparse
+import os
+import re
+import runpy
+import shlex
 import shutil
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
+from string import Template
+from unittest.mock import patch
 from pathlib import Path
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).parent))
 import validate_release_topology as topology
@@ -16,9 +25,66 @@ ASSETS = {
     "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64",
 }
 REPOSITORY_ROOT = Path(__file__).parents[1]
+VERSION = "v18.19.6"
+RELEASE_BASE = f"https://github.com/joshyorko/rcc/releases/download/{VERSION}"
 
 
 class ReleaseTopologyTests(unittest.TestCase):
+    def publisher_python_commands(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        values = {
+            "RCC_PREPARATION_RUN_ID": "123",
+            "RCC_SOURCE_SHA": "a" * 40,
+            "RCC_RELEASE_VERSION": VERSION,
+            "RCC_ASSET_MANIFEST_SHA256": "b" * 64,
+        }
+        return [
+            [Template(part).substitute(values) for part in shlex.split(line.strip())]
+            for line in workflow.replace("\\\n", " ").splitlines()
+            if line.strip().startswith("python3 scripts/")
+        ]
+
+    def test_publisher_python_invocations_match_actual_cli_parsers(self):
+        class ParsedCommand(Exception):
+            pass
+
+        parse_args = argparse.ArgumentParser.parse_args
+
+        def validate_and_stop(parser, args=None, namespace=None):
+            parse_args(parser, args, namespace)
+            raise ParsedCommand
+
+        # Stop immediately after real parsing, before any network or publication work.
+        for command in self.publisher_python_commands():
+            with self.subTest(command=command):
+                script = REPOSITORY_ROOT / command[1]
+                with patch.object(sys, "argv", [str(script), *command[2:]]), \
+                        patch.object(argparse.ArgumentParser, "parse_args", validate_and_stop), \
+                        self.assertRaises(ParsedCommand):
+                    runpy.run_path(str(script), run_name="__main__")
+
+    def test_publisher_topology_invocation_validates_all_workflows(self):
+        root, _, index = self.fixture()
+        self.addCleanup(shutil.rmtree, root)
+        assets = root / "rcc-release-preparation" / "assets"
+        assets.mkdir(parents=True)
+        for name in ASSETS:
+            (assets / name).write_bytes(b"release asset fixture")
+        shutil.copyfile(index, assets / "index.json")
+        workflows = root / "release-source" / ".github" / "workflows"
+        workflows.mkdir(parents=True)
+        for name in ("rcc.yaml", "create-release-tag.yml", "publish-release.yml", "recover-rcc-185.yml"):
+            shutil.copyfile(REPOSITORY_ROOT / ".github" / "workflows" / name, workflows / name)
+        command, = [c for c in self.publisher_python_commands() if c[1] == "scripts/validate_release_topology.py"]
+        invocation = [sys.executable, str(REPOSITORY_ROOT / command[1]), *command[2:]]
+        result = subprocess.run(invocation, cwd=root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        recovery = workflows / "recover-rcc-185.yml"
+        recovery.write_text(recovery.read_text().replace("contents: read", "contents: write"))
+        result = subprocess.run(invocation, cwd=root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("historical recovery workflow", result.stdout)
+
     def fixture(self):
         root = Path(tempfile.mkdtemp())
         for directory in ("linux64", "windows64", "macos64", "macosarm64"):
@@ -35,6 +101,8 @@ class ReleaseTopologyTests(unittest.TestCase):
                 directory = "linux64"
             source = root / "build" / directory / ("rccremote.exe" if "rccremote" in name and directory == "windows64" else "rcc.exe" if directory == "windows64" else "rccremote" if "rccremote" in name else "rcc")
             source.write_bytes(b"binary")
+        (root / "common").mkdir()
+        (root / "common" / "version.go").write_text(f"package common\nconst Version = `{VERSION}`\n")
         workflow = root / "workflow.yml"
         workflow.write_text("\n".join(f"cp build/{d}/{s} rcc-builds/{n}" for d, s, n in [
             ("linux64", "rcc", "rcc-linux64"), ("linux64", "rccremote", "rccremote-linux64"),
@@ -43,7 +111,13 @@ class ReleaseTopologyTests(unittest.TestCase):
             ("macosarm64", "rcc", "rcc-macosarm64"), ("macosarm64", "rccremote", "rccremote-macosarm64"),
         ]))
         index = root / "index.json"
-        index.write_text(json.dumps({"tested": [{"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64", "macosarm64": "https://x/rcc-macosarm64"}]}))
+        index.write_text(json.dumps({"tested": [{
+            "version": VERSION,
+            "windows": f"{RELEASE_BASE}/rcc-windows64.exe",
+            "linux": f"{RELEASE_BASE}/rcc-linux64",
+            "macos": f"{RELEASE_BASE}/rcc-macos64",
+            "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64",
+        }]}))
         return root, workflow, index
 
     def test_valid_fixture(self):
@@ -59,11 +133,34 @@ class ReleaseTopologyTests(unittest.TestCase):
         for runner in ("ubuntu-latest", "windows-latest", "macos-latest", "macos-15-intel"):
             self.assertIn(f'"{runner}"', workflow)
 
-    def test_repository_workflow_marks_rc_tags_as_prereleases(self):
+    def test_repository_workflow_has_no_tag_triggered_publisher(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        self.assertIn("prerelease: ${{ contains(github.ref_name, '-rc.') }}", workflow)
+        self.assertNotIn('      - "v*"', workflow)
+        self.assertNotIn("  release:\n", workflow)
+        self.assertNotIn("gh release create", workflow)
 
-    def test_candidate_identity_resolves_pr_head_main_push_and_tag_push(self):
+    def test_publisher_audits_with_automatic_tokens_before_and_after_manual_approval(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        jobs = workflow.split("\njobs:\n", 1)[1]
+        self.assertIn("\n  audit_policy:\n", "\n" + jobs)
+        audit, publish = jobs.split("\n  publish:\n", 1)
+        self.assertIn("    needs: audit_policy\n", publish)
+        self.assertIn("    environment:\n      name: rcc-production\n", publish)
+        for job in (audit, publish):
+            self.assertIn("if: github.ref == 'refs/heads/main'", job)
+            self.assertIn("RCC_RELEASE_POLICY_AUDIT_TOKEN: ${{ github.token }}", job)
+            self.assertIn("python3 scripts/release_publication.py verify-environment --name rcc-production", job)
+        self.assertIn("    permissions:\n      actions: read\n      contents: read\n", audit)
+        self.assertIn("persist-credentials: false", audit)
+        for forbidden in ("secrets.", "environment:", "write", "gh api", "gh release"):
+            self.assertNotIn(forbidden, audit)
+        self.assertNotIn("secrets.RCC_RELEASE_POLICY_AUDIT_TOKEN", workflow)
+        self.assertEqual(workflow.split("\njobs:\n", 1)[0].split("\npermissions:\n", 1)[1],
+                         "  actions: read\n  contents: write\n")
+        self.assertNotIn("pull_request:", workflow)
+        self.assertNotIn("\n  push:", workflow)
+
+    def test_candidate_identity_resolves_pr_main_push_and_manual_dispatch_but_rejects_tags(self):
         resolver = getattr(topology, "resolve_candidate_sha", None)
         self.assertIsNotNone(resolver, "release candidate SHA resolver is missing")
         merge_sha = "1" * 40
@@ -71,7 +168,9 @@ class ReleaseTopologyTests(unittest.TestCase):
         self.assertEqual(resolver("pull_request", merge_sha, head_sha), head_sha)
         self.assertNotEqual(resolver("pull_request", merge_sha, head_sha), merge_sha)
         self.assertEqual(resolver("push", "3" * 40), "3" * 40)
-        self.assertEqual(resolver("tag", "4" * 40), "4" * 40)
+        self.assertEqual(resolver("workflow_dispatch", "4" * 40), "4" * 40)
+        with self.assertRaisesRegex(ValueError, "unsupported.*tag"):
+            resolver("tag", "5" * 40)
 
     def test_repository_workflow_closes_release_identity_topology(self):
         validator = getattr(topology, "validate_release_identity_topology", None)
@@ -79,25 +178,163 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         self.assertEqual(validator(workflow), [])
 
+    def test_repository_two_phase_release_paths_are_fail_closed(self):
+        validator = getattr(topology, "validate_two_phase_release_topology", None)
+        self.assertIsNotNone(validator, "two-phase release topology validator is missing")
+        rcc = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        tag = (REPOSITORY_ROOT / ".github/workflows/create-release-tag.yml").read_text()
+        publisher = (REPOSITORY_ROOT / ".github/workflows/publish-release.yml").read_text()
+        recovery = (REPOSITORY_ROOT / ".github/workflows/recover-rcc-185.yml").read_text()
+        self.assertIn("--recovery-workflow .github/workflows/recover-rcc-185.yml", rcc)
+        self.assertIn("--version \"$RCC_RELEASE_VERSION\"", rcc)
+        self.assertIn("--recovery-workflow release-source/.github/workflows/recover-rcc-185.yml", publisher)
+        self.assertIn("--version \"$RCC_RELEASE_VERSION\"", publisher)
+        self.assertEqual(validator(rcc, tag, publisher, recovery), [])
+        self.assertTrue(validator(rcc, tag.replace("contents: read", "contents: write"), publisher, recovery))
+        self.assertTrue(validator(rcc, tag, publisher.replace("name: rcc-production", "name: unprotected"), recovery))
+        self.assertTrue(validator(rcc, tag, publisher.replace("if: github.ref == 'refs/heads/main'", "if: true"), recovery))
+        self.assertTrue(validator(rcc, tag, publisher, recovery.replace("contents: read", "contents: write")))
+        self.assertTrue(validator(rcc, tag, publisher, recovery.replace("exit 1", "echo publish")))
+
+    def test_release_candidate_is_label_or_manual_opt_in_and_never_tag_triggered(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        self.assertEqual(topology.validate_release_candidate_event_policy(workflow), [])
+
+        mutations = (
+            ("contains(github.event.pull_request.labels.*.name, 'release-candidate')", "github.event_name == 'pull_request'"),
+            ("      - labeled\n", ""),
+            ("(github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')", "(github.event_name == 'push')"),
+        )
+        for old, replacement in mutations:
+            with self.subTest(mutation=old):
+                self.assertIn(old, workflow)
+                self.assertTrue(topology.validate_release_candidate_event_policy(workflow.replace(old, replacement, 1)))
+
+    def test_release_candidate_stages_only_validated_self_host_metadata(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        script = re.search(
+            r"(?ms)^          python3 - \"\$gate_exit\" \"\$tee_exit\" <<'PY'\n(.*?)^          PY\s*$",
+            workflow,
+        )
+        self.assertIsNotNone(script, "release-candidate exit receipt/staging script is missing")
+        python_source = textwrap.dedent(script.group(1))
+        expected_sha = "a" * 40
+
+        def run_stage(metadata, evidence_paths=None, alternate_source=False):
+            with tempfile.TemporaryDirectory() as directory:
+                outer = Path(directory)
+                root = outer / "checkout"
+                root.mkdir()
+                (root / "tmp").mkdir()
+                home_b = outer / "private" / ".rcc-self-host-homes-123" / "home-b"
+                fixture = home_b / "artifacts" / "v1" / "metadata.json"
+                fixture.parent.mkdir(parents=True)
+                fixture.write_text(json.dumps(metadata) + "\n")
+                if alternate_source:
+                    alternate = outer / "private" / ".rcc-self-host-homes-124" / "home-b" / "artifacts" / "v1" / "metadata.json"
+                    alternate.parent.mkdir(parents=True)
+                    alternate.write_text(json.dumps(metadata) + "\n")
+                    evidence_paths = [str(alternate)]
+                receipt = {
+                    "homes": {"b": str(home_b)},
+                    "evidencePaths": [str(fixture)] if evidence_paths is None else evidence_paths,
+                }
+                (root / "tmp/self-host-v1.json").write_text(json.dumps(receipt))
+                result = subprocess.run(
+                    [sys.executable, "-c", python_source, "0", "0"],
+                    cwd=root,
+                    env=dict(os.environ, RCC_CANDIDATE_SHA=expected_sha),
+                    text=True,
+                    capture_output=True,
+                )
+                staged = root / "tmp/self-host-metadata-v1.json"
+                staged_content = staged.read_bytes() if staged.is_file() else None
+                exit_receipt = root / "tmp/release-candidate-exit.json"
+                source_sha = json.loads(exit_receipt.read_text())["sourceSha"] if exit_receipt.is_file() else None
+                return result, staged_content, source_sha
+
+        result, staged_content, source_sha = run_stage({"schemaVersion": 1})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(staged_content, b'{"schemaVersion": 1}\n')
+        self.assertEqual(source_sha, expected_sha)
+
+        for metadata, evidence_paths in (
+            ({"schemaVersion": 2}, None),
+            ({"schemaVersion": 1}, []),
+        ):
+            with self.subTest(metadata=metadata, evidence_paths=evidence_paths):
+                result, staged_content, _ = run_stage(metadata, evidence_paths)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIsNone(staged_content)
+        result, staged_content, _ = run_stage({"schemaVersion": 1}, alternate_source=True)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIsNone(staged_content)
+
+    def test_generated_index_changelog_fragment_resolves_to_release_heading(self):
+        workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
+        generator = re.search(r"(?ms)^          python3 - <<'PY'\n(.*?)^          PY\s*$", workflow)
+        self.assertIsNotNone(generator, "release index generator heredoc is missing")
+        version_source = (REPOSITORY_ROOT / "common/version.go").read_text()
+        version = re.search(r"(?m)^\s*Version = `([^`]+)`", version_source)
+        self.assertIsNotNone(version, "RCC version constant is missing")
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "downloaded-assets").mkdir()
+            prior = {
+                "version": "v18.19.5",
+                "windows": "https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-windows64.exe",
+                "linux": "https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-linux64",
+                "macos": "https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-macos64",
+                "macosarm64": "https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-macosarm64",
+            }
+            (root / "existing.json").write_text(json.dumps({"tested": [prior], "edge": []}))
+            env = dict(os.environ, VERSION=version.group(1), DATE="10.10.2026", REPO="joshyorko/rcc")
+            result = subprocess.run(
+                [sys.executable, "-c", textwrap.dedent(generator.group(1))],
+                cwd=root,
+                env=env,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            index = json.loads((root / "downloaded-assets/index.json").read_text())
+            self.assertEqual(index["tested"][0]["version"], version.group(1))
+            self.assertIn(prior, index["tested"], "new index generation must preserve valid older tested entries")
+
+        generated = urlsplit(index["tested"][0]["changelog"]).fragment
+        changelog = (REPOSITORY_ROOT / "docs/changelog.md").read_text()
+        anchor_before_heading = re.search(
+            rf'<a\s+name="([^"]+)"\s*></a>\s*\n## {re.escape(version.group(1))} \(date:',
+            changelog,
+        )
+        self.assertIsNotNone(anchor_before_heading, f"explicit changelog anchor for {version.group(1)} is missing")
+        self.assertEqual(
+            generated,
+            anchor_before_heading.group(1),
+            f"index fragment #{generated} does not resolve to the explicit release anchor #{anchor_before_heading.group(1)}",
+        )
+
     def test_release_identity_topology_rejects_merge_checkout_and_sha_drift(self):
         validator = getattr(topology, "validate_release_identity_topology", None)
         self.assertIsNotNone(validator, "release identity topology validator is missing")
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        candidate = "${{ github.event.pull_request.head.sha || github.sha }}"
+        candidate = "${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}"
         for old, replacement in (
             (candidate, "${{ github.sha }}"),
             (f"ref: {candidate}", "ref: refs/pull/119/merge"),
             (f"RCC_SOURCE_SHA: {candidate}", "RCC_SOURCE_SHA: ${{ github.sha }}"),
-            (f"target_commitish: {candidate}", "target_commitish: ${{ github.sha }}"),
+            ("- robot\n", "- build\n"),
         ):
             mutated = workflow.replace(old, replacement, 1)
             self.assertTrue(validator(mutated), (old, replacement))
 
-    def test_manual_stable_tag_path_requires_current_main_identity(self):
+    def test_legacy_tag_workflow_is_read_only_deprecation(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/create-release-tag.yml").read_text()
-        self.assertIn('target_sha="$(git rev-parse HEAD)"', workflow)
-        self.assertIn('main_sha="$(git rev-parse refs/remotes/origin/main)"', workflow)
-        self.assertIn('if [[ "$target_sha" != "$main_sha" ]]', workflow)
+        self.assertIn("contents: read", workflow)
+        self.assertNotIn("contents: write", workflow)
+        self.assertNotIn("git push", workflow)
+        self.assertNotIn("refs/tags/", workflow)
 
     def test_rejects_any_runtime_root_beneath_checkout(self):
         for variable in ("ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"):
@@ -111,10 +348,13 @@ class ReleaseTopologyTests(unittest.TestCase):
         errors = validate(root, REPOSITORY_ROOT / ".github/workflows/rcc.yaml", index)
         self.assertFalse(any("runtime root" in error for error in errors), errors)
 
-    def test_repository_release_waits_for_native_robot_matrix(self):
+    def test_preparation_artifact_waits_for_all_four_native_platforms(self):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
-        release_job = workflow.split("\n  release:\n", 1)[1]
-        self.assertRegex(release_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
+        prep_job = workflow.split("\n  assemble-release-preparation:\n", 1)[1]
+        self.assertRegex(prep_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
+        for platform in ("linux-amd64", "macos-amd64", "macos-arm64", "windows-amd64"):
+            self.assertIn(f"platform: {platform}", workflow)
+        self.assertIn("name: rcc-release-preparation", prep_job)
 
     def test_release_job_validates_downloaded_assets_without_build_tree(self):
         root, workflow, index = self.fixture()
@@ -132,6 +372,7 @@ class ReleaseTopologyTests(unittest.TestCase):
             "--asset-root", str(assets),
             "--workflow", str(workflow),
             "--index", str(published_index),
+            "--version", VERSION,
         ], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -169,20 +410,38 @@ class ReleaseTopologyTests(unittest.TestCase):
         (root / "rcc-builds" / "unexpected").write_bytes(b"x")
         index.write_text(json.dumps({"tested": [{"macos": "https://x/rcc-darwin64"}]}))
         errors = validate(root, workflow, index)
-        self.assertTrue(any("staged" in error or "basename" in error for error in errors))
+        self.assertTrue(any("staged" in error or "URL" in error for error in errors))
 
     def test_requires_macosarm64_index_asset(self):
         root, workflow, index = self.fixture()
-        index.write_text(json.dumps({"tested": [{"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64"}]}))
+        index.write_text(json.dumps({"tested": [{"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64"}]}))
         self.assertTrue(any("macosarm64" in error for error in validate(root, workflow, index)))
+
+    def test_rejects_wrong_index_version_host_path_and_architecture_mapping(self):
+        mutations = (
+            ("version", "v0.0.0", "version"),
+            ("linux", "https://attacker.invalid/wrong-version/rcc-linux64", "canonical release URL"),
+            ("macos", f"https://github.com/other/rcc/releases/download/{VERSION}/rcc-macos64", "canonical release URL"),
+            ("windows", f"https://github.com/joshyorko/rcc/releases/download/v18.19.5/rcc-windows64.exe", "canonical release URL"),
+            ("macosarm64", f"{RELEASE_BASE}/rcc-macos64", "canonical release URL"),
+        )
+        for key, value, expected_error in mutations:
+            with self.subTest(key=key, value=value):
+                root, workflow, index = self.fixture()
+                data = json.loads(index.read_text())
+                data["tested"][0][key] = value
+                index.write_text(json.dumps(data))
+                errors = validate(root, workflow, index)
+                self.assertTrue(any(expected_error in error for error in errors), errors)
 
     def test_rejects_index_urls_for_the_wrong_product_or_platform(self):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [{
-            "windows": "https://x/rccremote-windows64.exe",
-            "linux": "https://x/rccremote-linux64",
-            "macos": "https://x/rccremote-macosarm64",
-            "macosarm64": "https://x/rccremote-macos64",
+            "version": VERSION,
+            "windows": f"{RELEASE_BASE}/rccremote-windows64.exe",
+            "linux": f"{RELEASE_BASE}/rccremote-linux64",
+            "macos": f"{RELEASE_BASE}/rccremote-macosarm64",
+            "macosarm64": f"{RELEASE_BASE}/rccremote-macos64",
         }]}))
         errors = validate(root, workflow, index)
         self.assertEqual(len(errors), 4, errors)
@@ -197,15 +456,16 @@ class ReleaseTopologyTests(unittest.TestCase):
     def test_accepts_historical_entry_without_macosarm64(self):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [
-            {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64", "macosarm64": "https://x/rcc-macosarm64"},
+            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
             {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64"},
         ]}))
-        self.assertEqual(validate(root, workflow, index), [])
+        errors = validate(root, workflow, index)
+        self.assertEqual(errors, [])
 
     def test_accepts_historical_darwin_asset_name(self):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [
-            {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64", "macosarm64": "https://x/rcc-macosarm64"},
+            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
             {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-darwin64"},
         ]}))
         self.assertEqual(validate(root, workflow, index), [])

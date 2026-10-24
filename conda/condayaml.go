@@ -559,6 +559,11 @@ func (it *Environment) AsYaml() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Bust legacy-uv blueprints and pip-layer cache keys once so existing
+	// environments cannot reuse a layer produced with an ambient UV_PYTHON.
+	if len(it.Pip) > 0 && it.HasCondaDependency("uv") && !it.IsUvNative() {
+		return string(content) + "\n# RCC legacy uv target-python cache epoch: 1\n", nil
+	}
 	return string(content), nil
 }
 

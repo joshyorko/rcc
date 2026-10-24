@@ -124,8 +124,8 @@ func ExecutionEnvironmentListing(wantedfile, label string, searchPath pathlib.Pa
 		if !ok {
 			return false
 		}
-		fullPip, err := filepath.EvalSymlinks(pip)
-		if err != nil {
+		fullPip, resolveErr := filepath.EvalSymlinks(pip)
+		if resolveErr != nil {
 			return false
 		}
 		common.Log("Installed pip packages:")

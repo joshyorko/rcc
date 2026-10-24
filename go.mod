@@ -1,6 +1,6 @@
 module github.com/joshyorko/rcc
 
-go 1.26.5
+go 1.26.9
 
 require (
 	github.com/dchest/siphash v1.2.3

@@ -57,6 +57,8 @@ devTasks:
     shell: python call_invoke.py largeStream
   holotreeBenchmark:
     shell: python benchmarks/holotree.py
+  lifecycleBenchmark:
+    shell: python benchmarks/lifecycle.py --binary ../build/rcc
 
 environmentConfigs:
   - setup.yaml
