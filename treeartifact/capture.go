@@ -110,7 +110,9 @@ func (e *Engine) Capture(ctx context.Context, source string, previous *Digest, d
 	if err != nil {
 		return result, err
 	}
-	defer c.source.Close()
+	// Read-only handle on the source: a close failure cannot discard captured
+	// data, which is only acknowledged once the store has accepted it.
+	defer func() { _ = c.source.Close() }()
 	var root Descriptor
 	if previous == nil {
 		if len(dirty) != 0 {
@@ -218,11 +220,11 @@ func (c *capture) captureEntry(p, name string, depth int) (Entry, error) {
 		}
 		opened, err := f.Stat()
 		if err != nil {
-			f.Close()
+			_ = f.Close()
 			return entry, err
 		}
 		if !opened.Mode().IsRegular() || !os.SameFile(info, opened) {
-			f.Close()
+			_ = f.Close()
 			return entry, fmt.Errorf("source changed while opening %q", p)
 		}
 		h := sha256.New()
@@ -275,7 +277,7 @@ func (c *capture) captureEntry(p, name string, depth int) (Entry, error) {
 }
 
 func stableFile(a, b os.FileInfo) bool {
-	return os.SameFile(a, b) && a.Size() == b.Size() && a.Mode() == b.Mode() && a.ModTime() == b.ModTime()
+	return os.SameFile(a, b) && a.Size() == b.Size() && a.Mode() == b.Mode() && a.ModTime().Equal(b.ModTime())
 }
 
 func (c *capture) updateDirectory(p string, old *Descriptor, dirty *dirtyNode, depth int) (Descriptor, error) {
@@ -423,11 +425,11 @@ func (c *capture) flush() error {
 			}
 			info, statErr := file.Stat()
 			if statErr != nil {
-				file.Close()
+				_ = file.Close()
 				return statErr
 			}
 			if !stableFile(object.info, info) {
-				file.Close()
+				_ = file.Close()
 				return fmt.Errorf("source changed before CAS write: %q", object.source)
 			}
 			reader = &contextReader{ctx: c.ctx, reader: file, count: &c.stats.SourceBytesRead}

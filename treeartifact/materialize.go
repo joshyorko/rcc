@@ -45,7 +45,9 @@ func (e *Engine) Materialize(ctx context.Context, destination string, parent *Di
 	if err != nil {
 		return stats, err
 	}
-	defer root.Close()
+	// Every mutation below is synced through its own directory handle; a close
+	// failure on this root cannot discard bytes that were not already synced.
+	defer func() { _ = root.Close() }()
 	if parent == nil {
 		dir, err := root.Open(".")
 		if err != nil {
@@ -144,7 +146,7 @@ func (m *materialization) openDirectory(name string) (*os.File, error) {
 	}
 	info, err := f.Stat()
 	if err != nil || !info.IsDir() {
-		f.Close()
+		_ = f.Close()
 		if err == nil {
 			err = fmt.Errorf("%q is not a directory", name)
 		}
@@ -160,13 +162,13 @@ func (m *materialization) writableDirectory(name string) (*os.File, os.FileMode,
 	}
 	info, err := f.Stat()
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, 0, err
 	}
 	mode := info.Mode().Perm()
 	if mode|0700 != mode {
 		if err := f.Chmod(mode | 0700); err != nil {
-			f.Close()
+			_ = f.Close()
 			return nil, 0, err
 		}
 		m.touchDir(name)
@@ -287,7 +289,9 @@ func (m *materialization) entry(ctx context.Context, name string, old *Entry, ne
 		if err != nil {
 			return err
 		}
-		defer m.root.Remove(temporary)
+		// Best-effort cleanup of the staged file; after a successful rename the
+		// temporary name no longer exists, so a failure here is expected.
+		defer func() { _ = m.root.Remove(temporary) }()
 		if old != nil && old.Type == TypeDirectory {
 			if err := m.remove(ctx, name, *old); err != nil {
 				return err
@@ -346,7 +350,9 @@ func (m *materialization) fileMode(name string, mode uint32) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	// The mode is applied by this handle and the file had no pending writes;
+	// Sync's result is what proves the change durable.
+	defer func() { _ = f.Close() }()
 	if err := f.Chmod(os.FileMode(mode)); err != nil {
 		return err
 	}
@@ -359,7 +365,9 @@ func (m *materialization) syncDirectory(name string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	// Sync reports any pending directory metadata failure; a close failure after
+	// a successful sync adds no information the caller can act on.
+	defer func() { _ = f.Close() }()
 	return f.Sync()
 }
 
@@ -382,7 +390,9 @@ func (m *materialization) remove(ctx context.Context, name string, entry Entry) 
 			if err != nil {
 				_ = dir.Chmod(originalMode)
 			}
-			dir.Close()
+			// The directory is removed by name below; a close failure on this
+			// handle cannot revive it or hide an earlier error.
+			_ = dir.Close()
 		}()
 		tree, err := m.loadTree(ctx, *entry.Object, &entry.Mode)
 		if err != nil {
@@ -410,7 +420,9 @@ func (m *materialization) stageFile(ctx context.Context, name string, entry Entr
 	if err != nil {
 		return "", err
 	}
-	defer r.Close()
+	// Read-only store reader: every byte is verified against d before the
+	// staged file is accepted, so a close failure cannot admit bad content.
+	defer func() { _ = r.Close() }()
 	if size != d.Size {
 		return "", fmt.Errorf("file size mismatch for %q", name)
 	}
@@ -430,7 +442,9 @@ func (m *materialization) stageFile(ctx context.Context, name string, entry Entr
 		return "", err
 	}
 	defer func() {
-		file.Close()
+		// The data-bearing close below runs explicitly and its error is
+		// propagated; this is only a safety net for the error paths above it.
+		_ = file.Close()
 		if err != nil {
 			_ = m.root.Remove(temporary)
 		}

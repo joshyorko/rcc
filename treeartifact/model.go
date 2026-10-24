@@ -214,7 +214,9 @@ func (e *Engine) readMetadata(ctx context.Context, d Descriptor) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	defer r.Close()
+	// Read-only store reader; the full buffer is verified before it is returned,
+	// so a close failure cannot admit unverified metadata.
+	defer func() { _ = r.Close() }()
 	if size != d.Size || size > maxTreeBytes {
 		return nil, fmt.Errorf("metadata size mismatch")
 	}
@@ -252,7 +254,9 @@ func (e *Engine) LoadSnapshot(ctx context.Context, digest Digest) (Snapshot, err
 	if err != nil {
 		return s, err
 	}
-	defer r.Close()
+	// Read-only store reader; the snapshot is verified against its digest before
+	// any of its fields are trusted.
+	defer func() { _ = r.Close() }()
 	if size < 0 || size > maxTreeBytes {
 		return s, fmt.Errorf("snapshot exceeds bound")
 	}
