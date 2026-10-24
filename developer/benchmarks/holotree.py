@@ -31,24 +31,23 @@ def run_once(root, count):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(payload)
 
-    def inventory():
+    def inventory(directory):
         digest = hashlib.sha256()
         sizes = []
-        for path in sorted(source.rglob("*")):
+        for path in sorted(directory.rglob("*")):
             if path.is_file():
                 data = path.read_bytes()
-                digest.update(path.relative_to(source).as_posix().encode() + b"\0" + data)
+                digest.update(path.relative_to(directory).as_posix().encode() + b"\0" + data)
                 sizes.append(len(data))
         return {"files": len(sizes), "bytes": sum(sizes), "digest": digest.hexdigest()}
 
-    phases = [timed("inventory_and_hash", inventory)]
+    phases = [timed("inventory_and_hash", lambda: inventory(source))]
     phases.append(timed("materialize_copy", lambda: (
-        shutil.copytree(source, target), {"files": count, "bytes": sum(p.stat().st_size for p in source.rglob("*"))}
+        shutil.copytree(source, target), {"files": count, "bytes": count * len(payload)}
     )[1]))
-    phases.append(timed("verify_materialization", lambda: {
-        "files": sum(1 for p in target.rglob("*") if p.is_file()),
-        "bytes": sum(p.stat().st_size for p in target.rglob("*") if p.is_file()),
-    }))
+    phases.append(timed("verify_materialization", lambda: inventory(target)))
+    if phases[0]["digest"] != phases[2]["digest"] or phases[0]["files"] != phases[2]["files"]:
+        raise RuntimeError("materialized inventory differs from source")
     return phases
 
 
@@ -63,8 +62,9 @@ def main():
     with tempfile.TemporaryDirectory(prefix="rcc-holotree-benchmark-") as directory:
         runs = [{"repetition": repetition, "phases": run_once(Path(directory) / str(repetition), args.files)}
                 for repetition in range(args.repetitions)]
-    output = {"schema_version": 1, "benchmark": "holotree-filesystem-v1",
+    output = {"schema_version": 2, "benchmark": "holotree-filesystem-v2",
               "fixture": {"kind": "many-small-files", "files": args.files},
+              "harness_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "repetitions": args.repetitions,
               "system": {"platform": platform.platform(), "python": platform.python_version(),
                           "kernel": platform.release(), "cpu_count": os.cpu_count()},

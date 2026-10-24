@@ -22,7 +22,7 @@ rcc run -r developer/toolkit.yaml --dev -t local
 rcc run -r developer/toolkit.yaml -t robot
 ```
 
-With Go 1.26.5, Python 3.10+, and Invoke available:
+With the Go 1.26.9 toolchain selected, Python 3.10+, and Invoke available:
 
 ```sh
 inv assets   # regenerate embedded blobs

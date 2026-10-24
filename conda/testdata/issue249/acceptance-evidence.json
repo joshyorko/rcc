@@ -1,0 +1,590 @@
+{
+  "direct_uv_cli_matrix": {
+    "host": "Linux x86_64",
+    "hostile_selectors": "UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX, PATH all point at decoy",
+    "python": "3.12 non-venv isolated prefixes",
+    "receipt": "Direct uv CLI three-version target-prefix acceptance matrix",
+    "versions": [
+      {
+        "baseline": {
+          "decoy_changed": true,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "baseline",
+          "returncode": 0,
+          "target_import_exit": 1,
+          "target_output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'rcc_prefix_probe'"
+        },
+        "fixed_cold": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "4c0e4316441043818155cda68843a81071f180c2daaf44814c45ab3126710c53"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "4c0e4316441043818155cda68843a81071f180c2daaf44814c45ab3126710c53"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-cold",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "fixed_warm": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "4c0e4316441043818155cda68843a81071f180c2daaf44814c45ab3126710c53"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "4c0e4316441043818155cda68843a81071f180c2daaf44814c45ab3126710c53"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-warm",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "uv_sha256": "a0be2873b1bcbdb4b4bea06943924e3c94828e010a0b6e3cb35c6327130427d1",
+        "uv_version": "0.8.17"
+      },
+      {
+        "baseline": {
+          "decoy_changed": true,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "baseline",
+          "returncode": 0,
+          "target_import_exit": 1,
+          "target_output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'rcc_prefix_probe'"
+        },
+        "fixed_cold": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "cb1d5a411a7b6f0d0d902de10f7245ebbf7ef6f47e31818c40344151ae6df866"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "cb1d5a411a7b6f0d0d902de10f7245ebbf7ef6f47e31818c40344151ae6df866"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-cold",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "fixed_warm": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "cb1d5a411a7b6f0d0d902de10f7245ebbf7ef6f47e31818c40344151ae6df866"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "cb1d5a411a7b6f0d0d902de10f7245ebbf7ef6f47e31818c40344151ae6df866"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-warm",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "uv_sha256": "7f73d66b9767a281c2cae604b7cd0b6eaa1f0dda5ae28b9067e6de745d9593eb",
+        "uv_version": "0.9.18"
+      },
+      {
+        "baseline": {
+          "decoy_changed": true,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "baseline",
+          "returncode": 0,
+          "target_import_exit": 1,
+          "target_output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'rcc_prefix_probe'"
+        },
+        "fixed_cold": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "0417e1316a1ebb018ead55ff0d2dc8cb2e4812ecdc26c28d2af28cd8444b0fb6"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "0417e1316a1ebb018ead55ff0d2dc8cb2e4812ecdc26c28d2af28cd8444b0fb6"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-cold",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "fixed_warm": {
+          "decoy_changed": false,
+          "decoy_hashes_after": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "0417e1316a1ebb018ead55ff0d2dc8cb2e4812ecdc26c28d2af28cd8444b0fb6"
+          },
+          "decoy_hashes_before": {
+            "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+            "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "9c106889f7c97316cd70c767e7b14432086999e3e809a6fbba16301d9ead383e",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+            "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7bc78e50f01e8240e85f12d69d90225eb12a7100f6518549d7c40a6a39c6f359",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+            "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "0417e1316a1ebb018ead55ff0d2dc8cb2e4812ecdc26c28d2af28cd8444b0fb6"
+          },
+          "decoy_import_exit": 0,
+          "decoy_output": "installed-in-target",
+          "label": "fixed-warm",
+          "returncode": 0,
+          "target_import_exit": 0,
+          "target_output": "installed-in-target"
+        },
+        "uv_sha256": "1f95b3affb7fd478f068f62b80e374b84bf46764c37e9f35d2a648e5b9aa0036",
+        "uv_version": "0.9.22"
+      }
+    ],
+    "wheel": "local rcc_prefix_probe==1.0"
+  },
+  "failure_retry": {
+    "binary_revision": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f",
+    "binary_sha256": "d8879c878fc6e934643d55679ae7dcc072a3e6c54ff3beeabf550d9ba1d28347",
+    "exit": 6,
+    "external_pypi_used": false,
+    "failed_uv_attempts": 2,
+    "final_stage_directories": [
+      "hc2fd1aa_493f813dad24d3t"
+    ],
+    "outcome": "expected failed environment creation after a synthetic unreachable PyPI index",
+    "registered_final_environment_metadata": [],
+    "retry_message_count": 1,
+    "stage_cleanup_before_retry_count": 1,
+    "test_index": "http://127.0.0.1:9/simple/ (closed local port)",
+    "uv_install_error_count": 2
+  },
+  "go_test": "go test ./conda ./htfs -count=1 (Go 1.26.9, GOARCH=amd64, CGO_ENABLED=0)",
+  "issue": 249,
+  "limitations": [
+    "Runtime matrix exercised on Linux only; native CI supplies Windows and macOS platform checks.",
+    "Closed local PyPI failure injection caused the expected first uv failure, one generic retry, and successful cleanup of the first stage before retry. The forced retry failed too; no registered final-environment metadata remained, though the last hidden stage directory remained. Cleanup after the final failed attempt was not verified."
+  ],
+  "purpose": "Acceptance evidence for legacy Conda/micromamba uv target-Python binding and poisoned-cache invalidation.",
+  "rcc_baseline_cold": {
+    "binary": "released RCC v18.19.6",
+    "binary_revision": "release v18.19.6",
+    "binary_sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+    "decoy_changed": true,
+    "decoy_hashes_after": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79"
+    },
+    "decoy_hashes_before": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+    },
+    "decoy_import_exit": 0,
+    "decoy_import_output": "installed-in-target",
+    "exit": 0,
+    "target_identity_exists": true,
+    "target_import_exit": 1,
+    "target_import_output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'rcc_prefix_probe'",
+    "target_prefix": "staged Conda target prefix"
+  },
+  "rcc_baseline_warm": {
+    "binary": "released RCC v18.19.6",
+    "binary_revision": "release v18.19.6",
+    "binary_sha256": "2036b84ec8637e76ea41ab90abd2963357b1fed5ceb9a4e58fe852c67baaff1e",
+    "decoy_changed": false,
+    "decoy_hashes_after": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "decoy_hashes_before": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "decoy_import_exit": 0,
+    "decoy_import_output": "installed-in-target",
+    "exit": 0,
+    "target_identity_exists": true,
+    "target_import_exit": 1,
+    "target_import_output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'rcc_prefix_probe'",
+    "target_prefix": "staged Conda target prefix"
+  },
+  "rcc_fixed_cold": {
+    "binary": "built candidate RCC",
+    "binary_revision": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f",
+    "binary_sha256": "d8879c878fc6e934643d55679ae7dcc072a3e6c54ff3beeabf550d9ba1d28347",
+    "decoy_changed": false,
+    "decoy_hashes_after": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "decoy_hashes_before": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "exit": 0,
+    "target_identity_exists": true,
+    "target_import_exit": 0,
+    "target_import_output": "installed-in-target",
+    "target_prefix": "staged Conda target prefix"
+  },
+  "rcc_fixed_warm": {
+    "binary": "built candidate RCC",
+    "binary_revision": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f",
+    "binary_sha256": "d8879c878fc6e934643d55679ae7dcc072a3e6c54ff3beeabf550d9ba1d28347",
+    "decoy_changed": false,
+    "decoy_hashes_after": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "decoy_hashes_before": {
+      "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/INSTALLER": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/METADATA": "15beb603c5edb9ff72277ff024e2576034efe317827d4dd1ed3e18212ef590e1",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/RECORD": "2fdd0b18ead210324cb8b39deba8fc3800471a326967bd055b3a88890e8cfa95",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/REQUESTED": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/WHEEL": "a7d5ab3270954f789546b25aa5e59998258807dbb7581eacf832dd29061effa9",
+      "lib/python3.12/site-packages/rcc_prefix_probe-1.0.dist-info/uv_cache.json": "7496994b36dee6d3f408fefd472b3155231296e919d906294335c96aa404ff10",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__init__.py": "5c58be259d7fbacecd32b37464768fa8c38feaa5778dabd4c7bdd908c4384b79",
+      "lib/python3.12/site-packages/rcc_prefix_probe/__pycache__/__init__.cpython-312.pyc": "789832029e19b2afcb2eddaef3de8e87c2882de4c34d838658a401ef83ef0799"
+    },
+    "exit": 0,
+    "target_identity_exists": true,
+    "target_import_exit": 0,
+    "target_import_output": "installed-in-target",
+    "target_prefix": "staged Conda target prefix"
+  },
+  "real_conda_uv_matrix": {
+    "candidate_revision": "df0f5e8e6d7ff1fe5e807318837a4219daa8df1f",
+    "candidate_sha256": "8c6e0af6b5126070516cf6c295401101061b554bd61cd23c2603380690104722",
+    "host": "Linux x86_64",
+    "hostile_inherited_selectors": [
+      "UV_PYTHON",
+      "VIRTUAL_ENV",
+      "CONDA_PREFIX",
+      "PATH all point to decoy"
+    ],
+    "index": "Default PyPI endpoint configuration; no network isolation was enforced. The local wheel was supplied in ROBOCORP_HOME/wheels.",
+    "issue": 249,
+    "network_isolation": "Not enforced for the full RCC real-Conda matrix; only the separate failure/retry probe used a closed localhost endpoint.",
+    "prefix_type": "real micromamba Conda non-venv prefixes",
+    "rcc_version_requested": "python=3.12 and exact uv pin from each row",
+    "requirements": "local wheel rcc_prefix_probe==1.0 supplied in each ROBOCORP_HOME/wheels directory",
+    "versions": [
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "273b31cb120bdeb9",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.8.17-h2f8d451_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "273b31cb120bdeb9",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.8.17-h2f8d451_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.8.17"
+      },
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "54ef0fa1e4324a5c",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.18-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "54ef0fa1e4324a5c",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.18-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.9.18"
+      },
+      {
+        "decoy_hashes_after": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_hashes_before": {
+          "bin/python": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+          "lib/libpython3.12.so": "7e177a680eabb11fcb7d3867f7a1b9c4b93a9bd5b18129ce1af51ec07977b024"
+        },
+        "decoy_unchanged": true,
+        "rcc_runs": [
+          {
+            "blueprint": "fd946220d058d711",
+            "phase": "cold",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.22-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": true
+          },
+          {
+            "blueprint": "fd946220d058d711",
+            "phase": "warm",
+            "rcc_exit": 0,
+            "selected_uv_conda_meta": "uv-0.9.22-h76e24b7_0.json",
+            "target_import": "installed-in-target",
+            "target_prefix_has_conda_meta": true,
+            "target_uv_output": [],
+            "uv_python_scrub_warning": false
+          }
+        ],
+        "uv_version": "0.9.22"
+      }
+    ]
+  },
+  "review": {
+    "model": "GPT-6.1 Sol",
+    "reasoning": "high",
+    "result": "No unresolved blocking findings.",
+    "reviewed_head": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f"
+  },
+  "robot": {
+    "binary": "built candidate RCC (Go build metadata binds the revision and SHA-256)",
+    "revision": "8a1e3e2a09a0258f269845dae3d70a6b4c882c5f",
+    "robot_exit": 0,
+    "sha256": "d8879c878fc6e934643d55679ae7dcc072a3e6c54ff3beeabf550d9ba1d28347"
+  },
+  "robot_suites": [
+    "robot_tests/ht_hash.robot",
+    "robot_tests/blueprint.robot"
+  ],
+  "runtime_host": "Linux x86_64; isolated non-venv CPython 3.12 prefixes; local rcc_prefix_probe==1.0 wheel.",
+  "runtime_setup": "Direct uv CLI matrix: target and decoy are isolated non-venv CPython 3.12 prefixes with separate site-packages; the local wheel is supplied in a wheelhouse. Full RCC matrix: candidate cold/warm builds use real micromamba Conda prefixes pinned to uv 0.8.17, 0.9.18 and 0.9.22; the shipped v18.19.6 baseline cold/warm uses real Conda uv 0.9.22. The decoy is a separate synthetic prefix. Both scenarios set hostile UV_PYTHON, VIRTUAL_ENV, CONDA_PREFIX and PATH selectors. The full RCC matrix provides the local wheelhouse but does not enforce network isolation."
+}

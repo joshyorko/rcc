@@ -144,6 +144,38 @@ func TestCoordinatePrewarmEmptyResultEmitsItemsArray(t *testing.T) {
 	}
 }
 
+func TestCoordinatePrewarmReportsPriorityErrorsAsJSON(t *testing.T) {
+	public, _, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	command := newEnvironmentCoordinateCommand()
+	var output bytes.Buffer
+	command.SetOut(&output)
+	arguments := []string{
+		"prewarm", "--root", t.TempDir(), "--specification", "sha256:spec",
+		"--platform", "linux_amd64", "--builder", "v12-gzip-sha256",
+		"--owner", "prewarm", "--trust-key-id", "build-key",
+		"--trust-public-key", base64.RawStdEncoding.EncodeToString(public),
+		"--key", "sha256:spec", "--priority-map", "unknown=2",
+		"--build-command", "/bin/true", "--json",
+	}
+	if err := runCobraCommand(command, arguments); err == nil || !strings.Contains(err.Error(), "does not identify a requested build key") {
+		t.Fatalf("prewarm error = %v, want unknown priority key error", err)
+	}
+	var result struct {
+		Operation string `json:"operation"`
+		Status    string `json:"status"`
+		Error     string `json:"error"`
+	}
+	if err := json.Unmarshal(output.Bytes(), &result); err != nil {
+		t.Fatalf("decode prewarm error result %q: %v", output.String(), err)
+	}
+	if result.Operation != "prewarm" || result.Status != "failed" || !strings.Contains(result.Error, "does not identify a requested build key") {
+		t.Fatalf("prewarm error result = %+v", result)
+	}
+}
+
 var cliTestDigest = "sha256:" + strings.Repeat("a", 64)
 
 type testEnvironmentBuilder struct{}

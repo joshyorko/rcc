@@ -1,6 +1,63 @@
 # rcc change log
 ## Unreleased
 
+<a name="v18197"></a>
+## v18.19.7 (date: 15.10.2026)
+
+### Fixes
+
+- bind legacy Conda and micromamba `uv pip install` to the Python interpreter
+  staged in the target prefix, preventing successful installs into a different
+  Python environment (GH#249, PR#250)
+
+
+<a name="v18196"></a>
+## v18.19.6 (date: 10.10.2026)
+
+### Fixes
+
+- preserve existing ancestor directory permissions when provisioning shared
+  descendants, including a configured RCC home with mode 0700; continue
+  enforcing the requested mode on the target directory
+
+- return diagnostic output and cache persistence errors, preserve an
+  unreadable existing cache, and keep issue reporting from panicking when
+  its optional diagnostics cannot be written
+
+- report successful `pip freeze` fallback listings correctly in both direct
+  and captured output modes
+
+- close multipart upload response bodies and cancel TLS probe timeout contexts
+  on all completion paths
+
+- preserve internal relative Python links when UV's cache parent is symlinked
+  by comparing physical prefix paths; continue rejecting absolute links and
+  links that escape the selected prefix
+
+- accept padded and unpadded standard Base64 trust-root public keys in offline
+  `env trust verify`, matching runtime acquisition and execution while retaining
+  exact Ed25519 key sizes and strict signature verification
+
+- honor the parsed `--workers` limit when initializing the worker pool; retain
+  the supported 2–96 range and CPU-scaled default while allowing queued
+  startup work to complete
+
+### Security
+
+- use the Go 1.26.9 compiler for RCC builds and CI to include standard-library
+  security fixes; keep the contained Conda bootstrap package on 1.26.5 until
+  Go 1.26.9 is available from Conda Forge, with the `go.mod` minimum selecting
+  the official toolchain through Go's default automatic toolchain selection
+
+### Release Hardening
+
+- verify N-1 archive rollback against the latest published v18.19.5 binary,
+  pinned by its official asset checksum in the tag workflow
+
+- validate N-1 archive rollback against authoritative ready and reference
+  records while allowing successful imports to remove only matching
+  provisional intent records; preserve immutable content and trust state
+
 ## v18.19.5 (date: 07.09.2026)
 
 ### Environment Artifacts

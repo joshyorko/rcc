@@ -1,6 +1,7 @@
 package conda_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/joshyorko/rcc/common"
@@ -179,6 +180,34 @@ func TestCanGetLayersFromCondaYaml(t *testing.T) {
 	must_be.Equal("0d8cc85130420984", fingerprints[0])
 	must_be.Equal("5be3e197c8c2c67d", fingerprints[1])
 	must_be.Equal("d310697aca0840a1", fingerprints[2])
+}
+
+func TestLegacyUvTargetBindingInvalidatesOnlyAffectedCacheLayers(t *testing.T) {
+	legacy, err := conda.CondaYamlFrom([]byte("channels:\n  - conda-forge\ndependencies:\n  - python=3.12\n  - uv=0.9.22\n  - pip:\n      - demo==1.0\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	layers := legacy.AsLayers()
+	marker := "RCC legacy uv target-python cache epoch: 1"
+	if strings.Contains(layers[0], marker) {
+		t.Fatalf("Conda layer cache was unnecessarily invalidated: %s", layers[0])
+	}
+	if !strings.Contains(layers[1], marker) || !strings.Contains(layers[2], marker) {
+		t.Fatalf("legacy uv pip/final cache epochs missing: %#v", layers)
+	}
+
+	uvNative, err := conda.CondaYamlFrom([]byte("dependencies:\n  - python=3.12\n  - uv=0.9.22\n  - pip:\n      - demo==1.0\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !uvNative.IsUvNative() {
+		t.Fatal("fixture should select uv-native mode")
+	}
+	for _, layer := range uvNative.AsLayers() {
+		if strings.Contains(layer, marker) {
+			t.Fatalf("uv-native cache key changed: %#v", uvNative.AsLayers())
+		}
+	}
 }
 
 func TestValidateUvNativeRejectsExtraDeps(t *testing.T) {
