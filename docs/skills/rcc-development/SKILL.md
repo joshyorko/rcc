@@ -69,6 +69,7 @@ rcc run -r developer/toolkit.yaml -t robot
   decoy environment. A recorder that accepts every argv cannot prove old-CLI
   compatibility; exercise the released executable as well.
 - Run asset generation after changing embedded inputs.
+- For additive object storage and named-head work, use [the storage contract guide](../../object-storage.md) and `scripts/verify-object-storage.sh`. Its HTTP fixtures are transport evidence; signer hooks, Linux tests, and Windows compile-only do not certify live S3-compatible providers or native Windows execution.
 - Report exactly what was tested and distinguish source changes, builds, runtime validation, commits, pushes, and releases.
 
 ## Review and classify
