@@ -63,6 +63,11 @@ rcc run -r developer/toolkit.yaml -t robot
 - Use Robot Framework tests for executable CLI, environment, caching, or cross-process workflows.
 - Build `build/rcc` when the user needs a local binary to test.
 - Exercise the built binary, not an installed `rcc`, when validating a source change.
+- Legacy uv installation must select the staged interpreter with `--python`
+  without also passing `--system`: released uv 0.1.37 rejects that pair.
+  Preserve inherited-selector clearing and validate target selection against a
+  decoy environment. A recorder that accepts every argv cannot prove old-CLI
+  compatibility; exercise the released executable as well.
 - Run asset generation after changing embedded inputs.
 - Report exactly what was tested and distinguish source changes, builds, runtime validation, commits, pushes, and releases.
 
