@@ -17,7 +17,7 @@ func TestLegacyUvInstallCommandBindsStagedPythonAndPreservesCondaCompatibility(t
 	python := filepath.Join("/stage", "bin", "python")
 	got := legacyUvInstallCommand(uv, python, "/cache/uv", "/cache/wheels", "/tmp/requirements.txt")
 	want := []string{
-		uv, "pip", "install", "--system", "--python", python,
+		uv, "pip", "install", "--python", python,
 		"--link-mode", "copy", "--color", "never", "--cache-dir", "/cache/uv",
 		"--find-links", "/cache/wheels", "--requirement", "/tmp/requirements.txt",
 	}
@@ -80,7 +80,25 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 	}
 	uv := filepath.Join(bin, "uv")
 	uvRecord := filepath.Join(home, "uv-record")
-	uvScript := "#!/bin/sh\nif [ \"$1\" = --version ]; then echo 'uv 0.9.22'; exit 0; fi\nprintf '%s\\n' \"$@\" > \"$UV_RECORD\"\nprintf 'UV_PYTHON=%s\\nVIRTUAL_ENV=%s\\nCONDA_PREFIX=%s\\nPATH_PYTHON=%s\\n' \"$UV_PYTHON\" \"$VIRTUAL_ENV\" \"$CONDA_PREFIX\" \"$(command -v python)\" >> \"$UV_RECORD\"\n"
+	// uv 0.1.37 rejects these selectors together. The recorder must enforce
+	// that released CLI contract, not accept any argument vector as success.
+	uvScript := `#!/bin/sh
+if [ "$1" = --version ]; then echo 'uv 0.1.37'; exit 0; fi
+system=
+python=
+for argument do
+    case "$argument" in
+        --system) system=1 ;;
+        --python) python=1 ;;
+    esac
+done
+if [ "$system" = 1 ] && [ "$python" = 1 ]; then
+    echo '--system cannot be used with --python' >&2
+    exit 2
+fi
+printf '%s\n' "$@" > "$UV_RECORD"
+printf 'UV_PYTHON=%s\nVIRTUAL_ENV=%s\nCONDA_PREFIX=%s\nPATH_PYTHON=%s\n' "$UV_PYTHON" "$VIRTUAL_ENV" "$CONDA_PREFIX" "$(command -v python)" >> "$UV_RECORD"
+`
 	if err := os.WriteFile(uv, []byte(uvScript), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +123,7 @@ func TestLegacyUvChildUsesStagedPrefixDespiteHostSelectors(t *testing.T) {
 	}
 	text := string(recorded)
 	for _, want := range []string{
-		"--system\n--python\n" + selectedPython + "\n",
+		"--python\n" + selectedPython + "\n",
 		"UV_PYTHON=\n",
 		"VIRTUAL_ENV=\n",
 		"CONDA_PREFIX=" + prefix + "\n",

@@ -362,8 +362,8 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 		// uvCommand.Option("--trusted-host", settings.Global.PypiTrustedHost())
 		uvCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
 		common.Debug("===  uv install phase ===")
-		// uv honors UV_PYTHON even when invoked with --system. Bind the staged
-		// interpreter explicitly and remove that inherited selector; the base
+		// Bind the staged interpreter explicitly and remove inherited selectors;
+		// legacy uv rejects --system combined with --python. The base
 		// Conda environment already supplies the staged PATH and target prefix.
 		uvEnvironment := legacyUvExecutionEnvironment(CondaExecutionEnvironment(targetFolder, nil, true))
 		code, err := liveExecutionWithEnvironment(planWriter, targetFolder, uvEnvironment, uvCommand.CLI()...)
@@ -382,7 +382,7 @@ func uvLayer(fingerprint, requirementsText, targetFolder string, stopwatch fmt.S
 }
 
 func legacyUvInstallCommand(uv, python, uvCache, wheelCache, requirements string) []string {
-	return []string{uv, "pip", "install", "--system", "--python", python, "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirements}
+	return []string{uv, "pip", "install", "--python", python, "--link-mode", "copy", "--color", "never", "--cache-dir", uvCache, "--find-links", wheelCache, "--requirement", requirements}
 }
 
 func stagedTargetPython(targetFolder string) (string, error) {
