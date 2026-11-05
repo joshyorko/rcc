@@ -1,6 +1,17 @@
 # rcc change log
 ## Unreleased
 
+<a name="v18198"></a>
+## v18.19.8 (date: 05.11.2026)
+
+### Fixes
+
+- restore legacy uv 0.1.37 environment installation by keeping the explicit
+  staged `--python` selector without the conflicting `--system` flag; retain
+  inherited-selector clearing and target-prefix isolation (PR#261)
+- cover real legacy uv 0.1.37/Python 3.11.6/Actions Core 1.0.2 installation
+  alongside the modern uv 0.9.22 Conda compatibility case
+
 <a name="v18197"></a>
 ## v18.19.7 (date: 15.10.2026)
 
