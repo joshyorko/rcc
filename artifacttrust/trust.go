@@ -22,7 +22,7 @@ const (
 	SBOMMediaType           = "application/vnd.rcc.environment.sbom.spdx+json"
 	SignatureMediaType      = "application/vnd.rcc.environment.signature.v1+json"
 	RevocationMediaType     = "application/vnd.rcc.environment.revocations.v1+json"
-	DefaultPolicyRevision   = "artifacttrust/v1"
+	DefaultPolicyRevision   = "artifacttrust/v2"
 	DefaultRevocationMaxAge = 24 * time.Hour
 )
 
@@ -569,6 +569,11 @@ func (r Revocation) Revoked(artifact, keyID string) bool {
 }
 
 func (p Policy) Evaluate(local bool, artifact, platform, builder string, signatures []Signature, revocations []Revocation, keys map[string]ed25519.PublicKey) error {
+	// This legacy signature-only API cannot establish authenticated metadata.
+	// Strict callers must use Verify with deployment roots and retained state.
+	if p.effectiveMode() == StrictRemote {
+		return metadataError(CodeMetadataUnsigned)
+	}
 	return p.evaluateAt(local, artifact, platform, builder, signatures, revocations, keys, time.Now().UTC())
 }
 
