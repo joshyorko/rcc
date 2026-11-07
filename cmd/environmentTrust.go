@@ -143,6 +143,7 @@ func newEnvironmentTrustCommand() *cobra.Command {
 	root := &cobra.Command{Use: "trust", Short: "Verify detached artifact trust attestations.", Args: cobra.NoArgs}
 	root.AddCommand(verify)
 	root.AddCommand(newMetadataSignCommand())
+	root.AddCommand(newEnvironmentRevocationCommand())
 	return root
 }
 
