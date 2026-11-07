@@ -252,6 +252,24 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			command.Stdout = &stdout
 			command.Stderr = &stderr
 			runErr := command.Run()
+			// Preserve diagnostics before TempDir teardown, including failed cases.
+			if evidence := os.Getenv("RCC_BUNDLE_EVIDENCE"); evidence != "" {
+				directory := filepath.Join(evidence, tc.name)
+				if err := os.MkdirAll(directory, 0700); err != nil {
+					t.Fatal(err)
+				}
+				for name, data := range map[string][]byte{"stdout.log": stdout.Bytes(), "stderr.log": stderr.Bytes(), "artifact-roots.json": keyData, "metadata.json": metadataBytes, "refreshed-metadata.json": revokedMetadata} {
+					if err := os.WriteFile(filepath.Join(directory, name), data, 0600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				code := -1
+				if command.ProcessState != nil {
+					code = command.ProcessState.ExitCode()
+				}
+				trustfixture.WriteJSON(t, directory, "command.json", map[string]any{"binary": binary, "args": args, "exit": code, "artifactDigest": digest, "carrierReads": refreshReads.Load()})
+				trustfixture.WriteJSON(t, directory, "metadata-roots.json", metadataRoots)
+			}
 			if ctx.Err() != nil {
 				t.Fatalf("CLI timed out: stdout=%s stderr=%s", stdout.String(), stderr.String())
 			}
