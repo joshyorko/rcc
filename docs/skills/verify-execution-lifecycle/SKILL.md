@@ -9,6 +9,13 @@ Use this skill when changing artifact trust-policy selection, detached evidence,
 
 ## Run
 
+Prepare generated assets using `rcc-development`, then run
+`go test ./cmd -run '^TestBundleTrustDefaultsToStrictAndCarriesLeaseRefreshContext$' -count=1`.
+This Go regression detects a caller-side policy downgrade or loss of lease
+refresh context. It does not establish real bundle execution on its own. Also
+run `TestBundleTrustRealCLI` with the built executable and a real native archive
+as described in `docs/bundle-artifact-trust.md`; a skipped test is not acceptance.
+
 From the repository root, run `python3 docs/formal/execution-lifecycle/check.py`.
 It requires the pinned TLC 1.7.4 and Java selected by mise (or explicit
 `TLA2TOOLS` and `JAVA` paths), validates the TLC checksum, and checks fixed,
