@@ -30,18 +30,18 @@ for preparing an immutable release-review artifact.
 
 ### Triggers
 - **Push** to `main` branch
-- **Pull requests** to `main` branch; the release-candidate gate is opt-in through
+- **Pull requests** to any base branch, including stacked PRs; the release-candidate gate is opt-in through
   the `release-candidate` label. Adding the label runs it, and later PR commits
   rerun it while the label remains. This is the full release acceptance suite,
   so apply the label when that hosted-runner cost is useful.
 
-> Note: Changes to `.github/workflows/` and `.dagger/` directories are ignored.
+> Note: Changes limited to `.dagger/` are ignored by this workflow.
 
 ### Jobs
 
 #### 1. Build (`build`)
 - **Runner:** `ubuntu-latest`
-- **Condition:** Runs on pushes and pull requests to `main`
+- **Condition:** Runs on pushes to `main` and pull requests to any base branch
 - **Steps:**
   - Checkout code
   - Set up Go 1.26.9 and Python 3.10
