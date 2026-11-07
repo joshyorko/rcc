@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 import zipfile
@@ -87,7 +88,7 @@ def _install_metadata(binary, environment, artifact, carrier_root, sequence, met
     revocations_file.write_text(json.dumps(revocations, separators=(",", ":")), encoding="utf-8")
     now = datetime.now(timezone.utc).replace(microsecond=0)
     issued = now.isoformat().replace("+00:00", "Z")
-    expires = (now + timedelta(hours=1)).isoformat().replace("+00:00", "Z")
+    expires = (now + timedelta(hours=4)).isoformat().replace("+00:00", "Z")
     signed = attachment.parent.parent / f"metadata-{sequence}.json"
     _run(binary, ["env", "trust", "sign-metadata",
                   "--artifact", artifact, "--scope", "signed-offline-archive-robot",
@@ -166,10 +167,18 @@ def exercise_signed_offline_archive(binary):
     _phase("fixture:start")
     reuse_root = os.environ.get("RCC_SIGNED_ARCHIVE_REUSE_FIXTURE")
     if reuse_root:
-        root = Path(reuse_root).resolve()
+        prepared = Path(reuse_root).resolve()
         expected_parent = (Path(__file__).resolve().parents[2] / "tmp").resolve()
-        if root.parent != expected_parent or not root.name.startswith("environment-artifacts-"):
-            raise AssertionError(f"refusing to reuse unexpected fixture root {root}")
+        if prepared.parent != expected_parent or not prepared.name.startswith("environment-artifacts-"):
+            raise AssertionError(f"refusing to reuse unexpected fixture root {prepared}")
+        # Reuse only immutable transport and separately provisioned public roots.
+        # Prior consumers and every retained journal remain untouched.
+        if os.environ.get("RCC_SIGNED_ARCHIVE_RESUME_VALIDATION") == "1":
+            root = prepared  # Keep every existing journal; replay must still fail closed.
+        else:
+            root = Path(tempfile.mkdtemp(prefix="environment-artifacts-", dir=expected_parent))
+            for name in ("signed-v1.rcca", "signed-v2.rcca", "revoked.rcca", "artifact-roots.json", "metadata-roots.json", "provider.stdout"):
+                shutil.copyfile(prepared / name, root / name)
         resume_home = root / "home-resume"
         resume_home.mkdir(exist_ok=True)
         fixture = {
@@ -288,7 +297,7 @@ def exercise_signed_offline_archive(binary):
 
         # The old archive remains valid through a separately selected external carrier.
         external_home = root / "external-carrier-consumer"
-        external_home.mkdir()
+        external_home.mkdir(exist_ok=True)
         external_env = environment_artifact_process_environment(external_home, offline=True)
         external_acquire = _run(binary, _acquire_args(archive_v1, artifact, roots, metadata_roots, root / "external-state",
                                                        consume=False, external=external_trust), external_env)
@@ -314,12 +323,12 @@ def exercise_signed_offline_archive(binary):
         wrong_metadata_roots = root / "wrong-metadata-roots.json"
         _metadata_roots(wrong_metadata_roots, ARTIFACT_PUBLIC)
         for name, candidate, selected_roots, expected in (
-            ("tampered", tampered, metadata_roots, "signature"),
-            ("missing", missing, metadata_roots, "signature"),
+            ("tampered", tampered, metadata_roots, "invalid"),
+            ("missing", missing, metadata_roots, "unsigned"),
             ("wrong-authority", archive_v1, wrong_metadata_roots, "metadata-authority"),
         ):
             denial_home = root / f"denial-{name}"
-            denial_home.mkdir()
+            denial_home.mkdir(exist_ok=True)
             denial_env = environment_artifact_process_environment(denial_home, offline=True)
             marker = root / f"{name}-must-not-execute.txt"
             _assert_denied_before_execution(binary, candidate, denial_env, roots, selected_roots,
@@ -336,7 +345,7 @@ def exercise_signed_offline_archive(binary):
 
         # A signed revocation snapshot is transported but denies acquisition and execution.
         revoked_home = root / "revoked-consumer"
-        revoked_home.mkdir()
+        revoked_home.mkdir(exist_ok=True)
         revoked_env = environment_artifact_process_environment(revoked_home, offline=True)
         _assert_denied_before_execution(binary, revoked_archive, revoked_env, roots, metadata_roots,
                                         root / "revoked-state", artifact, root / "revoked-must-not-execute.txt", "revoked")
