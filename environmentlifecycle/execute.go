@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 
@@ -52,14 +51,13 @@ func (it *LocalMaterializer) ExecutionHandle(ctx context.Context, lease Lease, c
 		return ExecutionHandle{}, fmt.Errorf("lease materialization is not ready")
 	}
 	executable := command[0]
-	base := strings.ToLower(filepath.Base(executable))
-	if base == "python" || base == "python3" || base == "python.exe" {
+	if isMaterializedPythonCommand(executable) {
 		executable, err = materializedPython(record.Path)
 		if err != nil {
 			return ExecutionHandle{}, err
 		}
-	} else if !filepath.IsAbs(executable) {
-		executable, err = exec.LookPath(executable)
+	} else {
+		executable, err = resolveMaterializedExecutable(record.Path, executable)
 		if err != nil {
 			return ExecutionHandle{}, err
 		}

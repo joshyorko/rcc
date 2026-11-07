@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -767,7 +768,11 @@ func TestLegacyV12WrapImportAndExecutePreservesClosure(t *testing.T) {
 	if result.ArtifactDigest != manifest.ArtifactDigest || result.Path == "" {
 		t.Fatalf("legacy execution materialization = %+v", result)
 	}
-	_, child, err := Execute(context.Background(), NewLocalMaterializer(), Materialization{ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path, CacheHit: result.CacheHit}, []string{"sh", "-c", "test -f python"})
+	hostShell, err := exec.LookPath("sh")
+	if err != nil {
+		t.Skip("legacy fixture requires an explicitly delegated host shell")
+	}
+	_, child, err := Execute(context.Background(), NewLocalMaterializer(), Materialization{ArtifactDigest: result.ArtifactDigest, ID: result.MaterializationID, Path: result.Path, CacheHit: result.CacheHit}, []string{hostShell, "-c", "test -f python"})
 	if err != nil || child.ExitCode != 0 {
 		t.Fatalf("legacy materialization task execution = %+v, %v", child, err)
 	}
