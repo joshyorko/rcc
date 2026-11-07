@@ -10,7 +10,7 @@ func TestBundleTrustFlagsExposeStrictDefaultAndNamedLocalFallback(t *testing.T) 
 	var options bundleTrustOptions
 	command := &cobra.Command{Use: "run-from-bundle"}
 	options.addFlags(command)
-	for _, name := range []string{"trust-roots", "trust-carrier", "trust-carrier-type", "permissive-local"} {
+	for _, name := range []string{"trust-roots", "trust-carrier", "trust-carrier-type", "strict-remote", "permissive-local"} {
 		if command.Flags().Lookup(name) == nil {
 			t.Fatalf("missing bundle trust flag --%s", name)
 		}

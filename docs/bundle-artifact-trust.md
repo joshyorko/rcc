@@ -19,23 +19,26 @@ Do not edit `cmd/robotRunFromBundle.go` in this lane. After #256 is complete, ap
 3. Convert the acquired result with `materializationForBundledArtifact(acquired)` and pass it to the existing `environmentlifecycle.ExecuteInDirectory` call. Do not reconstruct a materialization that drops `Verification`, `TrustPolicy`, `TrustRequest`, or `TrustCarrier`.
 4. Preserve the existing manifest digest, archive identity, and platform-index checks. Do not change source-only execution.
 
-The coordinator must run `robot_tests/bundle_trust_cli_acceptance.py` against real source+Artifact bundles after wiring. Its required JSON cases cover signed allow, unsigned strict deny, revoked, tampered, unknown signer, missing/invalid evidence, explicit permissive legacy allow, and lease-time revocation refresh deny. Every deny case must configure a task marker and an absolute escaped-artifact path; the runner rejects the case if either appears. The refresh-denial case uses `carrier_refresh.before` and `.after` directories: it serves the first `revocations.json` response from `before`, then all later requests from `after`, forcing the second trust read to see the new revocation. A test that does not execute the final wired CLI is not runtime acceptance.
+After wiring, build RCC and export a real native environment archive. Run the
+opt-in `TestBundleTrustRealCLI` with both inputs explicitly selected:
 
-Example case shape:
-
-```json
-[
-  {
-    "name": "unsigned-strict-deny",
-    "bundle": "/path/to/unsigned-source-artifact.py",
-    "task": "proof",
-    "expect": "deny",
-    "marker": "task-ran.txt",
-    "escaped_artifact": "/tmp/rcc-bundle-trust-fixtures/unsigned/escaped.txt",
-    "trust_args": ["--trust-roots", "/path/to/roots.json", "--trust-carrier", "/path/to/carrier", "--trust-carrier-type", "filesystem"]
-  }
-]
+```sh
+RCC_ACCEPTANCE_BINARY="$RCC_BINARY" RCC_BUNDLE_TEST_ARCHIVE="$RCC_ARCHIVE" \
+  go test ./cmd -run '^TestBundleTrustRealCLI$' -count=1 -v
 ```
+
+`RCC_BINARY` must be an absolute built executable and `RCC_ARCHIVE` a real
+exported `.rcca` for the native platform. Each case constructs a source+Artifact
+bundle, ephemeral deployment signing key and private RCC home. It checks signed
+allow, strict unsigned denial, revocation, signature tampering, unknown signer,
+missing/invalid evidence, explicit unsigned migration, and lease-time revocation.
+An external task sentinel detects execution independently of copy-back; denied
+cases also require no caller artifacts or child streams. Successful cases check
+file bytes, stream separation, acquisition/lease receipts and released leases.
+The loopback carrier serves a valid snapshot for acquisition and a newly revoked
+snapshot for lease creation. A plain model or mocked acquirer cannot satisfy
+this gate. `RCC_TRUST_BASELINE=1` instead requires the real pre-fix CLI to execute
+the unsigned bundle without policy flags, proving the original bypass.
 
 ## Baseline reproduction
 

@@ -122,3 +122,11 @@ func TestBundleTrustRejectsAcquisitionWithoutMatchingValidReceipt(t *testing.T) 
 		t.Fatal("expected acquisition without valid trust receipt to fail closed")
 	}
 }
+
+func TestBundleTrustRejectsConflictingPolicySelection(t *testing.T) {
+	acquirer := &recordingBundleAcquirer{}
+	_, err := (bundleTrustOptions{strictRemote: true, permissiveLocal: true}).acquireWith(context.Background(), environmentartifact.DigestBytes([]byte("artifact")), acquirer)
+	if err == nil || acquirer.request.ArtifactDigest.Hex() != "" {
+		t.Fatal("conflicting policy flags must fail before acquisition")
+	}
+}

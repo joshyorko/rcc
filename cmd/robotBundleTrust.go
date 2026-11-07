@@ -17,6 +17,7 @@ type bundleTrustOptions struct {
 	trustRootsPath   string
 	trustCarrierPath string
 	trustCarrierType string
+	strictRemote     bool
 	permissiveLocal  bool
 }
 
@@ -24,6 +25,7 @@ func (options *bundleTrustOptions) addFlags(command *cobra.Command) {
 	command.Flags().StringVar(&options.trustRootsPath, "trust-roots", "", "JSON map of trusted key IDs to base64 Ed25519 public keys.")
 	command.Flags().StringVar(&options.trustCarrierPath, "trust-carrier", "", "Deployment-owned detached trust carrier path or URL.")
 	command.Flags().StringVar(&options.trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
+	command.Flags().BoolVar(&options.strictRemote, "strict-remote", false, "Require detached signature verification (the default for embedded artifacts).")
 	command.Flags().BoolVar(&options.permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts for controlled migration.")
 }
 
@@ -42,7 +44,7 @@ func (options bundleTrustOptions) acquireWith(ctx context.Context, digest enviro
 	if acquirer == nil {
 		return environmentlifecycle.AcquireResult{}, fmt.Errorf("bundled artifact acquirer is unavailable")
 	}
-	policy, err := trustPolicyForCommand(false, options.permissiveLocal)
+	policy, err := trustPolicyForCommand(options.strictRemote, options.permissiveLocal)
 	if err != nil {
 		return environmentlifecycle.AcquireResult{}, err
 	}
