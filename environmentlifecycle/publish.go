@@ -273,7 +273,7 @@ func generatedObjectInventory(manifest environmentartifact.Manifest, inventory e
 	}}
 	for _, entry := range inventory.Index.Entries {
 		components = append(components, artifacttrust.Component{
-			Name: entry.LegacyObjectID, Version: entry.StoredDigest.String(), PackageType: "rcc-hololib-object-v12",
+			Name: entry.LegacyObjectID, PackageType: "rcc-hololib-object-v12",
 			Hash: entry.StoredDigest.String(),
 		})
 	}
