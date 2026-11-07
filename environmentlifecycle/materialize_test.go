@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/ed25519"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -21,6 +22,7 @@ import (
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/internal/trustfixture"
 )
 
 type failOnTouchProvider struct{ t *testing.T }
@@ -184,10 +186,12 @@ func TestAcquireLoadsSignatureFromFilesystemCarrierWithRequestTrustRoots(t *test
 	if err := artifacttrust.PutAttachment(carrier, artifactDigest.String(), "signature", bundleBytes); err != nil {
 		t.Fatal(err)
 	}
+	q := trustfixture.Authenticate(t, artifacttrust.VerifyRequest{ArtifactDigest: artifactDigest.String(), Keys: map[string]ed25519.PublicKey{"build-key": public}, At: time.Unix(10, 0)})
+	trustfixture.Put(t, carrier, q)
 	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
 		ArtifactDigest: artifactDigest, Provider: remote,
 		TrustPolicy:  &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, AcceptedKeys: []string{"build-key"}},
-		TrustRequest: &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"build-key": public}, At: time.Unix(10, 0)},
+		TrustRequest: &q,
 		TrustCarrier: carrier,
 	})
 	if err != nil {
@@ -262,6 +266,11 @@ func TestAcquireProviderAuthorizationDoesNotLeakToTrustCarrierClient(t *testing.
 	if err != nil {
 		t.Fatal(err)
 	}
+	q := trustfixture.Authenticate(t, artifacttrust.VerifyRequest{ArtifactDigest: artifactDigest.String(), Keys: map[string]ed25519.PublicKey{"build-key": public}})
+	metadataBytes, err := json.Marshal(q.Metadata)
+	if err != nil {
+		t.Fatal(err)
+	}
 	const authorizationEnv = "RCC_TRUST_PROVIDER_AUTH_TEST"
 	const authorizationValue = "Bearer provider-secret-sentinel"
 	t.Setenv(authorizationEnv, authorizationValue)
@@ -280,6 +289,8 @@ func TestAcquireProviderAuthorizationDoesNotLeakToTrustCarrierClient(t *testing.
 			leaked = request.Header.Get("Authorization")
 		}
 		switch request.URL.Path {
+		case "/" + artifacttrust.AttachmentName(artifactDigest.String(), "metadata"):
+			_, _ = writer.Write(metadataBytes)
 		case "/" + artifacttrust.AttachmentName(artifactDigest.String(), "signature"):
 			writer.WriteHeader(http.StatusOK)
 			_, _ = writer.Write(signatureBytes)
@@ -298,7 +309,7 @@ func TestAcquireProviderAuthorizationDoesNotLeakToTrustCarrierClient(t *testing.
 	result, err := NewAcquirer().Acquire(context.Background(), AcquireRequest{
 		ArtifactDigest: artifactDigest, Provider: provider,
 		TrustPolicy:  &artifacttrust.Policy{Mode: artifacttrust.StrictRemote, FailClosedRevocations: true, AcceptedKeys: []string{"build-key"}},
-		TrustRequest: &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"build-key": public}},
+		TrustRequest: &q,
 		TrustCarrier: &artifacttrust.HTTPCarrier{BaseURL: server.URL, Client: server.Client()},
 	})
 	if err != nil || !result.Verification.Valid {

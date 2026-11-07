@@ -1,0 +1,155 @@
+=== fixed: exit 0 ===
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 27 and seed -3011420071018369440 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 979428] (Linux 7.2.11 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/AuthenticatedMetadata.tla
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module AuthenticatedMetadata
+Starting... (2026-11-07 08:51:34)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-07 08:51:34.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 3.8E-16
+185 states generated, 53 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 8.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 4).
+Finished in 00s at (2026-11-07 08:51:34)
+
+=== broken-auth: exit 12 ===
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 79 and seed 8987115365972193415 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 979464] (Linux 7.2.11 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/AuthenticatedMetadata.tla
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module AuthenticatedMetadata
+Starting... (2026-11-07 08:51:35)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-07 08:51:35.
+Error: Invariant NoUntrustedExecution is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ offered = <<0, FALSE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "idle"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 2: <Fetch line 16, col 10 to line 18, col 54 of module AuthenticatedMetadata>
+/\ offered = <<2, FALSE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "fetched"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 3: <Authenticate line 20, col 17 to line 23, col 70 of module AuthenticatedMetadata>
+/\ offered = <<2, FALSE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "authenticated"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 4: <Commit line 27, col 11 to line 33, col 30 of module AuthenticatedMetadata>
+/\ offered = <<2, FALSE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "persisted"
+/\ checkpoint = <<2, FALSE, FALSE>>
+
+State 5: <Decide line 44, col 11 to line 46, col 64 of module AuthenticatedMetadata>
+/\ offered = <<2, FALSE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "permitted"
+/\ checkpoint = <<2, FALSE, FALSE>>
+
+34 states generated, 20 distinct states found, 7 states left on queue.
+The depth of the complete state graph search is 5.
+The average outdegree of the complete state graph is 2 (minimum is 0, the maximum 4 and the 95th percentile is 4).
+Finished in 00s at (2026-11-07 08:51:35)
+
+=== broken-rollback: exit 12 ===
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 57 and seed -5813270277949804161 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 979507] (Linux 7.2.11 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/AuthenticatedMetadata.tla
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module AuthenticatedMetadata
+Starting... (2026-11-07 08:51:35)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-07 08:51:35.
+Error: Invariant NoTrustDowngrade is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ offered = <<0, FALSE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "idle"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 2: <Fetch line 16, col 10 to line 18, col 54 of module AuthenticatedMetadata>
+/\ offered = <<2, TRUE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "fetched"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 3: <Authenticate line 20, col 17 to line 23, col 70 of module AuthenticatedMetadata>
+/\ offered = <<2, TRUE, FALSE>>
+/\ highestCommitted = 0
+/\ phase = "authenticated"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 4: <Commit line 27, col 11 to line 33, col 30 of module AuthenticatedMetadata>
+/\ offered = <<2, TRUE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "persisted"
+/\ checkpoint = <<2, TRUE, FALSE>>
+
+State 5: <Restart line 48, col 12 to line 50, col 40 of module AuthenticatedMetadata>
+/\ offered = <<0, FALSE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "idle"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 6: <Fetch line 16, col 10 to line 18, col 54 of module AuthenticatedMetadata>
+/\ offered = <<1, TRUE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "fetched"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 7: <Authenticate line 20, col 17 to line 23, col 70 of module AuthenticatedMetadata>
+/\ offered = <<1, TRUE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "authenticated"
+/\ checkpoint = <<0, FALSE, FALSE>>
+
+State 8: <Commit line 27, col 11 to line 33, col 30 of module AuthenticatedMetadata>
+/\ offered = <<1, TRUE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "persisted"
+/\ checkpoint = <<1, TRUE, FALSE>>
+
+State 9: <Decide line 44, col 11 to line 46, col 64 of module AuthenticatedMetadata>
+/\ offered = <<1, TRUE, FALSE>>
+/\ highestCommitted = 2
+/\ phase = "permitted"
+/\ checkpoint = <<1, TRUE, FALSE>>
+
+230 states generated, 76 distinct states found, 5 states left on queue.
+The depth of the complete state graph search is 9.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 4).
+Finished in 00s at (2026-11-07 08:51:35)
+
+=== restored: exit 0 ===
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 7 and seed -8495383566305041886 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 979563] (Linux 7.2.11 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/AuthenticatedMetadata.tla
+Parsing file /var/tmp/codex-rcc-253-20261107-GAXL3k/codex-rcc-formal-n4xvu8js/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module AuthenticatedMetadata
+Starting... (2026-11-07 08:51:36)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-07 08:51:36.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 3.8E-16
+185 states generated, 53 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 8.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 4).
+Finished in 00s at (2026-11-07 08:51:36)

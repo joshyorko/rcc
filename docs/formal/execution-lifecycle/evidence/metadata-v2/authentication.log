@@ -1,0 +1,30 @@
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/expiry
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/scope
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/artifact
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/dependencies
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/issued
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/source
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sbom
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/revocations
+    metadata_test.go:65: unsigned mutation accepted
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sequence
+    metadata_test.go:65: unsigned mutation accepted
+--- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/expiry (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/scope (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/artifact (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/dependencies (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/issued (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/source (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sbom (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/revocations (0.00s)
+    --- FAIL: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sequence (0.00s)
+FAIL
+FAIL	github.com/joshyorko/rcc/artifacttrust	0.004s
+FAIL

@@ -25,6 +25,7 @@ import (
 	"github.com/joshyorko/rcc/environmentartifact"
 	"github.com/joshyorko/rcc/environmentlifecycle"
 	"github.com/joshyorko/rcc/htfs"
+	"github.com/joshyorko/rcc/internal/trustfixture"
 	"github.com/spf13/cobra"
 )
 
@@ -679,7 +680,7 @@ func TestEnvironmentExecClassifiesOnlyContextErrorsAsCancelled(t *testing.T) {
 	}
 }
 
-func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.T) {
+func TestEnvironmentCLIPublishedArtifactRequiresIndependentMetadataApproval(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree
 	producerHome := t.TempDir()
@@ -704,6 +705,7 @@ func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.
 		t.Fatal(err)
 	}
 	var published environmentlifecycle.PublishResult
+	trustRequest := &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"publish-key": public}}
 	dependencies := environmentCommandDependencies{
 		newProvider: func(string) (artifactprovider.Provider, error) { return provider, nil },
 		builder:     func() environmentlifecycle.Builder { return cliFixtureBuilder{result: build} },
@@ -715,7 +717,7 @@ func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.
 			return result, err
 		},
 		acquire: func(ctx context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
-			request.TrustRequest = &artifacttrust.VerifyRequest{Keys: map[string]ed25519.PublicKey{"publish-key": public}}
+			request.TrustRequest = trustRequest
 			return environmentlifecycle.NewAcquirer().Acquire(ctx, request)
 		},
 	}
@@ -731,6 +733,18 @@ func TestEnvironmentCLIPublishThenStrictAcquireUsesPublishedTrustSet(t *testing.
 	if published.ArtifactDigest.String() == "" || !strings.Contains(publishOutput.String(), published.ArtifactDigest.String()) {
 		t.Fatalf("publish output=%q result=%+v", publishOutput.String(), published)
 	}
+	denied := newEnvironmentCommand(dependencies)
+	if err := runCobraCommand(denied, []string{"acquire", "--artifact", published.ArtifactDigest.String(), "--provider", "provider", "--trust-carrier", trustRoot, "--json"}); err == nil || !strings.Contains(err.Error(), artifacttrust.CodeMetadataUnsigned) {
+		t.Fatalf("v1 publication must not authorize strict acquisition: %v", err)
+	}
+	carrier := artifacttrust.NewFilesystemCarrier(trustRoot)
+	attachments, err := artifacttrust.LoadAttachments(carrier, published.ArtifactDigest.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	approved := trustfixture.Authenticate(t, artifacttrust.VerifyRequest{ArtifactDigest: published.ArtifactDigest.String(), Keys: trustRequest.Keys, Provenance: attachments.Provenance, SBOM: attachments.SBOM, Revocations: attachments.Revocations})
+	trustfixture.Put(t, carrier, approved)
+	trustRequest = &approved
 	acquireCommand := newEnvironmentCommand(dependencies)
 	var acquireOutput bytes.Buffer
 	acquireCommand.SetOut(&acquireOutput)

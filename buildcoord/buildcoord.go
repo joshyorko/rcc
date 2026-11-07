@@ -56,7 +56,7 @@ func (v TrustVerifier) VerifyArtifact(a Artifact) error {
 	if err := VerifyArtifactProof(a); err != nil {
 		return err
 	}
-	return v.Policy.Evaluate(v.Local, ArtifactTrustDigest(a), v.Platform, v.Builder, a.Signatures, v.Revocations, v.Keys)
+	return v.Policy.VerifyStatement(ArtifactTrustDigest(a), v.Platform, v.Builder, a.Signatures, v.Revocations, v.Keys)
 }
 
 // NewTrustVerifier creates the only production trust verifier accepted by the

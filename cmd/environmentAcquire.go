@@ -21,6 +21,7 @@ type environmentAcquireResult struct {
 }
 
 func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *cobra.Command {
+	var metadata metadataOptions
 	var artifact, providerURL, archivePath, trustCarrierPath, trustCarrierType, trustRootsPath string
 	var strictRemote, permissiveLocal bool
 	var jsonOutput bool
@@ -67,6 +68,9 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 			if err != nil {
 				return err
 			}
+			if err := metadata.apply(&trustRequest, trustCarrier); err != nil {
+				return err
+			}
 			result, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
 				ArtifactDigest: digest, Provider: provider, TrustPolicy: &policy, TrustRequest: trustRequest, TrustCarrier: trustCarrier,
 			})
@@ -96,6 +100,7 @@ func newEnvironmentAcquireCommand(dependencies environmentCommandDependencies) *
 	command.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON result object to stdout.")
 	command.Flags().BoolVar(&strictRemote, "strict-remote", false, "Require detached signatures before acquisition.")
 	command.Flags().BoolVar(&permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts.")
+	metadata.addFlags(command)
 	return command
 }
 

@@ -22,7 +22,7 @@ const (
 	SBOMMediaType           = "application/vnd.rcc.environment.sbom.spdx+json"
 	SignatureMediaType      = "application/vnd.rcc.environment.signature.v1+json"
 	RevocationMediaType     = "application/vnd.rcc.environment.revocations.v1+json"
-	DefaultPolicyRevision   = "artifacttrust/v1"
+	DefaultPolicyRevision   = "artifacttrust/v2"
 	DefaultRevocationMaxAge = 24 * time.Hour
 )
 
@@ -107,6 +107,9 @@ type Policy struct {
 }
 
 type VerifyRequest struct {
+	Metadata                          *MetadataEnvelope
+	MetadataRoots                     *MetadataRoots
+	MetadataState                     *MetadataState
 	ArtifactDigest, Platform, Builder string
 	Provenance                        *Provenance
 	SBOM                              *SBOM
@@ -118,24 +121,30 @@ type VerifyRequest struct {
 	RevocationSource                  string
 }
 type VerificationReceipt struct {
-	Valid               bool       `json:"valid"`
-	Code                string     `json:"code"`
-	ArtifactDigest      string     `json:"artifactDigest"`
-	KeyID               string     `json:"keyID,omitempty"`
-	PolicyMode          PolicyMode `json:"policyMode"`
-	VerifiedAt          string     `json:"verifiedAt"`
-	Diagnostic          string     `json:"diagnostic,omitempty"`
-	DecisionID          string     `json:"decisionID"`
-	PolicyRevision      string     `json:"policyRevision"`
-	PolicyDigest        string     `json:"policyDigest,omitempty"`
-	Platform            string     `json:"platform,omitempty"`
-	Builder             string     `json:"builder,omitempty"`
-	ProvenanceDigest    string     `json:"provenanceDigest,omitempty"`
-	SBOMDigest          string     `json:"sbomDigest,omitempty"`
-	RevocationSnapshot  string     `json:"revocationSnapshot,omitempty"`
-	RevocationCheckedAt string     `json:"revocationCheckedAt,omitempty"`
-	RevocationSource    string     `json:"revocationSource,omitempty"`
-	LeaseID             string     `json:"leaseID,omitempty"`
+	MetadataVersion         int        `json:"metadataVersion,omitempty"`
+	MetadataDigest          string     `json:"metadataDigest,omitempty"`
+	MetadataSequence        uint64     `json:"metadataSequence,omitempty"`
+	MetadataScope           string     `json:"metadataScope,omitempty"`
+	MetadataKeyID           string     `json:"metadataKeyID,omitempty"`
+	MetadataAuthorityDigest string     `json:"metadataAuthorityDigest,omitempty"`
+	Valid                   bool       `json:"valid"`
+	Code                    string     `json:"code"`
+	ArtifactDigest          string     `json:"artifactDigest"`
+	KeyID                   string     `json:"keyID,omitempty"`
+	PolicyMode              PolicyMode `json:"policyMode"`
+	VerifiedAt              string     `json:"verifiedAt"`
+	Diagnostic              string     `json:"diagnostic,omitempty"`
+	DecisionID              string     `json:"decisionID"`
+	PolicyRevision          string     `json:"policyRevision"`
+	PolicyDigest            string     `json:"policyDigest,omitempty"`
+	Platform                string     `json:"platform,omitempty"`
+	Builder                 string     `json:"builder,omitempty"`
+	ProvenanceDigest        string     `json:"provenanceDigest,omitempty"`
+	SBOMDigest              string     `json:"sbomDigest,omitempty"`
+	RevocationSnapshot      string     `json:"revocationSnapshot,omitempty"`
+	RevocationCheckedAt     string     `json:"revocationCheckedAt,omitempty"`
+	RevocationSource        string     `json:"revocationSource,omitempty"`
+	LeaseID                 string     `json:"leaseID,omitempty"`
 }
 
 func (r VerificationReceipt) JSON() ([]byte, error) { return canonical(r) }
@@ -157,6 +166,12 @@ func PutAttachment(c Carrier, artifact, kind string, data []byte) error {
 	}
 	if err := validateCarrierName(AttachmentName(artifact, kind)); err != nil {
 		return err
+	}
+	if Normalize(kind) == "metadata" {
+		if _, err := decodeMetadataAttachment(data, artifact); err != nil {
+			return err
+		}
+		return c.Write(AttachmentName(artifact, kind), data)
 	}
 	var err error
 	data, err = normalizeAttachmentData(artifact, kind, data)
@@ -240,6 +255,10 @@ func GetAttachment(c Carrier, artifact, kind string) ([]byte, error) {
 	}
 	if len(data) > maxCarrierAttachmentBytes {
 		return nil, fmt.Errorf("carrier attachment exceeds %d bytes", maxCarrierAttachmentBytes)
+	}
+	if Normalize(kind) == "metadata" {
+		_, err := decodeMetadataAttachment(data, artifact)
+		return data, err
 	}
 	if err := VerifyAttestationBinding(data, mediaTypeFor(kind), artifact); err != nil {
 		return nil, err
@@ -561,7 +580,24 @@ func (r Revocation) Revoked(artifact, keyID string) bool {
 }
 
 func (p Policy) Evaluate(local bool, artifact, platform, builder string, signatures []Signature, revocations []Revocation, keys map[string]ed25519.PublicKey) error {
+	// This legacy signature-only API cannot establish authenticated metadata.
+	// Strict callers must use Verify with deployment roots and retained state.
+	if p.effectiveMode() == StrictRemote {
+		return metadataError(CodeMetadataUnsigned)
+	}
 	return p.evaluateAt(local, artifact, platform, builder, signatures, revocations, keys, time.Now().UTC())
+}
+
+// VerifyStatement verifies a signed coordination statement, not environment
+// admission. Its digest must cover the entire statement. Revocations here are
+// deployment-supplied; detached-metadata policies cannot use this boundary.
+// This method never produces an execution verification receipt.
+func (p Policy) VerifyStatement(digest, platform, builder string, signatures []Signature, revocations []Revocation, keys map[string]ed25519.PublicKey) error {
+	if len(p.AcceptedSources) > 0 || len(p.AcceptedDependencySources) > 0 || len(p.AcceptedRCCVersions) > 0 || p.MaxArtifactAge > 0 || p.FailClosedRevocations {
+		return fmt.Errorf("detached metadata policy requires authenticated environment verification")
+	}
+	p.RequireSignature = true
+	return p.evaluateAt(false, digest, platform, builder, signatures, revocations, keys, time.Now().UTC())
 }
 
 func (p Policy) evaluateAt(local bool, artifact, platform, builder string, signatures []Signature, revocations []Revocation, keys map[string]ed25519.PublicKey, at time.Time) error {
@@ -621,6 +657,39 @@ func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
 	}
 	if containsCredential(q.RevocationSource) {
 		r.Code, r.Diagnostic, r.RevocationSource = CodePolicy, "revocation source contains disallowed data", ""
+		return r.withDecisionID()
+	}
+	if p.Mode == StrictRemote || q.Metadata != nil {
+		if q.Metadata == nil {
+			r.Code, r.Diagnostic = CodeMetadataUnsigned, "strict policy requires authenticated v2 metadata"
+			return r.withDecisionID()
+		}
+		if q.MetadataRoots == nil || q.MetadataState == nil {
+			r.Code, r.Diagnostic = CodeMetadataAuthority, "deployment metadata roots and retained state are required"
+			return r.withDecisionID()
+		}
+		r.MetadataDigest, _ = MetadataDigest(*q.Metadata)
+		payload, err := VerifyMetadata(*q.Metadata, *q.MetadataRoots, q.ArtifactDigest, q.At)
+		// Bind the decision to the independently provisioned authority and floor,
+		// not just the signed envelope. Roots contain public data only.
+		authorityBytes, _ := json.Marshal(q.MetadataRoots)
+		r.MetadataAuthorityDigest = Digest(authorityBytes)
+		if err == nil {
+			r.MetadataVersion, r.MetadataSequence = 2, payload.Sequence
+			r.MetadataScope, r.MetadataKeyID = payload.Scope, payload.KeyID
+			err = q.MetadataState.Admit(payload, *q.Metadata)
+		}
+		if err != nil {
+			r.Code, r.Diagnostic = metadataFailureCode(err), "authenticated metadata admission failed"
+			return r.withDecisionID()
+		}
+		q.Provenance, q.SBOM, q.Revocations = payload.Provenance, payload.SBOM, payload.Revocations
+		q.RevocationFetchedAt, _ = time.Parse(time.RFC3339, payload.IssuedAt)
+		q.RevocationSource = payload.Scope
+		r.RevocationSource = payload.Scope
+	}
+	if q.Provenance == nil && (len(p.AcceptedSources) > 0 || len(p.AcceptedDependencySources) > 0 || len(p.AcceptedRCCVersions) > 0 || p.MaxArtifactAge > 0) {
+		r.Code, r.Diagnostic = CodePolicy, "required authenticated provenance is absent"
 		return r.withDecisionID()
 	}
 	if q.Provenance != nil {
@@ -781,20 +850,22 @@ func (r VerificationReceipt) withDecisionID() VerificationReceipt {
 		return r
 	}
 	data, _ := canonical(struct {
-		ArtifactDigest   string     `json:"artifactDigest"`
-		Code             string     `json:"code"`
-		PolicyMode       PolicyMode `json:"policyMode"`
-		PolicyRevision   string     `json:"policyRevision"`
-		PolicyDigest     string     `json:"policyDigest,omitempty"`
-		VerifiedAt       string     `json:"verifiedAt"`
-		KeyID            string     `json:"keyID,omitempty"`
-		Platform         string     `json:"platform,omitempty"`
-		Builder          string     `json:"builder,omitempty"`
-		Provenance       string     `json:"provenance,omitempty"`
-		SBOM             string     `json:"sbom,omitempty"`
-		Revocations      string     `json:"revocations,omitempty"`
-		RevocationSource string     `json:"revocationSource,omitempty"`
-	}{r.ArtifactDigest, r.Code, r.PolicyMode, r.PolicyRevision, r.PolicyDigest, r.VerifiedAt, r.KeyID, r.Platform, r.Builder, r.ProvenanceDigest, r.SBOMDigest, r.RevocationSnapshot, r.RevocationSource})
+		ArtifactDigest    string     `json:"artifactDigest"`
+		Code              string     `json:"code"`
+		PolicyMode        PolicyMode `json:"policyMode"`
+		PolicyRevision    string     `json:"policyRevision"`
+		PolicyDigest      string     `json:"policyDigest,omitempty"`
+		VerifiedAt        string     `json:"verifiedAt"`
+		KeyID             string     `json:"keyID,omitempty"`
+		Platform          string     `json:"platform,omitempty"`
+		Builder           string     `json:"builder,omitempty"`
+		Provenance        string     `json:"provenance,omitempty"`
+		SBOM              string     `json:"sbom,omitempty"`
+		Revocations       string     `json:"revocations,omitempty"`
+		RevocationSource  string     `json:"revocationSource,omitempty"`
+		Metadata          string     `json:"metadata,omitempty"`
+		MetadataAuthority string     `json:"metadataAuthority,omitempty"`
+	}{r.ArtifactDigest, r.Code, r.PolicyMode, r.PolicyRevision, r.PolicyDigest, r.VerifiedAt, r.KeyID, r.Platform, r.Builder, r.ProvenanceDigest, r.SBOMDigest, r.RevocationSnapshot, r.RevocationSource, r.MetadataDigest, r.MetadataAuthorityDigest})
 	r.DecisionID = Digest(data)
 	return r
 }

@@ -1,0 +1,42 @@
+---
+title: "Authenticated metadata admission across restarts"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: Breaks NoTrustDowngrade
+    lg1: Path to the NoTrustDowngrade bug
+  }
+  class lg0 breaks
+  class lg1 bugPath
+  s0: Ready for next admission
+  s1: Carrier snapshot received
+  s2: Authority checked
+  s3: Admission denied
+  s4: Checkpoint retained
+  s5: Execution permitted
+  s6: Execution permitted after rollback
+  [*] --> s0
+  s0 --> s1: carrier supplies a snapshot
+  s1 --> s0: restart with retained checkpoint or restart loses checkpoint [injected fault]
+  s1 --> s2: verify independent authority
+  s1 --> s3: verify independent authority
+  s2 --> s0: restart with retained checkpoint or restart loses checkpoint [injected fault]
+  s2 --> s3: storage fails closed or reject rollback or equivocation
+  s2 --> s4: compare sequence and flush checkpoint
+  s3 --> s0: restart with retained checkpoint or restart loses checkpoint [injected fault]
+  s3 --> s1: carrier supplies a snapshot
+  s4 --> s0: restart loses checkpoint [injected fault]
+  s4 --> s5: apply authenticated revocations
+  s4 --> s3: apply authenticated revocations
+  s5 --> s0: restart loses checkpoint [injected fault]
+  s5 --> s1: carrier supplies a snapshot
+  s4 --> s6: apply authenticated revocations
+  s6 --> s0: restart loses checkpoint [injected fault]
+  s6 --> s1: carrier supplies a snapshot
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 bugPath
+  class s1 bugPath
+  class s2 bugPath
+  class s4 bugPath
+  class s6 breaks
+  class s6 bugPath

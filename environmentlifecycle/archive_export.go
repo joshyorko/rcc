@@ -68,7 +68,7 @@ func ExportArchive(ctx context.Context, request ExportArchiveRequest) (environme
 		return environmentartifact.Manifest{}, err
 	}
 	if request.TrustCarrier != nil {
-		for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+		for _, kind := range []string{"provenance", "sbom", "signature", "revocations", "metadata"} {
 			data, trustErr := artifacttrust.GetAttachment(request.TrustCarrier, request.ArtifactDigest.String(), kind)
 			if errors.Is(trustErr, os.ErrNotExist) {
 				continue

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/spf13/cobra"
+	"io"
 	"os"
 	"time"
 )
@@ -13,6 +14,8 @@ import (
 // env trust verify is provider/carrier independent: it evaluates detached
 // attestations supplied by the caller and emits a stable receipt.
 func newEnvironmentTrustCommand() *cobra.Command {
+	var metadata metadataOptions
+	var metadataFile string
 	var artifact, platform, builder, provenanceFile, sbomFile, signaturesFile, keysFile, revocationsFile, verificationTime string
 	var strict, local, jsonOutput bool
 	verify := &cobra.Command{Use: "verify", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
@@ -99,6 +102,21 @@ func newEnvironmentTrustCommand() *cobra.Command {
 				q.Keys[id] = publicKey
 			}
 		}
+		request := &q
+		if err := metadata.apply(&request, nil); err != nil {
+			return err
+		}
+		if metadataFile != "" {
+			var envelope artifacttrust.MetadataEnvelope
+			if err := readMetadataEnvelopeFile(metadataFile, &envelope); err != nil {
+				receipt := p.FailureReceipt(q.ArtifactDigest, q.Platform, q.Builder, artifacttrust.CodeMetadataInvalid, "metadata envelope is unavailable or malformed", q.At)
+				if err := json.NewEncoder(cmd.OutOrStdout()).Encode(receipt); err != nil {
+					return err
+				}
+				return fmt.Errorf("artifact trust verification failed: %s", receipt.Code)
+			}
+			q.Metadata = &envelope
+		}
 		r := p.Verify(q)
 		if err := json.NewEncoder(cmd.OutOrStdout()).Encode(r); err != nil {
 			return err
@@ -120,7 +138,26 @@ func newEnvironmentTrustCommand() *cobra.Command {
 	verify.Flags().BoolVar(&strict, "strict-remote", false, "Require detached signature")
 	verify.Flags().BoolVar(&local, "permissive-local", false, "Explicitly allow unsigned local artifacts")
 	verify.Flags().BoolVar(&jsonOutput, "json", false, "Write one JSON receipt")
+	metadata.addFlags(verify)
+	verify.Flags().StringVar(&metadataFile, "metadata", "", "Authenticated complete v2 metadata envelope.")
 	root := &cobra.Command{Use: "trust", Short: "Verify detached artifact trust attestations.", Args: cobra.NoArgs}
 	root.AddCommand(verify)
+	root.AddCommand(newMetadataSignCommand())
 	return root
+}
+
+func readMetadataEnvelopeFile(path string, envelope *artifacttrust.MetadataEnvelope) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	data, err := io.ReadAll(io.LimitReader(file, (3<<20)+1))
+	if err != nil {
+		return err
+	}
+	if len(data) > 3<<20 {
+		return fmt.Errorf("metadata envelope exceeds size limit")
+	}
+	return decodeStrictTrustJSON(data, envelope)
 }

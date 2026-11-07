@@ -12,12 +12,13 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/internal/trustfixture"
 )
 
 func TestEnvironmentTrustVerifyAcceptsRawAndPaddedPublicKeys(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -60,7 +61,7 @@ func TestEnvironmentTrustVerifyAcceptsRawAndPaddedPublicKeys(t *testing.T) {
 func TestEnvironmentTrustVerifyRejectsMalformedPublicKeys(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -96,7 +97,7 @@ func TestEnvironmentTrustVerifyRejectsMalformedPublicKeys(t *testing.T) {
 func TestEnvironmentTrustVerifyRejectsInvalidSignatureWithValidKey(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -130,6 +131,27 @@ func trustVerifyTestKey() (ed25519.PublicKey, ed25519.PrivateKey) {
 	return public, private
 }
 
+func TestEnvironmentTrustVerifyMalformedMetadataEmitsFailureReceipt(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "metadata.json")
+	if err := os.WriteFile(path, []byte("{invalid-private-input"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	command := newEnvironmentTrustCommand()
+	var stdout bytes.Buffer
+	command.SetOut(&stdout)
+	err := runCobraCommand(command, []string{"verify", "--artifact", artifacttrust.Digest([]byte("fixture")), "--metadata", path, "--json", "--strict-remote"})
+	if err == nil || !strings.Contains(err.Error(), artifacttrust.CodeMetadataInvalid) {
+		t.Fatalf("malformed metadata error: %v", err)
+	}
+	var receipt artifacttrust.VerificationReceipt
+	if err := json.Unmarshal(stdout.Bytes(), &receipt); err != nil {
+		t.Fatal(err)
+	}
+	if receipt.Valid || receipt.Code != artifacttrust.CodeMetadataInvalid || bytes.Contains(stdout.Bytes(), []byte("private-input")) {
+		t.Fatalf("malformed metadata receipt: %+v", receipt)
+	}
+}
+
 func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, revocationBytes []byte, at time.Time) ([]byte, error) {
 	t.Helper()
 	root := t.TempDir()
@@ -147,6 +169,9 @@ func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, r
 			t.Fatal(err)
 		}
 	}
+	q := trustfixture.Authenticate(t, artifacttrust.VerifyRequest{ArtifactDigest: artifact, At: at})
+	metadataPath := trustfixture.WriteJSON(t, root, "metadata.json", q.Metadata)
+	metadataRoots := trustfixture.WriteJSON(t, root, "metadata-roots.json", q.MetadataRoots)
 	command := newEnvironmentTrustCommand()
 	var stdout bytes.Buffer
 	command.SetOut(&stdout)
@@ -154,6 +179,7 @@ func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, r
 		"verify", "--artifact", artifact, "--platform", "linux_amd64", "--builder", "fixture-builder",
 		"--signatures", signaturesPath, "--trust-roots", keysPath, "--revocations", revocationsPath,
 		"--verification-time", at.Format(time.RFC3339), "--strict-remote", "--json",
+		"--metadata", metadataPath, "--metadata-trust-roots", metadataRoots, "--metadata-state", q.MetadataState.Root,
 	}
 	err = runCobraCommand(command, arguments)
 	return stdout.Bytes(), err

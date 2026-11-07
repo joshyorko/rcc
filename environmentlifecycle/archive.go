@@ -108,7 +108,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 		}
 	}
 	trustEntries := make(map[string][]byte)
-	for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+	for _, kind := range []string{"provenance", "sbom", "signature", "revocations", "metadata"} {
 		name := environmentartifact.ArchiveAttestationDir + kind + ".json"
 		content, found, readErr := readOptionalArchiveMember(archive, name)
 		if readErr != nil {
@@ -214,7 +214,7 @@ func ImportArchive(ctx context.Context, request ImportArchiveRequest) (environme
 
 func importArchiveTrust(entries map[string][]byte, artifact string, target artifacttrust.Carrier) error {
 	archiveCarrier := &artifacttrust.ArchiveCarrier{Files: map[string][]byte{}}
-	for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+	for _, kind := range []string{"provenance", "sbom", "signature", "revocations", "metadata"} {
 		data, ok := entries[environmentartifact.ArchiveAttestationDir+kind+".json"]
 		if !ok {
 			continue
@@ -225,10 +225,13 @@ func importArchiveTrust(entries map[string][]byte, artifact string, target artif
 	if err != nil {
 		return fmt.Errorf("validate archive trust attachments: %w", err)
 	}
+	if _, err := artifacttrust.ReadMetadata(archiveCarrier, artifact); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("validate archive metadata: %w", err)
+	}
 	if target == nil {
 		return nil
 	}
-	for _, kind := range []string{"provenance", "sbom", "signature", "revocations"} {
+	for _, kind := range []string{"provenance", "sbom", "signature", "revocations", "metadata"} {
 		data, getErr := artifacttrust.GetAttachment(archiveCarrier, artifact, kind)
 		if getErr != nil {
 			if errors.Is(getErr, os.ErrNotExist) {

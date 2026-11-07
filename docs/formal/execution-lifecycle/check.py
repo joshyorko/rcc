@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Check the bounded admission model with pinned TLC, including its mutation."""
+import argparse
 import hashlib
 import os
 from pathlib import Path
@@ -19,6 +20,9 @@ def mise(*args):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", choices=("ExecutionLifecycle", "AuthenticatedMetadata"), default="ExecutionLifecycle")
+    model = parser.parse_args().model
     source = Path(__file__).resolve().parent
     jar = Path(os.environ.get("TLA2TOOLS") or Path(mise("where", TLC_TOOL)) / "tla2tools.jar")
     java = os.environ.get("JAVA") or mise("which", "java", "--tool", "java@temurin-25")
@@ -27,20 +31,29 @@ def main():
     # Run outside the checkout; TLC's state directory is task-owned and removed.
     with tempfile.TemporaryDirectory(prefix="codex-rcc-formal-", dir=os.environ.get("TMPDIR", "/tmp")) as tmp:
         target = Path(tmp)
-        for name in ("ExecutionLifecycle.tla", "ExecutionLifecycle.cfg", "ExecutionLifecycle-broken.cfg"):
-            shutil.copyfile(source / name, target / name)
-        (target / "ExecutionLifecycle-untrusted.cfg").write_text(
-            (target / "ExecutionLifecycle-broken.cfg").read_text().replace("INVARIANT NoTrustDowngrade\n", "")
-        )
-        for label, config, violation in (
+        configurations = (
+            ("fixed", model + ".cfg", None),
+            ("broken-auth", model + "-broken-auth.cfg", "NoUntrustedExecution"),
+            ("broken-rollback", model + "-broken-rollback.cfg", "NoTrustDowngrade"),
+            ("restored", model + ".cfg", None),
+        ) if model == "AuthenticatedMetadata" else (
             ("fixed", "ExecutionLifecycle.cfg", None),
             ("broken", "ExecutionLifecycle-broken.cfg", "NoTrustDowngrade"),
             ("broken-execution", "ExecutionLifecycle-untrusted.cfg", "NoUntrustedExecution"),
             ("restored", "ExecutionLifecycle.cfg", None),
-        ):
+        )
+        shutil.copyfile(source / (model + ".tla"), target / (model + ".tla"))
+        for _, config, _ in configurations:
+            if (source / config).exists():
+                shutil.copyfile(source / config, target / config)
+        if model == "ExecutionLifecycle":
+            (target / "ExecutionLifecycle-untrusted.cfg").write_text(
+                (target / "ExecutionLifecycle-broken.cfg").read_text().replace("INVARIANT NoTrustDowngrade\n", "")
+            )
+        for label, config, violation in configurations:
             result = subprocess.run(
                 [java, "-Xmx256m", "-XX:+UseParallelGC", "-Djava.io.tmpdir=" + str(target), "-cp", str(jar), "tlc2.TLC",
-                 "-workers", "1", "-config", config, "ExecutionLifecycle.tla"],
+                 "-workers", "1", "-config", config, model + ".tla"],
                 cwd=target, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=60,
             )
             print(f"=== {label}: exit {result.returncode} ===\n{result.stdout}", flush=True)

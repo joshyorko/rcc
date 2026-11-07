@@ -22,6 +22,7 @@ import (
 
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/joshyorko/rcc/environmentartifact"
+	"github.com/joshyorko/rcc/internal/trustfixture"
 )
 
 // This opt-in test drives an actual RCC executable and an exported, native
@@ -69,6 +70,10 @@ func TestBundleTrustRealCLI(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	metadataPublic, metadataPrivate, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
 	now := time.Now().UTC()
 	revoked := []artifacttrust.Revocation{{KeyIDs: []string{"deployment"}, UpdatedAt: now.Format(time.RFC3339), Reason: "fixture revocation"}}
 	cases := []struct {
@@ -76,13 +81,16 @@ func TestBundleTrustRealCLI(t *testing.T) {
 		allow              bool
 	}{
 		{"signed-allow", "signed", "", true},
+		{"offline-archive-carrier-allow", "offline-carrier", "", true},
 		{"unsigned-strict-deny", "unsigned", "unsigned", false},
 		{"revoked-deny", "revoked", "revoked", false},
 		{"tampered-signature-deny", "tampered", "invalid", false},
 		{"tampered-archive-deny", "archive-tampered", "digest", false},
 		{"unknown-signer-deny", "unknown", "unknown-signer", false},
-		{"missing-evidence-deny", "missing", "revocation-stale", false},
+		{"missing-evidence-deny", "missing", "metadata-unsigned", false},
 		{"invalid-evidence-deny", "invalid", "attachment", false},
+		{"mutated-metadata-deny", "metadata-mutated", "metadata-invalid", false},
+		{"unauthorized-metadata-deny", "metadata-unknown", "metadata-authority", false},
 		{"permissive-legacy-allow", "permissive", "", true},
 		{"lease-refresh-revocation-deny", "refresh", "revoked", false},
 		{"explicit-strict-source-only-deny", "source-only", "requires an embedded", false},
@@ -170,10 +178,40 @@ func TestBundleTrustRealCLI(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
+			payload := artifacttrust.MetadataPayload{SchemaVersion: 2, Scope: "bundle-fixture", ArtifactDigest: digest, Sequence: 1, KeyID: "independent-authority", IssuedAt: now.Add(-time.Minute).Format(time.RFC3339), ExpiresAt: now.Add(time.Hour).Format(time.RFC3339)}
+			metadataRoots := artifacttrust.MetadataRoots{SchemaVersion: 2, Scope: payload.Scope, MinimumSequence: 1, Keys: map[string]artifacttrust.MetadataKey{payload.KeyID: {PublicKey: base64.RawStdEncoding.EncodeToString(metadataPublic), NotBefore: now.Add(-time.Hour).Format(time.RFC3339), NotAfter: now.Add(2 * time.Hour).Format(time.RFC3339)}}}
+			if tc.kind == "metadata-unknown" {
+				metadataRoots.Keys = map[string]artifacttrust.MetadataKey{"unrelated": metadataRoots.Keys[payload.KeyID]}
+			}
+			metadataRootsPath := trustfixture.WriteJSON(t, root, "metadata-roots.json", metadataRoots)
+			metadataState := filepath.Join(root, "retained-state")
+			if tc.kind == "revoked" {
+				payload.Revocations = revoked
+			}
+			envelope, err := artifacttrust.SignMetadata(payload, metadataPrivate)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if tc.kind == "metadata-mutated" {
+				payload.Sequence++
+				payloadBytes, _ := json.Marshal(payload)
+				envelope.Payload = base64.RawStdEncoding.EncodeToString(payloadBytes)
+			}
+			metadataBytes, _ := json.Marshal(envelope)
+			if tc.kind != "missing" && tc.kind != "permissive" {
+				put("metadata", metadataBytes)
+			}
+			payload.Sequence = 2
+			payload.Revocations = revoked
+			revokedEnvelope, err := artifacttrust.SignMetadata(payload, metadataPrivate)
+			if err != nil {
+				t.Fatal(err)
+			}
+			revokedMetadata, _ := json.Marshal(revokedEnvelope)
 			args := []string{"robot", "run-from-bundle", bundle, "--task", "proof"}
 			var refreshReads atomic.Int32
 			if !baseline {
-				args = append(args, "--trust-roots", roots)
+				args = append(args, "--trust-roots", roots, "--metadata-trust-roots", metadataRootsPath, "--metadata-state", metadataState)
 				if tc.kind == "source-only" {
 					args = append(args, "--strict-remote")
 				}
@@ -185,13 +223,19 @@ func TestBundleTrustRealCLI(t *testing.T) {
 							http.NotFound(w, r)
 							return
 						}
-						if name == artifacttrust.AttachmentName(digest, "revocations") && refreshReads.Add(1) > 1 {
-							data = revokedData
+						if name == artifacttrust.AttachmentName(digest, "metadata") && refreshReads.Add(1) > 1 {
+							data = revokedMetadata
 						}
 						_, _ = w.Write(data)
 					}))
 					defer server.Close()
 					args = append(args, "--trust-carrier", server.URL, "--trust-carrier-type", "http")
+				} else if tc.kind == "offline-carrier" {
+					carrierArchive := filepath.Join(root, "signed-carrier.zip")
+					if err := artifacttrust.ExportArchive(carrier, carrierArchive, digest, []string{"signature", "metadata"}); err != nil {
+						t.Fatal(err)
+					}
+					args = append(args, "--trust-carrier", carrierArchive, "--trust-carrier-type", "archive")
 				} else {
 					args = append(args, "--trust-carrier", carrier.Root, "--trust-carrier-type", "filesystem")
 				}
@@ -208,6 +252,24 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			command.Stdout = &stdout
 			command.Stderr = &stderr
 			runErr := command.Run()
+			// Preserve diagnostics before TempDir teardown, including failed cases.
+			if evidence := os.Getenv("RCC_BUNDLE_EVIDENCE"); evidence != "" {
+				directory := filepath.Join(evidence, tc.name)
+				if err := os.MkdirAll(directory, 0700); err != nil {
+					t.Fatal(err)
+				}
+				for name, data := range map[string][]byte{"stdout.log": stdout.Bytes(), "stderr.log": stderr.Bytes(), "artifact-roots.json": keyData, "metadata.json": metadataBytes, "refreshed-metadata.json": revokedMetadata} {
+					if err := os.WriteFile(filepath.Join(directory, name), data, 0600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				code := -1
+				if command.ProcessState != nil {
+					code = command.ProcessState.ExitCode()
+				}
+				trustfixture.WriteJSON(t, directory, "command.json", map[string]any{"binary": binary, "args": args, "exit": code, "artifactDigest": digest, "carrierReads": refreshReads.Load()})
+				trustfixture.WriteJSON(t, directory, "metadata-roots.json", metadataRoots)
+			}
 			if ctx.Err() != nil {
 				t.Fatalf("CLI timed out: stdout=%s stderr=%s", stdout.String(), stderr.String())
 			}
@@ -245,7 +307,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 				t.Fatal("lease refresh was not observed")
 			}
 			if tc.kind == "signed" && os.Getenv("RCC_BUNDLE_TEST_ENV_PROBES") == "1" {
-				verifyCombinedEnvironmentCommands(t, binary, home, digest, roots, carrier.Root, command.Env)
+				verifyCombinedEnvironmentCommands(t, binary, home, digest, roots, carrier.Root, metadataRootsPath, metadataState, command.Env)
 			}
 			history, historyErr := artifacttrust.NewReceiptStore(filepath.Join(home, "artifacts", "v1", "verification")).History(digest)
 			receipts := len(history)
@@ -281,7 +343,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 	}
 }
 
-func verifyCombinedEnvironmentCommands(t *testing.T, binary, home, digest, roots, carrier string, environment []string) {
+func verifyCombinedEnvironmentCommands(t *testing.T, binary, home, digest, roots, carrier, metadataRoots, metadataState string, environment []string) {
 	t.Helper()
 	host := filepath.Join(t.TempDir(), "host-bin")
 	if err := os.Mkdir(host, 0750); err != nil {
@@ -304,7 +366,7 @@ func verifyCombinedEnvironmentCommands(t *testing.T, binary, home, digest, roots
 		{[]string{"python", "-c", "print('artifact-python')"}, "artifact-python\n", false, false},
 		{[]string{"rcc-issue258-missing"}, "", false, true},
 	} {
-		args := []string{"env", "exec", "--artifact", digest, "--trust-roots", roots, "--trust-carrier", carrier, "--strict-remote"}
+		args := []string{"env", "exec", "--artifact", digest, "--trust-roots", roots, "--trust-carrier", carrier, "--strict-remote", "--metadata-trust-roots", metadataRoots, "--metadata-state", metadataState}
 		receiptPath := filepath.Join(home, fmt.Sprintf("combined-command-%d.json", index))
 		if probe.json {
 			args = append(args, "--json")

@@ -239,6 +239,25 @@ jobs:
             exit "$evidence_exit"
           fi
           exit "$tee_exit"
+      - name: Verify authenticated metadata migration against N-1
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RCC_ACCEPTANCE_BINARY="$PWD/build/rcc"
+          export RCC_N_MINUS_ONE_BINARY="$RCC_N1_BINARY"
+          export RCC_METADATA_EVIDENCE="$PWD/tmp/metadata-security"
+          go test -count=1 ./cmd -run '^TestMetadataSecurityRealCLI$' -v 2>&1 | tee tmp/metadata-security.log
+      - name: Verify strict bundle trust with the retained native archive
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RCC_ACCEPTANCE_BINARY="$PWD/build/rcc"
+          export RCC_BUNDLE_TEST_ARCHIVE="$RCC_N1_ARCHIVE"
+          export RCC_BUNDLE_EVIDENCE="$PWD/tmp/bundle-trust-security"
+          test -s "$RCC_BUNDLE_TEST_ARCHIVE"
+          sha256sum "$RCC_ACCEPTANCE_BINARY" "$RCC_BUNDLE_TEST_ARCHIVE" > tmp/bundle-trust-inputs.sha256
+          go test -count=1 ./cmd -run '^TestBundleTrustRealCLI$' -timeout 15m -v 2>&1 | tee tmp/bundle-trust-security.log
       - name: Upload release candidate evidence
         if: success() || failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -254,6 +273,11 @@ jobs:
             build/self-host/candidate/rccremote
             tmp/release-candidate.log
             tmp/release-candidate-exit.json
+            tmp/metadata-security.log
+            tmp/metadata-security/
+            tmp/bundle-trust-security.log
+            tmp/bundle-trust-inputs.sha256
+            tmp/bundle-trust-security/
             tmp/self-host-v1.json
             tmp/release-candidate-v1.json
             tmp/native-runtime-receipt.json
@@ -591,6 +615,15 @@ jobs:
       - name: Run UV Python prefix symlink containment tests
         shell: bash
         run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
+      - name: Verify authenticated metadata and retained rollback state against exact binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RCC_ACCEPTANCE_BINARY="$RCC_REAL_BINARY"
+          export RCC_METADATA_EVIDENCE="$PWD/tmp/output/metadata-security"
+          go test -count=1 ./cmd -run '^TestMetadataSecurityRealCLI$' -v
+          go test -count=1 ./artifacttrust -run '^TestMetadata' -v
+          go test -count=1 ./environmentlifecycle -run '^TestMetadata' -v
       - name: Show commit info
         run: inv what
       - name: Run Windows process supervision and artifact lock acceptance

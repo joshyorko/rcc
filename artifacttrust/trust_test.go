@@ -63,7 +63,7 @@ func TestProvenanceAndSBOMBindToArtifact(t *testing.T) {
 func TestStrictRemoteRejectsUnsignedAndReceiptIsMachineReadable(t *testing.T) {
 	p := Policy{Mode: StrictRemote}
 	r := p.Verify(VerifyRequest{ArtifactDigest: "sha256:a", Platform: "linux/amd64", Builder: "b"})
-	if r.Valid || r.Code != CodeUnsigned {
+	if r.Valid || r.Code != CodeMetadataUnsigned {
 		t.Fatalf("receipt=%+v", r)
 	}
 	if _, err := r.JSON(); err != nil {
@@ -73,9 +73,9 @@ func TestStrictRemoteRejectsUnsignedAndReceiptIsMachineReadable(t *testing.T) {
 
 func TestSignatureExpiryAndRevocation(t *testing.T) {
 	pub, priv, _ := ed25519.GenerateKey(nil)
-	s, _ := SignAt("sha256:a", "k", priv, time.Unix(1, 0), time.Unix(2, 0))
+	s, _ := SignAt(Digest([]byte("signature-fixture")), "k", priv, time.Unix(1, 0), time.Unix(2, 0))
 	p := Policy{Mode: StrictRemote, AcceptedKeys: []string{"k"}}
-	r := p.Verify(VerifyRequest{ArtifactDigest: "sha256:a", Platform: "linux/amd64", Builder: "b", Signatures: []Signature{s}, Keys: map[string]ed25519.PublicKey{"k": pub}, At: time.Unix(3, 0)})
+	r := p.Verify(authenticatedTestRequest(t, VerifyRequest{ArtifactDigest: Digest([]byte("signature-fixture")), Platform: "linux/amd64", Builder: "b", Signatures: []Signature{s}, Keys: map[string]ed25519.PublicKey{"k": pub}, At: time.Unix(3, 0)}))
 	if r.Valid || r.Code != CodeExpired {
 		t.Fatalf("receipt=%+v", r)
 	}
@@ -84,9 +84,9 @@ func TestSignatureExpiryAndRevocation(t *testing.T) {
 func TestSignatureNotBeforeIsRejected(t *testing.T) {
 	pub, priv, _ := ed25519.GenerateKey(nil)
 	now := time.Now().UTC()
-	s, _ := SignAt("sha256:a", "k", priv, now.Add(time.Hour), now.Add(2*time.Hour))
+	s, _ := SignAt(Digest([]byte("signature-fixture")), "k", priv, now.Add(time.Hour), now.Add(2*time.Hour))
 	p := Policy{Mode: StrictRemote, AcceptedKeys: []string{"k"}}
-	r := p.Verify(VerifyRequest{ArtifactDigest: "sha256:a", Platform: "linux/amd64", Builder: "b", Signatures: []Signature{s}, Keys: map[string]ed25519.PublicKey{"k": pub}, At: now})
+	r := p.Verify(authenticatedTestRequest(t, VerifyRequest{ArtifactDigest: Digest([]byte("signature-fixture")), Platform: "linux/amd64", Builder: "b", Signatures: []Signature{s}, Keys: map[string]ed25519.PublicKey{"k": pub}, At: now}))
 	if r.Valid || r.Code != CodeInvalid {
 		t.Fatalf("receipt=%+v", r)
 	}
@@ -139,23 +139,28 @@ func TestAttestationsRejectCredentialBearingSources(t *testing.T) {
 
 func TestPolicySignatureAndRevocation(t *testing.T) {
 	public, private, _ := ed25519.GenerateKey(nil)
-	sig, err := Sign("sha256:artifact", "build-key", private)
+	artifact := Digest([]byte("signed-artifact"))
+	sig, err := Sign(artifact, "build-key", private)
 	if err != nil {
 		t.Fatal(err)
 	}
-	policy := Policy{RequireSignature: true, AcceptedKeys: []string{"build-key"}, AcceptedBuilders: []string{"builder-v1"}}
+	policy := Policy{Mode: StrictRemote, RequireSignature: true, AcceptedKeys: []string{"build-key"}, AcceptedBuilders: []string{"builder-v1"}}
 	keys := map[string]ed25519.PublicKey{"build-key": public}
-	if err := policy.Evaluate(false, "sha256:artifact", "linux/amd64", "builder-v1", []Signature{sig}, nil, keys); err != nil {
-		t.Fatal(err)
+	if err := policy.Evaluate(false, artifact, "linux/amd64", "builder-v1", []Signature{sig}, nil, keys); !metadataCodeIs(err, CodeMetadataUnsigned) {
+		t.Fatalf("signature-only strict admission: %v", err)
 	}
-	revoked := []Revocation{{KeyIDs: []string{"build-key"}, Reason: "incident"}}
-	if err := policy.Evaluate(false, "sha256:artifact", "linux/amd64", "builder-v1", []Signature{sig}, revoked, keys); err == nil {
-		t.Fatal("revoked signer accepted")
+	q := VerifyRequest{ArtifactDigest: artifact, Platform: "linux/amd64", Builder: "builder-v1", Signatures: []Signature{sig}, Keys: keys}
+	if r := policy.Verify(authenticatedTestRequest(t, q)); !r.Valid {
+		t.Fatalf("authenticated strict decision: %+v", r)
+	}
+	q.Revocations = []Revocation{{KeyIDs: []string{"build-key"}, Reason: "incident"}}
+	if r := policy.Verify(authenticatedTestRequest(t, q)); r.Valid || r.Code != CodeRevoked {
+		t.Fatalf("revoked signer: %+v", r)
 	}
 }
 
 func TestUnsignedLocalPolicy(t *testing.T) {
-	p := Policy{AllowUnsignedLocal: true}
+	p := Policy{Mode: PermissiveLocal, AllowUnsignedLocal: true}
 	if err := p.Evaluate(true, "sha256:artifact", "linux/amd64", "builder", nil, nil, nil); err != nil {
 		t.Fatal(err)
 	}
@@ -184,7 +189,7 @@ func TestVerifyUsesRequestTimeAndBindsProvenanceIdentity(t *testing.T) {
 
 func TestStrictDefaultDoesNotAcceptUnsignedVerifyRequest(t *testing.T) {
 	r := (Policy{}).Verify(VerifyRequest{ArtifactDigest: "sha256:a", Platform: "linux/amd64", Builder: "builder", At: time.Unix(1, 0)})
-	if r.Valid || r.Code != CodeUnsigned || r.PolicyMode != StrictRemote {
+	if r.Valid || r.Code != CodeMetadataUnsigned || r.PolicyMode != StrictRemote {
 		t.Fatalf("receipt=%+v", r)
 	}
 }
@@ -316,8 +321,8 @@ func TestStrictTrustBundleEvaluatesAttestationsAndFailureReceipt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	artifact := Digest([]byte("bundle"))
 	const (
-		artifact = "sha256:bundle"
 		platform = "linux/amd64"
 		builder  = "builder-v1"
 	)
@@ -340,7 +345,7 @@ func TestStrictTrustBundleEvaluatesAttestationsAndFailureReceipt(t *testing.T) {
 		Provenance: provenance, SBOM: &sbom, Signatures: []Signature{signature},
 		Keys: map[string]ed25519.PublicKey{"build-key": public}, At: at,
 	}
-	valid := policy.Verify(request)
+	valid := policy.Verify(authenticatedTestRequest(t, request))
 	if !valid.Valid || valid.Code != CodeValid || valid.ProvenanceDigest == "" || valid.SBOMDigest == "" || valid.KeyID != "build-key" {
 		t.Fatalf("valid trust bundle receipt=%+v", valid)
 	}
@@ -349,14 +354,14 @@ func TestStrictTrustBundleEvaluatesAttestationsAndFailureReceipt(t *testing.T) {
 	tampered.Provenance = &Provenance{}
 	*tampered.Provenance = *provenance
 	tampered.Provenance.Builder = "untrusted-builder"
-	tamperedReceipt := policy.Verify(tampered)
+	tamperedReceipt := policy.Verify(authenticatedTestRequest(t, tampered))
 	if tamperedReceipt.Valid || tamperedReceipt.Code != CodeBinding {
 		t.Fatalf("tampered trust bundle receipt=%+v", tamperedReceipt)
 	}
 
 	revoked := request
 	revoked.Revocations = []Revocation{{KeyIDs: []string{"build-key"}, UpdatedAt: FreshTimestamp(at)}}
-	revokedReceipt := policy.Verify(revoked)
+	revokedReceipt := policy.Verify(authenticatedTestRequest(t, revoked))
 	if revokedReceipt.Valid || revokedReceipt.Code != CodeRevoked {
 		t.Fatalf("revoked trust bundle receipt=%+v", revokedReceipt)
 	}
