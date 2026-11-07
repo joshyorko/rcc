@@ -17,6 +17,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var bundleTrust bundleTrustOptions
+
 var robotRunFromBundleCmd = &cobra.Command{
 	Use:   "run-from-bundle <bundle-file>",
 	Short: "Run a robot task from a single-file bundle.",
@@ -30,7 +32,12 @@ from sources you trust.
 Importing and restoring the bundled Holotree environment writes persistent cache
 and catalog state below ROBOCORP_HOME. A bundle can avoid package downloads only
 when it contains every required artifact and the target OS and architecture are
-compatible with the exported environment; it does not include RCC itself.`,
+compatible with the exported environment; it does not include RCC itself.
+
+Embedded Environment Artifacts require deployment-owned trust roots and detached
+evidence by default. --permissive-local explicitly allows controlled unsigned
+Artifact migration. --strict-remote also refuses legacy source-only bundles;
+without that flag, source-only bundles retain their existing execution path.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		bundleFile := args[0]
@@ -58,9 +65,10 @@ compatible with the exported environment; it does not include RCC itself.`,
 		artifactManifest, artifactErr := importBundleArtifact(zr)
 		err = artifactErr
 		pretty.Guard(err == nil, 3, "Failed to import environment artifact from bundle: %v", err)
+		pretty.Guard(!bundleTrust.strictRemote || artifactManifest.ArtifactDigest.Hex() != "", 3, "Strict bundle policy requires an embedded Environment Artifact; source-only bundles require the legacy execution contract.")
 		var artifactMaterialization environmentlifecycle.AcquireResult
 		if artifactManifest.ArtifactDigest.Hex() != "" {
-			artifactMaterialization, err = environmentlifecycle.NewAcquirer().Acquire(cmd.Context(), environmentlifecycle.AcquireRequest{ArtifactDigest: artifactManifest.ArtifactDigest})
+			artifactMaterialization, err = bundleTrust.acquire(cmd.Context(), artifactManifest.ArtifactDigest)
 			pretty.Guard(err == nil, 3, "Failed to materialize bundled environment artifact: %v", err)
 		}
 
@@ -109,7 +117,7 @@ compatible with the exported environment; it does not include RCC itself.`,
 					pretty.Exit(7, "Failed to copy artifacts: %v", finalizeErr)
 				}
 			}()
-			materialization := environmentlifecycle.Materialization{ArtifactDigest: artifactMaterialization.ArtifactDigest, ID: artifactMaterialization.MaterializationID, Path: artifactMaterialization.Path, CacheHit: artifactMaterialization.CacheHit}
+			materialization := materializationForBundledArtifact(artifactMaterialization)
 			child, execErr := executeArtifactBundleTask(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline(), workarea, config.ArtifactDirectory(), !common.NoOutputCapture, cmd.InOrStdin(), cmd.OutOrStdout(), cmd.ErrOrStderr())
 			pretty.Guard(execErr == nil, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
 			pretty.Guard(child.ExitCode == 0, 10, "Error: Bundled artifact task failed: exit status %d (robot run exit)", child.ExitCode)
@@ -135,6 +143,7 @@ compatible with the exported environment; it does not include RCC itself.`,
 
 func init() {
 	robotCmd.AddCommand(robotRunFromBundleCmd)
+	bundleTrust.addFlags(robotRunFromBundleCmd)
 	robotRunFromBundleCmd.Flags().StringVarP(&runTask, "task", "t", "", "Task to run from the configuration file.")
 	robotRunFromBundleCmd.Flags().StringVarP(&common.HolotreeSpace, "space", "s", "user", "Client specific name to identify this environment.")
 	robotRunFromBundleCmd.Flags().StringVarP(&accountName, "controller", "", "", "Account used for workspace. OPTIONAL")

@@ -8,6 +8,7 @@ Inside this checkout, repository-local guidance is authoritative for RCC impleme
 
 - [`rcc-development`](rcc-development/SKILL.md): source orientation, contained development, implementation boundaries, and verification for RCC changes.
 - [`meta-skill-improvement`](meta-skill-improvement/SKILL.md): evidence-backed guidance correction and durable-learning capture.
+- [`verify-execution-lifecycle`](verify-execution-lifecycle/SKILL.md): bounded TLA+ checks for strict artifact admission, trust-policy downgrade, and process permission.
 
 Use `rcc-development` for source work. Load `meta-skill-improvement` only when evidence reveals stale or missing guidance, the task changes agent guidance, or closure produces durable learning. The documentation receipt remains mandatory for non-trivial work, and a no-change receipt is valid without loading the meta-skill.
 

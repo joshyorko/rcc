@@ -261,16 +261,28 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Log To Console    phase=artifact-bundle:complete
     ${artifact_run_cwd}=    Set Variable    ${FIXTURE_ROOT}${/}artifact-run
     Create Directory    ${artifact_run_cwd}
-    Log To Console    phase=artifact-bundle-run:start
-    ${artifact_run_result}=    Run Process Without Group
+    # This fixture is unsigned: default trust must refuse it before execution.
+    ${artifact_default_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${artifact_bundle}
     ...    --task    proof
     ...    cwd=${artifact_run_cwd}
     ...    env=${B_ENV}
+    Log    ${artifact_default_result.stderr}
+    Should Be Equal As Integers    ${artifact_default_result.rc}    3
+    Should Contain    ${artifact_default_result.stderr}    artifact trust verification failed
+    Should Be Empty    ${artifact_default_result.stdout}
+    Directory Should Be Empty    ${artifact_run_cwd}
+    Log To Console    phase=artifact-bundle-run:start
+    ${artifact_run_result}=    Run Process Without Group
+    ...    ${RCC}    robot    run-from-bundle    ${artifact_bundle}
+    ...    --task    proof
+    ...    --permissive-local
+    ...    cwd=${artifact_run_cwd}
+    ...    env=${B_ENV}
+    Log    ${artifact_run_result.stderr}
     Should Be Equal As Integers    ${artifact_run_result.rc}    0
     Should Not Contain    ${artifact_run_result.stdout}    Bearer robot-test
     Should Not Contain    ${artifact_run_result.stderr}    Bearer robot-test
-    Log    ${artifact_run_result.stderr}
     Log To Console    phase=artifact-bundle-run:complete
 
     ${platform_index}=    Set Variable    ${FIXTURE_ROOT}${/}platform-index.json
@@ -294,12 +306,13 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     ${indexed_run_result}=    Run Process Without Group
     ...    ${RCC}    robot    run-from-bundle    ${indexed_bundle}
     ...    --task    proof
+    ...    --permissive-local
     ...    cwd=${indexed_run_cwd}
     ...    env=${B_ENV}
+    Log    ${indexed_run_result.stderr}
     Should Be Equal As Integers    ${indexed_run_result.rc}    0
     Should Not Contain    ${indexed_run_result.stdout}    Bearer robot-test
     Should Not Contain    ${indexed_run_result.stderr}    Bearer robot-test
-    Log    ${indexed_run_result.stderr}
     Log To Console    phase=indexed-bundle-run:complete
 
     ${wrong_index}=    Set Variable    ${FIXTURE_ROOT}${/}wrong-platform-index.json

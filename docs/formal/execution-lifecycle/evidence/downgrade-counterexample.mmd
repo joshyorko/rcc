@@ -1,0 +1,59 @@
+---
+title: "RCC strict environment admission"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: admission
+    lg1: execution
+    lg2: refused
+    lg3: Breaks NoTrustDowngrade
+    lg4: Breaks NoTrustDowngrade or NoUntrustedExecution in some cases
+    lg5: Path to the NoTrustDowngrade or NoUntrustedExecution bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 pink
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  s0: Artifact and carrier presented
+  s1: Strict policy selected
+  s2: Explicit unsigned-local opt-in
+  s3: Signature verified
+  s4: Untrusted artifact refused
+  s5: Strict policy silently downgraded
+  s6: Materialization admitted
+  s7: Materialization leased
+  s8: Process permitted under lease
+  [*] --> s0
+  s0 --> s1: operator selects strict verification
+  s0 --> s2: operator explicitly opts into unsigned local use
+  s1 --> s4: carrier and signature evidence are verified
+  s1 --> s5: caller loses the required verification policy
+  s1 --> s3: carrier and signature evidence are verified
+  s2 --> s6: operator-approved local artifact is materialized
+  s3 --> s6: validly signed artifact is materialized
+  s5 --> s6: unchecked artifact is materialized after policy loss
+  s6 --> s7: admitted materialization receives a lease
+  s7 --> s8: process becomes permitted
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 bugPath
+  class s1 blue
+  class s1 bugPath
+  class s2 blue
+  class s3 blue
+  class s4 pink
+  class s5 blue
+  class s5 breaks
+  class s5 bugPath
+  class s6 blue
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 blue
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 teal
+  class s8 mayBreak
+  class s8 bugPath

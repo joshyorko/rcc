@@ -11,6 +11,7 @@ import unittest
 import zipfile
 from contextlib import ExitStack
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 from invoke import Collection
@@ -436,6 +437,15 @@ class ArtifactTaskTests(unittest.TestCase):
       environment = artifact_robot_library.environment_artifact_process_environment("C:\\rcc-home")
     for name, value in windows.items():
       self.assertEqual(environment[name], value)
+
+  def test_windows_environment_construction_keeps_consumer_home_empty(self):
+    with tempfile.TemporaryDirectory() as temporary:
+      home = Path(temporary) / "consumer"
+      home.mkdir()
+      with mock.patch.object(artifact_robot_library, "os", SimpleNamespace(name="nt", environ={})):
+        environment = artifact_robot_library.environment_artifact_process_environment(home)
+      self.assertEqual(environment["PROGRAMDATA"], str(home / "programdata"))
+      self.assertEqual(list(home.iterdir()), [])
 
   def test_online_environment_artifact_environment_preserves_proxy_configuration(self):
     proxy_names = (
