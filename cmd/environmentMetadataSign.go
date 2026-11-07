@@ -14,8 +14,8 @@ func newMetadataSignCommand() *cobra.Command {
 	var artifact, scope, keyID, keyFile, issued, expires, provenance, sbom, revocations, output string
 	var sequence uint64
 	command := &cobra.Command{Use: "sign-metadata", Short: "Sign a reviewed complete metadata snapshot with an independent authority key.", Args: cobra.NoArgs, SilenceUsage: true, RunE: func(cmd *cobra.Command, _ []string) error {
-		if output == "" || keyFile == "" {
-			return fmt.Errorf("--output and --metadata-signing-key are required")
+		if output == "" || keyFile == "" || revocations == "" {
+			return fmt.Errorf("--output, --metadata-signing-key and explicit --revocations are required")
 		}
 		key, err := readTrustPrivateKey(keyFile)
 		if err != nil {
@@ -79,7 +79,7 @@ func newMetadataSignCommand() *cobra.Command {
 	command.Flags().StringVar(&expires, "expires-at", "", "RFC3339 expiration; maximum lifetime 24 hours.")
 	command.Flags().StringVar(&provenance, "provenance", "", "Reviewed canonical provenance JSON.")
 	command.Flags().StringVar(&sbom, "sbom", "", "Reviewed canonical SBOM JSON.")
-	command.Flags().StringVar(&revocations, "revocations", "", "Reviewed canonical revocation array JSON; omission signs an empty list.")
+	command.Flags().StringVar(&revocations, "revocations", "", "Required reviewed canonical revocation array JSON; use an explicit empty array for no revocations.")
 	command.Flags().StringVar(&output, "output", "", "New output file; existing files are never overwritten.")
 	return command
 }

@@ -39,8 +39,15 @@ func TestMetadataV1AttackBaseline(t *testing.T) {
 	}
 	provenance.SourceRepository = "allowed"
 	provenance.DependencySources = []string{"allowed"}
-	if !policy.Verify(q).Valid {
-		t.Fatal("baseline source/dependency assertion attack not reproduced")
+	if DefaultPolicyRevision == "artifacttrust/v1" {
+		if !policy.Verify(q).Valid {
+			t.Fatal("baseline source/dependency assertion attack not reproduced")
+		}
+	} else {
+		if policy.Verify(q).Valid {
+			t.Fatal("new source accepted unsigned assertion mutation")
+		}
+		t.Log("API baseline reproduction requires v1 source; current source denies it. CLI probes below use the supplied old executable.")
 	}
 	write := func(name string, v any) string {
 		t.Helper()

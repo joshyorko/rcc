@@ -1,0 +1,24 @@
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/dependencies
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sbom
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sequence
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/scope
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/revocations
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/issued
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/expiry
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/artifact
+=== RUN   TestMetadataEnvelopeAuthenticatesAllPolicyInputs/source
+--- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/dependencies (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sbom (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sequence (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/scope (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/revocations (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/issued (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/expiry (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/artifact (0.00s)
+    --- PASS: TestMetadataEnvelopeAuthenticatesAllPolicyInputs/source (0.00s)
+=== RUN   TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying
+--- PASS: TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying (0.04s)
+PASS
+ok  	github.com/joshyorko/rcc/artifacttrust	0.048s

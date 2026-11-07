@@ -1,0 +1,38 @@
+[
+  {
+    "guard": "authentication",
+    "source": "artifacttrust/metadata.go",
+    "originalSHA256": "cbe359b2260d10d837bfd1b84e19c7e5890d8a0000165cbeab803c94b4ba3690",
+    "mutationSHA256": "e57fe3f94cb5a87a23b67b08fc85a5a8379a93a08996d283f0f2f2e582c7d5ba",
+    "command": [
+      "go",
+      "test",
+      "-p",
+      "1",
+      "./artifacttrust",
+      "-run",
+      "^TestMetadataEnvelopeAuthenticatesAllPolicyInputs$",
+      "-count=1",
+      "-v"
+    ],
+    "exit": 1
+  },
+  {
+    "guard": "rollback",
+    "source": "artifacttrust/metadata_state.go",
+    "originalSHA256": "64ccd01aeaea8a937fea551743eeb13a3f4049cb2b3a18ea459676f8df7c691c",
+    "mutationSHA256": "a0999f8c3dacb9ec8f606ec913088c10491b62fcb4508d1c97bea066d9b154df",
+    "command": [
+      "go",
+      "test",
+      "-p",
+      "1",
+      "./artifacttrust",
+      "-run",
+      "^TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying$",
+      "-count=1",
+      "-v"
+    ],
+    "exit": 1
+  }
+]

@@ -68,12 +68,17 @@ func persistVerificationReceipt(receipt artifacttrust.VerificationReceipt) error
 	return store.Put(receipt)
 }
 
-func persistTrustFailure(policy artifacttrust.Policy, artifact, platform, builder string, _ error, at time.Time) (artifacttrust.VerificationReceipt, error) {
-	receipt := policy.FailureReceipt(artifact, platform, builder, artifacttrust.CodeInvalid, "trust attachment could not be decoded", at)
+func persistTrustFailure(policy artifacttrust.Policy, artifact, platform, builder string, cause error, at time.Time) (artifacttrust.VerificationReceipt, error) {
+	code := artifacttrust.CodeInvalid
+	var metadataFailure *artifacttrust.MetadataError
+	if errors.As(cause, &metadataFailure) {
+		code = metadataFailure.Code
+	}
+	receipt := policy.FailureReceipt(artifact, platform, builder, code, "trust attachment could not be decoded", at)
 	if persistErr := persistVerificationReceipt(receipt); persistErr != nil {
 		return receipt, fmt.Errorf("persist artifact trust failure receipt: %w", persistErr)
 	}
-	return receipt, fmt.Errorf("artifact trust attachment verification failed")
+	return receipt, fmt.Errorf("artifact trust attachment verification failed: %s", code)
 }
 
 func refreshMaterializationTrust(ctx context.Context, materialization Materialization) (artifacttrust.VerificationReceipt, error) {

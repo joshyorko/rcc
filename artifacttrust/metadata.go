@@ -79,12 +79,33 @@ func ReadMetadata(carrier Carrier, artifact string) (*MetadataEnvelope, error) {
 	if err != nil {
 		return nil, err
 	}
+	return decodeMetadataAttachment(data, artifact)
+}
+
+// Transport validation checks structure and binding only; admission still
+// requires VerifyMetadata and MetadataState.Admit with independent authority.
+func decodeMetadataAttachment(data []byte, artifact string) (*MetadataEnvelope, error) {
 	if len(data) > 3<<20 {
 		return nil, metadataError(CodeMetadataInvalid)
 	}
 	var envelope MetadataEnvelope
 	if err := decodeCanonical(data, &envelope); err != nil {
 		return nil, metadataError(CodeMetadataInvalid)
+	}
+	payloadBytes, err := base64.RawStdEncoding.DecodeString(envelope.Payload)
+	if err != nil || envelope.MediaType != MetadataMediaType {
+		return nil, metadataError(CodeMetadataInvalid)
+	}
+	var payload MetadataPayload
+	if err := decodeCanonical(payloadBytes, &payload); err != nil {
+		return nil, metadataError(CodeMetadataInvalid)
+	}
+	canonical, err := json.Marshal(payload)
+	if err != nil || !bytes.Equal(canonical, payloadBytes) || payload.ArtifactDigest != artifact {
+		return nil, metadataError(CodeMetadataInvalid)
+	}
+	if err := validateMetadataPayload(payload); err != nil {
+		return nil, err
 	}
 	return &envelope, nil
 }

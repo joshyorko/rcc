@@ -12,12 +12,13 @@ import (
 	"time"
 
 	"github.com/joshyorko/rcc/artifacttrust"
+	"github.com/joshyorko/rcc/internal/trustfixture"
 )
 
 func TestEnvironmentTrustVerifyAcceptsRawAndPaddedPublicKeys(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -60,7 +61,7 @@ func TestEnvironmentTrustVerifyAcceptsRawAndPaddedPublicKeys(t *testing.T) {
 func TestEnvironmentTrustVerifyRejectsMalformedPublicKeys(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -96,7 +97,7 @@ func TestEnvironmentTrustVerifyRejectsMalformedPublicKeys(t *testing.T) {
 func TestEnvironmentTrustVerifyRejectsInvalidSignatureWithValidKey(t *testing.T) {
 	public, private := trustVerifyTestKey()
 	at := time.Date(2026, 10, 10, 12, 0, 0, 0, time.UTC)
-	artifact := "sha256:fixture"
+	artifact := artifacttrust.Digest([]byte("fixture"))
 	signature, err := artifacttrust.Sign(artifact, "fixture-key", private)
 	if err != nil {
 		t.Fatal(err)
@@ -147,6 +148,9 @@ func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, r
 			t.Fatal(err)
 		}
 	}
+	q := trustfixture.Authenticate(t, artifacttrust.VerifyRequest{ArtifactDigest: artifact, At: at})
+	metadataPath := trustfixture.WriteJSON(t, root, "metadata.json", q.Metadata)
+	metadataRoots := trustfixture.WriteJSON(t, root, "metadata-roots.json", q.MetadataRoots)
 	command := newEnvironmentTrustCommand()
 	var stdout bytes.Buffer
 	command.SetOut(&stdout)
@@ -154,6 +158,7 @@ func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, r
 		"verify", "--artifact", artifact, "--platform", "linux_amd64", "--builder", "fixture-builder",
 		"--signatures", signaturesPath, "--trust-roots", keysPath, "--revocations", revocationsPath,
 		"--verification-time", at.Format(time.RFC3339), "--strict-remote", "--json",
+		"--metadata", metadataPath, "--metadata-trust-roots", metadataRoots, "--metadata-state", q.MetadataState.Root,
 	}
 	err = runCobraCommand(command, arguments)
 	return stdout.Bytes(), err

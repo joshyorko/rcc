@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -22,16 +23,16 @@ func (o metadataOptions) apply(request **artifacttrust.VerifyRequest, carrier ar
 	if o.roots == "" || o.state == "" {
 		return fmt.Errorf("--metadata-trust-roots and --metadata-state are required together")
 	}
-	state, err := filepath.Abs(o.state)
+	state, err := metadataResolvedPath(o.state)
 	if err != nil {
 		return err
 	}
 	if file, ok := carrier.(*artifacttrust.FilesystemCarrier); ok {
-		carrierRoot, err := filepath.Abs(file.Root)
+		carrierRoot, err := metadataResolvedPath(file.Root)
 		if err != nil {
 			return err
 		}
-		roots, err := filepath.Abs(o.roots)
+		roots, err := metadataResolvedPath(o.roots)
 		if err != nil {
 			return err
 		}
@@ -52,6 +53,34 @@ func (o metadataOptions) apply(request **artifacttrust.VerifyRequest, carrier ar
 	(*request).MetadataRoots = roots
 	(*request).MetadataState = &artifacttrust.MetadataState{Root: state}
 	return nil
+}
+
+// Resolve existing ancestors too: a not-yet-created state directory reached
+// through a parent alias must not end up beneath the writable carrier.
+func metadataResolvedPath(path string) (string, error) {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	}
+	var missing []string
+	for {
+		resolved, err := filepath.EvalSymlinks(abs)
+		if err == nil {
+			for i := len(missing) - 1; i >= 0; i-- {
+				resolved = filepath.Join(resolved, missing[i])
+			}
+			return resolved, nil
+		}
+		if !os.IsNotExist(err) {
+			return "", err
+		}
+		parent := filepath.Dir(abs)
+		if parent == abs {
+			return "", err
+		}
+		missing = append(missing, filepath.Base(abs))
+		abs = parent
+	}
 }
 func metadataPathWithin(parent, child string) bool {
 	rel, err := filepath.Rel(parent, child)

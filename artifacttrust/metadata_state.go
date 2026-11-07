@@ -21,7 +21,7 @@ func (s MetadataState) Admit(payload MetadataPayload, envelope MetadataEnvelope)
 	if s.Root == "" {
 		return metadataError(CodeMetadataState)
 	}
-	if err := os.MkdirAll(s.Root, 0700); err != nil {
+	if err := ensureMetadataStateDirectory(s.Root); err != nil {
 		return metadataError(CodeMetadataState)
 	}
 	if err := rejectSymlinkComponents(s.Root, s.Root); err != nil {
@@ -69,6 +69,14 @@ func (s MetadataState) Admit(payload MetadataPayload, envelope MetadataEnvelope)
 		return metadataError(CodeMetadataRollback)
 	}
 	if payload.Sequence == last.Sequence {
+		// A previous append may have succeeded while its durability barrier
+		// failed. A retry must complete that barrier before admitting anything.
+		if err := f.Sync(); err != nil {
+			return metadataError(CodeMetadataState)
+		}
+		if err := syncMetadataStateDirectory(s.Root); err != nil {
+			return metadataError(CodeMetadataState)
+		}
 		return nil
 	}
 	entry, err := json.Marshal(metadataCheckpoint{Sequence: payload.Sequence, Digest: digest})
@@ -76,6 +84,9 @@ func (s MetadataState) Admit(payload MetadataPayload, envelope MetadataEnvelope)
 		return metadataError(CodeMetadataState)
 	}
 	entry = append(entry, '\n')
+	if len(data)+len(entry) > 8<<20 {
+		return metadataError(CodeMetadataState)
+	}
 	if n, err := f.Write(entry); err != nil || n != len(entry) {
 		return metadataError(CodeMetadataState)
 	}
@@ -86,4 +97,25 @@ func (s MetadataState) Admit(payload MetadataPayload, envelope MetadataEnvelope)
 		return metadataError(CodeMetadataState)
 	}
 	return nil
+}
+
+func ensureMetadataStateDirectory(path string) error {
+	path = filepath.Clean(path)
+	parent := filepath.Dir(path)
+	if info, err := os.Stat(path); err == nil {
+		if !info.IsDir() {
+			return metadataError(CodeMetadataState)
+		}
+		// Also complete a previous creation whose parent flush failed.
+		return syncMetadataStateDirectory(parent)
+	} else if !os.IsNotExist(err) || parent == path {
+		return metadataError(CodeMetadataState)
+	}
+	if err := ensureMetadataStateDirectory(parent); err != nil {
+		return err
+	}
+	if err := os.Mkdir(path, 0700); err != nil && !os.IsExist(err) {
+		return err
+	}
+	return syncMetadataStateDirectory(parent)
 }

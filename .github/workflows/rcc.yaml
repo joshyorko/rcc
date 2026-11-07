@@ -591,6 +591,15 @@ jobs:
       - name: Run UV Python prefix symlink containment tests
         shell: bash
         run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
+      - name: Verify authenticated metadata and retained rollback state against exact binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RCC_ACCEPTANCE_BINARY="$RCC_REAL_BINARY"
+          export RCC_METADATA_EVIDENCE="$PWD/tmp/output/metadata-security"
+          go test -count=1 ./cmd -run '^TestMetadataSecurityRealCLI$' -v
+          go test -count=1 ./artifacttrust -run '^TestMetadata' -v
+          go test -count=1 ./environmentlifecycle -run '^TestMetadata' -v
       - name: Show commit info
         run: inv what
       - name: Run Windows process supervision and artifact lock acceptance

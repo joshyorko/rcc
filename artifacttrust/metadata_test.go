@@ -158,6 +158,26 @@ func metadataCodeIs(err error, code string) bool {
 	return errors.As(err, &failure) && failure.Code == code
 }
 
+func authenticatedTestRequest(t *testing.T, q VerifyRequest) VerifyRequest {
+	t.Helper()
+	if q.At.IsZero() {
+		q.At = time.Now().UTC()
+	}
+	pub, key, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := MetadataPayload{SchemaVersion: 2, Scope: "test-authority", ArtifactDigest: q.ArtifactDigest, Sequence: 1, KeyID: "metadata-key", IssuedAt: q.At.Add(-time.Minute).Format(time.RFC3339), ExpiresAt: q.At.Add(time.Hour).Format(time.RFC3339), Provenance: q.Provenance, SBOM: q.SBOM, Revocations: q.Revocations}
+	e, err := SignMetadata(p, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	q.Metadata = &e
+	q.MetadataRoots = &MetadataRoots{SchemaVersion: 2, Scope: p.Scope, MinimumSequence: 1, Keys: map[string]MetadataKey{p.KeyID: {PublicKey: base64.RawStdEncoding.EncodeToString(pub), NotBefore: q.At.Add(-time.Hour).Format(time.RFC3339), NotAfter: q.At.Add(2 * time.Hour).Format(time.RFC3339)}}}
+	q.MetadataState = &MetadataState{Root: t.TempDir()}
+	return q
+}
+
 func TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying(t *testing.T) {
 	p, roots, metadataKey, at := metadataFixture(t)
 	p.Provenance.Platform, p.Provenance.Builder = "linux_amd64", "fixture"
@@ -203,5 +223,53 @@ func TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying(t *testing.T) {
 	}
 	if accepted.DecisionID == denied.DecisionID || denied.DecisionID == rollback.DecisionID {
 		t.Fatal("metadata decisions lost receipt identity")
+	}
+}
+
+func TestMetadataDecisionBindsDeploymentAuthorityAndRequiredProvenance(t *testing.T) {
+	pub, key, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest := Digest([]byte("authority receipt fixture"))
+	sig, err := Sign(digest, "artifact", key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	q := authenticatedTestRequest(t, VerifyRequest{ArtifactDigest: digest, Keys: map[string]ed25519.PublicKey{"artifact": pub}, Signatures: []Signature{sig}})
+	policy := Policy{Mode: StrictRemote}
+	first := policy.Verify(q)
+	if !first.Valid || first.MetadataAuthorityDigest == "" {
+		t.Fatalf("authority receipt: %+v", first)
+	}
+	q.MetadataRoots.Keys["authorized-overlap"] = q.MetadataRoots.Keys["metadata-key"]
+	second := policy.Verify(q)
+	if !second.Valid || first.DecisionID == second.DecisionID || first.MetadataAuthorityDigest == second.MetadataAuthorityDigest {
+		t.Fatal("authority configuration change was not bound to decision")
+	}
+	policy.AcceptedSources = []string{"required-source"}
+	if receipt := policy.Verify(q); receipt.Valid || receipt.Code != CodePolicy {
+		t.Fatalf("missing required provenance: %+v", receipt)
+	}
+}
+
+func TestCoordinationStatementVerificationCannotGrantMetadataPolicy(t *testing.T) {
+	pub, key, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	digest := Digest([]byte("complete build statement"))
+	sig, err := Sign(digest, "build", key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	keys := map[string]ed25519.PublicKey{"build": pub}
+	policy := Policy{Mode: PermissiveLocal, AllowUnsignedLocal: true}
+	if err := policy.VerifyStatement(digest, "platform", "builder", nil, nil, keys); err == nil {
+		t.Fatal("statement verification allowed unsigned input")
+	}
+	policy = Policy{Mode: StrictRemote, AcceptedSources: []string{"source"}}
+	if err := policy.VerifyStatement(digest, "platform", "builder", []Signature{sig}, nil, keys); err == nil {
+		t.Fatal("statement verification bypassed metadata policy")
 	}
 }
