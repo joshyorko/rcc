@@ -63,6 +63,8 @@ ASSET_TARGETS = {
 }
 EXPECTED_GO_VERSION = "go1.26.9"
 MAX_REVIEW_ARTIFACT_BYTES = 24 * 1024 * 1024
+MAX_PREPARATION_FILE_BYTES = 1024 * 1024 * 1024
+MAX_PREPARATION_BYTES = 2 * 1024 * 1024 * 1024
 REVIEW_EXPORT_WORKFLOW_PATH = ".github/workflows/export-release-evidence.yml"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 VERSION_RE = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
@@ -340,8 +342,14 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
              "invalid expected asset manifest SHA-256")
     root = Path(root)
     _require(root.is_dir() and not root.is_symlink(), "release artifact root is missing or unsafe")
+    total_size = 0
     for path in [root, *root.rglob("*")]:
         _require(not path.is_symlink(), f"release artifact contains a symlink: {path.relative_to(root) if path != root else '.'}")
+        if path.is_file():
+            size = path.stat().st_size
+            total_size += size
+            _require(size <= MAX_PREPARATION_FILE_BYTES and total_size <= MAX_PREPARATION_BYTES,
+                     "preparation artifact payload exceeds the publisher extraction size limit")
     _require({path.name for path in root.iterdir()} == {"assets", "evidence"},
              "release artifact has unexpected top-level paths")
     assets_dir = root / "assets"
@@ -1205,7 +1213,14 @@ def assemble_prepared_bundle(asset_root, release_candidate_root, native_root, ou
         source = asset_root / name
         _require(source.is_file() and not source.is_symlink(), f"build asset is missing or unsafe: {name}")
         shutil.copyfile(source, output_assets / name)
-    shutil.copytree(release_candidate_root, evidence / "release-candidate", dirs_exist_ok=True, symlinks=True)
+    def ignore_bundle_test_homes(directory, _names):
+        if Path(directory) == release_candidate_root / "tmp" / "output" / "bundle-output":
+            return {"producer-home", "homes"}
+        return set()
+
+    # Retain fixture receipts and replay inputs while omitting mutable environments.
+    shutil.copytree(release_candidate_root, evidence / "release-candidate", dirs_exist_ok=True,
+                    symlinks=True, ignore=ignore_bundle_test_homes)
     for platform in NATIVE_RECEIPTS:
         matches = list(native_root.rglob("native-runtime-receipt.json"))
         matching = []
@@ -1355,14 +1370,14 @@ def download_preparation_artifact(api_url, token, repository, artifact, zip_path
         with opener.open(request, timeout=60) as response, zip_path.open("wb") as output:
             content_length = response.headers.get("Content-Length")
             if content_length and content_length.isdecimal():
-                _require(int(content_length) <= 2 * 1024 * 1024 * 1024,
+                _require(int(content_length) <= MAX_PREPARATION_BYTES,
                          "preparation artifact ZIP exceeds the accepted download size limit")
             while True:
                 block = response.read(1024 * 1024)
                 if not block:
                     break
                 downloaded += len(block)
-                _require(downloaded <= 2 * 1024 * 1024 * 1024,
+                _require(downloaded <= MAX_PREPARATION_BYTES,
                          "preparation artifact ZIP exceeds the accepted download size limit")
                 digest.update(block)
                 output.write(block)
@@ -1413,7 +1428,7 @@ def download_preparation_artifact(api_url, token, repository, artifact, zip_path
                             break
                         member_size += len(block)
                         total_size += len(block)
-                        _require(member_size <= 1024 * 1024 * 1024 and total_size <= 2 * 1024 * 1024 * 1024,
+                        _require(member_size <= MAX_PREPARATION_FILE_BYTES and total_size <= MAX_PREPARATION_BYTES,
                                  "preparation artifact ZIP expands beyond the accepted size limit")
                         output.write(block)
                     _require(member_size == member.file_size, f"preparation artifact ZIP member size mismatch: {name}")

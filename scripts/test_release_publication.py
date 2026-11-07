@@ -634,6 +634,47 @@ class ReleasePublicationTests(unittest.TestCase):
         artifact = {"name": "rcc-release-preparation", "expired": False, "digest": "sha256:" + "c" * 64}
         validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
 
+    def test_assembly_excludes_mutable_bundle_test_homes_but_keeps_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            self.fixture(source)
+            release = source / "evidence" / "release-candidate"
+            fixture = release / "tmp" / "output" / "bundle-output"
+            for relative in ("producer-home/pkgs/cache/index.json", "homes/source-artifact/python"):
+                path = fixture / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"mutable environment scratch")
+            (fixture / "summary.json").write_bytes(b"qualification receipt")
+            (fixture / "fixture.rcca").write_bytes(b"immutable replay input")
+            other = release / "tmp" / "metadata-security" / "homes" / "receipt.json"
+            other.parent.mkdir(parents=True)
+            other.write_bytes(b"unrelated evidence must survive")
+            output = root / "prepared"
+            manifest = publication.assemble_prepared_bundle(
+                source / "assets", release, source / "evidence" / "native", output,
+                SOURCE, VERSION, 123, str(self.fake_go(root)),
+            )
+            staged = output / "evidence" / "release-candidate"
+            staged_fixture = staged / "tmp" / "output" / "bundle-output"
+            self.assertFalse((staged_fixture / "producer-home").exists())
+            self.assertFalse((staged_fixture / "homes").exists())
+            self.assertEqual((staged_fixture / "summary.json").read_bytes(), b"qualification receipt")
+            self.assertEqual((staged_fixture / "fixture.rcca").read_bytes(), b"immutable replay input")
+            self.assertEqual((staged / other.relative_to(release)).read_bytes(), b"unrelated evidence must survive")
+            validate_prepared_bundle(output, SOURCE, VERSION, manifest, 123)
+
+    def test_preparation_rejects_payloads_over_publisher_extraction_limits(self):
+        for sizes in ((1024 ** 3 + 1,), (800 * 1024 ** 2,) * 3):
+            with self.subTest(sizes=sizes), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                digest = self.fixture(root)
+                for index, size in enumerate(sizes):
+                    with (root / "evidence" / f"oversized-{index}").open("wb") as stream:
+                        stream.truncate(size)
+                with self.assertRaisesRegex(ReleaseGateError, "size limit"):
+                    validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+
     def test_rejects_tampered_or_missing_asset(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
