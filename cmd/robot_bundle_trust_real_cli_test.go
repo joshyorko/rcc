@@ -79,6 +79,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 		{"unsigned-strict-deny", "unsigned", "unsigned", false},
 		{"revoked-deny", "revoked", "revoked", false},
 		{"tampered-signature-deny", "tampered", "invalid", false},
+		{"tampered-archive-deny", "archive-tampered", "digest", false},
 		{"unknown-signer-deny", "unknown", "unknown-signer", false},
 		{"missing-evidence-deny", "missing", "revocation-stale", false},
 		{"invalid-evidence-deny", "invalid", "attachment", false},
@@ -102,7 +103,12 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			// denied task cannot hide execution behind failed copy-back or cleanup.
 			sentinel := filepath.Join(root, "task-executed.txt")
 			bundle := filepath.Join(root, "bundle.zip")
-			writeTrustCLIBundle(t, bundle, archive, sentinel)
+			selectedArchive := archive
+			if tc.kind == "archive-tampered" {
+				selectedArchive = filepath.Join(root, "tampered.rcca")
+				writeTamperedTrustArchive(t, archive, selectedArchive)
+			}
+			writeTrustCLIBundle(t, bundle, selectedArchive, sentinel)
 			roots := filepath.Join(root, "roots.json")
 			keys := map[string]string{"deployment": base64.RawStdEncoding.EncodeToString(public)}
 			if tc.kind == "unknown" {
@@ -251,6 +257,52 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			}
 			t.Logf("binary=%s artifact=%s exit=%d executed=%v trustReceipts=%d leaseReceipt=%v refreshReads=%d baseline=%v", binary, digest, exit, sentinelErr == nil, receipts, leased, refreshReads.Load(), baseline)
 		})
+	}
+}
+
+func writeTamperedTrustArchive(t *testing.T, archive, target string) {
+	t.Helper()
+	source, err := zip.OpenReader(archive)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer source.Close()
+	out, err := os.Create(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := zip.NewWriter(out)
+	changed := false
+	for _, file := range source.File {
+		r, err := file.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		data, err := io.ReadAll(r)
+		_ = r.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !changed && strings.HasPrefix(file.Name, environmentartifact.ArchiveObjectDirectory) && len(data) > 0 {
+			data[0] ^= 1
+			changed = true
+		}
+		member, err := w.Create(file.Name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := member.Write(data); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := w.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := out.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if !changed {
+		t.Fatal("no artifact object was tampered")
 	}
 }
 
