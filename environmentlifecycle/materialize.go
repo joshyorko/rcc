@@ -63,6 +63,9 @@ type Materialization struct {
 	TrustCarrier   artifacttrust.Carrier
 }
 
+// Materializer owns materialization and lease operations. Materialize is a
+// lock-taking entry point for LocalMaterializer; callers already holding its
+// artifact transaction must use materializeLocked instead.
 type Materializer interface {
 	Materialize(context.Context, environmentartifact.Manifest) (Materialization, error)
 	Lease(context.Context, Materialization) (Lease, error)
@@ -78,6 +81,8 @@ func NewLocalMaterializer() *LocalMaterializer {
 	return &LocalMaterializer{}
 }
 
+// Materialize takes the artifact transaction; the caller must not hold it.
+// Unlike Acquirer.Acquire, this entry point does not take a content transaction.
 func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environmentartifact.Manifest) (Materialization, error) {
 	var result Materialization
 	err := withArtifactTransaction(ctx, manifest.ArtifactDigest, func(ctx context.Context) error {
@@ -88,6 +93,8 @@ func (it *LocalMaterializer) Materialize(ctx context.Context, manifest environme
 	return result, err
 }
 
+// materializeLocked requires the caller's artifact transaction. During acquisition
+// the content transaction is also held, acquired before the artifact transaction.
 func (it *LocalMaterializer) materializeLocked(ctx context.Context, manifest environmentartifact.Manifest) (Materialization, error) {
 	if err := ctx.Err(); err != nil {
 		return Materialization{}, err
@@ -171,6 +178,8 @@ func NewAcquirer() *Acquirer {
 	return &Acquirer{materializer: NewLocalMaterializer(), localProviderFactory: newLocalContentProvider}
 }
 
+// Acquire holds the content transaction before the artifact transaction through
+// verification and materialization. Neither transaction is reentrant.
 func (it *Acquirer) Acquire(ctx context.Context, request AcquireRequest) (AcquireResult, error) {
 	var result AcquireResult
 	err := withContentTransaction(ctx, localContentRoot(), func(ctx context.Context) error {
@@ -300,6 +309,7 @@ func (it *Acquirer) materialize(ctx context.Context, manifest environmentartifac
 	var materialization Materialization
 	var err error
 	if local, ok := it.materializer.(*LocalMaterializer); ok {
+		// Acquire already owns both transactions; the public method would deadlock.
 		materialization, err = local.materializeLocked(ctx, manifest)
 	} else {
 		materialization, err = it.materializer.Materialize(ctx, manifest)

@@ -25,6 +25,75 @@ import (
 
 type failOnTouchProvider struct{ t *testing.T }
 
+func TestDefaultAcquisitionMaterializesAndReusesWithinDeadline(t *testing.T) {
+	if os.Getenv("RCC_ACQUIRE_DEADLINE_CHILD") != "1" {
+		root := t.TempDir()
+		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+		defer cancel()
+		// A blocked mutex ignores context cancellation. Bound and reap the whole
+		// test process, including any temporary materialization it leaves behind.
+		command := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestDefaultAcquisitionMaterializesAndReusesWithinDeadline$", "-test.timeout=15s", "--", "--warranty-voided")
+		command.Env = environmentWith(os.Environ(), map[string]string{
+			"RCC_ACQUIRE_DEADLINE_CHILD": "1", "RCC_HOLOTREE_MODE": "private",
+			"ROBOCORP_HOME": filepath.Join(root, "rcc"), "HOME": root, "USERPROFILE": root,
+			"TMPDIR": root, "TMP": root, "TEMP": root,
+		})
+		command.WaitDelay = time.Second
+		if output, err := command.CombinedOutput(); err != nil {
+			t.Fatalf("default acquisition did not complete: %v (deadline: %v)\n%s", err, ctx.Err(), output)
+		}
+		return
+	}
+
+	fixture, remote, digest := publishedFixture(t)
+	common.Product.ForceHome(t.TempDir())
+	carrier := &countingAcquisitionCarrier{Carrier: artifacttrust.NewFilesystemCarrier(t.TempDir())}
+	policy := &artifacttrust.Policy{
+		Mode: artifacttrust.PermissiveLocal, AllowUnsignedLocal: true,
+		AcceptedBuilders: []string{fixture.build.Builder.Kind}, Revision: "same-cold-and-warm-policy",
+	}
+	trustRequest := &artifacttrust.VerifyRequest{At: time.Now().UTC()}
+	request := AcquireRequest{ArtifactDigest: digest, Provider: remote, TrustPolicy: policy, TrustRequest: trustRequest, TrustCarrier: carrier}
+	acquirer := NewAcquirer()
+	cold, err := acquirer.Acquire(context.Background(), request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cold.CacheHit != CacheProvider || !cold.Verification.Valid || carrier.reads == 0 {
+		t.Fatalf("cold acquisition or carrier verification missing: %+v, reads=%d", cold, carrier.reads)
+	}
+	python := "python"
+	if runtime.GOOS == "windows" {
+		python = "python.exe"
+	}
+	assertFileBytes(t, filepath.Join(cold.Path, python), []byte("immutable python bytes"))
+	carrier.reads = 0
+	request.Provider = failOnTouchProvider{t: t}
+	warm, err := acquirer.Acquire(context.Background(), request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if warm.CacheHit != CacheLocalMaterialization || warm.ArtifactDigest != cold.ArtifactDigest || warm.MaterializationID != cold.MaterializationID || warm.Path != cold.Path {
+		t.Fatalf("warm acquisition changed identity: cold=%+v warm=%+v", cold, warm)
+	}
+	if carrier.reads == 0 || !warm.Verification.Valid || warm.Verification.PolicyDigest != cold.Verification.PolicyDigest {
+		t.Fatalf("warm acquisition did not reverify the same policy: %+v, reads=%d", warm, carrier.reads)
+	}
+	if warm.TrustPolicy != policy || warm.TrustRequest != trustRequest || warm.TrustCarrier != carrier {
+		t.Fatal("warm acquisition lost runtime trust inputs")
+	}
+}
+
+type countingAcquisitionCarrier struct {
+	artifacttrust.Carrier
+	reads int
+}
+
+func (c *countingAcquisitionCarrier) Read(name string) ([]byte, error) {
+	c.reads++
+	return c.Carrier.Read(name)
+}
+
 func (it failOnTouchProvider) fail() {
 	it.t.Helper()
 	it.t.Fatal("warm acquisition touched the provider")

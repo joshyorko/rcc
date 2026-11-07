@@ -199,6 +199,7 @@ Portable Environment Is Published Acquired Executed And Reused Offline
     Should Be Equal    ${executed}[cacheHit]    local-materialization
     Should Be Equal As Integers    ${executed}[exitCode]    0
     Should Not Be Empty    ${executed}[leaseId]
+    Execution Modes Should Preserve Streams And Receipts    ${RCC}    ${artifact}    ${TRUST_ROOT}    ${B_ENV}    ${FIXTURE_ROOT}
     ${proof}=    Read JSON File    ${PROOF_FILE}
     Should Not Be Empty    ${proof}[yamlVersion]
     Should Be Equal    ${proof}[condaOffline]    true

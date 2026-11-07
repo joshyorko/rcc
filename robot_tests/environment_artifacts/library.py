@@ -36,6 +36,64 @@ def source_rcc_version():
     return match.group(1)
 
 
+def execution_modes_should_preserve_streams_and_receipts(binary, artifact, trust_root, environment, root):
+    """Exercise the built CLI, including direct-child signal forwarding on Linux."""
+    outcomes = ("success", "nonzero", "signal") if platform.system() == "Linux" else ("success", "nonzero")
+    if platform.system() != "Linux":
+        log_to_console("phase=execution-signal:skipped (requires Linux signal semantics)")
+    base = [str(binary), "env", "exec", "--artifact", artifact,
+            "--trust-carrier", trust_root, "--trust-carrier-type", "filesystem", "--permissive-local"]
+    for mode in ("json", "streams", "both"):
+        for outcome in outcomes:
+            receipt = Path(root) / f"{mode}-{outcome}-receipt.json"
+            ready = Path(root) / f"{mode}-{outcome}-ready"
+            arguments = base.copy()
+            if mode != "streams":
+                arguments += ["--json"]
+            if mode != "json":
+                receipt.write_text("old receipt")
+                arguments += ["--inherit-streams", "--receipt-file", str(receipt)]
+            program = "import sys,time,pathlib; print('child-output',flush=True); print('child-error',file=sys.stderr,flush=True); "
+            if outcome == "signal":
+                program += "pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(60)"
+            else:
+                program += f"sys.exit({7 if outcome == 'nonzero' else 0})"
+            process = subprocess.Popen(arguments + ["--", "python", "-c", program, str(ready)],
+                                       env=dict(environment), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            try:
+                if outcome == "signal":
+                    deadline = time.monotonic() + 15
+                    while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
+                        time.sleep(0.02)
+                    if not ready.exists():
+                        raise AssertionError(f"{mode}: child did not become ready")
+                    process.terminate()
+                stdout, stderr = process.communicate(timeout=15)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                process.communicate(timeout=5)
+            # Signals are forwarded to the child; they are not context cancellation.
+            expected_code = {"success": 0, "nonzero": 7, "signal": -1}[outcome]
+            if process.returncode != (expected_code % 256):
+                raise AssertionError(f"{mode}/{outcome}: exit={process.returncode}, stderr={stderr}")
+            if mode == "json":
+                result = json.loads(stdout)
+                if "child-output" in stdout or "child-error" in stderr:
+                    raise AssertionError("child output polluted JSON mode")
+            else:
+                result = json.loads(receipt.read_text())
+                if stdout != "child-output\n" or "child-error\n" not in stderr:
+                    raise AssertionError(f"inherited streams changed: stdout={stdout!r}, stderr={stderr!r}")
+            if result["exitCode"] != expected_code or result["status"] != ("completed" if outcome == "success" else "failed"):
+                raise AssertionError(f"{mode}/{outcome}: receipt={result}")
+            if result["artifactDigest"] != artifact or not result["leaseId"]:
+                raise AssertionError(f"missing execution identity: {result}")
+            lease = Path(environment["ROBOCORP_HOME"]) / "artifacts" / "v1" / "materializations" / artifact.removeprefix("sha256:") / "leases" / (result["leaseId"] + ".json")
+            if lease.exists():
+                raise AssertionError(f"execution lease survived child exit: {lease}")
+
+
 def run_process_without_group(*command, **configuration):
     environment = configuration.pop("env", None)
     cwd = configuration.pop("cwd", None)
