@@ -244,6 +244,9 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			if tc.kind == "refresh" && refreshReads.Load() < 2 {
 				t.Fatal("lease refresh was not observed")
 			}
+			if tc.kind == "signed" && os.Getenv("RCC_BUNDLE_TEST_ENV_PROBES") == "1" {
+				verifyCombinedEnvironmentCommands(t, binary, home, digest, roots, carrier.Root, command.Env)
+			}
 			history, historyErr := artifacttrust.NewReceiptStore(filepath.Join(home, "artifacts", "v1", "verification")).History(digest)
 			receipts := len(history)
 			leased := false
@@ -275,6 +278,84 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			}
 			t.Logf("binary=%s artifact=%s exit=%d executed=%v trustReceipts=%d leaseReceipt=%v refreshReads=%d baseline=%v", binary, digest, exit, sentinelErr == nil, receipts, leased, refreshReads.Load(), baseline)
 		})
+	}
+}
+
+func verifyCombinedEnvironmentCommands(t *testing.T, binary, home, digest, roots, carrier string, environment []string) {
+	t.Helper()
+	host := filepath.Join(t.TempDir(), "host-bin")
+	if err := os.Mkdir(host, 0750); err != nil {
+		t.Fatal(err)
+	}
+	decoy := filepath.Join(host, "rcc-issue258-probe")
+	if err := os.WriteFile(decoy, []byte("#!/bin/sh\nprintf 'host-decoy\\n'\n"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	environment = append(append([]string{}, environment...), "PATH="+host+string(os.PathListSeparator)+os.Getenv("PATH"))
+	for index, probe := range []struct {
+		command    []string
+		output     string
+		json, fail bool
+	}{
+		{[]string{"rcc-issue258-unique"}, "artifact-stdout\n", false, false},
+		{[]string{"rcc-issue258-probe"}, "artifact-stdout\n", false, false},
+		{[]string{"rcc-issue258-probe"}, "", true, false},
+		{[]string{decoy}, "host-decoy\n", false, false},
+		{[]string{"python", "-c", "print('artifact-python')"}, "artifact-python\n", false, false},
+		{[]string{"rcc-issue258-missing"}, "", false, true},
+	} {
+		args := []string{"env", "exec", "--artifact", digest, "--trust-roots", roots, "--trust-carrier", carrier, "--strict-remote"}
+		receiptPath := filepath.Join(home, fmt.Sprintf("combined-command-%d.json", index))
+		if probe.json {
+			args = append(args, "--json")
+		} else {
+			args = append(args, "--inherit-streams", "--receipt-file", receiptPath)
+		}
+		args = append(append(args, "--"), probe.command...)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+		command := exec.CommandContext(ctx, binary, args...)
+		command.Env = environment
+		var stdout, stderr bytes.Buffer
+		command.Stdout = &stdout
+		command.Stderr = &stderr
+		err := command.Run()
+		cancel()
+		if (err != nil) != probe.fail {
+			t.Fatalf("combined probe %v err=%v stdout=%s stderr=%s", probe.command, err, stdout.String(), stderr.String())
+		}
+		var receipt environmentExecResult
+		if probe.json {
+			if err := json.Unmarshal(stdout.Bytes(), &receipt); err != nil {
+				t.Fatalf("JSON channel contains child output: %s", stdout.String())
+			}
+			if stderr.Len() != 0 {
+				t.Fatalf("JSON mode leaked child stderr: %s", stderr.String())
+			}
+		} else {
+			data, err := os.ReadFile(receiptPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := json.Unmarshal(data, &receipt); err != nil {
+				t.Fatal(err)
+			}
+			if stdout.String() != probe.output {
+				t.Fatalf("combined probe %v stdout=%q want=%q", probe.command, stdout.String(), probe.output)
+			}
+			if index < 2 && stderr.String() != "artifact-stderr\n" {
+				t.Fatalf("combined probe stderr=%q", stderr.String())
+			}
+		}
+		if receipt.ArtifactDigest.String() != digest || receipt.Verification == nil || !receipt.Verification.Valid || receipt.Verification.PolicyMode != artifacttrust.StrictRemote {
+			t.Fatalf("combined probe lost strict receipt: %+v", receipt)
+		}
+		if probe.fail && (receipt.Status != "failed" || !strings.Contains(receipt.Reason, "rcc-issue258-missing")) {
+			t.Fatalf("lookup failure receipt=%+v", receipt)
+		}
+		if !probe.fail && (receipt.Status != "completed" || receipt.ExitCode != 0 || receipt.LeaseID == "") {
+			t.Fatalf("execution receipt=%+v", receipt)
+		}
+		t.Logf("combined command=%v status=%s exit=%d mode=%s", probe.command, receipt.Status, receipt.ExitCode, receipt.Verification.PolicyMode)
 	}
 }
 
