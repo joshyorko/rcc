@@ -150,6 +150,14 @@ func TestLegacySPDXLabeledInventoryRemainsVerifiableAndBytePreserved(t *testing.
 	if !receipt.Valid {
 		t.Fatalf("legacy inventory rejected by verifier: %+v", receipt)
 	}
+	misbound := bytes.Replace(legacy, []byte(`"artifactDigest":"sha256:legacy"`), []byte(`"artifactDigest":"sha256:other"`), 1)
+	if err := PutAttachment(NewFilesystemCarrier(t.TempDir()), artifact, "sbom", misbound); err == nil {
+		t.Fatal("misbound legacy inventory accepted")
+	}
+	credentialBearing := []byte(`{"mediaType":"application/vnd.rcc.environment.sbom.spdx+json","artifactDigest":"sha256:legacy","components":[{"name":"pkg","version":"1","packageType":"pip","source":"https://example.invalid/simple?token=secret"}]}`)
+	if err := PutAttachment(NewFilesystemCarrier(t.TempDir()), artifact, "sbom", credentialBearing); err == nil {
+		t.Fatal("credential-bearing legacy inventory accepted")
+	}
 
 	migrated, _, err := NewObjectInventory(artifact, inventory.Components)
 	if err != nil || migrated.MediaType != ObjectInventoryMediaType {
