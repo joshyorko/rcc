@@ -13,22 +13,25 @@ stateDiagram-v2
   s0: Artifact and carrier presented
   s1: Strict policy selected
   s2: Explicit unsigned-local opt-in
-  s3: Untrusted artifact refused
-  s4: Materialization admitted
-  s5: Verified materialization leased
-  s6: Process permitted under lease
+  s3: Signature verified
+  s4: Untrusted artifact refused
+  s5: Materialization admitted
+  s6: Verified materialization leased
+  s7: Process permitted under lease
   [*] --> s0
   s0 --> s1: operator selects strict verification
   s0 --> s2: operator explicitly opts into unsigned local use
+  s1 --> s4: carrier and signature evidence are verified
   s1 --> s3: carrier and signature evidence are verified
-  s2 --> s4: explicitly allowed local artifact is materialized
-  s1 --> s4: validly signed artifact is materialized
-  s4 --> s5: admitted materialization receives a lease
-  s5 --> s6: process becomes permitted
+  s2 --> s5: explicitly allowed local artifact is materialized
+  s3 --> s5: validly signed artifact is materialized
+  s5 --> s6: admitted materialization receives a lease
+  s6 --> s7: process becomes permitted
   class s0 blue
   class s1 blue
   class s2 blue
-  class s3 pink
-  class s4 blue
+  class s3 blue
+  class s4 pink
   class s5 blue
-  class s6 teal
+  class s6 blue
+  class s7 teal

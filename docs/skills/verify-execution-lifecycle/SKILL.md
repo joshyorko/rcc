@@ -9,6 +9,13 @@ Use this skill when changing artifact trust-policy selection, detached evidence,
 
 ## Run
 
+From the repository root, run `python3 docs/formal/execution-lifecycle/check.py`.
+It requires the pinned TLC 1.7.4 and Java selected by mise (or explicit
+`TLA2TOOLS` and `JAVA` paths), validates the TLC checksum, and checks fixed,
+deliberately broken, and restored configurations with a bounded JVM and timeout.
+If the tools are absent, report FORMAL BLOCKED; follow `/statechart` to provision
+and inspect the checker. No installed statechart command is embedded here.
+
 Run `/statechart` on `docs/formal/execution-lifecycle/ExecutionLifecycle.tla` with its fixed configuration and view. Confirm the bounded model passes both invariants and review the generated state chart. The model has two finite inputs: a deployment carrier with a valid signature and authenticated metadata, and an attacker carrier with an unsigned artifact and unsigned metadata. It does not enumerate arbitrary bytes, keys, revocation history, or platforms.
 
 For the falsifiability check, run `/statechart` with `ExecutionLifecycle-broken.cfg` and the same model and view. It must report the `NoTrustDowngrade` counterexample in which unsigned metadata changes a selected strict policy to permissive. This configuration is intentionally broken; do not use it as acceptance evidence.
@@ -19,6 +26,10 @@ For the falsifiability check, run `/statechart` with `ExecutionLifecycle-broken.
 - **NoUntrustedExecution:** A process can be permitted only after strict verification of a valid signature and authenticated metadata, or after an explicit permissive-local opt-in, and only with a materialization lease. Otherwise attacker-controlled bytes could reach execution.
 
 The model treats the deployment carrier and its metadata-authentication decision as trusted inputs. Issue #253 identifies that current detached provenance and revocation attachment bytes are not cryptographically authenticated or protected against rollback; those source facts are an explicit unresolved assumption here, not proven by this model. The model does not claim provider-only attacks can forge signature verification.
+
+Evidence and Artifact identity remain fixed between acquisition and lease in
+this model. Lease-time refresh against changed revocations requires real-code
+tests. These are safety checks, not liveness or eventual-completion proofs.
 
 ## Source coverage and synchronization
 

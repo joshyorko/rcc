@@ -6,7 +6,8 @@ export const state = (v) => {
   if (v.leaseHeld) return "Verified materialization leased";
   if (v.materialized) return "Materialization admitted";
   if (v.stage === "refused") return "Untrusted artifact refused";
-  if (v.policy === "permissive") return "Explicit unsigned-local opt-in";
+  if (v.stage === "verified") return "Signature verified";
+  if (v.policy === "permissive") return v.explicitOptIn ? "Explicit unsigned-local opt-in" : "Strict policy silently downgraded";
   if (v.policy === "strict" && v.strictChosen) return "Strict policy selected";
   return "Artifact and carrier presented";
 };
@@ -14,6 +15,7 @@ export const state = (v) => {
 export const group = (v) => v.stage === "refused" ? "refused" : v.stage === "running" ? "execution" : "admission";
 
 export const step = (action) => ({
+  Done: null,
   SelectStrict: "operator selects strict verification",
   SelectPermissive: "operator explicitly opts into unsigned local use",
   VerifyStrict: "carrier and signature evidence are verified",

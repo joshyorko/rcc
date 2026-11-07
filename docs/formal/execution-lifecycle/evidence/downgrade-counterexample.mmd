@@ -6,39 +6,44 @@ stateDiagram-v2
     lg0: admission
     lg1: execution
     lg2: refused
-    lg3: Breaks NoTrustDowngrade in some cases
+    lg3: Breaks NoTrustDowngrade
     lg4: Path to the NoTrustDowngrade bug
   }
   class lg0 blue
   class lg1 teal
   class lg2 pink
-  class lg3 mayBreak
+  class lg3 breaks
   class lg4 bugPath
   s0: Artifact and carrier presented
   s1: Strict policy selected
   s2: Explicit unsigned-local opt-in
-  s3: Untrusted artifact refused
-  s4: Materialization admitted
-  s5: Verified materialization leased
-  s6: Process permitted under lease
+  s3: Signature verified
+  s4: Untrusted artifact refused
+  s5: Strict policy silently downgraded
+  s6: Materialization admitted
+  s7: Verified materialization leased
+  s8: Process permitted under lease
   [*] --> s0
   s0 --> s1: operator selects strict verification
   s0 --> s2: operator explicitly opts into unsigned local use
+  s1 --> s4: carrier and signature evidence are verified
+  s1 --> s5: unsigned metadata attempts to lower strict policy
   s1 --> s3: carrier and signature evidence are verified
-  s1 --> s2: unsigned metadata attempts to lower strict policy
-  s2 --> s4: explicitly allowed local artifact is materialized
-  s1 --> s4: validly signed artifact is materialized
-  s4 --> s5: admitted materialization receives a lease
-  s5 --> s6: process becomes permitted
-  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  s2 --> s6: explicitly allowed local artifact is materialized
+  s3 --> s6: validly signed artifact is materialized
+  s6 --> s7: admitted materialization receives a lease
+  s7 --> s8: process becomes permitted
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
   class s0 blue
   class s0 bugPath
   class s1 blue
   class s1 bugPath
   class s2 blue
-  class s2 mayBreak
-  class s2 bugPath
-  class s3 pink
-  class s4 blue
+  class s3 blue
+  class s4 pink
   class s5 blue
-  class s6 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 blue
+  class s7 blue
+  class s8 teal

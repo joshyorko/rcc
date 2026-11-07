@@ -93,9 +93,14 @@ Refuse ==
   /\ UNCHANGED <<scenario, policy, strictChosen, explicitOptIn, decision,
                   materialized, leaseHeld, processPermitted>>
 
+Done ==
+  /\ (stage \in {"running", "refused"}
+      \/ (BreakTrustDowngrade /\ strictChosen /\ policy = "permissive"))
+  /\ UNCHANGED vars
+
 Next == SelectStrict \/ SelectPermissive \/ VerifyStrict \/ MaterializeStrict
         \/ MaterializePermissive \/ DowngradeOnUnsignedMetadata \/ CreateLease
-        \/ PermitProcess \/ Refuse
+        \/ PermitProcess \/ Refuse \/ Done
 
 NoTrustDowngrade == strictChosen => policy = "strict"
 
