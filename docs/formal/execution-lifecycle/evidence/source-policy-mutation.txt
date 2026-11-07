@@ -1,0 +1,10 @@
+BROKEN source: force permissive policy
+--- FAIL: TestBundleTrustDefaultsToStrictAndCarriesLeaseRefreshContext (0.00s)
+    robotBundleTrust_test.go:49: default policy is not fail-closed strict: &artifacttrust.Policy{Mode:"permissive-local", RequireSignature:false, AllowUnsignedLocal:false, AcceptedKeys:[]string(nil), AcceptedBuilders:[]string(nil), AcceptedPlatforms:[]string(nil), AcceptedRCCVersions:[]string(nil), AcceptedSources:[]string(nil), AcceptedDependencySources:[]string(nil), MaxArtifactAge:0, FailClosedRevocations:false, RevocationMaxAge:0, Revision:""}
+FAIL
+FAIL	github.com/joshyorko/rcc/cmd	0.020s
+FAIL
+Exit: 1
+RESTORED source
+ok  	github.com/joshyorko/rcc/cmd	0.025s
+Exit: 0
