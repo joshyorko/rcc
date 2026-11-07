@@ -258,6 +258,8 @@ class EnvironmentExec258Library:
             "http_proxy", "https_proxy", "all_proxy", "no_proxy",
         )
         environment = {key: os.environ[key] for key in allowed if key in os.environ}
+        # Linux capability discovery uses ldconfig, commonly installed in sbin.
+        path = os.pathsep.join(dict.fromkeys([*path.split(os.pathsep), "/usr/sbin", "/sbin"]))
         environment.update({
             "PATH": path,
             "ROBOCORP_HOME": str(home),
@@ -284,6 +286,8 @@ class EnvironmentExec258Library:
             timeout=600,
             check=False,
         )
+        if completed.returncode:
+            BuiltIn().log(f"CLI failure: {command}\nstdout={completed.stdout}\nstderr={completed.stderr}")
         return {"rc": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr,
                 "stdoutText": completed.stdout.strip(), "stderrText": completed.stderr.strip(),
                 "command": command}
