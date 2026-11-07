@@ -31,6 +31,7 @@ type environmentExecResult struct {
 var replaceReceipt = replaceReceiptFile
 
 func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cobra.Command {
+	var metadata metadataOptions
 	var artifact, providerURL, trustCarrierPath, trustCarrierType, trustRootsPath string
 	var strictRemote, permissiveLocal bool
 	var jsonOutput, inheritStreams bool
@@ -73,6 +74,9 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			policy.AcceptedKeys = acceptedKeys
 			trustCarrier, err := optionalEnvironmentTrustCarrier(trustCarrierPath, trustCarrierType, providerURL)
 			if err != nil {
+				return err
+			}
+			if err := metadata.apply(&trustRequest, trustCarrier); err != nil {
 				return err
 			}
 			acquired, err := dependencies.acquire(command.Context(), environmentlifecycle.AcquireRequest{
@@ -153,6 +157,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 	command.Flags().StringVar(&receiptFile, "receipt-file", "", "Required atomic JSON receipt path for --inherit-streams.")
 	command.Flags().BoolVar(&strictRemote, "strict-remote", false, "Require detached signatures before execution.")
 	command.Flags().BoolVar(&permissiveLocal, "permissive-local", false, "Explicitly allow unsigned local artifacts.")
+	metadata.addFlags(command)
 	return command
 }
 

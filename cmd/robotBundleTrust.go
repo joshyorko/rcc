@@ -14,6 +14,7 @@ import (
 // Environment Artifact. Strict signature verification is the default; unsigned
 // local artifacts require the explicit --permissive-local migration option.
 type bundleTrustOptions struct {
+	metadata         metadataOptions
 	trustRootsPath   string
 	trustCarrierPath string
 	trustCarrierType string
@@ -22,6 +23,7 @@ type bundleTrustOptions struct {
 }
 
 func (options *bundleTrustOptions) addFlags(command *cobra.Command) {
+	options.metadata.addFlags(command)
 	command.Flags().StringVar(&options.trustRootsPath, "trust-roots", "", "JSON map of trusted key IDs to base64 Ed25519 public keys.")
 	command.Flags().StringVar(&options.trustCarrierPath, "trust-carrier", "", "Deployment-owned detached trust carrier path or URL.")
 	command.Flags().StringVar(&options.trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: auto, filesystem, archive, or http.")
@@ -55,6 +57,9 @@ func (options bundleTrustOptions) acquireWith(ctx context.Context, digest enviro
 	policy.AcceptedKeys = acceptedKeys
 	carrier, err := optionalEnvironmentTrustCarrier(options.trustCarrierPath, options.trustCarrierType, "")
 	if err != nil {
+		return environmentlifecycle.AcquireResult{}, err
+	}
+	if err := options.metadata.apply(&trustRequest, carrier); err != nil {
 		return environmentlifecycle.AcquireResult{}, err
 	}
 	acquired, err := acquirer.Acquire(ctx, environmentlifecycle.AcquireRequest{

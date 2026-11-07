@@ -107,6 +107,9 @@ type Policy struct {
 }
 
 type VerifyRequest struct {
+	Metadata                          *MetadataEnvelope
+	MetadataRoots                     *MetadataRoots
+	MetadataState                     *MetadataState
 	ArtifactDigest, Platform, Builder string
 	Provenance                        *Provenance
 	SBOM                              *SBOM
@@ -118,6 +121,11 @@ type VerifyRequest struct {
 	RevocationSource                  string
 }
 type VerificationReceipt struct {
+	MetadataVersion     int        `json:"metadataVersion,omitempty"`
+	MetadataDigest      string     `json:"metadataDigest,omitempty"`
+	MetadataSequence    uint64     `json:"metadataSequence,omitempty"`
+	MetadataScope       string     `json:"metadataScope,omitempty"`
+	MetadataKeyID       string     `json:"metadataKeyID,omitempty"`
 	Valid               bool       `json:"valid"`
 	Code                string     `json:"code"`
 	ArtifactDigest      string     `json:"artifactDigest"`
@@ -623,6 +631,31 @@ func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
 		r.Code, r.Diagnostic, r.RevocationSource = CodePolicy, "revocation source contains disallowed data", ""
 		return r.withDecisionID()
 	}
+	if p.Mode == StrictRemote || q.Metadata != nil {
+		if q.Metadata == nil {
+			r.Code, r.Diagnostic = CodeMetadataUnsigned, "strict policy requires authenticated v2 metadata"
+			return r.withDecisionID()
+		}
+		if q.MetadataRoots == nil || q.MetadataState == nil {
+			r.Code, r.Diagnostic = CodeMetadataAuthority, "deployment metadata roots and retained state are required"
+			return r.withDecisionID()
+		}
+		payload, err := VerifyMetadata(*q.Metadata, *q.MetadataRoots, q.ArtifactDigest, q.At)
+		if err == nil {
+			r.MetadataVersion, r.MetadataSequence = 2, payload.Sequence
+			r.MetadataScope, r.MetadataKeyID = payload.Scope, payload.KeyID
+			r.MetadataDigest, _ = MetadataDigest(*q.Metadata)
+			err = q.MetadataState.Admit(payload, *q.Metadata)
+		}
+		if err != nil {
+			r.Code, r.Diagnostic = metadataFailureCode(err), "authenticated metadata admission failed"
+			return r.withDecisionID()
+		}
+		q.Provenance, q.SBOM, q.Revocations = payload.Provenance, payload.SBOM, payload.Revocations
+		q.RevocationFetchedAt, _ = time.Parse(time.RFC3339, payload.IssuedAt)
+		q.RevocationSource = payload.Scope
+		r.RevocationSource = payload.Scope
+	}
 	if q.Provenance != nil {
 		if data, err := CanonicalProvenance(*q.Provenance); err != nil {
 			r.Code, r.Diagnostic = CodePolicy, "provenance contains disallowed data"
@@ -794,7 +827,8 @@ func (r VerificationReceipt) withDecisionID() VerificationReceipt {
 		SBOM             string     `json:"sbom,omitempty"`
 		Revocations      string     `json:"revocations,omitempty"`
 		RevocationSource string     `json:"revocationSource,omitempty"`
-	}{r.ArtifactDigest, r.Code, r.PolicyMode, r.PolicyRevision, r.PolicyDigest, r.VerifiedAt, r.KeyID, r.Platform, r.Builder, r.ProvenanceDigest, r.SBOMDigest, r.RevocationSnapshot, r.RevocationSource})
+		Metadata         string     `json:"metadata,omitempty"`
+	}{r.ArtifactDigest, r.Code, r.PolicyMode, r.PolicyRevision, r.PolicyDigest, r.VerifiedAt, r.KeyID, r.Platform, r.Builder, r.ProvenanceDigest, r.SBOMDigest, r.RevocationSnapshot, r.RevocationSource, r.MetadataDigest})
 	r.DecisionID = Digest(data)
 	return r
 }

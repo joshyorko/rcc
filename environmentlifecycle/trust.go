@@ -2,7 +2,9 @@ package environmentlifecycle
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -28,6 +30,12 @@ func trustRequestFor(artifact, platform, builder string, supplied *artifacttrust
 	if carrier == nil {
 		return request, nil
 	}
+	metadata, metadataErr := artifacttrust.ReadMetadata(carrier, artifact)
+	if metadataErr != nil && !errors.Is(metadataErr, os.ErrNotExist) {
+		return artifacttrust.VerifyRequest{}, metadataErr
+	}
+	// Removal must not silently reuse an earlier authenticated snapshot.
+	request.Metadata = metadata
 	attachments, err := artifacttrust.LoadAttachments(carrier, artifact)
 	if err != nil {
 		return artifacttrust.VerifyRequest{}, err
