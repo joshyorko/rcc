@@ -58,15 +58,15 @@ MaterializeStrict ==
                   leaseHeld, processPermitted>>
 
 MaterializePermissive ==
-  /\ stage = "new" /\ policy = "permissive" /\ explicitOptIn
+  /\ stage = "new" /\ policy = "permissive"
   /\ materialized' = TRUE /\ stage' = "materialized"
   /\ UNCHANGED <<scenario, policy, strictChosen, explicitOptIn, decision,
                   leaseHeld, processPermitted>>
 
-DowngradeOnUnsignedMetadata ==
+DropRequiredPolicyContext ==
   /\ BreakTrustDowngrade
   /\ stage = "new" /\ policy = "strict" /\ strictChosen
-  /\ scenario[3] = "unsigned metadata"
+  /\ scenario[2] = "unsigned artifact"
   /\ policy' = "permissive" /\ explicitOptIn' = FALSE
   /\ UNCHANGED <<scenario, strictChosen, decision, stage, materialized,
                   leaseHeld, processPermitted>>
@@ -74,7 +74,7 @@ DowngradeOnUnsignedMetadata ==
 CreateLease ==
   /\ stage = "materialized" /\ materialized
   /\ ((policy = "strict" /\ decision = "accepted")
-      \/ (policy = "permissive" /\ explicitOptIn))
+      \/ policy = "permissive")
   /\ leaseHeld' = TRUE /\ stage' = "leased"
   /\ UNCHANGED <<scenario, policy, strictChosen, explicitOptIn, decision,
                   materialized, processPermitted>>
@@ -82,7 +82,7 @@ CreateLease ==
 PermitProcess ==
   /\ stage = "leased" /\ leaseHeld
   /\ ((policy = "strict" /\ decision = "accepted")
-      \/ (policy = "permissive" /\ explicitOptIn))
+      \/ policy = "permissive")
   /\ processPermitted' = TRUE /\ stage' = "running"
   /\ UNCHANGED <<scenario, policy, strictChosen, explicitOptIn, decision,
                   materialized, leaseHeld>>
@@ -94,12 +94,11 @@ Refuse ==
                   materialized, leaseHeld, processPermitted>>
 
 Done ==
-  /\ (stage \in {"running", "refused"}
-      \/ (BreakTrustDowngrade /\ strictChosen /\ policy = "permissive"))
+  /\ stage \in {"running", "refused"}
   /\ UNCHANGED vars
 
 Next == SelectStrict \/ SelectPermissive \/ VerifyStrict \/ MaterializeStrict
-        \/ MaterializePermissive \/ DowngradeOnUnsignedMetadata \/ CreateLease
+        \/ MaterializePermissive \/ DropRequiredPolicyContext \/ CreateLease
         \/ PermitProcess \/ Refuse \/ Done
 
 NoTrustDowngrade == strictChosen => policy = "strict"

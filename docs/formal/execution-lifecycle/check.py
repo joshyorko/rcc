@@ -29,20 +29,24 @@ def main():
         target = Path(tmp)
         for name in ("ExecutionLifecycle.tla", "ExecutionLifecycle.cfg", "ExecutionLifecycle-broken.cfg"):
             shutil.copyfile(source / name, target / name)
-        for label, config, broken in (
-            ("fixed", "ExecutionLifecycle.cfg", False),
-            ("broken", "ExecutionLifecycle-broken.cfg", True),
-            ("restored", "ExecutionLifecycle.cfg", False),
+        (target / "ExecutionLifecycle-untrusted.cfg").write_text(
+            (target / "ExecutionLifecycle-broken.cfg").read_text().replace("INVARIANT NoTrustDowngrade\n", "")
+        )
+        for label, config, violation in (
+            ("fixed", "ExecutionLifecycle.cfg", None),
+            ("broken", "ExecutionLifecycle-broken.cfg", "NoTrustDowngrade"),
+            ("broken-execution", "ExecutionLifecycle-untrusted.cfg", "NoUntrustedExecution"),
+            ("restored", "ExecutionLifecycle.cfg", None),
         ):
             result = subprocess.run(
-                [java, "-Xmx256m", "-XX:+UseParallelGC", "-cp", str(jar), "tlc2.TLC",
+                [java, "-Xmx256m", "-XX:+UseParallelGC", "-Djava.io.tmpdir=" + str(target), "-cp", str(jar), "tlc2.TLC",
                  "-workers", "1", "-config", config, "ExecutionLifecycle.tla"],
                 cwd=target, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=60,
             )
             print(f"=== {label}: exit {result.returncode} ===\n{result.stdout}", flush=True)
             expected = (
-                result.returncode == 12 and "Invariant NoTrustDowngrade is violated" in result.stdout
-                if broken else result.returncode == 0 and "No error has been found" in result.stdout
+                result.returncode == 12 and f"Invariant {violation} is violated" in result.stdout
+                if violation else result.returncode == 0 and "No error has been found" in result.stdout
             )
             if not expected:
                 raise SystemExit(f"FORMAL FAILED: unexpected {label} result")

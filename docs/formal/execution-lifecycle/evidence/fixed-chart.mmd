@@ -16,14 +16,14 @@ stateDiagram-v2
   s3: Signature verified
   s4: Untrusted artifact refused
   s5: Materialization admitted
-  s6: Verified materialization leased
+  s6: Materialization leased
   s7: Process permitted under lease
   [*] --> s0
   s0 --> s1: operator selects strict verification
   s0 --> s2: operator explicitly opts into unsigned local use
   s1 --> s4: carrier and signature evidence are verified
   s1 --> s3: carrier and signature evidence are verified
-  s2 --> s5: explicitly allowed local artifact is materialized
+  s2 --> s5: operator-approved local artifact is materialized
   s3 --> s5: validly signed artifact is materialized
   s5 --> s6: admitted materialization receives a lease
   s6 --> s7: process becomes permitted

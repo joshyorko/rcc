@@ -5,7 +5,7 @@ This finite TLA+ model checks only trust-policy downgrade and process admission.
 ## Results
 
 - Fixed config: TLC 1.7.4 / Temurin 25; 17 distinct states; `NoTrustDowngrade` and `NoUntrustedExecution` hold. See `fixed-report.md`, `fixed-chart.mmd`, and `fixed-tlc.txt`.
-- Broken config: same checker; `NoTrustDowngrade` fails in the shortest 2-step path: select strict policy, then unsigned attacker metadata downgrades it to permissive. `NoUntrustedExecution` still holds because this fault alone does not grant explicit local opt-in. See `broken-report.md`, `downgrade-counterexample.mmd`, and `broken-tlc.txt`. Statechart explores beyond the first violation; its graph counts differ from the first failing TLC run.
+- Broken config: same checker; `NoTrustDowngrade` fails in the shortest 2-step path: select strict policy, then lose that context at the caller boundary. `NoUntrustedExecution` fails after 5 steps: policy loss, unchecked materialization, lease creation and process admission. See `broken-report.md`, `downgrade-counterexample.mmd`, and `broken-tlc.txt`. Statechart explores beyond the first violation; its graph counts differ from the first failing TLC run.
 
 ## Reproduction
 
@@ -13,11 +13,20 @@ From the repository root, run `python3 docs/formal/execution-lifecycle/check.py`
 
 ## Code boundary
 
-The model contract is compared with source commit `f7960076843500d15835b476c07e60d7264027c1`:
+The model contract is compared with combined source commit `96151d5406c3c543fd66ea8849d0a5bf2e045574`:
 
 - `environmentlifecycle/materialize.go`, `Acquirer.acquireLocked`: nil policy currently produces a valid receipt; otherwise the selected policy verifies before acquired content is returned (#252).
 - `environmentlifecycle/lease.go`, `LocalMaterializer.Lease`: trust is refreshed and invalid receipts rejected before the durable lease is installed.
 - `environmentlifecycle/execute.go`, `executeWithSignalsAndStreamsInDirectory`: lease and execution handle precede `process.Start`.
-- `cmd/robotRunFromBundle.go`, `robotRunFromBundleCmd`: bundle acquisition currently supplies no trust policy (#252).
+- `cmd/robotRunFromBundle.go`, `robotRunFromBundleCmd`: the bundle caller now supplies strict policy, retains lease refresh inputs, and rejects an explicitly strict source-only fallback.
+- `cmd/robotBundleTrust.go`, `bundleTrustOptions.acquireWith` and `materializationForBundledArtifact`: deployment keys, carrier and selected policy reach acquisition and lease creation. Removing this caller context is the injected fault; the legacy nil-policy API remains available to other controlled callers.
 
-The counterexample demonstrates the model transition, not a reproduced Go runtime defect. Real-code regression tests and published-CLI runtime acceptance remain pending in the implementation lanes. Issue #253 additionally documents that policy-relevant detached metadata is not cryptographically authenticated and revocation snapshots lack rollback protection; the model explicitly assumes authenticated metadata and does not close that gap.
+The counterexample demonstrates a caller-policy omission fault, not a claim that
+metadata mutates Go policy fields. The generated skill's source-policy regression
+caught a real Go mutation forcing permissive mode; the source was restored and
+the regression passed (`source-policy-mutation.txt`). Real baseline CLI replay
+also demonstrated unsigned execution, but model success still does not prove Go
+implementation behavior. Post-fix real CLI acceptance remains a separate gate.
+Issue #253's detached metadata authentication and rollback exposure remains open;
+the model explicitly assumes authenticated, current metadata and does not close
+that gap.
