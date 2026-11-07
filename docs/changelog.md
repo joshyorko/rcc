@@ -1,6 +1,57 @@
 # rcc change log
 ## Unreleased
 
+<a name="v18199"></a>
+## v18.19.9 (date: 07.11.2026)
+
+### Execution Correctness
+
+- resolve bare non-Python commands from the acquired Artifact environment so
+  launcher PATH entries cannot shadow its executables; reject missing commands,
+  relative traversal and escaping symlinks, while retaining Python aliases and
+  explicit absolute-path delegation (GH#258, PR#264)
+- preserve validated task results and captured stdout/stderr before bundle
+  workarea cleanup on success, nonzero exit and supported cancellation, for
+  source-only and source+Artifact bundles; retain outer exit 10 and child-status
+  diagnostics, path containment and no-overwrite protections. Cancellation
+  preserves available flushed files, not incomplete writes or results after
+  abrupt RCC death (GH#256, PR#265)
+
+### Trust Security
+
+- default embedded Artifact bundles to strict trust, preserve caller policy
+  through acquisition and lease refresh, and reject source-only fallback when
+  strict mode is explicit; controlled legacy use requires `--permissive-local`
+  (GH#252, PR#266)
+- authenticate complete detached provenance, SBOM and revocation snapshots
+  with domain-separated Ed25519 metadata v2 signatures under independent
+  deployment-owned metadata roots. Retain a locked sequence journal before
+  admission to reject older snapshots and same-sequence equivocation, including
+  replay after an admitted revocation and process restart; existing running
+  processes retain their original decision (GH#253, PR#268)
+- strict deployments must provision metadata roots, an adequate initial sequence
+  floor, a trusted clock and retained state independently of the carrier.
+  Signature-only/v1 strict admission is rejected; N-1 clients cannot enforce v2
+  and must not share mutable homes or receipt stores with v2 clients. Offline
+  freshness is bounded by signed expiry and the independent floor, not knowledge
+  of globally latest unseen state. Host compromise, trusted-disk rollback and
+  power-loss/storage-controller durability are outside these guarantees (PR#268)
+
+### Formal Verification
+
+- add bounded TLA+ safety checks for caller-policy preservation and trusted
+  process admission, plus authenticated metadata and retained rollback state;
+  retain failing counterexamples and Go mutation regressions alongside restored
+  checks. These models do not prove the Go implementation, cryptography,
+  liveness or filesystem durability (PR#266, PR#268)
+
+### Dependency Ownership
+
+- route captured and inherited-stream execution through explicit typed command
+  dependencies, reject a missing selected executor and document acquisition's
+  content-before-artifact lock ownership; retain output, receipt-error, exit and
+  cancellation semantics with fresh-binary regression coverage (GH#263, PR#267)
+
 <a name="v18198"></a>
 ## v18.19.8 (date: 05.11.2026)
 
