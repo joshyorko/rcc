@@ -35,7 +35,10 @@ Earlier RCC releases used the misleading media type
 `application/vnd.rcc.environment.sbom.spdx+json` for this custom inventory.
 Readers continue to accept that legacy type and preserve its bytes, including
 when carried inside authenticated metadata v2. New inventories use the RCC
-media type above. Convert an old record explicitly by reading its components
+media type above. Stored objects have no software version: their version is
+empty and their content digest appears only as the object hash. This also avoids
+duplicating each hash inside bounded authenticated metadata. Evidence that still
+exceeds the metadata size limit fails closed; limits are not silently increased. Convert an old record explicitly by reading its components
 into `ObjectInventory` and writing it with `ObjectInventoryMediaType`; RCC does
 not rewrite signed metadata or relabel authenticated bytes during verification.
 The `sbom` field name remains in the v2 signed payload for wire compatibility.
