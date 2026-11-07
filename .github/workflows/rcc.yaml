@@ -239,6 +239,14 @@ jobs:
             exit "$evidence_exit"
           fi
           exit "$tee_exit"
+      - name: Verify authenticated metadata migration against N-1
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RCC_ACCEPTANCE_BINARY="$PWD/build/rcc"
+          export RCC_N_MINUS_ONE_BINARY="$RCC_N1_BINARY"
+          export RCC_METADATA_EVIDENCE="$PWD/tmp/metadata-security"
+          go test -count=1 ./cmd -run '^TestMetadataSecurityRealCLI$' -v 2>&1 | tee tmp/metadata-security.log
       - name: Upload release candidate evidence
         if: success() || failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -254,6 +262,8 @@ jobs:
             build/self-host/candidate/rccremote
             tmp/release-candidate.log
             tmp/release-candidate-exit.json
+            tmp/metadata-security.log
+            tmp/metadata-security/
             tmp/self-host-v1.json
             tmp/release-candidate-v1.json
             tmp/native-runtime-receipt.json

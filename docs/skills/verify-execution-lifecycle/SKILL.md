@@ -23,6 +23,23 @@ deliberately broken, and restored configurations with a bounded JVM and timeout.
 If the tools are absent, report FORMAL BLOCKED; follow `/statechart` to provision
 and inspect the checker. No installed statechart command is embedded here.
 
+For authenticated metadata or rollback-state changes, also run
+`python3 docs/formal/execution-lifecycle/check.py --model AuthenticatedMetadata`
+and read it with `$pstack:statechart`, using `metadata-view.mjs`. Run the
+corresponding Go tests (`go test ./artifacttrust ./environmentlifecycle -run
+'^TestMetadata|^TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying'`)
+and `TestMetadataSecurityRealCLI` with `RCC_ACCEPTANCE_BINARY` set to the built
+candidate. Its optional N-1 subtest requires `RCC_N_MINUS_ONE_BINARY`; report a
+skip honestly. The CLI test retains commands and public receipts when
+`RCC_METADATA_EVIDENCE` names a task-owned directory.
+
+To falsify the runtime checks in an exclusively owned checkout, stop concurrent
+builds and run `python3 docs/formal/execution-lifecycle/falsify_metadata.py
+--evidence /absolute/new/task-evidence-directory`. It removes one actual guard
+at a time, requires the matching test to fail, restores the original file bytes,
+and reruns the restored tests. It refuses a reused evidence directory or a
+changed guard. Never run this mutation exercise concurrently with other work.
+
 Run `/statechart` on `docs/formal/execution-lifecycle/ExecutionLifecycle.tla` with its fixed configuration and view. Confirm the bounded model passes both invariants and review the generated state chart. The model has two finite inputs: a deployment carrier with a valid signature and authenticated metadata, and an attacker carrier with an unsigned artifact and unsigned metadata. It does not enumerate arbitrary bytes, keys, revocation history, or platforms.
 
 For the falsifiability check, run `/statechart` with `ExecutionLifecycle-broken.cfg` and the same model and view. It must report policy loss at the caller boundary (`NoTrustDowngrade`, two steps), and unchecked process admission after materialization and leasing (`NoUntrustedExecution`, five steps). This configuration is intentionally broken; do not use it as acceptance evidence.
@@ -32,7 +49,17 @@ For the falsifiability check, run `/statechart` with `ExecutionLifecycle-broken.
 - **NoTrustDowngrade:** Once strict policy is selected, a caller must not lose it and silently select unchecked/local policy. A downgrade could bypass the deployment's signature requirement.
 - **NoUntrustedExecution:** A process can be permitted only after strict verification of a valid signature and authenticated metadata, or after an explicit permissive-local opt-in, and only with a materialization lease. Otherwise attacker-controlled bytes could reach execution.
 
-The model treats the deployment carrier and its metadata-authentication decision as trusted inputs. Issue #253 identifies that current detached provenance and revocation attachment bytes are not cryptographically authenticated or protected against rollback; those source facts are an explicit unresolved assumption here, not proven by this model. The model does not claim provider-only attacks can forge signature verification.
+The original model treats metadata authentication as a trusted input. The
+`AuthenticatedMetadata` model separately checks authenticated admission and
+retention across restarts under a carrier that can substitute/replay snapshots.
+It has two sequences, empty/revoked authenticated snapshots and a forged one.
+Fixed and restored configurations must pass; removing authentication must break
+`NoUntrustedExecution`, and losing state on restart must break `NoTrustDowngrade`.
+Independent deployment roots/floors, an unforgeable signature predicate and a
+trusted clock/filesystem are assumptions. These checks do not prove Ed25519,
+parsing, Go locking, filesystem power-loss behavior or global freshness under
+withholding. Read the exact bounds and runtime bindings in
+`docs/formal/execution-lifecycle/evidence/metadata-v2/README.md`.
 
 Evidence and Artifact identity remain fixed between acquisition and lease in
 this model. Lease-time refresh against changed revocations requires real-code
@@ -55,4 +82,19 @@ and lease creation trust the selected policy, as Go does; they do not independen
 re-read the operator's opt-in flag. The external flag remains in the model only
 to check the invariant.
 
-The model is an abstract admission contract, not a proof of these Go functions. Keep this source-sync commit at the last commit whose functions you checked. After any covered source change, inspect the new code, update this mapping/model if needed, rerun the fixed and broken configurations, then advance the sync commit. Issue #253's unsigned metadata and revocation rollback exposure remains open. Output copy-back (#256), child supervision/lease cleanup, and environment-relative executable resolution (#258) remain implementation and runtime-test gates outside this formal model.
+Metadata source coverage is synchronized to commit
+`6e7c84052e5ef09ee9aec47d22f639dfda76bf20`: `artifacttrust/metadata.go:VerifyMetadata`,
+`artifacttrust/metadata_state.go:MetadataState.Admit`,
+`artifacttrust/trust.go:Policy.Verify`, and
+`environmentlifecycle/trust.go:refreshMaterializationTrust`. The lock-protected
+comparison/flush is one abstract transition. `highestCommitted` is a model
+history variable, not a second implementation store. Key rotation, same-sequence
+equivocation, process concurrency and partial-journal failures require the Go
+and CLI regressions in addition to the model.
+
+The models are abstract admission contracts, not proofs of these Go functions.
+Keep source-sync commits at the last revisions whose functions were checked.
+After a covered change, inspect it, update the mapping/model if needed, rerun
+fixed/broken/restored checks and runtime regressions, then advance the record.
+Output copy-back, child supervision/lease cleanup and executable resolution
+remain implementation and runtime-test gates outside formal coverage.

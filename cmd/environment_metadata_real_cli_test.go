@@ -6,6 +6,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
+	"debug/buildinfo"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -39,6 +40,22 @@ func TestMetadataSecurityRealCLI(t *testing.T) {
 	if err := os.MkdirAll(evidence, 0700); err != nil {
 		t.Fatal(err)
 	}
+	binaryBytes, err := os.ReadFile(binary)
+	if err != nil {
+		t.Fatal(err)
+	}
+	build, err := buildinfo.ReadFile(binary)
+	if err != nil {
+		t.Fatal(err)
+	}
+	settings := map[string]string{}
+	for _, setting := range build.Settings {
+		settings[setting.Key] = setting.Value
+	}
+	if expected := os.Getenv("RCC_CANDIDATE_SHA"); expected != "" && (settings["vcs.revision"] != expected || settings["vcs.modified"] != "false") {
+		t.Fatalf("candidate source identity mismatch: revision=%s modified=%s expected=%s", settings["vcs.revision"], settings["vcs.modified"], expected)
+	}
+	trustfixture.WriteJSON(t, evidence, "candidate-identity.json", map[string]any{"binary": binary, "sha256": fmt.Sprintf("%x", sha256.Sum256(binaryBytes)), "goVersion": build.GoVersion, "settings": settings})
 	at := time.Now().UTC().Truncate(time.Second)
 	digest := artifacttrust.Digest([]byte("immutable metadata CLI fixture"))
 	artifactPublic, artifactPrivate, err := ed25519.GenerateKey(rand.Reader)

@@ -153,4 +153,3 @@ Model checking completed. No error has been found.
 The depth of the complete state graph search is 8.
 The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 4 and the 95th percentile is 4).
 Finished in 00s at (2026-11-07 08:51:36)
-
