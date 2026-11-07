@@ -123,7 +123,6 @@ def environment_artifact_process_environment(home, offline=False):
     environment["RCC_HOLOTREE_MODE"] = "private"
     if os.name == "nt":
         program_data = Path(home).resolve() / "programdata"
-        program_data.mkdir(parents=True, exist_ok=True)
         environment["PROGRAMDATA"] = str(program_data)
     for key in ("CONDA_OFFLINE", "MAMBA_OFFLINE", "PIP_NO_INDEX", "UV_NO_INDEX"):
         environment.pop(key, None)
