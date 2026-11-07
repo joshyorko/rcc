@@ -179,7 +179,10 @@ func TestMetadataSecurityRealCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 		revocations := trustfixture.WriteJSON(t, root, "legacy-revocations.json", bundle)
-		legacyArgs := []string{"env", "trust", "verify", "--artifact", digest, "--platform", provenance.Platform, "--builder", provenance.Builder, "--signatures", sigs, "--trust-roots", keys, "--provenance", provenancePath, "--sbom", sbomPath, "--revocations", revocations, "--strict-remote", "--json"}
+		legacyInventory := *payload.SBOM
+		legacyInventory.MediaType = artifacttrust.LegacySBOMMediaType
+		legacySBOMPath := trustfixture.WriteJSON(t, root, "n-minus-one-inventory.json", legacyInventory)
+		legacyArgs := []string{"env", "trust", "verify", "--artifact", digest, "--platform", provenance.Platform, "--builder", provenance.Builder, "--signatures", sigs, "--trust-roots", keys, "--provenance", provenancePath, "--sbom", legacySBOMPath, "--revocations", revocations, "--strict-remote", "--json"}
 		old := exec.CommandContext(signContext, older, legacyArgs...)
 		old.Env = append(os.Environ(), "ROBOCORP_HOME="+filepath.Join(root, "n-minus-one-home"))
 		stdout, err := old.Output()
