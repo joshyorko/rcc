@@ -231,25 +231,30 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			if tc.kind == "refresh" && refreshReads.Load() < 2 {
 				t.Fatal("lease refresh was not observed")
 			}
-			receipts := 0
+			history, historyErr := artifacttrust.NewReceiptStore(filepath.Join(home, "artifacts", "v1", "verification")).History(digest)
+			receipts := len(history)
 			leased := false
-			_ = filepath.WalkDir(filepath.Join(home, "artifacts", "v1", "verification"), func(path string, d os.DirEntry, walkErr error) error {
-				if walkErr != nil || d.IsDir() {
-					return nil
-				}
-				data, err := os.ReadFile(path)
-				if err != nil {
-					return err
-				}
-				var receipt artifacttrust.VerificationReceipt
-				if json.Unmarshal(data, &receipt) == nil && receipt.ArtifactDigest == digest {
-					receipts++
-					leased = leased || receipt.LeaseID != ""
-				}
-				return nil
-			})
+			for _, receipt := range history {
+				leased = leased || receipt.LeaseID != ""
+			}
 			if !baseline && tc.allow && (!leased || receipts < 2) {
 				t.Fatalf("missing acquisition/lease receipts: count=%d leased=%v", receipts, leased)
+			}
+			if !baseline && tc.kind != "archive-tampered" {
+				if historyErr != nil || len(history) == 0 {
+					t.Fatalf("trust history unavailable: %v", historyErr)
+				}
+				last := history[len(history)-1]
+				if last.Valid != tc.allow {
+					t.Fatalf("trust receipt valid=%v, allowed=%v", last.Valid, tc.allow)
+				}
+				wantMode := artifacttrust.StrictRemote
+				if tc.kind == "permissive" {
+					wantMode = artifacttrust.PermissiveLocal
+				}
+				if last.PolicyMode != wantMode {
+					t.Fatalf("receipt policy=%s want=%s", last.PolicyMode, wantMode)
+				}
 			}
 			leases, _ := filepath.Glob(filepath.Join(home, "artifacts", "v1", "materializations", manifest.ArtifactDigest.Hex(), "leases", "*.json"))
 			if len(leases) != 0 {
