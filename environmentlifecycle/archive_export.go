@@ -78,6 +78,9 @@ func ExportArchive(ctx context.Context, request ExportArchiveRequest) (environme
 			}
 			entries[environmentartifact.ArchiveAttestationDir+kind+".json"] = data
 		}
+		if err := importArchiveTrust(entries, request.ArtifactDigest.String(), nil); err != nil {
+			return environmentartifact.Manifest{}, err
+		}
 	}
 	if err := writeArchiveAtomically(request.OutputPath, entries); err != nil {
 		return environmentartifact.Manifest{}, err
