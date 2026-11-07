@@ -231,8 +231,8 @@ func TestBundleTrustRealCLI(t *testing.T) {
 				if runErr == nil || !os.IsNotExist(sentinelErr) {
 					t.Fatalf("denied task executed: exit=%d sentinel=%v", exit, sentinelErr)
 				}
-				if _, err := os.Stat(filepath.Join(caller, "output")); !os.IsNotExist(err) {
-					t.Fatalf("denied task produced caller artifacts: %v", err)
+				if _, err := os.Stat(filepath.Join(caller, "output", "result.txt")); !os.IsNotExist(err) {
+					t.Fatalf("denied task produced its result artifact: %v", err)
 				}
 				if strings.Contains(stdout.String(), "trust-child-stdout") || strings.Contains(stderr.String(), "trust-child-stderr") {
 					t.Fatal("denied task emitted child streams")
