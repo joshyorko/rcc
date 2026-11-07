@@ -104,42 +104,32 @@ compatible with the exported environment; it does not include RCC itself.`,
 			if todo == nil {
 				pretty.Exit(6, "Could not resolve task %q from bundled source metadata.", runTask)
 			}
+			defer func() {
+				if finalizeErr := finalizeBundleArtifacts(workarea, config.ArtifactDirectory()); finalizeErr != nil {
+					pretty.Exit(7, "Failed to copy artifacts: %v", finalizeErr)
+				}
+			}()
 			materialization := environmentlifecycle.Materialization{ArtifactDigest: artifactMaterialization.ArtifactDigest, ID: artifactMaterialization.MaterializationID, Path: artifactMaterialization.Path, CacheHit: artifactMaterialization.CacheHit}
-			_, child, execErr := environmentlifecycle.ExecuteInDirectory(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline(), workarea)
-			pretty.Guard(execErr == nil && child.ExitCode == 0, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
+			child, execErr := executeArtifactBundleTask(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline(), workarea, config.ArtifactDirectory(), !common.NoOutputCapture, cmd.InOrStdin(), cmd.OutOrStdout(), cmd.ErrOrStderr())
+			pretty.Guard(execErr == nil, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
+			pretty.Guard(child.ExitCode == 0, 10, "Error: Bundled artifact task exited %d (robot run exit)", child.ExitCode)
 			return
 		}
 
 		// Run the task
+		sourceConfig, sourceErr := robot.LoadRobotYaml(robotFile, true)
+		pretty.Guard(sourceErr == nil, 6, "Failed to load source metadata from bundle: %v", sourceErr)
+		_, _, outputErr := ensureBundleArtifactDirectory(workarea, sourceConfig.ArtifactDirectory())
+		pretty.Guard(outputErr == nil, 7, "Failed to prepare artifact directory: %v", outputErr)
 		simple, config, todo, label := operations.LoadTaskWithEnvironment(robotFile, runTask, forceFlag)
 		cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.cli.run-from-bundle", common.Version)
 		commandline := todo.Commandline()
+		defer func() {
+			if finalizeErr := finalizeBundleArtifacts(workarea, config.ArtifactDirectory()); finalizeErr != nil {
+				pretty.Exit(7, "Failed to copy artifacts: %v", finalizeErr)
+			}
+		}()
 		operations.SelectExecutionModel(captureRunFlags(false), simple, commandline, config, todo, label, interactiveFlag, nil)
-
-		// Copy artifacts back to current working directory
-		artifactDir := config.ArtifactDirectory()
-		if len(artifactDir) > 0 {
-			sourceDir := artifactDir
-			if !filepath.IsAbs(sourceDir) {
-				sourceDir = filepath.Join(workarea, artifactDir)
-			}
-
-			// Determine target directory relative to current working directory
-			// We want to preserve the relative path structure defined in robot.yaml
-			relPath, err := filepath.Rel(workarea, sourceDir)
-			if err != nil {
-				// Fallback: use base name if relative path cannot be resolved
-				relPath = filepath.Base(sourceDir)
-			}
-			targetDir := filepath.Join(".", relPath)
-
-			if pathlib.IsDir(sourceDir) {
-				common.Debug("Copying artifacts from %q to %q", sourceDir, targetDir)
-				err := copyBundleArtifacts(relPath, workarea, ".")
-				pretty.Guard(err == nil, 7, "Failed to copy artifacts: %v", err)
-				common.Log("Artifacts copied to %q", targetDir)
-			}
-		}
 	},
 }
 
