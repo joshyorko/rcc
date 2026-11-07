@@ -30,11 +30,14 @@ type BuildResult struct {
 }
 
 type PublishRequest struct {
-	RobotFile         string
-	Provider          artifactprovider.Provider
-	Builder           Builder
-	TrustCarrier      artifacttrust.Carrier
-	TrustProvenance   *artifacttrust.Provenance
+	RobotFile       string
+	Provider        artifactprovider.Provider
+	Builder         Builder
+	TrustCarrier    artifacttrust.Carrier
+	TrustProvenance *artifacttrust.Provenance
+	TrustInventory  *artifacttrust.ObjectInventory
+	// TrustSBOM accepts the historical object-inventory input field.
+	// Deprecated: use TrustInventory.
 	TrustSBOM         *artifacttrust.SBOM
 	TrustSignatures   []artifacttrust.Signature
 	TrustRevocations  []artifacttrust.Revocation
@@ -214,21 +217,24 @@ func publishTrustAttachments(request PublishRequest, manifest environmentartifac
 			return fmt.Errorf("publish provenance attachment: %w", err)
 		}
 	}
-	sbom := request.TrustSBOM
-	if sbom == nil {
-		generated, err := generatedSBOM(manifest, inventory)
-		if err != nil {
-			return fmt.Errorf("construct generated SBOM: %w", err)
-		}
-		sbom = &generated
+	objectInventory := request.TrustInventory
+	if objectInventory == nil {
+		objectInventory = request.TrustSBOM
 	}
-	if sbom != nil {
-		data, err := artifacttrust.CanonicalSBOM(*sbom)
+	if objectInventory == nil {
+		generated, err := generatedObjectInventory(manifest, inventory)
 		if err != nil {
-			return fmt.Errorf("construct SBOM attachment: %w", err)
+			return fmt.Errorf("construct generated object inventory: %w", err)
+		}
+		objectInventory = &generated
+	}
+	if objectInventory != nil {
+		data, err := artifacttrust.CanonicalObjectInventory(*objectInventory)
+		if err != nil {
+			return fmt.Errorf("construct object inventory attachment: %w", err)
 		}
 		if err := artifacttrust.PutAttachment(request.TrustCarrier, artifact, "sbom", data); err != nil {
-			return fmt.Errorf("publish SBOM attachment: %w", err)
+			return fmt.Errorf("publish object inventory attachment: %w", err)
 		}
 	}
 	signatures := append([]artifacttrust.Signature(nil), request.TrustSignatures...)
@@ -261,7 +267,7 @@ func publishTrustAttachments(request PublishRequest, manifest environmentartifac
 	return nil
 }
 
-func generatedSBOM(manifest environmentartifact.Manifest, inventory environmentartifact.Inventory) (artifacttrust.SBOM, error) {
+func generatedObjectInventory(manifest environmentartifact.Manifest, inventory environmentartifact.Inventory) (artifacttrust.ObjectInventory, error) {
 	components := []artifacttrust.Component{{
 		Name: "rcc", Version: manifest.Builder.RCCVersion, PackageType: "rcc-builder", Source: manifest.Builder.Kind,
 	}}
@@ -271,8 +277,8 @@ func generatedSBOM(manifest environmentartifact.Manifest, inventory environmenta
 			Hash: entry.StoredDigest.String(),
 		})
 	}
-	sbom, _, err := artifacttrust.NewSBOM(manifest.ArtifactDigest.String(), components)
-	return sbom, err
+	objectInventory, _, err := artifacttrust.NewObjectInventory(manifest.ArtifactDigest.String(), components)
+	return objectInventory, err
 }
 
 func descriptorFor(mediaType string, content []byte) environmentartifact.Descriptor {

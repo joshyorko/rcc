@@ -18,8 +18,12 @@ import (
 )
 
 const (
-	ProvenanceMediaType     = "application/vnd.rcc.environment.provenance.v1+json"
-	SBOMMediaType           = "application/vnd.rcc.environment.sbom.spdx+json"
+	ProvenanceMediaType      = "application/vnd.rcc.environment.provenance.v1+json"
+	ObjectInventoryMediaType = "application/vnd.rcc.environment.inventory.v1+json"
+	LegacySBOMMediaType      = "application/vnd.rcc.environment.sbom.spdx+json"
+	// SBOMMediaType is retained as a source-compatible name for RCC's object inventory.
+	// Deprecated: use ObjectInventoryMediaType; this payload is not an SPDX SBOM.
+	SBOMMediaType           = ObjectInventoryMediaType
 	SignatureMediaType      = "application/vnd.rcc.environment.signature.v1+json"
 	RevocationMediaType     = "application/vnd.rcc.environment.revocations.v1+json"
 	DefaultPolicyRevision   = "artifacttrust/v2"
@@ -74,11 +78,16 @@ type Component struct {
 	Source      string `json:"source,omitempty"`
 }
 
-type SBOM struct {
+// ObjectInventory records immutable RCC artifact objects. It is not a package SBOM.
+type ObjectInventory struct {
 	MediaType      string      `json:"mediaType"`
 	ArtifactDigest string      `json:"artifactDigest"`
 	Components     []Component `json:"components"`
 }
+
+// SBOM preserves the historical Go type name and signed metadata field shape.
+// Deprecated: use ObjectInventory; this type does not describe installed packages.
+type SBOM = ObjectInventory
 
 type Signature struct {
 	MediaType      string `json:"mediaType"`
@@ -112,13 +121,14 @@ type VerifyRequest struct {
 	MetadataState                     *MetadataState
 	ArtifactDigest, Platform, Builder string
 	Provenance                        *Provenance
-	SBOM                              *SBOM
-	Signatures                        []Signature
-	Revocations                       []Revocation
-	Keys                              map[string]ed25519.PublicKey
-	At                                time.Time
-	RevocationFetchedAt               time.Time
-	RevocationSource                  string
+	// SBOM is the historical field name; its value is RCC object inventory JSON.
+	SBOM                *SBOM
+	Signatures          []Signature
+	Revocations         []Revocation
+	Keys                map[string]ed25519.PublicKey
+	At                  time.Time
+	RevocationFetchedAt time.Time
+	RevocationSource    string
 }
 type VerificationReceipt struct {
 	MetadataVersion         int        `json:"metadataVersion,omitempty"`
@@ -140,11 +150,12 @@ type VerificationReceipt struct {
 	Platform                string     `json:"platform,omitempty"`
 	Builder                 string     `json:"builder,omitempty"`
 	ProvenanceDigest        string     `json:"provenanceDigest,omitempty"`
-	SBOMDigest              string     `json:"sbomDigest,omitempty"`
-	RevocationSnapshot      string     `json:"revocationSnapshot,omitempty"`
-	RevocationCheckedAt     string     `json:"revocationCheckedAt,omitempty"`
-	RevocationSource        string     `json:"revocationSource,omitempty"`
-	LeaseID                 string     `json:"leaseID,omitempty"`
+	// SBOMDigest retains its v1 JSON name; the generated value is an object inventory digest.
+	SBOMDigest          string `json:"sbomDigest,omitempty"`
+	RevocationSnapshot  string `json:"revocationSnapshot,omitempty"`
+	RevocationCheckedAt string `json:"revocationCheckedAt,omitempty"`
+	RevocationSource    string `json:"revocationSource,omitempty"`
+	LeaseID             string `json:"leaseID,omitempty"`
 }
 
 func (r VerificationReceipt) JSON() ([]byte, error) { return canonical(r) }
@@ -178,13 +189,24 @@ func PutAttachment(c Carrier, artifact, kind string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := VerifyAttestationBinding(data, mediaTypeFor(kind), artifact); err != nil {
+	if Normalize(kind) == "sbom" {
+		if err := validateObjectInventory(artifact, data); err != nil {
+			return err
+		}
+	} else if err := VerifyAttestationBinding(data, mediaTypeFor(kind), artifact); err != nil {
 		return err
 	}
 	return c.Write(AttachmentName(artifact, kind), data)
 }
 
 func normalizeAttachmentData(artifact, kind string, data []byte) ([]byte, error) {
+	if Normalize(kind) == "sbom" {
+		if err := validateObjectInventory(artifact, data); err == nil {
+			// Preserve authenticated legacy bytes exactly; migration is opt-in by
+			// publishing a new ObjectInventory with ObjectInventoryMediaType.
+			return data, nil
+		}
+	}
 	if VerifyAttestationBinding(data, mediaTypeFor(kind), artifact) == nil {
 		if err := validateAttachmentData(artifact, kind, data); err != nil {
 			return nil, err
@@ -222,12 +244,8 @@ func validateAttachmentData(artifact, kind string, data []byte) error {
 			return fmt.Errorf("provenance attachment is not bound")
 		}
 	case "sbom":
-		var sbom SBOM
-		if err := decodeStrict(data, &sbom); err != nil {
-			return fmt.Errorf("invalid SBOM attachment: %w", err)
-		}
-		if sbom.MediaType != SBOMMediaType || sbom.ArtifactDigest != artifact {
-			return fmt.Errorf("SBOM attachment is not bound")
+		if err := validateObjectInventory(artifact, data); err != nil {
+			return err
 		}
 	case "signature", "signatures":
 		if _, err := DecodeSignatureBundle(data, artifact); err != nil {
@@ -260,6 +278,9 @@ func GetAttachment(c Carrier, artifact, kind string) ([]byte, error) {
 		_, err := decodeMetadataAttachment(data, artifact)
 		return data, err
 	}
+	if Normalize(kind) == "sbom" {
+		return data, validateObjectInventory(artifact, data)
+	}
 	if err := VerifyAttestationBinding(data, mediaTypeFor(kind), artifact); err != nil {
 		return nil, err
 	}
@@ -277,6 +298,26 @@ func mediaTypeFor(kind string) string {
 		return RevocationMediaType
 	}
 	return ""
+}
+
+func validateObjectInventory(artifact string, data []byte) error {
+	var inventory ObjectInventory
+	if err := decodeStrict(data, &inventory); err != nil {
+		return fmt.Errorf("invalid object inventory attachment: %w", err)
+	}
+	if !supportedObjectInventoryMediaType(inventory.MediaType) || inventory.ArtifactDigest != artifact {
+		return fmt.Errorf("object inventory attachment is not bound")
+	}
+	for _, component := range inventory.Components {
+		if containsCredential(component.Name) || containsCredential(component.Version) || containsCredential(component.PackageType) || containsCredential(component.Hash) || containsCredential(component.License) || containsCredential(component.Source) {
+			return fmt.Errorf("object inventory component contains credentials")
+		}
+	}
+	return nil
+}
+
+func supportedObjectInventoryMediaType(mediaType string) bool {
+	return mediaType == ObjectInventoryMediaType || mediaType == LegacySBOMMediaType
 }
 
 type SignatureBundle struct {
@@ -415,30 +456,42 @@ type Revocation struct {
 
 func canonical(v any) ([]byte, error) { return json.Marshal(v) }
 
+// NewSBOM preserves the historical constructor name.
+// Deprecated: use NewObjectInventory; the resulting record is not a package SBOM.
 func NewSBOM(artifact string, components []Component) (SBOM, []byte, error) {
-	copyComponents := append([]Component(nil), components...)
-	s := SBOM{MediaType: SBOMMediaType, ArtifactDigest: artifact, Components: copyComponents}
-	b, err := CanonicalSBOM(s)
-	if err != nil {
-		return SBOM{}, nil, err
-	}
-	var canonicalSBOM SBOM
-	if err := decodeStrict(b, &canonicalSBOM); err != nil {
-		return SBOM{}, nil, err
-	}
-	return canonicalSBOM, b, nil
+	return NewObjectInventory(artifact, components)
 }
 
-func CanonicalSBOM(s SBOM) ([]byte, error) {
-	if s.MediaType == "" {
-		s.MediaType = SBOMMediaType
+func NewObjectInventory(artifact string, components []Component) (ObjectInventory, []byte, error) {
+	copyComponents := append([]Component(nil), components...)
+	s := ObjectInventory{MediaType: ObjectInventoryMediaType, ArtifactDigest: artifact, Components: copyComponents}
+	b, err := CanonicalObjectInventory(s)
+	if err != nil {
+		return ObjectInventory{}, nil, err
 	}
-	if s.MediaType != SBOMMediaType {
-		return nil, fmt.Errorf("unsupported SBOM media type")
+	var canonicalInventory ObjectInventory
+	if err := decodeStrict(b, &canonicalInventory); err != nil {
+		return ObjectInventory{}, nil, err
+	}
+	return canonicalInventory, b, nil
+}
+
+// CanonicalSBOM preserves the historical canonicalizer name.
+// Deprecated: use CanonicalObjectInventory; this record is not a package SBOM.
+func CanonicalSBOM(s SBOM) ([]byte, error) {
+	return CanonicalObjectInventory(s)
+}
+
+func CanonicalObjectInventory(s ObjectInventory) ([]byte, error) {
+	if s.MediaType == "" {
+		s.MediaType = ObjectInventoryMediaType
+	}
+	if !supportedObjectInventoryMediaType(s.MediaType) {
+		return nil, fmt.Errorf("unsupported object inventory media type")
 	}
 	for _, component := range s.Components {
 		if containsCredential(component.Name) || containsCredential(component.Version) || containsCredential(component.PackageType) || containsCredential(component.Hash) || containsCredential(component.License) || containsCredential(component.Source) {
-			return nil, fmt.Errorf("SBOM component contains credentials")
+			return nil, fmt.Errorf("object inventory component contains credentials")
 		}
 	}
 	s.Components = append([]Component(nil), s.Components...)
@@ -727,13 +780,13 @@ func (p Policy) Verify(q VerifyRequest) VerificationReceipt {
 	}
 	if q.SBOM != nil {
 		if data, err := CanonicalSBOM(*q.SBOM); err != nil {
-			r.Code, r.Diagnostic = CodePolicy, "SBOM contains disallowed data"
+			r.Code, r.Diagnostic = CodePolicy, "object inventory contains disallowed data"
 			return r.withDecisionID()
 		} else {
 			r.SBOMDigest = Digest(data)
 		}
-		if q.SBOM.MediaType != SBOMMediaType || q.SBOM.ArtifactDigest != q.ArtifactDigest {
-			r.Code, r.Diagnostic = CodeBinding, "SBOM artifact digest mismatch"
+		if !supportedObjectInventoryMediaType(q.SBOM.MediaType) || q.SBOM.ArtifactDigest != q.ArtifactDigest {
+			r.Code, r.Diagnostic = CodeBinding, "object inventory artifact digest mismatch"
 			return r.withDecisionID()
 		}
 	}

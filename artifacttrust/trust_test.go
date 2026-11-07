@@ -121,6 +121,42 @@ func TestSBOMIsDeterministicallyOrderedAndBound(t *testing.T) {
 	}
 }
 
+func TestGeneratedInventoryDoesNotClaimSPDX(t *testing.T) {
+	inventory, _, err := NewObjectInventory("sha256:artifact", []Component{{Name: "rcc", Version: "1", PackageType: "rcc-builder"}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if inventory.MediaType != "application/vnd.rcc.environment.inventory.v1+json" {
+		t.Fatalf("custom object inventory has misleading media type %q", inventory.MediaType)
+	}
+}
+
+func TestLegacySPDXLabeledInventoryRemainsVerifiableAndBytePreserved(t *testing.T) {
+	artifact := "sha256:legacy"
+	legacy := []byte(`{"mediaType":"application/vnd.rcc.environment.sbom.spdx+json","artifactDigest":"sha256:legacy","components":[{"name":"hololib-object","version":"sha256:object","packageType":"rcc-hololib-object-v12"}]}`)
+	carrier := NewFilesystemCarrier(t.TempDir())
+	if err := PutAttachment(carrier, artifact, "sbom", legacy); err != nil {
+		t.Fatalf("write legacy attachment: %v", err)
+	}
+	got, err := GetAttachment(carrier, artifact, "sbom")
+	if err != nil || !bytes.Equal(got, legacy) {
+		t.Fatalf("legacy attachment changed or failed validation: bytesEqual=%t err=%v", bytes.Equal(got, legacy), err)
+	}
+	var inventory ObjectInventory
+	if err := decodeStrict(got, &inventory); err != nil {
+		t.Fatal(err)
+	}
+	receipt := (Policy{Mode: PermissiveLocal, AllowUnsignedLocal: true}).Verify(VerifyRequest{ArtifactDigest: artifact, SBOM: &inventory})
+	if !receipt.Valid {
+		t.Fatalf("legacy inventory rejected by verifier: %+v", receipt)
+	}
+
+	migrated, _, err := NewObjectInventory(artifact, inventory.Components)
+	if err != nil || migrated.MediaType != ObjectInventoryMediaType {
+		t.Fatalf("migration did not produce the RCC inventory contract: inventory=%+v err=%v", migrated, err)
+	}
+}
+
 func TestAttestationsRejectCredentialBearingSources(t *testing.T) {
 	p := Provenance{ArtifactDigest: "sha256:a", Platform: "linux/amd64", Builder: "b", RCCVersion: "v1", CreatedAt: FreshTimestamp(time.Now()), DependencySources: []string{"https://user:password@example.invalid/simple"}}
 	if _, err := CanonicalProvenance(p); err == nil {

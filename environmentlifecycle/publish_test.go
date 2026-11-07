@@ -183,6 +183,9 @@ func TestPublishWritesGeneratedProvenanceToCarrierAfterManifestCommit(t *testing
 	if len(attachments.SBOM.Components) == 0 || attachments.SBOM.ArtifactDigest != result.ArtifactDigest.String() {
 		t.Fatalf("SBOM=%+v", attachments.SBOM)
 	}
+	if attachments.SBOM.MediaType != artifacttrust.ObjectInventoryMediaType {
+		t.Fatalf("generated object inventory has media type %q", attachments.SBOM.MediaType)
+	}
 	for _, kind := range []string{"provenance", "sbom", "revocations"} {
 		data, err := carrier.Read(artifacttrust.AttachmentName(result.ArtifactDigest.String(), kind))
 		if err != nil || bytes.Contains(data, []byte("publish-provider-secret-sentinel")) {
