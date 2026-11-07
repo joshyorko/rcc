@@ -40,7 +40,7 @@ func TestRevocationOperatorRealCLI(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer zr.Close()
+	defer func() { _ = zr.Close() }()
 	var manifest environmentartifact.Manifest
 	for _, entry := range zr.File {
 		if entry.Name == environmentartifact.ArchiveManifest {
@@ -306,7 +306,7 @@ func TestRevocationOperatorRealCLI(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer input.Close()
+			defer func() { _ = input.Close() }()
 			if err = child.Start(); err != nil {
 				t.Fatal(err)
 			}
