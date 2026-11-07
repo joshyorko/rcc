@@ -64,3 +64,7 @@ Artifact-Owned Executable Resolution Preserves Delegation And Receipts
     Should Not Contain    ${traversal}[stderr]    escaped-artifact
     Should Contain    ${traversal}[stderr]    outside the acquired environment
     Should Be True    ${traversal}[receipt][leaseReleased]
+
+Released CLI Baselines Replay The Same Native Artifact
+    ${comparison}=    Compare Release Binaries 258
+    Should Be Equal    ${comparison}    verified
