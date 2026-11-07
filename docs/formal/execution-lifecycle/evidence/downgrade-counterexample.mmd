@@ -1,0 +1,44 @@
+---
+title: "RCC strict environment admission"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: admission
+    lg1: execution
+    lg2: refused
+    lg3: Breaks NoTrustDowngrade in some cases
+    lg4: Path to the NoTrustDowngrade bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 pink
+  class lg3 mayBreak
+  class lg4 bugPath
+  s0: Artifact and carrier presented
+  s1: Strict policy selected
+  s2: Explicit unsigned-local opt-in
+  s3: Untrusted artifact refused
+  s4: Materialization admitted
+  s5: Verified materialization leased
+  s6: Process permitted under lease
+  [*] --> s0
+  s0 --> s1: operator selects strict verification
+  s0 --> s2: operator explicitly opts into unsigned local use
+  s1 --> s3: carrier and signature evidence are verified
+  s1 --> s2: unsigned metadata attempts to lower strict policy
+  s2 --> s4: explicitly allowed local artifact is materialized
+  s1 --> s4: validly signed artifact is materialized
+  s4 --> s5: admitted materialization receives a lease
+  s5 --> s6: process becomes permitted
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 bugPath
+  class s1 blue
+  class s1 bugPath
+  class s2 blue
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 pink
+  class s4 blue
+  class s5 blue
+  class s6 teal
