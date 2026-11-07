@@ -14,6 +14,12 @@ Partial task writes are not guaranteed to survive cancellation. Unsafe or
 outside-workarea artifact paths, symlinked sources, and symlinked destinations
 fail closed before task execution or during safe copy-back.
 
+Cancellation coverage distinguishes externally terminating the supervised child
+(both modes) from sending SIGTERM to RCC (Artifact mode, which forwards it).
+Abruptly killing RCC itself is not a durable-output guarantee. Acceptance checks
+that the owned child is gone, Artifact leases are released, copied file bytes
+are correct and the recorded temporary workarea has been removed.
+
 The wrapper exit code remains 10 for a task that exits nonzero, matching the
 existing source-only CLI behavior; the child exit code remains in the failure
 diagnostic. `robot run-from-bundle` does not accept `--json`; its stdout belongs
@@ -39,6 +45,15 @@ The Robot output directory retains the generated `fixture.rcca`, source-only
 and source+artifact bundles, per-command stdout/stderr/exit files, and a summary
 with binary and archive digests. The suite is Linux CLI evidence; it does not
 prove native Windows/macOS behavior or a published release.
+
+Set `RCC_BUNDLE_OUTPUT_FIXTURES` to a preserved fixture directory containing
+`fixture.rcca`, both source bundle variants and both denied-path variants to
+replay offline without rebuilding an environment. The runner rebases only the
+owned source fixture paths and adds a workarea marker; embedded Artifact bytes
+and identity are preserved. Set `TMPDIR` to a disk-backed task directory and
+check memory, swap, available bytes and inodes before running. Each bundle mode
+uses its own private RCC home and reuses that home across outcomes; each task
+uses a distinct caller directory.
 
 ## Issue #256 Evidence Snapshot
 

@@ -112,7 +112,7 @@ compatible with the exported environment; it does not include RCC itself.`,
 			materialization := environmentlifecycle.Materialization{ArtifactDigest: artifactMaterialization.ArtifactDigest, ID: artifactMaterialization.MaterializationID, Path: artifactMaterialization.Path, CacheHit: artifactMaterialization.CacheHit}
 			child, execErr := executeArtifactBundleTask(cmd.Context(), environmentlifecycle.NewLocalMaterializer(), materialization, todo.Commandline(), workarea, config.ArtifactDirectory(), !common.NoOutputCapture, cmd.InOrStdin(), cmd.OutOrStdout(), cmd.ErrOrStderr())
 			pretty.Guard(execErr == nil, 6, "Bundled artifact task failed: %v (exit %d)", execErr, child.ExitCode)
-			pretty.Guard(child.ExitCode == 0, 10, "Error: Bundled artifact task exited %d (robot run exit)", child.ExitCode)
+			pretty.Guard(child.ExitCode == 0, 10, "Error: Bundled artifact task failed: exit status %d (robot run exit)", child.ExitCode)
 			return
 		}
 

@@ -4,6 +4,8 @@ import os
 import signal
 import subprocess
 import time
+import zipfile
+import shutil
 from pathlib import Path
 
 
@@ -42,7 +44,15 @@ def run(binary, name, arguments, home, cwd, root, offline=False, expected=None):
     (evidence / "exit.txt").write_text(f"{result.returncode}\n", encoding="ascii")
     if expected is not None and result.returncode != expected:
         raise AssertionError(f"{name} exit={result.returncode}, expected={expected}; see {evidence}")
+    if list(map(str, arguments[:2])) == ["robot", "run-from-bundle"]:
+        assert_no_bundle_leases(home)
     return result
+
+
+def assert_no_bundle_leases(home):
+    leases = list(Path(home).glob("artifacts/v1/materializations/*/leases/*.json"))
+    if leases:
+        raise AssertionError(f"execution lease survived task completion: {leases}")
 
 
 def make_fixture(root):
@@ -66,6 +76,7 @@ def make_fixture(root):
         "    Path(sys.argv[2]).write_text('executed\\n', encoding='utf-8')\n"
         "    raise SystemExit(0)\n"
         "Path('output').mkdir(exist_ok=True)\n"
+        "Path('output/workarea.txt').write_text(str(Path.cwd()), encoding='utf-8')\n"
         "with open('output/result.txt', 'w', encoding='utf-8') as result:\n"
         "    result.write(mode + '-result\\n')\n"
         "    result.flush()\n"
@@ -81,7 +92,7 @@ def make_fixture(root):
     return source
 
 
-def create_cancel_run(binary, bundle, name, home, cwd, root, extra_flags):
+def create_cancel_run(binary, bundle, name, home, cwd, root, extra_flags, signal_parent=False):
     cwd.mkdir(parents=True)
     ready = root / "cancel-ready.txt"
     ready.unlink(missing_ok=True)
@@ -106,18 +117,26 @@ def create_cancel_run(binary, bundle, name, home, cwd, root, extra_flags):
         (evidence / "stderr.txt").write_text(stderr, encoding="utf-8")
         (evidence / "exit.txt").write_text(f"{process.returncode}\n", encoding="ascii")
         raise AssertionError(f"{name} did not reach cancel-ready: {process.returncode}; see {evidence}")
-    os.kill(int(ready.read_text(encoding="ascii")), signal.SIGTERM)
+    child_pid = int(ready.read_text(encoding="ascii"))
+    if signal_parent:
+        process.send_signal(signal.SIGTERM)
+    else:
+        os.kill(child_pid, signal.SIGTERM)
     stdout, stderr = process.communicate(timeout=40)
     evidence = root / "commands" / name
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "argv.json").write_text(json.dumps({
-        "argv": argv, "cwd": str(cwd), "privateHome": str(home), "offline": True, "cancelSignal": "SIGTERM to child pid",
+        "argv": argv, "cwd": str(cwd), "privateHome": str(home), "offline": True,
+        "cancelSignal": "SIGTERM to RCC" if signal_parent else "SIGTERM to child pid",
     }, indent=2) + "\n", encoding="utf-8")
     (evidence / "stdout.txt").write_text(stdout, encoding="utf-8")
     (evidence / "stderr.txt").write_text(stderr, encoding="utf-8")
     (evidence / "exit.txt").write_text(f"{process.returncode}\n", encoding="ascii")
     if process.returncode != 10:
         raise AssertionError(f"{name} outer exit={process.returncode}, expected legacy task failure 10 after SIGTERM")
+    if Path(f"/proc/{child_pid}").exists():
+        raise AssertionError(f"{name} left the owned child alive or unreaped: {child_pid}")
+    assert_no_bundle_leases(home)
     return stdout, stderr, process.returncode
 
 
@@ -138,15 +157,45 @@ def verify_run(root, mode, outcome, result, stdout, stderr, exit_code):
         raise AssertionError(f"{mode}-{outcome} task streams were not visible to the caller")
     if exit_code != result:
         raise AssertionError(f"{mode}-{outcome} exit={exit_code}, expected={result}")
+    workarea = Path((cwd / "output" / "workarea.txt").read_text(encoding="utf-8"))
+    if workarea.exists():
+        raise AssertionError(f"{mode}-{outcome} left the task workarea behind: {workarea}")
+
+
+def replay_preserved_fixture(binary, root, fixture):
+    """Reuse CLI-produced bundles/Artifact without rebuilding their environment."""
+    for name in ("source-only.py", "source-artifact.py", "denied-source.py", "denied-artifact.py"):
+        with zipfile.ZipFile(fixture / name) as source, zipfile.ZipFile(root / name, "w") as out:
+            for member in source.infolist():
+                if member.filename == "robot/robot.yaml":
+                    data = source.read(member).decode("utf-8").replace(str(fixture), str(root))
+                    out.writestr(member, data)
+                elif member.filename == "robot/task.py":
+                    data = source.read(member).decode("utf-8")
+                    if "output/workarea.txt" not in data:
+                        data = data.replace("Path('output').mkdir(exist_ok=True)\n", "Path('output').mkdir(exist_ok=True)\nPath('output/workarea.txt').write_text(str(Path.cwd()), encoding='utf-8')\n")
+                    out.writestr(member, data)
+                else:
+                    with source.open(member) as reader, out.open(member, "w") as writer:
+                        shutil.copyfileobj(reader, writer)
+    archive = fixture / "fixture.rcca"
+    with zipfile.ZipFile(archive) as exported:
+        digest = json.loads(exported.read("rcc-environment/manifest.json"))["artifactDigest"]
+    help_result = run(binary, "help", ["robot", "run-from-bundle", "--help"], root / "help-home", root, root, offline=True, expected=0)
+    flags = ["--permissive-local"] if "--permissive-local" in help_result.stdout else []
+    exercise_bundles(binary, root, digest, archive, root / "source-only.py", root / "source-artifact.py", root / "denied-source.py", root / "denied-artifact.py", root / "denied-task-ran.txt", flags)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--rcc", required=True, type=Path)
     parser.add_argument("--root", required=True, type=Path)
+    parser.add_argument("--fixtures", type=Path, default=os.environ.get("RCC_BUNDLE_OUTPUT_FIXTURES"), help="Reuse preserved CLI-produced fixtures offline.")
     args = parser.parse_args()
     binary, root = args.rcc.resolve(), args.root.resolve()
     root.mkdir(parents=True, exist_ok=True)
+    if args.fixtures:
+        return replay_preserved_fixture(binary, root, args.fixtures.resolve())
     source = make_fixture(root)
     producer_home = Path(os.environ.get("RCC_BUNDLE_OUTPUT_PRODUCER_HOME", root / "producer-home")).resolve()
     producer_home.mkdir(parents=True, exist_ok=True)
@@ -193,10 +242,15 @@ def main():
         (root / "provider-server.stdout.txt").write_text(server.stdout.read(), encoding="utf-8")
         (root / "provider-server.stderr.txt").write_text(server.stderr.read(), encoding="utf-8")
 
+    exercise_bundles(binary, root, digest, archive, source_bundle, artifact_bundle, denied_source_bundle, denied_artifact_bundle, denied_marker, artifact_trust_flag)
+
+
+def exercise_bundles(binary, root, digest, archive, source_bundle, artifact_bundle, denied_source_bundle, denied_artifact_bundle, denied_marker, artifact_trust_flag):
     for mode, bundle in (("source-only", source_bundle), ("source-artifact", artifact_bundle)):
+        home = root / "homes" / mode
+        home.mkdir(parents=True, exist_ok=True)
         for outcome, expected in (("success", 0), ("failure", 10)):
-            home, cwd = root / "homes" / f"{mode}-{outcome}", root / "runs" / f"{mode}-{outcome}"
-            home.mkdir(parents=True)
+            cwd = root / "runs" / f"{mode}-{outcome}"
             cwd.mkdir(parents=True)
             extra_flags = artifact_trust_flag if mode == "source-artifact" else []
             result = run(binary, f"{mode}-{outcome}", ["robot", "run-from-bundle", bundle, "--task", outcome, "--controller", "citests", *extra_flags], home, cwd, root, offline=True, expected=expected)
@@ -204,15 +258,19 @@ def main():
             if outcome == "failure" and "exit status 23" not in result.stderr:
                 raise AssertionError(f"{mode} failure did not report the child exit 23")
 
-        home, cwd = root / "homes" / f"{mode}-cancel", root / "runs" / f"{mode}-cancel"
-        home.mkdir(parents=True)
+        cwd = root / "runs" / f"{mode}-cancel"
         extra_flags = artifact_trust_flag if mode == "source-artifact" else []
         stdout, stderr, exit_code = create_cancel_run(binary, bundle, f"{mode}-cancel", home, cwd, root, extra_flags)
         verify_run(root, mode, "cancel", exit_code, stdout, stderr, exit_code)
 
+        if mode == "source-artifact":
+            cwd = root / "runs" / f"{mode}-parent-cancel"
+            stdout, stderr, exit_code = create_cancel_run(binary, bundle, f"{mode}-parent-cancel", home, cwd, root, extra_flags, signal_parent=True)
+            verify_run(root, mode + "-parent", "cancel", exit_code, stdout, stderr, exit_code)
+
         denied_bundle = denied_source_bundle if mode == "source-only" else denied_artifact_bundle
         denied_home, denied_cwd = root / "homes" / f"{mode}-denied", root / "runs" / f"{mode}-denied"
-        denied_home.mkdir()
+        denied_home.mkdir(parents=True)
         denied_cwd.mkdir(parents=True)
         extra_flags = artifact_trust_flag if mode == "source-artifact" else []
         denied_result = run(binary, f"{mode}-denied", ["robot", "run-from-bundle", denied_bundle, "--task", "denied", "--controller", "citests", *extra_flags], denied_home, denied_cwd, root, offline=True)
@@ -232,7 +290,7 @@ def main():
         "binary": str(binary), "binarySha256": __import__("hashlib").sha256(binary.read_bytes()).hexdigest(),
         "artifactDigest": digest, "archiveSha256": __import__("hashlib").sha256(archive.read_bytes()).hexdigest(),
         "platform": {"system": os.uname().sysname, "machine": os.uname().machine},
-        "cases": [f"{mode}-{outcome}" for mode in ("source-only", "source-artifact") for outcome in ("success", "failure", "cancel")],
+        "cases": [f"{mode}-{outcome}" for mode in ("source-only", "source-artifact") for outcome in ("success", "failure", "cancel")] + ["source-artifact-parent-cancel", "source-only-denied", "source-artifact-denied", "json-flag"],
         "failureContract": "both CLI paths preserve legacy outer exit 10 and report child exit 23",
         "cancellationContract": "only closed output files present at child reap are handed back; partial writes are not guaranteed",
         "jsonFlag": "unsupported by robot run-from-bundle",
