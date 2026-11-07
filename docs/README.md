@@ -283,6 +283,7 @@
 ## 19 [Environment Artifact v1 compatibility](https://github.com/joshyorko/rcc/blob/main/docs/environment-artifact-compatibility.md#environment-artifact-v1-compatibility)
 ### 19.1 [Linux compatibility semantics](https://github.com/joshyorko/rcc/blob/main/docs/environment-artifact-compatibility.md#linux-compatibility-semantics)
 ## 20 [Environment Artifact trust](https://github.com/joshyorko/rcc/blob/main/docs/environment-artifact-trust.md#environment-artifact-trust)
+### 20.1 [RCC object inventory and package SBOM](https://github.com/joshyorko/rcc/blob/main/docs/environment-artifact-trust.md#rcc-object-inventory-and-package-sbom)
 ## 21 [Environment build coordination and prewarming](https://github.com/joshyorko/rcc/blob/main/docs/environment-build-coordination.md#environment-build-coordination-and-prewarming)
 ### 21.1 [Stable build identity](https://github.com/joshyorko/rcc/blob/main/docs/environment-build-coordination.md#stable-build-identity)
 ### 21.2 [Machine contract (JSON v1)](https://github.com/joshyorko/rcc/blob/main/docs/environment-build-coordination.md#machine-contract-json-v1)

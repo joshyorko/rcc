@@ -146,9 +146,10 @@ Environment Artifact or establish an artifact signer as trusted. `env acquire`
 defaults to `strict-remote`; it fails closed unless the detached trust set
 includes a valid signature, deployment-owned Ed25519 trust roots, and fresh
 revocation data. The HTTP provider URL does not imply that its artifact API
-serves the detached trust files. `env publish` writes generated provenance,
-SBOM, and revocation data to a local filesystem trust carrier by default; use
-an explicit `--trust-carrier` to select where that detached data is staged.
+serves the detached trust files. `env publish` writes generated provenance, an
+RCC immutable object inventory, and revocation data to a local filesystem
+trust carrier by default. Pass `--trust-carrier` to select where that detached
+data is staged.
 
 For a controlled local development flow, publish and acquire with the same
 filesystem trust carrier and explicitly opt into unsigned local artifacts:

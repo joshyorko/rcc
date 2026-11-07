@@ -308,7 +308,8 @@ func ExportArchive(carrier Carrier, filePath, artifact string, kinds []string) e
 
 // Attachments is the decoded, carrier-independent trust input for one artifact.
 type Attachments struct {
-	Provenance          *Provenance
+	Provenance *Provenance
+	// SBOM is the legacy attachment field name for RCC's object inventory.
 	SBOM                *SBOM
 	Signatures          []Signature
 	Revocations         []Revocation

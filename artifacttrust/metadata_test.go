@@ -1,6 +1,7 @@
 package artifacttrust
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/base64"
@@ -66,6 +67,40 @@ func TestMetadataEnvelopeAuthenticatesAllPolicyInputs(t *testing.T) {
 				t.Fatal("unsigned mutation accepted")
 			}
 		})
+	}
+}
+
+func TestLegacyInventoryMetadataV2IsVerifiedWithoutRewritingSignedBytes(t *testing.T) {
+	p, roots, key, at := metadataFixture(t)
+	p.Provenance = nil
+	p.SBOM.MediaType = LegacySBOMMediaType
+	envelope, err := SignMetadata(p, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	signedBytes, err := json.Marshal(envelope)
+	if err != nil {
+		t.Fatal(err)
+	}
+	carrier := NewFilesystemCarrier(t.TempDir())
+	if err := PutAttachment(carrier, p.ArtifactDigest, "metadata", signedBytes); err != nil {
+		t.Fatal(err)
+	}
+	readBytes, err := GetAttachment(carrier, p.ArtifactDigest, "metadata")
+	if err != nil || !bytes.Equal(readBytes, signedBytes) {
+		t.Fatalf("signed metadata bytes changed: equal=%t err=%v", bytes.Equal(readBytes, signedBytes), err)
+	}
+	var readEnvelope MetadataEnvelope
+	if err := json.Unmarshal(readBytes, &readEnvelope); err != nil {
+		t.Fatal(err)
+	}
+	policy := Policy{Mode: PermissiveLocal, AllowUnsignedLocal: true}
+	receipt := policy.Verify(VerifyRequest{
+		Metadata: &readEnvelope, MetadataRoots: &roots, MetadataState: &MetadataState{Root: t.TempDir()},
+		ArtifactDigest: p.ArtifactDigest, Platform: "linux/amd64", Builder: "builder", At: at,
+	})
+	if !receipt.Valid {
+		t.Fatalf("legacy v2 metadata inventory rejected: %+v", receipt)
 	}
 }
 
