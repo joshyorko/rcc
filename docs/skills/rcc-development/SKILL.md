@@ -62,6 +62,11 @@ rcc run -r developer/toolkit.yaml -t robot
 - In a fresh checkout, run `inv assets` before direct `go test` commands that compile `blobs/`; `inv build` prepares those generated inputs transitively, but direct tests do not.
 - Use Robot Framework tests for executable CLI, environment, caching, or cross-process workflows.
 - Build `build/rcc` when the user needs a local binary to test.
+- Check `go version -m build/rcc` before claiming exact-source compiler
+  provenance. The pinned Go 1.26.9 does not stamp this Git worktree's `.git`
+  file, even with `-buildvcs=true`. If revision fields are absent, build the
+  same committed tree in a task-local checkout with a normal `.git` directory,
+  reuse generated inputs, and verify its clean revision and binary hash.
 - Exercise the built binary, not an installed `rcc`, when validating a source change.
 - Legacy uv installation must select the staged interpreter with `--python`
   without also passing `--system`: released uv 0.1.37 rejects that pair.
