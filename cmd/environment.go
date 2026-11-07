@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"io"
 
 	"github.com/joshyorko/rcc/artifactprovider"
 	"github.com/joshyorko/rcc/environmentlifecycle"
@@ -9,12 +10,13 @@ import (
 )
 
 type environmentCommandDependencies struct {
-	newProvider  func(string) (artifactprovider.Provider, error)
-	builder      func() environmentlifecycle.Builder
-	publish      func(context.Context, environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error)
-	acquire      func(context.Context, environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error)
-	execute      func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error)
-	materializer func() environmentlifecycle.Materializer
+	newProvider        func(string) (artifactprovider.Provider, error)
+	builder            func() environmentlifecycle.Builder
+	publish            func(context.Context, environmentlifecycle.PublishRequest) (environmentlifecycle.PublishResult, error)
+	acquire            func(context.Context, environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error)
+	execute            func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error)
+	executeWithStreams func(context.Context, environmentlifecycle.Materializer, environmentlifecycle.Materialization, []string, io.Reader, io.Writer, io.Writer) (environmentlifecycle.ExecutionHandle, environmentlifecycle.ChildResult, error)
+	materializer       func() environmentlifecycle.Materializer
 }
 
 func defaultEnvironmentCommandDependencies() environmentCommandDependencies {
@@ -25,8 +27,9 @@ func defaultEnvironmentCommandDependencies() environmentCommandDependencies {
 		acquire: func(ctx context.Context, request environmentlifecycle.AcquireRequest) (environmentlifecycle.AcquireResult, error) {
 			return environmentlifecycle.NewAcquirer().Acquire(ctx, request)
 		},
-		execute:      environmentlifecycle.Execute,
-		materializer: func() environmentlifecycle.Materializer { return environmentlifecycle.NewLocalMaterializer() },
+		execute:            environmentlifecycle.Execute,
+		executeWithStreams: environmentlifecycle.ExecuteWithStreams,
+		materializer:       func() environmentlifecycle.Materializer { return environmentlifecycle.NewLocalMaterializer() },
 	}
 }
 
