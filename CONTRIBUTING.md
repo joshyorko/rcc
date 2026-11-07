@@ -66,6 +66,9 @@ documented legacy finding set but rejects any new diagnostic. The artifact accep
 portable package check. Standard, Python, and
 extended templates need no special artifact-authoring model.
 
+In a fresh checkout, run `local` before `artifactFocused`: its Python task tests
+read and hash `build/rcc`, so asset generation alone is insufficient.
+
 The default development and promotion path is installed/released RCC →
 `developer/toolkit.yaml` → build/test the candidate, followed by
 `build/rcc` → a fresh `ROBOCORP_HOME` → `developer/toolkit.yaml` → build/test
@@ -125,6 +128,11 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
 | `conda/` | Python environment creation, activation, and package installation |
 | `htfs/` | Holotree filesystem storage and environment materialization |
 | `remotree/` | Remote cache protocol, service, and synchronization |
+| `environmentartifact/` | Canonical manifests, object indexes, artifact identity, and compatibility contracts |
+| `artifactprovider/` | Deferred filesystem, HTTP, and archive artifact transport; secret-safe resolution failures |
+| `artifacttrust/` | Detached attestations, trust carriers, signatures, policy, and revocation verification |
+| `environmentlifecycle/` | Publish, acquire, materialize, lease, execute, reconcile, and garbage-collect artifacts |
+| `buildcoord/` | Build claims, heartbeats, publication, and recovery coordination |
 | `settings/` | RCC settings, endpoint, and provider-profile configuration |
 | `common/`, `pathlib/`, `shell/` | Shared libraries/utilities |
 | `assets/` | *Source* assets that get embedded into the binary |
@@ -133,6 +141,82 @@ Your robot, however, lacks both vision and the ability to think. It needs precis
 | `robot_tests/` | Robot Framework acceptance tests (HTML logs under `tmp/output/`) |
 | `developer/` | The "repeatable, contained" dev environment bootstrap |
 | `.dagger/` | Dagger CI module for containerized builds and tests |
+
+### Environment execution: behavior, ownership, and evidence
+
+| Behavior | Entry point | Critical invariant | Regression coverage |
+|----------|-------------|--------------------|---------------------|
+| Provider resolution | [`cmd/provider.go`](cmd/provider.go): `newProviderReference`; [`artifactprovider/deferred.go`](artifactprovider/deferred.go) | Construction remains lazy; resolver errors suppress secrets. [`provider inspect`](cmd/providerInspect.go) reports authorization-source name and presence, never its value. | [`cmd/provider_test.go`](cmd/provider_test.go): `TestProviderReferenceDoesNotLoadAtConstruction`, `TestProviderInspectAuthorizationReportsNameAndPresenceWithoutValue`; [`artifactprovider/deferred_test.go`](artifactprovider/deferred_test.go): `TestDeferredProviderStableError`, `TestDeferredProviderDoesNotExposeResolverError` |
+| Acquisition and local reuse | [`environmentlifecycle/materialize.go`](environmentlifecycle/materialize.go): `Acquirer.Acquire` | Content transaction precedes artifact transaction. The default materializer uses `materializeLocked` because the public method would reacquire the same non-reentrant lock. Local reuse avoids remote artifact-provider calls, but may still read a trust carrier. | [`environmentlifecycle/materialize_test.go`](environmentlifecycle/materialize_test.go): `TestDefaultAcquisitionMaterializesAndReusesWithinDeadline`, `TestWarmAcquireDoesNotResolveDeferredProvider` |
+| Leased execution | [`cmd/environment.go`](cmd/environment.go): `defaultEnvironmentCommandDependencies`; [`cmd/environmentExec.go`](cmd/environmentExec.go): `newEnvironmentExecCommand`; [`environmentlifecycle/execute.go`](environmentlifecycle/execute.go): `Execute`, `ExecuteWithStreams` | Both executors are wired together. Copy the receipt **and** runtime trust inputs into `Materialization`. Release the lease after reaping the child. Preserve mode-specific output and error precedence. | [`cmd/environmentExec_test.go`](cmd/environmentExec_test.go): `TestEnvironmentExecRequiresSelectedExecutor`, `TestEnvironmentExecSelectsExecutorAndPreservesTrust`; [`robot_tests/environment_artifacts/library.py`](robot_tests/environment_artifacts/library.py): `execution_modes_should_preserve_streams_and_receipts` |
+| Lease-time trust refresh | [`environmentlifecycle/lease.go`](environmentlifecycle/lease.go): `LocalMaterializer.Lease`; [`environmentlifecycle/trust.go`](environmentlifecycle/trust.go): `refreshMaterializationTrust` | An acquisition receipt does not replace current policy, trust request, or carrier inputs. Refresh revocations for a new lease without changing an already-running lease. | [`environmentlifecycle/lease_test.go`](environmentlifecycle/lease_test.go): `TestNewLeaseRefreshesRevocationsWithoutChangingRunningLease`; [`cmd/environment_test.go`](cmd/environment_test.go): `TestEnvironmentConsumersLoadRuntimeTrustRoots` |
+
+`--json` suppresses child output and emits one result only if execution returns
+without an error. `--inherit-streams` requires `--receipt-file`, forwards the
+child streams, and attempts the receipt even on an execution error. When both
+flags are present, inherited streams take precedence. Receipt-write errors take
+precedence over child/execution failures. Context cancellation and a signal
+forwarded to the child are different outcomes; keep their classifications.
+Receipt replacement and symlink checks are covered in
+[`cmd/environment_test.go`](cmd/environment_test.go), under
+`TestEnvironmentExecReceiptSafelyReplacesFilesAndRejectsSymlinks` and
+`TestEnvironmentExecReceiptPreservesOldFileWhenReplacementFails`.
+
+Keep process guarantees specific: the Linux supervisor's parent-death signal
+targets the direct child; Windows uses a job object. Cleanup order alone does
+not prove descendant containment. See
+[`environmentlifecycle/execute_process_test.go`](environmentlifecycle/execute_process_test.go)
+and [`environmentlifecycle/lease_test.go`](environmentlifecycle/lease_test.go).
+Native platform tests are required before claiming parity.
+
+The locality benefit is a complete private executor composition point and
+adjacent ownership contracts. The command still shows its trust mapping and
+mode-specific output in place; the existing lifecycle and provider boundaries
+remain. The added navigation cost is a second typed executor field and this
+source/test map, not a new dispatch layer. No LLM performance improvement has
+been measured.
+
+### Startup conventions and unresolved bootstrap follow-up
+
+Imports currently have effects before command execution:
+[`common/variables.go`](common/variables.go): `init` reads arguments/environment,
+sets global defaults, and provisions cache directories;
+[`common/logger.go`](common/logger.go): `init` starts the logger goroutine;
+[`htfs/directory.go`](htfs/directory.go): `init` provisions storage directories.
+[`common/exit.go`](common/exit.go): `Exit` panics with `common.ExitCode`;
+[`cmd/rcc/main.go`](cmd/rcc/main.go): `ExitProtection` recovers that value at the
+executable boundary. Preserve deferred cleanup when changing command errors.
+
+An explicit bootstrap boundary remains **unresolved and separately scoped**;
+no startup migration is implemented here. The initial importer inventory is:
+`common` is imported directly by `cloud`, `cmd` (including both executables),
+`conda`, `environmentartifact`, `environmentlifecycle`, `htfs`, `journal`,
+`operations`, `pathlib`, `pretty`, `remotree`, `robot`, `settings`, `shell`,
+`wizard`, and `xviper`; `htfs` by `cmd`, `environmentartifact`,
+`environmentlifecycle`, `operations`, and `remotree`. Refresh this inventory with
+`go list -json ./...` and include external Go consumers before choosing a boundary.
+
+The follow-up should compare CLI-root initialization in both executables with
+explicit storage entry points (`htfs.New`, `Acquirer.Acquire`, and direct
+materializer users). CLI-root setup gives command authors one visible owner,
+but does not cover library/test callers. Storage-entry setup covers those callers,
+but needs idempotent, concurrency-safe ownership and a separate decision for
+logging and argument-derived globals. Inventory callers and error handling
+before selecting either approach; preserve shared/private selection, permissions,
+startup failures, and v12 storage compatibility.
+
+Characterize each proposal in fresh subprocesses: import-only probes for
+`common` and `htfs`, help/version in both executables, and actual storage entry
+points. Set environment **before process start**; `t.Setenv` after import cannot
+characterize `init`. Use a disposable container or mount namespace with a
+read-only host filesystem and writable task-local homes, caches, and temporary
+directories. Contain `HOME`, `ROBOCORP_HOME`, XDG paths, platform home/temp
+variables, and the shared holotree mount (Linux defaults to `/opt/robocorp/ht`),
+not only `ROBOCORP_HOME`. Test private/shared modes, existing/missing/read-only
+roots, and concurrent startup; record writes, permissions, stderr, exit status,
+and surviving processes. Keep platform-specific evidence separate. The bounded
+acquisition regression uses `--warranty-voided` to suppress shared-directory
+initialization in its child; it is not a normal-startup characterization.
 
 ---
 

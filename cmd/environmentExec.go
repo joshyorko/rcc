@@ -58,7 +58,8 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if err != nil {
 				return err
 			}
-			if dependencies.acquire == nil || dependencies.materializer == nil || (!inheritStreams && dependencies.execute == nil) {
+			if dependencies.acquire == nil || dependencies.materializer == nil ||
+				(!inheritStreams && dependencies.execute == nil) || (inheritStreams && dependencies.executeWithStreams == nil) {
 				return fmt.Errorf("environment execution dependencies are unavailable")
 			}
 			policy, err := trustPolicyForCommand(strictRemote, permissiveLocal)
@@ -80,6 +81,8 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			if err != nil {
 				return err
 			}
+			// Keep the runtime trust inputs as well as the earlier receipt: lease
+			// admission rechecks current policy and carrier revocations.
 			materialization := environmentlifecycle.Materialization{
 				ArtifactDigest: acquired.ArtifactDigest, ID: acquired.MaterializationID,
 				Path: acquired.Path, CacheHit: acquired.CacheHit, Verification: acquired.Verification,
@@ -88,10 +91,7 @@ func newEnvironmentExecCommand(dependencies environmentCommandDependencies) *cob
 			var handle environmentlifecycle.ExecutionHandle
 			var child environmentlifecycle.ChildResult
 			if inheritStreams {
-				if dependencies.materializer == nil {
-					return fmt.Errorf("environment execution dependencies are unavailable")
-				}
-				handle, child, err = environmentlifecycle.ExecuteWithStreams(command.Context(), dependencies.materializer(), materialization, arguments, command.InOrStdin(), command.OutOrStdout(), command.ErrOrStderr())
+				handle, child, err = dependencies.executeWithStreams(command.Context(), dependencies.materializer(), materialization, arguments, command.InOrStdin(), command.OutOrStdout(), command.ErrOrStderr())
 			} else {
 				handle, child, err = dependencies.execute(command.Context(), dependencies.materializer(), materialization, arguments)
 			}
