@@ -131,6 +131,27 @@ func trustVerifyTestKey() (ed25519.PublicKey, ed25519.PrivateKey) {
 	return public, private
 }
 
+func TestEnvironmentTrustVerifyMalformedMetadataEmitsFailureReceipt(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "metadata.json")
+	if err := os.WriteFile(path, []byte("{invalid-private-input"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	command := newEnvironmentTrustCommand()
+	var stdout bytes.Buffer
+	command.SetOut(&stdout)
+	err := runCobraCommand(command, []string{"verify", "--artifact", artifacttrust.Digest([]byte("fixture")), "--metadata", path, "--json", "--strict-remote"})
+	if err == nil || !strings.Contains(err.Error(), artifacttrust.CodeMetadataInvalid) {
+		t.Fatalf("malformed metadata error: %v", err)
+	}
+	var receipt artifacttrust.VerificationReceipt
+	if err := json.Unmarshal(stdout.Bytes(), &receipt); err != nil {
+		t.Fatal(err)
+	}
+	if receipt.Valid || receipt.Code != artifacttrust.CodeMetadataInvalid || bytes.Contains(stdout.Bytes(), []byte("private-input")) {
+		t.Fatalf("malformed metadata receipt: %+v", receipt)
+	}
+}
+
 func runTrustVerifyFixture(t *testing.T, artifact, key string, signatureBytes, revocationBytes []byte, at time.Time) ([]byte, error) {
 	t.Helper()
 	root := t.TempDir()

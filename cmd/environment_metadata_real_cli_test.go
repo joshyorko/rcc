@@ -86,11 +86,16 @@ func TestMetadataSecurityRealCLI(t *testing.T) {
 		}
 		return e
 	}
-	run := func(name string, envelope *artifacttrust.MetadataEnvelope, mode, want string) artifacttrust.VerificationReceipt {
+	run := func(name string, envelope *artifacttrust.MetadataEnvelope, mode, want string, raw ...[]byte) artifacttrust.VerificationReceipt {
 		t.Helper()
 		args := []string{"env", "trust", "verify", "--artifact", digest, "--platform", provenance.Platform, "--builder", provenance.Builder, "--signatures", sigs, "--trust-roots", keys, "--metadata-trust-roots", rootsPath, "--metadata-state", state, mode, "--json"}
 		if envelope != nil {
 			file := trustfixture.WriteJSON(t, evidence, name+"-metadata.json", envelope)
+			if len(raw) > 0 {
+				if err := os.WriteFile(file, raw[0], 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
 			args = append(args, "--metadata", file)
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -155,6 +160,7 @@ func TestMetadataSecurityRealCLI(t *testing.T) {
 		t.Fatal("CLI signer did not cover the reviewed complete payload")
 	}
 	accepted := run("authenticated", &first, "--strict-remote", artifacttrust.CodeValid)
+	run("malformed-envelope", &first, "--strict-remote", artifacttrust.CodeMetadataInvalid, []byte("{invalid"))
 	t.Run("N-minus-one-migration", func(t *testing.T) {
 		older := os.Getenv("RCC_N_MINUS_ONE_BINARY")
 		if older == "" {

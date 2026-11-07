@@ -108,7 +108,11 @@ func newEnvironmentTrustCommand() *cobra.Command {
 		if metadataFile != "" {
 			var envelope artifacttrust.MetadataEnvelope
 			if err := read(metadataFile, &envelope); err != nil {
-				return err
+				receipt := p.FailureReceipt(q.ArtifactDigest, q.Platform, q.Builder, artifacttrust.CodeMetadataInvalid, "metadata envelope is unavailable or malformed", q.At)
+				if err := json.NewEncoder(cmd.OutOrStdout()).Encode(receipt); err != nil {
+					return err
+				}
+				return fmt.Errorf("artifact trust verification failed: %s", receipt.Code)
 			}
 			q.Metadata = &envelope
 		}
