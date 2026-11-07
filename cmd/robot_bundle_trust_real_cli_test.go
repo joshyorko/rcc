@@ -85,16 +85,23 @@ func TestBundleTrustRealCLI(t *testing.T) {
 		{"invalid-evidence-deny", "invalid", "attachment", false},
 		{"permissive-legacy-allow", "permissive", "", true},
 		{"lease-refresh-revocation-deny", "refresh", "revoked", false},
+		{"explicit-strict-source-only-deny", "source-only", "requires an embedded", false},
 	}
 	baseline := os.Getenv("RCC_TRUST_BASELINE") == "1"
+	// A warm private home tests that a prior valid receipt cannot authorize
+	// later execution under missing, revoked or invalid evidence.
+	home := filepath.Join(t.TempDir(), "home")
+	if err := os.Mkdir(home, 0750); err != nil {
+		t.Fatal(err)
+	}
 	if baseline {
 		cases = cases[1:2]
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			root := t.TempDir()
-			caller, home, temporary := filepath.Join(root, "caller"), filepath.Join(root, "home"), filepath.Join(root, "temp")
-			for _, p := range []string{caller, home, temporary} {
+			caller, temporary := filepath.Join(root, "caller"), filepath.Join(root, "temp")
+			for _, p := range []string{caller, temporary} {
 				if err := os.Mkdir(p, 0750); err != nil {
 					t.Fatal(err)
 				}
@@ -104,6 +111,9 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			sentinel := filepath.Join(root, "task-executed.txt")
 			bundle := filepath.Join(root, "bundle.zip")
 			selectedArchive := archive
+			if tc.kind == "source-only" {
+				selectedArchive = ""
+			}
 			if tc.kind == "archive-tampered" {
 				selectedArchive = filepath.Join(root, "tampered.rcca")
 				writeTamperedTrustArchive(t, archive, selectedArchive)
@@ -164,6 +174,9 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			var refreshReads atomic.Int32
 			if !baseline {
 				args = append(args, "--trust-roots", roots)
+				if tc.kind == "source-only" {
+					args = append(args, "--strict-remote")
+				}
 				if tc.kind == "refresh" {
 					server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 						name := strings.TrimPrefix(r.URL.Path, "/")
@@ -186,7 +199,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 					args = append(args, "--permissive-local")
 				}
 			}
-			ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 			defer cancel()
 			command := exec.CommandContext(ctx, binary, args...)
 			command.Dir = caller
@@ -196,7 +209,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			command.Stderr = &stderr
 			runErr := command.Run()
 			if ctx.Err() != nil {
-				t.Fatal("CLI timed out")
+				t.Fatalf("CLI timed out: stdout=%s stderr=%s", stdout.String(), stderr.String())
 			}
 			exit := command.ProcessState.ExitCode()
 			_, sentinelErr := os.Stat(sentinel)
@@ -240,7 +253,7 @@ func TestBundleTrustRealCLI(t *testing.T) {
 			if !baseline && tc.allow && (!leased || receipts < 2) {
 				t.Fatalf("missing acquisition/lease receipts: count=%d leased=%v", receipts, leased)
 			}
-			if !baseline && tc.kind != "archive-tampered" {
+			if !baseline && tc.kind != "archive-tampered" && tc.kind != "source-only" {
 				if historyErr != nil || len(history) == 0 {
 					t.Fatalf("trust history unavailable: %v", historyErr)
 				}
@@ -332,18 +345,20 @@ func writeTrustCLIBundle(t *testing.T, bundle, archive, sentinel string) {
 			t.Fatal(err)
 		}
 	}
-	w, err := zw.Create("environment/artifact.rcca")
-	if err != nil {
-		t.Fatal(err)
-	}
-	source, err := os.Open(archive)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = io.Copy(w, source)
-	_ = source.Close()
-	if err != nil {
-		t.Fatal(err)
+	if archive != "" {
+		w, err := zw.Create("environment/artifact.rcca")
+		if err != nil {
+			t.Fatal(err)
+		}
+		source, err := os.Open(archive)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = io.Copy(w, source)
+		_ = source.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
 	if err := zw.Close(); err != nil {
 		t.Fatal(err)

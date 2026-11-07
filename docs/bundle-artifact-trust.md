@@ -10,6 +10,13 @@ This contract does not authenticate policy-relevant detached metadata. Per #253,
 
 Source-only and v12 compatibility stays on the existing execution path. The helpers in this lane are intended only for the embedded Environment Artifact branch.
 
+Deployment invocations requiring signed environments must explicitly select
+`--strict-remote`. With that flag, source-only bundles must be rejected before
+task execution, so removing the embedded Artifact cannot downgrade the selected
+contract. Without an explicit strict requirement, legacy source-only execution
+retains its existing behavior. Artifact bundles still default to strict even
+when no policy flag is supplied.
+
 ## Coordinator wiring after #256
 
 Do not edit `cmd/robotRunFromBundle.go` in this lane. After #256 is complete, apply this minimal wiring there:
