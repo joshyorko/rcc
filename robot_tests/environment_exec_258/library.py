@@ -1,4 +1,5 @@
 import json
+import hashlib
 import os
 import shutil
 import subprocess
@@ -141,6 +142,63 @@ class EnvironmentExec258Library:
         escaped.write_text("#!/bin/sh\nprintf 'escaped-artifact\\n'\n", encoding="utf-8")
         escaped.chmod(0o755)
 
+    def compare_release_binaries_258(self):
+        archive = os.environ.get("RCC_258_ARCHIVE")
+        binaries = {name: os.environ.get(key) for name, key in (
+            ("baseline-source", "RCC_BASELINE_SOURCE_BINARY"),
+            ("published-v18.19.8", "RCC_BASELINE_BINARY"),
+            ("n-minus-one", "RCC_N1_BINARY"),
+        )}
+        if not archive or not all(binaries.values()):
+            BuiltIn().skip("release replay requires native archive and all three identified binaries")
+        candidate = self.binary
+        results = []
+        try:
+            for name, binary in binaries.items():
+                self.binary = str(Path(binary).resolve())
+                version = self._run([self.binary, "--version"], self.consumer_home, True, "/usr/bin:/bin")
+                self._expect_success(version, name + " version")
+                acquisition = self._run(
+                    [self.binary, "env", "acquire", "--archive", str(Path(archive).resolve()), "--permissive-local", "--json"],
+                    self.consumer_home, True, "/usr/bin:/bin",
+                )
+                self._expect_success(acquisition, name + " archive replay")
+                if json.loads(acquisition["stdout"])["artifactDigest"] != self.artifact:
+                    raise AssertionError(name + " changed Artifact identity")
+                collision = self.execute_258_inherited("rcc-issue258-probe")
+                unique = self.execute_258_inherited("rcc-issue258-unique")
+                python = self.execute_258_inherited("python", "-c", "print('older-artifact-python')")
+                if collision["rc"] != 0 or collision["stdout"].strip() != "host-decoy":
+                    raise AssertionError(name + " did not reproduce host collision: " + str(collision))
+                if unique["rc"] == 0 or unique["stdout"]:
+                    raise AssertionError(name + " unexpectedly found the environment-only executable")
+                if python["rc"] != 0 or python["stdout"].strip() != "older-artifact-python":
+                    raise AssertionError(name + " failed real Python execution: " + str(python))
+                if not all(result["receipt"]["leaseReleased"] for result in (collision, unique, python)):
+                    raise AssertionError(name + " leaked an execution lease")
+                # A real source+Artifact bundle proves the pre-fix trust bypass
+                # independently of dropped streams and artifact copy-back.
+                sentinel = self.root / (name + "-unsigned-executed.txt")
+                bundle = self.root / (name + "-unsigned.zip")
+                with zipfile.ZipFile(bundle, "w") as out:
+                    out.write(archive, "environment/artifact.rcca")
+                    out.writestr("robot/robot.yaml", "tasks:\n  proof:\n    command: [python, task.py]\nartifactsDir: output\n")
+                    out.writestr("robot/task.py", "from pathlib import Path\nPath(" + repr(str(sentinel)) + ").write_text('executed\\n')\n")
+                unsigned = self._run([self.binary, "robot", "run-from-bundle", str(bundle), "--task", "proof"], self.consumer_home, True, "/usr/bin:/bin")
+                if unsigned["rc"] != 0 or not sentinel.is_file():
+                    raise AssertionError(name + " unsigned execution was not reproduced: " + str(unsigned))
+                results.append({"name": name, "version": version["stdout"].strip(),
+                    "binarySha256": hashlib.sha256(Path(self.binary).read_bytes()).hexdigest(),
+                    "artifactDigest": self.artifact, "archiveReplay": acquisition,
+                    "collision": collision, "unique": unique, "python": python,
+                    "unsignedBundle": unsigned, "unsignedTaskExecuted": True,
+                    "scope": "archive read/replay and warm materialization; not an older cold build or all N-1 workflows"})
+        finally:
+            self.binary = candidate
+        evidence = Path(BuiltIn().get_variable_value("${OUTPUT DIR}")) / "release-replay.json"
+        evidence.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+        return "verified"
+
     def clean_environment_exec_258(self):
         export_error = None
         if os.environ.get("RCC_258_KEEP_ARCHIVE") == "1" and self.artifact and self.provider and self.provider.poll() is None:
@@ -269,6 +327,10 @@ def execute_258_json(*command):
 
 def create_258_escaped_probe():
     return _library.create_258_escaped_probe()
+
+
+def compare_release_binaries_258():
+    return _library.compare_release_binaries_258()
 
 
 def clean_environment_exec_258():
