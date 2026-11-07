@@ -25,6 +25,10 @@ the exact canonical decoded payload bytes with a v2 domain separator. The
 snapshot cannot be assembled by mixing authenticated and legacy fields.
 Artifact identity and v1 Artifact signatures are unchanged.
 
+The encoded payload is limited to 2 MiB and a transported envelope to 3 MiB.
+Signing rejects snapshots the verifier cannot accept; CLI envelope reads are
+bounded before parsing. Oversized evidence must not be silently truncated.
+
 Metadata roots are a separate deployment-owned v2 file containing scope,
 minimum sequence and authorized public keys with validity windows. No key is
 inferred from a provider, archive or carrier. Key rotation is authorized through

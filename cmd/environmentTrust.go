@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/joshyorko/rcc/artifacttrust"
 	"github.com/spf13/cobra"
+	"io"
 	"os"
 	"time"
 )
@@ -107,7 +108,7 @@ func newEnvironmentTrustCommand() *cobra.Command {
 		}
 		if metadataFile != "" {
 			var envelope artifacttrust.MetadataEnvelope
-			if err := read(metadataFile, &envelope); err != nil {
+			if err := readMetadataEnvelopeFile(metadataFile, &envelope); err != nil {
 				receipt := p.FailureReceipt(q.ArtifactDigest, q.Platform, q.Builder, artifacttrust.CodeMetadataInvalid, "metadata envelope is unavailable or malformed", q.At)
 				if err := json.NewEncoder(cmd.OutOrStdout()).Encode(receipt); err != nil {
 					return err
@@ -143,4 +144,20 @@ func newEnvironmentTrustCommand() *cobra.Command {
 	root.AddCommand(verify)
 	root.AddCommand(newMetadataSignCommand())
 	return root
+}
+
+func readMetadataEnvelopeFile(path string, envelope *artifacttrust.MetadataEnvelope) error {
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	data, err := io.ReadAll(io.LimitReader(file, (3<<20)+1))
+	if err != nil {
+		return err
+	}
+	if len(data) > 3<<20 {
+		return fmt.Errorf("metadata envelope exceeds size limit")
+	}
+	return decodeStrictTrustJSON(data, envelope)
 }

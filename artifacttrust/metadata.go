@@ -121,6 +121,9 @@ func SignMetadata(payload MetadataPayload, key ed25519.PrivateKey) (MetadataEnve
 	if err != nil {
 		return MetadataEnvelope{}, err
 	}
+	if base64.RawStdEncoding.EncodedLen(len(data)) > 2<<20 {
+		return MetadataEnvelope{}, metadataError(CodeMetadataInvalid)
+	}
 	message := append([]byte(metadataSignatureDomain), data...)
 	return MetadataEnvelope{MediaType: MetadataMediaType, Payload: base64.RawStdEncoding.EncodeToString(data), Signature: base64.RawStdEncoding.EncodeToString(ed25519.Sign(key, message))}, nil
 }

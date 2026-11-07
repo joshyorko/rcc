@@ -42,3 +42,14 @@ func TestMetadataSignerRequiresExplicitRevocationSnapshot(t *testing.T) {
 		t.Fatalf("missing reviewed snapshot did not fail before signing: %v", err)
 	}
 }
+
+func TestMetadataEnvelopeFileReadIsBounded(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "oversized.json")
+	if err := os.WriteFile(path, []byte(strings.Repeat(" ", (3<<20)+1)), 0600); err != nil {
+		t.Fatal(err)
+	}
+	var envelope artifacttrust.MetadataEnvelope
+	if err := readMetadataEnvelopeFile(path, &envelope); err == nil || !strings.Contains(err.Error(), "size limit") {
+		t.Fatalf("unbounded metadata input: %v", err)
+	}
+}

@@ -265,7 +265,7 @@
 ## 14 [AI and CI observability runbook](https://github.com/joshyorko/rcc/blob/main/docs/ai-ops-runbook.md#ai-and-ci-observability-runbook)
 ### 14.1 [What is measured](https://github.com/joshyorko/rcc/blob/main/docs/ai-ops-runbook.md#what-is-measured)
 ### 14.2 [Triage](https://github.com/joshyorko/rcc/blob/main/docs/ai-ops-runbook.md#triage)
-## 15 [Authenticated detached metadata v2 (implementation in progress)](https://github.com/joshyorko/rcc/blob/main/docs/authenticated-metadata-v2.md#authenticated-detached-metadata-v2-implementation-in-progress)
+## 15 [Authenticated detached metadata v2](https://github.com/joshyorko/rcc/blob/main/docs/authenticated-metadata-v2.md#authenticated-detached-metadata-v2)
 ### 15.1 [Threat boundary](https://github.com/joshyorko/rcc/blob/main/docs/authenticated-metadata-v2.md#threat-boundary)
 ### 15.2 [Format and authority](https://github.com/joshyorko/rcc/blob/main/docs/authenticated-metadata-v2.md#format-and-authority)
 ### 15.3 [Retained rollback admission](https://github.com/joshyorko/rcc/blob/main/docs/authenticated-metadata-v2.md#retained-rollback-admission)

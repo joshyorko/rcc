@@ -8,6 +8,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 )
@@ -81,6 +82,14 @@ func TestMetadataValidityAndIndependentAuthority(t *testing.T) {
 	delete(roots.Keys, p.KeyID)
 	if _, err := VerifyMetadata(e, roots, p.ArtifactDigest, at); err == nil {
 		t.Fatal("artifact signer or carrier must not supply metadata authority")
+	}
+}
+
+func TestMetadataSignerRejectsPayloadTooLargeForVerifier(t *testing.T) {
+	p, _, key, _ := metadataFixture(t)
+	p.Provenance.SourceRepository = strings.Repeat("a", 2<<20)
+	if _, err := SignMetadata(p, key); !metadataCodeIs(err, CodeMetadataInvalid) {
+		t.Fatalf("signer emitted unverifiable oversized payload: %v", err)
 	}
 }
 
