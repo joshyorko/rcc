@@ -42,6 +42,18 @@ The `sbom` field name remains in the v2 signed payload for wire compatibility.
 It may contain an RCC object inventory and must not be treated as a package
 SBOM by consumers.
 
+Released v18.19.9 and earlier verifiers do not understand the new inventory
+media type. Upgrade verifiers before producing it, or deliberately supply an
+existing canonical legacy-media inventory through `--inventory` for older
+consumers. Preserve that legacy media type and its signed bytes; changing the
+media type requires a newly authorized complete metadata snapshot. Keep the
+retained sequence namespace and journals during either migration. A metadata
+policy rejection may already have advanced the authenticated sequence floor, so
+recovery uses a higher sequence rather than deleting or restoring old state.
+Inventory-format compatibility does not give pre-v2 binaries authenticated
+metadata support. A client without v2 support cannot satisfy a deployment that
+requires authenticated v2 admission, even when its inventory format is readable.
+
 Publication stages the required trust set before committing the provider
 manifest, so a failed trust write leaves no visible manifest; a later retry can
 reuse the staged objects and commit atomically.
@@ -67,10 +79,3 @@ Credential values, provider URLs, and mutable operational metadata are not
 part of the signed message or object inventory model. Carrier paths, archive
 members, and HTTP URLs are validated before traversal, and malformed present
 attachments fail closed.
-
-Documentation receipt
-- Canonical guidance: this file, `authenticated-metadata-v2.md`, and `holotree.md`; distinguish the RCC object inventory from package SBOM coverage
-- Durable learning: legacy SPDX-labeled custom inventory media types and signed v2 bytes remain readable without relabeling
-- Evidence: pre-fix media-type regression reproduced; focused Environment Artifact Go tests and `go vet` passed on Linux/amd64 with cached Go 1.27.3; native CLI accepted `--inventory` and deprecated `--sbom`
-- Stale guidance removed: claims that the custom inventory contains installed package components
-- Remaining uncertainty: true package SBOM generation and Go 1.26.9 / macOS / Windows / Robot gates remain unverified
