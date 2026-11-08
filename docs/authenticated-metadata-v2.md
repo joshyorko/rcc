@@ -25,6 +25,13 @@ the exact canonical decoded payload bytes with a v2 domain separator. The
 snapshot cannot be assembled by mixing authenticated and legacy fields.
 Artifact identity and v1 Artifact signatures are unchanged.
 
+The payload's historical `sbom` field may contain RCC's immutable object
+inventory. Older envelopes label that custom JSON with the legacy SPDX-looking
+media type; RCC verifies and preserves those authenticated bytes unchanged.
+New generated inventories use RCC's inventory media type. Verification does
+not relabel or rewrite signed v2 payloads, and neither type claims package-level
+SBOM coverage.
+
 The encoded payload is limited to 2 MiB and a transported envelope to 3 MiB.
 Signing rejects snapshots the verifier cannot accept; CLI envelope reads are
 bounded before parsing. Oversized evidence must not be silently truncated.

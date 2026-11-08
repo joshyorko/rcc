@@ -29,7 +29,7 @@ type environmentPublishResult struct {
 
 func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *cobra.Command {
 	var robotFile, environmentFile, providerURL, trustCarrierPath, trustCarrierType string
-	var provenancePath, sbomPath, signaturesPath, revocationsPath string
+	var provenancePath, inventoryPath, signaturesPath, revocationsPath string
 	var signingKeyPath, signingKeyID string
 	var jsonOutput bool
 	command := &cobra.Command{
@@ -78,7 +78,7 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 			if err != nil {
 				return err
 			}
-			sbom, err := readTrustJSON[artifacttrust.SBOM](sbomPath)
+			inventory, err := readTrustJSON[artifacttrust.ObjectInventory](inventoryPath)
 			if err != nil {
 				return err
 			}
@@ -110,7 +110,7 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 			}
 			result, err := dependencies.publish(command.Context(), environmentlifecycle.PublishRequest{
 				RobotFile: robotFile, Provider: provider, Builder: builder,
-				TrustCarrier: trustCarrier, TrustProvenance: provenance, TrustSBOM: sbom,
+				TrustCarrier: trustCarrier, TrustProvenance: provenance, TrustInventory: inventory,
 				TrustSignatures: trustSignatures, TrustRevocations: trustRevocations,
 				TrustSigningKey: signingKey, TrustSigningKeyID: signingKeyID,
 			})
@@ -130,7 +130,9 @@ func newEnvironmentPublishCommand(dependencies environmentCommandDependencies) *
 	command.Flags().StringVar(&trustCarrierPath, "trust-carrier", "", "Trust carrier path or URL; defaults to the local RCC trust store.")
 	command.Flags().StringVar(&trustCarrierType, "trust-carrier-type", "auto", "Trust carrier type: filesystem, archive, or http.")
 	command.Flags().StringVar(&provenancePath, "provenance", "", "Optional provenance JSON; RCC generates one when omitted.")
-	command.Flags().StringVar(&sbomPath, "sbom", "", "Optional SBOM JSON; RCC generates one when omitted.")
+	command.Flags().StringVar(&inventoryPath, "inventory", "", "Optional RCC immutable object inventory JSON; RCC generates one when omitted. This is not a package SBOM.")
+	command.Flags().StringVar(&inventoryPath, "sbom", "", "Deprecated alias for --inventory; accepts legacy RCC object inventory JSON, not SPDX.")
+	_ = command.Flags().MarkDeprecated("sbom", "use --inventory; this input is an RCC object inventory, not a package SBOM")
 	command.Flags().StringVar(&signaturesPath, "signatures", "", "Optional detached signature array JSON.")
 	command.Flags().StringVar(&revocationsPath, "revocations", "", "Optional revocation array JSON.")
 	command.Flags().StringVar(&signingKeyPath, "signing-key", "", "Ed25519 private key file for post-manifest signing.")

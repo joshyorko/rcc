@@ -26,6 +26,7 @@ var (
 	ErrDivergentArtifact  = errors.New("divergent artifact for equivalent build key")
 	ErrUnverifiedArtifact = errors.New("artifact is not verified")
 	ErrClaimBusy          = errors.New("build claim is owned by another live builder")
+	ErrLockBusy           = errors.New("lock is busy")
 	ErrUnsafeState        = errors.New("unsafe coordinator state")
 	ErrWaitTimeout        = errors.New("timed out waiting for build artifact")
 	ErrStagingBoundary    = errors.New("executor did not use the claimed staging boundary")
@@ -1268,7 +1269,8 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 		return err
 	}
 	claim, outcome, err := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
-	if err != nil && !errors.Is(err, ErrClaimBusy) {
+	waitForLock := request.Wait && errors.Is(err, ErrLockBusy)
+	if err != nil && !errors.Is(err, ErrClaimBusy) && !waitForLock {
 		if request.LocalFallback {
 			_, fallbackErr := c.runFallback(ctx, request, key, build, err)
 			if fallbackErr == nil {
@@ -1284,7 +1286,7 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 	if outcome == ExistingArtifact {
 		return nil
 	}
-	if outcome == Waiting {
+	if outcome == Waiting || waitForLock {
 		if request.IndependentBuild {
 			policy, policyErr := request.Build.ExecutionPolicy(c.Root)
 			if policyErr != nil {
@@ -1310,8 +1312,23 @@ func (c *Filesystem) prewarmOne(ctx context.Context, request PrewarmRequest, key
 			if ok && c.verifyArtifact(artifact) == nil {
 				return nil
 			}
+			// A live claim already establishes that this caller must wait.
+			// Repeatedly taking and syncing the key lock here can starve the
+			// owner that needs that same lock to commit its verified result.
+			if !ok {
+				current, present, claimErr := c.readClaim(key)
+				if claimErr != nil {
+					return claimErr
+				}
+				if present && current.ExpiresAt.After(c.Clock.Now()) {
+					if err := waitBackoff(ctx, request.Backoff); err != nil {
+						return err
+					}
+					continue
+				}
+			}
 			retry, retryOutcome, claimErr := c.ClaimContext(ctx, key, request.Owner, request.LeaseTTL)
-			if claimErr != nil && !errors.Is(claimErr, ErrClaimBusy) {
+			if claimErr != nil && !errors.Is(claimErr, ErrClaimBusy) && !errors.Is(claimErr, ErrLockBusy) {
 				return claimErr
 			}
 			if retryOutcome == Claimed {
@@ -1497,7 +1514,7 @@ func (c *Filesystem) lock(ctx context.Context, key BuildKey) (func() error, erro
 		}
 		_ = f.Close()
 		if time.Now().After(deadline) {
-			return nil, fmt.Errorf("acquire build key lock: lock is busy")
+			return nil, fmt.Errorf("acquire build key lock: %w", ErrLockBusy)
 		}
 		timer := time.NewTimer(5 * time.Millisecond)
 		select {
