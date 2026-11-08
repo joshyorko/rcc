@@ -159,14 +159,18 @@ func TestEnvironmentAcquireArchiveArtifactIsAnExpectedIdentity(t *testing.T) {
 
 func writeArchiveManifestFixture(t *testing.T) (environmentartifact.Manifest, string) {
 	t.Helper()
-	platform := environmentartifact.Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}
+	platform := environmentartifact.CurrentPlatform()
 	builder := environmentartifact.Builder{Kind: "rcc-holotree-v12", RCCVersion: "v0.test", CompatibilityKey: "v12-gzip-sha256"}
 	compatibility := environmentartifact.CompatibilityRequirements{
 		SchemaVersion: 1, RelocationVersion: "holotree-v12-path-rewrite-v1",
 		Python:     environmentartifact.PythonRequirements{Implementation: "cpython", Version: "3.11.9", ABI: "cp311"},
-		OS:         environmentartifact.OSRequirements{Family: "linux", MinimumVersion: "1", KernelMinimum: "3.15", LibC: "glibc", LibCMinimum: "2.34", NativeArchitecture: "amd64", TranslationPolicy: "native-only", RequiredLibraries: []string{"libc.so.6"}},
-		CPU:        environmentartifact.CPURequirements{Architecture: "amd64", RequiredFeatures: []string{"sse2"}},
-		Filesystem: environmentartifact.FilesystemRequirements{CaseSensitive: true, Symlinks: true, LongPaths: true, MinimumMaxPath: 260},
+		OS:         environmentartifact.OSRequirements{Family: platform.OS, MinimumVersion: "1", KernelMinimum: "1", NativeArchitecture: platform.Arch, TranslationPolicy: "native-only", RequiredLibraries: []string{}},
+		CPU:        environmentartifact.CPURequirements{Architecture: platform.Arch, RequiredFeatures: []string{}},
+		Filesystem: environmentartifact.FilesystemRequirements{MinimumMaxPath: 208},
+	}
+	if platform.OS == "linux" {
+		compatibility.OS.LibC = "glibc"
+		compatibility.OS.LibCMinimum = "1"
 	}
 	specification := []byte(`{"dependencies":["python=3.10"]}`)
 	blueprint := []byte("legacy blueprint")
@@ -179,7 +183,7 @@ func writeArchiveManifestFixture(t *testing.T) (environmentartifact.Manifest, st
 		Specification:   environmentartifact.Specification{Descriptor: environmentartifact.Descriptor{MediaType: environmentartifact.SpecificationMediaType, Digest: environmentartifact.DigestBytes(specification), Size: int64(len(specification))}, SourceKind: "robot.yaml", Platform: platform, Builder: builder},
 		LegacyBlueprint: environmentartifact.LegacyBlueprint{Descriptor: environmentartifact.Descriptor{MediaType: environmentartifact.LegacyBlueprintMediaType, Digest: environmentartifact.DigestBytes(blueprint), Size: int64(len(blueprint))}, LegacyBlueprintKey: "0123456789abcdef"},
 		Platform:        platform, Builder: builder,
-		Catalogs:     []environmentartifact.CatalogDescriptor{{Descriptor: environmentartifact.Descriptor{MediaType: environmentartifact.CatalogV12MediaType, Digest: environmentartifact.DigestBytes(catalog), Size: int64(len(catalog))}, LegacyName: "0123456789abcdefv12.linux_amd64"}},
+		Catalogs:     []environmentartifact.CatalogDescriptor{{Descriptor: environmentartifact.Descriptor{MediaType: environmentartifact.CatalogV12MediaType, Digest: environmentartifact.DigestBytes(catalog), Size: int64(len(catalog))}, LegacyName: "0123456789abcdefv12." + platform.RCCPlatform}},
 		ObjectIndex:  environmentartifact.Descriptor{MediaType: environmentartifact.ObjectIndexMediaType, Digest: environmentartifact.DigestBytes(objectIndex), Size: int64(len(objectIndex))},
 		Requirements: environmentartifact.Requirements{CatalogReader: "v12", Encoding: "gzip", LegacyLogicalDigestAlgorithm: "sha256", RequiredFeatures: []string{}, Compatibility: compatibility},
 	}
