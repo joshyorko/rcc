@@ -621,7 +621,7 @@ jobs:
           set -euo pipefail
           export RCC_ACCEPTANCE_BINARY="$RCC_REAL_BINARY"
           export RCC_METADATA_EVIDENCE="$PWD/tmp/output/metadata-security"
-          go test -count=1 ./cmd -run '^TestMetadataSecurityRealCLI$' -v
+          go test -count=1 ./cmd -run '^(TestMetadataSecurityRealCLI|TestEnvironmentArchive.*|TestEnvironmentAcquireRequiresArchiveForArchiveTrustConsumption|TestArchiveTrustDestinationIsScopedToArchiveBytes|TestEnvironmentAcquireArchiveArtifactIsAnExpectedIdentity|TestStageEnvironmentArchiveRejectsDirectoriesBeforeCreatingState)$' -v
           go test -count=1 ./artifacttrust -run '^TestMetadata' -v
           go test -count=1 ./environmentlifecycle -run '^TestMetadata' -v
       - name: Show commit info
