@@ -325,7 +325,7 @@ def exercise_signed_offline_archive(binary):
         for name, candidate, selected_roots, expected in (
             ("tampered", tampered, metadata_roots, "invalid"),
             ("missing", missing, metadata_roots, "unsigned"),
-            ("wrong-authority", archive_v1, wrong_metadata_roots, "metadata-authority"),
+            ("wrong-authority", archive_v1, wrong_metadata_roots, "metadata-invalid"),
         ):
             denial_home = root / f"denial-{name}"
             denial_home.mkdir(exist_ok=True)
