@@ -1,6 +1,58 @@
 # rcc change log
 ## Unreleased
 
+<a name="v181910"></a>
+## v18.19.10 (date: 08.11.2026)
+
+### Operator revocation lifecycle
+
+- add public commands to issue, renew, revoke and distribute authenticated v2
+  metadata snapshots without rebuilding or republishing the Artifact. Support
+  independent metadata authority, complete deny sets, sequence checkpoints,
+  delivery receipts, authorized key rotation and recovery (GH#254, PR#270)
+- admit new strict leases after valid renewal for the same Artifact digest.
+  Revoked snapshots deny new leases while an already-running child retains its
+  original decision. Preserve retained anti-rollback state across renewal,
+  rotation and recovery. Deployments still require independent roots and an
+  initial sequence floor, trusted time and retained state. Offline workers cannot
+  know globally latest unseen state. Host compromise, trusted-disk rollback and
+  power-loss durability remain outside these guarantees (PR#270)
+
+### Signed offline archives
+
+- let public `env export` explicitly select a trust carrier and include detached
+  evidence with `--include-trust-attachments`. Let `env acquire` consume that
+  evidence with `--consume-archive-trust` and return the selected carrier path
+  for strict execution on an independent offline worker (GH#255, PR#275)
+- bind consumed evidence to a bounded snapshot of the selected archive bytes,
+  so a warm home cannot borrow metadata omitted from another archive. Retain
+  path and size checks, require a matching expected `--artifact` when supplied,
+  and keep deployment roots and sequence state independent of archive contents.
+  Archive keys are not automatically trusted, and import does not enable a
+  permissive fallback (PR#275)
+
+### Truthful object inventory
+
+- identify generated records as RCC object inventory with
+  `application/vnd.rcc.environment.inventory.v1+json`, not SPDX or an installed
+  package SBOM. Prefer `env publish --inventory` while retaining historical
+  aliases. Leave unknown software versions empty and keep complete object
+  hashes, allowing JAT-sized inventories within the unchanged v2 evidence
+  limits without dropping entries (GH#257, PR#271)
+- preserve authenticated legacy inventory bytes without relabeling them.
+  Released v18.19.9 verifiers reject the new media type. Upgrade verifiers first
+  or explicitly supply canonical legacy inventory. Recovery after a later
+  policy denial can require a higher sequence in the same journal, never a
+  state reset. Genuine schema-validated package SBOM work remains separate
+  GH#272. Object inventory and package observations do not establish package
+  CVE or license coverage (PR#271)
+
+### Prewarm coordination
+
+- retry transient lock contention and avoid starving publication while a live
+  build claim exists. Keep verified Artifact readiness, claim ownership,
+  cancellation and non-waiting behavior intact (GH#273, PR#274)
+
 <a name="v18199"></a>
 ## v18.19.9 (date: 07.11.2026)
 
