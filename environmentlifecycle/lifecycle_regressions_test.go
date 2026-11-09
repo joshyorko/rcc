@@ -179,6 +179,54 @@ func TestGCDryRunPreservesProvisionalRecordsAndReferenceRoot(t *testing.T) {
 	}
 }
 
+func TestGCDryRunPreservesReadyMaterialization(t *testing.T) {
+	m := acquiredMaterialization(t)
+	sentinel := filepath.Join(m.Path, "dry-run-sentinel")
+	want := []byte("ready environment must survive dry-run")
+	if err := os.WriteFile(sentinel, want, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	paths := []string{
+		sentinel,
+		filepath.Join(recordRoot(), m.ArtifactDigest.Hex(), string(stateReady)+".json"),
+		filepath.Join(recordRoot(), m.ArtifactDigest.Hex(), "references.json"),
+	}
+	before := make(map[string][]byte)
+	for _, path := range paths {
+		content, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		before[path] = content
+	}
+	report, err := Collect(context.Background(), GCPolicy{DryRun: true, Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.ReclaimableBytes == 0 || report.ReclaimedBytes != 0 {
+		t.Errorf("dry-run did not preview an eligible environment without deleting bytes: %+v", report)
+	}
+	for _, path := range paths {
+		got, err := os.ReadFile(path)
+		if err != nil || !bytes.Equal(got, before[path]) {
+			t.Errorf("dry-run changed %s: %v", path, err)
+		}
+	}
+	if t.Failed() {
+		return
+	}
+	report, err = Collect(context.Background(), GCPolicy{Pressure: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Reclaimed != 1 || report.ReclaimedBytes == 0 {
+		t.Fatalf("real collection did not reclaim the previewed environment: %+v", report)
+	}
+	if _, err := os.Stat(m.Path); !os.IsNotExist(err) {
+		t.Fatalf("real collection retained the environment: %v", err)
+	}
+}
+
 func TestGCRejectsProviderOnlyContentRoot(t *testing.T) {
 	previousHome := common.Product.Home()
 	previousShared := common.SharedHolotree
