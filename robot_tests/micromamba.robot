@@ -19,8 +19,6 @@ Prepare Micromamba Home
         ${executable}=    Set Variable    ${home}/micromamba/v2.10.0/micromamba
     END
     Set Suite Variable    ${micromamba_executable}    ${executable}
-    ${rcc}=    Evaluate    os.path.abspath("build/rcc.exe" if os.name == "nt" else "build/rcc")    modules=os
-    Set Suite Variable    ${rcc_executable}    ${rcc}
 
 Restore Micromamba Home
     Set Environment Variable    ROBOCORP_HOME    ${original_home}
@@ -41,8 +39,8 @@ Cold Conda Build Includes Pip Packages And Activation
 List Json Contains Packages And Produces Golden Inventory
     Step    build/rcc ht vars --space micromamba-upgrade --controller citests robot_tests/uv_system_flag/conda.yaml
     ${prefix}=    Extract Env Value    ${robot_stdout}    CONDA_PREFIX
-    # Match goldenMaster's activated environment instead of the CI host PATH.
-    ${result}=    Run Process    ${rcc_executable}    task    script    --no-build    -r    ${EXECDIR}/robot_tests/micromamba/robot.yaml    --space    micromamba-upgrade    --controller    citests    --    ${micromamba_executable}    list    --json    --no-rc    -p    ${prefix}    timeout=30s    on_timeout=kill
+    # Robot 6.1 waits before draining PIPE output; verbose JSON needs file-backed capture.
+    ${result}=    Run Process    ${micromamba_executable}    list    --json    --no-rc    -p    ${prefix}    stdout=${micromamba_home}/package-list.json    stderr=${micromamba_home}/package-list.stderr    timeout=30s    on_timeout=kill
     IF    ${result.rc} != 0
         Log To Console    ${result.stderr}
         Log To Console    ${result.stdout}
