@@ -1,0 +1,25 @@
+---
+title: "RCC child execution and lease lifetime"
+---
+stateDiagram-v2
+  s0: Execution requested
+  s1: Lease held
+  s2: Command and supervisor prepared
+  s3: Child not started#59; cleanup pending
+  s4: Failure returned
+  s5: Child running under lease
+  s6: Child termination requested
+  s7: Child reaped#59; cleanup pending
+  s8: Execution succeeded
+  [*] --> s0
+  s0 --> s1: acquire execution lease
+  s1 --> s2: resolve command and prepare supervisor
+  s1 --> s3: command or setup rejected
+  s2 --> s5: start child
+  s3 --> s4: release lease and return result or lease release fails#59; return error
+  s2 --> s3: child cannot start
+  s5 --> s6: cancel or fail supervisor attachment
+  s5 --> s7: wait for child
+  s6 --> s7: wait for child
+  s7 --> s4: release lease and return result or lease release fails#59; return error
+  s7 --> s8: release lease and return result

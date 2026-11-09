@@ -1,0 +1,25 @@
+{
+  "model": "BuildCoordination.tla",
+  "sha256": "ebf8bc1a3e9f5fdadad6d90b6bebf9d2743e574614d7cc5269c57637ce90a906",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "NoStaleFirstPublication",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

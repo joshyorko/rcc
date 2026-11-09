@@ -1,0 +1,25 @@
+{
+  "model": "ProcessExecution.tla",
+  "sha256": "68236a657ace20e83a994c197cbfdb3da28ea45bbbe6541245707eef327aedd2",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "LeaseUntilReaped",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

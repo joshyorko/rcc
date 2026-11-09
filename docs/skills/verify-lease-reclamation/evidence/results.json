@@ -1,0 +1,25 @@
+{
+  "model": "LeaseReclamation.tla",
+  "sha256": "278702dbaeedb966b1a484477baf0f7d9a7056bde5ed8b7a05003c0973e658b9",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "NoProtectedDeletion",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

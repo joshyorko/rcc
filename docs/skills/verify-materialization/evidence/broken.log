@@ -1,0 +1,43 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 59 and seed -4826733808166465817 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 82576] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/final-check-Materialization/Materialization.tla
+Parsing file /tmp/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module Materialization
+Starting... (2026-11-09 13:36:01)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-09 13:36:01.
+Error: Invariant ReadyOnlyAfterValidation is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ checked = FALSE
+/\ restored = FALSE
+/\ crashed = FALSE
+/\ phase = "absent"
+/\ ready = FALSE
+
+State 2: <VerifyContent line 8, col 18 to line 9, col 67 of module Materialization>
+/\ checked = FALSE
+/\ restored = FALSE
+/\ crashed = FALSE
+/\ phase = "verified"
+/\ ready = FALSE
+
+State 3: <BeginRestore line 10, col 17 to line 11, col 66 of module Materialization>
+/\ checked = FALSE
+/\ restored = FALSE
+/\ crashed = FALSE
+/\ phase = "restoring"
+/\ ready = FALSE
+
+State 4: <PublishReady line 20, col 17 to line 22, col 59 of module Materialization>
+/\ checked = FALSE
+/\ restored = FALSE
+/\ crashed = FALSE
+/\ phase = "ready"
+/\ ready = TRUE
+
+7 states generated, 7 distinct states found, 3 states left on queue.
+The depth of the complete state graph search is 4.
+The average outdegree of the complete state graph is 2 (minimum is 1, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:36:01)

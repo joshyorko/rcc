@@ -1,0 +1,57 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 128 and seed 346964666141259077 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 80034] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/check-MetadataDistribution/MetadataDistribution.tla
+Parsing file /tmp/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module MetadataDistribution
+Starting... (2026-11-09 13:35:05)
+Computing initial states...
+Computed 2 initial states...
+Computed 4 initial states...
+Finished computing initial states: 8 distinct states generated at 2026-11-09 13:35:06.
+Error: Invariant DistributedOnlyAfterRetention is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ offered = 1
+/\ authenticated = TRUE
+/\ readBack = FALSE
+/\ retained = FALSE
+/\ phase = "received"
+/\ checkpoint = 0
+
+State 2: <Authenticate line 16, col 17 to line 18, col 87 of module MetadataDistribution>
+/\ offered = 1
+/\ authenticated = TRUE
+/\ readBack = FALSE
+/\ retained = FALSE
+/\ phase = "authenticated"
+/\ checkpoint = 0
+
+State 3: <Retain line 20, col 11 to line 24, col 59 of module MetadataDistribution>
+/\ offered = 1
+/\ authenticated = TRUE
+/\ readBack = FALSE
+/\ retained = FALSE
+/\ phase = "retained"
+/\ checkpoint = 0
+
+State 4: <Write line 33, col 10 to line 34, col 80 of module MetadataDistribution>
+/\ offered = 1
+/\ authenticated = TRUE
+/\ readBack = FALSE
+/\ retained = FALSE
+/\ phase = "written"
+/\ checkpoint = 0
+
+State 5: <ReadBack line 40, col 13 to line 42, col 73 of module MetadataDistribution>
+/\ offered = 1
+/\ authenticated = TRUE
+/\ readBack = TRUE
+/\ retained = FALSE
+/\ phase = "distributed"
+/\ checkpoint = 0
+
+40 states generated, 27 distinct states found, 2 states left on queue.
+The depth of the complete state graph search is 5.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:35:06)

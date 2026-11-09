@@ -1,0 +1,33 @@
+---
+title: "RCC build ownership and stale publication"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: result
+    lg1: ownership
+  }
+  class lg0 teal
+  class lg1 blue
+  s0: Build requested
+  s1: First builder owns claim
+  s2: First claim expired
+  s3: Artifact committed by live owner
+  s4: Expired publication rejected
+  s5: Successor owns claim
+  s6: Stale publication rejected
+  [*] --> s0
+  s0 --> s1: claim build
+  s1 --> s2: claim expires
+  s1 --> s3: owner publishes verified result
+  s2 --> s4: first builder tries to publish
+  s2 --> s5: another builder takes over
+  s5 --> s6: first builder tries to publish
+  s5 --> s3: owner publishes verified result
+  s6 --> s3: owner publishes verified result
+  class s0 blue
+  class s1 blue
+  class s2 blue
+  class s3 teal
+  class s4 blue
+  class s5 blue
+  class s6 blue

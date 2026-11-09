@@ -1,0 +1,30 @@
+---
+title: "RCC bundle task and output finalization"
+---
+stateDiagram-v2
+  s0: Bundle presented
+  s1: Environment and task prepared
+  s2: Bundle setup rejected
+  s3: Task running
+  s4: Task failed#59; outputs open
+  s5: Task succeeded#59; outputs open
+  s6: Outputs closed#59; copy pending
+  s7: Output copy failed
+  s8: Outputs saved
+  s9: Output failure returned
+  s10: Task failure returned
+  s11: Command succeeded
+  [*] --> s0
+  s0 --> s1: import environment and extract task
+  s0 --> s2: bundle or task setup fails
+  s1 --> s2: bundle or task setup fails
+  s1 --> s3: run selected task
+  s3 --> s4: child fails or execution is cancelled
+  s3 --> s5: child exits successfully
+  s4 --> s6: close output streams
+  s5 --> s6: close output streams
+  s6 --> s7: artifact copy fails
+  s6 --> s8: copy artifacts back
+  s7 --> s9: report output copy failure
+  s8 --> s10: report task failure with saved outputs
+  s8 --> s11: report task and output success

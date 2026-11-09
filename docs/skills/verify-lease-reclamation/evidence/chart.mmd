@@ -1,0 +1,44 @@
+---
+title: "RCC lease protection and reclamation"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: protected
+    lg1: reclaim
+    lg2: complete
+  }
+  class lg0 teal
+  class lg1 orange
+  class lg2 blue
+  s0: Ready without lease
+  s1: Dry run: storage preserved
+  s2: Environment removed#59; ready record remains
+  s3: Active owner protects environment
+  s4: Unknown owner protects environment
+  s5: Owner exited#59; stale lease remains
+  s6: Ready record removed#59; live root protects content
+  s7: Root retired#59; content eligible
+  s8: Unreferenced content reclaimed
+  [*] --> s0
+  [*] --> s1
+  s0 --> s2: collection removes an eligible environment
+  s0 --> s3: execution obtains a lease
+  s2 --> s6: collection removes the ready record
+  s3 --> s0: lease holder releases the lease
+  s3 --> s4: owner identity cannot be established
+  s3 --> s5: owner exits or its process identity changes
+  s4 --> s0: lease holder releases the lease
+  s4 --> s3: owner identity matches again
+  s4 --> s5: owner exits or its process identity changes
+  s5 --> s0: reconciliation removes a positively stale lease or lease holder releases the lease
+  s6 --> s7: collection retires the reference root
+  s7 --> s8: pressure collection reclaims eligible content
+  class s0 teal
+  class s1 teal
+  class s2 orange
+  class s3 teal
+  class s4 teal
+  class s5 teal
+  class s6 orange
+  class s7 orange
+  class s8 blue

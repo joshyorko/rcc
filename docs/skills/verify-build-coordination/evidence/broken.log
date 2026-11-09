@@ -1,0 +1,39 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 95 and seed 2031440233166852392 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 82418] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/final-check-BuildCoordination/BuildCoordination.tla
+Parsing file /tmp/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module BuildCoordination
+Starting... (2026-11-09 13:35:59)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-09 13:36:00.
+Error: Invariant NoStaleFirstPublication is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ live = FALSE
+/\ owner = 0
+/\ published = 0
+/\ phase = "unclaimed"
+
+State 2: <Claim line 7, col 10 to line 9, col 31 of module BuildCoordination>
+/\ live = TRUE
+/\ owner = 1
+/\ published = 0
+/\ phase = "building"
+
+State 3: <Expire line 10, col 11 to line 11, col 43 of module BuildCoordination>
+/\ live = FALSE
+/\ owner = 1
+/\ published = 0
+/\ phase = "expired"
+
+State 4: <PublishOld line 18, col 15 to line 22, col 42 of module BuildCoordination>
+/\ live = FALSE
+/\ owner = 1
+/\ published = 1
+/\ phase = "committed"
+
+6 states generated, 6 distinct states found, 2 states left on queue.
+The depth of the complete state graph search is 4.
+The average outdegree of the complete state graph is 2 (minimum is 1, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:36:00)

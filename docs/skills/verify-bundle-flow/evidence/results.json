@@ -1,0 +1,28 @@
+{
+  "model": "BundleFlow.tla",
+  "sha256": "489a3906df4924a9eb2057e92ef4bdc53b28968d274d23f8de9dae3c8c49c986",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "timed_out": false,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "timed_out": false,
+      "expected_violation": "NoFalseSuccess",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "timed_out": false,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

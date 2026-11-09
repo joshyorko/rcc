@@ -1,0 +1,5 @@
+export const title = "RCC environment acquisition and readiness";
+export const state = v => ({absent:"Artifact requested", verified:"Content verified", restoring:"Restoring environment", restored:"Environment restored", validated:"Executable and compatibility checked", ready:v.restored && v.checked ? "Ready for lease admission" : "Ready published before validation", interrupted:"Restore interrupted", failed:"Acquisition failed"})[v.phase];
+export const step = a => ({VerifyContent:"verify artifact content", BeginRestore:"begin restoration", Restore:"restore completes", RejectRestore:"restoration fails", Validate:"executable and compatibility checks pass", RejectValidation:"executable or compatibility check fails", PublishReady:"publish readiness", Crash:"process crashes", Reconcile:"discard provisional intent and retry", Done:"retain outcome"})[a] ?? a;
+export const group = v => v.phase === "ready" ? "ready" : v.phase === "failed" ? "failure" : "progress";
+export const colors = {ready:"teal", failure:"orange", progress:"blue"};
