@@ -40,6 +40,7 @@ def _archive_with_members(members):
 
 @contextmanager
 def _working_directory(directory):
+  """Restore the caller's cwd before temporary-directory cleanup, including on Windows."""
   previous = Path.cwd()
   try:
     os.chdir(directory)
@@ -50,11 +51,13 @@ def _working_directory(directory):
 
 class MicromambaDownloadTests(unittest.TestCase):
   def test_asset_generation_replaces_stale_binaries_and_reuses_verified_bytes(self):
+    """Reject stale or corrupt executables while retaining verified, reproducible assets."""
     archive = _archive_bytes()
     binary_digest = hashlib.sha256(b"micromamba").hexdigest()
     arches = ("linux_amd64", "darwin_amd64", "darwin_arm64", "windows_amd64")
 
     def download(url, destination, **kwargs):
+      """Supply the real archive layouts without a network dependency."""
       # The Windows archive has a different executable member.
       if "/win-64/" in url:
         stream = io.BytesIO()
@@ -433,6 +436,59 @@ class MicromambaDownloadTests(unittest.TestCase):
 
     self.assertEqual(len(calls), 3)
     self.assertEqual(sleeps, [10, 20])
+
+
+class MicromambaAcceptanceBinaryTests(unittest.TestCase):
+  """Keep acceptance bound to the candidate and preserve staged CI artifacts."""
+
+  def test_local_acceptance_builds_current_candidate_even_if_missing_or_stale(self):
+    """Standalone acceptance must replace stale bytes and build an absent candidate."""
+    for stale in (False, True):
+      with self.subTest(stale=stale), tempfile.TemporaryDirectory() as directory, _working_directory(directory):
+        binary = Path("build/rcc.exe" if os.name == "nt" else "build/rcc")
+        if stale:
+          binary.parent.mkdir()
+          binary.write_bytes(b"stale candidate")
+
+        def run(argv, **kwargs):
+          """Emulate only the build boundary while leaving observable candidate bytes."""
+          if argv[:2] == ["go", "build"]:
+            Path(argv[argv.index("-o") + 1]).write_bytes(b"current candidate")
+          return subprocess.CompletedProcess(argv, 0)
+
+        with mock.patch.dict(os.environ, {"RCC_REAL_BINARY": "", "RCC_REAL_BINARY_SHA256": ""}), mock.patch.object(tasks.subprocess, "run", side_effect=run):
+          tasks.micromambaAcceptance.body(mock.Mock())
+        self.assertTrue(binary.is_file(), "acceptance did not build the missing candidate")
+        self.assertEqual(binary.read_bytes(), b"current candidate")
+
+  def test_ci_acceptance_preserves_digest_verified_staged_candidate(self):
+    """CI acceptance must execute its verified artifact without rebuilding it."""
+    with tempfile.TemporaryDirectory() as directory, _working_directory(directory):
+      binary = Path("build/rcc.exe" if os.name == "nt" else "build/rcc")
+      binary.parent.mkdir()
+      binary.write_bytes(b"staged CI candidate")
+
+      def run(argv, **kwargs):
+        """Refuse any build attempt while allowing the isolated test commands."""
+        self.assertNotEqual(argv[:2], ["go", "build"], "must not overwrite the staged CI binary")
+        return subprocess.CompletedProcess(argv, 0)
+
+      with mock.patch.dict(os.environ, {"RCC_REAL_BINARY": str(binary.resolve()), "RCC_REAL_BINARY_SHA256": hashlib.sha256(binary.read_bytes()).hexdigest()}), mock.patch.object(tasks.subprocess, "run", side_effect=run):
+        tasks.micromambaAcceptance.body(mock.Mock())
+      self.assertEqual(binary.read_bytes(), b"staged CI candidate")
+
+  def test_ci_acceptance_rejects_unbound_or_mismatched_candidate_without_overwrite(self):
+    """Reject partial bindings, foreign paths and tampered bytes without modifying them."""
+    with tempfile.TemporaryDirectory() as directory, _working_directory(directory):
+      binary = Path("build/rcc.exe" if os.name == "nt" else "build/rcc")
+      binary.parent.mkdir()
+      binary.write_bytes(b"staged CI candidate")
+      digest = hashlib.sha256(binary.read_bytes()).hexdigest()
+      for staged, expected in ((str(binary.resolve()), "0" * 64), (str(binary.resolve()), ""), ("", digest), (str(Path("foreign-rcc").resolve()), digest)):
+        with self.subTest(staged=staged, expected=expected), mock.patch.dict(os.environ, {"RCC_REAL_BINARY": staged, "RCC_REAL_BINARY_SHA256": expected}), mock.patch.object(tasks.subprocess, "run", return_value=subprocess.CompletedProcess([], 0)):
+          with self.assertRaises(RuntimeError):
+            tasks.micromambaAcceptance.body(mock.Mock())
+          self.assertEqual(binary.read_bytes(), b"staged CI candidate")
 
 
 if __name__ == "__main__":

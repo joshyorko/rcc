@@ -15,8 +15,8 @@ import (
 	"github.com/joshyorko/rcc/hamlet"
 )
 
-// Runs the actual platform-specific embedded executable; cross-compilation is
-// deliberately insufficient to satisfy this check.
+// TestEmbeddedMicromambaVersionAndSideBySideExtraction runs the native embedded
+// executable, so cross-compilation is insufficient to satisfy this check.
 func TestEmbeddedMicromambaVersionAndSideBySideExtraction(t *testing.T) {
 	home := t.TempDir()
 	previousHome := common.Product.Home()

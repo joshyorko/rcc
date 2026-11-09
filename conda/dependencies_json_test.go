@@ -2,6 +2,7 @@ package conda
 
 import "testing"
 
+// TestParseDependenciesJSON preserves legacy arrays and validates wrapped micromamba listings.
 func TestParseDependenciesJSON(t *testing.T) {
 	for _, tc := range []struct {
 		name, origin, output string

@@ -1,3 +1,5 @@
+"""Check package layering, activation identity and nonzero task propagation."""
+
 import os
 import sys
 from pathlib import Path

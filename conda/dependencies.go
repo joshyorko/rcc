@@ -72,6 +72,7 @@ func (it dependencies) Lookup(name string, pypi bool) (*dependency, bool) {
 	return nil, false
 }
 
+// parseDependencies accepts legacy package arrays and micromamba's wrapped listing.
 func parseDependencies(origin string, output []byte) (dependencies, error) {
 	result := make(dependencies, 0, 100)
 	if origin == "mamba" && bytes.HasPrefix(bytes.TrimSpace(output), []byte("{")) {

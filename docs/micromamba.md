@@ -79,6 +79,10 @@ environment identity and package inventory.
 
 ## Native acceptance boundary
 
+The [repository verification models](skills/README.md) check bounded artifact
+workflow contracts. They do not model legacy conda solving or embedded dependency
+pins; passing those checks does not qualify a micromamba upgrade.
+
 `micromambaAcceptance` runs offline download-integrity regressions, executes the
 native embedded binary, verifies versioned extraction, then runs a real
 conda-forge fixture with pip layering, package JSON, activation, warm reuse and

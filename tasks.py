@@ -884,13 +884,33 @@ def test(c, cover=False):
         c.run("go test ./...")
 
 
-@task
+def _prepare_micromamba_acceptance_binary():
+    """Build the local candidate or verify CI's pre-staged binary without replacing it."""
+    binary = Path("build") / ("rcc.exe" if os.name == "nt" else "rcc")
+    staged = os.environ.get("RCC_REAL_BINARY")
+    expected = os.environ.get("RCC_REAL_BINARY_SHA256")
+    if staged or expected:
+        if not staged or not expected:
+            raise RuntimeError("staged RCC acceptance requires both its path and SHA-256")
+        if Path(staged).resolve() != binary.resolve() or not binary.is_file():
+            raise RuntimeError("staged RCC acceptance binary does not match the Robot candidate path")
+        if hashlib.sha256(binary.read_bytes()).hexdigest() != expected:
+            raise RuntimeError("staged RCC acceptance binary SHA-256 mismatch")
+    else:
+        binary.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["go", "build", "-ldflags", "-s", "-o", str(binary), "./cmd/rcc"],
+                       env={**os.environ, "CGO_ENABLED": "0"}, check=True)
+    return binary
+
+
+@task(pre=[assets])
 def micromambaAcceptance(c):
     """Verify download integrity and the native embedded micromamba runtime."""
     c.run(f"{PYTHON} -m unittest scripts/test_micromamba_tasks.py")
     subprocess.run(["go", "test", "-count=1", "./conda", "-run",
                     "^Test(EmbeddedMicromambaVersionAndSideBySideExtraction|ParseDependenciesJSON)$", "-v"],
                    env={**os.environ, "CGO_ENABLED": "0"}, check=True)
+    _prepare_micromamba_acceptance_binary()
     output = os.environ.get("RCC_MICROMAMBA_TEST_OUTPUT", "tmp/output/micromamba")
     subprocess.run([sys.executable, "-m", "robot", "-L", "DEBUG", "-d", output,
                     "robot_tests/micromamba.robot"], check=True)

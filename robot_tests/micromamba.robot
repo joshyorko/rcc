@@ -19,6 +19,8 @@ Prepare Micromamba Home
         ${executable}=    Set Variable    ${home}/micromamba/v2.10.0/micromamba
     END
     Set Suite Variable    ${micromamba_executable}    ${executable}
+    ${rcc}=    Evaluate    os.path.abspath("build/rcc.exe" if os.name == "nt" else "build/rcc")    modules=os
+    Set Suite Variable    ${rcc_executable}    ${rcc}
 
 Restore Micromamba Home
     Set Environment Variable    ROBOCORP_HOME    ${original_home}
@@ -39,7 +41,12 @@ Cold Conda Build Includes Pip Packages And Activation
 List Json Contains Packages And Produces Golden Inventory
     Step    build/rcc ht vars --space micromamba-upgrade --controller citests robot_tests/uv_system_flag/conda.yaml
     ${prefix}=    Extract Env Value    ${robot_stdout}    CONDA_PREFIX
-    ${result}=    Run Process    ${micromamba_executable}    list    --json    --no-rc    -p    ${prefix}    timeout=30s    on_timeout=kill
+    # Match goldenMaster's activated environment instead of the CI host PATH.
+    ${result}=    Run Process    ${rcc_executable}    task    script    --no-build    -r    ${EXECDIR}/robot_tests/micromamba/robot.yaml    --space    micromamba-upgrade    --controller    citests    --    ${micromamba_executable}    list    --json    --no-rc    -p    ${prefix}    timeout=30s    on_timeout=kill
+    IF    ${result.rc} != 0
+        Log To Console    ${result.stderr}
+        Log To Console    ${result.stdout}
+    END
     Should Be Equal As Integers    ${result.rc}    0
     ${listing}=    Evaluate    json.loads($result.stdout)    modules=json
     ${packages}=    Set Variable    ${listing}[packages]
@@ -52,6 +59,8 @@ List Json Contains Packages And Produces Golden Inventory
 Warm Restore Executes With Offline Configuration
     # Offline switches and dead proxies exercise restored execution without a
     # dependency fetch; network-namespace isolation remains a separate Linux gate.
+    Step    build/rcc run -r robot_tests/micromamba/robot.yaml -t probe --space micromamba-upgrade --controller citests
+    Must Have    MICROMAMBA_ACCEPTANCE_OK
     ${saved_network}=    Evaluate    {key: os.environ[key] for key in ("CONDA_OFFLINE", "MAMBA_OFFLINE", "HTTP_PROXY", "HTTPS_PROXY") if key in os.environ}    modules=os
     Set Environment Variable    CONDA_OFFLINE    true
     Set Environment Variable    MAMBA_OFFLINE    true
