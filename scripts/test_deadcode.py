@@ -72,6 +72,10 @@ class FakeRunner:
         self.calls.append((command, details))
         if command[:2] == ["go", "env"]:
             return self.env
+        if command[:2] == ["git", "rev-parse"]:
+            return subprocess.CompletedProcess(args=command, returncode=0, stdout="abc123\n", stderr="")
+        if command[:2] == ["git", "status"]:
+            return subprocess.CompletedProcess(args=command, returncode=0, stdout="", stderr="")
         return self.analyzer
 
 
@@ -118,7 +122,7 @@ class DeadcodeTests(unittest.TestCase):
             """RCC DEAD CODE REPORT
 Analyzer: golang.org/x/tools/cmd/deadcode v0.48.0
 Target: linux/amd64 (CGO_ENABLED=0)
-Scope: ./... (tests included)
+Scope: ./... (application reachability plus test reachability)
 Result: 2 unreachable functions across 2 packages
 
 github.com/joshyorko/rcc/pretty
@@ -128,6 +132,8 @@ github.com/joshyorko/rcc/wizard
   wizard/common.go:27:6  memberValidation
 
 Advisory: Review findings before deletion; results are specific to this target.
+Source revision: see invocation metadata
+Working tree: see invocation metadata
 """,
             report,
         )
@@ -170,13 +176,15 @@ Advisory: Review findings before deletion; results are specific to this target.
             runner.calls[0][0],
         )
         self.assertEqual(
-            ["go", "tool", "deadcode", "-json", "-test", "./..."],
+            ["go", "tool", "deadcode", "-json", "./..."],
             runner.calls[1][0],
         )
         self.assertEqual(Path("/repo"), runner.calls[1][1]["cwd"])
         self.assertEqual("0", runner.calls[1][1]["env"]["CGO_ENABLED"])
         self.assertEqual("2", runner.calls[1][1]["env"]["GO_TELEMETRY_CHILD"])
         self.assertIn("Target: linux/amd64", stdout.getvalue())
+        self.assertIn("Source revision: abc123", stdout.getvalue())
+        self.assertEqual(["go", "tool", "deadcode", "-json", "-test", "./..."], runner.calls[2][0])
 
     def test_cli_ignores_inherited_cross_target_overrides(self):
         runner = FakeRunner()

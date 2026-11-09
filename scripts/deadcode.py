@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import hashlib
 import subprocess
 import sys
 from itertools import groupby
@@ -36,6 +37,11 @@ class Finding(NamedTuple):
 def create_parser():
     parser = argparse.ArgumentParser(
         description="Report Go functions unreachable on the current RCC target."
+    )
+    parser.add_argument(
+        "--review",
+        action="store_true",
+        help="Include repository review instructions for turning findings into bounded briefs.",
     )
     parser.add_argument(
         "--summary",
@@ -107,7 +113,7 @@ def format_report(findings, config, summary=False):
         "RCC DEAD CODE REPORT",
         f"Analyzer: {ANALYZER} {ANALYZER_VERSION}",
         f"Target: {config.goos}/{config.goarch} (CGO_ENABLED=0)",
-        "Scope: ./... (tests included)",
+        "Scope: ./... (application reachability plus test reachability)",
     ]
 
     if findings:
@@ -135,7 +141,19 @@ def format_report(findings, config, summary=False):
             "Advisory: Review findings before deletion; results are specific to this target.",
         )
     )
+    lines.extend(("Source revision: see invocation metadata", "Working tree: see invocation metadata"))
     return "\n".join(lines) + "\n"
+
+
+def source_metadata(runner, repo_root):
+    revision = runner(["git", "rev-parse", "HEAD"], cwd=repo_root, capture_output=True, text=True)
+    if revision.returncode:
+        raise AnalysisError("could not determine source revision")
+    status = runner(["git", "status", "--porcelain=v1", "--untracked-files=all"], cwd=repo_root, capture_output=True, text=True)
+    if status.returncode:
+        raise AnalysisError("could not determine working-tree state")
+    fingerprint = hashlib.sha256(status.stdout.encode()).hexdigest()
+    return revision.stdout.strip(), fingerprint, "clean" if not status.stdout else "modified"
 
 
 def _run(command, runner, repository_root, environment, verbose, stderr):
@@ -199,22 +217,23 @@ def run_cli(
         # Its pinned child-process sentinel makes that call a no-op without
         # changing the user's global Go telemetry configuration.
         analyzer_environment["GO_TELEMETRY_CHILD"] = "2"
-        result = _run(
-            ["go", "tool", "deadcode", "-json", "-test", "./..."],
+        app_result = _run(
+            ["go", "tool", "deadcode", "-json", "./..."],
             runner,
             repo_root,
             analyzer_environment,
             options.verbose,
             stderr,
         )
-        if result.returncode != 0:
-            details = result.stderr.strip() or result.stdout.strip()
-            raise AnalysisError(
-                f"deadcode analysis failed: {details or 'unknown error'}"
-            )
-        if options.verbose and result.stderr:
-            print(result.stderr.rstrip(), file=stderr)
-        findings = parse_findings(result.stdout, repo_root)
+        test_result = _run(["go", "tool", "deadcode", "-json", "-test", "./..."], runner, repo_root, analyzer_environment, options.verbose, stderr)
+        for label, result in (("application", app_result), ("test-inclusive", test_result)):
+            if result.returncode != 0:
+                details = result.stderr.strip() or result.stdout.strip()
+                raise AnalysisError(f"{label} analysis failed; target is unknown: {details or 'unknown error'}")
+        app_findings = parse_findings(app_result.stdout, repo_root)
+        test_findings = parse_findings(test_result.stdout, repo_root)
+        findings = [item for item in test_findings if item not in set(app_findings)]
+        revision, fingerprint, state = source_metadata(runner, repo_root)
     except FileNotFoundError:
         print(
             "ERROR: Go toolchain was not found. "
@@ -226,7 +245,11 @@ def run_cli(
         print(f"ERROR: {error}", file=stderr)
         return 1
 
-    stdout.write(format_report(findings, config, options.summary))
+    report = format_report(findings, config, options.summary)
+    report = report.replace("Source revision: see invocation metadata", f"Source revision: {revision}").replace("Working tree: see invocation metadata", f"Working tree: {state}; status sha256={fingerprint}")
+    if options.review:
+        report += "\nReview handoff: consult docs/skills/deadcode-review/SKILL.md; recommendations require source-bound evidence and verification steps.\n"
+    stdout.write(report)
     return 0
 
 
