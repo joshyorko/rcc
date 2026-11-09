@@ -84,9 +84,11 @@ def static_snapshot(*values):
 
 
 class FakeRunner:
-    def __init__(self, analyzers=None, inventories=None):
+    def __init__(self, analyzers=None, inventories=None, metadata=None, scopes=None):
         self.analyzers = analyzers or {}
         self.inventories = inventories or {}
+        self.metadata = metadata or {}
+        self.scopes = scopes or {}
         self.calls = []
 
     def __call__(self, command, **details):
@@ -94,9 +96,15 @@ class FakeRunner:
         environment = details["env"]
         target = f"{environment.get('GOOS')}/{environment.get('GOARCH')}"
         if command == ["go", "version"]:
+            if "go-version" in self.metadata:
+                return self.metadata["go-version"]
             return self._result(command, stdout="go version go1.26.9 linux/amd64\n")
-        if command[:2] == ["go", "list"]:
+        if command[:2] == ["go", "list"] and "-m" in command:
+            if "analyzer-version" in self.metadata:
+                return self.metadata["analyzer-version"]
             return self._result(command, stdout="v0.48.0\n")
+        if command[:2] == ["go", "list"]:
+            return self._result(command, stdout=self.scopes.get(target, PACKAGE + "\n"))
         if command[:2] == ["go", "env"]:
             return self._result(command, stdout='{"GOHOSTOS":"linux","GOHOSTARCH":"amd64"}')
         if command[0] == "/deadcode":
@@ -243,8 +251,14 @@ class DeadcodeTests(unittest.TestCase):
         self.assertEqual(4, report["coverage"]["completed_targets"])
         analyzer_calls = [call for call in runner.calls if call[0][0] == "/deadcode"]
         inventory_calls = [call for call in runner.calls if call[0][0] == "/inventory"]
+        scope_calls = [
+            call
+            for call in runner.calls
+            if call[0][:2] == ["go", "list"] and "-m" not in call[0]
+        ]
         self.assertEqual(8, len(analyzer_calls))
         self.assertEqual(4, len(inventory_calls))
+        self.assertEqual(4, len(scope_calls))
         for _, details in analyzer_calls + inventory_calls:
             self.assertEqual("0", details["env"]["CGO_ENABLED"])
             self.assertEqual("", details["env"]["GOFLAGS"])
@@ -424,6 +438,110 @@ class DeadcodeTests(unittest.TestCase):
         self.assertEqual("unknown", self.symbol(report, LIVE)["targets"]["linux/amd64"]["state"])
         self.assertFalse(self.symbol(report, LIVE)["aggregate"]["removal_evidence_complete"])
 
+    def test_focused_scope_and_custom_tags_never_authorize_repository_removal(self):
+        for options in (["--package", "./pretty"], ["--tags", "custom"]):
+            with self.subTest(options=options):
+                analyzers = {}
+                inventories = {}
+                for target in ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
+                    analyzers[(target, "app")] = analyzer_payload(DEAD)
+                    analyzers[(target, "test")] = analyzer_payload(DEAD)
+                    inventories[target] = [inventory_symbol(DEAD)]
+                runner = FakeRunner(analyzers=analyzers, inventories=inventories)
+
+                code, report, _ = self.run_report(runner, options)
+
+                self.assertEqual(0, code)
+                self.assertTrue(report["coverage"]["target_coverage_complete"])
+                self.assertFalse(report["coverage"]["repository_scope_complete"])
+                self.assertFalse(report["coverage"]["complete"])
+                self.assertFalse(self.symbol(report, DEAD)["aggregate"]["removal_evidence_complete"])
+                if "--package" in options:
+                    analyzer_call = next(call for call in runner.calls if call[0][0] == "/deadcode")
+                    self.assertIn("./cmd/rcc", analyzer_call[0])
+                    self.assertIn("./cmd/rccremote", analyzer_call[0])
+                    self.assertIn("./pretty", analyzer_call[0])
+
+    def test_metadata_failure_or_version_mismatch_makes_coverage_unknown(self):
+        cases = {
+            "go-version": subprocess.CompletedProcess([], 1, "", "go unavailable"),
+            "analyzer-version": subprocess.CompletedProcess([], 1, "", "module unavailable"),
+            "mismatch": subprocess.CompletedProcess([], 0, "v0.47.0\n", ""),
+        }
+        for label, metadata_result in cases.items():
+            with self.subTest(label=label):
+                key = "mismatch" if label == "mismatch" else label
+                metadata = {key: metadata_result} if key != "mismatch" else {"analyzer-version": metadata_result}
+                runner = FakeRunner(
+                    inventories={"linux/amd64": [inventory_symbol(DEAD)]},
+                    metadata=metadata,
+                )
+
+                code, report, _ = self.run_report(runner, ["--target", "linux/amd64"])
+
+                self.assertEqual(1, code)
+                self.assertEqual("unknown", report["analyzer"]["status"])
+                self.assertEqual("unknown", report["targets"][0]["status"])
+                self.assertFalse(report["coverage"]["complete"])
+                self.assertTrue(report["analyzer"]["diagnostics"])
+
+    def test_exported_symbol_removal_requires_compatibility_review(self):
+        analyzers = {}
+        inventories = {}
+        for target in ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
+            analyzers[(target, "app")] = analyzer_payload(DEAD)
+            analyzers[(target, "test")] = analyzer_payload(DEAD)
+            inventories[target] = [inventory_symbol(DEAD, exported=True)]
+        runner = FakeRunner(analyzers=analyzers, inventories=inventories)
+
+        code, report, _ = self.run_report(runner)
+
+        self.assertEqual(0, code)
+        aggregate = self.symbol(report, DEAD)["aggregate"]
+        self.assertTrue(aggregate["cross_target_unreachable"])
+        self.assertFalse(aggregate["removal_evidence_complete"])
+        self.assertIn("exported API", " ".join(aggregate["removal_blocked_reasons"]))
+
+    def test_review_paths_and_template_are_repository_relative_and_consistent(self):
+        runner = FakeRunner()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "developer").mkdir()
+            previous = Path.cwd()
+            try:
+                os.chdir(root / "developer")
+                code = deadcode.run_cli(
+                    [
+                        "--target",
+                        "linux/amd64",
+                        "--analyzer-binary",
+                        "/deadcode",
+                        "--inventory-binary",
+                        "/inventory",
+                        "--review",
+                        "--output",
+                        "build/deadcode/evidence.txt",
+                    ],
+                    runner=runner,
+                    stdout=io.StringIO(),
+                    stderr=io.StringIO(),
+                    repo_root=root,
+                    snapshotter=static_snapshot(),
+                )
+            finally:
+                os.chdir(previous)
+            evidence_path = root / "build" / "deadcode" / "evidence.json"
+            text_path = root / "build" / "deadcode" / "evidence.txt"
+            template_path = root / "build" / "deadcode" / "review-template.json"
+            self.assertEqual(0, code)
+            self.assertTrue(evidence_path.is_file())
+            self.assertTrue(text_path.is_file())
+            self.assertTrue(template_path.is_file())
+            self.assertFalse((root / "developer" / "build").exists())
+            evidence = json.loads(evidence_path.read_text())
+            self.assertEqual(str(template_path), evidence["review_template"])
+            self.assertIn(str(template_path), text_path.read_text())
+
     def test_toolkit_routes_review_arguments_directly_and_runs_real_fixtures(self):
         toolkit = (ROOT / "developer" / "toolkit.yaml").read_text()
         tasks = (ROOT / "tasks.py").read_text()
@@ -509,6 +627,23 @@ class RealGoFixtureTests(unittest.TestCase):
         self.assertIn((package, "Shared"), {(item["package"], item["name"]) for item in outside})
         test_references = by_name["UsedByTestOnly"]["targets"]["linux/amd64"]["facts"]["references"]
         self.assertTrue(any(reference["test"] for reference in test_references))
+
+    def test_real_non_main_package_uses_application_entrypoints(self):
+        package = "github.com/joshyorko/rcc/scripts/testdata/deadcode/library"
+
+        code, report = self.run_fixture(
+            "./scripts/testdata/deadcode/library",
+            "linux/amd64",
+        )
+
+        self.assertEqual(0, code)
+        self.assertEqual("complete", report["targets"][0]["status"])
+        by_name = {symbol["name"]: symbol for symbol in report["symbols"]}
+        self.assertEqual("test_only", by_name["Live"]["targets"]["linux/amd64"]["state"])
+        self.assertEqual("unreachable_both", by_name["Unused"]["targets"]["linux/amd64"]["state"])
+        linux = report["targets"][0]
+        self.assertEqual([package], linux["package_scope"]["packages"])
+        self.assertIn("./cmd/rcc", linux["analyzer_patterns"])
 
     def test_real_platform_fixture_distinguishes_absent_from_reachable(self):
         package = "github.com/joshyorko/rcc/scripts/testdata/deadcode/platform"

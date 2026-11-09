@@ -8,7 +8,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-from deadcode import REPOSITORY_ROOT, SCHEMA_VERSION, AnalysisError, source_snapshot
+from deadcode import (
+    REPOSITORY_ROOT,
+    SCHEMA_VERSION,
+    AnalysisError,
+    repository_path,
+    source_snapshot,
+)
 
 
 DECISIONS = {
@@ -65,11 +71,20 @@ def _load_json(path):
 
 
 def _same_snapshot(left, right):
+    if not isinstance(left, dict) or not isinstance(right, dict):
+        return False
     return all(left.get(field) == right.get(field) for field in ("revision", "tree_sha256"))
 
 
 def _finding_map(evidence):
-    return {symbol["id"]: symbol for symbol in evidence.get("symbols", [])}
+    symbols = evidence.get("symbols", [])
+    if not isinstance(symbols, list):
+        return {}
+    return {
+        symbol["id"]: symbol
+        for symbol in symbols
+        if isinstance(symbol, dict) and isinstance(symbol.get("id"), str)
+    }
 
 
 def _valid_evidence_id(value, findings, evidence):
@@ -92,8 +107,9 @@ def _validate_observations(review, findings, evidence, errors):
         if not isinstance(observation, dict):
             errors.append(f"observations[{index}] must be an object")
             continue
-        if not observation.get("text", "").strip():
-            errors.append(f"observations[{index}].text is required")
+        text = observation.get("text")
+        if not isinstance(text, str) or not text.strip():
+            errors.append(f"observations[{index}].text must be a non-empty string")
         evidence_ids = observation.get("evidence_ids")
         if not isinstance(evidence_ids, list) or not evidence_ids:
             errors.append(f"observations[{index}].evidence_ids must be non-empty")
@@ -118,9 +134,14 @@ def _validate_removal(review, findings, evidence, errors):
     for finding_id in review["finding_ids"]:
         symbol = findings[finding_id]
         aggregate = symbol["aggregate"]
-        if not aggregate["removal_evidence_complete"]:
+        if not aggregate["removal_evidence_complete"] or symbol.get("exported"):
             blockers = "; ".join(aggregate["removal_blocked_reasons"]) or "incomplete reachability evidence"
+            if symbol.get("exported") and "exported" not in blockers:
+                blockers = (blockers + "; " if blockers else "") + "exported API compatibility is unresolved"
             errors.append(f"remove is unsupported for {finding_id}: {blockers}")
+    scope = evidence.get("scope", {})
+    if scope.get("packages") != ["./..."] or scope.get("build_tags"):
+        errors.append("remove requires the full ./... package scope with no custom build tags")
     if not evidence["source"].get("stable") or not evidence["coverage"].get("complete"):
         errors.append("remove requires a stable source snapshot and complete supported-target coverage")
 
@@ -145,60 +166,84 @@ def validate_reviews(evidence, review_document):
         if not isinstance(review, dict):
             errors.append(f"reviews[{index}] must be an object")
             continue
-        label = review.get("id") or f"reviews[{index}]"
+        brief = dict(review)
+        raw_id = review.get("id")
+        label = raw_id if isinstance(raw_id, str) and raw_id.strip() else f"reviews[{index}]"
+        brief["id"] = label
         for field in REQUIRED_STRINGS:
-            if not isinstance(review.get(field), str) or not review.get(field, "").strip():
-                errors.append(f"{label}: {field} is required")
+            value = review.get(field)
+            if not isinstance(value, str) or not value.strip():
+                errors.append(f"{label}: {field} must be a non-empty string")
+                if field != "id":
+                    brief[field] = ""
         for field in REQUIRED_LISTS:
-            if field == "verification":
-                if not isinstance(review.get(field), list):
-                    errors.append(f"{label}: {field} must be an array")
-                continue
-            if not isinstance(review.get(field), list):
+            value = review.get(field)
+            if not isinstance(value, list):
                 errors.append(f"{label}: {field} must be an array")
+                brief[field] = []
+                continue
+            invalid = [item for item in value if not isinstance(item, str)]
+            if invalid:
+                errors.append(f"{label}: {field} must contain only strings")
+            brief[field] = [item for item in value if isinstance(item, str)]
         if label in seen_ids:
             errors.append(f"{label}: duplicate review id")
         seen_ids.add(label)
-        if review.get("decision") not in DECISIONS:
-            errors.append(f"{label}: unsupported decision {review.get('decision')!r}")
-        finding_ids = review.get("finding_ids", [])
-        if not isinstance(finding_ids, list):
-            finding_ids = []
+
+        decision = review.get("decision")
+        if not isinstance(decision, str) or decision not in DECISIONS:
+            errors.append(f"{label}: unsupported decision {decision!r}")
+            decision = ""
+            brief["decision"] = ""
+        finding_ids = brief["finding_ids"]
         if not finding_ids:
             errors.append(f"{label}: at least one finding id is required")
         unknown = [finding_id for finding_id in finding_ids if finding_id not in findings]
         if unknown:
             errors.append(f"{label}: unknown finding ids: {', '.join(unknown)}")
-        if not isinstance(review.get("observations"), list):
+
+        observations = review.get("observations")
+        if not isinstance(observations, list):
             errors.append(f"{label}: observations must be an array")
+            observations = []
+            brief["observations"] = []
         else:
             _validate_observations(review, findings, evidence, errors)
-        if isinstance(review.get("verification"), list):
-            _validate_verification(review, errors)
-        if (
-            review.get("decision") == "repair_or_finish"
-            and not isinstance(review.get("requirement"), str)
-        ):
+            normalized_observations = []
+            for observation in observations:
+                if not isinstance(observation, dict):
+                    continue
+                normalized = dict(observation)
+                if not isinstance(normalized.get("text"), str):
+                    normalized["text"] = ""
+                evidence_ids = normalized.get("evidence_ids")
+                if not isinstance(evidence_ids, list):
+                    evidence_ids = []
+                normalized["evidence_ids"] = [item for item in evidence_ids if isinstance(item, str)]
+                normalized_observations.append(normalized)
+            brief["observations"] = normalized_observations
+        _validate_verification(brief, errors)
+        requirement = review.get("requirement")
+        if decision == "repair_or_finish" and not isinstance(requirement, str):
             errors.append(f"{label}: repair_or_finish requires a requirement field")
-        elif review.get("decision") == "repair_or_finish" and not review.get("requirement", "").strip():
+            brief["requirement"] = ""
+        elif decision == "repair_or_finish" and not requirement.strip():
             errors.append(f"{label}: repair_or_finish requires a justified requirement")
-        if review.get("decision") == "remove" and not unknown:
-            _validate_removal(review, findings, evidence, errors)
+        if decision == "remove" and finding_ids and not unknown:
+            _validate_removal(brief, findings, evidence, errors)
 
-        brief = dict(review)
-        brief["finding_ids"] = list(finding_ids)
+        evidence_source = evidence.get("source", {})
+        if not isinstance(evidence_source, dict):
+            evidence_source = {}
         brief["source"] = {
-            "revision": evidence.get("source", {}).get("revision"),
-            "tree_sha256": evidence.get("source", {}).get("tree_sha256"),
+            "revision": evidence_source.get("revision"),
+            "tree_sha256": evidence_source.get("tree_sha256"),
         }
         brief["evidence_ids"] = list(finding_ids)
-        unresolved = review.get("unresolved_questions", [])
-        if not isinstance(unresolved, list):
-            unresolved = []
-            brief["unresolved_questions"] = []
-        if review.get("decision") == "retain":
+        unresolved = brief["unresolved_questions"]
+        if decision == "retain":
             implementation_status = "no_change"
-        elif review.get("decision") == "investigate_further" or unresolved:
+        elif decision == "investigate_further" or unresolved:
             implementation_status = "blocked"
         else:
             implementation_status = "ready_for_separately_authorized_task"
@@ -278,6 +323,11 @@ def run_cli(
     stderr=sys.stderr,
 ):
     options = create_parser().parse_args(arguments)
+    repo_root = Path(options.repo).resolve()
+    for field in ("evidence", "reviews", "output", "json_output"):
+        value = getattr(options, field)
+        if value:
+            setattr(options, field, str(repository_path(repo_root, value)))
     try:
         evidence_path = Path(options.evidence)
         raw_evidence = evidence_path.read_bytes()
@@ -291,7 +341,7 @@ def run_cli(
 
     briefs, errors = validate_reviews(evidence, review_document)
     try:
-        current = snapshotter(runner, Path(options.repo).resolve())
+        current = snapshotter(runner, repo_root)
         fresh = _same_snapshot(evidence.get("source", {}), current)
         if not fresh:
             errors.append("source snapshot is stale; re-run deadcode and recheck every recommendation")

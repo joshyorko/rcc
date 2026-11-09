@@ -1,6 +1,7 @@
 import importlib.util
 import io
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -70,6 +71,7 @@ def evidence_document():
         "kind": "rcc-deadcode-evidence",
         "source": SOURCE,
         "coverage": {"complete": True},
+        "scope": {"packages": ["./..."], "build_tags": ""},
         "targets": [{"id": f"T:{target}", "target": target, "status": "complete"} for target in TARGETS],
         "commands": [{"id": "C001", "target": "windows/amd64", "mode": "application"}],
         "symbols": symbols,
@@ -291,6 +293,86 @@ class DeadcodeReviewTests(unittest.TestCase):
         self.assertIn("does not establish production use", text)
         self.assertIn("Implementation handoff: blocked", text)
         self.assertIn("exported API compatibility", text)
+
+    def test_focused_scope_and_exported_api_cannot_bypass_remove_guards(self):
+        focused = evidence_document()
+        focused["scope"]["packages"] = ["./pretty"]
+        focused_proposal = review(
+            finding_ids=["F001"],
+            decision="remove",
+            observations=[{"text": "Focused observation.", "evidence_ids": ["F001"]}],
+        )
+        code, report, _ = self.run_review(focused, review_document(focused_proposal))
+        self.assertEqual(1, code)
+        self.assertIn("full ./... package scope", "\n".join(report["review"]["errors"]))
+
+        exported = evidence_document()
+        exported["symbols"][0]["exported"] = True
+        exported_proposal = review(
+            finding_ids=["F001"],
+            decision="remove",
+            observations=[{"text": "Exported observation.", "evidence_ids": ["F001"]}],
+        )
+        code, report, _ = self.run_review(exported, review_document(exported_proposal))
+        self.assertEqual(1, code)
+        self.assertIn("exported API", "\n".join(report["review"]["errors"]))
+
+    def test_malformed_review_fields_render_validation_errors_without_crashing(self):
+        proposal = review(
+            finding_ids=7,
+            observations=[{"text": [], "evidence_ids": ["F002"]}],
+            shared_helpers=[{"not": "a string"}],
+        )
+        for output_format in ("json", "text"):
+            with self.subTest(output_format=output_format):
+                code, output, _ = self.run_review(
+                    evidence_document(),
+                    review_document(proposal),
+                    output_format=output_format,
+                )
+                self.assertEqual(1, code)
+                if output_format == "json":
+                    errors = "\n".join(output["review"]["errors"])
+                else:
+                    errors = output
+                self.assertIn("finding_ids must be an array", errors)
+                self.assertIn("text must be a non-empty string", errors)
+                self.assertIn("shared_helpers must contain only strings", errors)
+
+    def test_review_paths_resolve_from_repository_not_developer_cwd(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "developer").mkdir()
+            evidence_dir = root / "build" / "deadcode"
+            evidence_dir.mkdir(parents=True)
+            (evidence_dir / "evidence.json").write_text(json.dumps(evidence_document()))
+            (evidence_dir / "reviews.json").write_text(json.dumps(review_document(review())))
+            previous = Path.cwd()
+            try:
+                os.chdir(root / "developer")
+                code = reviewer.run_cli(
+                    [
+                        "--evidence",
+                        "build/deadcode/evidence.json",
+                        "--reviews",
+                        "build/deadcode/reviews.json",
+                        "--output",
+                        "build/deadcode/review.md",
+                        "--json",
+                        "build/deadcode/review.json",
+                        "--repo",
+                        str(root),
+                    ],
+                    snapshotter=current_snapshot,
+                    stdout=io.StringIO(),
+                    stderr=io.StringIO(),
+                )
+            finally:
+                os.chdir(previous)
+            self.assertEqual(0, code)
+            self.assertTrue((evidence_dir / "review.md").is_file())
+            self.assertTrue((evidence_dir / "review.json").is_file())
+            self.assertFalse((root / "developer" / "build").exists())
 
     def test_unknown_evidence_and_uncontained_verification_are_rejected(self):
         proposal = review(

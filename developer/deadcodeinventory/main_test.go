@@ -25,11 +25,13 @@ func TestReachabilityInventory(t *testing.T) {
 		"LinkedOnly",
 		"Live",
 		"NeverUsed",
+		"RemoteLinked",
 		"Shared",
 		"Task.Run",
 		"TestUsedByTestOnly",
 		"UsedByTestOnly",
 		"deadHelper",
+		"localLinked",
 		"main",
 	}
 	if len(report.Symbols) != len(wantNames) {
@@ -98,6 +100,12 @@ func TestReachabilityInventory(t *testing.T) {
 	assertPosition(t, "GeneratedOnly", generated.Position, "generated.go")
 	if linked := byName["LinkedOnly"]; !linked.Linkname {
 		t.Error("LinkedOnly was not marked as a go:linkname declaration")
+	}
+	if linked := byName["RemoteLinked"]; !linked.Linkname {
+		t.Error("RemoteLinked was not marked through a two-argument go:linkname directive")
+	}
+	if linked := byName["localLinked"]; !linked.Linkname {
+		t.Error("localLinked was not marked as a go:linkname declaration")
 	}
 
 	method := byName["Task.Run"]
@@ -175,6 +183,33 @@ func TestMarkerInterfaceObligation(t *testing.T) {
 	}
 	if want := []string{packagePath + ".Marker.Mark"}; !reflect.DeepEqual(method.InterfaceObligations, want) {
 		t.Errorf("Token.Mark obligations = %v, want %v", method.InterfaceObligations, want)
+	}
+}
+
+func TestLocalAndAnonymousInterfaceObligations(t *testing.T) {
+	packagePath := fixtureModule + "/marker"
+	for _, test := range []struct {
+		name       string
+		method     string
+		obligation string
+	}{
+		{name: "anonymous", method: "LocalToken.LocalMark", obligation: "anonymous@"},
+		{name: "local named", method: "NamedToken.NamedMark", obligation: "local.NamedMark"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			report := loadInventory(t, filepath.Join("testdata", "marker"), packagePath+"|"+test.method)
+			if len(report.Symbols) != 1 {
+				t.Fatalf("got %d symbols, want %s", len(report.Symbols), test.method)
+			}
+			method := report.Symbols[0]
+			if !method.Marker {
+				t.Error("empty local interface implementation was not marked as a marker method")
+			}
+			joined := strings.Join(method.InterfaceObligations, "\n")
+			if !strings.Contains(joined, test.obligation) {
+				t.Errorf("%s obligations = %v, want substring %q", test.method, method.InterfaceObligations, test.obligation)
+			}
+		})
 	}
 }
 

@@ -110,6 +110,8 @@ type builder struct {
 	declarations       []*declaration
 	declarationByKey   map[string]*declaration
 	interfacesByMethod map[string][]interfaceMethod
+	interfacesSeen     map[string]bool
+	linknames          map[string]bool
 }
 
 type referenceKey struct {
@@ -255,13 +257,21 @@ func buildInventory(root string, fset *token.FileSet, pkgs []*packages.Package, 
 		fset:               fset,
 		declarationByKey:   make(map[string]*declaration),
 		interfacesByMethod: make(map[string][]interfaceMethod),
+		interfacesSeen:     make(map[string]bool),
+		linknames:          make(map[string]bool),
 	}
 	packages.Visit(pkgs, func(pkg *packages.Package) bool {
+		builder.collectLinknames(pkg)
 		builder.collectInterfaces(pkg)
 		builder.collectDeclarations(pkg, roots[pkg.ID])
 		return true
 	}, nil)
 	builder.collectUniverseInterfaces()
+	for _, decl := range builder.declarations {
+		if builder.linknames[decl.id.packagePath+"."+decl.id.name] {
+			decl.linkname = true
+		}
+	}
 
 	chosen := make([]*declaration, 0)
 	for _, decl := range builder.declarations {
@@ -360,6 +370,27 @@ func buildInventory(root string, fset *token.FileSet, pkgs []*packages.Package, 
 	return report, nil
 }
 
+func (builder *builder) collectLinknames(pkg *packages.Package) {
+	packagePath := pkg.PkgPath
+	if pkg.Types != nil {
+		packagePath = pkg.Types.Path()
+	}
+	for _, file := range pkg.Syntax {
+		for _, group := range file.Comments {
+			for _, comment := range group.List {
+				fields := strings.Fields(comment.Text)
+				if len(fields) < 2 || fields[0] != "//go:linkname" {
+					continue
+				}
+				builder.linknames[packagePath+"."+fields[1]] = true
+				if len(fields) >= 3 {
+					builder.linknames[fields[2]] = true
+				}
+			}
+		}
+	}
+}
+
 func (builder *builder) collectDeclarations(pkg *packages.Package, root bool) {
 	if pkg.TypesInfo == nil {
 		return
@@ -414,6 +445,32 @@ func (builder *builder) collectInterfaces(pkg *packages.Package) {
 			builder.collectInterface(typeName)
 		}
 	}
+	if pkg.TypesInfo == nil {
+		return
+	}
+	for _, object := range pkg.TypesInfo.Defs {
+		if typeName, ok := object.(*types.TypeName); ok {
+			builder.collectInterface(typeName)
+		}
+	}
+	namedInterfaces := make(map[ast.Expr]bool)
+	for _, file := range pkg.Syntax {
+		ast.Inspect(file, func(node ast.Node) bool {
+			if typeSpec, ok := node.(*ast.TypeSpec); ok {
+				namedInterfaces[typeSpec.Type] = true
+			}
+			return true
+		})
+	}
+	for expression, value := range pkg.TypesInfo.Types {
+		iface, ok := value.Type.(*types.Interface)
+		if !ok || namedInterfaces[expression] {
+			continue
+		}
+		position := builder.position(expression.Pos())
+		name := fmt.Sprintf("anonymous@%s:%d", position.File, position.Line)
+		builder.collectInterfaceType(iface, pkg.Types.Path(), name)
+	}
 }
 
 func (builder *builder) collectUniverseInterfaces() {
@@ -432,15 +489,26 @@ func (builder *builder) collectInterface(typeName *types.TypeName) {
 	if !ok {
 		return
 	}
-	iface.Complete()
 	packagePath := ""
 	if typeName.Pkg() != nil {
 		packagePath = typeName.Pkg().Path()
 	}
+	builder.collectInterfaceType(iface, packagePath, typeName.Name())
+}
+
+func (builder *builder) collectInterfaceType(iface *types.Interface, packagePath, name string) {
+	iface.Complete()
+	key := packagePath + "\x00" + name + "\x00" + types.TypeString(iface, func(pkg *types.Package) string {
+		return pkg.Path()
+	})
+	if builder.interfacesSeen[key] {
+		return
+	}
+	builder.interfacesSeen[key] = true
 	for index := 0; index < iface.NumMethods(); index++ {
 		method := iface.Method(index)
 		builder.interfacesByMethod[method.Name()] = append(builder.interfacesByMethod[method.Name()], interfaceMethod{
-			name:        typeName.Name(),
+			name:        name,
 			packagePath: packagePath,
 			iface:       iface,
 			method:      method,

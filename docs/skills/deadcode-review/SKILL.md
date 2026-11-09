@@ -17,7 +17,7 @@ rcc run -r developer/toolkit.yaml --dev -t deadcode -- \
   --output build/deadcode/evidence.txt
 ```
 
-This writes human-readable evidence, `build/deadcode/evidence.json`, and `build/deadcode/review-template.json`. The default is the full release matrix: `linux/amd64`, `darwin/amd64`, `darwin/arm64`, and `windows/amd64`. The official pinned `deadcode` analyzer and the Go-aware inventory are built once for the host, then run with explicit target package-loading environments. `CGO_ENABLED=0`, `GOFLAGS` is empty, and build tags are empty unless explicitly supplied. This is static cross-target analysis, not native Windows or macOS execution.
+This writes human-readable evidence, `build/deadcode/evidence.json`, and `build/deadcode/review-template.json`. The default is the full release matrix: `linux/amd64`, `darwin/amd64`, `darwin/arm64`, and `windows/amd64`. The official pinned `deadcode` analyzer and the Go-aware inventory are built once for the host, then run with explicit target package-loading environments. Focused non-main scopes add `./cmd/rcc` and `./cmd/rccremote` as analyzer entrypoints while `go list` confines reported findings to the requested packages. `CGO_ENABLED=0`, `GOFLAGS` is empty, and build tags are empty unless explicitly supplied. This is static cross-target analysis, not native Windows or macOS execution.
 
 Focus a run only when that helps review; a focused run cannot support removal by itself:
 
@@ -53,7 +53,7 @@ Each review object requires:
 - `verification` containing exact `rcc run -r developer/toolkit.yaml --dev -t ...` commands; and
 - `requirement` when proposing `repair_or_finish`.
 
-Keep observed facts in `observations`, separate from the recommendation. Do not invent confidence percentages. An unresolved question or investigation decision blocks the implementation handoff. Removal additionally requires a stable full-matrix snapshot and no generated-code, marker/linkname, or interface-obligation blocker. A reviewed brief is a handoff for separately authorized work, never permission to implement in this read-only workflow.
+Keep observed facts in `observations`, separate from the recommendation. Do not invent confidence percentages. An unresolved question or investigation decision blocks the implementation handoff. Removal additionally requires a stable full-matrix, untagged `./...` snapshot and no exported-API, generated-code, marker/linkname, or interface-obligation blocker. A reviewed brief is a handoff for separately authorized work, never permission to implement in this read-only workflow.
 
 ## 3. Validate freshness and render the handoff
 

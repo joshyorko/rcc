@@ -22,6 +22,7 @@ SUPPORTED_TARGETS = (
     ("darwin", "arm64"),
     ("windows", "amd64"),
 )
+ANALYZER_ENTRYPOINTS = ("./cmd/rcc", "./cmd/rccremote")
 COMMAND_ENVIRONMENT = ("CGO_ENABLED", "GOFLAGS", "GOOS", "GOARCH", "GO_TELEMETRY_CHILD")
 
 
@@ -300,7 +301,7 @@ def _base_environment():
 
 
 def _tool_metadata(runner, repo_root, environment, commands, verbose, stderr):
-    _, version_output, _, _ = _command(
+    version_code, version_output, version_diagnostics, _ = _command(
         ["go", "version"],
         runner=runner,
         repo_root=repo_root,
@@ -310,7 +311,7 @@ def _tool_metadata(runner, repo_root, environment, commands, verbose, stderr):
         verbose=verbose,
         stderr=stderr,
     )
-    _, analyzer_output, _, _ = _command(
+    analyzer_code, analyzer_output, analyzer_diagnostics, _ = _command(
         ["go", "list", "-m", "-f={{.Version}}", "golang.org/x/tools"],
         runner=runner,
         repo_root=repo_root,
@@ -321,12 +322,22 @@ def _tool_metadata(runner, repo_root, environment, commands, verbose, stderr):
         stderr=stderr,
     )
     resolved = analyzer_output.strip() or "unknown"
+    matches = analyzer_code == 0 and resolved == ANALYZER_VERSION
+    diagnostics = []
+    if version_code != 0:
+        diagnostics.append("go version failed: " + (version_diagnostics.strip() or "unknown error"))
+    if analyzer_code != 0:
+        diagnostics.append("analyzer version lookup failed: " + (analyzer_diagnostics.strip() or "unknown error"))
+    if analyzer_code == 0 and not matches:
+        diagnostics.append(f"analyzer version {resolved!r} does not match declared {ANALYZER_VERSION!r}")
     return {
         "name": ANALYZER,
         "declared_version": ANALYZER_VERSION,
         "resolved_version": resolved,
-        "version_matches_pin": resolved == ANALYZER_VERSION,
+        "version_matches_pin": matches,
         "go_version": version_output.strip() or "unknown",
+        "status": "complete" if version_code == 0 and matches else "unknown",
+        "diagnostics": diagnostics,
     }
 
 
@@ -407,6 +418,7 @@ def _new_target(target, selected):
         "target": name,
         "status": "pending" if selected else "skipped",
         "selected": selected,
+        "package_scope": {"status": "skipped" if not selected else "pending", "packages": []},
         "application": {"status": "skipped" if not selected else "pending", "dead_symbols": []},
         "test_inclusive": {"status": "skipped" if not selected else "pending", "dead_symbols": []},
         "inventory": {"status": "skipped" if not selected else "pending"},
@@ -446,6 +458,8 @@ def _aggregate_symbol(symbol, report):
     )
     if not cross_target:
         blockers.append("not unreachable in application and tests on every target where present")
+    if symbol["exported"]:
+        blockers.append("exported API compatibility requires an explicit review")
     if symbol["generated"]:
         blockers.append("generated source requires generator review")
     if symbol["linkname"]:
@@ -455,7 +469,8 @@ def _aggregate_symbol(symbol, report):
     if symbol["interface_obligations"]:
         blockers.append("interface obligations require an explicit compatibility review")
     removal_evidence_complete = cross_target and not (
-        symbol["generated"]
+        symbol["exported"]
+        or symbol["generated"]
         or symbol["marker"]
         or symbol["linkname"]
         or symbol["interface_obligations"]
@@ -612,6 +627,7 @@ def format_text(report, summary=False):
         "Analysis: static cross-target analysis only; native Windows and macOS execution NOT PERFORMED.",
         (
             f"Coverage: {coverage['completed_targets']}/{coverage['supported_target_count']} supported targets complete; "
+            f"full-untagged-repository-scope={str(coverage['repository_scope_complete']).lower()}; "
             f"cross-target removal evidence={'complete' if coverage['complete'] else 'INCOMPLETE'}"
         ),
         "",
@@ -621,7 +637,8 @@ def format_text(report, summary=False):
         commands = ", ".join(target["command_ids"]) or "none"
         lines.append(
             f"  {target['id']}: {target['status']} "
-            f"(application={target['application']['status']}, tests={target['test_inclusive']['status']}, "
+            f"(scope={target['package_scope']['status']}, application={target['application']['status']}, "
+            f"tests={target['test_inclusive']['status']}, "
             f"inventory={target['inventory']['status']}; commands={commands})"
         )
         for diagnostic in target["diagnostics"]:
@@ -692,6 +709,13 @@ def format_text(report, summary=False):
     return "\n".join(lines) + "\n"
 
 
+def repository_path(repository_root, value):
+    path = Path(value)
+    if not path.is_absolute():
+        path = Path(repository_root) / path
+    return path.resolve()
+
+
 def _write_output(path, content):
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -728,6 +752,10 @@ def run_cli(
         options.review_template = str(repo_root / "build" / "deadcode" / "review-template.json")
     if options.review and not options.json_output:
         options.json_output = str(repo_root / "build" / "deadcode" / "evidence.json")
+    for field in ("output", "json_output", "review_template", "analyzer_binary", "inventory_binary"):
+        value = getattr(options, field)
+        if value:
+            setattr(options, field, str(repository_path(repo_root, value)))
 
     environment = _base_environment()
     commands = []
@@ -752,12 +780,41 @@ def run_cli(
         target_environment["GOOS"], target_environment["GOARCH"] = target
         target_record = targets[target]
         target_results[target] = {}
+        scope_command = ["go", "list", "-f={{.ImportPath}}", *packages]
+        scope_code, scope_output, scope_diagnostics, scope_record = _command(
+            scope_command,
+            runner=runner,
+            repo_root=repo_root,
+            environment=target_environment,
+            commands=commands,
+            target=name,
+            mode="package-scope",
+            verbose=options.verbose,
+            stderr=stderr,
+        )
+        target_record["command_ids"].append(scope_record["id"])
+        allowed_packages = set(scope_output.split())
+        target_results[target]["allowed_packages"] = allowed_packages
+        if scope_code != 0:
+            _mark_mode_failure(
+                target_record,
+                "package_scope",
+                "Go package scope resolution failed; target is unknown: "
+                + (scope_diagnostics.strip() or scope_output.strip() or "unknown error"),
+            )
+        else:
+            target_record["package_scope"]["status"] = "complete"
+            target_record["package_scope"]["packages"] = sorted(allowed_packages)
+        analyzer_patterns = list(packages)
+        if packages != ["./..."]:
+            analyzer_patterns = list(dict.fromkeys([*ANALYZER_ENTRYPOINTS, *packages]))
+        target_record["analyzer_patterns"] = analyzer_patterns
         for mode, test in (("application", False), ("test_inclusive", True)):
             if tool_build_error and not analyzer_binary:
                 _mark_mode_failure(target_record, mode, tool_build_error)
                 target_results[target][mode] = set()
                 continue
-            command = _analyzer_command(analyzer_binary, packages, options.tags, test)
+            command = _analyzer_command(analyzer_binary, analyzer_patterns, options.tags, test)
             code, output, diagnostics, command_record = _command(
                 command,
                 runner=runner,
@@ -789,6 +846,8 @@ def run_cli(
             target_record[mode]["status"] = "complete"
             keys = set()
             for finding in findings:
+                if finding.package not in allowed_packages:
+                    continue
                 keys.add(finding.key)
                 candidate = candidates.setdefault(finding.key, {"selected": False, "analyzer": []})
                 candidate["analyzer"].append((target, mode, finding))
@@ -852,8 +911,19 @@ def run_cli(
 
     for target in selected_targets:
         record = targets[target]
-        modes = (record["application"], record["test_inclusive"], record["inventory"])
-        record["status"] = "complete" if all(mode["status"] == "complete" for mode in modes) else "unknown"
+        if analyzer["status"] != "complete":
+            record["diagnostics"].extend(analyzer["diagnostics"])
+        modes = (
+            record["package_scope"],
+            record["application"],
+            record["test_inclusive"],
+            record["inventory"],
+        )
+        record["status"] = (
+            "complete"
+            if analyzer["status"] == "complete" and all(mode["status"] == "complete" for mode in modes)
+            else "unknown"
+        )
         if record["status"] == "unknown":
             record["diagnostics"].append("Incomplete target evidence blocks removal recommendations.")
 
@@ -874,8 +944,12 @@ def run_cli(
         source["diagnostic"] = "Source changed during analysis; re-run before reviewing or removing code."
 
     completed = sum(targets[target]["status"] == "complete" for target in SUPPORTED_TARGETS)
+    target_coverage_complete = stable and completed == len(SUPPORTED_TARGETS)
+    repository_scope_complete = packages == ["./..."] and not options.tags
     coverage = {
-        "complete": stable and completed == len(SUPPORTED_TARGETS),
+        "complete": target_coverage_complete and repository_scope_complete,
+        "target_coverage_complete": target_coverage_complete,
+        "repository_scope_complete": repository_scope_complete,
         "completed_targets": completed,
         "supported_target_count": len(SUPPORTED_TARGETS),
         "selected_targets": [target_name(target) for target in selected_targets],
@@ -889,6 +963,7 @@ def run_cli(
         "analyzer": analyzer,
         "scope": {
             "packages": packages,
+            "analyzer_entrypoints": list(ANALYZER_ENTRYPOINTS),
             "build_tags": options.tags,
             "cgo_enabled": "0",
             "goflags": "",
@@ -1013,6 +1088,8 @@ def run_cli(
     ]
     if selected_missing:
         report["coverage"]["selected_symbols_absent"] = selected_missing
+    if options.review_template:
+        report["review_template"] = options.review_template
 
     report_json = json.dumps(report, indent=2, sort_keys=True) + "\n"
     primary = report_json if options.format == "json" else format_text(report, options.summary)
@@ -1027,9 +1104,6 @@ def run_cli(
             options.review_template,
             json.dumps(_review_template(report, selected_ids), indent=2, sort_keys=True) + "\n",
         )
-        report["review_template"] = options.review_template
-        if options.format == "text" and not options.output:
-            stdout.write(f"Unreviewed template: {options.review_template}\n")
 
     failed = any(targets[target]["status"] != "complete" for target in selected_targets)
     return 1 if failed or not stable or selected_missing else 0
