@@ -5,6 +5,8 @@ tasks:
 devTasks:
   unitTests:
     shell: python call_invoke.py test
+  micromambaAcceptance:
+    shell: python call_invoke.py micromambaAcceptance
   build:
     shell: python call_invoke.py build
   local:

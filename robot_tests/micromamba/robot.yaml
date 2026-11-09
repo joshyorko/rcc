@@ -1,0 +1,8 @@
+tasks:
+  probe:
+    shell: python probe.py
+  fail:
+    shell: python probe.py fail
+environmentConfigs:
+  - ../uv_system_flag/conda.yaml
+artifactsDir: output

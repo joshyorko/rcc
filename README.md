@@ -352,9 +352,12 @@ Local settings file: write a `settings.yaml` to `$ROBOCORP_HOME/settings.yaml` w
 Micromamba is embedded into `rcc` and extracted locally at runtime; no live download is needed for the conda-forge path. The uv-native path (conda.yaml with no `channels`) downloads uv on-demand and caches it locally. If you rebuild assets yourself, you can change the micromamba download base used during asset preparation via:
 
 ```zsh
-export RCC_DOWNLOADS_BASE="https://downloads.your-domain.com"
+export RCC_MICROMAMBA_BASE="https://mirror.your-domain.com/api/micromamba"
 rcc run -r developer/toolkit.yaml --dev -t assets
 ```
+
+See [embedded micromamba](docs/micromamba.md) for the pinned release,
+digest refresh procedure and native acceptance gates.
 
 To verify what endpoints are in effect at runtime, run:
 

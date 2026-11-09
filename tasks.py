@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+import zlib
 from pathlib import Path
 
 from invoke import task
@@ -20,6 +21,14 @@ from invoke import task
 
 MICROMAMBA_MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
 MICROMAMBA_HASH_CHUNK_BYTES = 1024 * 1024
+# SHA-256 of the executable member, independently matched to the release's
+# standalone executable digest. These also qualify generated gzip asset reuse.
+MICROMAMBA_BINARY_SHA256 = {
+    "linux64": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+    "macos64": "8421462a1ef1df9f7acd114f9e2a24c1332ce4f4e29f44465b4acb44e2755172",
+    "macosarm64": "c547639f5caf742236641c362746abb4a3505774753ecd08fe341643670c4c01",
+    "windows64": "f8b4284bd4eb1134122eaf93b3ea6c7be567e596de5829e1a6f478e34e41974a",
+}
 
 
 def _binary_inventory_targets():
@@ -564,26 +573,26 @@ def get_official_micromamba_url(version, platform):
 def _get_official_micromamba_fallback(version, platform):
     """Return the immutable official release archive and its GitHub-reported digest."""
     version = version.removeprefix("v")
-    release = "2.5.0-2"
+    release = "2.10.0-0"
     assets = {
         "linux64": (
             "micromamba-linux-64.tar.bz2",
-            "cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6",
+            "9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b",
         ),
         "macos64": (
             "micromamba-osx-64.tar.bz2",
-            "2d6ab968ba08c003e43642f55afded1f0fc4247387f04e340cdc6a0129d9c550",
+            "17b20c4271d65c030a5c86788f5ca86eb575187209f626edabdb8c6a875c6838",
         ),
         "macosarm64": (
             "micromamba-osx-arm64.tar.bz2",
-            "74d1f250b1505cd4d78728bd8b0b7f0ffbaa660b18042f15f7b610c16102d201",
+            "acef4eaab19ec2174ad5a449e5aad981ca326270db819502ff096a92fc31caa6",
         ),
         "windows64": (
             "micromamba-win-64.tar.bz2",
-            "8a53345b37016e4303d3ecf243ff620380971dbe24d71ea849ec1d6957d15883",
+            "6283f25f8142606d86e81a43c7103b5d4f1d5c2027e3f9d7326eff23b33930d8",
         ),
     }
-    if version != "2.5.0" or platform not in assets:
+    if version != "2.10.0" or platform not in assets:
         raise ValueError(
             f"no integrity-bound micromamba fallback for version {version!r}, platform {platform!r}"
         )
@@ -711,55 +720,53 @@ def micromamba(c):
     }
 
     for platform, arch in platforms.items():
-        output = f"blobs/assets/micromamba.{arch}"
-        output_gz = output + ".gz"
-        if os.path.exists(output_gz):
-            print(f"Asset {output_gz} already exists, skipping")
-            continue
-
+        output_gz = Path(f"blobs/assets/micromamba.{arch}.gz")
         url = get_official_micromamba_url(version, platform)
         fallback_url, expected_sha256 = _get_official_micromamba_fallback(version, platform)
+        binary_sha256 = MICROMAMBA_BINARY_SHA256[platform]
+        if output_gz.exists():
+            try:
+                with gzip.open(output_gz, "rb") as stream:
+                    digest = hashlib.sha256()
+                    counted = 0
+                    while chunk := stream.read(MICROMAMBA_HASH_CHUNK_BYTES):
+                        counted += len(chunk)
+                        if counted > MICROMAMBA_MAX_ARCHIVE_BYTES:
+                            raise ValueError("generated executable exceeds size limit")
+                        digest.update(chunk)
+                if digest.hexdigest() == binary_sha256:
+                    print(f"Verified {output_gz}, skipping")
+                    continue
+            except (OSError, EOFError, ValueError, zlib.error):
+                pass  # A stale or corrupt asset must be regenerated and verified.
         print(f"Downloading from official source: {url}")
-
-        # Create unique extraction directory
-        extract_dir = tempfile.mkdtemp(prefix="rcc_micromamba_extract_")
-
-        # Download the archive
-        archive_path = os.path.join(extract_dir, "micromamba.tar.bz2")
-        _download_micromamba_archive(
-            url, archive_path,
-            expected_sha256=expected_sha256,
-            fallback_url=fallback_url,
-        )
-
-        # Extract the binary from the archive
-        # The archive contains Library/bin/micromamba.exe on Windows, bin/micromamba on Unix
-        with tarfile.open(archive_path, "r:bz2") as tar:
+        with tempfile.TemporaryDirectory(prefix="rcc_micromamba_extract_") as extract_dir:
+            archive_path = Path(extract_dir) / "micromamba.tar.bz2"
+            _download_micromamba_archive(
+                url, archive_path,
+                expected_sha256=expected_sha256,
+                fallback_url=fallback_url,
+            )
             expected_member = (
                 "Library/bin/micromamba.exe" if platform == "windows64" else "bin/micromamba"
             )
-            _validate_micromamba_archive_members(tar, expected_member)
-            tar.extractall(path=extract_dir)
-
-        # Find and move the binary
-        if platform == "windows64":
-            # Windows archive has binary at Library/bin/micromamba.exe
-            src_binary = os.path.join(extract_dir, "Library", "bin", "micromamba.exe")
-        else:
-            # Unix archives have binary at bin/micromamba
-            src_binary = os.path.join(extract_dir, "bin", "micromamba")
-
-        shutil.move(src_binary, output)
-
-        # Compress using Python's gzip module (cross-platform)
-        print(f"Compressing {output}")
-        with open(output, "rb") as f_in:
-            with gzip.open(output_gz, "wb", compresslevel=9) as f_out:
-                shutil.copyfileobj(f_in, f_out)
-        os.remove(output)
-
-        # Cleanup
-        shutil.rmtree(extract_dir, ignore_errors=True)
+            with tarfile.open(archive_path, "r:bz2") as tar:
+                _validate_micromamba_archive_members(tar, expected_member)
+                tar.extractall(path=extract_dir)
+            src_binary = Path(extract_dir) / expected_member
+            if _sha256_file(src_binary, MICROMAMBA_MAX_ARCHIVE_BYTES) != binary_sha256:
+                raise ValueError(f"micromamba executable SHA-256 mismatch for {platform}")
+            # Stage beside the destination for atomic replacement, including on Windows.
+            output_gz.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile(dir=output_gz.parent, delete=False) as staged:
+                staged_path = Path(staged.name)
+            try:
+                with src_binary.open("rb") as source, staged_path.open("wb") as sink:
+                    with gzip.GzipFile(filename="", mode="wb", fileobj=sink, compresslevel=9, mtime=0) as compressed:
+                        shutil.copyfileobj(source, compressed)
+                os.replace(staged_path, output_gz)
+            finally:
+                staged_path.unlink(missing_ok=True)
 
 
 @task(pre=[micromamba])
@@ -875,6 +882,38 @@ def test(c, cover=False):
         c.run("go tool cover -func=tmp/cover.out")
     else:
         c.run("go test ./...")
+
+
+def _prepare_micromamba_acceptance_binary():
+    """Build the local candidate or verify CI's pre-staged binary without replacing it."""
+    binary = Path("build") / ("rcc.exe" if os.name == "nt" else "rcc")
+    staged = os.environ.get("RCC_REAL_BINARY")
+    expected = os.environ.get("RCC_REAL_BINARY_SHA256")
+    if staged or expected:
+        if not staged or not expected:
+            raise RuntimeError("staged RCC acceptance requires both its path and SHA-256")
+        if Path(staged).resolve() != binary.resolve() or not binary.is_file():
+            raise RuntimeError("staged RCC acceptance binary does not match the Robot candidate path")
+        if hashlib.sha256(binary.read_bytes()).hexdigest() != expected:
+            raise RuntimeError("staged RCC acceptance binary SHA-256 mismatch")
+    else:
+        binary.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["go", "build", "-ldflags", "-s", "-o", str(binary), "./cmd/rcc"],
+                       env={**os.environ, "CGO_ENABLED": "0"}, check=True)
+    return binary
+
+
+@task(pre=[assets])
+def micromambaAcceptance(c):
+    """Verify download integrity and the native embedded micromamba runtime."""
+    c.run(f"{PYTHON} -m unittest scripts/test_micromamba_tasks.py")
+    subprocess.run(["go", "test", "-count=1", "./conda", "-run",
+                    "^Test(EmbeddedMicromambaVersionAndSideBySideExtraction|ParseDependenciesJSON)$", "-v"],
+                   env={**os.environ, "CGO_ENABLED": "0"}, check=True)
+    _prepare_micromamba_acceptance_binary()
+    output = os.environ.get("RCC_MICROMAMBA_TEST_OUTPUT", "tmp/output/micromamba")
+    subprocess.run([sys.executable, "-m", "robot", "-L", "DEBUG", "-d", output,
+                    "robot_tests/micromamba.robot"], check=True)
 
 
 @task

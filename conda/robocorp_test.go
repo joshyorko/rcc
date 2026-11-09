@@ -1,16 +1,59 @@
 package conda_test
 
 import (
+	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/conda"
 	"github.com/joshyorko/rcc/hamlet"
 )
+
+// TestEmbeddedMicromambaVersionAndSideBySideExtraction runs the native embedded
+// executable, so cross-compilation is insufficient to satisfy this check.
+func TestEmbeddedMicromambaVersionAndSideBySideExtraction(t *testing.T) {
+	home := t.TempDir()
+	previousHome := common.Product.Home()
+	common.Product.ForceHome(home)
+	t.Cleanup(func() { common.Product.ForceHome(previousHome) })
+	oldBinary := filepath.Join(common.MicromambaLocation(), "v2.5.0", filepath.Base(conda.BinMicromamba()))
+	if err := os.MkdirAll(filepath.Dir(oldBinary), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	oldContent := []byte("existing RCC 2.5.0 executable sentinel")
+	if err := os.WriteFile(oldBinary, oldContent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if conda.HasMicroMamba() {
+		t.Fatal("fresh home unexpectedly has the candidate micromamba")
+	}
+	if !conda.DoExtract(0) || !conda.HasMicroMamba() {
+		t.Fatal("embedded micromamba failed first-run extraction or version admission")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	command := exec.CommandContext(ctx, conda.BinMicromamba(), "--version")
+	command.Env = conda.CondaEnvironment()
+	out, err := command.Output()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if version := strings.TrimSpace(string(out)); version != "2.10.0" {
+		t.Fatalf("embedded executable version = %q; want 2.10.0", version)
+	}
+	if blobs.MicromambaVersion() != "v2.10.0" {
+		t.Fatal("embedded version asset differs from executable")
+	}
+	if content, err := os.ReadFile(oldBinary); err != nil || string(content) != string(oldContent) {
+		t.Fatalf("extraction changed the old version's executable: %q, %v", content, err)
+	}
+}
 
 func TestCondaExecutionEnvironmentRejectsProducerOwnedActivationPaths(t *testing.T) {
 	home := t.TempDir()

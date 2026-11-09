@@ -612,6 +612,9 @@ jobs:
         run: |
           inv assets
           inv robotsetup
+      - name: Verify native micromamba assets, cold, warm, JSON and activation paths
+        timeout-minutes: 15
+        run: inv micromambaAcceptance
       - name: Run UV Python prefix symlink containment tests
         shell: bash
         run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
