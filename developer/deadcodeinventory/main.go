@@ -204,7 +204,7 @@ func parseFlags(arguments []string, stderr io.Writer) (options, []string, error)
 	tags := flags.String("tags", "", "comma-separated Go build tags")
 	flags.Var(&symbols, "symbol", "function to report as full/import/path|FuncOrType.Method (repeatable)")
 	flags.Usage = func() {
-		fmt.Fprintln(stderr, "usage: deadcodeinventory -root /repo -tags '' -symbol 'full/import/path|FuncOrType.Method' -- ./package/pattern [...]")
+		_, _ = fmt.Fprintln(stderr, "usage: deadcodeinventory -root /repo -tags '' -symbol 'full/import/path|FuncOrType.Method' -- ./package/pattern [...]")
 		flags.PrintDefaults()
 	}
 	if err := flags.Parse(arguments); err != nil {
@@ -242,7 +242,7 @@ func writePackageErrors(pkgs []*packages.Package, stderr io.Writer) int {
 	}
 	sort.Strings(ordered)
 	for _, message := range ordered {
-		fmt.Fprintln(stderr, message)
+		_, _ = fmt.Fprintln(stderr, message)
 	}
 	return len(ordered)
 }
