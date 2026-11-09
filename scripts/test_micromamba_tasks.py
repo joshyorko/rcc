@@ -1,4 +1,7 @@
 import io
+from contextlib import contextmanager
+import gzip
+import os
 import hashlib
 import subprocess
 import sys
@@ -35,7 +38,78 @@ def _archive_with_members(members):
   return stream.getvalue()
 
 
+@contextmanager
+def _working_directory(directory):
+  previous = Path.cwd()
+  try:
+    os.chdir(directory)
+    yield
+  finally:
+    os.chdir(previous)
+
+
 class MicromambaDownloadTests(unittest.TestCase):
+  def test_asset_generation_replaces_stale_binaries_and_reuses_verified_bytes(self):
+    archive = _archive_bytes()
+    binary_digest = hashlib.sha256(b"micromamba").hexdigest()
+    arches = ("linux_amd64", "darwin_amd64", "darwin_arm64", "windows_amd64")
+
+    def download(url, destination, **kwargs):
+      # The Windows archive has a different executable member.
+      if "/win-64/" in url:
+        stream = io.BytesIO()
+        with tarfile.open(fileobj=stream, mode="w:bz2") as tar:
+          member = tarfile.TarInfo("Library/bin/micromamba.exe")
+          member.size = len(b"micromamba")
+          tar.addfile(member, io.BytesIO(b"micromamba"))
+        Path(destination).write_bytes(stream.getvalue())
+      else:
+        Path(destination).write_bytes(archive)
+
+    with tempfile.TemporaryDirectory() as directory, _working_directory(directory):
+      Path("assets").mkdir()
+      Path("assets/micromamba_version.txt").write_text("v2.10.0\n")
+      Path("blobs/assets").mkdir(parents=True)
+      outputs = [Path(f"blobs/assets/micromamba.{arch}.gz") for arch in arches]
+      for output in outputs:
+        output.write_bytes(gzip.compress(b"stale 2.5.0"))
+      with mock.patch.object(tasks, "MICROMAMBA_BINARY_SHA256", {
+          platform: binary_digest for platform in ("linux64", "macos64", "macosarm64", "windows64")
+      }, create=True), mock.patch.object(tasks, "_download_micromamba_archive", side_effect=download) as fetch:
+        tasks.micromamba.body(None)
+        self.assertEqual(fetch.call_count, 4)
+        first = [output.read_bytes() for output in outputs]
+        for content in first:
+          self.assertEqual(gzip.decompress(content), b"micromamba")
+        fetch.reset_mock()
+        tasks.micromamba.body(None)
+        fetch.assert_not_called()
+        # Corruption must trigger regeneration, with deterministic gzip bytes.
+        outputs[0].write_bytes(b"truncated gzip")
+        tasks.micromamba.body(None)
+        self.assertEqual(fetch.call_count, 1)
+        self.assertEqual(outputs[0].read_bytes(), first[0])
+        fetch.reset_mock()
+        corrupt = bytearray(first[0])
+        corrupt[10] = 7  # Invalid deflate block, after a valid gzip header.
+        outputs[0].write_bytes(corrupt)
+        tasks.micromamba.body(None)
+        self.assertEqual(fetch.call_count, 1)
+        self.assertEqual(outputs[0].read_bytes(), first[0])
+        outputs[0].write_bytes(gzip.compress(b"old"))
+        fetch.side_effect = RuntimeError("unavailable")
+        with self.assertRaisesRegex(RuntimeError, "unavailable"):
+          tasks.micromamba.body(None)
+        self.assertEqual(gzip.decompress(outputs[0].read_bytes()), b"old")
+        fetch.side_effect = download
+        tasks.MICROMAMBA_BINARY_SHA256["linux64"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "executable SHA-256 mismatch"):
+          tasks.micromamba.body(None)
+        self.assertEqual(gzip.decompress(outputs[0].read_bytes()), b"old")
+        Path("assets/micromamba_version.txt").write_text("v2.10.1\n")
+        with self.assertRaisesRegex(ValueError, "no integrity-bound micromamba fallback"):
+          tasks.micromamba.body(None)
+
   def test_download_rejects_oversized_payload_at_curl_and_local_boundaries(self):
     """Break caught: configured sources can force unbounded archive resource use."""
     calls = []
@@ -168,37 +242,37 @@ class MicromambaDownloadTests(unittest.TestCase):
     """Break caught: fallback hardening silently discards RCC_MICROMAMBA_BASE."""
     with mock.patch.dict("os.environ", {"RCC_MICROMAMBA_BASE": "https://mirror.test/root/"}):
       self.assertEqual(
-          tasks.get_official_micromamba_url("v2.5.0", "linux64"),
-          "https://mirror.test/root/linux-64/2.5.0",
+          tasks.get_official_micromamba_url("v2.10.0", "linux64"),
+          "https://mirror.test/root/linux-64/2.10.0",
       )
 
   def test_fallback_metadata_is_bound_to_exact_release_archives(self):
     """Break caught: a mutable or wrong-version fallback bypasses integrity binding."""
     expected = {
         "linux64": (
-            "https://github.com/mamba-org/micromamba-releases/releases/download/2.5.0-2/"
+            "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
             "micromamba-linux-64.tar.bz2",
-            "cec496f2299f9ceb5f5e23fc2ccf081fffda0c4bc87a6fdab575bf1e04f103b6",
+            "9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b",
         ),
         "macos64": (
-            "https://github.com/mamba-org/micromamba-releases/releases/download/2.5.0-2/"
+            "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
             "micromamba-osx-64.tar.bz2",
-            "2d6ab968ba08c003e43642f55afded1f0fc4247387f04e340cdc6a0129d9c550",
+            "17b20c4271d65c030a5c86788f5ca86eb575187209f626edabdb8c6a875c6838",
         ),
         "macosarm64": (
-            "https://github.com/mamba-org/micromamba-releases/releases/download/2.5.0-2/"
+            "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
             "micromamba-osx-arm64.tar.bz2",
-            "74d1f250b1505cd4d78728bd8b0b7f0ffbaa660b18042f15f7b610c16102d201",
+            "acef4eaab19ec2174ad5a449e5aad981ca326270db819502ff096a92fc31caa6",
         ),
         "windows64": (
-            "https://github.com/mamba-org/micromamba-releases/releases/download/2.5.0-2/"
+            "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
             "micromamba-win-64.tar.bz2",
-            "8a53345b37016e4303d3ecf243ff620380971dbe24d71ea849ec1d6957d15883",
+            "6283f25f8142606d86e81a43c7103b5d4f1d5c2027e3f9d7326eff23b33930d8",
         ),
     }
     for platform, metadata in expected.items():
-      self.assertEqual(tasks._get_official_micromamba_fallback("v2.5.0", platform), metadata)
-    for version, platform in (("v2.5.1", "linux64"), ("v2.5.0", "unknown")):
+      self.assertEqual(tasks._get_official_micromamba_fallback("v2.10.0", platform), metadata)
+    for version, platform in (("v2.10.1", "linux64"), ("v2.10.0", "unknown")):
       with self.assertRaisesRegex(ValueError, "no integrity-bound micromamba fallback"):
         tasks._get_official_micromamba_fallback(version, platform)
 

@@ -1,6 +1,7 @@
 package conda
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -73,9 +74,21 @@ func (it dependencies) Lookup(name string, pypi bool) (*dependency, bool) {
 
 func parseDependencies(origin string, output []byte) (dependencies, error) {
 	result := make(dependencies, 0, 100)
-	err := json.Unmarshal(output, &result)
-	if err != nil {
-		return nil, err
+	if origin == "mamba" && bytes.HasPrefix(bytes.TrimSpace(output), []byte("{")) {
+		var listing struct {
+			Packages *dependencies `json:"packages"`
+		}
+		if err := json.Unmarshal(output, &listing); err != nil {
+			return nil, err
+		}
+		if listing.Packages == nil {
+			return nil, fmt.Errorf("micromamba list JSON is missing a packages array")
+		}
+		result = *listing.Packages
+	} else {
+		if err := json.Unmarshal(output, &result); err != nil {
+			return nil, err
+		}
 	}
 	if len(origin) == 0 {
 		return result, nil

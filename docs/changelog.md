@@ -1,6 +1,11 @@
 # rcc change log
 ## Unreleased
 
+- pin embedded micromamba to 2.10.0 (upstream build 2.10.0-0), validate archive
+  and executable hashes, and regenerate stale compressed assets. Add native
+  version, extraction and environment acceptance checks; release qualification
+  still requires all four supported native targets (GH#279)
+
 <a name="v181910"></a>
 ## v18.19.10 (date: 08.11.2026)
 
