@@ -1,0 +1,36 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 96 and seed -4752745353828284125 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 80527] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/check-LeaseReclamation/LeaseReclamation.tla
+Parsing file /tmp/Naturals.tla
+Semantic processing of module Naturals
+Semantic processing of module LeaseReclamation
+Starting... (2026-11-09 13:35:11)
+Computing initial states...
+Finished computing initial states: 2 distinct states generated at 2026-11-09 13:35:11.
+Error: Invariant NoProtectedDeletion is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ contentPresent = TRUE
+/\ phase = "ready"
+/\ pathPresent = TRUE
+/\ dryRun = FALSE
+/\ lease = "none"
+
+State 2: <AcquireLease line 15, col 3 to line 17, col 61 of module LeaseReclamation>
+/\ contentPresent = TRUE
+/\ phase = "ready"
+/\ pathPresent = TRUE
+/\ dryRun = FALSE
+/\ lease = "active"
+
+State 3: <EvictPath line 45, col 3 to line 49, col 48 of module LeaseReclamation>
+/\ contentPresent = TRUE
+/\ phase = "path-removed"
+/\ pathPresent = FALSE
+/\ dryRun = FALSE
+/\ lease = "active"
+
+10 states generated, 8 distinct states found, 4 states left on queue.
+The depth of the complete state graph search is 3.
+The average outdegree of the complete state graph is 2 (minimum is 1, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:35:11)

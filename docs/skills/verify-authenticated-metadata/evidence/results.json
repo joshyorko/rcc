@@ -1,0 +1,25 @@
+{
+  "model": "MetadataDistribution.tla",
+  "sha256": "c92a9b972a3270399f52f957cc68ca2ef6e4f2f8520b9d67d9b08d241fd21e80",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "DistributedOnlyAfterRetention",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+---
+title: "Publish authenticated metadata without losing retained state"
+---
+stateDiagram-v2
+  s0: Snapshot supplied
+  s1: Rejected before retention
+  s2: Authority checked
+  s3: Checkpoint retained
+  s4: Failed, checkpoint retained
+  s5: Carrier written, awaiting readback
+  s6: Publication confirmed
+  [*] --> s0
+  s0 --> s1: reject unauthenticated snapshot
+  s0 --> s2: verify independent authority
+  s2 --> s1: storage fails closed or reject stale snapshot
+  s2 --> s3: retain snapshot under operator lock
+  s3 --> s4: carrier write fails
+  s3 --> s5: write detached carrier
+  s5 --> s4: readback fails or differs
+  s5 --> s6: confirm matching authenticated envelope

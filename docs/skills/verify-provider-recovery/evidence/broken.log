@@ -1,0 +1,55 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 44 and seed -8573744460823551187 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 81953] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/final-check-ProviderRecovery/ProviderRecovery.tla
+Semantic processing of module ProviderRecovery
+Starting... (2026-11-09 13:35:57)
+Computing initial states...
+Finished computing initial states: 2 distinct states generated at 2026-11-09 13:35:58.
+Error: Invariant OnlyCommittedRestoreVisible is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ pending = FALSE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "supplied"
+/\ visible = FALSE
+
+State 2: <Validate line 8, col 13 to line 10, col 70 of module ProviderRecovery>
+/\ pending = FALSE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "validated"
+/\ visible = FALSE
+
+State 3: <Begin line 11, col 10 to line 12, col 67 of module ProviderRecovery>
+/\ pending = FALSE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "begun"
+/\ visible = FALSE
+
+State 4: <StageRecords line 13, col 17 to line 15, col 65 of module ProviderRecovery>
+/\ pending = TRUE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "pending"
+/\ visible = FALSE
+
+State 5: <Crash line 22, col 10 to line 24, col 58 of module ProviderRecovery>
+/\ pending = TRUE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "crashed"
+/\ visible = FALSE
+
+State 6: <Replay line 25, col 11 to line 27, col 59 of module ProviderRecovery>
+/\ pending = TRUE
+/\ validArchive = TRUE
+/\ committed = FALSE
+/\ phase = "recovered"
+/\ visible = TRUE
+
+16 states generated, 13 distinct states found, 2 states left on queue.
+The depth of the complete state graph search is 6.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:35:58)

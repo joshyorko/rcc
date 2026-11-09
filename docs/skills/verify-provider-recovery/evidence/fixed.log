@@ -1,0 +1,15 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 25 and seed 3975305334068402766 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 81916] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/final-check-ProviderRecovery/ProviderRecovery.tla
+Semantic processing of module ProviderRecovery
+Starting... (2026-11-09 13:35:57)
+Computing initial states...
+Finished computing initial states: 2 distinct states generated at 2026-11-09 13:35:57.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 5.3E-18
+21 states generated, 14 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 7.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:35:57)

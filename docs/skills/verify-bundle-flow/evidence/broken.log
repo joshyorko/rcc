@@ -1,0 +1,48 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 62 and seed -4604215875499381457 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 99651] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/latest-runner-check/BundleFlow.tla
+Semantic processing of module BundleFlow
+Starting... (2026-11-09 13:40:45)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-09 13:40:45.
+Error: Invariant NoFalseSuccess is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ task = "not started"
+/\ closed = FALSE
+/\ phase = "opening"
+/\ copied = "pending"
+/\ reported = "pending"
+
+State 2: <PrepareBundle line 10, col 3 to line 11, col 49 of module BundleFlow>
+/\ task = "not started"
+/\ closed = FALSE
+/\ phase = "prepared"
+/\ copied = "pending"
+/\ reported = "pending"
+
+State 3: <RunTask line 17, col 3 to line 18, col 43 of module BundleFlow>
+/\ task = "running"
+/\ closed = FALSE
+/\ phase = "running"
+/\ copied = "pending"
+/\ reported = "pending"
+
+State 4: <TaskCompletes line 20, col 3 to line 22, col 43 of module BundleFlow>
+/\ task = "success"
+/\ closed = FALSE
+/\ phase = "reaped"
+/\ copied = "pending"
+/\ reported = "pending"
+
+State 5: <PrematureSuccess line 37, col 3 to line 39, col 39 of module BundleFlow>
+/\ task = "success"
+/\ closed = FALSE
+/\ phase = "returned"
+/\ copied = "pending"
+/\ reported = "success"
+
+10 states generated, 8 distinct states found, 2 states left on queue.
+The depth of the complete state graph search is 5.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:40:45)

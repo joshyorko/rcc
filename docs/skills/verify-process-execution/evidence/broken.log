@@ -1,0 +1,55 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Running breadth-first search Model-Checking with fp 66 and seed -3933512917501111611 with 1 worker on 20 cores with 228MB heap and 64MB offheap memory [pid: 80847] (Linux 7.3.1 amd64, Eclipse Adoptium 25.0.5 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /tmp/codex-rcc-state-machines-20261109-KQ2z0n/check-ProcessExecution/ProcessExecution.tla
+Semantic processing of module ProcessExecution
+Starting... (2026-11-09 13:35:15)
+Computing initial states...
+Computed 2 initial states...
+Computed 4 initial states...
+Finished computing initial states: 6 distinct states generated at 2026-11-09 13:35:15.
+Error: Invariant LeaseUntilReaped is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ reaped = FALSE
+/\ started = FALSE
+/\ outcome = "success"
+/\ phase = "request"
+/\ reported = "pending"
+/\ lease = FALSE
+
+State 2: <AcquireLease line 13, col 3 to line 14, col 53 of module ProcessExecution>
+/\ reaped = FALSE
+/\ started = FALSE
+/\ outcome = "success"
+/\ phase = "leased"
+/\ reported = "pending"
+/\ lease = TRUE
+
+State 3: <ResolveAndPrepare line 16, col 3 to line 18, col 60 of module ProcessExecution>
+/\ reaped = FALSE
+/\ started = FALSE
+/\ outcome = "success"
+/\ phase = "prepared"
+/\ reported = "pending"
+/\ lease = TRUE
+
+State 4: <StartChild line 24, col 3 to line 26, col 51 of module ProcessExecution>
+/\ reaped = FALSE
+/\ started = TRUE
+/\ outcome = "success"
+/\ phase = "running"
+/\ reported = "pending"
+/\ lease = TRUE
+
+State 5: <PrematureRelease line 49, col 3 to line 51, col 60 of module ProcessExecution>
+/\ reaped = FALSE
+/\ started = TRUE
+/\ outcome = "success"
+/\ phase = "running"
+/\ reported = "pending"
+/\ lease = FALSE
+
+27 states generated, 27 distinct states found, 7 states left on queue.
+The depth of the complete state graph search is 5.
+The average outdegree of the complete state graph is 1 (minimum is 1, the maximum 2 and the 95th percentile is 2).
+Finished in 00s at (2026-11-09 13:35:15)

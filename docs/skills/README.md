@@ -8,7 +8,24 @@ Inside this checkout, repository-local guidance is authoritative for RCC impleme
 
 - [`rcc-development`](rcc-development/SKILL.md): source orientation, contained development, implementation boundaries, and verification for RCC changes.
 - [`meta-skill-improvement`](meta-skill-improvement/SKILL.md): evidence-backed guidance correction and durable-learning capture.
-- [`verify-execution-lifecycle`](verify-execution-lifecycle/SKILL.md): bounded TLA+ checks for strict artifact admission, trust-policy downgrade, and process permission.
+- [`verify-execution-lifecycle`](verify-execution-lifecycle/SKILL.md): artifact admission, strict policy retention, and the shared bounded TLC checker.
+- [`verify-authenticated-metadata`](verify-authenticated-metadata/SKILL.md): authenticated monotonic metadata, restart retention, and operator distribution.
+- [`verify-build-coordination`](verify-build-coordination/SKILL.md): owner/expiry fencing before first authoritative publication.
+- [`verify-materialization`](verify-materialization/SKILL.md): verified-content intent, restore, runtime validation, ready publication and crash retry.
+- [`verify-lease-reclamation`](verify-lease-reclamation/SKILL.md): active/ambiguous lease protection, dry-run and ordered reclamation.
+- [`verify-process-execution`](verify-process-execution/SKILL.md): executable selection, direct-child supervision, reaping and lease cleanup.
+- [`verify-bundle-flow`](verify-bundle-flow/SKILL.md): task result versus output finalization and command result.
+- [`verify-provider-recovery`](verify-provider-recovery/SKILL.md): committed journal replay and deferred provider initialization.
+
+These skills partition the artifact execution pipeline; they do not prove all RCC
+commands. Each owns a feature map, source bindings, finite model bounds, and drive
+recipes. Existing admission/metadata models remain under `docs/formal/`;
+new models live inside their owning skills. Run each fixed/broken/restored gate
+and use `$statechart` to inspect its view. Cross-process tests are implementation
+evidence; model exploration is an abstract safety check, not a proof of Go.
+Legacy conda solving/holotree construction (`conda/`, `htfs/`), cloud authentication
+(`cloud/`), and legacy robot preparation (`operations/running.go:LoadTaskWithEnvironment`)
+are outside these finite models. Treat their behavior as unmodeled, not verified.
 
 Use `rcc-development` for source work. Load `meta-skill-improvement` only when evidence reveals stale or missing guidance, the task changes agent guidance, or closure produces durable learning. The documentation receipt remains mandatory for non-trivial work, and a no-change receipt is valid without loading the meta-skill.
 

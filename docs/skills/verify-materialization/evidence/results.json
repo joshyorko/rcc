@@ -1,0 +1,25 @@
+{
+  "model": "Materialization.tla",
+  "sha256": "8a55ccbb1faa6403ba62d2314fb4558c1ae13892ae03174c3d27aece1d4ee238",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "ReadyOnlyAfterValidation",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

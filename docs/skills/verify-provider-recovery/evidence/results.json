@@ -1,0 +1,25 @@
+{
+  "model": "ProviderRecovery.tla",
+  "sha256": "e7aa95ddf50e843ed3f5b1e3f5eeefc83d070d937c39e3527d3b4eccc0d1acb7",
+  "tlc_sha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88",
+  "cases": [
+    {
+      "case": "fixed",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    },
+    {
+      "case": "broken",
+      "exit": 12,
+      "expected_violation": "OnlyCommittedRestoreVisible",
+      "passed": true
+    },
+    {
+      "case": "restored",
+      "exit": 0,
+      "expected_violation": null,
+      "passed": true
+    }
+  ]
+}

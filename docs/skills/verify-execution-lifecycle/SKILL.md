@@ -7,6 +7,31 @@ description: Check changes to RCC artifact trust admission before materializatio
 
 Use this skill when changing artifact trust-policy selection, detached evidence, acquisition/materialization, lease admission, or a caller that starts a process from an acquired artifact. Read every model result with the pstack `/statechart` skill.
 
+## Feature map, launch and doctor
+
+Read [features/README.md](features/README.md). This is a short-lived CLI/model
+workflow, not a server session. Before each drive, check `go version`, generated
+assets via `rcc-development`, and pinned TLC/Java availability. After a failed
+drive inspect its complete log and restore a known fixture state before retrying.
+Go tests own isolated temporary homes and cleanup; never target the user cache.
+Keep evidence outside disposable test homes and clean task-owned scratch after
+retaining the intended reports. No process should outlive a useful drive.
+
+The shared subsystem model runner is
+`python3 docs/skills/verify-execution-lifecycle/scripts/check_models.py MODEL.tla --out /absolute/new-task-directory`. It checks
+pinned TLC bytes and expects fixed-pass, broken-invariant-failure, restored-pass,
+retaining logs and a JSON receipt. New subsystem models live with their skills;
+the original models remain at their established paths. Read each with `$statechart`.
+Model fault configurations demonstrate sensitivity, not source-code mutation or
+current product failures. Never replay a deliberate model fault as a product bug.
+
+Authenticated metadata is owned by the
+[metadata skill](../verify-authenticated-metadata/SKILL.md); the commands below
+remain available for compatibility with the original combined verification gate.
+
+The [chart gallery and evidence](evidence/README.md) describe retained results and
+regeneration, including the Pele renderer owned by this skill.
+
 ## Run
 
 Prepare generated assets using `rcc-development`, then run
@@ -97,4 +122,6 @@ Keep source-sync commits at the last revisions whose functions were checked.
 After a covered change, inspect it, update the mapping/model if needed, rerun
 fixed/broken/restored checks and runtime regressions, then advance the record.
 Output copy-back, child supervision/lease cleanup and executable resolution
-remain implementation and runtime-test gates outside formal coverage.
+are outside these original admission models. The [bundle flow](../verify-bundle-flow/SKILL.md)
+and [process execution](../verify-process-execution/SKILL.md) skills add separate
+bounded contracts; executable path resolution remains a runtime-test gate.

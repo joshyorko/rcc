@@ -1,0 +1,29 @@
+---
+title: "Recover a provider restore only after its commit record"
+---
+stateDiagram-v2
+  s0: Backup supplied
+  s1: Backup rejected
+  s2: Archive and closure checked
+  s3: Restore transaction opened
+  s4: Stopped before commit
+  s5: Uncommitted restore discarded
+  s6: Restore records pending
+  s7: Commit record retained
+  s8: Stopped after commit
+  s9: Restore available
+  s10: Committed restore recovered
+  [*] --> s0
+  s0 --> s1: reject invalid backup
+  s0 --> s2: validate backup before publication
+  s2 --> s3: append restore begin
+  s2 --> s4: process stops
+  s3 --> s4: process stops
+  s3 --> s6: append transaction records
+  s4 --> s5: discard incomplete transaction
+  s6 --> s4: process stops
+  s6 --> s7: append restore commit
+  s7 --> s8: process stops
+  s7 --> s9: make restored state available
+  s8 --> s10: replay committed transaction
+  s9 --> s8: process stops

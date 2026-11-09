@@ -1,0 +1,41 @@
+---
+title: "RCC environment acquisition and readiness"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: ready
+    lg1: failure
+    lg2: progress
+  }
+  class lg0 teal
+  class lg1 orange
+  class lg2 blue
+  s0: Artifact requested
+  s1: Content verified
+  s2: Restoring environment
+  s3: Restore interrupted
+  s4: Acquisition failed
+  s5: Environment restored
+  s6: Executable and compatibility checked
+  s7: Ready for lease admission
+  [*] --> s0
+  s0 --> s1: verify artifact content
+  s1 --> s2: begin restoration
+  s1 --> s3: process crashes
+  s2 --> s3: process crashes
+  s2 --> s4: restoration fails
+  s2 --> s5: restore completes
+  s3 --> s1: discard provisional intent and retry
+  s5 --> s3: process crashes
+  s5 --> s4: executable or compatibility check fails
+  s5 --> s6: executable and compatibility checks pass
+  s6 --> s3: process crashes
+  s6 --> s7: publish readiness
+  class s0 blue
+  class s1 blue
+  class s2 blue
+  class s3 blue
+  class s4 orange
+  class s5 blue
+  class s6 blue
+  class s7 teal

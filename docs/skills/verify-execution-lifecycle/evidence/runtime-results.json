@@ -1,0 +1,608 @@
+{
+  "source": "cf7a47e7b9430db4abebae68776f65f3e309624e",
+  "runtime": "Linux amd64, Go 1.26.9, CGO_ENABLED=0",
+  "passed": 118,
+  "skipped": 2,
+  "tests": [
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataV1AttackBaseline",
+      "result": "skip"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestFilesystemCoordinatorFencesTakeoverAndRejectsStalePublish",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestCommittedArtifactWinsAndDivergenceIsVisible",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestCommittedArtifactRecoveryAcknowledgesClaimTransaction",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestLocalFallbackRejectsNonAuthoritativeArtifact",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestFailedPrewarmBuilderRelinquishesClaimForRetry",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataStateIndependentProcesses",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/dependencies",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sbom",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/revocations",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/sequence",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/artifact",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/source",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/issued",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/expiry",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs/scope",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataEnvelopeAuthenticatesAllPolicyInputs",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataValidityAndIndependentAuthority/future",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataValidityAndIndependentAuthority/expired",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataValidityAndIndependentAuthority",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataSignerRejectsPayloadTooLargeForVerifier",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataRollbackSurvivesRestartAndKeyRotation",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataPartialJournalFailsClosed",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestStrictPolicyCommitsAuthenticatedRevocationBeforeDenying",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataDecisionBindsDeploymentAuthorityAndRequiredProvenance",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRenewalPreservesCompleteSnapshotAndDenials",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/unauthorized",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/wrong-key",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/future",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/expired",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/same-sequence",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/missing-prior",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/future-prior",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay/wrong-artifact",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRejectsUnauthorizedFreshnessAndReplay",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorRotationAndRecoveryKeepJournal",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorTransportFailureRetainsCheckpoint",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorIndependentProcesses",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifacttrust",
+      "test": "TestMetadataOperatorNeverRepairsCorruptJournal",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestWaitingPrewarmTakesOverAfterBuilderFailure",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestActiveFilesystemLockCannotBeStolenAcrossProcesses",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/buildcoord",
+      "test": "TestPrewarmWaiterReusesCommittedArtifactAcrossProcesses",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestCopyBundleArtifactsRejectsTraversalAndAbsolutePaths",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestCopyBundleArtifactsAllowsNestedNormalizationWithinWorkarea",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestCopyBundleArtifactsRejectsSymlinkedSourceAndDestinationParents",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestCopyBundleArtifactsRejectsExistingTargetWithoutOverwriting",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestCopyBundleFileFailureRemovesPartialTarget",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestMetadataOptionsRejectCarrierAliasesBeforeCreatingState",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestMetadataSignerRequiresExplicitRevocationSnapshot",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestMetadataEnvelopeFileReadIsBounded",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestMetadataSecurityRealCLI",
+      "result": "skip"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestPrepareBundleOutputWritersCaptureSeparateStreams",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestPrepareBundleOutputWritersRejectUnsafeArtifactDirectories",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestFinalizeBundleArtifactsRejectsSymlinkEscapes",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/cmd",
+      "test": "TestBundleTrustDefaultsToStrictAndCarriesLeaseRefreshContext",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-verified",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-verified",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-materializing",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-materializing",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-ready",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-ready",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-lease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-lease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-release",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-release",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/before-gc",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook/after-gc",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestSubprocessCrashRestartMatrixCoversEveryLifecycleHook",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutableResolution258BareNameUsesOnlyMaterializedPath",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutableResolution258AbsoluteAndRelativePaths",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutableResolution258RejectsTraversalAndEscapingSymlink",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutableResolution258PythonAliasesAndWindowsPATHEXT",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutableResolution258AllowsSymlinkedParentOfEnvironment",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestActiveLeaseEmbeddedClosureSurvivesDamagedReferenceRoot/missing",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestActiveLeaseEmbeddedClosureSurvivesDamagedReferenceRoot/corrupt",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestActiveLeaseEmbeddedClosureSurvivesDamagedReferenceRoot",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestAmbiguousIdentityLeaseProtectsEmbeddedClosureWithDamagedRoot",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestGCInterruptionRecoversAfterMaterializationRemoval",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestGCSeparateProcessSkipsActiveChildThenReclaimsAfterRelease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestCrashedLeaseIsReconciledThenReclaimed",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestLeaseAndExecutionHandleHaveExplicitTypedLifecycle",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestLeaseFailsClosedWhenStrongOwnerIdentityIsUnavailable",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteRunsPythonAndReleasesProcessScopedLease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteInDirectoryUsesMaterializedEnvironmentWithSourceCWD",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteReturnsChildExitCodeAndStillReleasesLease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteSpawnFailureStillReleasesLease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteForwardsTerminationSignalAndReleasesLease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteWithStreamsPreservesRequestResponseAndReleasesAfterReap",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestWarmAcquireDoesNotTouchProviderOrBuilder",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestMaterializationFailureNeverPublishesReadyRecord",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestMetadataRevocationDeniesNewLeaseWithoutTerminatingRunningProcess",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestMetadataLeaseChild",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestMetadataArchiveTransportPreservesEnvelopeAndArtifactIdentity",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestPublishUploadsOnlyMissingContentThenCommitsManifest",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestPublishStagesTrustBeforeManifestCommitAndRetryRecovers",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestValidateV1Capabilities",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestValidateCapabilityIntersectionFailsClosed",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestDeferredProviderResolvesOnce",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestDeferredProviderStableError",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestDeferredProviderDoesNotExposeResolverError",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRestoreChildProcessBoundary",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestIndependentProcessRepairAcquire",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRestoreCrashMatrix",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalDurableRestartContract",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRejectsManifestWithMissingObjects",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRecoversTornFinalRecord",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalStreamsObjectsToSidecar",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRestoreIsRestartDurableWithoutDuplicateHistory",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/artifactprovider",
+      "test": "TestJournalRestoreFailureLeavesRecoverableUncommittedTransaction",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestAcquireAndContentGCRaceSharesGlobalContentTransaction",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestExecutionHandleRejectsStaleLeaseOwnerIdentity",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestMaterializationEvictionRetiresRootBeforeCASReclamation",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestRetiredClosureReclaimsAfterRetentionUnderPressureAndMaxBytes",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestNewLeaseRefreshesRevocationsWithoutChangingRunningLease",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestLeaseFailsClosedWhenStrongOwnerIdentityIsAmbiguous",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestReconcileTreatsPIDReuseAsStale",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestGCDryRunPreservesProvisionalRecordsAndReferenceRoot",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestWarmAcquireRejectsMaterializedPythonABIMismatch",
+      "result": "pass"
+    },
+    {
+      "package": "github.com/joshyorko/rcc/environmentlifecycle",
+      "test": "TestWarmAcquireAndExecutionRejectSymlinkedPythonParent",
+      "result": "pass"
+    }
+  ]
+}
