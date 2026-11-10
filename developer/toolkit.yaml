@@ -16,7 +16,11 @@ devTasks:
   toc:
     shell: python call_invoke.py toc
   deadcode:
-    shell: python call_invoke.py deadcode
+    shell: python ../scripts/deadcode.py
+  deadcodeReview:
+    shell: python ../scripts/deadcode_review.py
+  deadcodeTests:
+    shell: python call_invoke.py deadcodeTests
   format:
     shell: python call_invoke.py format
   lint:

@@ -828,8 +828,15 @@ def toc(c):
 
 @task
 def deadcode(c):
-    """Report Go functions unreachable in this build configuration"""
+    """Collect cross-target Go reachability evidence"""
     c.run(f"{PYTHON} scripts/deadcode.py")
+
+
+@task
+def deadcodeTests(c):
+    """Run real Go fixture and simplification-review contract tests"""
+    c.run(f"{PYTHON} scripts/test_deadcode.py")
+    c.run(f"{PYTHON} scripts/test_deadcode_review.py")
 
 
 @task

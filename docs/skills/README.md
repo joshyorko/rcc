@@ -7,6 +7,7 @@ Inside this checkout, repository-local guidance is authoritative for RCC impleme
 ## Skill Router
 
 - [`rcc-development`](rcc-development/SKILL.md): source orientation, contained development, implementation boundaries, and verification for RCC changes.
+- [`deadcode-review`](deadcode-review/SKILL.md): evidence-bound, read-only simplification review of Go code.
 - [`meta-skill-improvement`](meta-skill-improvement/SKILL.md): evidence-backed guidance correction and durable-learning capture.
 - [`verify-execution-lifecycle`](verify-execution-lifecycle/SKILL.md): artifact admission, strict policy retention, and the shared bounded TLC checker.
 - [`verify-authenticated-metadata`](verify-authenticated-metadata/SKILL.md): authenticated monotonic metadata, restart retention, and operator distribution.
