@@ -2,7 +2,7 @@
 ## Unreleased
 
 <a name="v181911"></a>
-## v18.19.11
+## v18.19.11 (date: 10.11.2026)
 
 - pin embedded micromamba to 2.10.0 (upstream build 2.10.0-0), validate archive
   and executable hashes, and regenerate stale compressed assets. Add native
