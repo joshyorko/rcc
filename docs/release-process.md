@@ -171,4 +171,3 @@ This workflow verifies source, version, target architecture, checksums, and runt
 - **Evidence:** workflow and helper validation bind the preparation run, ZIP digest, nine asset hashes, compiler metadata, source/version, full11 exit, and four native receipts.
 - **Stale guidance replaced:** the old automatic tag-to-release and tag-recreation path is disabled; it must not be used as an alternate route.
 - **Uncertainty retained:** downstream dispatch permission and platform-wide signing coverage require separate operator verification.
-
