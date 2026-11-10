@@ -1,0 +1,85 @@
+name: Release metadata
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - common/version.go
+      - docs/changelog.md
+      - .release-metadata.json
+      - tools/release-metadata/**
+      - .github/workflows/release-metadata.yml
+      - .github/workflows/patchraptor-release.yml
+  workflow_dispatch:
+    inputs:
+      propose:
+        description: Create/refresh the single draft metadata PR for App/CI qualification (never publish)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-metadata-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - run: npm ci --prefix tools/release-metadata --ignore-scripts --no-audit --no-fund
+      - run: npm test --prefix tools/release-metadata
+
+  metadata:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - run: npm ci --prefix tools/release-metadata --ignore-scripts --no-audit --no-fund
+      - name: Read-only preview
+        env:
+          RCC_RELEASE_METADATA_TOKEN: ${{ github.token }}
+          RCC_RELEASE_EXPECTED_SHA: ${{ github.sha }}
+          RCC_RELEASE_METADATA_RECEIPT: ${{ runner.temp }}/release-metadata-preview.json
+        run: node tools/release-metadata/run.mjs
+      - name: Create selected-repository App installation token
+        id: app
+        if: vars.RCC_RELEASE_METADATA_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.propose)
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
+        with:
+          app-id: ${{ secrets.RCC_RELEASE_APP_ID }}
+          private-key: ${{ secrets.RCC_RELEASE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: rcc
+          permission-contents: write
+          permission-pull-requests: write
+          permission-actions: read
+      - name: Maintain the singleton draft PR (no publication)
+        if: steps.app.outcome == 'success'
+        env:
+          RCC_RELEASE_METADATA_TOKEN: ${{ steps.app.outputs.token }}
+          RCC_RELEASE_EXPECTED_SHA: ${{ github.sha }}
+          RCC_RELEASE_METADATA_PROPOSE: 'true'
+          RCC_RELEASE_METADATA_RECEIPT: ${{ runner.temp }}/release-metadata-result.json
+        run: node tools/release-metadata/run.mjs --write
+      - name: Upload public metadata receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-metadata-receipt
+          path: ${{ runner.temp }}/release-metadata-*.json
+          if-no-files-found: ignore
