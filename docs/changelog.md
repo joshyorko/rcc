@@ -1,10 +1,15 @@
 # rcc change log
 ## Unreleased
 
+<a name="v181911"></a>
+## v18.19.11
+
 - pin embedded micromamba to 2.10.0 (upstream build 2.10.0-0), validate archive
   and executable hashes, and regenerate stale compressed assets. Add native
   version, extraction and environment acceptance checks; release qualification
   still requires all four supported native targets (GH#279)
+- add a behavioral regression proving that dry-run garbage collection preserves
+  eligible ready environments; production behavior is unchanged (GH#281, PR#282)
 
 <a name="v181910"></a>
 ## v18.19.10 (date: 08.11.2026)
