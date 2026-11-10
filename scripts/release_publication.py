@@ -437,9 +437,12 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
         seen_platforms.add(platform)
         asset_name = NATIVE_RECEIPTS[platform]
         _validate_native_receipt(receipt, platform, asset_name, assets[asset_name], expected_source_sha, expected_version)
-        xml_reports = list(receipt_path.parent.rglob("output.xml"))
-        _require(len(xml_reports) == 1, f"native Robot XML report is missing or ambiguous: {platform}")
-        _validate_robot_xml(xml_reports[0], platform)
+        # Native acceptance writes beside its receipt. Other suites, such as
+        # micromamba, retain independent nested reports and cannot replace it.
+        xml_report = receipt_path.parent / "output.xml"
+        _require(xml_report.is_file() and not xml_report.is_symlink(),
+                 f"native Robot XML report is missing or unsafe: {platform}")
+        _validate_robot_xml(xml_report, platform)
     jat_receipts = list(native_root.rglob("jat-class-consumer-receipt.json"))
     _require(len(jat_receipts) == 1, "Linux JAT consumer receipt is missing or ambiguous")
     _require(jat_receipts[0].is_file() and not jat_receipts[0].is_symlink(), "Linux JAT consumer receipt is unsafe")
