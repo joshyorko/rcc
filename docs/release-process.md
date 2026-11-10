@@ -24,11 +24,72 @@ The historical `recover-rcc-185.yml` workflow is also retired: manual dispatch
 only reaches a read-only hold that exits nonzero, with no tag, release, or
 Homebrew write. The old `recovery/recover_rcc_185.py` implementation and its
 tests are retained as historical evidence, but the workflow no longer invokes
-them. `patchraptor-release.yml` may still make its automated version-bump commit
-and dispatch the retired `Create Release Tag` entry after its configured
-qualifying main push; it cannot create a tag or publish a release, and that
-dispatch now stops at the explicit hold. Treat that bot path as a version-bump
-automation only, not as release authorization.
+them. `patchraptor-release.yml` is now a manual read-only hold as well. The
+PR-only metadata controller and retirement of its direct-main bump/retired-tag
+dispatch ship atomically. Neither controller is a publication authorization.
+
+## Release metadata PR controller
+
+`tools/release-metadata` pins Release Please 17.11.2 and its npm integrity lock.
+Run `npm ci --prefix tools/release-metadata --ignore-scripts` and
+`npm test --prefix tools/release-metadata` to exercise actual released-library
+versioning and notes, plus the complete REST lifecycle with a simulated GitHub
+transport. The adapter uses Release Please's Go strategy, patch versioning and
+generic updater; it never calls its release/tag API. Its own REST write boundary
+permits only git objects, the singleton branch, and draft PR creation/text.
+
+The authoritative version baseline is the latest stable **published release's
+tag commit**, verified in main history, never a Release Please manifest or
+`target_commitish`. Initially only the same version or next patch is accepted.
+An existing source-only next-patch heading is preserved, including authored
+safety/migration notes and anchors; one marked generated block is replaced.
+Historical sections remain byte-for-byte unchanged. The source commit date
+supplies a missing heading date, not an unsupported publication claim. Go's
+grouped backtick constant retains its v prefix with an inline updater marker.
+Minor/major policy overrides are deliberately unsupported and fail closed until
+a separately reviewed policy change. Merged branch commits provide linked
+source facts; aggregate merge messages are excluded to avoid duplicate notes.
+
+Only `release-please--branches--main` is maintained. Refresh commits fast-forward
+that branch with both the prior PR head and current main as parents; they never
+force-update it. Main/published identities and branch head are checked again
+before ref updates and success receipts. `.release-metadata.json` records the
+published baseline, candidate, included commits, base SHA and generated-file
+digest. Once merged, an unpublished candidate holds in `PENDING_PUBLICATION`;
+new work cannot silently advance it again. Once protected publication creates
+that candidate's release, the actual published tag becomes the next baseline.
+This hold does not freeze main; later merges are queued for the following
+release and do not retroactively qualify an older preparation SHA.
+
+Review the generated draft, amend safety notes if necessary, and merge only with
+the normal owner authority and checks. A refresh detects reviewer edits and
+fails closed rather than overwriting them. Review/reconcile those edits before
+refreshing; a closed unmerged PR similarly requires owner resolution. Crashes
+after branch creation can safely retry using its recognized metadata state.
+A moved tag, unrelated/truncated history, stale main/head, unrelated branch
+files, tag collision, or an active old release run prevents writes.
+
+The `Release metadata` workflow defaults to read-only previews. Automatic PR
+writes require repository variable `RCC_RELEASE_METADATA_ENABLED=true`, which
+must remain unset until qualification. For live App/CI qualification, an owner
+can manually dispatch it on main with `propose=true` while automatic maintenance
+remains disabled. This still requires the atomically retired legacy writer and
+no queued/running legacy run. Never restart the old controller as fallback.
+
+The owner must install a dedicated GitHub App on **only this repository**, with
+Contents write, Pull requests write, and Actions read (to verify legacy runs
+are drained), and configure `RCC_RELEASE_APP_ID` and
+`RCC_RELEASE_APP_PRIVATE_KEY`. The workflow requests those scoped installation
+permissions; there is no PAT or GITHUB_TOKEN write fallback. The App's contents
+permission is inherently capable of tag/release writes at GitHub's permission
+layer; the tested adapter's API boundary excludes those operations. Verify the
+actual App-generated PR receives CI on its exact head before enabling the
+variable. Configured secrets or a successful token action alone do not prove
+that acceptance. No automatic mode may bypass rcc-production or artifact review.
+
+`release-metadata-receipt` is public metadata/preview evidence, not a release
+readiness or publication receipt. Full release preparation remains the existing
+manual exact-main operation until its separate automation is qualified.
 
 ## Signing limits
 
