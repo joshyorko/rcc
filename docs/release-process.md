@@ -87,6 +87,33 @@ actual App-generated PR receives CI on its exact head before enabling the
 variable. Configured secrets or a successful token action alone do not prove
 that acceptance. No automatic mode may bypass rcc-production or artifact review.
 
+
+For one-time creation, run `python3 tools/release-metadata/register_app.py` on
+Linux with OpenSSL and an already authenticated `gh` CLI for this repository.
+The helper opens a 20-minute loopback-only manifest callback; it does not log in
+as the owner. Open the printed local setup URL in your own browser, authorize
+**Create GitHub App** under `joshyorko`, then choose **Only select repositories
+→ rcc** and **Install**. Registration and installation are mandatory account UI
+steps; repository selection cannot be encoded in the manifest.
+
+The [official manifest flow](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest)
+generates the App identity and PEM key. The helper keeps that response in memory,
+checks exact App permissions/owner and actual installed repository scope, revokes
+its temporary installation token, and pipes the PEM directly to `gh secret set`.
+It writes no key file or credential artifact, refuses existing release secrets,
+and never activates maintenance, creates a release PR, or publishes. The CLI's
+existing account credential is used only for encrypted secret bootstrap, never
+stored as the controller's runtime credential. Request logging and API redirects
+are disabled to protect one-use codes and authorization headers. If setup expires
+after App creation, stop and inspect that existing App rather than registering a
+duplicate; a key that existed only in the terminated process must be regenerated
+through the App settings. Never put keys in chat or pass them as command arguments.
+
+After scope/storage succeeds, qualify the real App-authored singleton **draft**
+PR on its exact head and require successful normal CI before enabling automatic
+maintenance. The helper is optional for metadata automation; manual preparation
+and protected publication retain their existing credentials and gates.
+
 `release-metadata-receipt` is public metadata/preview evidence, not a release
 readiness or publication receipt. Full release preparation remains the existing
 manual exact-main operation until its separate automation is qualified.
