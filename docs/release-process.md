@@ -118,6 +118,41 @@ central policy, run `node scripts/test_renovate_policy.mjs <renovate-package-dir
 dashboard approval, actual bot-created PR checks, native qualification, or
 publication. Keep those gates separate when changing dependency policy.
 
+
+## Optional read-only readiness receipt
+
+The manual `Export RCC Preparation Review Evidence` workflow accepts an optional
+`readiness=true` flag. It first performs its existing canonical ZIP digest,
+asset/binary metadata and full evidence audits, then emits a small
+`rcc-release-readiness-<run>-<source>` JSON artifact. With the default false,
+older main-ancestor preparation review remains unchanged. Readiness is stricter:
+the prepared source must still equal current main, its version must be the next
+patch after the stable published release, and the candidate tag/release must be
+absent. It rechecks main, published tag, preparation attempt, artifact identity
+and all successful required jobs before writing the receipt. A rerun, moved
+baseline, stale source, changed evidence or collision fails closed without a
+readiness output. The readiness script consumes already-audited sidecar bytes
+from the preceding exporter step in the same trusted job; invoking it on an
+arbitrary locally constructed sidecar does not independently prove canonical
+ZIP provenance. Repeated audits use distinct workflow runs/artifact names;
+local output files are never overwritten.
+
+The receipt records `READY_FOR_OWNER_REVIEW`, exact source/version, previous
+published tag/commit, preparation run/attempt/artifact/ZIP and manifest hashes,
+nine asset identities, full11 gates and numeric exits, Robot pass/fail/**skip**
+counts, four native receipt hashes, consumer/self-host/N-1 evidence hashes,
+limitations, and all four publisher inputs. Publication authorization is always
+false with `OWNER_APPROVAL_REQUIRED`; this is not an approval, signature claim,
+or substitute for the publisher's original canonical artifact. The workflow
+summary links preparation and lists inputs for independent review. It has only
+Actions read and Contents read permissions and cannot dispatch preparation,
+create tags/releases, or update Homebrew. No second binary build is introduced.
+
+Automating preparation dispatch remains gated on live qualification of the
+metadata controller's App-created PR and exact-head CI. Until that acceptance,
+use the existing owner-dispatched exact-main preparation, then this optional
+readiness audit. The publisher and its protected environment remain unchanged.
+
 ## Signing limits
 
 This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified publisher signature. Go's Darwin ARM64 linker produces ad hoc code-integrity signatures; those signatures do not establish publisher identity. The build has no vendor-signing step for Darwin AMD64, Windows, or Linux binaries. Review signing requirements and platform-specific signature evidence separately before publication.

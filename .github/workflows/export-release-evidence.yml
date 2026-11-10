@@ -19,6 +19,11 @@ on:
         description: SHA-256 of evidence/asset-manifest.json in that preparation
         required: true
         type: string
+      readiness:
+        description: Also export readiness; requires source to still equal current main
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   actions: read
@@ -87,6 +92,40 @@ jobs:
             --go "$(command -v go)"
       - name: Enforce review payload size
         run: python3 scripts/release_publication.py check-review-payload --root rcc-preparation-review-evidence
+      - name: Export current-source readiness without publication
+        if: inputs.readiness
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 scripts/release_readiness.py \
+            --review-root rcc-preparation-review-evidence \
+            --run-id "$RCC_PREPARATION_RUN_ID" \
+            --source-sha "$RCC_SOURCE_SHA" \
+            --version "$RCC_RELEASE_VERSION" \
+            --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
+            --exporter-sha "$RCC_EXPORTER_SHA" \
+            --exporter-run-id "$RCC_EXPORTER_RUN_ID" \
+            --output rcc-release-readiness.json
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          receipt = json.loads(Path('rcc-release-readiness.json').read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('## READY FOR OWNER REVIEW\n\n')
+              summary.write(f"Source `{receipt['sourceSha']}`, version `{receipt['version']}`.\n\n")
+              summary.write(f"Preparation: {receipt['preparation']['runUrl']}\n\n")
+              summary.write('Protected publisher inputs:\n```json\n')
+              summary.write(json.dumps(receipt['publication']['inputs'], indent=2))
+              summary.write('\n```\nPublication still requires independent artifact review and rcc-production approval.\n')
+          PY
+      - name: Upload release readiness
+        if: inputs.readiness
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rcc-release-readiness-${{ inputs.preparation_run_id }}-${{ inputs.source_sha }}
+          path: rcc-release-readiness.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Upload read-only review evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
