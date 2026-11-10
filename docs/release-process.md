@@ -91,6 +91,33 @@ that acceptance. No automatic mode may bypass rcc-production or artifact review.
 readiness or publication receipt. Full release preparation remains the existing
 manual exact-main operation until its separate automation is qualified.
 
+## Dependency preparation policy
+
+PatchRaptor may open patch PRs for Cobra, Viper, and yaml.v3 without a dashboard
+checkbox. Every RCC dependency still requires review and CI before merge;
+automerge and platform automerge are disabled, including inherited pin/digest
+rules. Other updates, including Go compiler, native modules, Actions, and Python
+requirements, require dashboard approval before PR creation. Concurrency remains
+one PR. Actions and Python discovery do not authorize a release. Micromamba
+automation remains deferred; its archive/executable verification and native
+acceptance must continue through the existing reviewed asset workflow.
+
+The Go toolchain group covers `go.mod`, Dagger's compiler default, all three
+explicit Rcc CI selectors, publisher/export selectors, and the release verifier's
+`EXPECTED_GO_VERSION`. `python scripts/validate_compiler_pins.py` fails if a
+selector is missing or differs from `go.mod`. Rcc build CI runs this check and
+its negative fixtures. `developer/setup.yaml` intentionally retains its older
+Conda bootstrap; Go auto-selection uses `go.mod` for the actual compiler.
+
+The Dependency policy workflow installs Renovate 43.288.0 without lifecycle
+scripts and tests resolved inherited presets, rule precedence, compiler
+extraction/replacement, and Actions/Python extraction against an immutable
+central-policy baseline. To repeat with an installed runner and downloaded
+central policy, run `node scripts/test_renovate_policy.mjs <renovate-package-dir>
+<inherited-json>`. This offline fit-test is not evidence of a live sweep,
+dashboard approval, actual bot-created PR checks, native qualification, or
+publication. Keep those gates separate when changing dependency policy.
+
 ## Signing limits
 
 This workflow verifies source, version, target architecture, checksums, and runtime receipts. It does not introduce a new signing or attestation policy and does not claim that every platform binary has a verified publisher signature. Go's Darwin ARM64 linker produces ad hoc code-integrity signatures; those signatures do not establish publisher identity. The build has no vendor-signing step for Darwin AMD64, Windows, or Linux binaries. Review signing requirements and platform-specific signature evidence separately before publication.
