@@ -1,0 +1,9 @@
+{
+  "name": "rcc-release-metadata",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": { "test": "node --test test.mjs" },
+  "dependencies": { "release-please": "17.11.2" }
+}
