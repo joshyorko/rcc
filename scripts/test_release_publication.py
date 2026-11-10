@@ -634,6 +634,56 @@ class ReleasePublicationTests(unittest.TestCase):
         artifact = {"name": "rcc-release-preparation", "expired": False, "digest": "sha256:" + "c" * 64}
         validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
 
+    def test_native_robot_report_is_bound_to_receipt_directory(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "source"
+            digest = self.fixture(root)
+            for platform in publication.NATIVE_RECEIPTS:
+                micromamba = root / "evidence" / "native" / platform / "micromamba" / "output.xml"
+                micromamba.parent.mkdir()
+                micromamba.write_text('<robot><statistics><total><stat pass="4" fail="0" skip="0">All Tests</stat></total></statistics></robot>')
+            validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+            output = Path(directory) / "prepared"
+            manifest = publication.assemble_prepared_bundle(
+                root / "assets", root / "evidence" / "release-candidate",
+                root / "evidence" / "native", output, SOURCE, VERSION, 123,
+                str(self.fake_go(Path(directory))),
+            )
+            validate_prepared_bundle(output, SOURCE, VERSION, manifest, 123)
+            for platform in publication.NATIVE_RECEIPTS:
+                relative = Path("evidence") / "native" / platform / "micromamba" / "output.xml"
+                self.assertEqual((output / relative).read_bytes(), (root / relative).read_bytes())
+
+    def test_nested_robot_report_cannot_replace_missing_or_failed_native_report(self):
+        for state in ("missing", "failed", "empty", "malformed", "symlink"):
+            with self.subTest(state=state), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                digest = self.fixture(root)
+                native = root / "evidence" / "native" / "linux_amd64"
+                micromamba = native / "micromamba" / "output.xml"
+                micromamba.parent.mkdir()
+                micromamba.write_text('<robot><statistics><total><stat pass="4" fail="0" skip="0">All Tests</stat></total></statistics></robot>')
+                required = native / "output.xml"
+                if state in ("missing", "symlink"):
+                    required.unlink()
+                    if state == "symlink":
+                        required.symlink_to(micromamba)
+                elif state == "failed":
+                    required.write_text('<robot><statistics><total><stat pass="1" fail="1" skip="0">All Tests</stat></total></statistics></robot>')
+                elif state == "empty":
+                    required.write_text('<robot><statistics><total><stat pass="0" fail="0" skip="1">All Tests</stat></total></statistics></robot>')
+                else:
+                    required.write_text("not XML")
+                expected_error = {
+                    "missing": "native Robot XML report is missing",
+                    "failed": "native Robot suite did not pass",
+                    "empty": "native Robot suite did not pass",
+                    "malformed": "native Robot XML is unreadable",
+                    "symlink": "release artifact contains a symlink",
+                }[state]
+                with self.assertRaisesRegex(ReleaseGateError, expected_error):
+                    validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+
     def test_assembly_excludes_mutable_bundle_test_homes_but_keeps_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
