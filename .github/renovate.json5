@@ -4,8 +4,8 @@
     "github>joshyorko/renovate-config:org-inherited-config"
   ],
 
-  // RCC releases are expensive and safety-critical, so every PatchRaptor update
-  // must be approved from the dashboard and merged only after CI passes.
+  // RCC releases are expensive and safety-critical. Higher-risk PR creation
+  // requires dashboard approval; every merge requires review and CI.
   "automerge": false,
   "platformAutomerge": false,
   "dependencyDashboardApproval": true,
@@ -20,13 +20,13 @@
     "tmp/**"
   ],
 
-  // Keep workflow/action updates out of the first RCC lane. They currently do
-  // not exercise the full Robot matrix because rcc.yaml ignores workflow paths.
+  // Workflow changes receive Rcc CI. Discover updates, but require approval;
+  // discovery and PR creation never grant merge or publication authority.
   "github-actions": {
-    "enabled": false
+    "enabled": true
   },
   "pip_requirements": {
-    "enabled": false
+    "enabled": true
   },
 
   "customManagers": [
@@ -35,13 +35,15 @@
       "description": "Track the official Go toolchain pin across RCC source, CI, and Dagger.",
       "managerFilePatterns": [
         "/^go\\.mod$/",
-        "/^\\.github/workflows/rcc\\.ya?ml$/",
+        "/^\\.github/workflows/(?:rcc|publish-release|export-release-evidence)\\.ya?ml$/",
+        "/^scripts/release_publication\\.py$/",
         "/^\\.dagger/main\\.go$/"
       ],
       "matchStrings": [
         "(?:^|\\n)go\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)",
         "go-version:\\s*[\"']?(?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']?",
-        "defaultGoVersion\\s*=\\s*[\"'](?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']"
+        "defaultGoVersion\\s*=\\s*[\"'](?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']",
+        "EXPECTED_GO_VERSION\\s*=\\s*\"go(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
       ],
       "depNameTemplate": "go",
       "datasourceTemplate": "golang-version",
@@ -70,7 +72,16 @@
     },
     {
       "description": [
-        "Keep official Go runtime updates coordinated across go.mod, CI, and Dagger."
+        "Routine library patch PRs may open automatically; review and CI still gate every merge."
+      ],
+      "matchManagers": ["gomod"],
+      "matchPackageNames": ["github.com/spf13/cobra", "github.com/spf13/viper", "gopkg.in/yaml.v3"],
+      "matchUpdateTypes": ["patch"],
+      "dependencyDashboardApproval": false
+    },
+    {
+      "description": [
+        "Keep official Go runtime updates coordinated across go.mod, CI, Dagger, and release provenance."
       ],
       "groupName": "Go toolchain",
       "matchManagers": [

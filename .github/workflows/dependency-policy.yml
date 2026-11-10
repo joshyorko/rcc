@@ -1,0 +1,38 @@
+name: Dependency policy
+
+on:
+  pull_request:
+    paths:
+      - .github/renovate.json5
+      - .github/workflows/dependency-policy.yml
+      - scripts/test_renovate_policy.mjs
+  push:
+    branches: [main]
+    paths:
+      - .github/renovate.json5
+      - .github/workflows/dependency-policy.yml
+      - scripts/test_renovate_policy.mjs
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Install exact scanner without lifecycle scripts
+        run: npm install --prefix "$RUNNER_TEMP/renovate-policy" --ignore-scripts --no-audit --no-fund renovate@43.288.0
+      - name: Validate effective policy and extraction against immutable central baseline
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --location \
+            https://raw.githubusercontent.com/joshyorko/renovate-config/20ccfe326407c8034c96dcb8cfd462876cb8931b/org-inherited-config.json \
+            --output "$RUNNER_TEMP/inherited.json"
+          "$RUNNER_TEMP/renovate-policy/node_modules/.bin/renovate-config-validator" --no-global .github/renovate.json5
+          node scripts/test_renovate_policy.mjs \
+            "$RUNNER_TEMP/renovate-policy/node_modules/renovate" "$RUNNER_TEMP/inherited.json"
