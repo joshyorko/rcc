@@ -30,7 +30,7 @@ rcc run -r developer/toolkit.yaml --dev -t deadcode -- \
 ```
 
 - Repeat `--target`, `--package`, and `--symbol` as needed. Use `IMPORT_PATH:FuncOrType.Method` for symbols. Selected reachable functions are included even when absent from analyzer findings.
-- `--tags TAGS` is recorded and passed to both Go loading paths. `--summary` hides symbol details only in text, never in JSON. `--format json` makes the primary output structured; `--json PATH` always writes the full evidence record.
+- `--tags TAGS` is recorded and passed to package scoping, the analyzer, and the Go inventory. `--summary` hides symbol details only in text, never in JSON. `--format json` makes the primary output structured; `--json PATH` always writes the full evidence record.
 - Application reachability and `-test` reachability are separate facts. `test_only` means unreachable in the application but reachable with tests. `unreachable_both` means unreachable in both. A selected declaration absent from one target is `absent`, not reachable or dead. Marker/linkname ambiguity and failed loading are `unknown`.
 - Every target records exact commands, environment, diagnostics, and completion state. Skipped and failed targets are unknown. Partial reports remain available and return nonzero for failed selected targets.
 - The source fingerprint covers path, type, executable bit, and contents for tracked and untracked non-ignored files, including deletions. Metadata is captured before and after analysis; a change makes the report unstable. Re-run after any source or review-instruction change.

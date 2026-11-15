@@ -442,6 +442,8 @@ def _aggregate_symbol(symbol, report):
         aggregate = "unknown"
     elif any(state in {"test_code_unreachable"} for state in states.values()):
         aggregate = "test_code_unreachable"
+    elif states and all(state == "absent" for state in states.values()):
+        aggregate = "absent"
     elif states and all(state in {"unreachable_both", "absent"} for state in states.values()):
         aggregate = "unreachable_both"
     else:
@@ -780,7 +782,10 @@ def run_cli(
         target_environment["GOOS"], target_environment["GOARCH"] = target
         target_record = targets[target]
         target_results[target] = {}
-        scope_command = ["go", "list", "-f={{.ImportPath}}", *packages]
+        scope_command = ["go", "list", "-f={{.ImportPath}}"]
+        if options.tags:
+            scope_command.append(f"-tags={options.tags}")
+        scope_command.extend(packages)
         scope_code, scope_output, scope_diagnostics, scope_record = _command(
             scope_command,
             runner=runner,

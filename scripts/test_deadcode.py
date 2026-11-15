@@ -581,7 +581,7 @@ class RealGoFixtureTests(unittest.TestCase):
                 check=True,
             )
 
-    def run_fixture(self, package, *targets, symbol=None):
+    def run_fixture(self, package, *targets, symbol=None, tags=None):
         stdout = io.StringIO()
         arguments = [
             "--format",
@@ -597,6 +597,8 @@ class RealGoFixtureTests(unittest.TestCase):
             arguments.extend(("--target", target))
         if symbol:
             arguments.extend(("--symbol", symbol))
+        if tags:
+            arguments.extend(("--tags", tags))
         code = deadcode.run_cli(
             arguments,
             runner=subprocess.run,
@@ -606,6 +608,34 @@ class RealGoFixtureTests(unittest.TestCase):
             snapshotter=static_snapshot(),
         )
         return code, json.loads(stdout.getvalue())
+
+    def test_missing_symbol_is_absent_in_every_report(self):
+        package = "github.com/joshyorko/rcc/scripts/testdata/deadcode/platform"
+        code, report = self.run_fixture(
+            "./scripts/testdata/deadcode/platform",
+            *[deadcode.target_name(target) for target in deadcode.SUPPORTED_TARGETS],
+            symbol=f"{package}:Misspelled",
+        )
+        self.assertEqual(1, code)
+        symbol = report["symbols"][0]
+        self.assertEqual("absent", symbol["aggregate"]["state"])
+        self.assertFalse(symbol["aggregate"]["removal_evidence_complete"])
+        self.assertIn("aggregate=absent", deadcode.format_text(report))
+        template = deadcode._review_template(report, [symbol["id"]])
+        self.assertEqual("absent", template["candidates"][0]["aggregate_state"])
+
+    def test_tag_only_package_uses_tags_in_every_loading_path(self):
+        code, report = self.run_fixture(
+            "./scripts/testdata/deadcode/tagged", "linux/amd64", tags="reviewfixture"
+        )
+        self.assertEqual(0, code)
+        target = report["targets"][0]
+        self.assertEqual("complete", target["status"])
+        package = "github.com/joshyorko/rcc/scripts/testdata/deadcode/tagged"
+        self.assertEqual([package], target["package_scope"]["packages"])
+        unused = next(symbol for symbol in report["symbols"] if symbol["name"] == "Unused")
+        self.assertEqual("unreachable_both", unused["targets"]["linux/amd64"]["state"])
+        self.assertFalse(report["coverage"]["complete"])
 
     def test_real_fixture_proves_application_test_and_grouping_facts(self):
         package = "github.com/joshyorko/rcc/scripts/testdata/deadcode/reachability"
