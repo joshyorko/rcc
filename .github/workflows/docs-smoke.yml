@@ -1,0 +1,48 @@
+name: Docs Smoke
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "README.md"
+      - "docs/**"
+      - "scripts/toc.py"
+      - "scripts/test_toc.py"
+      - "scripts/docs_smoke.py"
+      - ".github/workflows/docs-smoke.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "README.md"
+      - "docs/**"
+      - "scripts/toc.py"
+      - "scripts/test_toc.py"
+      - "scripts/docs_smoke.py"
+      - ".github/workflows/docs-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-smoke:
+    name: Docs & README First-Run Smoke (Linux amd64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: "3.10"
+
+      - name: Run Python doc & TOC unit tests
+        run: |
+          python3 -m unittest scripts/test_toc.py -v
+          python3 -m unittest scripts/test_validate_agent_docs.py -v
+          python3 scripts/validate_agent_docs.py
+
+      - name: Verify links, TOC idempotence, staged installer, and README First Run
+        run: python3 scripts/docs_smoke.py

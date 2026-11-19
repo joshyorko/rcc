@@ -26,6 +26,8 @@ Apache 2.0, with **zero telemetry** and **no hard-coded cloud endpoints**.
 2. **Distribute immutable environments separately from code** — Publish environments as canonical `sha256:` Environment Artifacts to a loopback/HTTPS provider (`rcc cache serve` + `rcc provider`) or export offline `.rcca` archives (`rcc env export`) up to `256 MiB` / `32,768` members—no shared writable filesystem required.
 3. **Verify before execution** — `rcc env acquire` and `rcc env exec` default to fail-closed `--strict-remote` admission: deployment-owned Ed25519 Artifact trust roots (`--trust-roots`), independently signed v2 metadata envelopes (`--metadata-trust-roots`), retained rollback journals (`--metadata-state`), platform/ABI preflight, and process-scoped execution leases that resolve bare commands inside the acquired environment.
 
+![RCC verified Environment Artifact flow on v18.19.11](docs/rcc-artifact-flow.svg)
+
 ---
 
 ## Supported Platforms & Current Release
@@ -48,56 +50,99 @@ Current stable release: **[`v18.19.11`](https://github.com/joshyorko/rcc/release
 
 ## Install RCC (`v18.19.11`)
 
-### Linux x86_64 (user-scoped, no `sudo` required)
+> **Optional: isolate RCC state before your first command.** Running any `rcc`
+> command (including `rcc --version`) initializes `$ROBOCORP_HOME` (default
+> `~/.robocorp` on Unix, `%LOCALAPPDATA%\robocorp` on Windows). If you want to
+> keep your default home untouched, export a private directory **before**
+> running the install verification step below:
+>
+> ```sh
+> export ROBOCORP_HOME="$HOME/.rcc-quickstart"
+> export RCC_HOLOTREE_MODE=private
+> ```
+
+Each installer below downloads to a temporary file in the destination directory,
+verifies the pinned SHA-256 digest before touching any existing binary, and
+replaces the installed executable only after verification succeeds.
+
+### Linux x86_64 (user-scoped, no `sudo` required; exercised in Linux CI)
 
 ```sh
-mkdir -p "$HOME/.local/bin"
-curl --fail --show-error --location \
-  https://github.com/joshyorko/rcc/releases/download/v18.19.11/rcc-linux64 \
-  --output "$HOME/.local/bin/rcc"
-printf '%s  %s\n' \
-  '4d68609044d3a39a1728d571d54c77a6174215adb40eb9acd69ce5ad34a6db1f' \
-  "$HOME/.local/bin/rcc" | sha256sum --check -
-chmod +x "$HOME/.local/bin/rcc"
-rcc --version
+(
+  DEST="$HOME/.local/bin"
+  mkdir -p "$DEST" &&
+  TMP="$(mktemp "$DEST/.rcc.tmp.XXXXXX")" &&
+  trap 'rm -f "$TMP"' EXIT &&
+  curl --fail --show-error --location \
+    https://github.com/joshyorko/rcc/releases/download/v18.19.11/rcc-linux64 \
+    --output "$TMP" &&
+  printf '%s  %s\n' \
+    '4d68609044d3a39a1728d571d54c77a6174215adb40eb9acd69ce5ad34a6db1f' \
+    "$TMP" | sha256sum --check - &&
+  chmod 0755 "$TMP" &&
+  mv -f "$TMP" "$DEST/rcc" &&
+  trap - EXIT &&
+  "$DEST/rcc" --version
+) && export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Ensure `$HOME/.local/bin` is on your `PATH` (or move the binary to `/usr/local/bin/rcc` for a system-wide install).
+Add `export PATH="$HOME/.local/bin:$PATH"` to your shell profile (or move the
+verified binary to `/usr/local/bin/rcc` for a system-wide install).
 
 ### macOS (user-scoped, no `sudo` required)
 
+*(Checksums verified against the `v18.19.11` release API and Homebrew cask; shell commands not executed on a macOS host in Linux docs CI.)*
+
 ```sh
-mkdir -p "$HOME/.local/bin"
+(
+  DEST="$HOME/.local/bin"
 
-# Apple Silicon (darwin_arm64):
-ASSET="rcc-macosarm64"
-SHA256="23c665387951289b16a3d9be3103498598dce94d55327e103758df944ca067e7"
+  # Apple Silicon (darwin_arm64):
+  ASSET="rcc-macosarm64"
+  SHA256="23c665387951289b16a3d9be3103498598dce94d55327e103758df944ca067e7"
 
-# Intel (darwin_amd64) — uncomment to use instead:
-# ASSET="rcc-macos64"
-# SHA256="b3fe1fe2972136cfa58261f49cc4f5e9f12bed5041d49b2035561366b3d5ef6c"
+  # Intel (darwin_amd64) — uncomment to use instead:
+  # ASSET="rcc-macos64"
+  # SHA256="b3fe1fe2972136cfa58261f49cc4f5e9f12bed5041d49b2035561366b3d5ef6c"
 
-curl --fail --show-error --location \
-  "https://github.com/joshyorko/rcc/releases/download/v18.19.11/${ASSET}" \
-  --output "$HOME/.local/bin/rcc"
-printf '%s  %s\n' "$SHA256" "$HOME/.local/bin/rcc" | shasum -a 256 --check -
-chmod +x "$HOME/.local/bin/rcc"
-rcc --version
+  mkdir -p "$DEST" &&
+  TMP="$(mktemp "$DEST/.rcc.tmp.XXXXXX")" &&
+  trap 'rm -f "$TMP"' EXIT &&
+  curl --fail --show-error --location \
+    "https://github.com/joshyorko/rcc/releases/download/v18.19.11/${ASSET}" \
+    --output "$TMP" &&
+  printf '%s  %s\n' "$SHA256" "$TMP" | shasum -a 256 --check - &&
+  chmod 0755 "$TMP" &&
+  mv -f "$TMP" "$DEST/rcc" &&
+  trap - EXIT &&
+  "$DEST/rcc" --version
+) && export PATH="$HOME/.local/bin:$PATH"
 ```
 
 ### Windows x86_64 (PowerShell, user-scoped)
+
+*(Checksum verified against the `v18.19.11` release API; PowerShell snippet not executed on a Windows host in Linux docs CI.)*
 
 ```powershell
 $Dir = "$env:LOCALAPPDATA\rcc\bin"
 New-Item -ItemType Directory -Force -Path $Dir | Out-Null
 $Out = Join-Path $Dir "rcc.exe"
-Invoke-WebRequest -Uri "https://github.com/joshyorko/rcc/releases/download/v18.19.11/rcc-windows64.exe" -OutFile $Out
+$Tmp = Join-Path $Dir (".rcc.tmp." + [guid]::NewGuid().ToString("N") + ".exe")
 $Expected = "58f43a3b3c54032740f224cb4a8bbf68c47c865cf2652084fb139b8ecc01cfd0"
-if ((Get-FileHash $Out -Algorithm SHA256).Hash.ToLower() -ne $Expected) { throw "SHA-256 mismatch" }
+try {
+  Invoke-WebRequest -Uri "https://github.com/joshyorko/rcc/releases/download/v18.19.11/rcc-windows64.exe" -OutFile $Tmp
+  if ((Get-FileHash $Tmp -Algorithm SHA256).Hash.ToLower() -ne $Expected) {
+    throw "SHA-256 mismatch; existing installation left untouched"
+  }
+  Move-Item -Force -Path $Tmp -Destination $Out
+} finally {
+  Remove-Item -Force -ErrorAction SilentlyContinue $Tmp
+}
+$env:PATH = "$Dir;$env:PATH"
 & $Out --version
 ```
 
-Add `$env:LOCALAPPDATA\rcc\bin` to your user `PATH` to invoke `rcc` from any terminal.
+Add `$env:LOCALAPPDATA\rcc\bin` to your user `PATH` to invoke `rcc` from future terminals.
 
 ### Homebrew (macOS & Linux x86_64)
 
@@ -182,7 +227,7 @@ or run `rcc create` interactively to scaffold from community templates in
 
 - **Not an OS or process sandbox:** RCC isolates Python/Conda dependencies and resolves bare commands in `rcc env exec` inside the acquired environment ([executable resolution](docs/environment-executable-resolution.md)), but tasks run as normal host processes. Use a container or OS sandbox (Docker, Podman, `bwrap`) when you need filesystem, network, or syscall isolation.
 - **Object inventory, not a package SBOM:** `rcc env publish` emits an immutable Hololib object inventory (`application/vnd.rcc.environment.inventory.v1+json`), not an SPDX or CycloneDX installed-package SBOM, license inventory, or CVE scan ([trust docs](docs/environment-artifact-trust.md#rcc-object-inventory-and-package-sbom)).
-- **Separate transport, signing, and metadata authority:** Reverse-proxy HTTP `Authorization` headers authenticate transport only. Strict remote acquisition (`--strict-remote`, the default) requires deployment-owned Ed25519 Artifact roots (`--trust-roots`), independent v2 metadata roots (`--metadata-trust-roots`), and a retained rollback sequence journal (`--metadata-state`). See [Providers & Endpoints](docs/providers.md#signed-artifacts-for-remote-clients).
+- **Separate transport, signing, and metadata authority:** Reverse-proxy HTTP `Authorization` headers authenticate transport only (enforced by your edge proxy). RCC's `--strict-remote` verifier independently enforces deployment-owned Ed25519 Artifact roots (`--trust-roots`), independent v2 metadata roots (`--metadata-trust-roots`), and a retained rollback sequence journal (`--metadata-state`), online or offline. See [Providers & Endpoints](docs/providers.md#signed-artifacts-for-remote-clients).
 - **Telemetry disabled by default:** No background metrics are sent, the installation ID header is not attached to outbound HTTP requests, and `rcc configure identity` reports tracking disabled.
 
 ---

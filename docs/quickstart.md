@@ -9,10 +9,27 @@ Linux `amd64` in an isolated private `ROBOCORP_HOME`.
 
 ---
 
+## Optional: isolate RCC state before your first command
+
+Running **any** `rcc` command (including `rcc --version`) initializes
+`$ROBOCORP_HOME` (default `~/.robocorp` on Unix, `%LOCALAPPDATA%\robocorp` on
+Windows) and creates `rcccache.yaml`, lock files, and cache directories. If you
+want to try RCC without writing to your default home or any machine-wide shared
+Holotree, export a temporary private home **before** installing or running
+`rcc --version`:
+
+```sh
+export ROBOCORP_HOME="$HOME/.rcc-quickstart"
+export RCC_HOLOTREE_MODE=private
+```
+
+---
+
 ## 1. Verify your installation
 
-Install `rcc` using the checksum-verified commands in the [root README](../README.md#install-rcc-v181911),
-then confirm the binary version:
+Install `rcc` using the checksum-verified staged commands in the
+[root README](../README.md#install-rcc-v181911), then confirm the binary
+version:
 
 ```sh
 rcc --version
@@ -22,14 +39,6 @@ Expected output:
 
 ```text
 v18.19.11
-```
-
-If you want to try RCC without touching your default `~/.robocorp` directory or
-any machine-wide shared Holotree, scope your session to a temporary private home:
-
-```sh
-export ROBOCORP_HOME="$HOME/.rcc-quickstart"
-export RCC_HOLOTREE_MODE=private
 ```
 
 ---
@@ -178,10 +187,9 @@ rcc provider add local-demo --type http --url http://127.0.0.1:8080 --json
 rcc provider test local-demo --json
 
 # Build and publish the immutable Environment Artifact
-PUBLISH_JSON=$(rcc env publish --robot robot.yaml --provider local-demo \
+rcc env publish --robot robot.yaml --provider local-demo \
   --trust-carrier "$ROBOCORP_HOME/artifacts/v1/trust" \
-  --trust-carrier-type filesystem --json)
-printf '%s\n' "$PUBLISH_JSON"
+  --trust-carrier-type filesystem --json
 ```
 
 Observed publish receipt shape (`rcc v18.19.11`, Linux `amd64`):
@@ -197,10 +205,13 @@ Observed publish receipt shape (`rcc v18.19.11`, Linux `amd64`):
 }
 ```
 
-Extract `artifactDigest`, acquire the artifact, and run a leased command inside it:
+Copy the full `artifactDigest` value from the publish receipt above (no host
+Python or JSON tool is required; optionally, if `jq` is installed, you can
+capture it automatically with `| jq -r .artifactDigest`), then acquire and
+execute:
 
 ```sh
-ARTIFACT_DIGEST=$(printf '%s' "$PUBLISH_JSON" | python3 -c 'import json,sys; print(json.load(sys.stdin)["artifactDigest"])')
+ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST_FROM_PUBLISH_JSON'
 
 # Acquire and materialize (explicitly selecting permissive-local for unsigned local dev)
 rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider local-demo \
@@ -239,4 +250,4 @@ Error: artifact trust verification failed: metadata-unsigned: strict policy requ
 - **Trust model, object inventory vs. package SBOM, and revocation:** [environment-artifact-trust.md](environment-artifact-trust.md), [authenticated-metadata-v2.md](authenticated-metadata-v2.md), [revocation-lifecycle.md](revocation-lifecycle.md)
 - **Offline `.rcca` archives:** [signed-offline-archives.md](signed-offline-archives.md)
 - **Full documentation index:** [docs/README.md](README.md)
-- **Diagnostics & troubleshooting:** Run `rcc configuration diagnostics --quick --json` or see [troubleshooting.md](troubleshooting.md)
+- **Diagnostics & troubleshooting:** Run `rcc configuration diagnostics --quick --json` (or `rcc configuration settings --json` to inspect effective endpoint overrides) and see [troubleshooting.md](troubleshooting.md)

@@ -4,7 +4,7 @@ This guide covers:
 
 1. Managing named Environment Artifact provider profiles (`rcc provider`)
 2. Hosting a local loopback provider (`rcc cache serve`) and exposing it safely behind an authenticated TLS reverse proxy
-3. Publishing and acquiring **signed, strict-remote** artifacts with authenticated v2 metadata (`v18.19.9+`)
+3. Publishing and acquiring **signed, strict-remote** artifacts with authenticated v2 metadata (tested on **`v18.19.11`**; version floors noted below)
 4. Overriding RCC network endpoints and `settings.yaml`
 
 For the underlying trust contracts and revocation operations, see
@@ -80,7 +80,14 @@ rcc cache serve --listen 127.0.0.1:8787
 $ROBOCORP_HOME/artifacts/v1/provider
 ```
 
-Example nginx site terminating TLS and enforcing HTTP Basic auth:
+### Edge security & request-size requirements
+
+1. **Deny `/v1/admin/` at the client-facing edge:** `rcc cache serve`'s default filesystem handler exposes store-wide administrative endpoints under `/v1/admin/` (`cleanup`, `gc`, `repair`, `backup`, `restore`, `audit`, `objects`, `manifests` — see `artifactprovider/http.go`). Never expose `/v1/admin/` to download workers or publishers; keep administration on local loopback or a separately authorized internal interface.
+2. **Separate read-only workers from publishers:** Workers need only `GET` on `/v1/health`, `/v1/capabilities`, `/v1/protocol`, `/v1/objects/sha256/*`, and `/v1/manifests/sha256/*`. Restrict `POST /v1/objects/missing` and `PUT` on `/v1/objects/sha256/*` and `/v1/manifests/sha256/*` to publisher credentials.
+3. **Set a bounded `client_max_body_size` for uploads:** Stock nginx limits request bodies to `1m` (1 MiB), whereas RCC uploads each compressed object in a single HTTP `PUT` request (`artifactprovider/http.go`, `PutObject`). Even the minimal Python `3.12.11` quickstart environment includes five objects larger than `1 MiB` (the largest is `13,797,634` bytes, ~13.2 MiB), so stock nginx rejects normal publishes with HTTP `413`. Set a **bounded** `client_max_body_size` on the object upload route sized above your largest single compressed environment object (for example `32m` for the quickstart environment, or larger for ML/browser environments—never `0` unbounded), `16m` on manifests (matching `maxManifestBytes`), and `4m` on `/v1/objects/missing` (matching `maxRequestBytes`).
+
+Example hardened nginx site terminating TLS, blocking `/v1/admin/`, separating
+reader vs. publisher credentials, and bounding upload sizes:
 
 ```nginx
 server {
@@ -89,12 +96,86 @@ server {
     ssl_certificate     /etc/letsencrypt/live/artifacts.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/artifacts.example.com/privkey.pem;
 
-    auth_basic "RCC artifacts";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-    location / {
+    # Never expose provider administration (backup/restore/gc/audit) to clients.
+    location ^~ /v1/admin/ {
+        return 403;
+    }
+
+    # Read-only capability & health probes (workers and publishers).
+    # .htpasswd-readers holds worker accounts plus publisher accounts (for GET/test).
+    # .htpasswd-publishers holds publisher accounts only.
+    location = /v1/health {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
         proxy_pass http://127.0.0.1:8787;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location = /v1/capabilities {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location = /v1/protocol {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    # Missing-object negotiation is publish-only (RCC maxRequestBytes = 4 MiB).
+    location = /v1/objects/missing {
+        auth_basic "RCC artifacts (publish)";
+        auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        limit_except POST { deny all; }
+        client_max_body_size 4m;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    # Content-addressed objects: GET for readers, PUT for publishers only.
+    # Size client_max_body_size above your largest single compressed object
+    # (32m covers the minimal Python quickstart's ~13.8 MB largest object).
+    location ^~ /v1/objects/sha256/ {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET {
+            auth_basic "RCC artifacts (publish)";
+            auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        }
+        client_max_body_size 32m;
+        proxy_request_buffering off;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    # Manifests: GET for readers, PUT for publishers only (RCC maxManifestBytes = 16 MiB).
+    location ^~ /v1/manifests/sha256/ {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET {
+            auth_basic "RCC artifacts (publish)";
+            auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        }
+        client_max_body_size 16m;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    # Default-deny all other paths.
+    location / {
+        return 404;
     }
 }
 ```
@@ -119,11 +200,18 @@ rcc provider test office --json
 ## Signed artifacts for remote clients
 
 Remote and production consumers use the default **`--strict-remote`** policy.
-Since `v18.19.9`, strict admission enforces **three independent layers**:
+The operator recipe below targets **`v18.19.11`** (version floors:
+`v18.19.9+` introduced authenticated detached metadata v2 and `env trust sign-metadata`;
+`v18.19.10+` added the `env trust revocations issue|renew|revoke|distribute` CLI
+and the `application/vnd.rcc.environment.inventory.v1+json` media type, which
+`v18.19.9` verifiers reject—upgrade verifiers to `v18.19.10+` before producing
+new inventories).
 
-1. **Transport authentication** (`--authorization-env`): protects HTTP access to your reverse proxy. It never signs an artifact or establishes trust.
-2. **Artifact signing** (`--signing-key` on publisher; `--trust-roots` on consumer): binds the immutable `sha256:` Artifact digest to a deployment-owned Ed25519 public key map (`{"org-artifact-2026":"<base64-pubkey>"}`).
-3. **Authenticated detached metadata v2** (`rcc env trust revocations issue` & `distribute` on operator; `--metadata-trust-roots` & `--metadata-state` on consumer): binds provenance, RCC object inventory, and revocations to an independent metadata authority key and a retained per-worker rollback sequence journal.
+Keep three security concerns strictly separate:
+
+1. **Transport access control (enforced by your TLS reverse proxy):** `--authorization-env` sends HTTP credentials to the edge proxy. It never signs an artifact or establishes trust. RCC's strict verifier evaluates cryptographic evidence independently of HTTP credentials, including offline.
+2. **Artifact signing (enforced by RCC `--strict-remote`):** `--signing-key` on the publisher and `--trust-roots` on each consumer bind the immutable `sha256:` Artifact digest to a deployment-owned Ed25519 public key map (`{"org-artifact-2026":"<base64-pubkey>"}`).
+3. **Authenticated detached metadata v2 (enforced by RCC `--strict-remote`):** `rcc env trust revocations issue` and `distribute` on an independent metadata authority, verified on each consumer with `--metadata-trust-roots` and a retained rollback sequence journal (`--metadata-state`).
 
 > **Important:** Do **not** assume the HTTP artifact provider serves detached
 > trust files, and never infer trust roots from a provider or archive response.
@@ -147,13 +235,14 @@ rcc env publish --robot robot.yaml --provider office \
   --signing-key-id org-artifact-2026 --json
 ```
 
-### 2. Metadata authority: issue and distribute a signed v2 metadata snapshot
+### 2. Metadata authority (`v18.19.10+`): issue and distribute a signed v2 metadata snapshot
 
-After reviewing the generated provenance, RCC object inventory (flag `--sbom`
-for wire compatibility), and explicit revocation array (`[]` for none), sign
-and distribute the v2 metadata envelope under an **independent** metadata
-authority key (see [revocation-lifecycle.md](revocation-lifecycle.md) for the
-complete key-window schema and renewal/revocation commands):
+`env publish` writes publisher attachments; it does **not** issue the metadata
+authority's v2 envelope. After reviewing the generated provenance, RCC object
+inventory (flag `--sbom` for wire compatibility), and explicit revocation array
+(`[]` for none), sign and distribute the v2 metadata envelope under an
+**independent** metadata authority key (see [revocation-lifecycle.md](revocation-lifecycle.md)
+for the key-window schema and renewal/revocation commands):
 
 ```sh
 ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
@@ -182,9 +271,9 @@ rcc env trust revocations distribute \
 
 (The example timestamps above are illustrative; choose current RFC3339 times
 within the 24-hour maximum snapshot lifetime and the metadata key's authorized
-window. This remote operator sequence is documented from the `v18.19.11` CLI
-contract and covered by `TestRevocationOperatorRealCLI`; it was not executed
-against an external host in this documentation-only change.)
+window. This remote operator sequence matches the `v18.19.11` CLI contract
+covered by `TestRevocationOperatorRealCLI`; it was not executed against an
+external HTTPS host in this documentation change.)
 
 ### 3. Consumer: acquire strictly with independent roots and rollback journal
 
@@ -248,8 +337,8 @@ export RCC_ENDPOINT_CONDA="https://conda.example.com/"
 export RCC_AUTOUPDATES_TEMPLATES="https://github.com/joshyorko/robot-templates/releases/latest/download/templates.yaml"
 export RCC_AUTOUPDATES_RCC_INDEX="https://github.com/joshyorko/rcc/releases/latest/download/index.json"
 
-# Verify effective runtime configuration
-rcc configuration diagnostics --quick --json | jq .
+# Verify effective endpoint overrides (use `| jq .endpoints` if jq is installed)
+rcc configuration settings --json
 ```
 
 To persist overrides in `$ROBOCORP_HOME/settings.yaml`, define an `endpoints:`
@@ -260,9 +349,12 @@ profiles ([profile_configuration.md](profile_configuration.md)).
 ### Build-time micromamba mirror
 
 Micromamba `2.10.0` is embedded into the `rcc` binary and extracted locally at
-runtime; no live download occurs when running conda-forge environments. When
-rebuilding RCC assets from source behind a mirror, override the **build-time**
-download base (SHA-256 verification still applies; see [micromamba.md](micromamba.md)):
+runtime, so RCC does not download the micromamba executable itself. (A cold
+Conda environment solve still fetches package indexes and archives from your
+configured Conda/PyPI endpoints unless satisfied from a local cache or prebuilt
+Environment Artifact.) When rebuilding RCC assets from source behind a mirror,
+override the **build-time** download base (SHA-256 verification still applies;
+see [micromamba.md](micromamba.md)):
 
 ```sh
 export RCC_MICROMAMBA_BASE="https://mirror.example.com/api/micromamba"

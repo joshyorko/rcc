@@ -56,8 +56,46 @@ class TocOrderingTests(unittest.TestCase):
             output = first.decode("utf-8")
             self.assertLess(output.index("## 1 [Use cases]"), output.index("## 2 [Features]"))
             self.assertLess(output.index("## 3 [Alpha]"), output.index("## 4 [Zeta]"))
+            self.assertIn("(usecases.md#use-cases)", output)
+            self.assertNotIn("https://github.com/joshyorko/rcc/blob/main/", output)
             for ignored_title in ("Ignored README", "Ignored TOC", "Ignored changelog", "Ignored build notes"):
                 self.assertNotIn(ignored_title, output)
+
+    def test_github_compatible_slugs_and_repeated_headings(self):
+        self.assertEqual(toc.unify("Tip: Python-only `uv`-native mode"), "tip-python-only-uv-native-mode")
+        self.assertEqual(
+            toc.unify("Terminal 1 — Start a loopback artifact provider"),
+            "terminal-1--start-a-loopback-artifact-provider",
+        )
+        self.assertEqual(
+            toc.unify("RCC Capability & Documentation Inventory"),
+            "rcc-capability--documentation-inventory",
+        )
+        self.assertEqual(
+            toc.unify("2. PROVEN ON MAIN (Post-`v18.19.11` Delta)"),
+            "2-proven-on-main-post-v181911-delta",
+        )
+        self.assertEqual(toc.unify("Run it with `--` separator."), "run-it-with----separator")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            docs = root / "docs"
+            docs.mkdir()
+            (docs / "sample.md").write_text(
+                "# Sample\n## Limitations\n## `uv`-native & Notes\n## Limitations\n",
+                encoding="utf-8",
+            )
+            previous = Path.cwd()
+            try:
+                os.chdir(root)
+                toc.process()
+                output = (docs / "toc.md").read_text(encoding="utf-8")
+            finally:
+                os.chdir(previous)
+
+            self.assertIn("(sample.md#limitations)", output)
+            self.assertIn("(sample.md#uv-native--notes)", output)
+            self.assertIn("(sample.md#limitations-1)", output)
 
 
 if __name__ == "__main__":

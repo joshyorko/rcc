@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 270" width="960" height="270" role="img" aria-labelledby="title desc">
+  <title id="title">RCC Verified Environment Artifact Flow (v18.19.11, Linux amd64)</title>
+  <desc id="desc">Four-stage diagram grounded in a verified rcc v18.19.11 Linux amd64 run: declarative project inputs produce an immutable sha256 Environment Artifact, which is verified and materialized locally and executed under a process-scoped lease.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.25; }
+      .card { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.5; }
+      .card-accent { fill: #f0f9ff; stroke: #0284c7; stroke-width: 1.5; }
+      .card-ok { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+      .banner { fill: #0f172a; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 14px; font-weight: 700; }
+      .sub { fill: #475569; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 11px; }
+      .step { fill: #0369a1; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; }
+      .step-ok { fill: #15803d; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; }
+      .heading { fill: #0f172a; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 13px; font-weight: 700; }
+      .mono { fill: #1e293b; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10.5px; }
+      .muted { fill: #475569; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 10.5px; }
+      .pill { fill: #e2e8f0; }
+      .pill-text { fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; font-weight: 600; }
+      .footer { fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 10px; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="4" y="4" width="952" height="262" rx="12"/>
+  <text class="banner" x="24" y="30">RCC Environment Artifact Flow — Grounded in Verified v18.19.11 Run (linux_amd64)</text>
+  <text class="sub" x="24" y="47">Environment identity (sha256) is separate from application code and provider transport. Local demo used --permissive-local; remote requires --strict-remote + metadata v2.</text>
+
+  <!-- Stage 1 -->
+  <rect class="card" x="24" y="64" width="206" height="162" rx="8"/>
+  <text class="step" x="36" y="84">1. PROJECT INPUTS</text>
+  <text class="heading" x="36" y="102">Declarative Spec</text>
+  <rect class="pill" x="36" y="112" width="182" height="20" rx="4"/>
+  <text class="pill-text" x="43" y="126">conda.yaml + robot.yaml</text>
+  <text class="mono" x="36" y="149">python=3.12.11</text>
+  <text class="mono" x="36" y="165">micromamba v2.10.0</text>
+  <text class="mono" x="36" y="181">blueprint: e64246d31bd41a89</text>
+  <text class="muted" x="36" y="203">Code (task.py) stays outside</text>
+  <text class="muted" x="36" y="216">the environment digest.</text>
+
+  <line x1="230" y1="145" x2="254" y2="145" stroke="#475569" stroke-width="1.75" marker-end="url(#arrow)"/>
+
+  <!-- Stage 2 -->
+  <rect class="card-accent" x="258" y="64" width="212" height="162" rx="8"/>
+  <text class="step" x="270" y="84">2. PUBLISH ARTIFACT</text>
+  <text class="heading" x="270" y="102">rcc env publish</text>
+  <rect class="pill" x="270" y="112" width="188" height="20" rx="4"/>
+  <text class="pill-text" x="277" y="126">sha256:d5a28b46ff69a4d4…</text>
+  <text class="mono" x="270" y="149">objects: 4,947 (65.6 MB)</text>
+  <text class="mono" x="270" y="165">provider: loopback HTTP</text>
+  <text class="mono" x="270" y="181">carrier: provenance +</text>
+  <text class="mono" x="270" y="195">  object inventory + rev.</text>
+  <text class="muted" x="270" y="216">Optional offline .rcca (≤256 MiB)</text>
+
+  <line x1="470" y1="145" x2="494" y2="145" stroke="#475569" stroke-width="1.75" marker-end="url(#arrow)"/>
+
+  <!-- Stage 3 -->
+  <rect class="card-accent" x="498" y="64" width="212" height="162" rx="8"/>
+  <text class="step" x="510" y="84">3. VERIFY &amp; MATERIALIZE</text>
+  <text class="heading" x="510" y="102">rcc env acquire</text>
+  <rect class="pill" x="510" y="112" width="188" height="20" rx="4"/>
+  <text class="pill-text" x="517" y="126">id: 2a6fe41_5a1fac3_51ea…</text>
+  <text class="mono" x="510" y="149">compat: compatible</text>
+  <text class="mono" x="510" y="165">os: linux_amd64 (≥3.15)</text>
+  <text class="mono" x="510" y="181">policy: strict-remote*</text>
+  <text class="mono" x="510" y="195">valid: true (receipt)</text>
+  <text class="muted" x="510" y="216">*permissive-local for local demo</text>
+
+  <line x1="710" y1="145" x2="734" y2="145" stroke="#475569" stroke-width="1.75" marker-end="url(#arrow)"/>
+
+  <!-- Stage 4 -->
+  <rect class="card-ok" x="738" y="64" width="198" height="162" rx="8"/>
+  <text class="step-ok" x="750" y="84">4. LEASED EXECUTION</text>
+  <text class="heading" x="750" y="102">rcc env exec</text>
+  <rect class="pill" x="750" y="112" width="174" height="20" rx="4"/>
+  <text class="pill-text" x="757" y="126">cacheHit: local-mater…</text>
+  <text class="mono" x="750" y="149">leaseId: 8fa05ebaa553…</text>
+  <text class="mono" x="750" y="165">status: completed</text>
+  <text class="mono" x="750" y="181">exitCode: 0</text>
+  <text class="muted" x="750" y="203">Bare cmds resolve inside env.</text>
+  <text class="muted" x="750" y="216">Use containers for OS sandbox.</text>
+
+  <text class="footer" x="24" y="250">Evidence: observed receipts from rcc v18.19.11 (rcc-linux64 sha256:4d686090…6db1f) on Linux x86_64 in an isolated private ROBOCORP_HOME.</text>
+</svg>
