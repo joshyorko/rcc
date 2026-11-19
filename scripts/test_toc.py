@@ -46,7 +46,7 @@ class TocOrderingTests(unittest.TestCase):
                     try:
                         os.chdir(root)
                         toc.process()
-                        return (docs / "README.md").read_bytes()
+                        return (docs / "toc.md").read_bytes()
                     finally:
                         os.chdir(previous)
 

@@ -1,5 +1,15 @@
 # RCC Cloud Commands
 
+> **Status: Legacy Compatibility.**
+> `rcc cloud` (`rcc robocorp`) and `rcc assistant` are retained for
+> compatibility with Control Room-compatible APIs. In this fork, all cloud
+> endpoints are **empty by default** unless explicitly configured via
+> `RCC_ENDPOINT_CLOUD_*` or `$ROBOCORP_HOME/settings.yaml`. For self-hosted
+> environment distribution without a Control Room, use Environment Artifacts
+> (`rcc env`, `rcc provider`, `rcc cache serve`); see
+> [Providers & Endpoints](providers.md) and
+> [Capability Inventory](capability-inventory.md).
+
 This document provides a complete reference for all RCC cloud commands used to interact with Control Room (Robocorp Control Room or similar automation platforms).
 
 ## Command Structure

@@ -1,5 +1,14 @@
 # RCC Roadmap
 
+> **Status: Historical / Proposed (`v18.12.0`-era planning document).**
+> This document is preserved for context from the initial decoupling phase of
+> the fork. Since it was written, RCC has shipped through **`v18.19.11`**,
+> including Environment Artifacts v1 (`rcc env`, `rcc provider`, `rcc cache serve`),
+> authenticated detached metadata v2, operator revocations, and signed offline
+> `.rcca` archives. For current shipped capabilities, limits, and open proposals,
+> see [Capability & Documentation Inventory](capability-inventory.md) and
+> [Changelog](changelog.md).
+
 This document outlines the development direction for the community fork of RCC.
 
 The goal isn't to recreate Robocorp or compete with Sema4.ai. It's to **finish

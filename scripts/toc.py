@@ -16,6 +16,9 @@ NEWLINE = "\n"
 IGNORE_LIST = ("changelog.md", "toc.md", "BUILD.md", "README.md")
 
 PRIORITY_LIST = (
+    "docs/quickstart.md",
+    "docs/capability-inventory.md",
+    "docs/providers.md",
     "docs/usecases.md",
     "docs/features.md",
     "docs/holotree.md",
@@ -99,7 +102,7 @@ def process():
             continue
         for filename, level, title in headings(f"docs/{flatname}"):
             toc.add(filename, level, title)
-    toc.write("docs/README.md")
+    toc.write("docs/toc.md")
 
 
 if __name__ == "__main__":

@@ -24,9 +24,11 @@ can be active at any moment.
 
 ## Quick start guide
 
-### Setup Utility -- user interface for this
+### Setup Utility -- user interface for this (historical)
 
-More behind [this link](https://robocorp.com/docs/control-room/setup-utility).
+Robocorp previously provided a separate Setup Utility GUI for profile discovery.
+In this independent fork, manage profiles directly through the pure `rcc
+configuration` CLI workflow below (or export/import profile YAML files).
 
 ### Pure rcc workflow for handling existing profiles
 

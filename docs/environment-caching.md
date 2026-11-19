@@ -12,7 +12,7 @@ Instead, how about just `rcc`?
 
 RCC creates virtual execution environments that only show up as files and folders on the user machine, basically containing the complexity described above. The target is that neither setting up nor using these environments must either depend on or change anything to the user's environment.
 
-The [hotel analogy below](/docs/environment-caching.md#a-better-analogy-accommodations) describes the problem and evolution of our solutions.
+The [hotel analogy below](#a-better-analogy-accommodations) describes the problem and evolution of our solutions.
 
 ## The second evolution of environment management in RCC
 
@@ -28,7 +28,7 @@ Holotree can fit hundreds of unique environments in a small space.
 
 There are other significant changes and improvements in Holotree regarding [relocation](<https://en.wikipedia.org/wiki/Relocation_(computing)>) and [file locking](https://en.wikipedia.org/wiki/File_locking).
 
-The implementation is already available in [RCC v10](https://github.com/joshyorko/rcc/blob/master/docs/changelog.md), and we are rolling out it to our developer tools, applications and Control Room during Q3 2021.
+*Historical note (2021):* Holotree was introduced in [RCC v10](changelog.md) and became the default storage engine in v11. For current `v18.19.11` Environment Artifacts built on Holotree, see [Capability Inventory](capability-inventory.md) and [Providers & Endpoints](providers.md).
 
 ### Relocation and file locking
 

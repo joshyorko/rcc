@@ -26,6 +26,8 @@ ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
 rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
   --trust-carrier https://trust.example.com/rcc/artifacts \
   --trust-carrier-type http --trust-roots /etc/rcc/trust-roots.json \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/worker-metadata-state \
   --strict-remote --json
 ```
 
@@ -190,16 +192,31 @@ rcc provider add office --type http --url https://artifacts.example.com \
 rcc provider test office --json
 rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
   --trust-carrier /etc/rcc/artifact-trust --trust-carrier-type filesystem \
-  --trust-roots /etc/rcc/trust-roots.json --strict-remote --json
+  --trust-roots /etc/rcc/trust-roots.json \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/worker-metadata-state \
+  --strict-remote --json
 ```
 
 The trust-roots JSON maps signer IDs to base64-encoded Ed25519 public keys.
-The signer ID must match the publish `--signing-key-id`. The private key,
-public trust roots, detached carrier, and proxy Authorization credential have
-separate roles. Do not use a provider credential as an artifact signing key,
-and do not assume the HTTP artifact provider serves the trust carrier.
-The [README remote artifact guide](../README.md#signed-artifacts-for-remote-clients)
-shows the full client setup alongside the TLS/auth proxy configuration.
+The signer ID must match the publish `--signing-key-id`. Since `v18.19.9`,
+`--strict-remote` also requires an independently signed v2 metadata snapshot
+in the carrier plus `--metadata-trust-roots` and a retained `--metadata-state`
+journal (see [authenticated-metadata-v2.md](authenticated-metadata-v2.md) and
+[revocation-lifecycle.md](revocation-lifecycle.md)). The private key,
+public trust roots, metadata authority roots, detached carrier, and proxy
+Authorization credential have separate roles. Do not use a provider credential
+as an artifact signing key, and do not assume the HTTP artifact provider serves
+the trust carrier. The [remote artifact guide](providers.md#signed-artifacts-for-remote-clients)
+shows the full client and metadata-authority setup alongside the TLS/auth proxy
+configuration.
+
+---
+
+> **Scope note (Parts I–IV below):** The remainder of this document preserves
+> the original pre-`v18.19` Holotree architecture essay, gap analysis, and
+> improvement proposals. For current `v18.19.11` Environment Artifact status
+> versus unshipped proposals, see [capability-inventory.md](capability-inventory.md).
 
 Holotree is RCC's content-addressed storage system for Python environments. It is the
 innovation that transforms RCC from "a tool that creates Python environments" into
