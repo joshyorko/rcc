@@ -1,7 +1,16 @@
 # Incomplete list of rcc features
 
-* supported operating systems are Windows, MacOS, and Linux
-* support for product families `--robocorp`
+> **Note:** This list is embedded in `rcc docs features` and preserves historical
+> feature notes alongside current capabilities. For the full `v18.19.11` status
+> classification (including Environment Artifacts v1, strict trust, and legacy
+> compatibility boundaries), see [Capability & Documentation Inventory](capability-inventory.md).
+
+* supported operating systems are Windows (`amd64`), macOS (`amd64`, `arm64`), and Linux (`amd64`)
+* publish, acquire, export, and execute immutable `sha256:` Environment Artifacts
+  (`rcc env`, `rcc provider`, `rcc cache serve`) with strict Ed25519 signing,
+  authenticated detached metadata v2, and operator revocations
+* legacy compatibility support for product families (`--robocorp`), `rccremote`,
+  and Control Room CLI commands (cloud endpoints empty by default)
 * supported sources for environment building are both conda and pypi
 * provide repeatable, isolated, and clean environments for automations and
   robots to run on

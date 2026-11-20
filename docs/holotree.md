@@ -26,6 +26,8 @@ ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
 rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
   --trust-carrier https://trust.example.com/rcc/artifacts \
   --trust-carrier-type http --trust-roots /etc/rcc/trust-roots.json \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/worker-metadata-state \
   --strict-remote --json
 ```
 
@@ -96,12 +98,13 @@ RCC client -- HTTPS + proxy authentication --> reverse proxy
                                                                provider root on disk
 ```
 
-The proxy terminates TLS and enforces authentication; `rcc cache serve` remains
-the local immutable provider and is never exposed on a non-loopback address.
-The nginx example below uses `auth_basic`, so its clients must supply an HTTP
-Basic `Authorization` value, `Basic <base64(username:password)>`, from their
-secret store. Other proxy configurations may require a different scheme chosen
-by the operator. For example, an nginx site can use:
+The proxy terminates TLS, enforces authentication, blocks store-wide
+`/v1/admin/` endpoints (`backup`, `restore`, `gc`, `cleanup`, `repair`,
+`audit`), separates read-only worker credentials from publisher credentials, and
+sets a bounded `client_max_body_size` above the largest single compressed
+environment object (stock nginx's `1m` default rejects normal publishes with
+HTTP `413`; the minimal Python quickstart includes objects up to ~13.8 MB).
+`rcc cache serve` remains loopback-only. For example, an nginx site can use:
 
 ```nginx
 server {
@@ -110,15 +113,78 @@ server {
     ssl_certificate     /etc/letsencrypt/live/artifacts.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/artifacts.example.com/privkey.pem;
 
-    auth_basic "RCC artifacts";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-    location / {
+    location ^~ /v1/admin/ { return 403; }
+
+    location = /v1/health {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
         proxy_pass http://127.0.0.1:8787;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto https;
     }
+
+    location = /v1/capabilities {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location = /v1/protocol {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET { deny all; }
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location = /v1/objects/missing {
+        auth_basic "RCC artifacts (publish)";
+        auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        limit_except POST { deny all; }
+        client_max_body_size 4m;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location ^~ /v1/objects/sha256/ {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET {
+            auth_basic "RCC artifacts (publish)";
+            auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        }
+        client_max_body_size 32m;
+        proxy_request_buffering off;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location ^~ /v1/manifests/sha256/ {
+        auth_basic "RCC artifacts (read)";
+        auth_basic_user_file /etc/nginx/.htpasswd-readers;
+        limit_except GET {
+            auth_basic "RCC artifacts (publish)";
+            auth_basic_user_file /etc/nginx/.htpasswd-publishers;
+        }
+        client_max_body_size 16m;
+        proxy_pass http://127.0.0.1:8787;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location / { return 404; }
 }
 ```
+
+See [providers.md](providers.md#host-for-remote-clients) for credential-file
+separation and `client_max_body_size` sizing notes.
 
 On every client process, set the complete `Authorization` header in the
 environment variable named by `--authorization-env`, then save that variable
@@ -169,37 +235,76 @@ rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office-local \
 This unsigned example is for a controlled local development environment. Do
 not use `--permissive-local` for remote or production artifacts.
 
-For a remote deployment, sign at publish time using an Ed25519 private key
-controlled by the publisher. Deliver the resulting detached trust carrier
-through a trusted deployment channel, separately from the artifact provider.
-Consumers deploy the matching public-key trust roots and acquire under the
-default strict policy:
+For a remote deployment (`v18.19.10+` operator workflow, tested on `v18.19.11`),
+publication requires three ordered steps: (1) the publisher signs the Artifact
+with an Ed25519 private key, (2) an independent metadata authority reviews the
+generated attachments and issues/distributes a signed v2 metadata snapshot
+(`env publish` does not issue that v2 metadata envelope), and (3) each consumer
+acquires strictly with deployment-owned Artifact roots, metadata roots, and a
+retained rollback journal:
 
 ```sh
-# Publisher: the private key remains in the publishing system's key store.
+# 1. Publisher: the private key remains in the publishing system's key store.
 rcc env publish --robot robot.yaml --provider office \
   --trust-carrier /var/lib/rcc/artifact-trust --trust-carrier-type filesystem \
   --signing-key /secure/path/rcc-ed25519-private.key \
   --signing-key-id org-prod-2026 --json
 
-# Consumer: set the complete proxy Authorization header from its secret store.
+# 2. Metadata authority: issue and distribute the authenticated v2 snapshot
+#    (uses an independent metadata key; required before strict-remote acquire).
 ARTIFACT_DIGEST='sha256:REPLACE_WITH_DIGEST'
+rcc env trust revocations issue \
+  --artifact "$ARTIFACT_DIGEST" \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/issuer-journal \
+  --metadata-key-id org-metadata-2026 \
+  --metadata-signing-key /secure/path/rcc-metadata-ed25519.key \
+  --sequence 1 \
+  --issued-at 2026-11-19T12:00:00Z --expires-at 2026-11-20T00:00:00Z \
+  --provenance /var/lib/rcc/reviewed/provenance.json \
+  --sbom /var/lib/rcc/reviewed/inventory.json \
+  --revocations /var/lib/rcc/reviewed/revocations.json \
+  --output /var/lib/rcc/out/snapshot-1.json --json
+rcc env trust revocations distribute \
+  --artifact "$ARTIFACT_DIGEST" \
+  --metadata /var/lib/rcc/out/snapshot-1.json \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/distributor-journal \
+  --trust-carrier /var/lib/rcc/artifact-trust --trust-carrier-type filesystem --json
+
+# 3. Consumer: set the complete proxy Authorization header from its secret store
+#    and supply independent Artifact roots, metadata roots, and retained journal.
 export RCC_PROVIDER_OFFICE_AUTHORIZATION="${RCC_ARTIFACT_AUTHORIZATION}"
 rcc provider add office --type http --url https://artifacts.example.com \
   --authorization-env RCC_PROVIDER_OFFICE_AUTHORIZATION --replace --json
 rcc provider test office --json
 rcc env acquire --artifact "$ARTIFACT_DIGEST" --provider office \
   --trust-carrier /etc/rcc/artifact-trust --trust-carrier-type filesystem \
-  --trust-roots /etc/rcc/trust-roots.json --strict-remote --json
+  --trust-roots /etc/rcc/trust-roots.json \
+  --metadata-trust-roots /etc/rcc/metadata-roots.json \
+  --metadata-state /var/lib/rcc/worker-metadata-state \
+  --strict-remote --json
 ```
 
 The trust-roots JSON maps signer IDs to base64-encoded Ed25519 public keys.
-The signer ID must match the publish `--signing-key-id`. The private key,
-public trust roots, detached carrier, and proxy Authorization credential have
-separate roles. Do not use a provider credential as an artifact signing key,
-and do not assume the HTTP artifact provider serves the trust carrier.
-The [README remote artifact guide](../README.md#signed-artifacts-for-remote-clients)
-shows the full client setup alongside the TLS/auth proxy configuration.
+The signer ID must match the publish `--signing-key-id`. Since `v18.19.9`,
+`--strict-remote` also requires an independently signed v2 metadata snapshot
+in the carrier plus `--metadata-trust-roots` and a retained `--metadata-state`
+journal (see [authenticated-metadata-v2.md](authenticated-metadata-v2.md) and
+[revocation-lifecycle.md](revocation-lifecycle.md)). The private key,
+public trust roots, metadata authority roots, detached carrier, and proxy
+Authorization credential have separate roles. Do not use a provider credential
+as an artifact signing key, and do not assume the HTTP artifact provider serves
+the trust carrier. The [remote artifact guide](providers.md#signed-artifacts-for-remote-clients)
+shows the full client and metadata-authority setup alongside the TLS/auth proxy
+configuration.
+
+---
+
+> **Scope note (Parts I–IV below):** The remainder of this document preserves
+> the original pre-`v18.19` Holotree architecture essay, gap analysis, and
+> improvement proposals. For current `v18.19.11` Environment Artifact status
+> versus unshipped proposals, see [capability-inventory.md](capability-inventory.md).
 
 Holotree is RCC's content-addressed storage system for Python environments. It is the
 innovation that transforms RCC from "a tool that creates Python environments" into
