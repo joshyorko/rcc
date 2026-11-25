@@ -114,10 +114,6 @@ func started(the *BuildEvent) float64 {
 	return the.Started
 }
 
-func prepared(the *BuildEvent) float64 {
-	return the.Prepared
-}
-
 func micromamba(the *BuildEvent) float64 {
 	return the.MicromambaDone
 }
@@ -128,10 +124,6 @@ func pip(the *BuildEvent) float64 {
 
 func postinstall(the *BuildEvent) float64 {
 	return the.PostInstallDone
-}
-
-func record(the *BuildEvent) float64 {
-	return the.RecordDone
 }
 
 func restore(the *BuildEvent) float64 {

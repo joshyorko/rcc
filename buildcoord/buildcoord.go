@@ -1542,17 +1542,6 @@ func (c *Filesystem) readArtifact(key BuildKey) (Artifact, bool, error) {
 	}
 	return v, ok, err
 }
-func (c *Filesystem) readLock(key BuildKey) (lockRecord, error) {
-	var record lockRecord
-	b, err := os.ReadFile(c.lockPath(key))
-	if err != nil {
-		return record, err
-	}
-	if err := json.Unmarshal(b, &record); err != nil || record.Owner == "" || record.AcquiredAt.IsZero() {
-		return lockRecord{}, ErrUnsafeState
-	}
-	return record, nil
-}
 func (c *Filesystem) readJSON(path string, value any) (bool, error) {
 	info, statErr := os.Lstat(path)
 	if statErr == nil && (info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular()) {

@@ -2,7 +2,6 @@ package wizard
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -57,11 +56,6 @@ func firstOf(arguments []string, missing string) string {
 		return arguments[0]
 	}
 	return missing
-}
-
-func note(form string, details ...interface{}) {
-	message := fmt.Sprintf(form, details...)
-	common.Stdout("%s! %s%s%s\n", pretty.Red, pretty.White, message, pretty.Reset)
 }
 
 func ask(question, defaults string, validator Validator) (string, error) {
