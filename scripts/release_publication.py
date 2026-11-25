@@ -15,6 +15,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from xml.etree import ElementTree
 
@@ -236,6 +237,29 @@ def validate_environment_protection(environment, repository=None):
     return True
 
 
+def validate_release_changelog(changelog, version):
+    heading = f"## {version}"
+    headings = list(re.finditer(rf"(?m)^{re.escape(heading)}(?:[^\S\n].*)?$", changelog))
+    _require(len(headings) == 1, f"docs/changelog.md: expected exactly one {heading} heading")
+    date = re.fullmatch(
+        rf"{re.escape(heading)} \(date: ([0-9]{{1,2}}\.[0-9]{{1,2}}\.[0-9]{{4}})\)",
+        headings[0].group(),
+    )
+    date_error = f"docs/changelog.md: use {heading} (date: D.M.YYYY) with a valid release date"
+    _require(date is not None, date_error)
+    try:
+        datetime.strptime(date.group(1), "%d.%m.%Y")
+    except ValueError as error:
+        raise ReleaseGateError(date_error) from error
+
+    fragment = version.replace(".", "")
+    anchor = f'<a name="{fragment}"></a>'
+    preceding = changelog[:headings[0].start()].rstrip().splitlines()
+    _require(changelog.splitlines().count(anchor) == 1 and preceding[-1:] == [anchor],
+             f"docs/changelog.md: put the unique release index anchor {anchor} above {heading}")
+    return fragment
+
+
 def validate_source_checkout(source_root, expected_source_sha, expected_version, workflow_relative_path=".github/workflows/rcc.yaml"):
     validate_inputs(expected_source_sha, expected_version)
     source_root = Path(source_root)
@@ -253,9 +277,7 @@ def validate_source_checkout(source_root, expected_source_sha, expected_version,
     _require(match is not None and match.group(1) == expected_version, "source version differs from the approved version")
     changelog_path = source_root / "docs" / "changelog.md"
     _require(changelog_path.is_file() and not changelog_path.is_symlink(), "source changelog is missing or unsafe")
-    changelog = changelog_path.read_text(encoding="utf-8")
-    _require(re.search(rf"(?m)^## {re.escape(expected_version)}(?:\s|$)", changelog) is not None,
-             "source changelog has no heading for the approved version")
+    validate_release_changelog(changelog_path.read_text(encoding="utf-8"), expected_version)
     workflow_path = source_root / workflow_relative_path
     _require(workflow_path.is_file() and not workflow_path.is_symlink(), "source RCC workflow is missing or unsafe")
     workflow_text = workflow_path.read_text(encoding="utf-8")

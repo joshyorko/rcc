@@ -45,6 +45,10 @@ Name Go tests `TestXxx` in `*_test.go`; name acceptance suites `*.robot`. Start 
 
 Recent history follows Conventional Commits: `fix:`, `feat(scope):`, and `chore(scope):`. Keep subjects imperative and commits focused. Search existing issues; open one first for non-trivial work. Target PRs at `main`, link the issue, summarize behavior changes, and list exact verification commands plus relevant logs or before/after CLI output.
 
+| Rule | Enforcement |
+| --- | --- |
+| Give the version in `common/version.go` one dated heading and its version-only anchor in `docs/changelog.md`. | `release_publication.py validate-source` checks the heading and anchor before preparation or publication. Release readiness CI checks the generated index link against the same changelog rule on metadata changes. |
+
 ## Repository-Local Skills & Durable Learning
 
 Use [`docs/skills/README.md`](docs/skills/README.md) to route recurring RCC development work and [`docs/agent-boundaries.md`](docs/agent-boundaries.md) to determine allowed actions. Apply the RCC development skill for source changes. Load the meta-skill-improvement skill only when evidence reveals stale or missing guidance, the task changes agent guidance, or closure produces durable learning.

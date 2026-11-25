@@ -18,6 +18,7 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).parent))
 import validate_release_topology as topology
 from validate_release_topology import validate
+from release_publication import validate_release_changelog
 
 
 ASSETS = {
@@ -304,15 +305,11 @@ class ReleaseTopologyTests(unittest.TestCase):
 
         generated = urlsplit(index["tested"][0]["changelog"]).fragment
         changelog = (REPOSITORY_ROOT / "docs/changelog.md").read_text()
-        anchor_before_heading = re.search(
-            rf'<a\s+name="([^"]+)"\s*></a>\s*\n## {re.escape(version.group(1))} \(date:',
-            changelog,
-        )
-        self.assertIsNotNone(anchor_before_heading, f"explicit changelog anchor for {version.group(1)} is missing")
+        anchor = validate_release_changelog(changelog, version.group(1))
         self.assertEqual(
             generated,
-            anchor_before_heading.group(1),
-            f"index fragment #{generated} does not resolve to the explicit release anchor #{anchor_before_heading.group(1)}",
+            anchor,
+            f"index fragment #{generated} does not resolve to the explicit release anchor #{anchor}",
         )
 
     def test_release_identity_topology_rejects_merge_checkout_and_sha_drift(self):
