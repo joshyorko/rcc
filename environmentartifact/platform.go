@@ -10,6 +10,7 @@ import (
 // of the manifest, so matching GOOS/GOARCH alone is never sufficient.
 var SupportedPlatforms = map[Platform]struct{}{
 	{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}:     {},
+	{OS: "linux", Arch: "arm64", RCCPlatform: "linux_arm64"}:     {},
 	{OS: "darwin", Arch: "amd64", RCCPlatform: "darwin_amd64"}:   {},
 	{OS: "darwin", Arch: "arm64", RCCPlatform: "darwin_arm64"}:   {},
 	{OS: "windows", Arch: "amd64", RCCPlatform: "windows_amd64"}: {},

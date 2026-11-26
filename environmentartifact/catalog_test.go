@@ -41,7 +41,7 @@ func TestValidateV12CatalogAcceptsSupportedSurface(t *testing.T) {
 }
 
 func TestValidateV12CatalogAcceptsPOSIXGitPerlPackageNames(t *testing.T) {
-	for _, platform := range []string{"linux_amd64", "darwin_arm64"} {
+	for _, platform := range []string{"linux_amd64", "linux_arm64", "darwin_arm64"} {
 		t.Run(platform, func(t *testing.T) {
 			root, index, identity := validCatalogForValidation(t)
 			root.Platform = platform

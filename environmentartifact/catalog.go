@@ -54,7 +54,7 @@ func ValidateV12Catalog(root *htfs.Root, index ObjectIndex, producerIdentity str
 
 func catalogSemantics(platform string) (catalogPathSemantics, error) {
 	switch platform {
-	case "linux_amd64", "darwin_amd64", "darwin_arm64":
+	case "linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64":
 		return posixCatalogPaths, nil
 	case "windows_amd64":
 		return windowsCatalogPaths, nil

@@ -4,11 +4,12 @@ Environment Artifacts are platform-specific. A worker must match the
 manifest's operating system, architecture, RCC catalog platform, and v12
 gzip/SHA-256 reader contract before it downloads or materializes content.
 
-The released RCC platform matrix is:
+The RCC source platform matrix is:
 
 | RCC platform | OS | Architecture | A→B runtime proof |
 | --- | --- | --- | --- |
 | `linux_amd64` | Linux | amd64 | supported |
+| `linux_arm64` | Linux | arm64 | release gated on native A→B CI |
 | `darwin_amd64` | macOS | amd64 | supported |
 | `darwin_arm64` | macOS | arm64 | supported |
 | `windows_amd64` | Windows | amd64 | supported |
