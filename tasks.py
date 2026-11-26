@@ -974,7 +974,7 @@ def artifactVertical(c):
         "RCC_REAL_ARTIFACT_TEST": "1",
         "RCC_SOURCE_SHA": _exact_commit_sha(),
         "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
-        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_NATIVE_PLATFORM": f"linux-{env['GOARCH']}",
         "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "native-runtime-receipt.json").resolve()),
     })
     if os.environ.get("RCC_N1_ARCHIVE"):
@@ -984,15 +984,17 @@ def artifactVertical(c):
 
 @task
 def artifactConsumerVertical(c):
-    """Run the real Linux JAT-class portable consumer lifecycle test."""
+    """Run the real Linux amd64 JAT-class portable consumer lifecycle test."""
     _require_linux("artifactConsumerVertical")
+    if _native_goarch() != "amd64":
+        raise RuntimeError("artifactConsumerVertical requires the Linux amd64 package fixture")
     local(c, do_test=False)
     env = _contained_go_env()
     env.update({
         "RCC_REAL_JAT_CLASS_TEST": "1",
         "RCC_SOURCE_SHA": _exact_commit_sha(),
         "RCC_REAL_BINARY": str(Path("build/rcc").resolve()),
-        "RCC_NATIVE_PLATFORM": "linux-amd64",
+        "RCC_NATIVE_PLATFORM": f"linux-{env['GOARCH']}",
         "RCC_REAL_RECEIPT_FILE": str((Path("tmp") / "jat-class-consumer-receipt.json").resolve()),
     })
     c.run("go test -timeout 30m -count=1 ./environmentlifecycle -run '^TestRealJATClassRCCAtoBVertical$'", env=env)

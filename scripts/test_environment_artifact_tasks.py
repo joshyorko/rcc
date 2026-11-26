@@ -388,6 +388,7 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("TestRealCurrentRCCAtoBVertical", native_job)
     self.assertIn("TestRealJATClassRCCAtoBVertical", native_job)
     self.assertIn("RCC_REAL_JAT_CLASS_TEST=1", native_job)
+    self.assertIn("if: matrix.goos == 'linux' && matrix.goarch == 'amd64'", native_job)
     self.assertIn("Run Windows process supervision and artifact lock acceptance", native_job)
     self.assertIn("TestExecuteCancellationDoesNotWaitForGrandchildInheritedStreams", native_job)
     self.assertIn("TestIndependentProcessArtifactLockContentionBlocks", native_job)
@@ -716,7 +717,7 @@ class ArtifactTaskTests(unittest.TestCase):
         calls.append((command, kwargs))
 
     context = Context()
-    with mock.patch.object(tasks, "local") as local_build:
+    with mock.patch.object(tasks, "local") as local_build, mock.patch("platform.machine", return_value="aarch64"):
       tasks.artifactVertical.body(context)
 
     local_build.assert_called_once_with(context, do_test=False)
@@ -725,7 +726,8 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("TestRealCurrentRCCAtoBVertical", command)
     self.assertEqual(kwargs["env"]["RCC_REAL_ARTIFACT_TEST"], "1")
     self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
-    self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-amd64")
+    self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-arm64")
+    self.assertEqual(kwargs["env"]["GOARCH"], "arm64")
     self.assertEqual(kwargs["env"]["RCC_REAL_RECEIPT_FILE"], str((ROOT / "tmp" / "native-runtime-receipt.json").resolve()))
     self.assertIn("RCC_SOURCE_SHA", kwargs["env"])
     self.assertRegex(kwargs["env"]["RCC_SOURCE_SHA"], r"^[0-9a-f]{40}$")
@@ -738,7 +740,7 @@ class ArtifactTaskTests(unittest.TestCase):
         calls.append((command, kwargs))
 
     context = Context()
-    with mock.patch.object(tasks, "local") as local_build:
+    with mock.patch.object(tasks, "local") as local_build, mock.patch("platform.machine", return_value="x86_64"):
       tasks.artifactConsumerVertical.body(context)
 
     local_build.assert_called_once_with(context, do_test=False)
@@ -750,6 +752,12 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertEqual(kwargs["env"]["RCC_REAL_BINARY"], str((ROOT / "build" / "rcc").resolve()))
     self.assertEqual(kwargs["env"]["RCC_NATIVE_PLATFORM"], "linux-amd64")
     self.assertEqual(kwargs["env"]["RCC_REAL_RECEIPT_FILE"], str((ROOT / "tmp" / "jat-class-consumer-receipt.json").resolve()))
+
+  def test_jat_class_fixture_rejects_arm64_before_build(self):
+    with mock.patch("platform.machine", return_value="aarch64"), mock.patch.object(tasks, "local") as build:
+      with self.assertRaisesRegex(RuntimeError, "Linux amd64 package fixture"):
+        tasks.artifactConsumerVertical.body(object())
+      build.assert_not_called()
 
   def test_release_workflow_gates_publication_on_contained_release_candidate(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()

@@ -681,7 +681,7 @@ jobs:
           set -euo pipefail
           RCC_REAL_ARTIFACT_TEST=1 go test -timeout 45m -count=1 ./environmentlifecycle -run '^TestRealCurrentRCCAtoBVertical$' -v
       - name: Run JAT-class real consumer A-to-B acceptance
-        if: matrix.goos == 'linux'
+        if: matrix.goos == 'linux' && matrix.goarch == 'amd64'
         shell: bash
         run: |
           set -euo pipefail
