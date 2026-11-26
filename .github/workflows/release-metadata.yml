@@ -36,6 +36,8 @@ jobs:
           node-version: "24"
       - run: npm ci --prefix tools/release-metadata --ignore-scripts --no-audit --no-fund
       - run: npm test --prefix tools/release-metadata
+      - name: Test one-time manifest setup without credentials or network
+        run: python3 -m unittest discover -s tools/release-metadata -p test_register_app.py
 
   metadata:
     needs: verify
