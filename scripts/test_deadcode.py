@@ -240,7 +240,7 @@ class DeadcodeTests(unittest.TestCase):
         runner = FakeRunner(
             inventories={
                 target: [inventory_symbol(LIVE)]
-                for target in ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64")
+                for target in ("linux/amd64", "linux/arm64", "darwin/amd64", "darwin/arm64", "windows/amd64")
             }
         )
         with patch.dict(os.environ, {"GOOS": "plan9", "GOARCH": "mips", "GOFLAGS": "-tags=hidden"}, clear=False):
@@ -248,7 +248,7 @@ class DeadcodeTests(unittest.TestCase):
 
         self.assertEqual(0, code)
         self.assertTrue(report["coverage"]["complete"])
-        self.assertEqual(4, report["coverage"]["completed_targets"])
+        self.assertEqual(5, report["coverage"]["completed_targets"])
         analyzer_calls = [call for call in runner.calls if call[0][0] == "/deadcode"]
         inventory_calls = [call for call in runner.calls if call[0][0] == "/inventory"]
         scope_calls = [
@@ -256,9 +256,9 @@ class DeadcodeTests(unittest.TestCase):
             for call in runner.calls
             if call[0][:2] == ["go", "list"] and "-m" not in call[0]
         ]
-        self.assertEqual(8, len(analyzer_calls))
-        self.assertEqual(4, len(inventory_calls))
-        self.assertEqual(4, len(scope_calls))
+        self.assertEqual(10, len(analyzer_calls))
+        self.assertEqual(5, len(inventory_calls))
+        self.assertEqual(5, len(scope_calls))
         for _, details in analyzer_calls + inventory_calls:
             self.assertEqual("0", details["env"]["CGO_ENABLED"])
             self.assertEqual("", details["env"]["GOFLAGS"])
@@ -443,7 +443,7 @@ class DeadcodeTests(unittest.TestCase):
             with self.subTest(options=options):
                 analyzers = {}
                 inventories = {}
-                for target in ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
+                for target in ("linux/amd64", "linux/arm64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
                     analyzers[(target, "app")] = analyzer_payload(DEAD)
                     analyzers[(target, "test")] = analyzer_payload(DEAD)
                     inventories[target] = [inventory_symbol(DEAD)]
@@ -488,7 +488,7 @@ class DeadcodeTests(unittest.TestCase):
     def test_exported_symbol_removal_requires_compatibility_review(self):
         analyzers = {}
         inventories = {}
-        for target in ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
+        for target in ("linux/amd64", "linux/arm64", "darwin/amd64", "darwin/arm64", "windows/amd64"):
             analyzers[(target, "app")] = analyzer_payload(DEAD)
             analyzers[(target, "test")] = analyzer_payload(DEAD)
             inventories[target] = [inventory_symbol(DEAD, exported=True)]

@@ -330,6 +330,7 @@
 ### 27.1 [Provenance and refresh procedure](micromamba.md#provenance-and-refresh-procedure)
 ### 27.2 [Compatibility checks](micromamba.md#compatibility-checks)
 ### 27.3 [Native acceptance boundary](micromamba.md#native-acceptance-boundary)
+### 27.4 [Linux ARM64](micromamba.md#linux-arm64)
 ## 28 [RCC release preparation and publication](release-process.md#rcc-release-preparation-and-publication)
 ### 28.1 [Release metadata PR controller](release-process.md#release-metadata-pr-controller)
 ### 28.2 [Dependency preparation policy](release-process.md#dependency-preparation-policy)

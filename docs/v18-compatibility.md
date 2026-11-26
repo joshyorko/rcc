@@ -10,8 +10,8 @@ local or remote contracts.
 | Providers | Named profiles are additive; credentials are referenced by environment-variable name and local operation does not require provider configuration. |
 | Legacy remote | `rccremote` remains a separate binary and protocol; `/parts`, `/delta`, `RCC_REMOTE_ORIGIN`, and `RCC_REMOTE_AUTHORIZATION` remain supported. |
 | Home boundary | No mandatory `ROBOCORP_HOME` migration is introduced. |
-| Runtime support | The same-platform, private-home Environment Artifact A→B lifecycle passed native jobs in release run [34149302701](https://github.com/joshyorko/rcc/actions/runs/34149302701), source `d1aec7d`, on Linux amd64, macOS amd64, macOS arm64, and Windows amd64. This historical evidence does not prove cross-platform artifact portability or complete ABI compatibility. |
-| Release assets | Each release retains `rcc` and `rccremote` for Linux amd64, macOS amd64, macOS arm64, and Windows amd64. |
+| Runtime support | The same-platform, private-home Environment Artifact A→B lifecycle passed native jobs in release run [34149302701](https://github.com/joshyorko/rcc/actions/runs/34149302701), source `d1aec7d`, on Linux amd64, Linux ARM64, macOS amd64, macOS arm64, and Windows amd64. This historical evidence does not prove cross-platform artifact portability or complete ABI compatibility. |
+| Release assets | Each release retains `rcc` and `rccremote` for Linux amd64, Linux ARM64, macOS amd64, macOS arm64, and Windows amd64. |
 
 Environment Artifact identity does not include provider references, provider
 locations, credentials, materialization paths, or RCC process IDs.

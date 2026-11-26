@@ -22,7 +22,7 @@ from release_publication import validate_release_changelog
 
 
 ASSETS = {
-    "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
+    "rcc-linux64", "rccremote-linux64", "rcc-linuxarm64", "rccremote-linuxarm64", "rcc-windows64.exe", "rccremote-windows64.exe",
     "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64",
 }
 REPOSITORY_ROOT = Path(__file__).parents[1]
@@ -88,12 +88,14 @@ class ReleaseTopologyTests(unittest.TestCase):
 
     def fixture(self):
         root = Path(tempfile.mkdtemp())
-        for directory in ("linux64", "windows64", "macos64", "macosarm64"):
+        for directory in ("linuxarm64", "linux64", "windows64", "macos64", "macosarm64"):
             (root / "build" / directory).mkdir(parents=True)
         for name in ASSETS:
             target = {"linux": "linux64", "windows": "windows64", "macos64": "macos64", "macosarm64": "macosarm64"}
             if "windows" in name:
                 directory = "windows64"
+            elif "linuxarm64" in name:
+                directory = "linuxarm64"
             elif "macosarm64" in name:
                 directory = "macosarm64"
             elif "macos64" in name:
@@ -106,6 +108,7 @@ class ReleaseTopologyTests(unittest.TestCase):
         (root / "common" / "version.go").write_text(f"package common\nconst Version = `{VERSION}`\n")
         workflow = root / "workflow.yml"
         workflow.write_text("\n".join(f"cp build/{d}/{s} rcc-builds/{n}" for d, s, n in [
+            ("linuxarm64", "rcc", "rcc-linuxarm64"), ("linuxarm64", "rccremote", "rccremote-linuxarm64"),
             ("linux64", "rcc", "rcc-linux64"), ("linux64", "rccremote", "rccremote-linux64"),
             ("windows64", "rcc.exe", "rcc-windows64.exe"), ("windows64", "rccremote.exe", "rccremote-windows64.exe"),
             ("macos64", "rcc", "rcc-macos64"), ("macos64", "rccremote", "rccremote-macos64"),
@@ -115,7 +118,7 @@ class ReleaseTopologyTests(unittest.TestCase):
         index.write_text(json.dumps({"tested": [{
             "version": VERSION,
             "windows": f"{RELEASE_BASE}/rcc-windows64.exe",
-            "linux": f"{RELEASE_BASE}/rcc-linux64",
+            "linux": f"{RELEASE_BASE}/rcc-linux64", "linuxarm64": f"{RELEASE_BASE}/rcc-linuxarm64",
             "macos": f"{RELEASE_BASE}/rcc-macos64",
             "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64",
         }]}))
@@ -349,7 +352,7 @@ class ReleaseTopologyTests(unittest.TestCase):
         workflow = (REPOSITORY_ROOT / ".github/workflows/rcc.yaml").read_text()
         prep_job = workflow.split("\n  assemble-release-preparation:\n", 1)[1]
         self.assertRegex(prep_job, r"needs:\s*\n(?:\s+- .+\n)*\s+- robot\n")
-        for platform in ("linux-amd64", "macos-amd64", "macos-arm64", "windows-amd64"):
+        for platform in ("linux-arm64", "linux-amd64", "macos-amd64", "macos-arm64", "windows-amd64"):
             self.assertIn(f"platform: {platform}", workflow)
         self.assertIn("name: rcc-release-preparation", prep_job)
 
@@ -411,7 +414,7 @@ class ReleaseTopologyTests(unittest.TestCase):
 
     def test_requires_macosarm64_index_asset(self):
         root, workflow, index = self.fixture()
-        index.write_text(json.dumps({"tested": [{"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64"}]}))
+        index.write_text(json.dumps({"tested": [{"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "linuxarm64": f"{RELEASE_BASE}/rcc-linuxarm64", "macos": f"{RELEASE_BASE}/rcc-macos64"}]}))
         self.assertTrue(any("macosarm64" in error for error in validate(root, workflow, index)))
 
     def test_rejects_wrong_index_version_host_path_and_architecture_mapping(self):
@@ -437,12 +440,13 @@ class ReleaseTopologyTests(unittest.TestCase):
             "version": VERSION,
             "windows": f"{RELEASE_BASE}/rccremote-windows64.exe",
             "linux": f"{RELEASE_BASE}/rccremote-linux64",
+            "linuxarm64": f"{RELEASE_BASE}/rccremote-linuxarm64",
             "macos": f"{RELEASE_BASE}/rccremote-macosarm64",
             "macosarm64": f"{RELEASE_BASE}/rccremote-macos64",
         }]}))
         errors = validate(root, workflow, index)
-        self.assertEqual(len(errors), 4, errors)
-        for key in ("windows", "linux", "macos", "macosarm64"):
+        self.assertEqual(len(errors), 5, errors)
+        for key in ("windows", "linux", "linuxarm64", "macos", "macosarm64"):
             self.assertTrue(any(f"index {key} URL" in error for error in errors), errors)
 
     def test_rejects_extra_workflow_asset(self):
@@ -453,7 +457,7 @@ class ReleaseTopologyTests(unittest.TestCase):
     def test_accepts_historical_entry_without_macosarm64(self):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [
-            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
+            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "linuxarm64": f"{RELEASE_BASE}/rcc-linuxarm64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
             {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-macos64"},
         ]}))
         errors = validate(root, workflow, index)
@@ -462,7 +466,7 @@ class ReleaseTopologyTests(unittest.TestCase):
     def test_accepts_historical_darwin_asset_name(self):
         root, workflow, index = self.fixture()
         index.write_text(json.dumps({"tested": [
-            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
+            {"version": VERSION, "windows": f"{RELEASE_BASE}/rcc-windows64.exe", "linux": f"{RELEASE_BASE}/rcc-linux64", "linuxarm64": f"{RELEASE_BASE}/rcc-linuxarm64", "macos": f"{RELEASE_BASE}/rcc-macos64", "macosarm64": f"{RELEASE_BASE}/rcc-macosarm64"},
             {"windows": "https://x/rcc-windows64.exe", "linux": "https://x/rcc-linux64", "macos": "https://x/rcc-darwin64"},
         ]}))
         self.assertEqual(validate(root, workflow, index), [])

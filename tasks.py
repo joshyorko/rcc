@@ -24,6 +24,7 @@ MICROMAMBA_HASH_CHUNK_BYTES = 1024 * 1024
 # SHA-256 of the executable member, independently matched to the release's
 # standalone executable digest. These also qualify generated gzip asset reuse.
 MICROMAMBA_BINARY_SHA256 = {
+    "linuxarm64": "3bb56786e21b9b24024f599fe9185b4a59dc3f9f59937a42311ee583adbbb23c",
     "linux64": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
     "macos64": "8421462a1ef1df9f7acd114f9e2a24c1332ce4f4e29f44465b4acb44e2755172",
     "macosarm64": "c547639f5caf742236641c362746abb4a3505774753ecd08fe341643670c4c01",
@@ -34,6 +35,7 @@ MICROMAMBA_BINARY_SHA256 = {
 def _binary_inventory_targets():
     return [
         ("linux", "amd64", "linux64", ""),
+        ("linux", "arm64", "linuxarm64", ""),
         ("darwin", "amd64", "macos64", ""),
         ("darwin", "arm64", "macosarm64", ""),
         ("windows", "amd64", "windows64", ".exe"),
@@ -449,14 +451,19 @@ def _invoke_command(task_name):
     return f"{executable} -m invoke {task_name}"
 
 
+def _native_goarch():
+    import platform
+    return {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}[platform.machine()]
+
+
 def _contained_go_env():
-    return {"CGO_ENABLED": "0", "GOARCH": "amd64"}
+    return {"CGO_ENABLED": "0", "GOARCH": _native_goarch()}
 
 
 def _contained_race_env():
     if shutil.which("gcc") is None:
         raise RuntimeError("artifactRace requires gcc available on PATH")
-    return {"CGO_ENABLED": "1", "GOARCH": "amd64", "CC": "gcc"}
+    return {"CGO_ENABLED": "1", "GOARCH": _native_goarch(), "CC": "gcc"}
 
 
 def _new_self_host_homes():
@@ -552,6 +559,7 @@ def get_official_micromamba_url(version, platform):
     # Map our platform names to conda-forge platform names
     platform_map = {
         "linux64": "linux-64",
+        "linuxarm64": "linux-aarch64",
         "macos64": "osx-64",
         "macosarm64": "osx-arm64",
         "windows64": "win-64",
@@ -575,6 +583,10 @@ def _get_official_micromamba_fallback(version, platform):
     version = version.removeprefix("v")
     release = "2.10.0-0"
     assets = {
+        "linuxarm64": (
+            "micromamba-linux-aarch64.tar.bz2",
+            "890bc4906e6ab17f1b393f0da21547f75e000078e573a156316ec925b92a4a4c",
+        ),
         "linux64": (
             "micromamba-linux-64.tar.bz2",
             "9a97976244929bbae28fb1fae504e74a3e7e6d1932870e3a03321f01b7fbd07b",
@@ -714,6 +726,7 @@ def micromamba(c):
 
     platforms = {
         "linux64": "linux_amd64",
+        "linuxarm64": "linux_arm64",
         "macos64": "darwin_amd64",
         "macosarm64": "darwin_arm64",
         "windows64": "windows_amd64",
@@ -875,14 +888,14 @@ def agentdocs(c):
 @task(pre=[toc])
 def support(c):
     """Create necessary directories"""
-    for dir in ["tmp", "build/linux64", "build/macos64", "build/macosarm64", "build/windows64"]:
+    for dir in ["tmp", "build/linux64", "build/linuxarm64", "build/macos64", "build/macosarm64", "build/windows64"]:
         os.makedirs(dir, exist_ok=True)
 
 
 @task(pre=[support, assets])
 def test(c, cover=False):
     """Run tests"""
-    os.environ["GOARCH"] = "amd64"
+    os.environ["GOARCH"] = _native_goarch()
     os.environ["CGO_ENABLED"] = "0"
     if cover:
         c.run("go test -cover -coverprofile=tmp/cover.out ./...")
@@ -1483,6 +1496,7 @@ def build(c, platform="all"):
     # Define platform-arch combinations
     build_targets = [
         ("linux", "amd64", "linux64"),
+        ("linux", "arm64", "linuxarm64"),
         ("darwin", "amd64", "macos64"),
         ("darwin", "arm64", "macosarm64"),
         ("windows", "amd64", "windows64"),
@@ -1496,6 +1510,8 @@ def build(c, platform="all"):
         targets = [t for t in build_targets if t[0] == "darwin"]
     elif platform == "windows":
         targets = [t for t in build_targets if t[0] == "windows"]
+    elif platform in {t[2] for t in build_targets}:
+        targets = [t for t in build_targets if t[2] == platform]
     else:
         raise ValueError(f"Invalid platform: {platform}")
 
@@ -1522,7 +1538,13 @@ def windows64(c):
 @task
 def linux64(c):
     """Build linux64 executable"""
-    build(c, platform="linux")
+    build(c, platform="linux64")
+
+
+@task(pre=[support, version_txt, assets])
+def linuxarm64(c):
+    """Build Linux ARM64 executables."""
+    build(c, platform="linuxarm64")
 
 
 @task

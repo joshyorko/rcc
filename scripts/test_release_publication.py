@@ -51,6 +51,7 @@ class ReleasePublicationTests(unittest.TestCase):
                     "version": VERSION,
                     "windows": f"{base}/rcc-windows64.exe",
                     "linux": f"{base}/rcc-linux64",
+                    "linuxarm64": f"{base}/rcc-linuxarm64",
                     "macos": f"{base}/rcc-macos64",
                     "macosarm64": f"{base}/rcc-macosarm64",
                 }]}, separators=(",", ":")) + "\n").encode()
@@ -79,7 +80,7 @@ class ReleasePublicationTests(unittest.TestCase):
             "version": VERSION,
             "preparationRunId": 123,
             "assetManifestSha256": manifest_digest,
-            "nativePlatforms": sorted(("linux_amd64", "darwin_amd64", "darwin_arm64", "windows_amd64")),
+            "nativePlatforms": sorted(("linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64", "windows_amd64")),
             "binaryBuildInfo": {
                 name: {
                     "goVersion": EXPECTED_GO_VERSION,
@@ -134,6 +135,7 @@ class ReleasePublicationTests(unittest.TestCase):
         }
         platform_assets = {
             "linux_amd64": "rcc-linux64",
+            "linux_arm64": "rcc-linuxarm64",
             "darwin_amd64": "rcc-macos64",
             "darwin_arm64": "rcc-macosarm64",
             "windows_amd64": "rcc-windows64.exe",
@@ -328,7 +330,7 @@ class ReleasePublicationTests(unittest.TestCase):
         executable.chmod(0o755)
         return executable
 
-    def test_review_asset_staging_binds_nine_small_exact_payloads(self):
+    def test_review_asset_staging_binds_eleven_small_exact_payloads(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             bundle = root / "bundle"
@@ -787,6 +789,7 @@ import pathlib, sys
 name = pathlib.Path(sys.argv[-1]).name
 targets = {
     "rcc-linux64": ("linux", "amd64"), "rccremote-linux64": ("linux", "amd64"),
+  "rcc-linuxarm64": ("linux", "arm64"), "rccremote-linuxarm64": ("linux", "arm64"),
     "rcc-windows64.exe": ("windows", "amd64"), "rccremote-windows64.exe": ("windows", "amd64"),
     "rcc-macos64": ("darwin", "amd64"), "rccremote-macos64": ("darwin", "amd64"),
     "rcc-macosarm64": ("darwin", "arm64"), "rccremote-macosarm64": ("darwin", "arm64"),
@@ -1005,6 +1008,7 @@ print("\\tbuild\\tvcs.modified=false")
 import pathlib, sys
 targets = {
   "rcc-linux64": ("linux", "amd64"), "rccremote-linux64": ("linux", "amd64"),
+  "rcc-linuxarm64": ("linux", "arm64"), "rccremote-linuxarm64": ("linux", "arm64"),
   "rcc-windows64.exe": ("windows", "amd64"), "rccremote-windows64.exe": ("windows", "amd64"),
   "rcc-macos64": ("darwin", "amd64"), "rccremote-macos64": ("darwin", "amd64"),
   "rcc-macosarm64": ("darwin", "arm64"), "rccremote-macosarm64": ("darwin", "arm64"),

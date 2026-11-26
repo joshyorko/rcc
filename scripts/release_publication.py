@@ -23,6 +23,7 @@ from validate_release_topology import validate as validate_release_topology
 
 
 ASSET_NAMES = (
+    "rcc-linuxarm64", "rccremote-linuxarm64",
     "rcc-linux64",
     "rccremote-linux64",
     "rcc-windows64.exe",
@@ -34,12 +35,14 @@ ASSET_NAMES = (
     "index.json",
 )
 NATIVE_RECEIPTS = {
+    "linux_arm64": "rcc-linuxarm64",
     "linux_amd64": "rcc-linux64",
     "darwin_amd64": "rcc-macos64",
     "darwin_arm64": "rcc-macosarm64",
     "windows_amd64": "rcc-windows64.exe",
 }
 NATIVE_JOB_NAMES = {
+    "linux_arm64": "Native Runtime (linux-arm64)",
     "linux_amd64": "Native Runtime (linux-amd64)",
     "darwin_amd64": "Native Runtime (macos-amd64)",
     "darwin_arm64": "Native Runtime (macos-arm64)",
@@ -53,6 +56,8 @@ REQUIRED_JOBS = (
     "Assemble Release Preparation",
 )
 ASSET_TARGETS = {
+    "rcc-linuxarm64": ("linux", "arm64"),
+    "rccremote-linuxarm64": ("linux", "arm64"),
     "rcc-linux64": ("linux", "amd64"),
     "rccremote-linux64": ("linux", "amd64"),
     "rcc-windows64.exe": ("windows", "amd64"),
@@ -450,7 +455,7 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
 
     native_root = evidence_dir / "native"
     receipts = list(native_root.rglob("native-runtime-receipt.json"))
-    _require(len(receipts) == len(NATIVE_RECEIPTS), "native runtime receipt count is not exactly four")
+    _require(len(receipts) == len(NATIVE_RECEIPTS), "native runtime receipt count is not exactly five")
     seen_platforms = set()
     for receipt_path in receipts:
         receipt = _read_json(receipt_path)
@@ -1225,7 +1230,7 @@ def assemble_prepared_bundle(asset_root, release_candidate_root, native_root, ou
     output_root = Path(output_root)
     _require(not output_root.exists(), "output directory already exists")
     _require(asset_root.is_dir() and not asset_root.is_symlink(), "build asset directory is missing or unsafe")
-    _require({path.name for path in asset_root.iterdir()} == set(ASSET_NAMES), "build asset directory must contain exactly nine assets")
+    _require({path.name for path in asset_root.iterdir()} == set(ASSET_NAMES), "build asset directory must contain exactly eleven assets")
     _require(release_candidate_root.is_dir() and not release_candidate_root.is_symlink(), "release-candidate evidence is missing or unsafe")
     _require(native_root.is_dir() and not native_root.is_symlink(), "native receipt artifacts are missing or unsafe")
 

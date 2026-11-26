@@ -85,6 +85,8 @@ jobs:
       - name: Prepare Artifacts
         run: |
           mkdir -p rcc-builds
+          cp build/linuxarm64/rcc rcc-builds/rcc-linuxarm64
+          cp build/linuxarm64/rccremote rcc-builds/rccremote-linuxarm64
           cp build/linux64/rcc rcc-builds/rcc-linux64
           cp build/linux64/rccremote rcc-builds/rccremote-linux64
           cp build/windows64/rcc.exe rcc-builds/rcc-windows64.exe
@@ -103,6 +105,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p native-runtime-binaries
+          cp rcc-builds/rcc-linuxarm64 native-runtime-binaries/
           cp rcc-builds/rcc-linux64 native-runtime-binaries/
           cp rcc-builds/rcc-macos64 native-runtime-binaries/
           cp rcc-builds/rcc-macosarm64 native-runtime-binaries/
@@ -338,7 +341,7 @@ jobs:
         with:
           name: release-candidate-evidence
           path: release-candidate-evidence
-      - name: Download all four native runtime receipts
+      - name: Download all five native runtime receipts
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           pattern: "*-native-runtime-receipt"
@@ -369,6 +372,7 @@ jobs:
               "changelog": f"https://github.com/{repo}/blob/main/docs/changelog.md#{version.replace('.', '')}",
               "windows": f"{base}/rcc-windows64.exe",
               "linux": f"{base}/rcc-linux64",
+              "linuxarm64": f"{base}/rcc-linuxarm64",
               "macos": f"{base}/rcc-macos64",
               "macosarm64": f"{base}/rcc-macosarm64",
           }
@@ -416,6 +420,22 @@ jobs:
             --run-id "$GITHUB_RUN_ID" \
             --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
             --go "$(command -v go)"
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rcc-linuxarm64
+          path: rcc-release-review-assets/rcc-linuxarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Upload review-only release asset
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-rccremote-linuxarm64
+          path: rcc-release-review-assets/rccremote-linuxarm64/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
       - name: Upload review-only release asset
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -499,6 +519,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: "ubuntu-24.04-arm"
+            platform: linux-arm64
+            asset: rcc-linuxarm64
+            binary: build/rcc
+            goos: linux
+            goarch: arm64
           - os: "ubuntu-latest"
             platform: linux-amd64
             asset: rcc-linux64

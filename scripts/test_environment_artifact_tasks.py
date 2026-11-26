@@ -61,7 +61,7 @@ class ArtifactTaskTests(unittest.TestCase):
       class Context:
         def run(self, command):
           calls.append(command)
-          output = root / "build" / "linux64" / "rcc"
+          output = root / command.split("-o ", 1)[1].split()[0] / "rcc"
           output.parent.mkdir(parents=True, exist_ok=True)
           output.write_bytes(b"test executable placeholder")
 
@@ -70,7 +70,7 @@ class ArtifactTaskTests(unittest.TestCase):
         os.chdir(root)
         with mock.patch.dict(os.environ, {}, clear=True):
           tasks.build.body(Context(), platform="linux")
-        self.assertEqual(len(calls), 1, "ordinary developer build should allow tracked edits")
+        self.assertEqual(len(calls), 2, "ordinary developer build should allow tracked edits")
 
         calls.clear()
         with mock.patch.dict(os.environ, {"RCC_REQUIRE_CLEAN_SOURCE": "1"}, clear=True):
@@ -354,6 +354,7 @@ class ArtifactTaskTests(unittest.TestCase):
   def test_binary_inventory_matrix_is_exact(self):
     self.assertEqual(tasks._binary_inventory_targets(), [
         ("linux", "amd64", "linux64", ""),
+        ("linux", "arm64", "linuxarm64", ""),
         ("darwin", "amd64", "macos64", ""),
         ("darwin", "arm64", "macosarm64", ""),
         ("windows", "amd64", "windows64", ".exe"),
@@ -362,6 +363,7 @@ class ArtifactTaskTests(unittest.TestCase):
   def test_native_robot_matrix_has_explicit_platform_receipts(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     self.assertIn("platform: linux-amd64", workflow)
+    self.assertIn("platform: linux-arm64", workflow)
     self.assertIn("platform: macos-amd64", workflow)
     self.assertIn('os: "macos-15-intel"', workflow)
     self.assertNotIn('os: "macos-13"', workflow)
@@ -683,13 +685,14 @@ class ArtifactTaskTests(unittest.TestCase):
       self.assertEqual(metadata["candidate"], str(candidate.resolve()))
 
   def test_artifact_and_self_host_go_tasks_use_contained_safe_environment(self):
-    focused = tasks._contained_go_env()
-    race = tasks._contained_race_env()
-    self.assertEqual(focused["CGO_ENABLED"], "0")
-    self.assertEqual(focused["GOARCH"], "amd64")
-    self.assertEqual(race["CGO_ENABLED"], "1")
-    self.assertEqual(race["GOARCH"], "amd64")
-    self.assertEqual(race["CC"], "gcc")
+    for machine, expected in (("x86_64", "amd64"), ("AMD64", "amd64"),
+                              ("aarch64", "arm64"), ("arm64", "arm64")):
+      with self.subTest(machine=machine), mock.patch("platform.machine", return_value=machine), \
+          mock.patch("shutil.which", return_value="/usr/bin/gcc"):
+        focused = tasks._contained_go_env()
+        race = tasks._contained_race_env()
+        self.assertEqual(focused, {"CGO_ENABLED": "0", "GOARCH": expected})
+        self.assertEqual(race, {"CGO_ENABLED": "1", "GOARCH": expected, "CC": "gcc"})
 
   def test_artifact_focused_runs_task_and_release_contract_tests(self):
     commands = []
@@ -837,16 +840,17 @@ class ArtifactTaskTests(unittest.TestCase):
         workflow.index("- name: Dispatch Homebrew update after release publication"),
     )
 
-  def test_manual_preparation_uploads_nine_review_only_asset_artifacts(self):
+  def test_manual_preparation_uploads_eleven_review_only_asset_artifacts(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     self.assertIn("stage-review-assets", workflow)
-    self.assertEqual(workflow.count("name: Upload review-only release asset"), 9)
+    self.assertEqual(workflow.count("name: Upload review-only release asset"), 11)
     self.assertIn("rcc-release-preparation", workflow)
     self.assertIn("check-review-payload", workflow)
     self.assertNotIn("needs: assemble-release-preparation", workflow)
     self.assertLess(workflow.index("name: Upload immutable release preparation artifact"),
                     workflow.index("name: Upload review-only release asset"))
     for asset in (
+      "rcc-linuxarm64", "rccremote-linuxarm64",
       "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
       "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64", "index.json",
     ):
@@ -884,12 +888,14 @@ class ArtifactTaskTests(unittest.TestCase):
     ]
     with tempfile.TemporaryDirectory() as directory:
       commit = tasks._exact_commit_sha()
+      binary = b"release candidate fixture"
       for name in tasks._PROMOTION_RECEIPT_FILES:
         payload = {"commitSha": commit}
         if name == "coordination-blackbox-v1.json":
-          payload["binarySha256"] = hashlib.sha256(Path("build/rcc").read_bytes()).hexdigest()
+          payload["binarySha256"] = hashlib.sha256(binary).hexdigest()
         (Path(directory) / name).write_text(json.dumps(payload))
       with ExitStack() as stack:
+        stack.enter_context(mock.patch.object(Path, "read_bytes", return_value=binary))
         stack.enter_context(mock.patch.dict(
             os.environ, {"RCC_RELEASE_CANDIDATE_RECEIPT_ROOT": directory}))
         for name in task_names:
@@ -995,10 +1001,12 @@ class ArtifactTaskTests(unittest.TestCase):
     ])
 
   def test_self_host_homes_are_outside_the_module_root(self):
-    home_a, home_b = tasks._new_self_host_homes()
-    for home in (home_a, home_b):
-      self.assertNotEqual(home.resolve(), ROOT.resolve())
-      with self.assertRaises(ValueError):
-        home.resolve().relative_to(ROOT.resolve())
-    self.assertNotEqual(home_a, home_b)
-    self.assertEqual(home_a.parent.parent, ROOT.parent.resolve())
+    with tempfile.TemporaryDirectory() as directory, mock.patch.dict(
+        os.environ, {"RCC_SELF_HOST_ROOT": directory}):
+      home_a, home_b = tasks._new_self_host_homes()
+      for home in (home_a, home_b):
+        self.assertNotEqual(home.resolve(), ROOT.resolve())
+        with self.assertRaises(ValueError):
+          home.resolve().relative_to(ROOT.resolve())
+      self.assertNotEqual(home_a, home_b)
+      self.assertEqual(home_a.parent.parent, Path(directory).resolve())

@@ -54,7 +54,7 @@ class MicromambaDownloadTests(unittest.TestCase):
     """Reject stale or corrupt executables while retaining verified, reproducible assets."""
     archive = _archive_bytes()
     binary_digest = hashlib.sha256(b"micromamba").hexdigest()
-    arches = ("linux_amd64", "darwin_amd64", "darwin_arm64", "windows_amd64")
+    arches = ("linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64", "windows_amd64")
 
     def download(url, destination, **kwargs):
       """Supply the real archive layouts without a network dependency."""
@@ -77,10 +77,10 @@ class MicromambaDownloadTests(unittest.TestCase):
       for output in outputs:
         output.write_bytes(gzip.compress(b"stale 2.5.0"))
       with mock.patch.object(tasks, "MICROMAMBA_BINARY_SHA256", {
-          platform: binary_digest for platform in ("linux64", "macos64", "macosarm64", "windows64")
+          platform: binary_digest for platform in ("linux64", "linuxarm64", "macos64", "macosarm64", "windows64")
       }, create=True), mock.patch.object(tasks, "_download_micromamba_archive", side_effect=download) as fetch:
         tasks.micromamba.body(None)
-        self.assertEqual(fetch.call_count, 4)
+        self.assertEqual(fetch.call_count, 5)
         first = [output.read_bytes() for output in outputs]
         for content in first:
           self.assertEqual(gzip.decompress(content), b"micromamba")
@@ -252,6 +252,11 @@ class MicromambaDownloadTests(unittest.TestCase):
   def test_fallback_metadata_is_bound_to_exact_release_archives(self):
     """Break caught: a mutable or wrong-version fallback bypasses integrity binding."""
     expected = {
+        "linuxarm64": (
+            "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
+            "micromamba-linux-aarch64.tar.bz2",
+            "890bc4906e6ab17f1b393f0da21547f75e000078e573a156316ec925b92a4a4c",
+        ),
         "linux64": (
             "https://github.com/mamba-org/micromamba-releases/releases/download/2.10.0-0/"
             "micromamba-linux-64.tar.bz2",

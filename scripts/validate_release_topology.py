@@ -5,18 +5,20 @@ import stat
 from pathlib import Path
 
 ASSETS = {
+    "rcc-linuxarm64", "rccremote-linuxarm64",
     "rcc-linux64", "rccremote-linux64", "rcc-windows64.exe", "rccremote-windows64.exe",
     "rcc-macos64", "rccremote-macos64", "rcc-macosarm64", "rccremote-macosarm64",
 }
 PUBLISHED_ASSETS = ASSETS | {"index.json"}
 INDEX_ASSETS = {
+    "linuxarm64": "rcc-linuxarm64",
     "windows": "rcc-windows64.exe",
     "linux": "rcc-linux64",
     "macos": "rcc-macos64",
     "macosarm64": "rcc-macosarm64",
 }
 RELEASE_REPOSITORY = "joshyorko/rcc"
-TARGETS = {"linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
+TARGETS = {"linuxarm64": ("rcc", "rccremote"), "linux64": ("rcc", "rccremote"), "windows64": ("rcc.exe", "rccremote.exe"), "macos64": ("rcc", "rccremote"), "macosarm64": ("rcc", "rccremote")}
 RUNTIME_ROOT_ENV_VARS = {"ROBOCORP_HOME", "RCC_HOME", "GOCACHE", "GOMODCACHE", "TMPDIR", "TMP", "TEMP"}
 CANDIDATE_SHA_EXPRESSION = "${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}"
 RELEASE_IDENTITY_JOBS = ("build", "release-candidate", "robot")
