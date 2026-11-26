@@ -146,7 +146,7 @@ jobs:
           gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
             -f "ref=refs/tags/${RCC_RELEASE_VERSION}" \
             -f "sha=${RCC_SOURCE_SHA}"
-      - name: Publish exactly the nine reviewed release assets
+      - name: Publish exactly the eleven reviewed release assets
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

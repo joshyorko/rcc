@@ -23,6 +23,7 @@ from validate_release_topology import validate as validate_release_topology
 
 
 ASSET_NAMES = (
+    "rcc-linuxarm64", "rccremote-linuxarm64",
     "rcc-linux64",
     "rccremote-linux64",
     "rcc-windows64.exe",
@@ -34,12 +35,14 @@ ASSET_NAMES = (
     "index.json",
 )
 NATIVE_RECEIPTS = {
+    "linux_arm64": "rcc-linuxarm64",
     "linux_amd64": "rcc-linux64",
     "darwin_amd64": "rcc-macos64",
     "darwin_arm64": "rcc-macosarm64",
     "windows_amd64": "rcc-windows64.exe",
 }
 NATIVE_JOB_NAMES = {
+    "linux_arm64": "Native Runtime (linux-arm64)",
     "linux_amd64": "Native Runtime (linux-amd64)",
     "darwin_amd64": "Native Runtime (macos-amd64)",
     "darwin_arm64": "Native Runtime (macos-arm64)",
@@ -53,6 +56,8 @@ REQUIRED_JOBS = (
     "Assemble Release Preparation",
 )
 ASSET_TARGETS = {
+    "rcc-linuxarm64": ("linux", "arm64"),
+    "rccremote-linuxarm64": ("linux", "arm64"),
     "rcc-linux64": ("linux", "amd64"),
     "rccremote-linux64": ("linux", "amd64"),
     "rcc-windows64.exe": ("windows", "amd64"),
@@ -450,7 +455,7 @@ def validate_prepared_bundle(root, expected_source_sha, expected_version, expect
 
     native_root = evidence_dir / "native"
     receipts = list(native_root.rglob("native-runtime-receipt.json"))
-    _require(len(receipts) == len(NATIVE_RECEIPTS), "native runtime receipt count is not exactly four")
+    _require(len(receipts) == len(NATIVE_RECEIPTS), "native runtime receipt count is not exactly five")
     seen_platforms = set()
     for receipt_path in receipts:
         receipt = _read_json(receipt_path)
@@ -1121,8 +1126,8 @@ def _validate_native_receipt(receipt, platform, asset_name, asset_record, source
              f"native CLI artifact digest differs from receipt: {platform}")
     _require(receipt.get("exactBinaryCLI", {}).get("objectCount", 0) > 0,
              f"native CLI proof has no provider objects: {platform}")
-    _validate_consumer_lifecycle(receipt.get("exactBinaryCLI"), artifact_digest, platform)
-    _validate_consumer_lifecycle(receipt.get("sourceAPI"), artifact_digest, platform)
+    _validate_consumer_lifecycle(receipt.get("exactBinaryCLI"), artifact_digest, platform, goarch)
+    _validate_consumer_lifecycle(receipt.get("sourceAPI"), artifact_digest, platform, goarch)
     if not require_robot:
         return
     robot = receipt.get("robotExactBinary")
@@ -1168,7 +1173,7 @@ def _validate_native_receipt(receipt, platform, asset_name, asset_record, source
                  f"native Rosetta probe is not an explicit result: {platform}")
 
 
-def _validate_consumer_lifecycle(evidence, artifact_digest, label):
+def _validate_consumer_lifecycle(evidence, artifact_digest, label, expected_arch):
     _require(isinstance(evidence, dict) and evidence.get("artifactDigest") == artifact_digest,
              f"consumer lifecycle artifact mismatch: {label}")
     cold, warm, mismatch = evidence.get("cold"), evidence.get("warm"), evidence.get("mismatch")
@@ -1193,6 +1198,11 @@ def _validate_consumer_lifecycle(evidence, artifact_digest, label):
              worker.get("os", {}).get("nativeArchitecture") and worker.get("cpu", {}).get("architecture") and
              worker.get("filesystem", {}).get("maxPath", 0) > 0 and worker.get("relocationVersions"),
              f"consumer worker capability receipt is incomplete: {label}")
+    for phase in (cold, warm):
+        worker = phase.get("compatibility", {}).get("worker", {})
+        _require(worker.get("os", {}).get("nativeArchitecture") == expected_arch and
+                 worker.get("cpu", {}).get("architecture") == expected_arch,
+                 f"consumer worker architecture differs from native platform: {label}")
 
 
 def _validate_robot_xml(path, platform):
@@ -1225,7 +1235,7 @@ def assemble_prepared_bundle(asset_root, release_candidate_root, native_root, ou
     output_root = Path(output_root)
     _require(not output_root.exists(), "output directory already exists")
     _require(asset_root.is_dir() and not asset_root.is_symlink(), "build asset directory is missing or unsafe")
-    _require({path.name for path in asset_root.iterdir()} == set(ASSET_NAMES), "build asset directory must contain exactly nine assets")
+    _require({path.name for path in asset_root.iterdir()} == set(ASSET_NAMES), "build asset directory must contain exactly eleven assets")
     _require(release_candidate_root.is_dir() and not release_candidate_root.is_symlink(), "release-candidate evidence is missing or unsafe")
     _require(native_root.is_dir() and not native_root.is_symlink(), "native receipt artifacts are missing or unsafe")
 

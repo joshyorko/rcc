@@ -14,7 +14,7 @@ reviewer = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(reviewer)
 
 SOURCE = {"revision": "abc123", "tree_sha256": "tree-1", "state": "clean", "stable": True}
-TARGETS = ("linux/amd64", "darwin/amd64", "darwin/arm64", "windows/amd64")
+TARGETS = ("linux/amd64", "linux/arm64", "darwin/amd64", "darwin/arm64", "windows/amd64")
 
 
 def target_evidence(state):

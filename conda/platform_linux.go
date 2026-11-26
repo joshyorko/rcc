@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/common"
@@ -35,7 +36,11 @@ var (
 )
 
 func MicromambaLink() string {
-	return settings.Global.DownloadsLink(micromambaLink("linux64", "micromamba"))
+	platform := "linux64"
+	if runtime.GOARCH == "arm64" {
+		platform = "linuxarm64"
+	}
+	return settings.Global.DownloadsLink(micromambaLink(platform, "micromamba"))
 }
 
 func CondaEnvironment() []string {

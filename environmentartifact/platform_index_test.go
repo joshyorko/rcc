@@ -2,6 +2,31 @@ package environmentartifact
 
 import "testing"
 
+func TestLinuxARM64PlatformAndCatalog(t *testing.T) {
+	platform := Platform{OS: "linux", Arch: "arm64", RCCPlatform: "linux_arm64"}
+	if err := platform.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	semantics, err := catalogSemantics(platform.RCCPlatform)
+	if err != nil || semantics != posixCatalogPaths {
+		t.Fatalf("catalog semantics = %v, %v", semantics, err)
+	}
+	_, content, err := NewPlatformIndex(testDigest(t, "a"), []PlatformArtifact{{Platform: platform, Artifact: testDigest(t, "b")}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	index, err := DecodePlatformIndex(content)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, err := index.Select(platform); err != nil || got != testDigest(t, "b") {
+		t.Fatalf("ARM64 selection = %s, %v", got, err)
+	}
+	if _, err := index.Select(Platform{OS: "linux", Arch: "amd64", RCCPlatform: "linux_amd64"}); err == nil {
+		t.Fatal("ARM64 artifact selected for amd64 worker")
+	}
+}
+
 func TestPlatformValidateRejectsInconsistentTargetMetadata(t *testing.T) {
 	for _, test := range []struct {
 		name     string

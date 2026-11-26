@@ -51,6 +51,7 @@ class ReleasePublicationTests(unittest.TestCase):
                     "version": VERSION,
                     "windows": f"{base}/rcc-windows64.exe",
                     "linux": f"{base}/rcc-linux64",
+                    "linuxarm64": f"{base}/rcc-linuxarm64",
                     "macos": f"{base}/rcc-macos64",
                     "macosarm64": f"{base}/rcc-macosarm64",
                 }]}, separators=(",", ":")) + "\n").encode()
@@ -79,7 +80,7 @@ class ReleasePublicationTests(unittest.TestCase):
             "version": VERSION,
             "preparationRunId": 123,
             "assetManifestSha256": manifest_digest,
-            "nativePlatforms": sorted(("linux_amd64", "darwin_amd64", "darwin_arm64", "windows_amd64")),
+            "nativePlatforms": sorted(("linux_amd64", "linux_arm64", "darwin_amd64", "darwin_arm64", "windows_amd64")),
             "binaryBuildInfo": {
                 name: {
                     "goVersion": EXPECTED_GO_VERSION,
@@ -97,13 +98,13 @@ class ReleasePublicationTests(unittest.TestCase):
             "teeExitCode": 0,
         }))
 
-        def lifecycle(digest):
+        def lifecycle(digest, arch):
             compatibility = {
                 "status": "compatible",
                 "worker": {
                     "python": {"artifactProvided": True},
-                    "os": {"nativeArchitecture": "amd64"},
-                    "cpu": {"architecture": "amd64"},
+                    "os": {"nativeArchitecture": arch},
+                    "cpu": {"architecture": arch},
                     "filesystem": {"maxPath": 4096},
                     "relocationVersions": ["test-relocation"],
                 },
@@ -134,6 +135,7 @@ class ReleasePublicationTests(unittest.TestCase):
         }
         platform_assets = {
             "linux_amd64": "rcc-linux64",
+            "linux_arm64": "rcc-linuxarm64",
             "darwin_amd64": "rcc-macos64",
             "darwin_arm64": "rcc-macosarm64",
             "windows_amd64": "rcc-windows64.exe",
@@ -154,7 +156,7 @@ class ReleasePublicationTests(unittest.TestCase):
                     "expectedGOOS": goos, "expectedGOARCH": goarch,
                 },
                 "exactBinaryCLI": {
-                    **lifecycle(digest),
+                    **lifecycle(digest, goarch),
                     "objectCount": 1000,
                     "platformChecks": {
                         key: ("case-sensitive-filesystem" if key == "caseCollision" else
@@ -162,7 +164,7 @@ class ReleasePublicationTests(unittest.TestCase):
                         for key in platform_checks[goos]
                     },
                 },
-                "sourceAPI": lifecycle(digest),
+                "sourceAPI": lifecycle(digest, goarch),
                 "robotExactBinary": {
                     "binarySha256": asset_hashes[asset]["sha256"], "binaryVersion": VERSION,
                     "artifactDigest": "sha256:" + "d" * 64,
@@ -328,7 +330,7 @@ class ReleasePublicationTests(unittest.TestCase):
         executable.chmod(0o755)
         return executable
 
-    def test_review_asset_staging_binds_nine_small_exact_payloads(self):
+    def test_review_asset_staging_binds_eleven_small_exact_payloads(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             bundle = root / "bundle"
@@ -634,6 +636,24 @@ class ReleasePublicationTests(unittest.TestCase):
         artifact = {"name": "rcc-release-preparation", "expired": False, "digest": "sha256:" + "c" * 64}
         validate_preparation_run(run, jobs, artifact, SOURCE, 42, 123)
 
+    def test_native_worker_architecture_must_match_platform(self):
+        for platform, asset in publication.NATIVE_RECEIPTS.items():
+            expected = ASSET_TARGETS[asset][1]
+            wrong = "amd64" if expected == "arm64" else "arm64"
+            for proof in ("exactBinaryCLI", "sourceAPI"):
+                for phase in ("cold", "warm"):
+                    for section, field in (("os", "nativeArchitecture"), ("cpu", "architecture")):
+                        with self.subTest(platform=platform, proof=proof, phase=phase, section=section), \
+                             tempfile.TemporaryDirectory() as directory:
+                            root = Path(directory)
+                            digest = self.fixture(root)
+                            path = root / "evidence" / "native" / platform / "native-runtime-receipt.json"
+                            receipt = json.loads(path.read_text())
+                            receipt[proof][phase]["compatibility"]["worker"][section][field] = wrong
+                            path.write_text(json.dumps(receipt))
+                            with self.assertRaisesRegex(ReleaseGateError, "worker architecture differs"):
+                                validate_prepared_bundle(root, SOURCE, VERSION, digest, 123)
+
     def test_native_robot_report_is_bound_to_receipt_directory(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "source"
@@ -787,6 +807,7 @@ import pathlib, sys
 name = pathlib.Path(sys.argv[-1]).name
 targets = {
     "rcc-linux64": ("linux", "amd64"), "rccremote-linux64": ("linux", "amd64"),
+  "rcc-linuxarm64": ("linux", "arm64"), "rccremote-linuxarm64": ("linux", "arm64"),
     "rcc-windows64.exe": ("windows", "amd64"), "rccremote-windows64.exe": ("windows", "amd64"),
     "rcc-macos64": ("darwin", "amd64"), "rccremote-macos64": ("darwin", "amd64"),
     "rcc-macosarm64": ("darwin", "arm64"), "rccremote-macosarm64": ("darwin", "arm64"),
@@ -1005,6 +1026,7 @@ print("\\tbuild\\tvcs.modified=false")
 import pathlib, sys
 targets = {
   "rcc-linux64": ("linux", "amd64"), "rccremote-linux64": ("linux", "amd64"),
+  "rcc-linuxarm64": ("linux", "arm64"), "rccremote-linuxarm64": ("linux", "arm64"),
   "rcc-windows64.exe": ("windows", "amd64"), "rccremote-windows64.exe": ("windows", "amd64"),
   "rcc-macos64": ("darwin", "amd64"), "rccremote-macos64": ("darwin", "amd64"),
   "rcc-macosarm64": ("darwin", "arm64"), "rccremote-macosarm64": ("darwin", "arm64"),

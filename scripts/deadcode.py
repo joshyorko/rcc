@@ -18,6 +18,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_VERSION = 1
 SUPPORTED_TARGETS = (
     ("linux", "amd64"),
+    ("linux", "arm64"),
     ("darwin", "amd64"),
     ("darwin", "arm64"),
     ("windows", "amd64"),

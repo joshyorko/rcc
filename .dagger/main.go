@@ -39,7 +39,7 @@ func (m *RccCi) ContainerEcho(stringArg string) *dagger.Container {
 func (m *RccCi) RunRobotTests(ctx context.Context, source *dagger.Directory) (string, error) {
 	rccURL := fmt.Sprintf("https://github.com/joshyorko/rcc/releases/download/%s/rcc-linux64", defaultRccVersion)
 
-	return dag.Container().
+	return dag.Container(dagger.ContainerOpts{Platform: dagger.Platform("linux/amd64")}).
 		From(fmt.Sprintf("golang:%s", defaultGoVersion)).
 		WithExec([]string{"apt-get", "update"}).
 		WithExec([]string{"apt-get", "install", "-y", "curl", "git", "unzip", "ca-certificates"}).

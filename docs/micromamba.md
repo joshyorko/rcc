@@ -3,7 +3,7 @@
 RCC embeds micromamba **2.10.0**, from upstream release build
 [`2.10.0-0`](https://github.com/mamba-org/micromamba-releases/releases/tag/2.10.0-0).
 The executable is extracted locally; RCC does not download or self-update it
-at runtime. The supported targets remain Linux amd64, macOS amd64,
+at runtime. The supported targets are Linux amd64, Linux ARM64 (aarch64), macOS amd64,
 macOS arm64 and Windows amd64.
 
 ## Provenance and refresh procedure
@@ -19,7 +19,7 @@ For a pin update:
 1. Review the intervening [upstream release notes](https://github.com/mamba-org/mamba/releases).
 2. Read the release asset metadata from GitHub's
    `repos/mamba-org/micromamba-releases/releases/tags/<release-build>` API.
-   Download all four `.tar.bz2` archives and calculate their SHA-256 values
+   Download all five `.tar.bz2` archives and calculate their SHA-256 values
    independently. Match each to that archive's API `digest` field.
 3. Validate the archive members, hash the extracted executable and match it to
    the separate standalone executable's API digest. Do not confuse an archive
@@ -94,8 +94,25 @@ isolation proof; additionally execute a restored fixture with networking disable
 (for example, a Linux network namespace). Test actual old-home reuse and rollback,
 custom CA/mirror/proxy/auth deployments, and Windows long paths separately.
 
-The native CI matrix runs this task on all four supported targets. A configured
+The native CI matrix runs this task on all five supported targets. A configured
 job or cross-compiled binary is not a passed native gate. Release acceptance
 requires each target's exact candidate SHA, RCC hash, extracted micromamba hash,
 test counts, skips and retained evidence. Missing native or compatibility evidence
 means NO-GO; merging and publishing require separate owner approval.
+
+## Linux ARM64
+
+`inv linuxarm64` builds `build/linuxarm64/rcc` and `rccremote` with Go
+`linux/arm64`. Linux ARM64 embeds the official `linux-aarch64` micromamba
+archive, independently checking the archive and executable digests.
+Release assets use `rcc-linuxarm64` and `rccremote-linuxarm64`; the index key
+is `linuxarm64`, while environment compatibility uses `linux_arm64`.
+The native `ubuntu-24.04-arm` CI job must supply the same runtime evidence as
+existing targets before release preparation can succeed. Cross-compilation
+alone does not satisfy that gate.
+
+uv-native mode selects `aarch64-unknown-linux-gnu` on Linux ARM64 and
+downloads its managed Python separately. Conda specifications still require
+packages available for conda-forge `linux-aarch64`; amd64-only specifications
+are not portable. Existing Docker/Dagger helpers explicitly use amd64 and
+the published amd64 RCC bootstrap; they are not ARM64 runtime evidence.
