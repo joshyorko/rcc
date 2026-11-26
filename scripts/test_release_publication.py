@@ -1047,7 +1047,7 @@ print("\\tbuild\\tvcs.modified=false")
             version.write_text("package common\nconst Version = `v18.19.6`\n")
             changelog = root / "docs" / "changelog.md"
             changelog.parent.mkdir()
-            changelog.write_text("## Unreleased\n\n## v18.19.6 (date: 10.10.2026)\n")
+            changelog.write_text('## Unreleased\n\n<a name="v18196"></a>\n## v18.19.6 (date: 10.10.2026)\n')
             workflow = root / ".github" / "workflows" / "rcc.yaml"
             workflow.parent.mkdir(parents=True)
             workflow.write_text("""name: Rcc
@@ -1104,6 +1104,16 @@ jobs:
             subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
             source_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
             self.assertTrue(validate_source_checkout(root, source_sha, VERSION))
+            valid_changelog = changelog.read_text()
+            for old, expected_error in (
+                ('<a name="v18196"></a>\n', "anchor"),
+                (" (date: 10.10.2026)", "date"),
+            ):
+                with self.subTest(missing=expected_error):
+                    changelog.write_text(valid_changelog.replace(old, "", 1))
+                    with self.assertRaisesRegex(ReleaseGateError, rf"docs/changelog\.md:.*{expected_error}"):
+                        validate_source_checkout(root, source_sha, VERSION)
+            changelog.write_text(valid_changelog)
             recovery_workflow.write_text(recovery_workflow.read_text().replace("contents: read", "contents: write"))
             with self.assertRaisesRegex(ReleaseGateError, "historical recovery workflow"):
                 validate_source_checkout(root, source_sha, VERSION)

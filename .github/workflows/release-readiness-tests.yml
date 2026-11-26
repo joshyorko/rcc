@@ -3,17 +3,35 @@ name: Release readiness contracts
 on:
   pull_request:
     paths:
+      - common/version.go
+      - docs/changelog.md
       - scripts/release_readiness.py
       - scripts/test_release_readiness.py
       - scripts/release_publication.py
+      - scripts/test_release_publication.py
+      - scripts/validate_release_topology.py
+      - scripts/test_validate_release_topology.py
+      - .github/workflows/rcc.yaml
+      - .github/workflows/create-release-tag.yml
+      - .github/workflows/publish-release.yml
+      - .github/workflows/recover-rcc-185.yml
       - .github/workflows/export-release-evidence.yml
       - .github/workflows/release-readiness-tests.yml
   push:
     branches: [main]
     paths:
+      - common/version.go
+      - docs/changelog.md
       - scripts/release_readiness.py
       - scripts/test_release_readiness.py
       - scripts/release_publication.py
+      - scripts/test_release_publication.py
+      - scripts/validate_release_topology.py
+      - scripts/test_validate_release_topology.py
+      - .github/workflows/rcc.yaml
+      - .github/workflows/create-release-tag.yml
+      - .github/workflows/publish-release.yml
+      - .github/workflows/recover-rcc-185.yml
       - .github/workflows/export-release-evidence.yml
       - .github/workflows/release-readiness-tests.yml
 
@@ -29,4 +47,4 @@ jobs:
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.10"
-      - run: python -m unittest scripts.test_release_readiness scripts.test_release_publication
+      - run: python -m unittest scripts.test_release_readiness scripts.test_release_publication scripts.test_validate_release_topology
