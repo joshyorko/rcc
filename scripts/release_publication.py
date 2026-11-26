@@ -1126,8 +1126,8 @@ def _validate_native_receipt(receipt, platform, asset_name, asset_record, source
              f"native CLI artifact digest differs from receipt: {platform}")
     _require(receipt.get("exactBinaryCLI", {}).get("objectCount", 0) > 0,
              f"native CLI proof has no provider objects: {platform}")
-    _validate_consumer_lifecycle(receipt.get("exactBinaryCLI"), artifact_digest, platform)
-    _validate_consumer_lifecycle(receipt.get("sourceAPI"), artifact_digest, platform)
+    _validate_consumer_lifecycle(receipt.get("exactBinaryCLI"), artifact_digest, platform, goarch)
+    _validate_consumer_lifecycle(receipt.get("sourceAPI"), artifact_digest, platform, goarch)
     if not require_robot:
         return
     robot = receipt.get("robotExactBinary")
@@ -1173,7 +1173,7 @@ def _validate_native_receipt(receipt, platform, asset_name, asset_record, source
                  f"native Rosetta probe is not an explicit result: {platform}")
 
 
-def _validate_consumer_lifecycle(evidence, artifact_digest, label):
+def _validate_consumer_lifecycle(evidence, artifact_digest, label, expected_arch):
     _require(isinstance(evidence, dict) and evidence.get("artifactDigest") == artifact_digest,
              f"consumer lifecycle artifact mismatch: {label}")
     cold, warm, mismatch = evidence.get("cold"), evidence.get("warm"), evidence.get("mismatch")
@@ -1198,6 +1198,11 @@ def _validate_consumer_lifecycle(evidence, artifact_digest, label):
              worker.get("os", {}).get("nativeArchitecture") and worker.get("cpu", {}).get("architecture") and
              worker.get("filesystem", {}).get("maxPath", 0) > 0 and worker.get("relocationVersions"),
              f"consumer worker capability receipt is incomplete: {label}")
+    for phase in (cold, warm):
+        worker = phase.get("compatibility", {}).get("worker", {})
+        _require(worker.get("os", {}).get("nativeArchitecture") == expected_arch and
+                 worker.get("cpu", {}).get("architecture") == expected_arch,
+                 f"consumer worker architecture differs from native platform: {label}")
 
 
 def _validate_robot_xml(path, platform):

@@ -171,7 +171,7 @@ local output files are never overwritten.
 
 The receipt records `READY_FOR_OWNER_REVIEW`, exact source/version, previous
 published tag/commit, preparation run/attempt/artifact/ZIP and manifest hashes,
-nine asset identities, full11 gates and numeric exits, Robot pass/fail/**skip**
+eleven asset identities, full11 gates and numeric exits, Robot pass/fail/**skip**
 counts, five native receipt hashes, consumer/self-host/N-1 evidence hashes,
 limitations, and all four publisher inputs. Publication authorization is always
 false with `OWNER_APPROVAL_REQUIRED`; this is not an approval, signature claim,
