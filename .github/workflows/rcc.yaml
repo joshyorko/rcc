@@ -809,7 +809,7 @@ jobs:
           python3 scripts/release_publication.py stage-native-review-binary \
             --binary "$RCC_REAL_BINARY" \
             --receipt "$RCC_REAL_RECEIPT_FILE" \
-            --output tmp/output/native-binary-review \
+            --output tmp/native-binary-review \
             --asset-name "$RCC_NATIVE_ASSET" \
             --platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}" \
             --source-sha "$RCC_CANDIDATE_SHA" \
@@ -823,7 +823,8 @@ jobs:
           set -euo pipefail
           if [[ -n "${RCC_REAL_BINARY:-}" && -f "${RCC_REAL_BINARY:-}" && \
                 -n "${RCC_REAL_RECEIPT_FILE:-}" && -f "${RCC_REAL_RECEIPT_FILE:-}" ]]; then
-            test -f tmp/output/native-binary-review/native-binary-review.json
+            test -f tmp/native-binary-review/native-binary-review.json
+            python3 scripts/release_publication.py check-review-payload --root tmp/native-binary-review
           fi
           python3 scripts/release_publication.py check-review-payload --root tmp/output
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -831,3 +832,11 @@ jobs:
         with:
           name: ${{ matrix.platform }}-native-runtime-receipt
           path: ./tmp/output/
+      - name: Upload exact native binary review sidecar
+        if: always() && steps.native_payload_size.outcome == 'success' && hashFiles('tmp/native-binary-review/native-binary-review.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ matrix.platform }}-native-binary-review
+          path: ./tmp/native-binary-review/
+          if-no-files-found: error
+          compression-level: 0

@@ -865,7 +865,7 @@ class ArtifactTaskTests(unittest.TestCase):
       with self.subTest(asset=asset):
         self.assertIn(f"rcc-release-review-assets/{asset}/", workflow)
 
-  def test_native_receipt_artifact_includes_guarded_exact_executable(self):
+  def test_native_receipt_and_exact_executable_use_separate_guarded_artifacts(self):
     workflow = (ROOT / ".github" / "workflows" / "rcc.yaml").read_text()
     job = re.search(r"(?ms)^  robot:\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", workflow)
     self.assertIsNotNone(job)
@@ -881,6 +881,12 @@ class ArtifactTaskTests(unittest.TestCase):
     self.assertIn("--source-sha \"$RCC_CANDIDATE_SHA\"", native_job)
     self.assertIn('--platform "${RCC_NATIVE_GOOS}_${RCC_NATIVE_GOARCH}"', native_job)
     self.assertIn("path: ./tmp/output/", native_job)
+    self.assertIn("--output tmp/native-binary-review", native_job)
+    self.assertNotIn("tmp/output/native-binary-review", native_job)
+    self.assertIn("check-review-payload --root tmp/native-binary-review", native_job)
+    self.assertIn("check-review-payload --root tmp/output", native_job)
+    self.assertIn("name: ${{ matrix.platform }}-native-binary-review", native_job)
+    self.assertIn("path: ./tmp/native-binary-review/", native_job)
 
   def test_release_candidate_runs_complete_gate_sequence_via_invoke(self):
     commands = []
