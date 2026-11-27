@@ -333,6 +333,7 @@ jobs:
       - build
       - release-candidate
       - robot
+      - signed-provider-artifacts
     env:
       RCC_CANDIDATE_SHA: ${{ inputs.source_sha }}
       RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
@@ -442,6 +443,16 @@ jobs:
             --run-id "$GITHUB_RUN_ID" \
             --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
             --go "$(command -v go)"
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          repository: actions/upload-artifact
+          ref: ea165f8d65b6e75b540449e92b4886f43607fa02
+          path: tmp/official-review-uploader
+          persist-credentials: false
+      - uses: ./.github/actions/upload-review-parts
+        with:
+          root: rcc-release-review-assets
+          prefix: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-
       - name: Upload review-only release asset
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -862,3 +873,15 @@ jobs:
           path: ./tmp/native-binary-review/
           if-no-files-found: error
           compression-level: 0
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        if: always() && steps.native_payload_size.outcome == 'success' && hashFiles('tmp/native-binary-review/multipart-review.json') != ''
+        with:
+          repository: actions/upload-artifact
+          ref: ea165f8d65b6e75b540449e92b4886f43607fa02
+          path: tmp/official-review-uploader
+          persist-credentials: false
+      - uses: ./.github/actions/upload-review-parts
+        if: ${{ !cancelled() && steps.native_payload_size.outcome == 'success' && hashFiles('tmp/native-binary-review/multipart-review.json') != '' }}
+        with:
+          root: tmp
+          prefix: ${{ matrix.platform }}-

@@ -517,7 +517,7 @@ def _parse_asset_checksums(path, expected_assets):
     return parsed
 
 
-def validate_review_assets(root, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha):
+def validate_review_assets(root, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha, _assembled=False):
     validate_inputs(expected_source_sha, expected_version)
     _require(type(expected_run_id) is int and expected_run_id > 0, "invalid review artifact preparation run ID")
     _require(isinstance(expected_manifest_sha, str) and re.fullmatch(r"[0-9a-f]{64}", expected_manifest_sha) is not None,
@@ -525,14 +525,27 @@ def validate_review_assets(root, expected_source_sha, expected_version, expected
     root = Path(root)
     _require(root.is_dir() and not root.is_symlink(), "review artifact directory is missing or unsafe")
     asset_dirs = list(root.iterdir())
-    _require({path.name for path in asset_dirs} == set(ASSET_NAMES),
-             f"review artifact asset directory set mismatch: {sorted(path.name for path in asset_dirs)}")
+    expected_dirs = set(ASSET_NAMES)
+    for name in ASSET_NAMES:
+        artifact = root / name
+        check_review_payload_size(artifact, MAX_PREPARATION_BYTES if _assembled else None)
+        if (artifact / "multipart-review.json").exists():
+            expected_dirs.update(p.name for p in root.glob(name + "-part-*"))
+    _require({path.name for path in asset_dirs} == expected_dirs,
+             "review artifact asset directory set mismatch")
+    with tempfile.TemporaryDirectory(prefix="rcc-review-reassemble-") as scratch:
+        return _validate_review_asset_directories(root, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha, _assembled, Path(scratch))
 
+
+def _validate_review_asset_directories(root, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha, _assembled, scratch):
     expected_manifest_bytes = None
     for name in ASSET_NAMES:
         artifact_dir = root / name
+        if (artifact_dir / "multipart-review.json").exists():
+            artifact_dir = scratch / name
+            _reassemble_review_parts(root, name, artifact_dir, name)
         _require(artifact_dir.is_dir() and not artifact_dir.is_symlink(), f"review artifact is missing or unsafe: {name}")
-        check_review_payload_size(artifact_dir)
+        check_review_payload_size(artifact_dir, MAX_PREPARATION_BYTES if _assembled or artifact_dir.parent == scratch else None)
         expected_files = {
             f"assets/{name}",
             "evidence/asset-manifest.json",
@@ -987,6 +1000,103 @@ def export_preparation_review(api_url, token, repository, run_id, source_sha, ve
                                  artifact, exporter_sha, exporter_run_id, max_bytes=max_bytes, go_binary=go_binary)
 
 
+def _review_directory_size(root):
+    return sum(path.stat().st_size for path in root.rglob("*") if path.is_file())
+
+
+def _split_review_directory(source, destination, asset_name):
+    if _review_directory_size(source) <= MAX_REVIEW_ARTIFACT_BYTES:
+        check_review_payload_size(source)
+        if source != destination:
+            os.replace(source, destination)
+        return
+    limit = MAX_REVIEW_ARTIFACT_BYTES
+    _require(limit > 1024, f"review artifact payload exceeds {limit} raw bytes: metadata cannot fit")
+    binary = source / "assets" / asset_name
+    size = binary.stat().st_size
+    _require(size <= MAX_PREPARATION_FILE_BYTES, "review binary exceeds preparation safety bound")
+    sha = _sha256(binary)
+    chunk_size = limit - 1024
+    count = (size + chunk_size - 1) // chunk_size
+    index = {"schemaVersion": 1, "assetName": asset_name, "count": count,
+             "binarySize": size, "binarySha256": sha}
+    index_bytes = (json.dumps(index, sort_keys=True) + "\n").encode()
+    metadata_size = _review_directory_size(source) - size + len(index_bytes)
+    _require(metadata_size <= limit, f"review artifact payload exceeds {limit} raw bytes: metadata cannot fit")
+    created = []
+    moved = False
+    try:
+        with binary.open("rb") as stream:
+            for number in range(1, count + 1):
+                part = destination.parent / f"{destination.name}-part-{number:03d}"
+                _require(not part.exists(), f"review artifact output already exists: {part}")
+                part.mkdir()
+                created.append(part)
+                data = stream.read(chunk_size)
+                (part / "part.bin").write_bytes(data)
+                meta = dict(index, index=number, partSize=len(data), partSha256=hashlib.sha256(data).hexdigest())
+                (part / "part.json").write_text(json.dumps(meta, sort_keys=True) + "\n", encoding="utf-8")
+                check_review_payload_size(part)
+        binary.unlink()
+        (source / "multipart-review.json").write_bytes(index_bytes)
+        if source != destination:
+            os.replace(source, destination)
+            moved = True
+        check_review_payload_size(destination)
+        with tempfile.TemporaryDirectory(prefix="rcc-review-check-") as directory:
+            _reassemble_review_parts(destination.parent, destination.name, Path(directory) / destination.name, asset_name)
+    except Exception:
+        if moved:
+            shutil.rmtree(destination)
+        for part in created:
+            shutil.rmtree(part)
+        raise
+
+
+def _reassemble_review_parts(parent, name, output, asset_name):
+    _require(asset_name in ASSET_NAMES, "invalid review asset name")
+    root = parent / name
+    check_review_payload_size(root)
+    identity_path = root / "review-identity.json"
+    if identity_path.exists():
+        identity = _read_json(identity_path)
+        expected_sha, expected_size = identity.get("assetSha256"), identity.get("assetSize")
+    else:
+        identity = _read_json(root / "native-binary-review.json")
+        expected_sha, expected_size = identity.get("binarySha256"), identity.get("binarySize")
+    _require(identity.get("assetName") == asset_name, "review asset identity mismatch")
+    index = _read_json(root / "multipart-review.json")
+    parts = sorted(parent.glob(name + "-part-*"), key=lambda p: (len(p.name), p.name))
+    _require(type(expected_size) is int and 0 < expected_size <= MAX_PREPARATION_FILE_BYTES
+             and isinstance(expected_sha, str) and re.fullmatch(r"[0-9a-f]{64}", expected_sha), "invalid review binary identity")
+    _require(index == {"schemaVersion": 1, "assetName": asset_name, "count": len(parts),
+                       "binarySize": expected_size, "binarySha256": expected_sha} and parts, "review index identity mismatch")
+    total = 0
+    _require(_review_directory_size(root) + expected_size <= MAX_PREPARATION_BYTES, "review reconstruction exceeds preparation safety bound")
+    for number, part in enumerate(parts, 1):
+        _require(part.name == f"{name}-part-{number:03d}", "review part order mismatch")
+        check_review_payload_size(part)
+        _require({p.name for p in part.iterdir()} == {"part.bin", "part.json"}, "review part layout mismatch")
+        meta = _read_json(part / "part.json")
+        size = (part / "part.bin").stat().st_size
+        _require(meta == dict(index, index=number, partSize=size, partSha256=_sha256(part / "part.bin")), "review part hash mismatch")
+        total += size
+        _require(total <= expected_size and total <= MAX_PREPARATION_FILE_BYTES, "review parts exceed binary size")
+    _require(total == expected_size, "review binary size mismatch")
+    shutil.copytree(root, output)
+    (output / "multipart-review.json").unlink()
+    binary = output / "assets" / asset_name
+    binary.parent.mkdir(exist_ok=True)
+    digest = hashlib.sha256()
+    with binary.open("xb") as target:
+        for part in parts:
+            with (part / "part.bin").open("rb") as stream:
+                for block in iter(lambda: stream.read(1024 * 1024), b""):
+                    target.write(block)
+                    digest.update(block)
+    _require(digest.hexdigest() == expected_sha, "review binary hash mismatch")
+
+
 def stage_review_assets(root, output, expected_source_sha, expected_version, expected_run_id,
                         expected_manifest_sha, go_binary="go"):
     root = Path(root)
@@ -1027,10 +1137,12 @@ def stage_review_assets(root, output, expected_source_sha, expected_version, exp
             (artifact_dir / "review-identity.json").write_text(
                 json.dumps(identity, sort_keys=True, separators=(",", ":")) + "\n", encoding="utf-8"
             )
-            check_review_payload_size(artifact_dir)
+        validate_review_assets(temporary, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha, _assembled=True)
+        for name in ASSET_NAMES:
+            _split_review_directory(temporary / name, temporary / name, name)
         validate_review_assets(temporary, expected_source_sha, expected_version, expected_run_id, expected_manifest_sha)
         os.replace(temporary, output)
-        return {name: check_review_payload_size(output / name) for name in ASSET_NAMES}
+        return {path.name: check_review_payload_size(path) for path in output.iterdir()}
     finally:
         if temporary.exists():
             shutil.rmtree(temporary)
@@ -1100,8 +1212,10 @@ def stage_native_review_binary(binary_path, receipt_path, output, asset_name, pl
         (temporary / "native-binary-review.json").write_text(
             json.dumps(metadata, sort_keys=True, indent=2) + "\n", encoding="utf-8"
         )
-        check_review_payload_size(temporary)
-        os.replace(temporary, output)
+        if _review_directory_size(temporary) <= MAX_REVIEW_ARTIFACT_BYTES:
+            os.replace(temporary, output)
+        else:
+            _split_review_directory(temporary, output, asset_name)
         return metadata
     finally:
         if temporary.exists():
@@ -1509,6 +1623,10 @@ def main():
     native_review.add_argument("--source-sha", required=True)
     native_review.add_argument("--version", required=True)
     native_review.add_argument("--go", default="go")
+    reconstruct = subparsers.add_parser("reassemble-review-binary")
+    reconstruct.add_argument("--index-root", type=Path, required=True)
+    reconstruct.add_argument("--asset-name", choices=ASSET_NAMES, required=True)
+    reconstruct.add_argument("--output", type=Path, required=True)
     payload = subparsers.add_parser("check-review-payload")
     payload.add_argument("--root", type=Path, required=True)
     assemble = subparsers.add_parser("assemble")
@@ -1579,6 +1697,12 @@ def main():
             metadata = stage_native_review_binary(args.binary, args.receipt, args.output, args.asset_name,
                                                   args.platform, args.source_sha, args.version, args.go)
             print("native binary review payload validated: " + json.dumps(metadata, sort_keys=True))
+        elif args.command == "reassemble-review-binary":
+            _require(not args.output.exists(), f"review output already exists: {args.output}")
+            with tempfile.TemporaryDirectory(dir=args.output.parent) as work:
+                verified = Path(work) / "verified"
+                _reassemble_review_parts(args.index_root.parent, args.index_root.name, verified, args.asset_name)
+                os.replace(verified, args.output)
         elif args.command == "check-review-payload":
             size = check_review_payload_size(args.root)
             print(f"review artifact payload size is within limit: {size} raw bytes")

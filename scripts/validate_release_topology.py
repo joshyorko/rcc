@@ -87,9 +87,9 @@ def validate_release_candidate_event_policy(workflow_text):
 
 def validate_release_identity_topology(workflow_text):
     errors = validate_release_candidate_event_policy(workflow_text)
-    defaults = _workflow_job(workflow_text, "provider-defaults")
-    if f"candidate: {CANDIDATE_SHA_EXPRESSION}" not in defaults:
-        errors.append("provider defaults must build from the intended candidate SHA")
+    for name in ("provider-defaults", "signed-provider-artifacts"):
+        if f"candidate: {CANDIDATE_SHA_EXPRESSION}" not in _workflow_job(workflow_text, name):
+            errors.append(f"{name} must run against the intended candidate SHA")
     for name in RELEASE_IDENTITY_JOBS:
         job = _workflow_job(workflow_text, name)
         if not job:
@@ -108,7 +108,7 @@ def validate_release_identity_topology(workflow_text):
     if '_validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])' not in native:
         errors.append("robot native receipt is not validated against the intended candidate SHA")
     preparation = _workflow_job(workflow_text, "assemble-release-preparation")
-    for marker in ("needs:", "- build", "- release-candidate", "- robot", "rcc-release-preparation"):
+    for marker in ("needs:", "- build", "- release-candidate", "- robot", "- signed-provider-artifacts", "rcc-release-preparation"):
         if marker not in preparation:
             errors.append(f"release preparation does not bind every gate/artifact: {marker}")
     if "github.event_name == 'workflow_dispatch'" not in preparation or "github.ref == 'refs/heads/main'" not in preparation:

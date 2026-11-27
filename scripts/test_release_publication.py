@@ -40,7 +40,7 @@ VERSION = "v18.19.6"
 
 
 class ReleasePublicationTests(unittest.TestCase):
-    def fixture(self, root):
+    def fixture(self, root, large=False):
         assets = root / "assets"
         assets.mkdir(parents=True)
         asset_hashes = {}
@@ -56,7 +56,8 @@ class ReleasePublicationTests(unittest.TestCase):
                     "macosarm64": f"{base}/rcc-macosarm64",
                 }]}, separators=(",", ":")) + "\n").encode()
             else:
-                content = f"asset:{name}".encode()
+                content = (bytes(range(256)) * 100 if large and name == "rcc-linux64"
+                           else f"asset:{name}".encode())
             (assets / name).write_bytes(content)
             asset_hashes[name] = {"sha256": hashlib.sha256(content).hexdigest(), "size": len(content)}
 
@@ -589,6 +590,52 @@ class ReleasePublicationTests(unittest.TestCase):
                         str(self.fake_go(root)),
                     )
             self.assertFalse((root / "rejected").exists())
+
+    def test_multipart_native_review_reassembles_and_detects_tampering(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "rcc-linux64"
+            binary.write_bytes(bytes(range(256)) * 80)
+            receipt = root / "receipt.json"
+            receipt.write_text(json.dumps({"commitSha": SOURCE, "platform": "linux_amd64", "binary": {
+                "sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "version": VERSION,
+                "runtimeGOOS": "linux", "runtimeGOARCH": "amd64",
+            }}))
+            output = root / "native-review"
+            with patch.object(publication, "MAX_REVIEW_ARTIFACT_BYTES", 4096):
+                publication.stage_native_review_binary(binary, receipt, output, "rcc-linux64",
+                                                       "linux_amd64", SOURCE, VERSION, str(self.fake_go(root)))
+                parts = sorted(root.glob("native-review-part-*"))
+                self.assertGreater(len(parts), 1)
+                self.assertTrue((output / "multipart-review.json").is_file())
+                self.assertTrue((output / "native-binary-review.json").is_file())
+                for part in parts:
+                    self.assertLessEqual(publication.check_review_payload_size(part), 4096)
+                assembled = root / "assembled"
+                publication._reassemble_review_parts(root, "native-review", assembled, "rcc-linux64")
+                self.assertEqual((assembled / "assets/rcc-linux64").read_bytes(), binary.read_bytes())
+                (parts[0] / "extra-link").symlink_to(binary)
+                with self.assertRaisesRegex(ReleaseGateError, "symlink"):
+                    publication._reassemble_review_parts(root, "native-review", root / "unsafe", "rcc-linux64")
+                (parts[0] / "extra-link").unlink()
+                (parts[0] / "part.bin").write_bytes(b"corrupt")
+                with self.assertRaisesRegex(ReleaseGateError, "part hash mismatch"):
+                    publication._reassemble_review_parts(root, "native-review", root / "bad", "rcc-linux64")
+
+    def test_multipart_review_assets_validate_reassembly(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / "bundle"
+            digest = self.fixture(bundle, large=True)
+            output = root / "review-assets"
+            with patch.object(publication, "MAX_REVIEW_ARTIFACT_BYTES", 8192):
+                publication.stage_review_assets(bundle, output, SOURCE, VERSION, 123, digest, str(self.fake_go(root)))
+                self.assertTrue(any(output.glob("*-part-*")))
+                self.assertTrue(publication.validate_review_assets(output, SOURCE, VERSION, 123, digest))
+                part = next(output.glob("*-part-*"))
+                (part / "part.bin").write_bytes(b"corrupt")
+                with self.assertRaises(ReleaseGateError):
+                    publication.validate_review_assets(output, SOURCE, VERSION, 123, digest)
 
     def test_native_review_reports_each_go_metadata_mismatch(self):
         cases = (
