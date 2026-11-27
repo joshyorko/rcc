@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import subprocess
@@ -13,7 +14,8 @@ import zipfile
 
 def prepare_channel(home, cache):
     channel = home / 'channel'
-    records = {s: {'info': {'subdir': s}, 'packages': {}, 'packages.conda': {}, 'repodata_version': 1} for s in ('linux-64', 'noarch')}
+    native = {'x86_64':'linux-64','aarch64':'linux-aarch64'}[platform.machine()]
+    records = {s: {'info': {'subdir': s}, 'packages': {}, 'packages.conda': {}, 'repodata_version': 1} for s in (native, 'noarch')}
     for record_path in cache.glob('*/info/repodata_record.json'):
         record = json.loads(record_path.read_text())
         subdir, filename = record.get('subdir'), record.get('fn')

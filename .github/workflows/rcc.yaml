@@ -30,7 +30,18 @@ permissions:
   contents: read
 
 jobs:
+  package-profile:
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- profile-package-providers -->')
+    needs: build
+    uses: ./.github/workflows/provider-profile.yml
+    with:
+      candidate: ${{ github.event.pull_request.head.sha }}
+  provider-defaults:
+    uses: ./.github/workflows/rattler-helper.yml
+    with:
+      candidate: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
   build:
+    needs: provider-defaults
     name: Build RCC
     runs-on: ubuntu-latest
     # Build the exact commit bytes consumed by native runtime jobs and releases.
@@ -44,6 +55,12 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
           ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+      - name: Assemble the five verified native provider payloads
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: provider-defaults-*-${{ env.RCC_CANDIDATE_SHA }}
+          path: blobs
+          merge-multiple: true
       - name: Assert exact candidate checkout
         shell: bash
         run: |

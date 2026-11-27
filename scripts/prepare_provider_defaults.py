@@ -32,7 +32,11 @@ def main():
     if not target:
         raise SystemExit(f"unsupported native runner: {system}/{goarch}")
     helper = args.helper.resolve()
-    if not helper.is_file(): raise SystemExit(f"helper executable missing: {helper}")
+    if not helper.is_file():
+        raise SystemExit(f"helper executable missing: {helper}")
+    for flag, expected in [("--version", "0.1.0"), ("--protocol-version", "1")]:
+        if subprocess.check_output([str(helper), flag], text=True, timeout=10).strip() != expected:
+            raise SystemExit("incompatible helper build")
     pins = {
         "uv-aarch64-apple-darwin.tar.gz": "fcf0a9ea6599c6ae28a4c854ac6da76f2c889354d7c36ce136ef071f7ab9721f",
         "uv-aarch64-unknown-linux-gnu.tar.gz": "f71040c59798f79c44c08a7a1c1af7de95a8d334ea924b47b67ad6b9632be270",

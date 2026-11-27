@@ -1,5 +1,10 @@
 name: Native Rattler helper
-on: [pull_request, workflow_dispatch]
+on:
+  workflow_call:
+    inputs:
+      candidate:
+        required: true
+        type: string
 permissions:
   contents: read
 jobs:
@@ -16,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.candidate }}
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
           go-version: "1.26.9"
@@ -35,3 +40,11 @@ jobs:
           go build -tags rcc_provider_defaults -ldflags "-s -w" -o "$rcc" ./cmd/rcc
           python helper/tests/native_install.py "helper/$bin" "$rcc"
           if [[ "$RUNNER_OS" == Linux ]]; then python helper/tests/remote_channel.py "helper/$bin"; fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: provider-defaults-${{ matrix.os }}-${{ inputs.candidate }}
+          path: |
+            blobs/provider_payload_*.go
+            blobs/assets/provider_default.*.gz
+          if-no-files-found: error
+          retention-days: 3

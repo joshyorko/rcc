@@ -155,7 +155,11 @@ func providerPlanLayers(env *Environment, prefix string, output io.Writer, skip 
 	var python string
 	for i, layer := range env.ProviderPlan.Layers {
 		if i >= start {
-			_, _ = fmt.Fprintf(output, "Installing layer %d with %s %s\n", i+1, layer.Provider, layer.Version)
+			status := "release default"
+			if layer.ToolLock != nil || layer.NativeToolPin != nil {
+				status = "operator pin; outside RCC qualification unless independently matched"
+			}
+			_, _ = fmt.Fprintf(output, "Installing layer %d with %s %s (%s)\n", i+1, layer.Provider, layer.Version, status)
 			pypi, interpreter, err := runProviderLayer(layer, keys[i], prefix, output, force)
 			if err != nil {
 				_, _ = fmt.Fprintln(output, err)

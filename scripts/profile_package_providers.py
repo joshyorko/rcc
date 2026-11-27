@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
 import time
 import zipfile
 
@@ -81,8 +82,13 @@ def main():
                         receipt['samples'].append({'case':case, 'mode':mode, 'run':n, 'phase':phase, 'seconds':elapsed})
                     python = next(home.glob('holotree/*/bin/python'))
                     run([str(python), '-I', '-c', 'import provider_receipt,zlib,sys; assert provider_receipt.value == 306; print(sys.version, zlib.ZLIB_VERSION)'], base, env, 'verify')
-                    import shutil
+                    space = python.parent.parent
+                    for filename in ('rcc_plan.log', 'golden-ee.yaml', 'identity.yaml'):
+                        file = space / filename
+                        if file.exists():
+                            shutil.copyfile(file, base / filename)
                     shutil.rmtree(home)
+        shutil.rmtree(channel)
         (a.output/'receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')
     finally:
         # Inventory even failed runs; symlinks are recorded separately, never followed.
