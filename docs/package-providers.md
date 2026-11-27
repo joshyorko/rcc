@@ -18,6 +18,8 @@ For native or polyglot dependencies, start with micromamba 2.10.0 or Rattler. Su
 
 The Rattler helper implements protocol 1. It supports the RCC local channel and HTTPS channels through RCC’s configured alias. Build the Rust helper with the pinned toolchain and Cargo.lock, place it next to the candidate RCC and compile RCC with the linker variable `github.com/joshyorko/rcc/conda.rattlerHelperSHA256` set to that helper's SHA-256. An ordinary build has no digest. Installation verifies a private executable copy before use. The helper requires SHA-256 package records and disables hard links, copy-on-write links and link scripts. Rattler uses its shell activation implementation and installed prefix records. Native candidate CI embeds the locked helper, micromamba 2.10.0 and UV 0.9.26. Release preparation requires all five target payloads.
 
+Renovate discovers official micromamba and UV release versions as one dependency-dashboard review group. Approval only allows update PR creation; automerge remains disabled. Version discovery does not update micromamba archive digests, UV per-platform archive hashes, generated embedded payloads, or the Rattler git revision/Cargo.lock. Those values are coupled to integrity checks and helper qualification, so update them manually as a reviewed, coordinated change; Renovate discovery is not a safe hash or lock updater.
+
 The equivalent Actions shorthand keeps the dependency mapping inside the guarded section. RCC supports the syntax directly. Actions' current package compiler and executable admission require downstream changes before use.
 
 ```yaml

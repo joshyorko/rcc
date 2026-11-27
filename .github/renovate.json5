@@ -48,6 +48,25 @@
       "depNameTemplate": "go",
       "datasourceTemplate": "golang-version",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Discover official micromamba version updates for review.",
+      "managerFilePatterns": ["/^assets\\/micromamba_version\\.txt$/"],
+      "matchStrings": ["v(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "extractVersionTemplate": "^(?<version>\\d+\\.\\d+\\.\\d+)-[0-9]+$",
+      "depNameTemplate": "mamba-org/micromamba-releases",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Discover official UV version updates for review.",
+      "managerFilePatterns": ["/^scripts\\/prepare_provider_defaults\\.py$/"],
+      "matchStrings": ["VERSION\\s*=\\s*[\"'](?<currentValue>\\d+\\.\\d+\\.\\d+)[\"']"],
+      "depNameTemplate": "astral-sh/uv",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     }
   ],
 
@@ -91,6 +110,17 @@
       "matchPackageNames": [
         "go"
       ]
+    },
+    {
+      "description": [
+        "Discover official micromamba and UV runtime updates together for dashboard review; archive hashes and embedded payloads still require coordinated qualification."
+      ],
+      "groupName": "Native package provider runtimes",
+      "matchManagers": ["custom.regex"],
+      "matchPackageNames": ["mamba-org/micromamba-releases", "astral-sh/uv"],
+      "dependencyDashboardApproval": true,
+      "automerge": false,
+      "platformAutomerge": false
     },
     {
       "description": [
