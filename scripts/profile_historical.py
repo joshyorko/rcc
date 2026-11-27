@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import select
 import signal
+import socket
 import statistics
 import shutil
 import subprocess
@@ -66,6 +67,21 @@ def parse_fixture(path):
     return packages, pip
 
 
+def inspect_cpu_profile(binary, directory):
+    profile = directory / 'cpu.pprof'
+    if not profile.is_file() or profile.stat().st_size == 0:
+        raise RuntimeError(f'RCC did not emit a CPU profile at {profile}')
+    for label, flags in [('flat', ['-top']), ('cumulative', ['-top', '-cum']), ('raw', ['-raw'])]:
+        result = execute(['go', 'tool', 'pprof', *flags, str(binary), str(profile)],
+                         directory, os.environ, 'pprof-' + label)
+        if result['exit']:
+            raise RuntimeError(f'go tool pprof failed for {profile}: see pprof-{label}.stderr')
+    raw = (directory / 'pprof-raw.stdout').read_text()
+    if 'cpu/nanoseconds' not in raw or 'samples/count' not in raw:
+        raise RuntimeError(f'unexpected profile sample types in {profile}')
+    return {'sha256': sha(profile), 'size_bytes': profile.stat().st_size}
+
+
 def inventory(home, cwd, env, fixture):
     pythons = list(home.glob('holotree/*/bin/python'))
     if len(pythons) != 1:
@@ -102,6 +118,9 @@ def main():
     a = p.parse_args()
     if a.runs < 1:
         p.error('--runs must be positive')
+    interfaces = sorted(name for _, name in socket.if_nameindex())
+    if interfaces != ['lo']:
+        p.error('run the historical comparison in a network namespace with loopback only')
     baseline, candidate, cache, output = (x.resolve() for x in (a.baseline, a.candidate, a.cache, a.output))
     fixture = ROOT/'robot_tests'/f'profile_conda_{a.fixture}.yaml'
     original = subprocess.run(['git', 'show', '2a3e1a38e4343f44a57f97a496fad0c6700d2a2d:robot_tests/'+fixture.name], cwd=ROOT, capture_output=True, check=True).stdout
@@ -114,7 +133,8 @@ def main():
         raise ValueError('historical Robot Framework wheel digest mismatch')
     output.mkdir(parents=True, exist_ok=False)
     receipt = {'fixture': str(fixture), 'fixture_sha256': sha(fixture), 'input_commit': '2a3e1a38e4343f44a57f97a496fad0c6700d2a2d',
-               'semantics': 'reduced-channel solve; not exact record installation', 'binaries': {str(x): sha(x) for x in (baseline, candidate)}, 'samples': []}
+               'semantics': 'reduced-channel solve; not exact record installation', 'network_interfaces':interfaces,
+               'binaries': {str(x): sha(x) for x in (baseline, candidate)}, 'samples': []}
     try:
         channel, records = prepare_profile_channel(output, cache)
         retain_provider_inputs(channel, records, output)
@@ -171,14 +191,11 @@ def main():
                                                                          (cwd/'rcc.stderr').read_text(errors='replace')))
                             sample['phases'].append({'phase': phase, **result})
                             (output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
-                            if mode == 'profiled' and (cwd/'cpu.pprof').exists():
-                                for label, flags in [('flat', ['-top']), ('cumulative', ['-top', '-cum']), ('raw', ['-raw'])]:
-                                    report = execute(['go', 'tool', 'pprof', *flags, str(binary), str(cwd/'cpu.pprof')], cwd, os.environ, 'pprof-'+label)
-                                    if report['exit']:
-                                        raise RuntimeError('pprof failed')
+                            if mode == 'profiled':
+                                sample['phases'][-1]['cpu_profile'] = inspect_cpu_profile(binary, cwd)
                             if result['exit']:
                                 raise RuntimeError(f'{case}/{mode}/{n}/{phase} failed: {result["exit"]}')
-                            inventory(home, cwd, env, a.fixture)
+                            sample['phases'][-1]['inventory_checks'] = inventory(home, cwd, env, a.fixture)
                         if not seed.exists():
                             shutil.move(home/cache_name, seed)
                     finally:

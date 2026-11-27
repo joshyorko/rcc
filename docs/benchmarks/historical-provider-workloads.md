@@ -8,7 +8,8 @@ On native Linux amd64, freeze the official conda-forge `linux-64` and `noarch` r
 python3 scripts/seed_historical_profile.py --fixture robot_tests/profile_conda_large.yaml \
   --repodata "$INPUTS/repodata" --micromamba "$MICROMAMBA" --cache "$INPUTS/archives" \
   --public-sharded-seed --pip-version 25.0.1 --output "$INPUTS/large-seed"
-python3 scripts/profile_historical.py --fixture large --baseline "$RELEASED_RCC" \
+unshare --user --map-root-user --net sh -c 'ip link set lo up && exec "$@"' sh \
+  python3 scripts/profile_historical.py --fixture large --baseline "$RELEASED_RCC" \
   --candidate "$CANDIDATE_RCC" --cache "$INPUTS/large-seed/records" \
   --wheel-dir "$INPUTS/wheels" --runs 5 --output "$RESULTS/large"
 ```

@@ -651,5 +651,10 @@
         ]
       }
     }
+  },
+  "cpu_profile_archive": {
+    "file": "package-providers-linux-amd64-cpu.zip",
+    "sha256": "db455e66c058cd211ae4321d68274b4b10f205cb2f8ccf7ecafc1545a6a4bcf8",
+    "contents": "30 raw profiles and their flat, cumulative and raw pprof analyses; full-run inventory and timing receipt"
   }
 }
