@@ -4,7 +4,7 @@ The helper uses the `conda/rattler` Git revision pinned in `Cargo.toml` and
 `Cargo.lock`; registry dependencies are locked with checksums. Build with the
 pinned Rust toolchain and `cargo build --release --locked`. A lockfile and
 revision identify inputs, but do not independently attest source provenance or
-the resulting binary. RCC requires a separately configured helper SHA-256.
+the resulting binary. Release builds verify the embedded default against its embedded digest. Development builds that load a sidecar require a separately configured helper SHA-256.
 
 Protocol 1 reads local `repodata.json` files for the native subdir and noarch.
 The solver explicitly uses strict channel priority. It requires SHA-256 on

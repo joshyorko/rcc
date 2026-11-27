@@ -50,7 +50,9 @@ def main():
             folder.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(archive, folder / archive.name)
             kind = 'packages.conda' if archive.suffix == '.conda' else 'packages'
-            records[record['subdir']][kind][archive.name] = record
+            records[record['subdir']][kind][archive.name] = {
+                k: v for k, v in record.items() if k not in ('url', 'base_url', 'channel')
+            }
             copied += 1
         if not copied:
             raise SystemExit('no verified cached openssl archive found')

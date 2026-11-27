@@ -23,8 +23,12 @@ def check(binary, rcc_binary, root):
                   depends=[], subdir=target)
     archive = channel / "receipt-1-0.tar.bz2"
     marker = "share/rcc-receipt"
+    windows = os.name == "nt"
+    hook = "etc/conda/activate.d/" + ("unset-sentinel.bat" if windows else "unset-sentinel.sh")
+    hook_body = b"set RCC_UNSET_SENTINEL=\r\n" if windows else b"unset RCC_UNSET_SENTINEL\n"
     with tarfile.open(archive, "w:bz2") as tar:
-        for name, body in [(marker, b"installed\n"), ("info/files", marker.encode()+b"\n"),
+        for name, body in [(marker, b"installed\n"), (hook, hook_body),
+                           ("info/files", f"{marker}\n{hook}\n".encode()),
                            ("info/index.json", json.dumps(record).encode())]:
             item = tarfile.TarInfo(name)
             item.size = len(body)
@@ -38,6 +42,10 @@ def check(binary, rcc_binary, root):
     assert (root/"prefix"/marker).read_bytes() == b"installed\n"
     installed = json.loads((root/"prefix/conda-meta/receipt-1-0.json").read_text())
     assert installed["sha256"] == record["sha256"]
+    delta = json.loads(subprocess.check_output(
+        [binary, "activate", root / "prefix"], env=dict(os.environ, RCC_UNSET_SENTINEL="inherited"),
+        text=True, timeout=150))
+    assert delta.get("RCC_UNSET_SENTINEL") == "", delta.keys()
     helper_hash = hashlib.sha256(binary.read_bytes()).hexdigest()
     rcc_hash = hashlib.sha256(rcc_binary.read_bytes()).hexdigest()
     print(json.dumps({"source": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "rccSHA256": rcc_hash, "platform": target, "helperSHA256": helper_hash,
@@ -46,12 +54,15 @@ def check(binary, rcc_binary, root):
     (channel.parent / "channeldata.json").write_text("{}")
     manifest = root / "conda.yaml"
     manifest.write_text("dependencies: rcc-provider-plan-v1\nrcc:\n  schema-version: 1\n  layers:\n    - provider: rattler\n      channels: [local]\n      packages: [receipt=1]\n")
-    env = dict(os.environ, ROBOCORP_HOME=str(root))
+    env = dict(os.environ, ROBOCORP_HOME=str(root), RCC_UNSET_SENTINEL="inherited")
     subprocess.run([rcc_binary, "holotree", "variables", manifest, "--json"],
                    cwd=root, env=env, check=True, stdout=subprocess.DEVNULL)
     spaces = [p for p in (root/"holotree").glob("*/share/rcc-receipt")
               if (p.parents[1]/"golden-ee.yaml").is_file()]
     assert spaces and all(p.read_bytes() == b"installed\n" for p in spaces)
+    for receipt in spaces:
+        activation = json.loads((receipt.parents[1] / "rcc_activate.json").read_text())
+        assert activation.get("RCC_UNSET_SENTINEL") == "", activation.keys()
     assert any("name: receipt" in (p.parents[1]/"golden-ee.yaml").read_text() for p in spaces)
     print(json.dumps({"materialized": True, "inventory": "receipt", "platform": target}))
 

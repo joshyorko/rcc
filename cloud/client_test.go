@@ -1,6 +1,8 @@
 package cloud_test
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/hamlet"
@@ -42,6 +45,25 @@ func assertDownloadFailurePreservesDestination(t *testing.T, handler http.Handle
 	}
 	if len(entries) != 1 || entries[0].Name() != filepath.Base(destination) {
 		t.Fatalf("download left temporary files behind: %v", entries)
+	}
+}
+
+func TestDownloadTimeoutCoversStalledBody(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Length", "100")
+		_, _ = w.Write([]byte("partial"))
+		w.(http.Flusher).Flush()
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+	dir := t.TempDir()
+	err := cloud.DownloadWithTimeout(server.URL, filepath.Join(dir, "archive"), 150*time.Millisecond)
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("stalled transfer: %v", err)
+	}
+	entries, err := os.ReadDir(dir)
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("partial archive after timeout: %v, %v", entries, err)
 	}
 }
 

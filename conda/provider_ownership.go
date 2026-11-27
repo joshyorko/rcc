@@ -37,11 +37,27 @@ func snapshotProviderFiles(root string) (map[string]providerFile, error) {
 			if err != nil {
 				return err
 			}
+			opened, err := f.Stat()
+			if err != nil || !os.SameFile(info, opened) {
+				_ = f.Close()
+				if err != nil {
+					return err
+				}
+				return fmt.Errorf("staged file changed while snapshotting: %s", rel)
+			}
+			entry.info = opened
 			h := sha256.New()
 			_, err = io.Copy(h, f)
+			finished, statErr := f.Stat()
 			closeErr := f.Close()
 			if err != nil {
 				return err
+			}
+			if statErr != nil {
+				return statErr
+			}
+			if !os.SameFile(opened, finished) || opened.Size() != finished.Size() || !opened.ModTime().Equal(finished.ModTime()) {
+				return fmt.Errorf("staged file changed while snapshotting: %s", rel)
 			}
 			if closeErr != nil {
 				return closeErr
@@ -136,17 +152,28 @@ func checkProviderCollisions(root string, packages []string) error {
 			owned[providerPackageName(meta.Name)] = true
 		}
 	}
-	files, err := snapshotProviderFiles(root)
+	err = filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		lower := strings.ToLower(entry.Name())
+		for _, suffix := range []string{".dist-info", ".egg-info"} {
+			if strings.HasSuffix(lower, suffix) {
+				stem := strings.TrimSuffix(lower, suffix)
+				name := stem
+				for i := 1; i+1 < len(stem); i++ {
+					if stem[i] == '-' && stem[i+1] >= '0' && stem[i+1] <= '9' {
+						name = stem[:i]
+						break
+					}
+				}
+				owned[providerPackageName(name)] = true
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		return err
-	}
-	for path := range files {
-		base := filepath.Base(path)
-		lower := strings.ToLower(base)
-		if strings.HasSuffix(lower, ".dist-info") || strings.HasSuffix(lower, ".egg-info") {
-			name := strings.SplitN(base, "-", 2)[0]
-			owned[providerPackageName(name)] = true
-		}
 	}
 	for _, pkg := range packages {
 		name := providerPackageName(pkg)

@@ -259,6 +259,10 @@ func (it *Environment) FreezeDependencies(fixed dependencies) *Environment {
 		PostInstall:  it.PostInstall,
 		ProviderPlan: it.ProviderPlan,
 	}
+	if it.ProviderPlan != nil {
+		result.ProviderPlan, _ = freezeProviderPlan(it.ProviderPlan, fixed)
+		return result
+	}
 	used := make(map[string]bool)
 	for _, dependency := range fixed {
 		if dependency.Origin == "pypi" {
@@ -303,6 +307,11 @@ func (it *Environment) FromDependencies(fixed dependencies) (*Environment, bool)
 		PostInstall:  it.PostInstall,
 		ProviderPlan: it.ProviderPlan,
 	}
+	if it.ProviderPlan != nil {
+		var same bool
+		result.ProviderPlan, same = freezeProviderPlan(it.ProviderPlan, fixed)
+		return result, same
+	}
 	same := true
 	for _, dependency := range it.Conda {
 		found, ok := fixed.Lookup(dependency.Name, false)
@@ -333,6 +342,34 @@ func (it *Environment) FromDependencies(fixed dependencies) (*Environment, bool)
 			Qualifier: "==",
 			Versions:  found.Version,
 		})
+	}
+	return result, same
+}
+
+func freezeProviderPlan(plan *ProviderPlan, fixed dependencies) (*ProviderPlan, bool) {
+	result := &ProviderPlan{Layers: make([]ProviderLayer, len(plan.Layers))}
+	same := true
+	for i, layer := range plan.Layers {
+		result.Layers[i] = layer
+		result.Layers[i].Packages = append([]string(nil), layer.Packages...)
+		pypi := layer.Provider == "pip" || layer.Provider == "uv"
+		for j, pkg := range layer.Packages {
+			dep := AsDependency(pkg)
+			if dep == nil {
+				same = false
+				continue
+			}
+			found, ok := fixed.Lookup(dep.Name, pypi)
+			if !ok {
+				same = false
+				continue
+			}
+			separator := "="
+			if pypi {
+				separator = "=="
+			}
+			result.Layers[i].Packages[j] = dep.Name + separator + found.Version
+		}
 	}
 	return result, same
 }

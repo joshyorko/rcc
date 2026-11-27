@@ -64,16 +64,19 @@ def main():
             for run in range(args.runs):
                 Channel.requests = []
                 with tempfile.TemporaryDirectory(prefix="rcc-mm-channel-") as home:
-                    env = {**os.environ, "MAMBA_ROOT_PREFIX": str(Path(home) / "root"), "MAMBA_NO_BANNER": "1"}
+                    root = Path(home) / "root"
+                    env = {key: value for key, value in os.environ.items()
+                           if not key.startswith(("MAMBA_", "CONDA_", "CONDARC"))}
+                    env.update({"HOME": home, "USERPROFILE": home, "XDG_CACHE_HOME": str(root / "cache"),
+                                "XDG_CONFIG_HOME": str(root / "config"), "NO_PROXY": "127.0.0.1",
+                                "no_proxy": "127.0.0.1"})
                     started = time.perf_counter()
-                    proc = subprocess.run([str(binary), "search", "rcc-benchmark-no-such-package", "-c", base, "--override-channels", "--json"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=90)
+                    proc = subprocess.run([str(binary), "--no-rc", "--no-env", "--root-prefix", str(root), "search", "rcc-benchmark-no-such-package", "-c", base, "--override-channels", "--json"], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=90)
                     elapsed = time.perf_counter() - started
                     results.append({"binary": name, "binary_sha256": digest(binary), "run": run + 1,
                                     "exit_code": proc.returncode, "elapsed_seconds": elapsed,
                                     "requests": list(Channel.requests), "stdout": proc.stdout.decode(errors="replace")[-2000:],
                                     "stderr": proc.stderr.decode(errors="replace")[-2000:]})
-                    if proc.returncode != 0:
-                        raise RuntimeError(f"{name} run {run + 1} failed ({proc.returncode}); see receipt")
     finally:
         server.shutdown()
         thread.join()
@@ -87,7 +90,10 @@ def main():
                                    "max_seconds": max(durations)}
     args.receipt.parent.mkdir(parents=True, exist_ok=True)
     args.receipt.write_text(json.dumps(report, indent=2) + "\n")
+    if any(result["exit_code"] != 0 for result in results):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

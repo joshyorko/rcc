@@ -7,8 +7,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -101,7 +103,7 @@ func ResolveLockedUv(l UVToolLock) (string, error) {
 	dir := filepath.Join(common.UvBinaryCache(), "locked", l.Version, l.Target, l.ArchiveSHA256, l.BinarySHA256)
 	dest := filepath.Join(dir, name)
 	if info, err := os.Lstat(dest); err == nil && verifiedExecutable(dest, l.BinarySHA256, info.Size()) {
-		return dest, nil
+		return checkedLockedUV(dest, l.Version)
 	}
 	if err := os.MkdirAll(dir, 0750); err != nil {
 		return "", err
@@ -116,7 +118,7 @@ func ResolveLockedUv(l UVToolLock) (string, error) {
 	}
 	defer func() { _ = os.Remove(archivePath) }()
 	url := strings.TrimRight(settings.Global.UvReleasesURL(), "/") + "/" + l.Version + "/" + uvAsset(l.Target)
-	if err = cloud.Download(url, archivePath); err != nil {
+	if err = downloadUvArchive(url, archivePath); err != nil {
 		return "", err
 	}
 	if err = VerifyUvArchive(UvArchivePin{Version: l.Version, Target: l.Target, SHA256: l.ArchiveSHA256}, archivePath); err != nil {
@@ -142,7 +144,14 @@ func ResolveLockedUv(l UVToolLock) (string, error) {
 		return "", err
 	}
 
-	return dest, nil
+	return checkedLockedUV(dest, l.Version)
+}
+
+func checkedLockedUV(path, version string) (string, error) {
+	if UvVersion(path) != version {
+		return "", fmt.Errorf("verified uv executable does not report requested version %s", version)
+	}
+	return path, nil
 }
 
 func extractLockedUv(archive, target, name string, out io.Writer) error {
@@ -236,19 +245,86 @@ func CreateUVToolLock(version string) (UVToolLock, error) {
 	default:
 		return l, fmt.Errorf("unsupported uv platform")
 	}
-	endpoint := "https://api.github.com/repos/astral-sh/uv/releases/"
+	l, err := discoverUVArchive(version)
+	if err != nil {
+		return UVToolLock{}, err
+	}
+	dir, err := os.MkdirTemp("", "rcc-uv-lock-*")
+	if err != nil {
+		return UVToolLock{}, err
+	}
+	defer func() { _ = os.RemoveAll(dir) }()
+	archive := filepath.Join(dir, "archive")
+	if err = downloadUvArchive(strings.TrimRight(settings.Global.UvReleasesURL(), "/")+"/"+l.Version+"/"+uvAsset(l.Target), archive); err != nil {
+		return UVToolLock{}, err
+	}
+	if err = VerifyUvArchive(UvArchivePin{l.Version, l.Target, l.ArchiveSHA256}, archive); err != nil {
+		return UVToolLock{}, err
+	}
+	binary, err := os.CreateTemp(dir, "binary-*")
+	if err != nil {
+		return UVToolLock{}, err
+	}
+	name := "uv"
+	if runtime.GOOS == "windows" {
+		name = "uv.exe"
+	}
+	err = extractLockedUv(archive, l.Target, name, binary)
+	if e := binary.Close(); err == nil {
+		err = e
+	}
+	if err != nil {
+		return UVToolLock{}, err
+	}
+	l.BinarySHA256, err = uvHash(binary.Name())
+	if err != nil {
+		return UVToolLock{}, err
+	}
+	cache := filepath.Join(common.UvBinaryCache(), "locked", l.Version, l.Target, l.ArchiveSHA256, l.BinarySHA256, name)
+	if err = publishUvFile(cache, l.BinarySHA256, binary.Name()); err != nil {
+		return UVToolLock{}, err
+	}
+	if UvVersion(cache) != l.Version {
+		return UVToolLock{}, fmt.Errorf("verified uv executable does not report requested version %s", l.Version)
+	}
+	return l, nil
+}
+
+func downloadUvArchive(url, path string) error {
+	const timeout = 30 * time.Second
+	err := cloud.DownloadWithTimeout(url, path, timeout)
+	var status *cloud.DownloadStatusError
+	var network net.Error
+	if errors.Is(err, io.ErrUnexpectedEOF) || errors.Is(err, io.EOF) ||
+		(errors.As(err, &network) && network.Timeout()) ||
+		(errors.As(err, &status) && (status.StatusCode == 408 || status.StatusCode == 429 || status.StatusCode >= 500)) {
+		return cloud.DownloadWithTimeout(url, path, timeout)
+	}
+	return err
+}
+
+func discoverUVArchive(version string) (UVToolLock, error) {
+	var l UVToolLock
+	if !settings.Global.VerifySsl() {
+		return l, fmt.Errorf("verified release discovery requires TLS verification")
+	}
+	target := uvPlatformTarget()
+	if digest, err := uvReleaseDigest(version, uvAsset(target), ""); err == nil {
+		return UVToolLock{Version: version, Target: target, ArchiveSHA256: digest}, nil
+	}
+	endpoint := strings.TrimRight(settings.Global.UvMetadataURL(), "/") + "/"
 	if version == "latest" {
 		endpoint += "latest"
 	} else {
 		endpoint += "tags/" + version
 	}
-	if !settings.Global.VerifySsl() {
-		return l, fmt.Errorf("verified release discovery requires TLS verification")
-	}
 	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport(), Timeout: 30 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return fmt.Errorf("release metadata redirect refused") }}
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return l, err
+	}
+	if req.URL.Scheme != "https" || req.URL.Hostname() == "" || req.URL.User != nil || req.URL.RawQuery != "" || req.URL.Fragment != "" {
+		return l, fmt.Errorf("uv release metadata endpoint must be an HTTPS base URL")
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
 	req.Header.Set("User-Agent", "rcc-uv-lock")
@@ -289,44 +365,6 @@ func CreateUVToolLock(version string) (UVToolLock, error) {
 	}
 	if matches != 1 {
 		return UVToolLock{}, fmt.Errorf("expected exactly one uv release asset")
-	}
-	dir, err := os.MkdirTemp("", "rcc-uv-lock-*")
-	if err != nil {
-		return UVToolLock{}, err
-	}
-	defer func() { _ = os.RemoveAll(dir) }()
-	archive := filepath.Join(dir, "archive")
-	if err = cloud.Download(strings.TrimRight(settings.Global.UvReleasesURL(), "/")+"/"+l.Version+"/"+uvAsset(l.Target), archive); err != nil {
-		return UVToolLock{}, err
-	}
-	if err = VerifyUvArchive(UvArchivePin{l.Version, l.Target, l.ArchiveSHA256}, archive); err != nil {
-		return UVToolLock{}, err
-	}
-	binary, err := os.CreateTemp(dir, "binary-*")
-	if err != nil {
-		return UVToolLock{}, err
-	}
-	name := "uv"
-	if runtime.GOOS == "windows" {
-		name = "uv.exe"
-	}
-	err = extractLockedUv(archive, l.Target, name, binary)
-	if e := binary.Close(); err == nil {
-		err = e
-	}
-	if err != nil {
-		return UVToolLock{}, err
-	}
-	l.BinarySHA256, err = uvHash(binary.Name())
-	if err != nil {
-		return UVToolLock{}, err
-	}
-	cache := filepath.Join(common.UvBinaryCache(), "locked", l.Version, l.Target, l.ArchiveSHA256, l.BinarySHA256, name)
-	if err = publishUvFile(cache, l.BinarySHA256, binary.Name()); err != nil {
-		return UVToolLock{}, err
-	}
-	if UvVersion(cache) != l.Version {
-		return UVToolLock{}, fmt.Errorf("verified uv executable does not report requested version %s", l.Version)
 	}
 	return l, nil
 }

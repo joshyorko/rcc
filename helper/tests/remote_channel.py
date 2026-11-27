@@ -130,11 +130,11 @@ def main(binary):
             unauthorized = dict(base, prefix=str(root/"unauthorized-prefix"), cache=str(root/"unauthorized-cache"),
                                 network=dict(network, authorization="Basic " + base64.b64encode(b"wrong:synthetic").decode()))
             before_denied = len(denied)
-            failure = subprocess.run([str(binary)], input=json.dumps(unauthorized), text=True, capture_output=True)
+            failure = subprocess.run([str(binary)], input=json.dumps(unauthorized), text=True, capture_output=True, timeout=120)
             assert failure.returncode != 0 and len(denied) > before_denied, "unauthorized request unexpectedly succeeded or did not reach channel"
             trusted = dict(base, network=network)
             before_trusted = len(tunnels)
-            result = subprocess.run([str(binary)], input=json.dumps(trusted), text=True, capture_output=True)
+            result = subprocess.run([str(binary)], input=json.dumps(trusted), text=True, capture_output=True, timeout=120)
             assert result.returncode == 0, result.stderr
             assert (root/"prefix"/marker).read_bytes() == b"https installed\n"
             assert any(path.endswith("repodata.json") for path in requests), requests
@@ -143,8 +143,9 @@ def main(binary):
             rejected = dict(base, prefix=str(root/"untrusted-prefix"), cache=str(root/"untrusted-cache"),
                             network=dict(network, ca_bundle_pem=""))
             before_untrusted = len(tunnels)
-            failure = subprocess.run([str(binary)], input=json.dumps(rejected), text=True, capture_output=True)
+            failure = subprocess.run([str(binary)], input=json.dumps(rejected), text=True, capture_output=True, timeout=120)
             assert failure.returncode != 0, "untrusted certificate unexpectedly succeeded"
+            assert any(s in failure.stderr.lower() for s in ("certificate verify failed", "invalid peer certificate", "unknownissuer", "unknown issuer")), failure.stderr
             assert len(tunnels) > before_untrusted, "untrusted test did not reach CONNECT proxy"
             print(json.dumps({"trusted_install": True, "untrusted_ca_rejected": True,
                               "requests": requests, "platform": target,

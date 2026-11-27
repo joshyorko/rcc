@@ -124,7 +124,7 @@ func normalizeShorthand(data []byte, actions, dev bool) (providerPlanYaml, error
 			conda = append(conda, input.Dev.CondaForge...)
 			pypi = append(pypi, input.Dev.Pypi...)
 		}
-		if len(input.Channels) == 0 {
+		if len(input.Channels) == 0 && input.Managers.Conda != "uv-runtime" {
 			input.Channels = []string{"conda-forge"}
 		}
 		for i, item := range pypi {

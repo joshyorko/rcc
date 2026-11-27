@@ -55,10 +55,41 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 		cmd.Env = append(cmd.Env, "SystemRoot="+os.Getenv("SystemRoot"))
 	}
 	cmd.Stdin = bytes.NewReader(request)
+	diagnostic := &boundedRattlerOutput{}
+	cmd.Stderr = diagnostic
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("rattler install: %w", err)
+		return fmt.Errorf("rattler install: %w (%s)", err, rattlerDiagnostic(diagnostic.buf.String()))
 	}
 	return nil
+}
+
+// Capture a bounded prefix without allowing helper output to exhaust memory.
+type boundedRattlerOutput struct{ buf bytes.Buffer }
+
+func (b *boundedRattlerOutput) Write(p []byte) (int, error) {
+	n := len(p)
+	if remaining := 16384 - b.buf.Len(); remaining > 0 {
+		if len(p) > remaining {
+			p = p[:remaining]
+		}
+		_, _ = b.buf.Write(p)
+	}
+	return n, nil
+}
+
+// Do not forward arbitrary helper output: it may contain credentials or URLs.
+func rattlerDiagnostic(output string) string {
+	output = strings.ToLower(output)
+	switch {
+	case strings.Contains(output, "401"), strings.Contains(output, "403"), strings.Contains(output, "unauthorized"), strings.Contains(output, "authentication"):
+		return "channel authentication or authorization failed"
+	case strings.Contains(output, "certificate"), strings.Contains(output, "tls"), strings.Contains(output, "unknownissuer"):
+		return "TLS or certificate failure"
+	case strings.Contains(output, "solv"), strings.Contains(output, "unsatisfiable"):
+		return "dependency resolution failed"
+	default:
+		return "helper failed; diagnostic details withheld"
+	}
 }
 
 func embeddedTool(tool string) (string, error) {

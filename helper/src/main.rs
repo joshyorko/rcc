@@ -97,12 +97,28 @@ async fn run() -> Result<()> {
             shell,
             Subdir::current().context("unsupported platform")?,
         )?;
-        println!(
-            "{}",
-            serde_json::to_string(
-                &activation.run_activation(ActivationVariables::from_env()?, None)?
-            )?
-        );
+        let before = rattler_shell::environment::EnvironmentSnapshot::from_system();
+        let limits = rattler_shell::process::ProcessLimits {
+            timeout: std::time::Duration::from_secs(120),
+            output_limit: 8 * 1024 * 1024,
+        };
+        let after = activation
+            .run_activation_bounded(ActivationVariables::from_env()?, &before, limits)
+            .await?;
+        let mut delta = std::collections::BTreeMap::new();
+        for (key, value) in after.iter() {
+            if before.get(key) != Some(value) {
+                delta.insert(key.to_str().context("invalid activation key")?,
+                             value.to_str().context("invalid activation value")?);
+            }
+        }
+        for (key, _) in before.iter() {
+            if after.get(key).is_none() {
+                // RCC activation files represent removals with an empty value.
+                delta.insert(key.to_str().context("invalid activation key")?, "");
+            }
+        }
+        println!("{}", serde_json::to_string(&delta)?);
         return Ok(());
     }
     if args.len() == 2 && args[0] == "list" {

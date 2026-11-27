@@ -99,7 +99,7 @@ def main():
 
         report = {"scope": "local-filesystem executable decode/copy, inline SHA-256, and output fsync microbenchmark; no network or host-cache claims",
                   "platform": platform.platform(), "machine": platform.machine(),
-                  "filesystem": subprocess.check_output(["stat", "-f", "-c", "%T", str(raw.parent)], text=True).strip(),
+                  "filesystem": subprocess.check_output(["stat", "-f", "-c", "%T", str(root)], text=True).strip(),
                   "runs": 5, "expected_sha256": expected, "binary_sha256": actual,
                   "embedded_gzip_sha256": digest_file(embedded), "raw_bytes": raw.stat().st_size,
                   "expanded_bytes": expanded.stat().st_size,

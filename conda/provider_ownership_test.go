@@ -55,6 +55,16 @@ func TestProviderPackageCollision(t *testing.T) {
 	if err := checkProviderCollisions(p, []string{"my-package>=1"}); err == nil {
 		t.Fatal("expected collision")
 	}
+	for _, metadata := range []string{"already-here.egg-info", "some_pkg-2.0.dist-info"} {
+		if err := os.Mkdir(filepath.Join(p, metadata), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, pkg := range []string{"already_here", "some-pkg"} {
+		if err := checkProviderCollisions(p, []string{pkg}); err == nil {
+			t.Fatalf("missed installed package %s", pkg)
+		}
+	}
 	if err := checkProviderCollisions(p, []string{"other"}); err != nil {
 		t.Fatal(err)
 	}

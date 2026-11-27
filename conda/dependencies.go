@@ -139,7 +139,7 @@ func goldenMasterWithCondaCommand(targetFolder string, pipUsed bool, command ...
 	seen := make(map[string]string)
 	collector := make(dependencies, 0, 100)
 	collector, err = fillDependencies("mamba", targetFolder, seen, collector, command...)
-	fail.On(err != nil, "Failed to list micromamba dependencies, reason: %v", err)
+	fail.On(err != nil, "Failed to list Conda dependencies, reason: %v", err)
 	if pipUsed {
 		collector, err = fillDependencies("pypi", targetFolder, seen, collector, "pip", "list", "--isolated", "--local", "--format", "json")
 		fail.On(err != nil, "Failed to list pip dependencies, reason: %v", err)

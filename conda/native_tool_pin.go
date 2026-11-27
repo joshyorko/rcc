@@ -68,7 +68,7 @@ func ResolveNativeToolPin(home, tool string, pin NativeToolPin, source string) (
 	path := filepath.Join(home, "provider-tools", tool, pin.Version, pin.Target, pin.SHA256, name)
 	if source != "" {
 		// An operator supplies this source outside the manifest.
-		f, err := os.Open(source)
+		f, err := openNativeToolSource(source)
 		if err != nil {
 			return "", err
 		}

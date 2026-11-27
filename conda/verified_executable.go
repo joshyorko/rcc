@@ -61,6 +61,9 @@ func publishExecutable(path, digest string, maxSize int64, source io.Reader) err
 			break
 		}
 		if attempts >= 100 {
+			if verifiedExecutable(path, digest, maxSize) {
+				return nil
+			}
 			return errors.New("timed out waiting for executable install lock")
 		}
 		time.Sleep(40 * time.Millisecond)

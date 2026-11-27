@@ -1,8 +1,13 @@
 package conda
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/joshyorko/rcc/hamlet"
+)
 
 func TestUVReleaseDigestHistorical(t *testing.T) {
+	must, mustNot := hamlet.Specifications(t)
 	assets := map[string]string{
 		"uv-x86_64-unknown-linux-gnu.tar.gz":  "0dcad9831d3f10f3bc4dcd7678948dfc74c0b3ab3f07aa684eb9e5135b971a58",
 		"uv-aarch64-unknown-linux-gnu.tar.gz": "f355989fb5ecf47c9f9087a0b21e2ee7d7c802bc3d0cf6edae07560d4297751f",
@@ -12,21 +17,17 @@ func TestUVReleaseDigestHistorical(t *testing.T) {
 	}
 	for asset, want := range assets {
 		got, err := uvReleaseDigest("0.6.1", asset, "")
-		if err != nil || got != want {
-			t.Errorf("%s: got %q, %v", asset, got, err)
-		}
-		if _, err := uvReleaseDigest("0.6.2", asset, ""); err == nil {
-			t.Errorf("accepted unpinned version for %s", asset)
-		}
-		if _, err := uvReleaseDigest("0.6.1", asset, "sha256:invalid"); err == nil {
-			t.Errorf("accepted malformed metadata for %s", asset)
-		}
+		must.Nil(err)
+		must.Equal(want, got)
+		_, err = uvReleaseDigest("0.6.2", asset, "")
+		mustNot.Nil(err)
+		_, err = uvReleaseDigest("0.6.1", asset, "sha256:invalid")
+		mustNot.Nil(err)
 	}
-	if _, err := uvReleaseDigest("0.6.1", "unknown", ""); err == nil {
-		t.Fatal("accepted unpinned asset")
-	}
+	_, err := uvReleaseDigest("0.6.1", "unknown", "")
+	mustNot.Nil(err)
 	want := assets["uv-x86_64-unknown-linux-gnu.tar.gz"]
-	if got, err := uvReleaseDigest("0.6.2", "unknown", "sha256:"+want); err != nil || got != want {
-		t.Fatalf("valid metadata: got %q, %v", got, err)
-	}
+	got, err := uvReleaseDigest("0.6.2", "unknown", "sha256:"+want)
+	must.Nil(err)
+	must.Equal(want, got)
 }

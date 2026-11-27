@@ -5,12 +5,27 @@ package conda
 import (
 	"errors"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"golang.org/x/sys/windows"
 )
 
 func openExecutableLock(path string) (*os.File, error) {
-	name, err := windows.UTF16PtrFromString(path)
+	absolute, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case strings.HasPrefix(absolute, `\\?\`):
+	case strings.HasPrefix(absolute, `\\.\`):
+		return nil, errors.New("device namespace is not an executable install path")
+	case strings.HasPrefix(absolute, `\\`):
+		absolute = `\\?\UNC\` + strings.TrimPrefix(absolute, `\\`)
+	default:
+		absolute = `\\?\` + absolute
+	}
+	name, err := windows.UTF16PtrFromString(absolute)
 	if err != nil {
 		return nil, err
 	}

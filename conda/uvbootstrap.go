@@ -47,7 +47,13 @@ func MustUv(version string) bool {
 	} else if err == nil {
 		err = json.Unmarshal(body, &pin)
 	}
-	if err != nil || pin.Version != version || uvLockValid(pin) != nil {
+	if err == nil {
+		err = uvLockValid(pin)
+	}
+	if err == nil && pin.Version != version {
+		err = fmt.Errorf("receipt selects version %s", pin.Version)
+	}
+	if err != nil {
 		common.Log("Could not verify uv %s release pin: %v", version, err)
 		return false
 	}
