@@ -32,7 +32,13 @@ jobs:
         with:
           name: RCC-Binaries
           path: candidate
-      - name: Measure released CLI startup
+      - name: Qualify assembled binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x 'candidate/${{ matrix.binary }}'
+          python -u helper/tests/native_mixed.py --artifact 'candidate/${{ matrix.binary }}' | tee provider-artifact.jsonl
+      - name: Measure matched CLI startup
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -50,14 +56,7 @@ jobs:
               raise SystemExit("released RCC SHA-256 mismatch")
           PYTHON
           chmod +x "baseline/$ASSET"
-          python scripts/profile_cli_startup.py "baseline/$ASSET" > baseline-startup.json
-      - name: Qualify assembled binary
-        shell: bash
-        run: |
-          set -euo pipefail
-          chmod +x 'candidate/${{ matrix.binary }}'
-          python scripts/profile_cli_startup.py 'candidate/${{ matrix.binary }}' > cli-startup.json
-          python -u helper/tests/native_mixed.py --artifact 'candidate/${{ matrix.binary }}' | tee provider-artifact.jsonl
+          python scripts/profile_cli_startup.py "baseline/$ASSET" "candidate/$ASSET" > cli-startup.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -65,5 +64,4 @@ jobs:
           path: |
             provider-artifact.jsonl
             cli-startup.json
-            baseline-startup.json
           if-no-files-found: warn
