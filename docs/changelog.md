@@ -1,6 +1,23 @@
 # rcc change log
 ## Unreleased
 
+<a name="v181912"></a>
+## v18.19.12 (date: 26.11.2026)
+
+- add native Linux ARM64 RCC and rccremote builds, architecture-specific embedded
+  micromamba, Environment Artifact admission, and release assets. Require five
+  native runtime receipts, exact worker architecture, and independently bounded
+  native binary review sidecars before release preparation (GH#303, PR#304)
+- preserve exact platform matching: ARM64 artifacts do not execute on amd64
+  workers. Conda dependencies must be available for linux-aarch64; the existing
+  JAT package fixture and legacy Dagger bootstrap remain Linux amd64-only
+- add evidence-driven deadcode review tooling and remove five proven unreachable
+  private helpers without changing public CLI behavior (PR#283, PR#301)
+- rebuild onboarding, capability inventory, and documentation navigation (PR#292)
+- add dedicated release-metadata App registration and fail-closed version heading
+  and changelog anchor validation. Protected release preparation, artifact review,
+  and owner publication approval remain separate requirements (PR#290, PR#302)
+
 <a name="v181911"></a>
 ## v18.19.11 (date: 10.11.2026)
 
