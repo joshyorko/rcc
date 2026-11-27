@@ -39,6 +39,31 @@ func uvDigest(s string) bool {
 	b, e := hex.DecodeString(s)
 	return e == nil && len(b) == sha256.Size && s == strings.ToLower(s)
 }
+
+// Historical checksums are from Astral's per-asset .sha256 files at
+// https://github.com/astral-sh/uv/releases/tag/0.6.1. They pin archive bytes,
+// including when the archive is downloaded from the configured mirror.
+func uvReleaseDigest(version, asset, digest string) (string, error) {
+	if version == "0.6.1" {
+		pinned := map[string]string{
+			"uv-x86_64-unknown-linux-gnu.tar.gz":  "0dcad9831d3f10f3bc4dcd7678948dfc74c0b3ab3f07aa684eb9e5135b971a58",
+			"uv-aarch64-unknown-linux-gnu.tar.gz": "f355989fb5ecf47c9f9087a0b21e2ee7d7c802bc3d0cf6edae07560d4297751f",
+			"uv-x86_64-apple-darwin.tar.gz":       "d8609b53f280d5e784a7586bf7a3fd90c557656af109cee8572b24a0c1443191",
+			"uv-aarch64-apple-darwin.tar.gz":      "90e10cc7f26cbaf3eaa867cf99344ffd550e942fd4b660e88f2f91c23022dc5a",
+			"uv-x86_64-pc-windows-msvc.zip":       "32de1730597db0a7c5f34e2257ab491b660374b22c016c3d9a59ae279d837697",
+		}[asset]
+		if pinned != "" {
+			if digest != "" && digest != "sha256:"+pinned {
+				return "", fmt.Errorf("official uv release digest conflicts with pinned checksum")
+			}
+			return pinned, nil
+		}
+	}
+	if !strings.HasPrefix(digest, "sha256:") || !uvDigest(strings.TrimPrefix(digest, "sha256:")) {
+		return "", fmt.Errorf("missing official SHA-256 digest")
+	}
+	return strings.TrimPrefix(digest, "sha256:"), nil
+}
 func uvHash(path string) (string, error) {
 	f, e := os.Open(path)
 	if e != nil {
@@ -256,9 +281,9 @@ func CreateUVToolLock(version string) (UVToolLock, error) {
 	for _, a := range release.Assets {
 		if a.Name == uvAsset(l.Target) {
 			matches++
-			l.ArchiveSHA256 = strings.TrimPrefix(a.Digest, "sha256:")
-			if !strings.HasPrefix(a.Digest, "sha256:") || !uvDigest(l.ArchiveSHA256) {
-				return UVToolLock{}, fmt.Errorf("missing official SHA-256 digest")
+			l.ArchiveSHA256, err = uvReleaseDigest(l.Version, a.Name, a.Digest)
+			if err != nil {
+				return UVToolLock{}, err
 			}
 		}
 	}
