@@ -186,7 +186,7 @@ func extractLockedUv(archive, target, name string, out io.Writer) error {
 			if h.Name != wanted {
 				continue
 			}
-			if h.Typeflag != tar.TypeReg && h.Typeflag != tar.TypeRegA {
+			if h.Typeflag != tar.TypeReg {
 				return fmt.Errorf("uv executable is not regular")
 			}
 			if e = copyEntry(tr, h.Size); e != nil {

@@ -55,7 +55,7 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 	}
 	cmd.Stdin = bytes.NewReader(request)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("Rattler install: %w", err)
+		return fmt.Errorf("rattler install: %w", err)
 	}
 	return nil
 }
@@ -143,7 +143,7 @@ func rattlerChannels(names []string) ([]string, *rattlerNetwork, error) {
 	}
 	endpoint, err := url.Parse(alias)
 	if err != nil || endpoint.Scheme != "https" || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" {
-		return nil, nil, errors.New("Rattler needs a credential-free HTTPS channel alias")
+		return nil, nil, errors.New("rattler needs a credential-free HTTPS channel alias")
 	}
 	channels := make([]string, 0, len(names))
 	for _, name := range names {

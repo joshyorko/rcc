@@ -645,7 +645,9 @@ func (it *Environment) ProviderLayerKeys() ([]string, error) {
 			lock = fmt.Sprintf("%+v", *layer.ToolLock)
 		}
 		native := ""
-		if layer.NativeToolPin != nil { native = fmt.Sprintf("%+v", *layer.NativeToolPin) }
+		if layer.NativeToolPin != nil {
+			native = fmt.Sprintf("%+v", *layer.NativeToolPin)
+		}
 		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q:%q:%q\n", i, layer.Provider, layer.Version+"@"+layer.Policy, layer.Channels, layer.Packages, lock, native)
 		keys = append(keys, common.BlueprintHash([]byte(canonical.String())))
 	}

@@ -12,7 +12,7 @@ func TestProviderDefaultMicromamba(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	h := sha256.New()
 	n, err := io.Copy(h, r)
 	if err != nil {
@@ -25,7 +25,7 @@ func TestProviderDefaultMicromamba(t *testing.T) {
 
 func TestProviderDefaultUnavailable(t *testing.T) {
 	if r, _, _, err := OpenProviderDefault("unknown"); err == nil {
-		r.Close()
+		_ = r.Close()
 		t.Fatal("unknown provider succeeded")
 	}
 }
