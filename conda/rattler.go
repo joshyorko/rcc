@@ -3,12 +3,12 @@ package conda
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
+
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
+
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -22,7 +22,8 @@ import (
 var rattlerHelperSHA256 string
 
 func installRattlerLayer(prefix string, layer ProviderLayer) error {
-	if len(rattlerHelperSHA256) != 64 {
+	_, decodeErr := hex.DecodeString(rattlerHelperSHA256)
+	if len(rattlerHelperSHA256) != 64 || decodeErr != nil {
 		return errors.New("this RCC build has no pinned native Rattler helper")
 	}
 	if len(layer.Channels) != 1 || layer.Channels[0] != "local" {
@@ -32,7 +33,7 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 	if !ok {
 		return errors.New("RCC local channel is unavailable")
 	}
-	platform := map[string]string{"linux_amd64": "linux-64", "linux_arm64": "linux-aarch64", "darwin_amd64": "osx-64", "darwin_arm64": "osx-arm64", "windows_amd64": "win-64"}[common.Platform()]
+	platform := rattlerSubdir()
 	if platform == "" {
 		return errors.New("unsupported Rattler platform")
 	}
@@ -48,28 +49,22 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 	if err != nil {
 		return err
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	private, err := os.MkdirTemp("", "rcc-rattler-")
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(private)
-	verified := filepath.Join(private, name)
-	dest, err := os.OpenFile(verified, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0700)
+	defer func() { _ = os.RemoveAll(private) }()
+	info, err := source.Stat()
 	if err != nil {
 		return err
 	}
-	hash := sha256.New()
-	size, err := io.Copy(io.MultiWriter(dest, hash), io.LimitReader(source, 256<<20+1))
-	closeErr := dest.Close()
-	if err != nil {
+	if !info.Mode().IsRegular() {
+		return errors.New("invalid Rattler sidecar")
+	}
+	verified := filepath.Join(common.Product.Home(), "rattler", layer.Version, rattlerHelperSHA256, name)
+	if err := publishExecutable(verified, rattlerHelperSHA256, info.Size(), source); err != nil {
 		return err
-	}
-	if closeErr != nil {
-		return closeErr
-	}
-	if size > 256<<20 || hex.EncodeToString(hash.Sum(nil)) != rattlerHelperSHA256 {
-		return errors.New("Rattler helper integrity check failed")
 	}
 	request, err := json.Marshal(map[string]interface{}{"protocol": 1, "prefix": prefix, "cache": filepath.Join(common.Product.Home(), "rattler-cache"), "platform": platform, "channels": []string{channel}, "packages": layer.Packages})
 	if err != nil {
@@ -88,4 +83,8 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 		return fmt.Errorf("local Rattler install: %w", err)
 	}
 	return nil
+}
+
+func rattlerSubdir() string {
+	return map[string]string{"linux_amd64": "linux-64", "linux_arm64": "linux-aarch64", "darwin_amd64": "osx-64", "darwin_arm64": "osx-arm64", "windows_amd64": "win-64"}[common.Platform()]
 }

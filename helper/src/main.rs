@@ -2,7 +2,7 @@ use anyhow::{bail, Context, Result};
 use rattler::install::{Installer, LinkOptions, ExternalSymlinkPolicy};
 use rattler_cache::package_cache::PackageCache;
 use rattler_conda_types::{Channel, ChannelConfig, MatchSpec, PrefixRecord, RepoData, Subdir};
-use rattler_solve::{resolvo::Solver, SolverImpl, SolverTask};
+use rattler_solve::{resolvo::Solver, ChannelPriority, SolverImpl, SolverTask};
 use serde::Deserialize;
 use std::{io::Read, path::PathBuf, str::FromStr};
 use url::Url;
@@ -16,6 +16,21 @@ struct Request {
     platform: String,
     channels: Vec<String>,
     packages: Vec<String>,
+    #[serde(default)]
+    network: Option<NetworkPolicy>,
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NetworkPolicy {
+    allow_https: bool,
+}
+
+fn validate_policy(request: &Request) -> Result<()> {
+    if request.network.as_ref().is_some_and(|policy| policy.allow_https) {
+        bail!("HTTPS gateway is not implemented; network policy cannot be honored");
+    }
+    Ok(())
 }
 
 #[tokio::main]
@@ -31,6 +46,7 @@ async fn run() -> Result<()> {
     std::io::stdin().take(1024 * 1024 + 1).read_to_string(&mut input)?;
     if input.len() > 1024 * 1024 { bail!("request too large"); }
     let request: Request = serde_json::from_str(&input).context("invalid helper request")?;
+    validate_policy(&request)?;
     if request.protocol != 1 || request.channels.is_empty() || request.packages.is_empty() {
         bail!("protocol must be 1 and channels and packages must be nonempty");
     }
@@ -66,6 +82,7 @@ async fn run() -> Result<()> {
     let result = Solver.solve(SolverTask {
         virtual_packages: rattler_virtual_packages::VirtualPackages::detect(&Default::default(), None)?.into_generic_virtual_packages().collect(),
         specs: specs.clone(),
+        channel_priority: ChannelPriority::Strict,
         locked_packages: installed.iter().map(|r| &r.repodata_record).collect(),
         ..SolverTask::from_iter(&repositories)
     })?;
@@ -80,4 +97,19 @@ async fn run() -> Result<()> {
         .with_requested_specs(specs)
         .install(&request.prefix, result.records).await?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn network_policy_fails_closed() {
+        let base = r#"{"protocol":1,"prefix":"p","cache":"c","platform":"linux-64","channels":["local"],"packages":["x"]"#;
+        for (suffix, accepted) in [("}", true), (r#", "network":{"allow_https":false}}"#, true), (r#", "network":{"allow_https":true}}"#, false)] {
+            let request: Request = serde_json::from_str(&format!("{base}{suffix}")).unwrap();
+            assert_eq!(validate_policy(&request).is_ok(), accepted);
+        }
+        assert!(serde_json::from_str::<Request>(&format!("{base}{}", r#", "network":{"allow_https":false,"proxy":"x"}}"#)).is_err());
+    }
 }

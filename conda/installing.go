@@ -1,17 +1,12 @@
 package conda
 
 import (
-	"bytes"
 	"compress/gzip"
-	"io"
-	"os"
 	"time"
 
 	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/common"
-	"github.com/joshyorko/rcc/fail"
-	"github.com/joshyorko/rcc/pathlib"
 	"github.com/joshyorko/rcc/pretty"
 )
 
@@ -24,42 +19,23 @@ func DoFailMicromamba() bool {
 	return false
 }
 
-func GunzipWrite(context, filename string, blob []byte) (err error) {
-	defer fail.Around(&err)
-
-	stream := bytes.NewReader(blob)
-	source, err := gzip.NewReader(stream)
-	fail.On(err != nil, "Failed to  %q -> %v", filename, err)
-
-	sink, err := pathlib.Create(filename)
-	fail.On(err != nil, "Failed to create %q reader -> %v", context, err)
-	defer sink.Close()
-
-	_, err = io.Copy(sink, source)
-	fail.On(err != nil, "Failed to copy %q to %q -> %v", context, filename, err)
-
-	err = sink.Sync()
-	fail.On(err != nil, "Failed to sync %q -> %v", filename, err)
-
-	return nil
-}
-
 func DoExtract(delay time.Duration) bool {
 	pretty.Highlight("Note: Extracting micromamba binary from inside rcc.")
 
 	time.Sleep(delay)
-	binary := blobs.MustMicromamba()
-	err := GunzipWrite("micromamba", BinMicromamba(), binary)
+	stream, err := blobs.OpenMicromamba()
 	if err != nil {
-		err = os.Remove(BinMicromamba())
-		if err != nil {
-			common.Fatal("Remove of micromamba failed, reason:", err)
-		}
+		common.Log("Open embedded micromamba: %v", err)
 		return false
 	}
-	err = os.Chmod(BinMicromamba(), 0o755)
+	defer func() { _ = stream.Close() }()
+	binary, err := gzip.NewReader(stream)
 	if err != nil {
-		common.Fatal("Could not make micromamba executalbe, reason:", err)
+		return false
+	}
+	defer func() { _ = binary.Close() }()
+	if err := publishExecutable(BinMicromamba(), blobs.MicromambaSHA256, 64<<20, binary); err != nil {
+		common.Log("Install micromamba: %v", err)
 		return false
 	}
 	cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.micromamba.extract", common.Version)

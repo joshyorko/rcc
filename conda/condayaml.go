@@ -51,6 +51,8 @@ type ProviderPlan struct {
 }
 
 type ProviderLayer struct {
+	Policy   string
+	ToolLock *UVToolLock
 	Provider string
 	Version  string
 	Channels []string
@@ -637,7 +639,11 @@ func (it *Environment) ProviderLayerKeys() ([]string, error) {
 		if strings.TrimSpace(layer.Provider) == "" || strings.TrimSpace(layer.Version) == "" {
 			return nil, fmt.Errorf("provider layer %d requires provider and version", i)
 		}
-		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q\n", i, layer.Provider, layer.Version, layer.Channels, layer.Packages)
+		lock := ""
+		if layer.ToolLock != nil {
+			lock = fmt.Sprintf("%+v", *layer.ToolLock)
+		}
+		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q:%q\n", i, layer.Provider, layer.Version+"@"+layer.Policy, layer.Channels, layer.Packages, lock)
 		keys = append(keys, common.BlueprintHash([]byte(canonical.String())))
 	}
 	return keys, nil

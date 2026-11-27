@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/journal"
@@ -139,7 +140,7 @@ func newLive(yaml, condaYaml, requirementsText, key string, force, freshInstall 
 	if finalEnv.IsUvNative() {
 		return newLiveUvNative(yaml, requirementsText, key, force, freshInstall, skip, finalEnv, recorder)
 	}
-	if !MustMicromamba() {
+	if (finalEnv.ProviderPlan == nil || finalEnv.ProviderPlan.Layers[0].Provider != "uv-runtime") && !MustMicromamba() {
 		return false, fmt.Errorf("Could not get micromamba installed.")
 	}
 	targetFolder := common.StageFolder
@@ -309,7 +310,7 @@ func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.
 	if force {
 		ttl = "0"
 	}
-	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", MicromambaVersion(), fingerprint)
+	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", strings.TrimPrefix(blobs.MicromambaVersion(), "v"), fingerprint)
 	mambaCommand := common.NewCommander(BinMicromamba(), "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
 	mambaCommand.Option("--channel-alias", settings.Global.CondaURL())
 	mambaCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
@@ -318,15 +319,15 @@ func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.
 		// Keep the installed profile path compatible with older RCC versions.
 		body, err := os.ReadFile(common.MicroMambaRcFile())
 		if err != nil {
-			fmt.Fprintln(planWriter, err)
+			_, _ = fmt.Fprintln(planWriter, err)
 			return false, true
 		}
 		path, err := providerInputNamed("rcc-mambarc-*.yaml", body)
 		if err != nil {
-			fmt.Fprintln(planWriter, err)
+			_, _ = fmt.Fprintln(planWriter, err)
 			return false, true
 		}
-		defer os.Remove(path)
+		defer func() { _ = os.Remove(path) }()
 		mambaCommand.Option("--rc-file", path)
 	} else {
 		mambaCommand.ConditionalFlag(true, "--no-rc")
@@ -596,7 +597,20 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
 	}
-	err = goldenMaster(targetFolder, pipUsed)
+	if finalEnv.ProviderPlan != nil && finalEnv.ProviderPlan.Layers[0].Provider == "uv-runtime" {
+		owner := finalEnv.ProviderPlan.Layers[0]
+		uv, resolveErr := ResolveLockedUv(*owner.ToolLock)
+		if resolveErr != nil {
+			return false, true
+		}
+		interpreter, resolveErr := stagedTargetPython(targetFolder)
+		if resolveErr != nil {
+			return false, true
+		}
+		err = goldenMasterUvNative(targetFolder, uv, interpreter)
+	} else {
+		err = goldenMaster(targetFolder, pipUsed)
+	}
 	if err != nil {
 		common.Log("%sGolden EE failure: %v%s", pretty.Yellow, err, pretty.Reset)
 		if finalEnv.ProviderPlan != nil {

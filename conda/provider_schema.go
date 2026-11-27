@@ -76,7 +76,18 @@ func explicitProviderEnvironment(content []byte, actions, dev bool) (*Environmen
 	if actions {
 		scripts = post.Actions
 	}
-	return &Environment{ProviderPlan: spec.plan(), PostInstall: scripts}, true, nil
+	plan := spec.plan()
+	for i, layer := range plan.Layers {
+		key, err := providerResolutionIdentity(layer)
+		if err != nil {
+			return nil, true, err
+		}
+		if layer.Policy != "" && layer.Policy != key {
+			return nil, true, fmt.Errorf("provider layer %d resolution policy differs from its blueprint", i)
+		}
+		plan.Layers[i].Policy = key
+	}
+	return &Environment{ProviderPlan: plan, PostInstall: scripts}, true, nil
 }
 
 // Keep the legacy dependency shape inside the guarded section.
@@ -156,7 +167,7 @@ func normalizeShorthand(data []byte, actions, dev bool) (providerPlanYaml, error
 func (p *providerPlanYaml) plan() *ProviderPlan {
 	layers := make([]ProviderLayer, 0, len(p.Layers))
 	for _, l := range p.Layers {
-		layers = append(layers, ProviderLayer{Provider: l.Provider, Version: l.Version, Channels: append([]string(nil), l.Channels...), Packages: append([]string(nil), l.Packages...)})
+		layers = append(layers, ProviderLayer{Policy: l.Policy, ToolLock: l.ToolLock, Provider: l.Provider, Version: l.Version, Channels: append([]string(nil), l.Channels...), Packages: append([]string(nil), l.Packages...)})
 	}
 	return &ProviderPlan{Layers: layers}
 }
@@ -164,7 +175,7 @@ func (p *providerPlanYaml) plan() *ProviderPlan {
 func providerPlanFrom(p *ProviderPlan) *providerPlanYaml {
 	out := &providerPlanYaml{SchemaVersion: 1}
 	for _, l := range p.Layers {
-		out.Layers = append(out.Layers, ProviderLayerYaml{Provider: l.Provider, Version: l.Version, Channels: append([]string(nil), l.Channels...), Packages: append([]string(nil), l.Packages...)})
+		out.Layers = append(out.Layers, ProviderLayerYaml{Policy: l.Policy, ToolLock: l.ToolLock, Provider: l.Provider, Version: l.Version, Channels: append([]string(nil), l.Channels...), Packages: append([]string(nil), l.Packages...)})
 	}
 	return out
 }
@@ -178,19 +189,36 @@ func (p *providerPlanYaml) validate() error {
 	}
 	for i, l := range p.Layers {
 		provider := strings.TrimSpace(l.Provider)
-		if provider != "rattler" && provider != "micromamba" && provider != "uv" && provider != "pip" {
+		if provider != "rattler" && provider != "micromamba" && provider != "uv-runtime" && provider != "uv" && provider != "pip" {
 			return fmt.Errorf("provider layer %d has unknown provider %q", i, l.Provider)
 		}
-		owner := provider == "rattler" || provider == "micromamba"
-		if owner != (i == 0) || len(l.Packages) == 0 || owner != (len(l.Channels) > 0) {
+		owner := provider == "rattler" || provider == "micromamba" || provider == "uv-runtime"
+		if owner != (i == 0) || len(l.Packages) == 0 || (provider != "uv-runtime" && owner != (len(l.Channels) > 0)) {
 			return fmt.Errorf("invalid package ownership, channels or order at layer %d", i)
 		}
 		if provider != l.Provider {
 			return fmt.Errorf("invalid provider name")
 		}
-		pins := map[string]string{"micromamba": "2.10.0", "rattler": "0.1.0", "uv": "0.9.26", "pip": "25.0.1"}
-		if l.Version == "" {
+		pins := map[string]string{"micromamba": "2.10.0", "rattler": "0.1.0", "uv-runtime": "0.9.26", "uv": "0.9.26", "pip": "25.0.1"}
+		if provider == "uv" && l.ToolLock == nil && p.Layers[0].Provider == "uv-runtime" {
+			l.ToolLock = p.Layers[0].ToolLock
+			p.Layers[i].ToolLock = l.ToolLock
+		}
+		if l.ToolLock != nil {
+			if provider != "uv" && provider != "uv-runtime" {
+				return fmt.Errorf("a UV tool-lock requires a UV provider")
+			}
+			if err := uvLockValid(*l.ToolLock); err != nil {
+				return err
+			}
+			if l.Version != "" && l.Version != l.ToolLock.Version {
+				return fmt.Errorf("uv version conflicts with its lock")
+			}
+			p.Layers[i].Version = l.ToolLock.Version
+		} else if l.Version == "" {
 			p.Layers[i].Version = pins[provider]
+		} else if provider == "uv" && exactUvVersion.MatchString(l.Version) {
+			// The owning Conda layer supplies this exact staged executable.
 		} else if l.Version != pins[provider] {
 			return fmt.Errorf("unsupported %s version %q", provider, l.Version)
 		}
@@ -204,7 +232,14 @@ func (p *providerPlanYaml) validate() error {
 				return fmt.Errorf("provider channels require a configured channel name")
 			}
 		}
-
+		if provider == "uv-runtime" {
+			if l.ToolLock == nil {
+				return fmt.Errorf("uv-runtime requires an inline tool-lock")
+			}
+			if len(l.Channels) != 0 || len(l.Packages) != 1 || !strings.HasPrefix(l.Packages[0], "python=") || !exactUvVersion.MatchString(strings.TrimPrefix(l.Packages[0], "python=")) {
+				return fmt.Errorf("uv-runtime owns exactly one pinned python=X.Y.Z and accepts no channels")
+			}
+		}
 	}
 	return nil
 }

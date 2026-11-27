@@ -46,10 +46,12 @@ type providerPlanYaml struct {
 }
 
 type ProviderLayerYaml struct {
-	Provider string   `yaml:"provider"`
-	Version  string   `yaml:"version"`
-	Channels []string `yaml:"channels,omitempty"`
-	Packages []string `yaml:"packages,omitempty"`
+	Policy   string      `yaml:"resolution-policy,omitempty"`
+	ToolLock *UVToolLock `yaml:"tool-lock,omitempty"`
+	Provider string      `yaml:"provider"`
+	Version  string      `yaml:"version"`
+	Channels []string    `yaml:"channels,omitempty"`
+	Packages []string    `yaml:"packages,omitempty"`
 }
 
 func fixPipDependency(dependency *Dependency) *Dependency {
