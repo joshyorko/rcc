@@ -53,7 +53,11 @@ def prepare_profile_channel(output, cache, native=None):
             os.link(archive, target)
         except OSError:
             shutil.copyfile(archive, target)
-        records[subdir]['packages.conda' if filename.endswith('.conda') else 'packages'][filename] = record
+        # Cache records contain origin URLs. Leaving those hints in repodata
+        # lets micromamba download upstream even when the channel is local.
+        local_record = {key:value for key,value in record.items()
+                        if key not in ('url','base_url','channel','fn','package_tarball_full_path','extracted_package_dir')}
+        records[subdir]['packages.conda' if filename.endswith('.conda') else 'packages'][filename] = local_record
     for subdir, data in records.items():
         folder = channel / subdir
         folder.mkdir(parents=True, exist_ok=True)
