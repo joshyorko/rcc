@@ -58,14 +58,23 @@ def main(helper, rcc_binary, cache):
             python = Path(activation["PYTHON_EXE"]).resolve(strict=True)
             if not prefix.is_relative_to(home / "holotree") or not python.is_relative_to(prefix):
                 raise RuntimeError("interpreter escaped the materialized environment")
-            check = subprocess.run([str(python), "-I", "-c", "import sys,zlib,provider_receipt; assert sys.version_info[:3]==(3,12,15); assert zlib.ZLIB_RUNTIME_VERSION=='1.3.2'; assert provider_receipt.value==306; print(sys.executable)"],
+            probe = """
+import json, platform, sys, zlib
+from importlib.metadata import version
+import provider_receipt
+assert provider_receipt.value == 306
+print(json.dumps(dict(python=sys.executable, pythonVersion=platform.python_version(),
+                      pipVersion=version('pip'), zlibVersion=zlib.ZLIB_RUNTIME_VERSION)))
+"""
+            check = subprocess.run([str(python), "-I", "-c", probe],
                                    env={**env, **activation}, text=True, capture_output=True, check=True)
+            runtime = json.loads(check.stdout)
+            assert (runtime["pythonVersion"], runtime["pipVersion"], runtime["zlibVersion"]) == ("3.12.15", "25.0.1", "1.3.2"), runtime
             if "provider-receipt" not in (prefix / "golden-ee.yaml").read_text():
                 raise RuntimeError(f"{conda}->{pypi}: wheel absent from environment inventory")
             print(json.dumps({"sourceSHA": source, "platform": target, "conda": conda, "pypi": pypi,
                               "helperSHA256": sha256(helper), "rccSHA256": sha256(rcc_binary),
-                              "wheelSHA256": sha256(wheel_path), "python": check.stdout.strip(),
-                              "pythonVersion": "3.12.15", "pipVersion": "25.0.1", "zlibVersion": "1.3.2",
+                              "wheelSHA256": sha256(wheel_path), **runtime,
                               "inventory": True}))
 
 
