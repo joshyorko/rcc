@@ -88,6 +88,49 @@ func TestCanReadPackageCondaYaml(t *testing.T) {
 	must_be.Equal(1, len(sut.Pip))
 }
 
+func TestProviderPlanNormalizationAndCumulativeKeys(t *testing.T) {
+	legacy, err := conda.ReadPackageCondaYaml("testdata/case_package/package.yaml", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if legacy.ProviderPlan != nil {
+		t.Fatal("legacy package unexpectedly has provider plan")
+	}
+	plan, err := conda.ReadPackageCondaYamlFromContents([]byte("rcc:\n  schema-version: 1\n  layers:\n    - provider: rattler\n      version: 0.1.0\n      channels: [conda-forge]\n      packages: [python=3.12]\n    - provider: uv\n      version: 0.9.26\n      packages: [demo==1.0]\ndependencies: rcc-provider-plan-v1\n"), "package.yaml", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(plan.ProviderPlan.Layers) != 2 || plan.ProviderPlan.Layers[1].Provider != "uv" {
+		t.Fatalf("unexpected plan: %#v", plan.ProviderPlan)
+	}
+	keys, err := plan.ProviderLayerKeys()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(keys) != 2 || keys[0] == keys[1] {
+		t.Fatalf("keys are not cumulative: %#v", keys)
+	}
+	changed := *plan
+	changed.ProviderPlan = &conda.ProviderPlan{Layers: append([]conda.ProviderLayer(nil), plan.ProviderPlan.Layers...)}
+	changed.ProviderPlan.Layers[0].Provider = "micromamba"
+	changedKeys, err := changed.ProviderLayerKeys()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if keys[0] == changedKeys[0] || keys[1] == changedKeys[1] {
+		t.Fatalf("provider identity did not affect keys: %#v %#v", keys, changedKeys)
+	}
+}
+
+func TestProviderPlanRejectsUnsupportedSchemaAndMissingIdentity(t *testing.T) {
+	if _, err := conda.ReadPackageCondaYamlFromContents([]byte("rcc:\n  schema-version: 2\n  layers: []\n"), "package.yaml", false); err == nil {
+		t.Fatal("unsupported schema accepted")
+	}
+	if _, err := conda.ReadPackageCondaYamlFromContents([]byte("rcc: {schema-version: 1}"), "package.yaml", false); err == nil {
+		t.Fatal("unguarded plan accepted")
+	}
+}
+
 func TestCanReadPackageDevYaml(t *testing.T) {
 	must_be, wont_be := hamlet.Specifications(t)
 

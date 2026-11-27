@@ -1,0 +1,23 @@
+name: Native Rattler helper
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: helper
+        shell: bash
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+      - run: rustup toolchain install "$(cat rust-toolchain)" --profile minimal
+      - run: cargo build --locked --release
+      - run: |
+          bin=target/release/rcc-rattler-helper
+          if [[ "$RUNNER_OS" == Windows ]]; then bin+=.exe; fi
+          python tests/native_install.py "$bin"

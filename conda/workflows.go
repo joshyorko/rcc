@@ -37,7 +37,7 @@ const (
 type (
 	pipTool func(string, string, string, fmt.Stringer, io.Writer) (bool, bool, bool, string)
 
-	SkipLayer uint8
+	SkipLayer int
 	Recorder  interface {
 		Record([]byte) error
 	}
@@ -246,6 +246,9 @@ func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshIns
 	err := Activate(planWriter, targetFolder)
 	if err != nil {
 		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
@@ -310,8 +313,24 @@ func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.
 	mambaCommand := common.NewCommander(BinMicromamba(), "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
 	mambaCommand.Option("--channel-alias", settings.Global.CondaURL())
 	mambaCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
-	mambaCommand.ConditionalFlag(!settings.Global.HasMicroMambaRc(), "--no-rc")
-	mambaCommand.ConditionalFlag(settings.Global.HasMicroMambaRc(), "--rc-file", common.MicroMambaRcFile())
+	if settings.Global.HasMicroMambaRc() {
+		// 2.10.0 filters rc files by basename even for an explicit --rc-file.
+		// Keep the installed profile path compatible with older RCC versions.
+		body, err := os.ReadFile(common.MicroMambaRcFile())
+		if err != nil {
+			fmt.Fprintln(planWriter, err)
+			return false, true
+		}
+		path, err := providerInputNamed("rcc-mambarc-*.yaml", body)
+		if err != nil {
+			fmt.Fprintln(planWriter, err)
+			return false, true
+		}
+		defer os.Remove(path)
+		mambaCommand.Option("--rc-file", path)
+	} else {
+		mambaCommand.ConditionalFlag(true, "--no-rc")
+	}
 	observer := make(InstallObserver)
 	common.Debug("===  micromamba create phase ===")
 	fmt.Fprintf(planWriter, "\n---  micromamba plan @%ss  ---\n\n", stopwatch)
@@ -475,6 +494,9 @@ func postInstallLayer(fingerprint string, postInstall []string, targetFolder str
 }
 
 func holotreeLayers(condaYaml, requirementsText string, finalEnv *Environment, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, theplan *PlanWriter, force bool, skip SkipLayer, recorder Recorder) (bool, bool, bool, string) {
+	if finalEnv.ProviderPlan != nil {
+		return providerPlanLayers(finalEnv, targetFolder, planWriter, skip, recorder, force)
+	}
 	assertStageFolder(targetFolder)
 	common.TimelineBegin("Holotree layers at %q", targetFolder)
 	defer common.TimelineEnd()
@@ -567,6 +589,9 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	err := Activate(planWriter, targetFolder)
 	if err != nil {
 		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
@@ -574,6 +599,9 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	err = goldenMaster(targetFolder, pipUsed)
 	if err != nil {
 		common.Log("%sGolden EE failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	fmt.Fprintf(planWriter, "\n---  pip check plan @%ss  ---\n\n", stopwatch)
 	if common.StrictFlag && pipUsed {

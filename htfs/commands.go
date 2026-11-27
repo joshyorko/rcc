@@ -216,6 +216,23 @@ func RestoreLayersTo(tree MutableLibrary, identityfile string, targetDir string)
 	if err != nil {
 		return conda.SkipNoLayers
 	}
+	if config.ProviderPlan != nil {
+		keys, err := config.ProviderLayerKeys()
+		if err != nil {
+			return conda.SkipNoLayers
+		}
+		for i := len(keys) - 1; i >= 0; i-- {
+			key := []byte("rcc-provider-layer-v1:" + keys[i])
+			if !tree.HasBlueprint(key) {
+				continue
+			}
+			if _, err := tree.RestoreTo(key, filepath.Base(targetDir), common.ControllerIdentity(), common.HolotreeSpace, true); err != nil {
+				return conda.SkipError
+			}
+			return conda.SkipLayer(i+1) + conda.SkipError
+		}
+		return conda.SkipNoLayers
+	}
 
 	layers := config.AsLayers()
 	mambaLayer := []byte(layers[0])

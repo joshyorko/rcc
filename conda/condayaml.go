@@ -3,6 +3,7 @@ package conda
 import (
 	"fmt"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/joshyorko/rcc/common"
@@ -34,12 +35,26 @@ type internalEnvironment struct {
 }
 
 type Environment struct {
-	Name        string
-	Prefix      string
-	Channels    []string
-	Conda       []*Dependency
-	Pip         []*Dependency
-	PostInstall []string
+	Name         string
+	Prefix       string
+	Channels     []string
+	Conda        []*Dependency
+	Pip          []*Dependency
+	PostInstall  []string
+	ProviderPlan *ProviderPlan
+}
+
+// ProviderPlan is the canonical ordered package installation plan. A nil plan
+// preserves the historical implicit micromamba/pip behavior.
+type ProviderPlan struct {
+	Layers []ProviderLayer
+}
+
+type ProviderLayer struct {
+	Provider string
+	Version  string
+	Channels []string
+	Packages []string
 }
 
 type Dependency struct {
@@ -215,6 +230,9 @@ func (it *Environment) ValidateUvNative() error {
 }
 
 func (it *Environment) IsCacheable() bool {
+	if it.ProviderPlan != nil {
+		return false
+	}
 	for _, dependency := range it.Conda {
 		if !dependency.IsCacheable() {
 			return false
@@ -230,12 +248,13 @@ func (it *Environment) IsCacheable() bool {
 
 func (it *Environment) FreezeDependencies(fixed dependencies) *Environment {
 	result := &Environment{
-		Name:        it.Name,
-		Prefix:      it.Prefix,
-		Channels:    it.Channels,
-		Conda:       []*Dependency{},
-		Pip:         []*Dependency{},
-		PostInstall: it.PostInstall,
+		Name:         it.Name,
+		Prefix:       it.Prefix,
+		Channels:     it.Channels,
+		Conda:        []*Dependency{},
+		Pip:          []*Dependency{},
+		PostInstall:  it.PostInstall,
+		ProviderPlan: it.ProviderPlan,
 	}
 	used := make(map[string]bool)
 	for _, dependency := range fixed {
@@ -273,12 +292,13 @@ func (it *Environment) FreezeDependencies(fixed dependencies) *Environment {
 
 func (it *Environment) FromDependencies(fixed dependencies) (*Environment, bool) {
 	result := &Environment{
-		Name:        it.Name,
-		Prefix:      it.Prefix,
-		Channels:    it.Channels,
-		Conda:       []*Dependency{},
-		Pip:         []*Dependency{},
-		PostInstall: it.PostInstall,
+		Name:         it.Name,
+		Prefix:       it.Prefix,
+		Channels:     it.Channels,
+		Conda:        []*Dependency{},
+		Pip:          []*Dependency{},
+		PostInstall:  it.PostInstall,
+		ProviderPlan: it.ProviderPlan,
 	}
 	same := true
 	for _, dependency := range it.Conda {
@@ -440,6 +460,9 @@ func (it *Environment) Merge(right *Environment) (*Environment, error) {
 	if err != nil {
 		return nil, err
 	}
+	if it.ProviderPlan != nil || right.ProviderPlan != nil {
+		return nil, fmt.Errorf("cannot merge an explicit provider plan with another blueprint")
+	}
 	return result, nil
 }
 
@@ -509,23 +532,25 @@ func (it *Environment) PipMap() map[interface{}]interface{} {
 
 func (it *Environment) AsPureConda() *Environment {
 	return &Environment{
-		Name:        it.Name,
-		Prefix:      it.Prefix,
-		Channels:    it.Channels,
-		Conda:       it.Conda,
-		Pip:         []*Dependency{},
-		PostInstall: []string{},
+		Name:         it.Name,
+		Prefix:       it.Prefix,
+		Channels:     it.Channels,
+		Conda:        it.Conda,
+		Pip:          []*Dependency{},
+		PostInstall:  []string{},
+		ProviderPlan: it.ProviderPlan,
 	}
 }
 
 func (it *Environment) WithoutPostInstall() *Environment {
 	return &Environment{
-		Name:        it.Name,
-		Prefix:      it.Prefix,
-		Channels:    it.Channels,
-		Conda:       it.Conda,
-		Pip:         it.Pip,
-		PostInstall: []string{},
+		Name:         it.Name,
+		Prefix:       it.Prefix,
+		Channels:     it.Channels,
+		Conda:        it.Conda,
+		Pip:          it.Pip,
+		PostInstall:  []string{},
+		ProviderPlan: it.ProviderPlan,
 	}
 }
 
@@ -552,6 +577,10 @@ func (it *Environment) AsYaml() (string, error) {
 	result.Dependencies = it.CondaList()
 	seenScripts := make(map[string]bool)
 	result.PostInstall = addItem(seenScripts, it.PostInstall, result.PostInstall)
+	if it.ProviderPlan != nil {
+		body, err := yaml.Marshal(providerManifest{Dependencies: providerPlanMarker, RCC: providerPlanFrom(it.ProviderPlan), PostInstall: it.PostInstall})
+		return string(body), err
+	}
 	if len(it.Pip) > 0 {
 		result.Dependencies = append(result.Dependencies, it.PipMap())
 	}
@@ -593,6 +622,25 @@ func (it *Environment) FingerprintLayers() [3]string {
 		common.BlueprintHash([]byte(layers[1])),
 		common.BlueprintHash([]byte(layers[2])),
 	}
+}
+
+// ProviderLayerKeys returns cumulative restore keys in plan order. Each key
+// includes all preceding layers, matching RCC's cumulative snapshot semantics.
+func (it *Environment) ProviderLayerKeys() ([]string, error) {
+	if it == nil || it.ProviderPlan == nil {
+		return nil, fmt.Errorf("environment has no provider plan")
+	}
+	keys := make([]string, 0, len(it.ProviderPlan.Layers))
+	var canonical strings.Builder
+	fmt.Fprintf(&canonical, "rcc-provider-plan-v1/%s/%s\n", runtime.GOOS, runtime.GOARCH)
+	for i, layer := range it.ProviderPlan.Layers {
+		if strings.TrimSpace(layer.Provider) == "" || strings.TrimSpace(layer.Version) == "" {
+			return nil, fmt.Errorf("provider layer %d requires provider and version", i)
+		}
+		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q\n", i, layer.Provider, layer.Version, layer.Channels, layer.Packages)
+		keys = append(keys, common.BlueprintHash([]byte(canonical.String())))
+	}
+	return keys, nil
 }
 
 func (it *Environment) Diagnostics(target *common.DiagnosticStatus, production bool) {
@@ -686,6 +734,9 @@ func (it *Environment) Diagnostics(target *common.DiagnosticStatus, production b
 
 func CondaYamlFrom(content []byte) (*Environment, error) {
 	result := new(internalEnvironment)
+	if env, handled, err := explicitProviderEnvironment(content, false, false); handled {
+		return env, err
+	}
 	err := yaml.Unmarshal(content, result)
 	if err != nil {
 		return nil, err

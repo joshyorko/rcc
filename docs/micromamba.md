@@ -116,3 +116,11 @@ downloads its managed Python separately. Conda specifications still require
 packages available for conda-forge `linux-aarch64`; amd64-only specifications
 are not portable. Existing Docker/Dagger helpers explicitly use amd64 and
 the published amd64 RCC bootstrap; they are not ARM64 runtime evidence.
+
+Micromamba 2.10.0 filters explicit rc files by filename. RCC keeps the installed
+profile at `micromambarc` and passes its contents through a private temporary
+YAML file during installation. With a valid shard index the default and a custom
+profile both fetched the package shard. A profile setting
+`use_sharded_repodata: false` selected flat package metadata. An index probe
+can still occur when the solver uses flat metadata.
+See the [native loopback receipt](benchmarks/sharded-local.json).
