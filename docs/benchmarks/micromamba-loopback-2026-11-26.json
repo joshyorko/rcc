@@ -1,0 +1,209 @@
+{
+  "fixture": "empty-flat-repodata-loopback",
+  "runs_per_binary": 5,
+  "platform": "x86_64",
+  "results": [
+    {
+      "binary": "micromamba-2.10.0",
+      "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+      "run": 1,
+      "exit_code": 0,
+      "elapsed_seconds": 0.013336413001525216,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.6569304
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.6573591
+        }
+      ],
+      "stdout": "{\n    \"log_history\": [],\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.10.0",
+      "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+      "run": 2,
+      "exit_code": 0,
+      "elapsed_seconds": 0.014680330001283437,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.6845424
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.6848323
+        }
+      ],
+      "stdout": "{\n    \"log_history\": [],\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.10.0",
+      "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+      "run": 3,
+      "exit_code": 0,
+      "elapsed_seconds": 0.015025216998765245,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.7114313
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.7117062
+        }
+      ],
+      "stdout": "{\n    \"log_history\": [],\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.10.0",
+      "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+      "run": 4,
+      "exit_code": 0,
+      "elapsed_seconds": 0.012849776998336893,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.735764
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.7360394
+        }
+      ],
+      "stdout": "{\n    \"log_history\": [],\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.10.0",
+      "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+      "run": 5,
+      "exit_code": 0,
+      "elapsed_seconds": 0.012591432998306118,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.7607455
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.7609975
+        }
+      ],
+      "stdout": "{\n    \"log_history\": [],\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}\n",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.5.0",
+      "binary_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+      "run": 1,
+      "exit_code": 0,
+      "elapsed_seconds": 0.010981512001308147,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.783444
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.7837567
+        }
+      ],
+      "stdout": "{\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.5.0",
+      "binary_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+      "run": 2,
+      "exit_code": 0,
+      "elapsed_seconds": 0.01247506700019585,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.8070705
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.8073778
+        }
+      ],
+      "stdout": "{\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.5.0",
+      "binary_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+      "run": 3,
+      "exit_code": 0,
+      "elapsed_seconds": 0.011662921999231912,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.8297157
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.8299804
+        }
+      ],
+      "stdout": "{\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.5.0",
+      "binary_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+      "run": 4,
+      "exit_code": 0,
+      "elapsed_seconds": 0.010535866997088306,
+      "requests": [
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.8513966
+        },
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.8515875
+        }
+      ],
+      "stdout": "{\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}",
+      "stderr": ""
+    },
+    {
+      "binary": "micromamba-2.5.0",
+      "binary_sha256": "c04571cfb0750e5432d530a3068b8fcd232ebed3133358e056e59a90b9852b00",
+      "run": 5,
+      "exit_code": 0,
+      "elapsed_seconds": 0.011854478994791862,
+      "requests": [
+        {
+          "path": "/linux-64/repodata.json",
+          "time": 1795744240.8744774
+        },
+        {
+          "path": "/noarch/repodata.json",
+          "time": 1795744240.8748941
+        }
+      ],
+      "stdout": "{\n    \"query\": {\n        \"query\": \"rcc-benchmark-no-such-package\",\n        \"type\": \"search\"\n    },\n    \"result\": {\n        \"msg\": \"No entries matching \\\"rcc-benchmark-no-such-package\\\" found\",\n        \"pkgs\": [],\n        \"status\": \"OK\"\n    }\n}",
+      "stderr": ""
+    }
+  ],
+  "summary": {
+    "micromamba-2.10.0": {
+      "median_seconds": 0.013336413001525216,
+      "min_seconds": 0.012591432998306118,
+      "max_seconds": 0.015025216998765245
+    },
+    "micromamba-2.5.0": {
+      "median_seconds": 0.011662921999231912,
+      "min_seconds": 0.010535866997088306,
+      "max_seconds": 0.01247506700019585
+    }
+  }
+}
