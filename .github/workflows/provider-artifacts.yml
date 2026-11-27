@@ -32,15 +32,38 @@ jobs:
         with:
           name: RCC-Binaries
           path: candidate
+      - name: Measure released CLI startup
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET: ${{ matrix.binary }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v18.19.12" > release.json
+          gh release download v18.19.12 --repo "$GITHUB_REPOSITORY" --pattern "$ASSET" --dir baseline
+          python - <<'PYTHON'
+          import hashlib, json, os
+          from pathlib import Path
+          name = os.environ["ASSET"]
+          expected = next(a["digest"] for a in json.loads(Path("release.json").read_text())["assets"] if a["name"] == name)
+          if expected != "sha256:" + hashlib.sha256((Path("baseline") / name).read_bytes()).hexdigest():
+              raise SystemExit("released RCC SHA-256 mismatch")
+          PYTHON
+          chmod +x "baseline/$ASSET"
+          python scripts/profile_cli_startup.py "baseline/$ASSET" > baseline-startup.json
       - name: Qualify assembled binary
         shell: bash
         run: |
           set -euo pipefail
           chmod +x 'candidate/${{ matrix.binary }}'
+          python scripts/profile_cli_startup.py 'candidate/${{ matrix.binary }}' > cli-startup.json
           python -u helper/tests/native_mixed.py --artifact 'candidate/${{ matrix.binary }}' | tee provider-artifact.jsonl
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: signed-provider-artifact-${{ matrix.binary }}-${{ inputs.candidate }}
-          path: provider-artifact.jsonl
+          path: |
+            provider-artifact.jsonl
+            cli-startup.json
+            baseline-startup.json
           if-no-files-found: warn
