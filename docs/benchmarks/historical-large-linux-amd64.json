@@ -1,4 +1,6 @@
 {
+  "candidate_source": "3fc3a99eab16b324190255a5eecde17ac27e20e8",
+  "identical_linux_binary_rebuilt_at": "1372f7c28f88b59fb61e9381b269b57c1dc47e34",
   "fixture_commit": "2a3e1a38e4343f44a57f97a496fad0c6700d2a2d",
   "method": "Large PR64 original task inputs; common interpreter-local pip 25.0.1 and Robot Framework 6.1.1 wheel. Timed solvers receive only the reduced, SHA-verified local channel in a loopback-only namespace.",
   "sample_limit": "n=1 unprofiled and 1 separately profiled run per completed cold/seeded condition; warm replay after each. Shared host under I/O pressure; priority was lowered after baseline unprofiled observations. No provider speed attribution.",

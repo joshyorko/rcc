@@ -80,8 +80,10 @@ def inspect_cpu_profile(binary, directory):
     if 'cpu/nanoseconds' not in raw or 'samples/count' not in raw:
         raise RuntimeError(f'unexpected profile sample types in {profile}')
     sample_rows = re.findall(r'^\s*(\d+)\s+\d+:', raw, re.M)
-    return {'sha256': sha(profile), 'size_bytes': profile.stat().st_size,
-            'cpu_samples': sum(map(int, sample_rows))}
+    sample_count = sum(map(int, sample_rows))
+    if sample_count == 0:
+        raise RuntimeError(f'RCC CPU profile contains no samples: {profile}')
+    return {'sha256': sha(profile), 'size_bytes': profile.stat().st_size, 'cpu_samples': sample_count}
 
 
 def inventory(home, cwd, env, fixture):

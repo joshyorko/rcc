@@ -1,0 +1,85 @@
+{
+  "fixture_commit": "2a3e1a38e4343f44a57f97a496fad0c6700d2a2d",
+  "fixture_sha256": "5f1c544c39cec515cf8cf2e04282791949729e0219150aedfafd958d18daf1ce",
+  "verified_solved_archives": 273,
+  "archive_bytes": 895815792,
+  "baseline_sha256": "0a13e78201a71c1bbc19a2ee8ccc86dd60a67ec4ffa8cd3a9a8f254d148849ee",
+  "imports": "imports ok",
+  "resolved_conda_count": 273,
+  "file_count": 54668,
+  "logical_file_bytes": 2920391588,
+  "link_scripts": [
+    {
+      "path": "bin/.ucx-post-link.sh",
+      "size": 330,
+      "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+    }
+  ],
+  "cases": {
+    "cold-package-cache": {
+      "seconds": 223.7263511189958,
+      "exit": 0,
+      "user_seconds": 120.560138,
+      "system_seconds": 50.063544,
+      "wait4_maxrss_kib": 305228,
+      "progress_seconds": {
+        "00": "0.020",
+        "01": "0.002",
+        "02": "0.000",
+        "03": "0.005",
+        "04": "0.003",
+        "05": "0.003",
+        "06": "0.003",
+        "07": "0.149",
+        "08": "160.675",
+        "09": "0.967",
+        "10": "0.000",
+        "11": "1.489",
+        "12": "0.000",
+        "13": "0.037",
+        "14": "3.141",
+        "15": "57.002"
+      }
+    },
+    "warm-holotree-replay": {
+      "seconds": 3.235630472001503,
+      "exit": 0,
+      "user_seconds": 1.710503,
+      "system_seconds": 0.769031,
+      "wait4_maxrss_kib": 270868,
+      "progress_seconds": {
+        "00": "0.016",
+        "01": "0.000",
+        "02": "0.006",
+        "14": "0.591",
+        "15": "1.037"
+      }
+    },
+    "seeded-package-cache": {
+      "seconds": 340.32157399699645,
+      "exit": 0,
+      "user_seconds": 123.066409,
+      "system_seconds": 50.326134,
+      "wait4_maxrss_kib": 290216,
+      "progress_seconds": {
+        "00": "0.016",
+        "01": "0.009",
+        "02": "0.000",
+        "03": "0.011",
+        "04": "0.005",
+        "05": "0.005",
+        "06": "0.004",
+        "07": "0.166",
+        "08": "215.013",
+        "09": "8.342",
+        "10": "0.000",
+        "11": "7.627",
+        "12": "0.000",
+        "13": "8.134",
+        "14": "9.305",
+        "15": "86.870"
+      }
+    }
+  },
+  "stopped": "At 04:10 UTC Linux full I/O pressure averaged 70.95% over 60 s; full memory pressure reached 19.47% over 60 s. The serial, idle-priority benchmark was interrupted to protect the shared workstation. No candidate heavy timings or heavy CPU profiles qualified."
+}
