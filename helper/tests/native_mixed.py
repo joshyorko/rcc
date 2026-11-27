@@ -54,10 +54,11 @@ def main(helper, rcc_binary, cache):
             if proc.returncode:
                 raise RuntimeError(f"{conda}->{pypi} failed: {proc.stdout}\n{proc.stderr}")
             activation = {entry["key"]: entry["value"] for entry in json.loads(proc.stdout)}
-            prefix = Path(activation["CONDA_PREFIX"]).resolve()
+            holotree = (home / "holotree").resolve(strict=True)
+            prefix = Path(activation["CONDA_PREFIX"]).resolve(strict=True)
             python = Path(activation["PYTHON_EXE"]).resolve(strict=True)
-            if not prefix.is_relative_to(home / "holotree") or not python.is_relative_to(prefix):
-                raise RuntimeError("interpreter escaped the materialized environment")
+            if not prefix.is_relative_to(holotree) or not python.is_relative_to(prefix):
+                raise RuntimeError(f"interpreter containment failed: holotree={holotree}, prefix={prefix}, python={python}")
             probe = """
 import json, platform, sys, zlib
 from importlib.metadata import version
