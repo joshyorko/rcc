@@ -1,0 +1,81 @@
+name: Package provider profile
+on:
+  workflow_call:
+    inputs:
+      candidate:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  profile:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            goarch: amd64
+          - runner: ubuntu-24.04-arm
+            goarch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ inputs.candidate }}
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: RCC-Binaries
+          path: tmp/candidate
+      - name: Prepare matched binaries
+        run: |
+          python -m pip install invoke==2.2.0
+          python -m invoke assets
+          cp "tmp/candidate/rcc-linux${{ matrix.goarch == 'arm64' && 'arm64' || '64' }}" tmp/rcc-candidate
+          chmod +x tmp/rcc-candidate
+      - name: Download and verify released baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="rcc-linux${{ matrix.goarch == 'arm64' && 'arm64' || '64' }}"
+          gh api repos/${GITHUB_REPOSITORY}/releases/tags/v18.19.12 > tmp/release.json
+          digest="$(jq -r --arg name "$asset" '.assets[] | select(.name == $name) | .digest | sub("^sha256:"; "")' tmp/release.json)"
+          test -n "$digest" && test "$digest" != null
+          gh release download v18.19.12 --repo "$GITHUB_REPOSITORY" --pattern "$asset" --dir tmp
+          echo "$digest  tmp/$asset" | sha256sum --check
+          mv "tmp/$asset" tmp/rcc-baseline
+          chmod +x tmp/rcc-baseline
+      - name: Seed verified local package caches
+        run: |
+          gzip -dc "blobs/assets/micromamba.linux_${{ matrix.goarch }}.gz" > tmp/micromamba
+          chmod +x tmp/micromamba
+          tmp/micromamba --version
+          export MAMBA_ROOT_PREFIX="$PWD/tmp/mamba-root"
+          tmp/micromamba create --yes --name profile --channel conda-forge --strict-channel-priority python=3.12.15 pip=25.0.1 zlib=1.3.2
+          test "$(find "$MAMBA_ROOT_PREFIX/pkgs" -name 'repodata_record.json' | wc -l)" -gt 0
+      - name: Run five fresh-home profiles
+        run: |
+          go version
+          go tool pprof -h >/dev/null
+          arch='${{ matrix.goarch }}'
+          cache="$PWD/tmp/mamba-root/pkgs"
+          python scripts/profile_package_providers.py --baseline tmp/rcc-baseline --candidate tmp/rcc-candidate --cache "$cache" --output "tmp/profile-$arch" --runs 5
+          cp tmp/rcc-baseline "tmp/profile-$arch/rcc-baseline"
+          cp tmp/rcc-candidate "tmp/profile-$arch/rcc-candidate"
+          (cd "tmp/profile-$arch" && sha256sum rcc-baseline rcc-candidate >> SHA256SUMS)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: package-provider-profile-linux-${{ matrix.goarch }}
+          path: |
+            tmp/profile-${{ matrix.goarch }}/
+            !tmp/profile-${{ matrix.goarch }}/**/home/**
+            !tmp/profile-${{ matrix.goarch }}/channel/**
+            tmp/rcc-baseline
+            tmp/rcc-candidate
+          if-no-files-found: warn

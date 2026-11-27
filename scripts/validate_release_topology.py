@@ -50,6 +50,20 @@ def _workflow_pull_request_event(workflow_text):
     return match.group(1) if match else ""
 
 
+def _live_needs_items(job_text):
+    match = re.search(r"(?m)^    needs:[ \t]*\n((?:^      [^\n]*\n)*)", job_text)
+    if not match:
+        return set()
+    items = set()
+    for line in match.group(1).splitlines():
+        if line.lstrip().startswith("#"):
+            continue
+        item = re.fullmatch(r"\s*-\s*([A-Za-z0-9_-]+)\s*", line)
+        if item:
+            items.add(item.group(1))
+    return items
+
+
 def validate_release_candidate_event_policy(workflow_text):
     errors = []
     pull_request = _workflow_pull_request_event(workflow_text)
@@ -87,27 +101,37 @@ def validate_release_candidate_event_policy(workflow_text):
 
 def validate_release_identity_topology(workflow_text):
     errors = validate_release_candidate_event_policy(workflow_text)
+    for name in ("provider-defaults", "signed-provider-artifacts"):
+        job = _workflow_job(workflow_text, name)
+        if not any(re.fullmatch(rf"\s*candidate:\s*{re.escape(CANDIDATE_SHA_EXPRESSION)}\s*", line)
+                   for line in job.splitlines() if not line.lstrip().startswith("#")):
+            errors.append(f"{name} must run against the intended candidate SHA")
     for name in RELEASE_IDENTITY_JOBS:
         job = _workflow_job(workflow_text, name)
         if not job:
             errors.append(f"missing release identity job: {name}")
             continue
-        if f"RCC_CANDIDATE_SHA: {CANDIDATE_SHA_EXPRESSION}" not in job:
+        live = [line for line in job.splitlines() if not line.lstrip().startswith("#")]
+        if not any(re.fullmatch(rf"\s*RCC_CANDIDATE_SHA:\s*{re.escape(CANDIDATE_SHA_EXPRESSION)}\s*", line) for line in live):
             errors.append(f"{name} does not derive the intended candidate SHA")
-        if f"ref: {CANDIDATE_SHA_EXPRESSION}" not in job:
+        if not any(re.fullmatch(rf"\s*ref:\s*{re.escape(CANDIDATE_SHA_EXPRESSION)}\s*", line) for line in live):
             errors.append(f"{name} checkout is not pinned to the intended candidate SHA")
         for marker in ("Assert exact candidate checkout", "git rev-parse HEAD", '"$actual_sha" != "$RCC_CANDIDATE_SHA"'):
             if marker not in job:
                 errors.append(f"{name} lacks candidate checkout assertion: {marker}")
     native = _workflow_job(workflow_text, "robot")
-    if f"RCC_SOURCE_SHA: {CANDIDATE_SHA_EXPRESSION}" not in native:
+    if not any(re.fullmatch(rf"\s*RCC_SOURCE_SHA:\s*{re.escape(CANDIDATE_SHA_EXPRESSION)}\s*", line)
+               for line in native.splitlines() if not line.lstrip().startswith("#")):
         errors.append("robot native source SHA is not the intended candidate SHA")
     if '_validate_receipt_commit(data, os.environ["RCC_CANDIDATE_SHA"])' not in native:
         errors.append("robot native receipt is not validated against the intended candidate SHA")
     preparation = _workflow_job(workflow_text, "assemble-release-preparation")
-    for marker in ("needs:", "- build", "- release-candidate", "- robot", "rcc-release-preparation"):
-        if marker not in preparation:
-            errors.append(f"release preparation does not bind every gate/artifact: {marker}")
+    required_needs = {"build", "release-candidate", "robot", "signed-provider-artifacts"}
+    missing_needs = required_needs - _live_needs_items(preparation)
+    if missing_needs:
+        errors.append(f"release preparation is missing dependencies: {sorted(missing_needs)}")
+    if "rcc-release-preparation" not in preparation:
+        errors.append("release preparation artifact name is missing: rcc-release-preparation")
     if "github.event_name == 'workflow_dispatch'" not in preparation or "github.ref == 'refs/heads/main'" not in preparation:
         errors.append("release preparation must be limited to manual dispatch from main")
     return errors

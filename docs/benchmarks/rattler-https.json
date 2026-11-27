@@ -1,0 +1,18 @@
+{
+  "trusted_install": true,
+  "untrusted_ca_rejected": true,
+  "requests": [
+    "/noarch/repodata_shards.msgpack.zst",
+    "/linux-64/repodata_shards.msgpack.zst",
+    "/noarch/repodata.json",
+    "/linux-64/repodata.json",
+    "/linux-64/https-receipt-1-0.tar.bz2"
+  ],
+  "platform": "linux-64",
+  "unauthorized_rejected": true,
+  "unauthorized_count": 3,
+  "proxy_connect_count": 13,
+  "metadata_request_count": 2,
+  "package_request_count": 1,
+  "helper_sha256": "2b03048b7b683ecc1cab1c3aab84d94d4d3e43d6c7c7de27e0243be7fdb3fe6f"
+}

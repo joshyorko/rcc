@@ -1,0 +1,12 @@
+name: Upload bounded review parts
+description: Upload each independently verified binary part with the pinned GitHub artifact action.
+inputs:
+  root:
+    description: Parent of the staged part directories
+    required: true
+  prefix:
+    description: Run-specific artifact name prefix
+    required: true
+runs:
+  using: node24
+  main: upload.cjs

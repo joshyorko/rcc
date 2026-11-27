@@ -18,6 +18,8 @@
 
 __pycache__/
 build/
+blobs/provider_payload_*.go
+blobs/assets/provider_default.*.gz
 output/
 tmp/
 developer/tmp/

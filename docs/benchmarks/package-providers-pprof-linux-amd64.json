@@ -1,0 +1,660 @@
+{
+  "workload": "Python 3.12.15, native zlib 1.3.2, pip 25.0.1 and local provider-receipt 1.0 wheel",
+  "platform": "Linux amd64; i7-12800H; kernel 7.3.1",
+  "release": "v18.19.12",
+  "candidate_source": "3fc3a99eab16b324190255a5eecde17ac27e20e8",
+  "release_sha256": "0a13e78201a71c1bbc19a2ee8ccc86dd60a67ec4ffa8cd3a9a8f254d148849ee",
+  "candidate_sha256": "2b46ff375a3a7a55ec2cbe30f88a2a083a0cb4e83c2eb108db8d71ddb5c4c24e",
+  "helper_sha256": "2b03048b7b683ecc1cab1c3aab84d94d4d3e43d6c7c7de27e0243be7fdb3fe6f",
+  "corpus_manifest_sha256": "3e626de699572d6251f874a24b267312ee438f29d21a0a469c21d8fba145083a",
+  "input_inventory_sha256": "bfba1e698e96d8ba8f4f2d7ae1d94a37ea2179fb8ad0f0c6a43430b9cf5a5581",
+  "individual_cpu_profiles": 30,
+  "unprofiled_invocations": 30,
+  "profile_tool": "RCC --pprof FILE; go tool pprof -top, -top -cum, -raw with matched binary",
+  "unavailable": [
+    "RCC heap and allocation profiles",
+    "goroutine, block and mutex profiles",
+    "execution trace",
+    "child process CPU stacks"
+  ],
+  "qualification": "Source channel contained cached upstream archive URLs and egress was available. The remote origins appear in micromamba package records. Concurrent correctness work contributed to host load. These observations are unsuitable for isolating provider speed.",
+  "cases": {
+    "baseline": {
+      "cold": {
+        "unprofiled_seconds": {
+          "median": 35.289,
+          "range": [
+            27.1282,
+            100.7178
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.01,
+            "range": [
+              0.008,
+              1.807
+            ]
+          },
+          "01->02": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "02->03": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "03->04": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "04->05": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "05->06": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "06->07": {
+            "median": 0.489,
+            "range": [
+              0.277,
+              0.519
+            ]
+          },
+          "07->08": {
+            "median": 24.458,
+            "range": [
+              15.826,
+              66.91
+            ]
+          },
+          "08->09": {
+            "median": 0.872,
+            "range": [
+              0.771,
+              6.803
+            ]
+          },
+          "09->10": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "10->11": {
+            "median": 1.071,
+            "range": [
+              1.003,
+              2.328
+            ]
+          },
+          "11->12": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "12->13": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "13->14": {
+            "median": 0.354,
+            "range": [
+              0.225,
+              2.995
+            ]
+          },
+          "14->15": {
+            "median": 8.097,
+            "range": [
+              1.554,
+              18.924
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "    16.41s 26.74% 26.74%     16.41s 26.74%  internal/runtime/syscall/linux.Syscall6",
+          "     3.73s  6.08% 32.81%      3.73s  6.08%  runtime.memclrNoHeapPointers",
+          "     3.17s  5.16% 37.98%      5.23s  8.52%  compress/flate.(*deflateFast).encode",
+          "     3.16s  5.15% 43.12%      3.16s  5.15%  crypto/internal/fips140/sha256.blockSHANI",
+          "     2.86s  4.66% 47.78%      3.64s  5.93%  compress/flate.(*decompressor).huffSym",
+          "     1.78s  2.90% 50.68%      2.70s  4.40%  runtime.tryDeferToSpanScan",
+          "     1.69s  2.75% 53.44%      7.12s 11.60%  compress/flate.(*huffmanBitWriter).writeTokens",
+          "     1.52s  2.48% 55.91%      6.98s 11.37%  compress/flate.(*decompressor).huffmanBlock"
+        ],
+        "cumulative_rows": [
+          "         0     0%     0%     46.21s 75.29%  github.com/joshyorko/rcc/anywork.member",
+          "         0     0%     0%     46.10s 75.11%  github.com/joshyorko/rcc/anywork.process",
+          "         0     0%     0%     33.10s 53.93%  io.Copy (partial-inline)",
+          "     0.01s 0.016% 0.016%     33.10s 53.93%  io.copyBuffer",
+          "         0     0% 0.016%     23.63s 38.50%  github.com/joshyorko/rcc/htfs.ScheduleLifters.func1.LiftFile.1",
+          "         0     0% 0.016%     22.60s 36.82%  os.(*File).WriteTo",
+          "         0     0% 0.016%     22.59s 36.80%  os.genericWriteTo",
+          "         0     0% 0.016%     16.65s 27.13%  compress/gzip.(*Writer).Write"
+        ]
+      },
+      "warm": {
+        "unprofiled_seconds": {
+          "median": 0.4545,
+          "range": [
+            0.4142,
+            4.17
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "01->02": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "02->14": {
+            "median": 0.066,
+            "range": [
+              0.06,
+              0.092
+            ]
+          },
+          "14->15": {
+            "median": 0.344,
+            "range": [
+              0.315,
+              3.894
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "     0.23s 15.23% 15.23%      0.23s 15.23%  internal/runtime/syscall/linux.Syscall6",
+          "     0.09s  5.96% 21.19%      0.34s 22.52%  encoding/json.(*Decoder).readValue",
+          "     0.06s  3.97% 25.17%      0.17s 11.26%  compress/flate.(*decompressor).huffmanBlock",
+          "     0.06s  3.97% 29.14%      0.07s  4.64%  encoding/json.(*decodeState).rescanLiteral",
+          "     0.06s  3.97% 33.11%      0.06s  3.97%  runtime.memmove",
+          "     0.05s  3.31% 36.42%      0.05s  3.31%  compress/flate.(*decompressor).huffSym",
+          "     0.04s  2.65% 39.07%      0.33s 21.85%  encoding/json.(*decodeState).object",
+          "     0.04s  2.65% 41.72%      0.06s  3.97%  encoding/json.appendIndent"
+        ],
+        "cumulative_rows": [
+          "         0     0%     0%      0.96s 63.58%  github.com/joshyorko/rcc/cmd.Execute",
+          "         0     0%     0%      0.96s 63.58%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+          "         0     0%     0%      0.96s 63.58%  github.com/joshyorko/rcc/cmd.init.func53",
+          "         0     0%     0%      0.96s 63.58%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+          "         0     0%     0%      0.96s 63.58%  github.com/spf13/cobra.(*Command).Execute (inline)",
+          "         0     0%     0%      0.96s 63.58%  github.com/spf13/cobra.(*Command).ExecuteC",
+          "         0     0%     0%      0.96s 63.58%  github.com/spf13/cobra.(*Command).execute",
+          "         0     0%     0%      0.96s 63.58%  main.main"
+        ]
+      }
+    },
+    "micromamba": {
+      "cold": {
+        "unprofiled_seconds": {
+          "median": 29.8387,
+          "range": [
+            27.9155,
+            36.2311
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.011,
+            "range": [
+              0.008,
+              0.152
+            ]
+          },
+          "01->02": {
+            "median": 0.001,
+            "range": [
+              0.0,
+              0.001
+            ]
+          },
+          "02->03": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.001
+            ]
+          },
+          "03->04": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "04->05": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "05->06": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "06->07": {
+            "median": 0.479,
+            "range": [
+              0.157,
+              2.02
+            ]
+          },
+          "07->08": {
+            "median": 20.542,
+            "range": [
+              15.662,
+              21.621
+            ]
+          },
+          "08->09": {
+            "median": 1.214,
+            "range": [
+              0.932,
+              4.405
+            ]
+          },
+          "09->10": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "10->11": {
+            "median": 1.074,
+            "range": [
+              1.029,
+              2.428
+            ]
+          },
+          "11->12": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "12->13": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "13->14": {
+            "median": 0.511,
+            "range": [
+              0.252,
+              1.313
+            ]
+          },
+          "14->15": {
+            "median": 7.14,
+            "range": [
+              3.631,
+              7.465
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "    16.85s 24.82% 24.82%     16.85s 24.82%  internal/runtime/syscall/linux.Syscall6",
+          "     4.99s  7.35% 32.17%      4.99s  7.35%  crypto/internal/fips140/sha256.blockSHANI",
+          "     4.17s  6.14% 38.32%      4.17s  6.14%  runtime.memclrNoHeapPointers",
+          "     3.31s  4.88% 43.19%      5.55s  8.18%  compress/flate.(*deflateFast).encode",
+          "     3.18s  4.68% 47.88%      4.08s  6.01%  compress/flate.(*decompressor).huffSym",
+          "     2.67s  3.93% 51.81%      4.10s  6.04%  runtime.tryDeferToSpanScan",
+          "     1.51s  2.22% 54.04%      7.66s 11.28%  compress/flate.(*huffmanBitWriter).writeTokens",
+          "     1.39s  2.05% 56.08%      4.66s  6.87%  compress/flate.(*huffmanBitWriter).writeCode"
+        ],
+        "cumulative_rows": [
+          "     0.01s 0.015% 0.015%     48.03s 70.76%  github.com/joshyorko/rcc/anywork.member",
+          "     0.01s 0.015% 0.029%     47.93s 70.61%  github.com/joshyorko/rcc/anywork.process",
+          "     0.02s 0.029% 0.059%     36.43s 53.67%  io.Copy (partial-inline)",
+          "     0.05s 0.074%  0.13%     36.41s 53.64%  io.copyBuffer",
+          "         0     0%  0.13%     25.93s 38.20%  os.(*File).WriteTo",
+          "         0     0%  0.13%     25.92s 38.19%  os.genericWriteTo",
+          "     0.02s 0.029%  0.16%     25.37s 37.37%  github.com/joshyorko/rcc/htfs.ScheduleLifters.func1.LiftFile.1",
+          "         0     0%  0.16%     17.70s 26.08%  compress/gzip.(*Writer).Write"
+        ]
+      },
+      "warm": {
+        "unprofiled_seconds": {
+          "median": 0.4971,
+          "range": [
+            0.2474,
+            0.6231
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "01->02": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "02->14": {
+            "median": 0.06,
+            "range": [
+              0.057,
+              0.061
+            ]
+          },
+          "14->15": {
+            "median": 0.398,
+            "range": [
+              0.145,
+              0.519
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "     0.24s 17.91% 17.91%      0.24s 17.91%  internal/runtime/syscall/linux.Syscall6",
+          "     0.10s  7.46% 25.37%      0.34s 25.37%  encoding/json.(*Decoder).readValue",
+          "     0.08s  5.97% 31.34%      0.10s  7.46%  compress/flate.(*decompressor).huffSym",
+          "     0.07s  5.22% 36.57%      0.08s  5.97%  encoding/json.(*decodeState).scanWhile",
+          "     0.06s  4.48% 41.04%      0.06s  4.48%  internal/filepathlite.(*lazybuf).append (inline)",
+          "     0.05s  3.73% 44.78%      0.05s  3.73%  runtime.memmove",
+          "     0.04s  2.99% 47.76%      0.16s 11.94%  compress/flate.(*decompressor).huffmanBlock",
+          "     0.04s  2.99% 50.75%      0.04s  2.99%  runtime.tryDeferToSpanScan"
+        ],
+        "cumulative_rows": [
+          "         0     0%     0%      0.91s 67.91%  github.com/joshyorko/rcc/cmd.Execute",
+          "         0     0%     0%      0.91s 67.91%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+          "         0     0%     0%      0.91s 67.91%  github.com/joshyorko/rcc/cmd.init.func54",
+          "         0     0%     0%      0.91s 67.91%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+          "         0     0%     0%      0.91s 67.91%  github.com/spf13/cobra.(*Command).Execute (inline)",
+          "         0     0%     0%      0.91s 67.91%  github.com/spf13/cobra.(*Command).ExecuteC",
+          "         0     0%     0%      0.91s 67.91%  github.com/spf13/cobra.(*Command).execute",
+          "         0     0%     0%      0.91s 67.91%  main.main"
+        ]
+      }
+    },
+    "rattler": {
+      "cold": {
+        "unprofiled_seconds": {
+          "median": 17.2542,
+          "range": [
+            12.0649,
+            18.3607
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.009,
+            "range": [
+              0.008,
+              0.01
+            ]
+          },
+          "01->02": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.001
+            ]
+          },
+          "02->03": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.001
+            ]
+          },
+          "03->04": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "04->05": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "05->06": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "06->08": {
+            "median": 11.284,
+            "range": [
+              6.783,
+              11.647
+            ]
+          },
+          "08->09": {
+            "median": 0.931,
+            "range": [
+              0.906,
+              1.072
+            ]
+          },
+          "09->10": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "10->11": {
+            "median": 0.512,
+            "range": [
+              0.502,
+              0.524
+            ]
+          },
+          "11->12": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "12->13": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "13->14": {
+            "median": 0.389,
+            "range": [
+              0.224,
+              1.178
+            ]
+          },
+          "14->15": {
+            "median": 3.384,
+            "range": [
+              2.002,
+              4.749
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "    17.92s 26.26% 26.26%     17.92s 26.26%  internal/runtime/syscall/linux.Syscall6",
+          "     4.57s  6.70% 32.96%      4.57s  6.70%  crypto/internal/fips140/sha256.blockSHANI",
+          "     4.37s  6.40% 39.36%      4.37s  6.40%  runtime.memclrNoHeapPointers",
+          "     3.24s  4.75% 44.11%      5.43s  7.96%  compress/flate.(*deflateFast).encode",
+          "     2.95s  4.32% 48.43%         4s  5.86%  compress/flate.(*decompressor).huffSym",
+          "     2.68s  3.93% 52.36%      3.78s  5.54%  runtime.tryDeferToSpanScan",
+          "     1.37s  2.01% 54.37%      7.10s 10.40%  compress/flate.(*huffmanBitWriter).writeTokens",
+          "     1.34s  1.96% 56.33%      1.34s  1.96%  runtime.memmove"
+        ],
+        "cumulative_rows": [
+          "     0.01s 0.015% 0.015%     48.61s 71.23%  github.com/joshyorko/rcc/anywork.member",
+          "     0.01s 0.015% 0.029%     48.47s 71.03%  github.com/joshyorko/rcc/anywork.process",
+          "         0     0% 0.029%     35.96s 52.70%  io.Copy (partial-inline)",
+          "     0.05s 0.073%   0.1%     35.96s 52.70%  io.copyBuffer",
+          "         0     0%   0.1%     25.47s 37.32%  github.com/joshyorko/rcc/htfs.ScheduleLifters.func1.LiftFile.1",
+          "         0     0%   0.1%     25.04s 36.69%  os.(*File).WriteTo",
+          "     0.01s 0.015%  0.12%     25.03s 36.68%  os.genericWriteTo",
+          "    17.92s 26.26% 26.38%     17.92s 26.26%  internal/runtime/syscall/linux.Syscall6"
+        ]
+      },
+      "warm": {
+        "unprofiled_seconds": {
+          "median": 0.4085,
+          "range": [
+            0.2536,
+            2.9233
+          ]
+        },
+        "stage_intervals_seconds": {
+          "00->01": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.0
+            ]
+          },
+          "01->02": {
+            "median": 0.0,
+            "range": [
+              0.0,
+              0.001
+            ]
+          },
+          "02->14": {
+            "median": 0.058,
+            "range": [
+              0.057,
+              0.064
+            ]
+          },
+          "14->15": {
+            "median": 0.232,
+            "range": [
+              0.145,
+              1.818
+            ]
+          }
+        },
+        "sample_types": [
+          "samples",
+          "cpu"
+        ],
+        "missing_sample_types": [
+          "inuse_space",
+          "alloc_space"
+        ],
+        "flat_rows": [
+          "     0.19s 14.73% 14.73%      0.19s 14.73%  internal/runtime/syscall/linux.Syscall6",
+          "     0.09s  6.98% 21.71%      0.34s 26.36%  encoding/json.(*Decoder).readValue",
+          "     0.09s  6.98% 28.68%      0.09s  6.98%  runtime.memmove",
+          "     0.06s  4.65% 33.33%      0.16s 12.40%  compress/flate.(*decompressor).huffmanBlock",
+          "     0.05s  3.88% 37.21%      0.05s  3.88%  encoding/json.stateBeginString",
+          "     0.04s  3.10% 40.31%      0.04s  3.10%  compress/flate.(*decompressor).huffSym",
+          "     0.04s  3.10% 43.41%      0.22s 17.05%  encoding/json.(*decodeState).object",
+          "     0.04s  3.10% 46.51%      0.07s  5.43%  encoding/json.appendIndent"
+        ],
+        "cumulative_rows": [
+          "         0     0%     0%      0.81s 62.79%  github.com/joshyorko/rcc/cmd.Execute",
+          "         0     0%     0%      0.81s 62.79%  github.com/joshyorko/rcc/cmd.init.func54",
+          "         0     0%     0%      0.81s 62.79%  github.com/spf13/cobra.(*Command).Execute (inline)",
+          "         0     0%     0%      0.81s 62.79%  github.com/spf13/cobra.(*Command).ExecuteC",
+          "         0     0%     0%      0.81s 62.79%  github.com/spf13/cobra.(*Command).execute",
+          "         0     0%     0%      0.81s 62.79%  main.main",
+          "         0     0%     0%      0.81s 62.79%  runtime.main",
+          "         0     0%     0%      0.80s 62.02%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment"
+        ]
+      }
+    }
+  },
+  "cpu_profile_archive": {
+    "file": "package-providers-linux-amd64-cpu.zip",
+    "sha256": "db455e66c058cd211ae4321d68274b4b10f205cb2f8ccf7ecafc1545a6a4bcf8",
+    "contents": "30 raw profiles and their flat, cumulative and raw pprof analyses; full-run inventory and timing receipt"
+  }
+}

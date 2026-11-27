@@ -1,6 +1,7 @@
 package conda
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -10,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/cloud"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/journal"
@@ -37,7 +39,7 @@ const (
 type (
 	pipTool func(string, string, string, fmt.Stringer, io.Writer) (bool, bool, bool, string)
 
-	SkipLayer uint8
+	SkipLayer int
 	Recorder  interface {
 		Record([]byte) error
 	}
@@ -139,7 +141,7 @@ func newLive(yaml, condaYaml, requirementsText, key string, force, freshInstall 
 	if finalEnv.IsUvNative() {
 		return newLiveUvNative(yaml, requirementsText, key, force, freshInstall, skip, finalEnv, recorder)
 	}
-	if !MustMicromamba() {
+	if finalEnv.ProviderPlan == nil && !MustMicromamba() {
 		return false, fmt.Errorf("Could not get micromamba installed.")
 	}
 	targetFolder := common.StageFolder
@@ -246,6 +248,9 @@ func newLiveUvNativeInternal(yaml, requirementsText, key string, force, freshIns
 	err := Activate(planWriter, targetFolder)
 	if err != nil {
 		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
@@ -297,6 +302,9 @@ func assertStageFolder(location string) {
 }
 
 func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, force bool) (bool, bool) {
+	return micromambaLayerWithBinary(fingerprint, condaYaml, targetFolder, stopwatch, planWriter, force, BinMicromamba(), strings.TrimPrefix(blobs.MicromambaVersion(), "v"))
+}
+func micromambaLayerWithBinary(fingerprint, condaYaml, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, force bool, binary, version string) (bool, bool) {
 	assertStageFolder(targetFolder)
 	common.TimelineBegin("Layer: micromamba [%s]", fingerprint)
 	defer common.TimelineEnd()
@@ -306,12 +314,28 @@ func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.
 	if force {
 		ttl = "0"
 	}
-	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", MicromambaVersion(), fingerprint)
-	mambaCommand := common.NewCommander(BinMicromamba(), "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
+	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", version, fingerprint)
+	mambaCommand := common.NewCommander(binary, "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
 	mambaCommand.Option("--channel-alias", settings.Global.CondaURL())
 	mambaCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
-	mambaCommand.ConditionalFlag(!settings.Global.HasMicroMambaRc(), "--no-rc")
-	mambaCommand.ConditionalFlag(settings.Global.HasMicroMambaRc(), "--rc-file", common.MicroMambaRcFile())
+	if settings.Global.HasMicroMambaRc() {
+		// 2.10.0 filters rc files by basename even for an explicit --rc-file.
+		// Keep the installed profile path compatible with older RCC versions.
+		body, err := os.ReadFile(common.MicroMambaRcFile())
+		if err != nil {
+			_, _ = fmt.Fprintln(planWriter, err)
+			return false, true
+		}
+		path, err := providerInputNamed("rcc-mambarc-*.yaml", body)
+		if err != nil {
+			_, _ = fmt.Fprintln(planWriter, err)
+			return false, true
+		}
+		defer func() { _ = os.Remove(path) }()
+		mambaCommand.Option("--rc-file", path)
+	} else {
+		mambaCommand.ConditionalFlag(true, "--no-rc")
+	}
 	observer := make(InstallObserver)
 	common.Debug("===  micromamba create phase ===")
 	fmt.Fprintf(planWriter, "\n---  micromamba plan @%ss  ---\n\n", stopwatch)
@@ -475,6 +499,9 @@ func postInstallLayer(fingerprint string, postInstall []string, targetFolder str
 }
 
 func holotreeLayers(condaYaml, requirementsText string, finalEnv *Environment, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, theplan *PlanWriter, force bool, skip SkipLayer, recorder Recorder) (bool, bool, bool, string) {
+	if finalEnv.ProviderPlan != nil {
+		return providerPlanLayers(finalEnv, targetFolder, planWriter, skip, recorder, force)
+	}
 	assertStageFolder(targetFolder)
 	common.TimelineBegin("Holotree layers at %q", targetFolder)
 	defer common.TimelineEnd()
@@ -564,16 +591,65 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	pretty.Progress(10, "Activate environment started phase.")
 	common.Debug("===  activate phase ===")
 	fmt.Fprintf(planWriter, "\n---  activation plan @%ss  ---\n\n", stopwatch)
-	err := Activate(planWriter, targetFolder)
+	var err error
+	var ownerBinary string
+	if finalEnv.ProviderPlan != nil {
+		owner := finalEnv.ProviderPlan.Layers[0]
+		ownerBinary, err = providerExecutable(owner)
+		if err != nil {
+			common.Log("Provider activation: %v", err)
+			return false, true
+		}
+		if owner.Provider == "rattler" {
+			var out string
+			out, _, err = LiveCapture(targetFolder, ownerBinary, "activate", targetFolder)
+			if err == nil {
+				var env map[string]string
+				err = json.Unmarshal([]byte(out), &env)
+				if err == nil {
+					err = os.WriteFile(filepath.Join(targetFolder, activateFile), []byte(out), 0644)
+				}
+			}
+		} else {
+			err = activateWithMicromamba(planWriter, targetFolder, ownerBinary)
+		}
+	} else {
+		err = Activate(planWriter, targetFolder)
+	}
 	if err != nil {
 		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	for _, line := range LoadActivationEnvironment(targetFolder) {
 		fmt.Fprintf(planWriter, "%s\n", line)
 	}
-	err = goldenMaster(targetFolder, pipUsed)
+	if finalEnv.ProviderPlan != nil && finalEnv.ProviderPlan.Layers[0].Provider == "uv-runtime" {
+		owner := finalEnv.ProviderPlan.Layers[0]
+		uv, resolveErr := providerExecutable(owner)
+		if resolveErr != nil {
+			return false, true
+		}
+		interpreter, resolveErr := stagedTargetPython(targetFolder)
+		if resolveErr != nil {
+			return false, true
+		}
+		err = goldenMasterUvNative(targetFolder, uv, interpreter)
+	} else if finalEnv.ProviderPlan != nil {
+		if finalEnv.ProviderPlan.Layers[0].Provider == "rattler" {
+			err = goldenMasterWithCondaCommand(targetFolder, pipUsed, ownerBinary, "list", targetFolder)
+		} else {
+			err = goldenMasterWithMicromamba(targetFolder, pipUsed, ownerBinary)
+		}
+	} else {
+		err = goldenMaster(targetFolder, pipUsed)
+	}
 	if err != nil {
 		common.Log("%sGolden EE failure: %v%s", pretty.Yellow, err, pretty.Reset)
+		if finalEnv.ProviderPlan != nil {
+			return false, true
+		}
 	}
 	fmt.Fprintf(planWriter, "\n---  pip check plan @%ss  ---\n\n", stopwatch)
 	if common.StrictFlag && pipUsed {

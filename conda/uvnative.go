@@ -290,16 +290,17 @@ func copyPrefixFile(source, target string) error {
 }
 
 func uvNativeLayer(fingerprint, targetFolder, pythonVersion, uvBinary string, stopwatch fmt.Stringer, planWriter io.Writer) (bool, bool) {
+	return uvNativeLayerFrom(fingerprint, targetFolder, pythonVersion, uvBinary, common.UvPythonCache(), nil, stopwatch, planWriter)
+}
+
+func uvNativeLayerFrom(fingerprint, targetFolder, pythonVersion, uvBinary, pythonCache string, overrides []string, stopwatch fmt.Stringer, planWriter io.Writer) (bool, bool) {
 	assertStageFolder(targetFolder)
 	common.TimelineBegin("Layer: uv-native [%s]", fingerprint)
 	defer common.TimelineEnd()
 
 	pretty.Progress(7, "Running uv-native phase. [layer: %s]", fingerprint)
 
-	env := uvCommandEnvironment(
-		CondaEnvironment(),
-		fmt.Sprintf("UV_PYTHON_INSTALL_DIR=%s", common.UvPythonCache()),
-	)
+	env := uvCommandEnvironment(CondaEnvironment(), append(overrides, "UV_PYTHON_INSTALL_DIR="+pythonCache)...)
 
 	common.Debug("Setting up new uv-native environment at %v with python %v", targetFolder, pythonVersion)
 	fmt.Fprintf(planWriter, "\n---  uv-native plan @%ss  ---\n\n", stopwatch)
@@ -319,7 +320,7 @@ func uvNativeLayer(fingerprint, targetFolder, pythonVersion, uvBinary string, st
 	// Step 2: Copy the entire Python installation into targetFolder
 	// This mirrors micromamba's --always-copy approach
 	common.Debug("===  copy python prefix phase ===")
-	err = copyPythonPrefix(common.UvPythonCache(), pythonVersion, targetFolder, planWriter)
+	err = copyPythonPrefix(pythonCache, pythonVersion, targetFolder, planWriter)
 	if err != nil {
 		cloud.InternalBackgroundMetric(common.ControllerIdentity(), "rcc.env.fatal.uv.copy", "copy_failed")
 		common.Timeline("python prefix copy fail.")

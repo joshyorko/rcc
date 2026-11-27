@@ -42,6 +42,25 @@ assert.equal(effective.prConcurrentLimit, 1);
 assert.equal(effective['github-actions'].enabled, true);
 assert.equal(effective.pip_requirements.enabled, true);
 const custom = local.customManagers[0];
+const providerManagers = local.customManagers.slice(1);
+assert.equal(providerManagers.length, 2);
+for (const [manager, file, depName] of [
+  [providerManagers[0], 'assets/micromamba_version.txt', 'mamba-org/micromamba-releases'],
+  [providerManagers[1], 'scripts/prepare_provider_defaults.py', 'astral-sh/uv'],
+]) {
+  assert.equal(manager.datasourceTemplate, 'github-releases');
+  assert.equal(manager.depNameTemplate, depName);
+  assert(manager.managerFilePatterns.some((p) => new RegExp(p.slice(1, -1)).test(file)));
+  const { deps } = extractPackageFile(await readFile(file, 'utf8'), file, manager);
+  assert.equal(deps.length, 1, file);
+  assert.equal(deps[0].depName, depName);
+  assert.match(deps[0].currentValue, /^v?\d+\.\d+\.\d+$/);
+}
+const providerGroup = local.packageRules.find((rule) => rule.groupName === 'Native package provider runtimes');
+assert.deepEqual(providerGroup.matchPackageNames, ['mamba-org/micromamba-releases', 'astral-sh/uv']);
+assert.equal(providerGroup.dependencyDashboardApproval, true);
+assert.equal(providerGroup.automerge, false);
+assert.equal(providerGroup.platformAutomerge, false);
 const files = new Map([
   ['go.mod', 1], ['.dagger/main.go', 1], ['.github/workflows/rcc.yaml', 3],
   ['.github/workflows/publish-release.yml', 1], ['.github/workflows/export-release-evidence.yml', 1],

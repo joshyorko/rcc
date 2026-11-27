@@ -40,6 +40,21 @@ func (it *internalPackage) AsEnvironment(devDependencies bool) *Environment {
 	return result
 }
 
+type providerPlanYaml struct {
+	SchemaVersion int                 `yaml:"schema-version"`
+	Layers        []ProviderLayerYaml `yaml:"layers"`
+}
+
+type ProviderLayerYaml struct {
+	Policy        string         `yaml:"resolution-policy,omitempty"`
+	ToolLock      *UVToolLock    `yaml:"tool-lock,omitempty"`
+	NativeToolPin *NativeToolPin `yaml:"native-tool-pin,omitempty"`
+	Provider      string         `yaml:"provider"`
+	Version       string         `yaml:"version"`
+	Channels      []string       `yaml:"channels,omitempty"`
+	Packages      []string       `yaml:"packages,omitempty"`
+}
+
 func fixPipDependency(dependency *Dependency) *Dependency {
 	if dependency != nil {
 		if dependency.Qualifier == "=" {
@@ -81,6 +96,9 @@ func (it *internalPackage) condaDependencies(useDependencies *packageDependencie
 }
 
 func packageYamlFrom(content []byte, devDependencies bool) (*Environment, error) {
+	if env, handled, err := explicitProviderEnvironment(content, true, devDependencies); handled {
+		return env, err
+	}
 	result := new(internalPackage)
 	err := yaml.Unmarshal(content, result)
 	if err != nil {

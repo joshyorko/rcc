@@ -30,7 +30,23 @@ permissions:
   contents: read
 
 jobs:
+  signed-provider-artifacts:
+    needs: build
+    uses: ./.github/workflows/provider-artifacts.yml
+    with:
+      candidate: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+  package-profile:
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- profile-package-providers -->')
+    needs: build
+    uses: ./.github/workflows/provider-profile.yml
+    with:
+      candidate: ${{ github.event.pull_request.head.sha }}
+  provider-defaults:
+    uses: ./.github/workflows/rattler-helper.yml
+    with:
+      candidate: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
   build:
+    needs: provider-defaults
     name: Build RCC
     runs-on: ubuntu-latest
     # Build the exact commit bytes consumed by native runtime jobs and releases.
@@ -44,6 +60,12 @@ jobs:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
         with:
           ref: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
+      - name: Assemble the five verified native provider payloads
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          pattern: provider-defaults-*-${{ env.RCC_CANDIDATE_SHA }}
+          path: blobs
+          merge-multiple: true
       - name: Assert exact candidate checkout
         shell: bash
         run: |
@@ -311,6 +333,7 @@ jobs:
       - build
       - release-candidate
       - robot
+      - signed-provider-artifacts
     env:
       RCC_CANDIDATE_SHA: ${{ inputs.source_sha }}
       RCC_RELEASE_VERSION: ${{ inputs.expected_version }}
@@ -420,6 +443,16 @@ jobs:
             --run-id "$GITHUB_RUN_ID" \
             --manifest-sha "$RCC_ASSET_MANIFEST_SHA256" \
             --go "$(command -v go)"
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          repository: actions/upload-artifact
+          ref: ea165f8d65b6e75b540449e92b4886f43607fa02
+          path: tmp/official-review-uploader
+          persist-credentials: false
+      - uses: ./.github/actions/upload-review-parts
+        with:
+          root: rcc-release-review-assets
+          prefix: ${{ inputs.expected_version }}-${{ inputs.source_sha }}-review-
       - name: Upload review-only release asset
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -648,6 +681,9 @@ jobs:
       - name: Run UV Python prefix symlink containment tests
         shell: bash
         run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
+      - name: Verify native file identity on equal-content replacement
+        shell: bash
+        run: go test -count=1 ./conda -run '^TestProviderOwnership$/^replacement$' -v
       - name: Verify authenticated metadata and retained rollback state against exact binary
         shell: bash
         run: |
@@ -840,3 +876,15 @@ jobs:
           path: ./tmp/native-binary-review/
           if-no-files-found: error
           compression-level: 0
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        if: always() && steps.native_payload_size.outcome == 'success' && hashFiles('tmp/native-binary-review/multipart-review.json') != ''
+        with:
+          repository: actions/upload-artifact
+          ref: ea165f8d65b6e75b540449e92b4886f43607fa02
+          path: tmp/official-review-uploader
+          persist-credentials: false
+      - uses: ./.github/actions/upload-review-parts
+        if: ${{ !cancelled() && steps.native_payload_size.outcome == 'success' && hashFiles('tmp/native-binary-review/multipart-review.json') != '' }}
+        with:
+          root: tmp
+          prefix: ${{ matrix.platform }}-

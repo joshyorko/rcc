@@ -22,6 +22,9 @@ func TestNoProxyMatchSupportsHostDomainAndPort(t *testing.T) {
 		{"http://cache.example:8080", "cache.example", true},
 		{"http://worker.cache.example:8080", ".cache.example", true},
 		{"http://cache.example:8080", "cache.example:443", false},
+		{"https://cache.example", "cache.example:443", true},
+		{"https://cache.example:8443", "cache.example:443", false},
+		{"http://cache.example", "cache.example:443", false},
 		{"http://cache.example:8080", "*", true},
 	}
 	for _, test := range tests {

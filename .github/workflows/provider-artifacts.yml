@@ -1,0 +1,67 @@
+name: Signed provider artifacts
+on:
+  workflow_call:
+    inputs:
+      candidate:
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  qualify:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            binary: rcc-linux64
+          - runner: ubuntu-24.04-arm
+            binary: rcc-linuxarm64
+          - runner: macos-latest
+            binary: rcc-macosarm64
+          - runner: macos-15-intel
+            binary: rcc-macos64
+          - runner: windows-latest
+            binary: rcc-windows64.exe
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          ref: ${{ inputs.candidate }}
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: RCC-Binaries
+          path: candidate
+      - name: Qualify assembled binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x 'candidate/${{ matrix.binary }}'
+          python -u helper/tests/native_mixed.py --artifact 'candidate/${{ matrix.binary }}' | tee provider-artifact.jsonl
+      - name: Measure matched CLI startup
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ASSET: ${{ matrix.binary }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v18.19.12" > release.json
+          gh release download v18.19.12 --repo "$GITHUB_REPOSITORY" --pattern "$ASSET" --dir baseline
+          python - <<'PYTHON'
+          import hashlib, json, os
+          from pathlib import Path
+          name = os.environ["ASSET"]
+          expected = next(a["digest"] for a in json.loads(Path("release.json").read_text())["assets"] if a["name"] == name)
+          if expected != "sha256:" + hashlib.sha256((Path("baseline") / name).read_bytes()).hexdigest():
+              raise SystemExit("released RCC SHA-256 mismatch")
+          PYTHON
+          chmod +x "baseline/$ASSET"
+          python scripts/profile_cli_startup.py "baseline/$ASSET" "candidate/$ASSET" > cli-startup.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: signed-provider-artifact-${{ matrix.binary }}-${{ inputs.candidate }}
+          path: |
+            provider-artifact.jsonl
+            cli-startup.json
+          if-no-files-found: warn

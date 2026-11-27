@@ -218,10 +218,24 @@ func (it *internalClient) Delete(request *Request) *Response {
 }
 
 func Download(url, filename string) error {
+	return DownloadWithTimeout(url, filename, 0)
+}
+
+type DownloadStatusError struct {
+	StatusCode int
+	Status     string
+}
+
+func (e *DownloadStatusError) Error() string {
+	return fmt.Sprintf("download failed: %s", e.Status)
+}
+
+// DownloadWithTimeout applies the deadline through the last response-body read.
+func DownloadWithTimeout(url, filename string, timeout time.Duration) error {
 	common.Timeline("start %s download", filename)
 	defer common.Timeline("done %s download", filename)
 
-	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport()}
+	client := &http.Client{Transport: settings.Global.ConfiguredHttpTransport(), Timeout: timeout}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -234,7 +248,7 @@ func Download(url, filename string) error {
 	defer response.Body.Close()
 
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
-		return fmt.Errorf("Downloading %q failed, reason: %q!", url, response.Status)
+		return &DownloadStatusError{StatusCode: response.StatusCode, Status: response.Status}
 	}
 
 	_, err = pathlib.EnsureParentDirectory(filename)

@@ -2,6 +2,7 @@ package blobs
 
 import (
 	"embed"
+	"io/fs"
 	"strings"
 )
 
@@ -44,3 +45,5 @@ func MicromambaVersion() string {
 	}
 	return strings.TrimSpace(string(body))
 }
+
+func OpenMicromamba() (fs.File, error) { return micromamba.Open(micromambaName) }

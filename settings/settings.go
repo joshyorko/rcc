@@ -46,6 +46,7 @@ func loadEnvOverrides() *Settings {
 		"RCC_ENDPOINT_PYPI":          "pypi",
 		"RCC_ENDPOINT_PYPI_TRUSTED":  "pypi-trusted",
 		"RCC_ENDPOINT_CONDA":         "conda",
+		"RCC_ENDPOINT_UV_METADATA":   "uv-metadata",
 		"RCC_ENDPOINT_UV_RELEASES":   "uv-releases",
 	}
 
@@ -238,6 +239,13 @@ func (it gateway) CondaURL() string {
 	return it.Endpoint("conda")
 }
 
+func (it gateway) UvMetadataURL() string {
+	if u := it.Endpoint("uv-metadata"); u != "" {
+		return u
+	}
+	return "https://api.github.com/repos/astral-sh/uv/releases"
+}
+
 func (it gateway) UvReleasesURL() string {
 	endpoint := it.Endpoint("uv-releases")
 	if len(endpoint) == 0 {
@@ -403,6 +411,10 @@ func withNoProxy(proxy func(*http.Request) (*url.URL, error), noProxy string) fu
 
 func noProxyMatch(target *url.URL, raw string) bool {
 	host := strings.ToLower(target.Hostname())
+	targetPort := target.Port()
+	if targetPort == "" && strings.EqualFold(target.Scheme, "https") {
+		targetPort = "443"
+	}
 	ip := net.ParseIP(host)
 	for _, rawToken := range strings.Split(raw, ",") {
 		token := strings.TrimSpace(strings.ToLower(rawToken))
@@ -419,7 +431,7 @@ func noProxyMatch(target *url.URL, raw string) bool {
 			parts := strings.SplitN(token, ":", 2)
 			token, port = parts[0], parts[1]
 		}
-		if port != "" && port != target.Port() {
+		if port != "" && port != targetPort {
 			continue
 		}
 		token = strings.Trim(token, "[]")
@@ -439,4 +451,15 @@ func noProxyMatch(target *url.URL, raw string) bool {
 		}
 	}
 	return false
+}
+
+// ProfileProxyFor selects the operator-configured route without inheriting ambient proxies.
+func ProfileProxyFor(target *url.URL) string {
+	if noProxyMatch(target, Global.NoProxy()) {
+		return ""
+	}
+	if proxy := Global.HttpsProxy(); proxy != "" {
+		return proxy
+	}
+	return Global.HttpProxy()
 }

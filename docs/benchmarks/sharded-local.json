@@ -1,0 +1,61 @@
+{
+  "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+  "shard_sha256": "f63293c31dd3df923e57cd762faff9977eca89662762337024028e64c17b46d6",
+  "platform": "linux-64",
+  "cases": [
+    {
+      "mode": "default",
+      "exit": 0,
+      "requests": [
+        "HEAD /linux-64/repodata.json.zst",
+        "HEAD /linux-64/repodata_shards.msgpack.zst",
+        "HEAD /noarch/repodata.json.zst",
+        "HEAD /noarch/repodata_shards.msgpack.zst",
+        "GET /linux-64/repodata_shards.msgpack.zst",
+        "GET /noarch/repodata_shards.msgpack.zst",
+        "GET /noarch/shards/f63293c31dd3df923e57cd762faff9977eca89662762337024028e64c17b46d6.msgpack.zst",
+        "GET /noarch/rcc-shard-fixture-1.0-0.tar.bz2"
+      ]
+    },
+    {
+      "mode": "custom-rc-default",
+      "exit": 0,
+      "requests": [
+        "HEAD /linux-64/repodata.json.zst",
+        "HEAD /linux-64/repodata_shards.msgpack.zst",
+        "HEAD /noarch/repodata.json.zst",
+        "HEAD /noarch/repodata_shards.msgpack.zst",
+        "GET /linux-64/repodata_shards.msgpack.zst",
+        "GET /noarch/repodata_shards.msgpack.zst",
+        "GET /noarch/shards/f63293c31dd3df923e57cd762faff9977eca89662762337024028e64c17b46d6.msgpack.zst",
+        "GET /noarch/rcc-shard-fixture-1.0-0.tar.bz2"
+      ]
+    },
+    {
+      "mode": "disabled",
+      "exit": 0,
+      "requests": [
+        "HEAD /linux-64/repodata.json.zst",
+        "HEAD /linux-64/repodata_shards.msgpack.zst",
+        "HEAD /noarch/repodata.json.zst",
+        "HEAD /noarch/repodata_shards.msgpack.zst",
+        "GET /linux-64/repodata.json",
+        "GET /noarch/repodata.json",
+        "GET /noarch/rcc-shard-fixture-1.0-0.tar.bz2"
+      ]
+    },
+    {
+      "mode": "flat-fallback",
+      "exit": 0,
+      "requests": [
+        "HEAD /flat/linux-64/repodata.json.zst",
+        "HEAD /flat/linux-64/repodata_shards.msgpack.zst",
+        "HEAD /flat/noarch/repodata.json.zst",
+        "HEAD /flat/noarch/repodata_shards.msgpack.zst",
+        "GET /flat/linux-64/repodata.json",
+        "GET /flat/noarch/repodata.json",
+        "GET /flat/noarch/rcc-shard-fixture-1.0-0.tar.bz2"
+      ]
+    }
+  ]
+}

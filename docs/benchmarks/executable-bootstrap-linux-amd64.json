@@ -1,0 +1,215 @@
+{
+  "scope": "local-filesystem executable decode/copy, inline SHA-256, and output fsync microbenchmark; no network or host-cache claims",
+  "platform": "Linux-7.3.1-x86_64-with-glibc2.44",
+  "machine": "x86_64",
+  "filesystem": "btrfs",
+  "runs": 5,
+  "expected_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+  "binary_sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd",
+  "embedded_gzip_sha256": "13f4284f1db7bf5621610dc2571ca4d4cb9d5c8c4b05efeb480541e3fab00f04",
+  "raw_bytes": 19028608,
+  "expanded_bytes": 19028608,
+  "peak_child_rss": "omitted: GNU /usr/bin/time cannot reliably wrap this in-process pipeline without changing the timed workload",
+  "variants": [
+    {
+      "variant": "raw",
+      "measurements": [
+        {
+          "run": 1,
+          "archive_bytes": 19028608,
+          "decode_copy_hash_fsync_seconds": 0.07139866000215989,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 2,
+          "archive_bytes": 19028608,
+          "decode_copy_hash_fsync_seconds": 0.029778058000374585,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 3,
+          "archive_bytes": 19028608,
+          "decode_copy_hash_fsync_seconds": 0.07791303900012281,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 4,
+          "archive_bytes": 19028608,
+          "decode_copy_hash_fsync_seconds": 0.21272165999835124,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 5,
+          "archive_bytes": 19028608,
+          "decode_copy_hash_fsync_seconds": 0.23360502700234065,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        }
+      ]
+    },
+    {
+      "variant": "embedded_gzip",
+      "measurements": [
+        {
+          "run": 1,
+          "archive_bytes": 7763628,
+          "decode_copy_hash_fsync_seconds": 0.4420493289944716,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 2,
+          "archive_bytes": 7763628,
+          "decode_copy_hash_fsync_seconds": 0.576306173003104,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 3,
+          "archive_bytes": 7763628,
+          "decode_copy_hash_fsync_seconds": 0.280918215001293,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 4,
+          "archive_bytes": 7763628,
+          "decode_copy_hash_fsync_seconds": 0.17953991499962285,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 5,
+          "archive_bytes": 7763628,
+          "decode_copy_hash_fsync_seconds": 0.1427757319979719,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        }
+      ]
+    },
+    {
+      "variant": "gzip_opt9",
+      "measurements": [
+        {
+          "run": 1,
+          "archive_bytes": 7771971,
+          "decode_copy_hash_fsync_seconds": 0.1600859389945981,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 2,
+          "archive_bytes": 7771971,
+          "decode_copy_hash_fsync_seconds": 0.16063686499546748,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 3,
+          "archive_bytes": 7771971,
+          "decode_copy_hash_fsync_seconds": 0.20064440200076206,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 4,
+          "archive_bytes": 7771971,
+          "decode_copy_hash_fsync_seconds": 0.22112874199956423,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 5,
+          "archive_bytes": 7771971,
+          "decode_copy_hash_fsync_seconds": 0.1975247060036054,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        }
+      ]
+    },
+    {
+      "variant": "zstd_19",
+      "measurements": [
+        {
+          "run": 1,
+          "archive_bytes": 6294019,
+          "decode_copy_hash_fsync_seconds": 0.1154877619992476,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 2,
+          "archive_bytes": 6294019,
+          "decode_copy_hash_fsync_seconds": 0.047612884001864586,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 3,
+          "archive_bytes": 6294019,
+          "decode_copy_hash_fsync_seconds": 0.046328866003022995,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 4,
+          "archive_bytes": 6294019,
+          "decode_copy_hash_fsync_seconds": 0.0552608100042562,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 5,
+          "archive_bytes": 6294019,
+          "decode_copy_hash_fsync_seconds": 0.05495793199952459,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        }
+      ]
+    },
+    {
+      "variant": "lz4_hc",
+      "measurements": [
+        {
+          "run": 1,
+          "archive_bytes": 8886799,
+          "decode_copy_hash_fsync_seconds": 0.27970643700246,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 2,
+          "archive_bytes": 8886799,
+          "decode_copy_hash_fsync_seconds": 0.17492761500034248,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 3,
+          "archive_bytes": 8886799,
+          "decode_copy_hash_fsync_seconds": 0.27916250599810155,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 4,
+          "archive_bytes": 8886799,
+          "decode_copy_hash_fsync_seconds": 0.03394682599900989,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        },
+        {
+          "run": 5,
+          "archive_bytes": 8886799,
+          "decode_copy_hash_fsync_seconds": 0.031487423002545256,
+          "output_bytes": 19028608,
+          "sha256": "701f39c06f8e6a670a0e186c8479b9e5c0502a2f0cda6cef65d83bdd2875e8bd"
+        }
+      ]
+    }
+  ]
+}

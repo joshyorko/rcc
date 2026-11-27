@@ -310,14 +310,7 @@ func MicromambaVersion() string {
 }
 
 func HasMicroMamba() bool {
-	if !pathlib.IsFile(BinMicromamba()) {
-		return false
-	}
-	version, versionText := AsVersion(MicromambaVersion())
-	goodEnough := version >= blobs.MicromambaVersionLimit
-	common.Debug("%q version is %q -> %v (good enough: %v)", BinMicromamba(), versionText, version, goodEnough)
-	common.Timeline("µmamba version is %q (at %q).", versionText, BinMicromamba())
-	return goodEnough
+	return verifiedExecutable(BinMicromamba(), blobs.MicromambaSHA256, 64<<20)
 }
 
 func LocalChannel() (string, bool) {
