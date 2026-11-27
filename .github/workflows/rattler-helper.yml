@@ -39,7 +39,14 @@ jobs:
           if [[ "$RUNNER_OS" == Windows ]]; then rcc+=.exe; fi
           go build -tags rcc_provider_defaults -ldflags "-s -w" -o "$rcc" ./cmd/rcc
           python helper/tests/native_install.py "helper/$bin" "$rcc"
+          python -u helper/tests/native_mixed.py "helper/$bin" "$rcc" | tee native-mixed.jsonl
           if [[ "$RUNNER_OS" == Linux ]]; then python helper/tests/remote_channel.py "helper/$bin"; fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-mixed-${{ matrix.os }}-${{ inputs.candidate }}
+          path: native-mixed.jsonl
+          if-no-files-found: warn
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: provider-defaults-${{ matrix.os }}-${{ inputs.candidate }}

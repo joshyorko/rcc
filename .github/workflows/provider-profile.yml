@@ -72,5 +72,10 @@ jobs:
         if: always()
         with:
           name: package-provider-profile-linux-${{ matrix.goarch }}
-          path: tmp/profile-${{ matrix.goarch }}/
+          path: |
+            tmp/profile-${{ matrix.goarch }}/
+            !tmp/profile-${{ matrix.goarch }}/**/home/**
+            !tmp/profile-${{ matrix.goarch }}/channel/**
+            tmp/rcc-baseline
+            tmp/rcc-candidate
           if-no-files-found: warn

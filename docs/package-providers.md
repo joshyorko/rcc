@@ -14,7 +14,7 @@ rcc:
       packages: [requests==2.32.5]
 ```
 
-For native or polyglot dependencies, start with micromamba 2.10.0 or Rattler. Subsequent pip or uv layers target the staged interpreter. Pip defaults to 25.0.1 and uv to 0.9.26 in explicit plans. An explicit uv version selects that exact staged executable. RCC checks existing file ownership before recording a PyPI layer. RCC takes cumulative snapshots before subsequent layers and runs post-install last. The artifact builder and v12 reader retain their existing names.
+For native or polyglot dependencies, start with micromamba 2.10.0 or Rattler. Subsequent pip or uv layers target the staged interpreter. Pip defaults to 25.0.1 and uv to 0.9.26 in explicit plans. A UV tool lock selects a verified executable independently of the UV package visible to tasks. RCC checks existing file ownership before recording a PyPI layer. RCC takes cumulative snapshots before subsequent layers and runs post-install last. The artifact builder and v12 reader retain their existing names.
 
 The Rattler helper implements protocol 1. It supports the RCC local channel and HTTPS channels through RCC’s configured alias. Build the Rust helper with the pinned toolchain and Cargo.lock, place it next to the candidate RCC and compile RCC with the linker variable `github.com/joshyorko/rcc/conda.rattlerHelperSHA256` set to that helper's SHA-256. An ordinary build has no digest. Installation verifies a private executable copy before use. The helper requires SHA-256 package records and disables hard links, copy-on-write links and link scripts. Rattler uses its shell activation implementation and installed prefix records. Native candidate CI embeds the locked helper, micromamba 2.10.0 and UV 0.9.26. Release preparation requires all five target payloads.
 
@@ -41,7 +41,7 @@ Lock creation checks the official release tag and SHA-256 metadata over verified
 
 Linux amd64 local-channel builds ran Python 3.12.15 and zlib 1.3.2, imported the test wheel through pip and uv, and executed OpenSSL 3.6.5. A separate consumer home with only RCC acquired and executed an exported artifact under permissive-local trust. The intermediate artifact digest was `sha256:d40a2d17e91e1614ee83ae33a8f79d0dfdc67c7667866ac1ac7c95954f8ed776`. Strict trust rejected the unsigned archive. The run used offline flags without network isolation.
 
-Synthetic HTTPS metadata and archive downloads passed with a trusted CA and rejected an untrusted CA on Linux. Proxy and authenticated-channel support, cross-platform runtime parity and complete signed artifact and performance qualification remain open. See [Actions admission](benchmarks/actions-provider-admission.md) and the [shard traffic receipt](benchmarks/sharded-local.json).
+On Linux, the synthetic HTTPS channel served metadata and archives through a CONNECT proxy with Basic authentication. Missing credentials and an untrusted CA both failed. Cross-platform runtime parity and complete signed artifact and performance qualification remain open. See [Actions admission](benchmarks/actions-provider-admission.md) and the [shard traffic receipt](benchmarks/sharded-local.json).
 
 
 ## Operator-selected native tools

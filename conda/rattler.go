@@ -3,6 +3,7 @@ package conda
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -114,8 +115,10 @@ func providerExecutable(layer ProviderLayer) (string, error) {
 }
 
 type rattlerNetwork struct {
-	HTTPS    bool   `json:"allow_https"`
-	CABundle string `json:"ca_bundle_pem,omitempty"`
+	HTTPS         bool   `json:"allow_https"`
+	CABundle      string `json:"ca_bundle_pem,omitempty"`
+	ProxyURL      string `json:"proxy_url,omitempty"`
+	Authorization string `json:"authorization,omitempty"`
 }
 
 func rattlerChannels(names []string) ([]string, *rattlerNetwork, error) {
@@ -126,7 +129,7 @@ func rattlerChannels(names []string) ([]string, *rattlerNetwork, error) {
 		}
 		return []string{path}, nil, nil
 	}
-	if len(names) == 0 || !settings.Global.VerifySsl() || settings.Global.NoRevocation() || settings.Global.LegacyRenegotiation() || settings.Global.HasMicroMambaRc() || settings.Global.HttpsProxy() != "" || settings.Global.HttpProxy() != "" || settings.Global.NoProxy() != "" {
+	if len(names) == 0 || !settings.Global.VerifySsl() || settings.Global.NoRevocation() || settings.Global.LegacyRenegotiation() || settings.Global.HasMicroMambaRc() {
 		return nil, nil, errors.New("requested Rattler transport policy is unsupported")
 	}
 	policy := &rattlerNetwork{HTTPS: true}
@@ -142,8 +145,23 @@ func rattlerChannels(names []string) ([]string, *rattlerNetwork, error) {
 		alias = settings.Global.CondaLink(".")
 	}
 	endpoint, err := url.Parse(alias)
-	if err != nil || endpoint.Scheme != "https" || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" {
-		return nil, nil, errors.New("rattler needs a credential-free HTTPS channel alias")
+	if err != nil || endpoint.Scheme != "https" || endpoint.Host == "" || endpoint.RawQuery != "" || endpoint.Fragment != "" {
+		return nil, nil, errors.New("rattler requires an HTTPS channel alias")
+	}
+	if user := endpoint.User; user != nil {
+		password, hasPassword := user.Password()
+		if !hasPassword || user.Username() == "" || strings.Contains(user.Username(), ":") {
+			return nil, nil, errors.New("rattler channel authentication requires an explicit HTTP Basic username and password")
+		}
+		policy.Authorization = "Basic " + base64.StdEncoding.EncodeToString([]byte(user.Username()+":"+password))
+		endpoint.User = nil
+	}
+	if proxy := settings.ProfileProxyFor(endpoint); proxy != "" {
+		u, err := url.Parse(proxy)
+		if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Hostname() == "" || (u.Path != "" && u.Path != "/") || u.RawQuery != "" || u.Fragment != "" {
+			return nil, nil, errors.New("unsupported Rattler proxy URL")
+		}
+		policy.ProxyURL = proxy
 	}
 	channels := make([]string, 0, len(names))
 	for _, name := range names {

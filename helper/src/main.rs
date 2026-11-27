@@ -10,12 +10,15 @@ use std::{io::Read, path::PathBuf, str::FromStr};
 use url::Url;
 
 // Enforce channel boundaries on metadata and shard URLs as well as package archives.
-struct ChannelScope(Vec<Url>);
+struct ChannelScope {
+    channels: Vec<Url>,
+    authorization: Option<reqwest::header::HeaderValue>,
+}
 #[async_trait::async_trait]
 impl reqwest_middleware::Middleware for ChannelScope {
     async fn handle(
         &self,
-        req: reqwest::Request,
+        mut req: reqwest::Request,
         extensions: &mut http::Extensions,
         next: reqwest_middleware::Next<'_>,
     ) -> reqwest_middleware::Result<reqwest::Response> {
@@ -23,13 +26,17 @@ impl reqwest_middleware::Middleware for ChannelScope {
         if !url.username().is_empty()
             || url.password().is_some()
             || !self
-                .0
+                .channels
                 .iter()
                 .any(|base| url.origin() == base.origin() && url.path().starts_with(base.path()))
         {
             return Err(reqwest_middleware::Error::middleware(
                 std::io::Error::other("outside configured channel"),
             ));
+        }
+        if let Some(value) = &self.authorization {
+            req.headers_mut()
+                .insert(reqwest::header::AUTHORIZATION, value.clone());
         }
         next.run(req, extensions).await
     }
@@ -53,6 +60,8 @@ struct Request {
 struct NetworkPolicy {
     allow_https: bool,
     ca_bundle_pem: Option<String>,
+    proxy_url: Option<String>,
+    authorization: Option<String>,
 }
 
 #[tokio::main]
@@ -153,8 +162,49 @@ async fn run() -> Result<()> {
         .filter(|c| c.starts_with("https://"))
         .map(|c| Url::parse(&format!("{}/", c.trim_end_matches('/'))))
         .collect::<Result<Vec<_>, _>>()?;
+    let mut authorization = None;
+    if let Some(policy) = &request.network {
+        if policy.proxy_url.is_some() || policy.authorization.is_some() {
+            let first = scope
+                .first()
+                .context("network policy requires an HTTPS channel")?;
+            if !policy.allow_https
+                || scope
+                    .iter()
+                    .any(|channel| channel.origin() != first.origin())
+            {
+                bail!("configured network route requires a single HTTPS origin");
+            }
+        }
+        if let Some(raw) = &policy.proxy_url {
+            let url = Url::parse(raw).map_err(|_| anyhow::anyhow!("invalid proxy URL"))?;
+            if !matches!(url.scheme(), "http" | "https")
+                || url.host().is_none()
+                || url.path() != "/"
+                || url.query().is_some()
+                || url.fragment().is_some()
+            {
+                bail!("unsupported proxy URL");
+            }
+            let proxy = reqwest::Proxy::https(url)
+                .map_err(|_| anyhow::anyhow!("invalid HTTPS proxy configuration"))?;
+            builder = builder.proxy(proxy);
+        }
+        if let Some(raw) = &policy.authorization {
+            if !raw.starts_with("Basic ") {
+                bail!("unsupported channel authentication");
+            }
+            let mut value = reqwest::header::HeaderValue::from_str(raw)
+                .context("invalid authorization header")?;
+            value.set_sensitive(true);
+            authorization = Some(value);
+        }
+    }
     let client = ClientBuilder::new(builder.build()?)
-        .with(ChannelScope(scope))
+        .with(ChannelScope {
+            channels: scope,
+            authorization,
+        })
         .build();
     let mut repositories = Vec::new();
     let mut remote_channels = Vec::new();

@@ -87,6 +87,9 @@ def validate_release_candidate_event_policy(workflow_text):
 
 def validate_release_identity_topology(workflow_text):
     errors = validate_release_candidate_event_policy(workflow_text)
+    defaults = _workflow_job(workflow_text, "provider-defaults")
+    if f"candidate: {CANDIDATE_SHA_EXPRESSION}" not in defaults:
+        errors.append("provider defaults must build from the intended candidate SHA")
     for name in RELEASE_IDENTITY_JOBS:
         job = _workflow_job(workflow_text, name)
         if not job:

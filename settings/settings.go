@@ -440,3 +440,14 @@ func noProxyMatch(target *url.URL, raw string) bool {
 	}
 	return false
 }
+
+// ProfileProxyFor selects the operator-configured route without inheriting ambient proxies.
+func ProfileProxyFor(target *url.URL) string {
+	if noProxyMatch(target, Global.NoProxy()) {
+		return ""
+	}
+	if proxy := Global.HttpsProxy(); proxy != "" {
+		return proxy
+	}
+	return Global.HttpProxy()
+}

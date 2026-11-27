@@ -18,10 +18,14 @@ Protocol 1 can query exclusively HTTPS channels when `network.allow_https` is
 true. The gateway enables sharded repodata and recursive dependency queries.
 The HTTP client disables ambient proxies and redirects, uses rustls, and can add
 certificates from `network.ca_bundle_pem`. Selected archives must have SHA-256
-and belong to their originating HTTPS channel. Mixed local and remote channels,
-authentication, proxy settings, and revocation configuration are unsupported.
-Metadata remains trusted input; package hashes do not authenticate metadata.
-Remote behavior has not yet been validated by a native build or integration test.
+and belong to their originating HTTPS channel. RCC resolves the profile proxy
+and bypass rules for that origin. A username and password in the configured
+HTTPS channel alias select Basic authentication. RCC passes credentials on the
+helper's stdin and removes them from the channel URL. The helper attaches the
+header only to requests inside the configured channel paths. Mixed local and
+remote channels and custom revocation settings remain unsupported. Metadata
+remains trusted input. The Linux synthetic fixture verifies proxy CONNECT,
+authenticated metadata and payload requests, and rejects an untrusted CA.
 
 Upstream references: [pinned solver](https://github.com/conda/rattler/blob/fa471774d9975a65febae10d8405637f89d2ba85/crates/rattler_solve/src/lib.rs),
 [Rattler book networking](https://github.com/prefix-dev/rattler-book/blob/main/book/src/deep-dive-networking.md),
