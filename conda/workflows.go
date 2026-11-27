@@ -1,6 +1,7 @@
 package conda
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -140,7 +141,7 @@ func newLive(yaml, condaYaml, requirementsText, key string, force, freshInstall 
 	if finalEnv.IsUvNative() {
 		return newLiveUvNative(yaml, requirementsText, key, force, freshInstall, skip, finalEnv, recorder)
 	}
-	if (finalEnv.ProviderPlan == nil || finalEnv.ProviderPlan.Layers[0].Provider != "uv-runtime") && !MustMicromamba() {
+	if finalEnv.ProviderPlan == nil && !MustMicromamba() {
 		return false, fmt.Errorf("Could not get micromamba installed.")
 	}
 	targetFolder := common.StageFolder
@@ -301,6 +302,9 @@ func assertStageFolder(location string) {
 }
 
 func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, force bool) (bool, bool) {
+	return micromambaLayerWithBinary(fingerprint, condaYaml, targetFolder, stopwatch, planWriter, force, BinMicromamba(), strings.TrimPrefix(blobs.MicromambaVersion(), "v"))
+}
+func micromambaLayerWithBinary(fingerprint, condaYaml, targetFolder string, stopwatch fmt.Stringer, planWriter io.Writer, force bool, binary, version string) (bool, bool) {
 	assertStageFolder(targetFolder)
 	common.TimelineBegin("Layer: micromamba [%s]", fingerprint)
 	defer common.TimelineEnd()
@@ -310,8 +314,8 @@ func micromambaLayer(fingerprint, condaYaml, targetFolder string, stopwatch fmt.
 	if force {
 		ttl = "0"
 	}
-	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", strings.TrimPrefix(blobs.MicromambaVersion(), "v"), fingerprint)
-	mambaCommand := common.NewCommander(BinMicromamba(), "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
+	pretty.Progress(7, "Running micromamba phase. (micromamba v%s) [layer: %s]", version, fingerprint)
+	mambaCommand := common.NewCommander(binary, "create", "--always-copy", "--no-env", "--safety-checks", "enabled", "--extra-safety-checks", "--retry-clean-cache", "--strict-channel-priority", "--repodata-ttl", ttl, "-y", "-f", condaYaml, "-p", targetFolder)
 	mambaCommand.Option("--channel-alias", settings.Global.CondaURL())
 	mambaCommand.ConditionalFlag(common.VerboseEnvironmentBuilding(), "--verbose")
 	if settings.Global.HasMicroMambaRc() {
@@ -587,7 +591,31 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	pretty.Progress(10, "Activate environment started phase.")
 	common.Debug("===  activate phase ===")
 	fmt.Fprintf(planWriter, "\n---  activation plan @%ss  ---\n\n", stopwatch)
-	err := Activate(planWriter, targetFolder)
+	var err error
+	var ownerBinary string
+	if finalEnv.ProviderPlan != nil {
+		owner := finalEnv.ProviderPlan.Layers[0]
+		ownerBinary, err = providerExecutable(owner)
+		if err != nil {
+			common.Log("Provider activation: %v", err)
+			return false, true
+		}
+		if owner.Provider == "rattler" {
+			var out string
+			out, _, err = LiveCapture(targetFolder, ownerBinary, "activate", targetFolder)
+			if err == nil {
+				var env map[string]string
+				err = json.Unmarshal([]byte(out), &env)
+				if err == nil {
+					err = os.WriteFile(filepath.Join(targetFolder, activateFile), []byte(out), 0644)
+				}
+			}
+		} else {
+			err = activateWithMicromamba(planWriter, targetFolder, ownerBinary)
+		}
+	} else {
+		err = Activate(planWriter, targetFolder)
+	}
 	if err != nil {
 		common.Log("%sActivation failure: %v%s", pretty.Yellow, err, pretty.Reset)
 		if finalEnv.ProviderPlan != nil {
@@ -599,7 +627,7 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 	}
 	if finalEnv.ProviderPlan != nil && finalEnv.ProviderPlan.Layers[0].Provider == "uv-runtime" {
 		owner := finalEnv.ProviderPlan.Layers[0]
-		uv, resolveErr := ResolveLockedUv(*owner.ToolLock)
+		uv, resolveErr := providerExecutable(owner)
 		if resolveErr != nil {
 			return false, true
 		}
@@ -608,6 +636,12 @@ func newLiveInternal(yaml, condaYaml, requirementsText, key string, force, fresh
 			return false, true
 		}
 		err = goldenMasterUvNative(targetFolder, uv, interpreter)
+	} else if finalEnv.ProviderPlan != nil {
+		if finalEnv.ProviderPlan.Layers[0].Provider == "rattler" {
+			err = goldenMasterWithCondaCommand(targetFolder, pipUsed, ownerBinary, "list", targetFolder)
+		} else {
+			err = goldenMasterWithMicromamba(targetFolder, pipUsed, ownerBinary)
+		}
 	} else {
 		err = goldenMaster(targetFolder, pipUsed)
 	}

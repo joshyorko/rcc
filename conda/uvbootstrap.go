@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/fail"
 	"github.com/joshyorko/rcc/pathlib"
@@ -25,6 +26,13 @@ func MustUv(version string) bool {
 		return false
 	}
 	target := UvBinaryPath(version)
+	if v, d, n, ok := blobs.ProviderDefaultInfo("uv"); ok && version == v {
+		if verifiedExecutable(target, d, n) {
+			return true
+		}
+		src, err := embeddedTool("uv")
+		return err == nil && publishUvFile(target, d, src) == nil
+	}
 	lockPath := target + ".lock.json"
 	body, err := os.ReadFile(lockPath)
 	var pin UVToolLock
@@ -345,22 +353,4 @@ func ensureZipDirectory(root, directory string) error {
 		}
 	}
 	return nil
-}
-
-// copyFile is a helper to copy a file when os.Rename fails across devices
-func copyFile(src, dst string) error {
-	source, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer source.Close()
-
-	destination, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-
-	_, err = io.Copy(destination, source)
-	return err
 }

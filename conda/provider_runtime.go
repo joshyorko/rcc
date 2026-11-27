@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/joshyorko/rcc/blobs"
@@ -36,18 +37,27 @@ func runProviderLayer(layer ProviderLayer, key, prefix string, output io.Writer,
 	watch := common.Stopwatch("package provider")
 	switch layer.Provider {
 	case "uv-runtime":
-		bin, err := ResolveLockedUv(*layer.ToolLock)
+		bin, err := providerExecutable(layer)
 		if err != nil {
 			return false, "", err
 		}
-		if ok, _ := uvNativeLayer(key, prefix, strings.TrimPrefix(layer.Packages[0], "python="), bin, watch, output); !ok {
+		// The verified UV release supplies the managed Python download catalog.
+		// Start with private empty directories so an existing Python cache cannot select the artifact.
+		root, err := os.MkdirTemp("", "rcc-uv-runtime-*")
+		if err != nil {
+			return false, "", err
+		}
+		defer func() { _ = os.RemoveAll(root) }()
+		overrides := []string{"UV_CACHE_DIR=" + filepath.Join(root, "cache"), "UV_PYTHON_BIN_DIR=" + filepath.Join(root, "bin")}
+		if ok, _ := uvNativeLayerFrom(key, prefix, strings.TrimPrefix(layer.Packages[0], "python="), bin, filepath.Join(root, "python"), overrides, watch, output); !ok {
 			return false, "", fmt.Errorf("uv managed Python installation failed")
 		}
 	case "rattler":
 		return false, "", installRattlerLayer(prefix, layer)
 	case "micromamba":
-		if strings.TrimPrefix(blobs.MicromambaVersion(), "v") != layer.Version {
-			return false, "", fmt.Errorf("requires micromamba %s", layer.Version)
+		mamba, err := providerExecutable(layer)
+		if err != nil {
+			return false, "", err
 		}
 		channels := append([]string(nil), layer.Channels...)
 		for i, name := range channels {
@@ -63,12 +73,12 @@ func runProviderLayer(layer ProviderLayer, key, prefix string, output io.Writer,
 		if err != nil {
 			return false, "", err
 		}
-		file, err := providerInput(content)
+		file, err := providerInputNamed("rcc-conda-*.yaml", content)
 		if err != nil {
 			return false, "", err
 		}
 		defer func() { _ = os.Remove(file) }()
-		if ok, _ := micromambaLayer(key, file, prefix, watch, output, force); !ok {
+		if ok, _ := micromambaLayerWithBinary(key, file, prefix, watch, output, force, mamba, layer.Version); !ok {
 			return false, "", fmt.Errorf("micromamba install failed")
 		}
 	case "pip", "uv":
@@ -78,8 +88,9 @@ func runProviderLayer(layer ProviderLayer, key, prefix string, output io.Writer,
 		}
 		installer := pipLayer
 		var version string
-		if layer.ToolLock != nil && layer.Provider == "uv" {
-			bin, err := ResolveLockedUv(*layer.ToolLock)
+		uvVersion, _, _, hasDefault := blobs.ProviderDefaultInfo("uv")
+		if layer.Provider == "uv" && (layer.ToolLock != nil || (hasDefault && uvVersion == layer.Version)) {
+			bin, err := providerExecutable(layer)
 			if err != nil {
 				return false, "", err
 			}

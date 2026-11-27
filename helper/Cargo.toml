@@ -14,3 +14,10 @@ rattler_cache = { git = "https://github.com/conda/rattler", rev = "fa471774d9975
 rattler_conda_types = { git = "https://github.com/conda/rattler", rev = "fa471774d9975a65febae10d8405637f89d2ba85", default-features = false }
 rattler_solve = { git = "https://github.com/conda/rattler", rev = "fa471774d9975a65febae10d8405637f89d2ba85", default-features = false, features = ["resolvo"] }
 rattler_virtual_packages = { git = "https://github.com/conda/rattler", rev = "fa471774d9975a65febae10d8405637f89d2ba85", default-features = false }
+
+rattler_repodata_gateway = { git = "https://github.com/conda/rattler", rev = "fa471774d9975a65febae10d8405637f89d2ba85", default-features = false, features = ["gateway", "rustls"] }
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
+reqwest-middleware = { package = "astral-reqwest-middleware", version = "0.5" }
+rattler_shell = { git = "https://github.com/conda/rattler", rev = "fa471774d9975a65febae10d8405637f89d2ba85", default-features = false }
+async-trait = "0.1"
+http = "1"

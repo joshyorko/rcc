@@ -48,6 +48,10 @@ func capturePreformatted(incoming string) ([]string, string) {
 }
 
 func createScript(targetFolder string) (string, error) {
+	return createScriptWithMicromamba(targetFolder, BinMicromamba())
+}
+
+func createScriptWithMicromamba(targetFolder, micromamba string) (string, error) {
 	scriptTemplate := activateScript
 	if pathlib.IsFile(filepath.Join(targetFolder, "pyvenv.cfg")) || pathlib.IsFile(filepath.Join(targetFolder, ".rcc_uv_prefix")) {
 		scriptTemplate = uvNativeActivateScript
@@ -62,7 +66,7 @@ func createScript(targetFolder string) (string, error) {
 	details["Rcc"] = common.BinRcc()
 	details["Robocorphome"] = common.Product.Home()
 	details["MambaRootPrefix"] = common.MambaRootPrefix()
-	details["Micromamba"] = BinMicromamba()
+	details["Micromamba"] = micromamba
 	details["Live"] = targetFolder
 	buffer := bytes.NewBuffer(nil)
 	script.Execute(buffer, details)
@@ -105,6 +109,10 @@ func diffStringMaps(before, after map[string]string) map[string]string {
 }
 
 func Activate(sink io.Writer, targetFolder string) error {
+	return activateWithMicromamba(sink, targetFolder, BinMicromamba())
+}
+
+func activateWithMicromamba(sink io.Writer, targetFolder, micromamba string) error {
 	envCommand := []string{common.BinRcc(), "internal", "env", "--label", "before"}
 	out, _, err := LiveCapture(targetFolder, envCommand...)
 	if err != nil {
@@ -119,7 +127,7 @@ func Activate(sink io.Writer, targetFolder string) error {
 		return err
 	}
 
-	script, err := createScript(targetFolder)
+	script, err := createScriptWithMicromamba(targetFolder, micromamba)
 	if err != nil {
 		return err
 	}

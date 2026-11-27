@@ -11,6 +11,36 @@ import tempfile
 import zipfile
 
 
+def prepare_channel(home, cache):
+    channel = home / 'channel'
+    records = {s: {'info': {'subdir': s}, 'packages': {}, 'packages.conda': {}, 'repodata_version': 1} for s in ('linux-64', 'noarch')}
+    for record_path in cache.glob('*/info/repodata_record.json'):
+        record = json.loads(record_path.read_text())
+        subdir, filename = record.get('subdir'), record.get('fn')
+        if subdir not in records or not filename:
+            continue
+        archive = cache / filename
+        if not archive.is_file() or not record.get('sha256'):
+            continue
+        digest = hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
+        if digest != record['sha256'] or archive.stat().st_size != record['size']:
+            raise ValueError(f'archive verification failed: {archive}')
+        target = channel / subdir / filename
+        target.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            os.link(archive, target)
+        except OSError:
+            shutil.copyfile(archive, target)
+        key = 'packages.conda' if filename.endswith('.conda') else 'packages'
+        records[subdir][key][filename] = record
+    for subdir, data in records.items():
+        folder = channel / subdir
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / 'repodata.json').write_text(json.dumps(data))
+    (channel / 'channeldata.json').write_text('{}')
+    return channel, records
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--rcc', type=Path, required=True)
@@ -22,32 +52,7 @@ def main():
     with tempfile.TemporaryDirectory(prefix='codex-rcc-provider-') as tmp:
         root = Path(tmp)
         home = root / 'home'
-        channel = home / 'channel'
-        records = {s: {'info': {'subdir': s}, 'packages': {}, 'packages.conda': {}, 'repodata_version': 1} for s in ('linux-64', 'noarch')}
-        for record_path in args.cache.glob('*/info/repodata_record.json'):
-            record = json.loads(record_path.read_text())
-            subdir, filename = record.get('subdir'), record.get('fn')
-            if subdir not in records or not filename:
-                continue
-            archive = args.cache / filename
-            if not archive.is_file() or not record.get('sha256'):
-                continue
-            digest = hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
-            if digest != record['sha256'] or archive.stat().st_size != record['size']:
-                raise ValueError(f'archive verification failed: {archive}')
-            target = channel / subdir / filename
-            target.parent.mkdir(parents=True, exist_ok=True)
-            try:
-                os.link(archive, target)
-            except OSError:
-                shutil.copyfile(archive, target)
-            key = 'packages.conda' if filename.endswith('.conda') else 'packages'
-            records[subdir][key][filename] = record
-        for subdir, data in records.items():
-            folder = channel / subdir
-            folder.mkdir(parents=True, exist_ok=True)
-            (folder / 'repodata.json').write_text(json.dumps(data))
-        (channel / 'channeldata.json').write_text('{}')
+        channel, records = prepare_channel(home, args.cache)
         manifest = root / 'package.yaml'
         packages = ['openssl'] if args.native_only else ['python=3.12.15', 'pip=25.0.1', 'zlib=1.3.2']
         if args.pypi=="uv":

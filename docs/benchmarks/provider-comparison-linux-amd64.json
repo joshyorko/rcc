@@ -1,0 +1,221 @@
+{
+  "channel_records": 52,
+  "cases": {
+    "baseline legacy conda": {
+      "binarySHA256": "0a13e78201a71c1bbc19a2ee8ccc86dd60a67ec4ffa8cd3a9a8f254d148849ee",
+      "openssl": "OpenSSL 3.6.5 29 Sep 2026 (Library: OpenSSL 3.6.5 29 Sep 2026)",
+      "samples": {
+        "startup": [
+          {
+            "seconds": 0.4373346020001918,
+            "maxRSSKiB": 23452
+          },
+          {
+            "seconds": 1.248509113000182,
+            "maxRSSKiB": 21356
+          },
+          {
+            "seconds": 1.2213792239999748,
+            "maxRSSKiB": 22424
+          },
+          {
+            "seconds": 0.20039182400068967,
+            "maxRSSKiB": 22712
+          },
+          {
+            "seconds": 5.132838226003514,
+            "maxRSSKiB": 21480
+          }
+        ],
+        "cold": [
+          {
+            "seconds": 1.7547356450013467,
+            "maxRSSKiB": 63932
+          },
+          {
+            "seconds": 4.301521346998925,
+            "maxRSSKiB": 75412
+          },
+          {
+            "seconds": 1.9590752680014702,
+            "maxRSSKiB": 71628
+          },
+          {
+            "seconds": 4.3036123369965935,
+            "maxRSSKiB": 59004
+          },
+          {
+            "seconds": 8.534956735005835,
+            "maxRSSKiB": 67800
+          }
+        ],
+        "warm": [
+          {
+            "seconds": 0.2217732800054364,
+            "maxRSSKiB": 22624
+          },
+          {
+            "seconds": 0.19180156999937026,
+            "maxRSSKiB": 23324
+          },
+          {
+            "seconds": 0.1724021710033412,
+            "maxRSSKiB": 24072
+          },
+          {
+            "seconds": 0.1896530869998969,
+            "maxRSSKiB": 23308
+          },
+          {
+            "seconds": 0.10947738999675494,
+            "maxRSSKiB": 19820
+          }
+        ]
+      }
+    },
+    "candidate legacy micromamba": {
+      "binarySHA256": "5f0eaeb8da690e10b142fcb5301dd17c37d15e344149dbae9b980cd17fdb42b5",
+      "openssl": "OpenSSL 3.6.5 29 Sep 2026 (Library: OpenSSL 3.6.5 29 Sep 2026)",
+      "samples": {
+        "startup": [
+          {
+            "seconds": 0.6955687679947005,
+            "maxRSSKiB": 26760
+          },
+          {
+            "seconds": 1.415740526994341,
+            "maxRSSKiB": 26636
+          },
+          {
+            "seconds": 1.2279673390003154,
+            "maxRSSKiB": 25896
+          },
+          {
+            "seconds": 1.2794105050052167,
+            "maxRSSKiB": 26720
+          },
+          {
+            "seconds": 1.271475797999301,
+            "maxRSSKiB": 26216
+          }
+        ],
+        "cold": [
+          {
+            "seconds": 3.232437345002836,
+            "maxRSSKiB": 61768
+          },
+          {
+            "seconds": 2.041026658996998,
+            "maxRSSKiB": 58192
+          },
+          {
+            "seconds": 7.32852961000026,
+            "maxRSSKiB": 75280
+          },
+          {
+            "seconds": 3.1260610329991323,
+            "maxRSSKiB": 72484
+          },
+          {
+            "seconds": 1.730242673002067,
+            "maxRSSKiB": 66112
+          }
+        ],
+        "warm": [
+          {
+            "seconds": 0.08459991800191347,
+            "maxRSSKiB": 20928
+          },
+          {
+            "seconds": 0.28158540799631737,
+            "maxRSSKiB": 22252
+          },
+          {
+            "seconds": 0.09818866799469106,
+            "maxRSSKiB": 25368
+          },
+          {
+            "seconds": 0.17014308700163383,
+            "maxRSSKiB": 25428
+          },
+          {
+            "seconds": 0.22173938099876978,
+            "maxRSSKiB": 23820
+          }
+        ]
+      }
+    },
+    "candidate rattler local": {
+      "binarySHA256": "5f0eaeb8da690e10b142fcb5301dd17c37d15e344149dbae9b980cd17fdb42b5",
+      "openssl": "OpenSSL 3.6.5 29 Sep 2026 (Library: OpenSSL 3.6.5 29 Sep 2026)",
+      "samples": {
+        "startup": [
+          {
+            "seconds": 0.3148902429966256,
+            "maxRSSKiB": 24760
+          },
+          {
+            "seconds": 5.441013206000207,
+            "maxRSSKiB": 27016
+          },
+          {
+            "seconds": 1.2435269189954852,
+            "maxRSSKiB": 27060
+          },
+          {
+            "seconds": 0.22432563999609556,
+            "maxRSSKiB": 26316
+          },
+          {
+            "seconds": 1.2462151399959112,
+            "maxRSSKiB": 24992
+          }
+        ],
+        "cold": [
+          {
+            "seconds": 5.646675789997971,
+            "maxRSSKiB": 70204
+          },
+          {
+            "seconds": 3.6673997389953,
+            "maxRSSKiB": 64212
+          },
+          {
+            "seconds": 7.275950647002901,
+            "maxRSSKiB": 82320
+          },
+          {
+            "seconds": 0.9957778879979742,
+            "maxRSSKiB": 64560
+          },
+          {
+            "seconds": 0.9601770610024687,
+            "maxRSSKiB": 77364
+          }
+        ],
+        "warm": [
+          {
+            "seconds": 0.3106310610019136,
+            "maxRSSKiB": 23716
+          },
+          {
+            "seconds": 0.250102316000266,
+            "maxRSSKiB": 25168
+          },
+          {
+            "seconds": 0.08062727600190556,
+            "maxRSSKiB": 25372
+          },
+          {
+            "seconds": 0.06465688499883981,
+            "maxRSSKiB": 26348
+          },
+          {
+            "seconds": 0.06344194100529421,
+            "maxRSSKiB": 25760
+          }
+        ]
+      }
+    }
+  }
+}

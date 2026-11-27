@@ -334,6 +334,7 @@
 ## 28 [Experimental package providers](package-providers.md#experimental-package-providers)
 ### 28.1 [UV-managed Python](package-providers.md#uv-managed-python)
 ### 28.2 [Qualification boundaries](package-providers.md#qualification-boundaries)
+### 28.3 [Operator-selected native tools](package-providers.md#operator-selected-native-tools)
 ## 29 [RCC release preparation and publication](release-process.md#rcc-release-preparation-and-publication)
 ### 29.1 [Release metadata PR controller](release-process.md#release-metadata-pr-controller)
 ### 29.2 [Dependency preparation policy](release-process.md#dependency-preparation-policy)

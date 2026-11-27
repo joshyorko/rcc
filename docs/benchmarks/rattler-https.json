@@ -1,0 +1,19 @@
+{
+  "fixture": "trusted-self-signed-localhost-https-channel",
+  "source": "a799d69937aa348fcc40be882951535feacdc4ee",
+  "helper": "/var/tmp/codex-rcc306-20261126-quwSiz/target/debug/rcc-rattler-helper",
+  "helper_sha256": "44c5233e617dc1eb2f943c65974aa83b347ebc746798edf46b04c708c752958a",
+  "platform": "linux-64",
+  "protocol": 1,
+  "trusted_ca_install": true,
+  "installed_file": "share/rcc-https-receipt",
+  "observed_gets": [
+    "/linux-64/repodata_shards.msgpack.zst",
+    "/noarch/repodata_shards.msgpack.zst",
+    "/linux-64/repodata.json",
+    "/noarch/repodata.json",
+    "/linux-64/https-receipt-1-0.tar.bz2"
+  ],
+  "untrusted_ca_rejected": true,
+  "command": "python3 helper/tests/remote_channel.py /var/tmp/codex-rcc306-20261126-quwSiz/target/debug/rcc-rattler-helper"
+}

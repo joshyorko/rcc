@@ -1523,7 +1523,9 @@ def build(c, platform="all"):
         output = f"build/{output_dir}/"
 
         _assert_clean_source_if_required()
-        c.run(f"go build -ldflags -s -o {output} ./cmd/...")
+        # Release builds require verified, native-generated provider payloads for every target.
+        provider_flags = "-tags rcc_provider_defaults " if os.environ.get("RCC_REQUIRE_CLEAN_SOURCE") == "1" else ""
+        c.run(f"go build {provider_flags}-ldflags -s -o {output} ./cmd/...")
 
         ext = ".exe" if goos == "windows" else ""
         f = f"{output}rcc{ext}"

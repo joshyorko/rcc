@@ -15,10 +15,10 @@ func TestProviderOwnership(t *testing.T) {
 		{"addition", func(p string) error { return os.WriteFile(filepath.Join(p, "added"), []byte("new"), 0600) }, false},
 		{"modified", func(p string) error { return os.WriteFile(filepath.Join(p, "existing"), []byte("changed"), 0600) }, true},
 		{"replacement", func(p string) error {
-			if err := os.Remove(filepath.Join(p, "existing")); err != nil {
+			if err := os.WriteFile(filepath.Join(p, "replacement"), []byte("old"), 0600); err != nil {
 				return err
 			}
-			return os.WriteFile(filepath.Join(p, "existing"), []byte("old"), 0600)
+			return os.Rename(filepath.Join(p, "replacement"), filepath.Join(p, "existing"))
 		}, true},
 		{"deleted", func(p string) error { return os.Remove(filepath.Join(p, "existing")) }, true},
 		{"escaping link", func(p string) error { return os.Symlink(os.TempDir(), filepath.Join(p, "link")) }, true},

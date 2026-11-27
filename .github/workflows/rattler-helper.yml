@@ -28,8 +28,10 @@ jobs:
       - run: |
           bin=target/release/rcc-rattler-helper
           if [[ "$RUNNER_OS" == Windows ]]; then bin+=.exe; fi
-          digest=$(python -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$bin")
-          rcc=target/release/rcc
+          cd ..
+          python scripts/prepare_provider_defaults.py --helper "helper/$bin"
+          rcc=helper/target/release/rcc
           if [[ "$RUNNER_OS" == Windows ]]; then rcc+=.exe; fi
-          go build -ldflags "-X github.com/joshyorko/rcc/conda.rattlerHelperSHA256=$digest" -o "$rcc" ../cmd/rcc
-          python tests/native_install.py "$bin" "$rcc"
+          go build -tags rcc_provider_defaults -ldflags "-s -w" -o "$rcc" ./cmd/rcc
+          python helper/tests/native_install.py "helper/$bin" "$rcc"
+          if [[ "$RUNNER_OS" == Linux ]]; then python helper/tests/remote_channel.py "helper/$bin"; fi

@@ -51,12 +51,13 @@ type ProviderPlan struct {
 }
 
 type ProviderLayer struct {
-	Policy   string
-	ToolLock *UVToolLock
-	Provider string
-	Version  string
-	Channels []string
-	Packages []string
+	Policy        string
+	ToolLock      *UVToolLock
+	NativeToolPin *NativeToolPin
+	Provider      string
+	Version       string
+	Channels      []string
+	Packages      []string
 }
 
 type Dependency struct {
@@ -643,7 +644,9 @@ func (it *Environment) ProviderLayerKeys() ([]string, error) {
 		if layer.ToolLock != nil {
 			lock = fmt.Sprintf("%+v", *layer.ToolLock)
 		}
-		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q:%q\n", i, layer.Provider, layer.Version+"@"+layer.Policy, layer.Channels, layer.Packages, lock)
+		native := ""
+		if layer.NativeToolPin != nil { native = fmt.Sprintf("%+v", *layer.NativeToolPin) }
+		fmt.Fprintf(&canonical, "%d:%s:%s:%q:%q:%q:%q\n", i, layer.Provider, layer.Version+"@"+layer.Policy, layer.Channels, layer.Packages, lock, native)
 		keys = append(keys, common.BlueprintHash([]byte(canonical.String())))
 	}
 	return keys, nil

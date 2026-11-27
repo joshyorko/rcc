@@ -3,70 +3,45 @@ package conda
 import (
 	"bytes"
 	"context"
-
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
+	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/common"
+	"github.com/joshyorko/rcc/settings"
 )
 
 // Set by the native candidate build after building the locked helper.
 var rattlerHelperSHA256 string
 
 func installRattlerLayer(prefix string, layer ProviderLayer) error {
-	_, decodeErr := hex.DecodeString(rattlerHelperSHA256)
-	if len(rattlerHelperSHA256) != 64 || decodeErr != nil {
-		return errors.New("this RCC build has no pinned native Rattler helper")
+	verified, err := providerExecutable(layer)
+	if err != nil {
+		return err
 	}
-	if len(layer.Channels) != 1 || layer.Channels[0] != "local" {
-		return errors.New("this helper supports only the RCC local channel")
-	}
-	channel, ok := LocalChannel()
-	if !ok {
-		return errors.New("RCC local channel is unavailable")
+	channels, network, err := rattlerChannels(layer.Channels)
+	if err != nil {
+		return err
 	}
 	platform := rattlerSubdir()
 	if platform == "" {
 		return errors.New("unsupported Rattler platform")
 	}
-	rcc, err := os.Executable()
-	if err != nil {
-		return err
-	}
-	name := "rcc-rattler-helper"
-	if runtime.GOOS == "windows" {
-		name += ".exe"
-	}
-	source, err := os.Open(filepath.Join(filepath.Dir(rcc), name))
-	if err != nil {
-		return err
-	}
-	defer func() { _ = source.Close() }()
-	private, err := os.MkdirTemp("", "rcc-rattler-")
+	private, err := os.MkdirTemp("", "rcc-rattler-*")
 	if err != nil {
 		return err
 	}
 	defer func() { _ = os.RemoveAll(private) }()
-	info, err := source.Stat()
-	if err != nil {
-		return err
-	}
-	if !info.Mode().IsRegular() {
-		return errors.New("invalid Rattler sidecar")
-	}
-	verified := filepath.Join(common.Product.Home(), "rattler", layer.Version, rattlerHelperSHA256, name)
-	if err := publishExecutable(verified, rattlerHelperSHA256, info.Size(), source); err != nil {
-		return err
-	}
-	request, err := json.Marshal(map[string]interface{}{"protocol": 1, "prefix": prefix, "cache": filepath.Join(common.Product.Home(), "rattler-cache"), "platform": platform, "channels": []string{channel}, "packages": layer.Packages})
+	request, err := json.Marshal(map[string]interface{}{"protocol": 1, "prefix": prefix, "cache": filepath.Join(common.Product.Home(), "rattler-cache"), "platform": platform, "network": network, "channels": channels, "packages": layer.Packages})
 	if err != nil {
 		return err
 	}
@@ -80,9 +55,104 @@ func installRattlerLayer(prefix string, layer ProviderLayer) error {
 	}
 	cmd.Stdin = bytes.NewReader(request)
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("local Rattler install: %w", err)
+		return fmt.Errorf("Rattler install: %w", err)
 	}
 	return nil
+}
+
+func embeddedTool(tool string) (string, error) {
+	version, digest, size, ok := blobs.ProviderDefaultInfo(tool)
+	if !ok {
+		return "", fmt.Errorf("embedded %s default is unavailable in this build", tool)
+	}
+	path := filepath.Join(common.Product.Home(), "provider-tools", tool, version, common.Platform(), digest, nativeToolName(tool))
+	if verifiedExecutable(path, digest, size) {
+		return path, nil
+	}
+	stream, _, _, err := blobs.OpenProviderDefault(tool)
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = stream.Close() }()
+	if err = publishExecutable(path, digest, size, stream); err != nil {
+		return "", err
+	}
+	common.PlatformSyncDelay()
+	return path, nil
+}
+
+func providerExecutable(layer ProviderLayer) (string, error) {
+	if layer.NativeToolPin != nil {
+		return ResolveNativeToolPin(common.Product.Home(), layer.Provider, *layer.NativeToolPin, os.Getenv("RCC_"+strings.ToUpper(layer.Provider)+"_SOURCE"))
+	}
+	if layer.Provider == "micromamba" {
+		if MustMicromamba() {
+			return BinMicromamba(), nil
+		}
+		return "", errors.New("micromamba unavailable")
+	}
+	if layer.Provider == "uv" || layer.Provider == "uv-runtime" {
+		if layer.ToolLock != nil {
+			return ResolveLockedUv(*layer.ToolLock)
+		}
+		return embeddedTool("uv")
+	}
+	if _, _, _, ok := blobs.ProviderDefaultInfo("rattler"); ok {
+		return embeddedTool("rattler")
+	}
+	// Development-only sidecar, authenticated with the hash set by the native build.
+	digest, err := hex.DecodeString(rattlerHelperSHA256)
+	if err != nil || len(digest) != 32 {
+		return "", errors.New("this RCC build has no pinned native Rattler helper")
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	pin := NativeToolPin{Version: layer.Version, Target: common.Platform(), SHA256: rattlerHelperSHA256, Protocol: "1"}
+	return ResolveNativeToolPin(common.Product.Home(), "rattler", pin, filepath.Join(filepath.Dir(exe), nativeToolName("rattler")))
+}
+
+type rattlerNetwork struct {
+	HTTPS    bool   `json:"allow_https"`
+	CABundle string `json:"ca_bundle_pem,omitempty"`
+}
+
+func rattlerChannels(names []string) ([]string, *rattlerNetwork, error) {
+	if len(names) == 1 && names[0] == "local" {
+		path, ok := LocalChannel()
+		if !ok {
+			return nil, nil, errors.New("RCC local channel is unavailable")
+		}
+		return []string{path}, nil, nil
+	}
+	if len(names) == 0 || !settings.Global.VerifySsl() || settings.Global.NoRevocation() || settings.Global.LegacyRenegotiation() || settings.Global.HasMicroMambaRc() || settings.Global.HttpsProxy() != "" || settings.Global.HttpProxy() != "" || settings.Global.NoProxy() != "" {
+		return nil, nil, errors.New("requested Rattler transport policy is unsupported")
+	}
+	policy := &rattlerNetwork{HTTPS: true}
+	if settings.Global.HasCaBundle() {
+		data, err := os.ReadFile(common.CaBundleFile())
+		if err != nil {
+			return nil, nil, err
+		}
+		policy.CABundle = string(data)
+	}
+	alias := settings.Global.CondaURL()
+	if alias == "" {
+		alias = settings.Global.CondaLink(".")
+	}
+	endpoint, err := url.Parse(alias)
+	if err != nil || endpoint.Scheme != "https" || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" {
+		return nil, nil, errors.New("Rattler needs a credential-free HTTPS channel alias")
+	}
+	channels := make([]string, 0, len(names))
+	for _, name := range names {
+		if name == "local" || !providerChannel.MatchString(name) {
+			return nil, nil, errors.New("mixing local and remote Rattler channels is unsupported")
+		}
+		channels = append(channels, strings.TrimSuffix(endpoint.String(), "/")+"/"+name+"/")
+	}
+	return channels, policy, nil
 }
 
 func rattlerSubdir() string {

@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/joshyorko/rcc/blobs"
 	"github.com/joshyorko/rcc/common"
 	"github.com/joshyorko/rcc/settings"
 )
@@ -39,6 +40,15 @@ func providerResolutionIdentity(layer ProviderLayer) (string, error) {
 		return "", err
 	}
 	fields := map[string]interface{}{"platform": common.Platform(), "certificates": config.Certificates, "network": config.Network}
+	tool := layer.Provider
+	if tool == "uv-runtime" {
+		tool = "uv"
+	}
+	if layer.NativeToolPin != nil {
+		fields["nativePin"] = layer.NativeToolPin
+	} else if _, d, _, ok := blobs.ProviderDefaultInfo(tool); ok && layer.ToolLock == nil {
+		fields["embeddedDefault"] = d
+	}
 	files := map[string]string{"ca": common.CaBundleFile()}
 	if (layer.Provider == "rattler" || layer.Provider == "micromamba") && slices.Contains(layer.Channels, "local") {
 		if channel, ok := LocalChannel(); ok {
@@ -48,8 +58,12 @@ func providerResolutionIdentity(layer ProviderLayer) (string, error) {
 		}
 	}
 	switch layer.Provider {
+	case "uv-runtime":
+		fields["managed-python-source"] = "uv-builtin-private-v1"
 	case "rattler":
 		fields["helper"] = rattlerHelperSHA256
+		fields["conda"] = config.Endpoints["conda"]
+		files["micromambarc"] = common.MicroMambaRcFile()
 
 	case "micromamba":
 		fields["conda"] = config.Endpoints["conda"]
