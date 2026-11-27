@@ -681,6 +681,9 @@ jobs:
       - name: Run UV Python prefix symlink containment tests
         shell: bash
         run: go test -count=1 ./conda -run '^TestCopyPythonPrefix' -v
+      - name: Verify native file identity on equal-content replacement
+        shell: bash
+        run: go test -count=1 ./conda -run '^TestProviderOwnership$/^replacement$' -v
       - name: Verify authenticated metadata and retained rollback state against exact binary
         shell: bash
         run: |

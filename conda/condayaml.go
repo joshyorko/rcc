@@ -348,6 +348,12 @@ func (it *Environment) FromDependencies(fixed dependencies) (*Environment, bool)
 
 func freezeProviderPlan(plan *ProviderPlan, fixed dependencies) (*ProviderPlan, bool) {
 	result := &ProviderPlan{Layers: make([]ProviderLayer, len(plan.Layers))}
+	pypiVersions := make(map[string]string)
+	for _, installed := range fixed {
+		if installed.Origin == "pypi" {
+			pypiVersions[providerPackageName(installed.Name)] = installed.Version
+		}
+	}
 	same := true
 	for i, layer := range plan.Layers {
 		result.Layers[i] = layer
@@ -359,16 +365,19 @@ func freezeProviderPlan(plan *ProviderPlan, fixed dependencies) (*ProviderPlan, 
 				same = false
 				continue
 			}
-			found, ok := fixed.Lookup(dep.Name, pypi)
-			if !ok {
+			version := ""
+			separator := "="
+			if pypi {
+				version = pypiVersions[providerPackageName(dep.Name)]
+				separator = "=="
+			} else if found, ok := fixed.Lookup(dep.Name, false); ok {
+				version = found.Version
+			}
+			if version == "" {
 				same = false
 				continue
 			}
-			separator := "="
-			if pypi {
-				separator = "=="
-			}
-			result.Layers[i].Packages[j] = dep.Name + separator + found.Version
+			result.Layers[i].Packages[j] = dep.Name + separator + version
 		}
 	}
 	return result, same

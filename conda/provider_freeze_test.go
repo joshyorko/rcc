@@ -8,11 +8,11 @@ import (
 func TestProviderFreezeSerializesResolvedOrderedLayers(t *testing.T) {
 	original := &Environment{ProviderPlan: &ProviderPlan{Layers: []ProviderLayer{
 		{Provider: "rattler", Version: "0.1.0", Channels: []string{"conda-forge"}, Packages: []string{"python>=3.10", "shared"}},
-		{Provider: "uv", Version: "0.9.26", Packages: []string{"shared>=1", "demo"}},
+		{Provider: "uv", Version: "0.9.26", Packages: []string{"shared>=1", "Demo-Pkg>=2"}},
 		{Provider: "pip", Version: "25.0.1", Packages: []string{"other"}},
 	}}}
-	fixed := dependencies{{Name: "python", Version: "3.12.4", Origin: "conda-forge"}, {Name: "shared", Version: "2", Origin: "conda-forge"}, {Name: "shared", Version: "3", Origin: "pypi"}, {Name: "demo", Version: "4", Origin: "pypi"}, {Name: "other", Version: "5", Origin: "pypi"}}
-	want := [][]string{{"python=3.12.4", "shared=2"}, {"shared==3", "demo==4"}, {"other==5"}}
+	fixed := dependencies{{Name: "python", Version: "3.12.4", Origin: "conda-forge"}, {Name: "shared", Version: "2", Origin: "conda-forge"}, {Name: "shared", Version: "3", Origin: "pypi"}, {Name: "demo_.pkg", Version: "4", Origin: "pypi"}, {Name: "other", Version: "5", Origin: "pypi"}}
+	want := [][]string{{"python=3.12.4", "shared=2"}, {"shared==3", "Demo-Pkg==4"}, {"other==5"}}
 	check := func(t *testing.T, frozen *Environment) {
 		t.Helper()
 		serialized, err := frozen.AsYaml()
