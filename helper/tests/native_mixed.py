@@ -1,4 +1,5 @@
 """Qualify mixed native and Python package providers with the native RCC build."""
+import argparse
 import hashlib
 import json
 import os
@@ -17,7 +18,7 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def main(helper, rcc_binary, cache):
+def main(helper, rcc_binary, cache, artifact=False):
     target = {("Linux", "x86_64"): "linux-64", ("Linux", "aarch64"): "linux-aarch64",
               ("Darwin", "arm64"): "osx-arm64", ("Darwin", "x86_64"): "osx-64",
               ("Windows", "AMD64"): "win-64"}[platform.system(), platform.machine()]
@@ -70,19 +71,36 @@ print(json.dumps(dict(python=sys.executable, pythonVersion=platform.python_versi
             check = subprocess.run([str(python), "-I", "-c", probe],
                                    env={**env, **activation}, text=True, capture_output=True, check=True)
             runtime = json.loads(check.stdout)
+            if not Path(runtime["python"]).resolve(strict=True).is_relative_to(prefix):
+                raise RuntimeError(f"staged Python launched an interpreter outside {prefix}")
             assert (runtime["pythonVersion"], runtime["pipVersion"], runtime["zlibVersion"]) == ("3.12.15", "25.0.1", "1.3.2"), runtime
             if "provider-receipt" not in (prefix / "golden-ee.yaml").read_text():
                 raise RuntimeError(f"{conda}->{pypi}: wheel absent from environment inventory")
+            if artifact:
+                subprocess.run([sys.executable, str(Path(__file__).resolve().parents[2] / "scripts/qualify_provider_artifact.py"),
+                                "--rcc", str(rcc_binary), "--environment", str(manifest),
+                                "--publisher-home", str(home), "--wheel-dir", str(wheels),
+                                "--target", target], check=True)
             print(json.dumps({"sourceSHA": source, "platform": target, "conda": conda, "pypi": pypi,
-                              "helperSHA256": sha256(helper), "rccSHA256": sha256(rcc_binary),
+                              "helperSHA256": sha256(helper) if helper else None, "rccSHA256": sha256(rcc_binary),
                               "wheelSHA256": sha256(wheel_path), **runtime,
                               "inventory": True}))
 
 
 if __name__ == "__main__":
-    helper, rcc = [Path(arg).resolve(strict=True) for arg in sys.argv[1:3]]
-    if len(sys.argv) == 4:
-        main(helper, rcc, Path(sys.argv[3]).resolve(strict=True))
+    parser = argparse.ArgumentParser(description=__doc__)
+    artifact = "--artifact" in sys.argv[1:]
+    if artifact:
+        parser.add_argument("--artifact", metavar="ASSEMBLED_RCC", required=True, dest="rcc", type=Path)
+    else:
+        parser.add_argument("helper", type=Path)
+        parser.add_argument("rcc", type=Path)
+    parser.add_argument("cache", nargs="?", type=Path)
+    args = parser.parse_args()
+    helper = None if artifact else args.helper.resolve(strict=True)
+    rcc = args.rcc.resolve(strict=True)
+    if args.cache:
+        main(helper, rcc, args.cache.resolve(strict=True), artifact)
     else:
         with tempfile.TemporaryDirectory(prefix="rcc-seed-") as tmp:
             home = Path(tmp)
@@ -90,4 +108,4 @@ if __name__ == "__main__":
             seed.write_text("channels: [conda-forge]\ndependencies: [python=3.12.15, pip=25.0.1, zlib=1.3.2]\n")
             subprocess.run([str(rcc), "holotree", "variables", str(seed), "--json", "--no-retry-build"],
                            check=True, env=dict(os.environ, ROBOCORP_HOME=tmp), stdout=subprocess.DEVNULL)
-            main(helper, rcc, home / "pkgs")
+            main(helper, rcc, home / "pkgs", artifact)

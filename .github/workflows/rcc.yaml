@@ -30,6 +30,11 @@ permissions:
   contents: read
 
 jobs:
+  signed-provider-artifacts:
+    needs: build
+    uses: ./.github/workflows/provider-artifacts.yml
+    with:
+      candidate: ${{ inputs.source_sha || github.event.pull_request.head.sha || github.sha }}
   package-profile:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.body, '<!-- profile-package-providers -->')
     needs: build
