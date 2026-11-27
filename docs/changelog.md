@@ -1,6 +1,12 @@
 # rcc change log
 ## Unreleased
 
+- add opt-in ordered package-provider layers to `conda.yaml` and `package.yaml`,
+  with verified micromamba, UV and Rattler tools and cumulative Holotree reuse.
+  Existing manifests keep their released identities. See
+  [package providers](package-providers.md) for the downgrade guard, version
+  overrides and current Actions admission boundary (GH#306, PR#307).
+
 <a name="v181912"></a>
 ## v18.19.12 (date: 26.11.2026)
 

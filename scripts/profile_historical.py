@@ -79,7 +79,9 @@ def inspect_cpu_profile(binary, directory):
     raw = (directory / 'pprof-raw.stdout').read_text()
     if 'cpu/nanoseconds' not in raw or 'samples/count' not in raw:
         raise RuntimeError(f'unexpected profile sample types in {profile}')
-    return {'sha256': sha(profile), 'size_bytes': profile.stat().st_size}
+    sample_rows = re.findall(r'^\s*(\d+)\s+\d+:', raw, re.M)
+    return {'sha256': sha(profile), 'size_bytes': profile.stat().st_size,
+            'cpu_samples': sum(map(int, sample_rows))}
 
 
 def inventory(home, cwd, env, fixture):
@@ -88,6 +90,9 @@ def inventory(home, cwd, env, fixture):
         raise RuntimeError(f'expected one holotree Python, found {len(pythons)}')
     python = pythons[0]
     prefix = python.parent.parent
+    for name in ('rcc_plan.log', 'golden-ee.yaml', 'identity.yaml', '.messages.txt'):
+        if (prefix / name).is_file():
+            shutil.copyfile(prefix / name, cwd / name)
     records = []
     for path in sorted((prefix/'conda-meta').glob('*.json')):
         data = json.loads(path.read_text())
@@ -209,7 +214,7 @@ def main():
         for sample in receipt['samples']:
             for phase in sample['phases']:
                 key = '/'.join((sample['case'], sample['mode'], phase['phase']))
-                if phase['exit'] == 0:
+                if 'inventory_checks' in phase:
                     groups.setdefault(key, []).append(phase['seconds'])
         receipt['ranges'] = {k: {'n': len(v), 'min': min(v), 'median': statistics.median(v), 'max': max(v)} for k, v in groups.items()}
         (output/'receipt.json').write_text(json.dumps(receipt, indent=2)+'\n')

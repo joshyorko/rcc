@@ -1,0 +1,1106 @@
+{
+  "fixture_commit": "2a3e1a38e4343f44a57f97a496fad0c6700d2a2d",
+  "method": "Large PR64 original task inputs; common interpreter-local pip 25.0.1 and Robot Framework 6.1.1 wheel. Timed solvers receive only the reduced, SHA-verified local channel in a loopback-only namespace.",
+  "sample_limit": "n=1 unprofiled and 1 separately profiled run per completed cold/seeded condition; warm replay after each. Shared host under I/O pressure; priority was lowered after baseline unprofiled observations. No provider speed attribution.",
+  "cases": {
+    "baseline": {
+      "binary_sha256": "0a13e78201a71c1bbc19a2ee8ccc86dd60a67ec4ffa8cd3a9a8f254d148849ee",
+      "samples": [
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 195.773,
+          "user_s": 79.362,
+          "system_s": 35.508,
+          "peak_rss_kib": 267420,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.058",
+            "02": "0.000",
+            "03": "0.019",
+            "04": "0.005",
+            "05": "0.005",
+            "06": "0.005",
+            "07": "0.581",
+            "08": "139.416",
+            "09": "2.505",
+            "10": "0.000",
+            "11": "1.327",
+            "12": "0.000",
+            "13": "0.089",
+            "14": "3.956",
+            "15": "47.197"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768247664,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 2.52,
+          "user_s": 1.243,
+          "system_s": 0.418,
+          "peak_rss_kib": 144368,
+          "progress_interval_s": {
+            "00": "0.021",
+            "01": "0.000",
+            "02": "0.565",
+            "14": "0.685",
+            "15": "1.011"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768247664,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 208.206,
+          "user_s": 84.505,
+          "system_s": 32.604,
+          "peak_rss_kib": 222064,
+          "progress_interval_s": {
+            "00": "0.019",
+            "01": "0.218",
+            "02": "0.000",
+            "03": "0.021",
+            "04": "0.010",
+            "05": "0.005",
+            "06": "0.005",
+            "07": "0.514",
+            "08": "164.061",
+            "09": "1.625",
+            "10": "0.000",
+            "11": "1.430",
+            "12": "0.000",
+            "13": "0.008",
+            "14": "1.323",
+            "15": "32.526"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768258296,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.231,
+          "user_s": 1.186,
+          "system_s": 0.55,
+          "peak_rss_kib": 144152,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.000",
+            "02": "0.005",
+            "14": "0.410",
+            "15": "0.751"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768258296,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 131.339,
+          "user_s": 82.864,
+          "system_s": 32.091,
+          "peak_rss_kib": 247888,
+          "progress_interval_s": {
+            "00": "0.020",
+            "01": "0.026",
+            "02": "0.000",
+            "03": "0.002",
+            "04": "0.003",
+            "05": "0.004",
+            "06": "0.002",
+            "07": "0.340",
+            "08": "98.371",
+            "09": "0.989",
+            "10": "0.000",
+            "11": "1.380",
+            "12": "0.000",
+            "13": "0.036",
+            "14": "1.766",
+            "15": "28.323"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768237033,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "6ed5fc471addec07454adbbcfede0c621d922801082dc7c5d3c34c545605fbe2",
+          "top_flat": [
+            "    21.07s 23.76% 23.76%     21.07s 23.76%  internal/runtime/syscall/linux.Syscall6",
+            "     5.43s  6.12% 29.88%      5.43s  6.12%  runtime.memclrNoHeapPointers",
+            "     5.19s  5.85% 35.74%      5.19s  5.85%  crypto/internal/fips140/sha256.blockSHANI",
+            "     4.82s  5.44% 41.17%      8.65s  9.75%  compress/flate.(*deflateFast).encode",
+            "     4.25s  4.79% 45.96%      5.28s  5.95%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%     70.46s 79.45%  github.com/joshyorko/rcc/anywork.member",
+            "     0.01s 0.011% 0.011%     70.24s 79.21%  github.com/joshyorko/rcc/anywork.process",
+            "         0     0% 0.011%     50.91s 57.41%  io.Copy (partial-inline)",
+            "     0.04s 0.045% 0.056%     50.91s 57.41%  io.copyBuffer",
+            "     0.04s 0.045%   0.1%     40.35s 45.50%  github.com/joshyorko/rcc/htfs.ScheduleLifters.func1.LiftFile.1"
+          ],
+          "cpu_profile_duration": "Duration: 131.30s, Total samples = 88.68s (67.54%)",
+          "cpu_sample_count": 8868
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.315,
+          "user_s": 1.26,
+          "system_s": 0.708,
+          "peak_rss_kib": 154440,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.000",
+            "02": "0.006",
+            "14": "0.468",
+            "15": "0.763"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768237033,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "050edbe9f1189c773107112175def5479692c0fa118d9de844c70e85325d5bd4",
+          "top_flat": [
+            "     0.52s 27.08% 27.08%      0.52s 27.08%  internal/runtime/syscall/linux.Syscall6",
+            "     0.08s  4.17% 31.25%      0.35s 18.23%  encoding/json.(*Decoder).readValue",
+            "     0.07s  3.65% 34.90%      0.07s  3.65%  internal/filepathlite.(*lazybuf).append (inline)",
+            "     0.06s  3.12% 38.02%      0.06s  3.12%  runtime.memmove",
+            "     0.05s  2.60% 40.62%      0.07s  3.65%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      0.99s 51.56%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      0.99s 51.56%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      0.99s 51.56%  github.com/joshyorko/rcc/cmd.init.func53",
+            "         0     0%     0%      0.99s 51.56%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      0.99s 51.56%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 1.28s, Total samples = 1.92s (149.69%)",
+          "cpu_sample_count": 192
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 191.169,
+          "user_s": 82.507,
+          "system_s": 31.886,
+          "peak_rss_kib": 248120,
+          "progress_interval_s": {
+            "00": "0.024",
+            "01": "2.435",
+            "02": "0.000",
+            "03": "0.010",
+            "04": "0.005",
+            "05": "0.005",
+            "06": "0.005",
+            "07": "0.252",
+            "08": "131.555",
+            "09": "4.019",
+            "10": "0.000",
+            "11": "1.951",
+            "12": "0.000",
+            "13": "1.835",
+            "14": "2.261",
+            "15": "45.442"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768247668,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "e7edf9cde5080c07cfa42852c85d4ea13d5487ba7369a7a1ebe7d14d01f35b13",
+          "top_flat": [
+            "    20.90s 23.48% 23.48%     20.90s 23.48%  internal/runtime/syscall/linux.Syscall6",
+            "     5.95s  6.68% 30.17%      5.95s  6.68%  runtime.memclrNoHeapPointers",
+            "     5.21s  5.85% 36.02%      9.34s 10.49%  compress/flate.(*deflateFast).encode",
+            "     5.19s  5.83% 41.85%      5.19s  5.83%  crypto/internal/fips140/sha256.blockSHANI",
+            "     4.65s  5.22% 47.07%      5.98s  6.72%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "     0.03s 0.034% 0.034%     72.09s 80.99%  github.com/joshyorko/rcc/anywork.member",
+            "         0     0% 0.034%     71.95s 80.83%  github.com/joshyorko/rcc/anywork.process",
+            "     0.01s 0.011% 0.045%     53.83s 60.48%  io.Copy (partial-inline)",
+            "     0.05s 0.056%   0.1%     53.82s 60.47%  io.copyBuffer",
+            "         0     0%   0.1%     40.53s 45.53%  github.com/joshyorko/rcc/htfs.ScheduleLifters.func1.LiftFile.1"
+          ],
+          "cpu_profile_duration": "Duration: 191.12s, Total samples = 89.01s (46.57%)",
+          "cpu_sample_count": 8901
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 2.394,
+          "user_s": 1.231,
+          "system_s": 0.431,
+          "peak_rss_kib": 145108,
+          "progress_interval_s": {
+            "00": "0.018",
+            "01": "0.000",
+            "02": "0.718",
+            "14": "0.398",
+            "15": "1.195"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768247668,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "f175a1f0ebc9f0d2cb0762e3df4e620a12a84415b0b654b5ff64c4fb36f60771",
+          "top_flat": [
+            "     0.38s 23.46% 23.46%      0.38s 23.46%  internal/runtime/syscall/linux.Syscall6",
+            "     0.10s  6.17% 29.63%      0.34s 20.99%  encoding/json.(*Decoder).readValue",
+            "     0.07s  4.32% 33.95%      0.07s  4.32%  encoding/json.stateInString",
+            "     0.07s  4.32% 38.27%      0.07s  4.32%  internal/filepathlite.(*lazybuf).append (inline)",
+            "     0.07s  4.32% 42.59%      0.07s  4.32%  runtime.memmove"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      0.98s 60.49%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      0.98s 60.49%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      0.98s 60.49%  github.com/joshyorko/rcc/cmd.init.func53",
+            "         0     0%     0%      0.98s 60.49%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      0.98s 60.49%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 2.36s, Total samples = 1.62s (68.59%)",
+          "cpu_sample_count": 162
+        }
+      ],
+      "failure": null
+    },
+    "micromamba": {
+      "binary_sha256": "2b46ff375a3a7a55ec2cbe30f88a2a083a0cb4e83c2eb108db8d71ddb5c4c24e",
+      "samples": [
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 206.968,
+          "user_s": 89.307,
+          "system_s": 34.692,
+          "peak_rss_kib": 229480,
+          "progress_interval_s": {
+            "00": "0.020",
+            "01": "7.720",
+            "02": "0.006",
+            "03": "0.008",
+            "04": "0.005",
+            "05": "0.006",
+            "06": "0.004",
+            "07": "3.165",
+            "08": "172.969",
+            "09": "5.029",
+            "10": "0.000",
+            "11": "1.415",
+            "12": "0.000",
+            "13": "0.021",
+            "14": "1.502",
+            "15": "15.072"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768268719,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.206,
+          "user_s": 1.212,
+          "system_s": 0.488,
+          "peak_rss_kib": 148752,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.005",
+            "02": "0.006",
+            "14": "0.376",
+            "15": "0.762"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768268719,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 152.716,
+          "user_s": 90.164,
+          "system_s": 33.328,
+          "peak_rss_kib": 246708,
+          "progress_interval_s": {
+            "00": "0.020",
+            "01": "0.038",
+            "02": "0.004",
+            "03": "0.007",
+            "04": "0.002",
+            "05": "0.005",
+            "06": "0.002",
+            "07": "0.147",
+            "08": "109.035",
+            "09": "5.900",
+            "10": "0.000",
+            "11": "1.812",
+            "12": "0.000",
+            "13": "4.050",
+            "14": "4.485",
+            "15": "26.062"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768279346,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.825,
+          "user_s": 1.271,
+          "system_s": 0.42,
+          "peak_rss_kib": 149468,
+          "progress_interval_s": {
+            "00": "0.018",
+            "01": "0.004",
+            "02": "0.008",
+            "14": "0.389",
+            "15": "1.363"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768279346,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 226.066,
+          "user_s": 88.236,
+          "system_s": 34.33,
+          "peak_rss_kib": 251060,
+          "progress_interval_s": {
+            "00": "0.022",
+            "01": "0.045",
+            "02": "0.005",
+            "03": "0.009",
+            "04": "0.005",
+            "05": "0.004",
+            "06": "0.004",
+            "07": "0.395",
+            "08": "183.838",
+            "09": "5.375",
+            "10": "0.000",
+            "11": "1.444",
+            "12": "0.000",
+            "13": "0.008",
+            "14": "13.400",
+            "15": "17.847"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768258095,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "b8d8d61a34dbce5b7edb939efa576459d68acfb48361e47e0617264d8aa5345d",
+          "top_flat": [
+            "    23.28s 23.75% 23.75%     23.28s 23.75%  internal/runtime/syscall/linux.Syscall6",
+            "     7.66s  7.81% 31.56%      7.66s  7.81%  crypto/internal/fips140/sha256.blockSHANI",
+            "     5.73s  5.84% 37.40%      5.73s  5.84%  runtime.memclrNoHeapPointers",
+            "     5.01s  5.11% 42.51%      8.97s  9.15%  compress/flate.(*deflateFast).encode",
+            "     4.54s  4.63% 47.14%      5.85s  5.97%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "     0.01s  0.01%  0.01%     71.22s 72.64%  github.com/joshyorko/rcc/anywork.member",
+            "     0.01s  0.01%  0.02%     70.94s 72.36%  github.com/joshyorko/rcc/anywork.process",
+            "         0     0%  0.02%     56.28s 57.41%  io.Copy (partial-inline)",
+            "     0.01s  0.01% 0.031%     56.28s 57.41%  io.copyBuffer",
+            "         0     0% 0.031%     42.87s 43.73%  os.(*File).WriteTo"
+          ],
+          "cpu_profile_duration": "Duration: 226.02s, Total samples = 98.04s (43.38%)",
+          "cpu_sample_count": 9804
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 10.588,
+          "user_s": 1.242,
+          "system_s": 0.52,
+          "peak_rss_kib": 149128,
+          "progress_interval_s": {
+            "00": "0.022",
+            "01": "5.421",
+            "02": "3.861",
+            "14": "0.395",
+            "15": "0.818"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768258095,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "7551859193e0f5607837913cd519611b4fe55dd560ca075a82714c4e82309c91",
+          "top_flat": [
+            "     0.30s 17.96% 17.96%      0.30s 17.96%  internal/runtime/syscall/linux.Syscall6",
+            "     0.12s  7.19% 25.15%      0.12s  7.19%  runtime.memmove",
+            "     0.10s  5.99% 31.14%      0.10s  5.99%  internal/filepathlite.(*lazybuf).append (inline)",
+            "     0.09s  5.39% 36.53%      0.38s 22.75%  encoding/json.(*Decoder).readValue",
+            "     0.06s  3.59% 40.12%      0.06s  3.59%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      1.02s 61.08%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      1.02s 61.08%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      1.02s 61.08%  github.com/joshyorko/rcc/cmd.init.func54",
+            "         0     0%     0%      1.02s 61.08%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      1.02s 61.08%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 10.55s, Total samples = 1.67s (15.84%)",
+          "cpu_sample_count": 167
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 196.066,
+          "user_s": 89.031,
+          "system_s": 34.091,
+          "peak_rss_kib": 273660,
+          "progress_interval_s": {
+            "00": "0.021",
+            "01": "5.022",
+            "02": "0.008",
+            "03": "0.011",
+            "04": "0.006",
+            "05": "0.006",
+            "06": "0.003",
+            "07": "0.528",
+            "08": "146.548",
+            "09": "7.604",
+            "10": "0.000",
+            "11": "1.433",
+            "12": "0.000",
+            "13": "0.021",
+            "14": "1.506",
+            "15": "25.675"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768268723,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "d91a200dca4cbcafc205c9b70c0a2474f76a91059370cdb8c619c948775be340",
+          "top_flat": [
+            "    22.90s 23.55% 23.55%     22.90s 23.55%  internal/runtime/syscall/linux.Syscall6",
+            "     8.07s  8.30% 31.86%      8.07s  8.30%  crypto/internal/fips140/sha256.blockSHANI",
+            "     6.24s  6.42% 38.27%      6.24s  6.42%  runtime.memclrNoHeapPointers",
+            "     5.24s  5.39% 43.66%      9.34s  9.61%  compress/flate.(*deflateFast).encode",
+            "     4.27s  4.39% 48.06%      5.46s  5.62%  compress/flate.(*decompressor).huffSym"
+          ],
+          "top_cumulative": [
+            "     0.01s  0.01%  0.01%     71.70s 73.75%  github.com/joshyorko/rcc/anywork.member",
+            "         0     0%  0.01%     71.59s 73.64%  github.com/joshyorko/rcc/anywork.process",
+            "     0.01s  0.01% 0.021%     57.45s 59.09%  io.Copy (partial-inline)",
+            "     0.03s 0.031% 0.051%     57.44s 59.08%  io.copyBuffer",
+            "         0     0% 0.051%     44.80s 46.08%  os.(*File).WriteTo"
+          ],
+          "cpu_profile_duration": "Duration: 196.02s, Total samples = 97.22s (49.60%)",
+          "cpu_sample_count": 9722
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.31,
+          "user_s": 1.32,
+          "system_s": 0.562,
+          "peak_rss_kib": 156968,
+          "progress_interval_s": {
+            "00": "0.018",
+            "01": "0.005",
+            "02": "0.010",
+            "14": "0.455",
+            "15": "0.765"
+          },
+          "file_count": 41225,
+          "file_bytes": 1768268723,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "7d1dc008f386785d9b4022e2ad0132229447bb23a1b8fabd2befecc58b2f7655",
+          "top_flat": [
+            "     0.50s 27.62% 27.62%      0.50s 27.62%  internal/runtime/syscall/linux.Syscall6",
+            "     0.13s  7.18% 34.81%      0.34s 18.78%  encoding/json.(*Decoder).readValue",
+            "     0.06s  3.31% 38.12%      0.06s  3.31%  runtime.memmove",
+            "     0.05s  2.76% 40.88%      0.06s  3.31%  compress/flate.(*decompressor).huffSym",
+            "     0.05s  2.76% 43.65%      0.05s  2.76%  encoding/json.stateInString"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      0.94s 51.93%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      0.94s 51.93%  github.com/joshyorko/rcc/cmd.init.func54",
+            "         0     0%     0%      0.94s 51.93%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      0.93s 51.38%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      0.93s 51.38%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 1.28s, Total samples = 1.81s (141.27%)",
+          "cpu_sample_count": 181
+        }
+      ],
+      "failure": null
+    },
+    "rattler": {
+      "binary_sha256": "2b46ff375a3a7a55ec2cbe30f88a2a083a0cb4e83c2eb108db8d71ddb5c4c24e",
+      "samples": [
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 111.201,
+          "user_s": 83.863,
+          "system_s": 38.342,
+          "peak_rss_kib": 433260,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.471",
+            "02": "0.003",
+            "03": "0.006",
+            "04": "0.003",
+            "05": "0.003",
+            "06": "0.315",
+            "08": "63.445",
+            "09": "5.337",
+            "10": "0.000",
+            "11": "1.196",
+            "12": "0.216",
+            "13": "0.010",
+            "14": "1.972",
+            "15": "33.745"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760649216,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.268,
+          "user_s": 1.201,
+          "system_s": 0.473,
+          "peak_rss_kib": 148592,
+          "progress_interval_s": {
+            "00": "0.020",
+            "01": "0.037",
+            "02": "0.012",
+            "14": "0.394",
+            "15": "0.747"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760649216,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 100.54,
+          "user_s": 76.483,
+          "system_s": 31.509,
+          "peak_rss_kib": 227752,
+          "progress_interval_s": {
+            "00": "0.030",
+            "01": "0.028",
+            "02": "0.004",
+            "03": "0.008",
+            "04": "0.005",
+            "05": "0.006",
+            "06": "0.004",
+            "08": "39.439",
+            "09": "11.153",
+            "10": "0.000",
+            "11": "0.608",
+            "12": "0.000",
+            "13": "0.007",
+            "14": "7.278",
+            "15": "41.918"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760655162,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "unprofiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.231,
+          "user_s": 1.252,
+          "system_s": 0.457,
+          "peak_rss_kib": 149708,
+          "progress_interval_s": {
+            "00": "0.022",
+            "01": "0.006",
+            "02": "0.013",
+            "14": "0.389",
+            "15": "0.760"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760655162,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "cold-package-cache",
+          "exit": 0,
+          "seconds": 155.046,
+          "user_s": 77.086,
+          "system_s": 34.553,
+          "peak_rss_kib": 505880,
+          "progress_interval_s": {
+            "00": "0.020",
+            "01": "0.031",
+            "02": "0.004",
+            "03": "0.010",
+            "04": "0.010",
+            "05": "0.005",
+            "06": "0.005",
+            "08": "104.307",
+            "09": "3.788",
+            "10": "0.000",
+            "11": "0.601",
+            "12": "0.000",
+            "13": "0.006",
+            "14": "2.691",
+            "15": "43.489"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760643273,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "65ea43f59618a30cdf65770d2068d6032f9734797bae27e26dd5141bc6945f73",
+          "top_flat": [
+            "    24.02s 25.09% 25.09%     24.02s 25.09%  internal/runtime/syscall/linux.Syscall6",
+            "     8.02s  8.38% 33.47%      8.02s  8.38%  crypto/internal/fips140/sha256.blockSHANI",
+            "     5.63s  5.88% 39.35%      5.63s  5.88%  runtime.memclrNoHeapPointers",
+            "     4.58s  4.78% 44.14%      7.95s  8.31%  compress/flate.(*deflateFast).encode",
+            "     3.95s  4.13% 48.27%      6.92s  7.23%  runtime.tryDeferToSpanScan"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%     69.09s 72.18%  github.com/joshyorko/rcc/anywork.member",
+            "     0.03s 0.031% 0.031%     68.95s 72.03%  github.com/joshyorko/rcc/anywork.process",
+            "         0     0% 0.031%     54.52s 56.96%  io.Copy (partial-inline)",
+            "     0.06s 0.063% 0.094%     54.52s 56.96%  io.copyBuffer",
+            "     0.01s  0.01%   0.1%     42.36s 44.25%  os.(*File).WriteTo"
+          ],
+          "cpu_profile_duration": "Duration: 155s, Total samples = 95.72s (61.75%)",
+          "cpu_sample_count": 9572
+        },
+        {
+          "mode": "profiled",
+          "seeded": false,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 3.21,
+          "user_s": 1.294,
+          "system_s": 0.505,
+          "peak_rss_kib": 153444,
+          "progress_interval_s": {
+            "00": "0.023",
+            "01": "0.007",
+            "02": "0.050",
+            "14": "0.411",
+            "15": "0.793"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760643273,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "cb103273b21702a65d9a4f540f0b4c0ba24bce6c1ad54b2e600841ddfbb5743c",
+          "top_flat": [
+            "     0.40s 23.12% 23.12%      0.40s 23.12%  internal/runtime/syscall/linux.Syscall6",
+            "     0.13s  7.51% 30.64%      0.13s  7.51%  internal/filepathlite.(*lazybuf).append (inline)",
+            "     0.11s  6.36% 36.99%      0.37s 21.39%  encoding/json.(*Decoder).readValue",
+            "     0.09s  5.20% 42.20%      0.12s  6.94%  compress/flate.(*decompressor).huffSym",
+            "     0.08s  4.62% 46.82%      0.08s  4.62%  runtime.memmove"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      0.98s 56.65%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      0.98s 56.65%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      0.98s 56.65%  github.com/joshyorko/rcc/cmd.init.func54",
+            "         0     0%     0%      0.98s 56.65%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      0.98s 56.65%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 2.98s, Total samples = 1.73s (57.97%)",
+          "cpu_sample_count": 173
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "seeded-package-cache",
+          "exit": 0,
+          "seconds": 53.517,
+          "user_s": 78.525,
+          "system_s": 31.81,
+          "peak_rss_kib": 233084,
+          "progress_interval_s": {
+            "00": "0.019",
+            "01": "0.015",
+            "02": "0.004",
+            "03": "0.010",
+            "04": "0.005",
+            "05": "0.004",
+            "06": "0.003",
+            "08": "31.530",
+            "09": "3.390",
+            "10": "0.000",
+            "11": "0.630",
+            "12": "0.000",
+            "13": "0.006",
+            "14": "2.082",
+            "15": "14.771"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760649215,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "bc7045a059b3083baadb16b911817f230a0eda7a34448bcc944ff17df3784c9e",
+          "top_flat": [
+            "    25.51s 24.55% 24.55%     25.51s 24.55%  internal/runtime/syscall/linux.Syscall6",
+            "     8.43s  8.11% 32.66%      8.43s  8.11%  crypto/internal/fips140/sha256.blockSHANI",
+            "     5.86s  5.64% 38.30%      5.86s  5.64%  runtime.memclrNoHeapPointers",
+            "     5.15s  4.96% 43.26%      9.25s  8.90%  compress/flate.(*deflateFast).encode",
+            "     5.07s  4.88% 48.14%      9.21s  8.86%  runtime.tryDeferToSpanScan"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%     75.08s 72.25%  github.com/joshyorko/rcc/anywork.member",
+            "     0.01s 0.0096% 0.0096%     74.89s 72.07%  github.com/joshyorko/rcc/anywork.process",
+            "         0     0% 0.0096%     60.68s 58.40%  io.Copy (partial-inline)",
+            "     0.09s 0.087% 0.096%     60.68s 58.40%  io.copyBuffer",
+            "         0     0% 0.096%     46.49s 44.74%  os.(*File).WriteTo"
+          ],
+          "cpu_profile_duration": "Duration: 52.48s, Total samples = 103.91s (198.00%)",
+          "cpu_sample_count": 10391
+        },
+        {
+          "mode": "profiled",
+          "seeded": true,
+          "phase": "warm-holotree-replay",
+          "exit": 0,
+          "seconds": 1.316,
+          "user_s": 1.278,
+          "system_s": 0.529,
+          "peak_rss_kib": 153788,
+          "progress_interval_s": {
+            "00": "0.017",
+            "01": "0.023",
+            "02": "0.010",
+            "14": "0.428",
+            "15": "0.786"
+          },
+          "file_count": 41224,
+          "file_bytes": 1760649215,
+          "symlink_count": 2685,
+          "resolved_conda_count": 260,
+          "link_scripts": [
+            {
+              "path": "bin/.ucx-post-link.sh",
+              "size": 330,
+              "sha256": "5b61c5b3b843e15eee79847cacfa85699da4b39952d5aecc1789222970de2d83"
+            }
+          ],
+          "canonical_conda_sha256": "ea86684d5fac6f6ad73f1e49df5420f55bdff63df1f14a0fc185d42596aadb20",
+          "pip_list_sha256": "808da484b153c8bd36fb32d03021a05c341aaf8c5836444d8db14385bb5a308d",
+          "imports_passed": true,
+          "cpu_profile_sha256": "dafce8976e0434be52dce111ceafe7eaeec8466246091f91eb15d8fcd3f4c00e",
+          "top_flat": [
+            "     0.49s 27.37% 27.37%      0.49s 27.37%  internal/runtime/syscall/linux.Syscall6",
+            "     0.11s  6.15% 33.52%      0.33s 18.44%  encoding/json.(*Decoder).readValue",
+            "     0.09s  5.03% 38.55%      0.09s  5.03%  internal/filepathlite.(*lazybuf).append (inline)",
+            "     0.06s  3.35% 41.90%      0.11s  6.15%  compress/flate.(*decompressor).huffmanBlock",
+            "     0.05s  2.79% 44.69%      0.07s  3.91%  encoding/json.(*decodeState).scanWhile"
+          ],
+          "top_cumulative": [
+            "         0     0%     0%      0.96s 53.63%  github.com/joshyorko/rcc/cmd.Execute",
+            "         0     0%     0%      0.96s 53.63%  github.com/joshyorko/rcc/cmd.holotreeExpandEnvironment",
+            "         0     0%     0%      0.96s 53.63%  github.com/joshyorko/rcc/cmd.init.func54",
+            "         0     0%     0%      0.96s 53.63%  github.com/joshyorko/rcc/htfs.NewEnvironment",
+            "         0     0%     0%      0.96s 53.63%  github.com/spf13/cobra.(*Command).Execute (inline)"
+          ],
+          "cpu_profile_duration": "Duration: 1.29s, Total samples = 1.79s (138.82%)",
+          "cpu_sample_count": 179
+        }
+      ],
+      "failure": null
+    }
+  },
+  "archive": {
+    "file": "historical-large-linux-amd64-cpu.zip",
+    "sha256": "f012707079a9c3557db943abb6fe71912a266d75ea3b4fbe9e9c557443ee6fed",
+    "bytes": 2099253
+  }
+}
